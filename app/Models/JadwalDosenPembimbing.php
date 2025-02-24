@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class JadwalDosenPembimbing extends Model
 {
-    use HasFactory;
+    protected $table = 'jadwal_dosen_pembimbing';
+    protected $primaryKey = 'id_jadwal_pembimbing';
+    protected $fillable = ['nip', 'hari', 'jam_mulai', 'jam_selesai'];
 }

@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class DosenPembimbing extends Model
 {
-    use HasFactory;
+    protected $table = 'dosen_pembimbing';
+    protected $primaryKey = 'nip';
+
+    protected $fillable = [
+        'kbk',
+        'maksimal_d4',
+        'maksimal_d3'
+    ];
 }
