@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class KategoriPenilaian extends Model
 {
-    use HasFactory;
+    protected $table = 'kategori_penilaian';
+    protected $primaryKey = 'id_kategori';
+
+    protected $fillable = [
+        'id_kategori',
+        'id_form_penilaian',
+        'nama_kategori',
+        'bobot_kategori'
+    ];
 }

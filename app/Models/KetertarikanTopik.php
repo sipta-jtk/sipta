@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class KetertarikanTopik extends Model
 {
-    use HasFactory;
+    protected $table = 'ketertarikan_topik';
+    protected $primaryKey = 'id_ketertarikan_topik';
+
+    protected $fillable = [
+        'id_ketertarikan_topik',
+        'nip',
+        'id_topik'
+    ];
 }
