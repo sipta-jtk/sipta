@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class AmbangBatas extends Model
 {
-    use HasFactory;
+    protected $table = 'ambang_batas';
+    protected $primaryKey = 'id_ambang_batas';
+
+    protected $fillable = [
+        'ambang_batas'
+    ];
 }

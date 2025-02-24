@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dosen extends Model
 {
-    use HasFactory;
+    protected $table = 'dosen';
+    protected $primaryKey = 'nip';
+
+    protected $fillable = [
+        'status_dosen',
+        'role_dosen'
+    ];
 }
