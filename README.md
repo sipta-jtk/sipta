@@ -18,5 +18,5 @@
 ## Logging
 - Laravel Observer
 
-## Authenication
+## Authentication
 - Laravel Fortify
