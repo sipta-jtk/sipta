@@ -9,6 +9,7 @@ use Awobaz\Compoships\Compoships; // Import Compoships
 class RuangFasilitas extends Model
 {
     use Compoships;
+    use HasFactory;
 
     protected $table = 'ruang_fasilitas';
     

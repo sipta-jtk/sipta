@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 // Model untuk Prodi
 class Prodi extends Model
 {
-
+    use HasFactory;
     protected $table = 'prodi';
     protected $primaryKey = 'id_prodi';
 
