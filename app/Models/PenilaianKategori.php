@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class PenilaianKategori extends Model
 {
     use HasFactory;
+
+    protected $table = 'penilaian_kategori';
+
+    protected $fillable = [
+        'nim',
+        'id_kategori',
+        'nilai_kategori'
+    ];
+
+    
 }
