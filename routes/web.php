@@ -13,6 +13,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+$modulesPath = base_path('app/Modules');
+
+foreach (scandir($modulesPath) as $module) {
+    $routesFile = "{$modulesPath}/{$module}/routes.php";
+
+    if (is_file($routesFile)) {
+        require $routesFile; 
+    }
+}
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
+Route::get('/register', function () {
+    return view('auth.register');
 });

@@ -63,9 +63,9 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '',
+    'logo_img' => 'vendor/adminlte/dist/img/polban.png',
+    'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
@@ -110,14 +110,14 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/polban2.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 746,
+            'height' => 1042,
         ],
     ],
 
@@ -171,12 +171,12 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
+    'classes_auth_card' => 'bg-gradient-dark',
     'classes_auth_header' => '',
-    'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
-    'classes_auth_btn' => 'btn-flat btn-primary',
+    'classes_auth_body' => 'bg-gradient-dark',
+    'classes_auth_footer' => 'text-center',
+    'classes_auth_icon' => 'fa-fw text-light',
+    'classes_auth_btn' => 'btn-flat btn-light',
 
     /*
     |--------------------------------------------------------------------------
@@ -214,7 +214,7 @@ return [
     |
     */
 
-    'sidebar_mini' => 'lg',
+    'sidebar_mini' => 'sm',
     'sidebar_collapse' => false,
     'sidebar_collapse_auto_size' => false,
     'sidebar_collapse_remember' => false,
@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => '',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -320,78 +320,147 @@ return [
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
+        ['header' => 'Pelayanan Tugas Akhir'],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
+            'text' => 'Pengajuan dan Alokasi Pembimbing',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'level_one',
+                    'text' => 'Pengajuan Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Alokasi Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Perencanaan Seminar dan Sidang',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pelanaksanaan Seminar dan Sidang',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Pengelolaan dan Penjadwalan Ruangan',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-home',
+            'submenu' => [
+                [
+                    'text' => 'Pengelolaan Ruangan',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Penjadwalan Ruangan',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Pengelolaan Penilaian',
+            'url' => '#',
+            'icon' => 'fas fa-scroll',
+        ],
+        [
+            'text' => 'Repository Tugas Akhir',
+            'url' => '#',
+            'icon' => 'fas fa-book',
+        ],
+        ['header' => 'Pengaturan Pengguna'],
+        // [
+        //     'text' => 'profile',
+        //     'url' => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-user',
+        // ],
+        // [
+        //     'text' => 'change_password',
+        //     'url' => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-lock',
+        // ],
+        [
+            'text' => 'User Management',
+            'icon' => 'fas fa-user',
+            'submenu' => [
+                [
+                    'text' => 'Mahasiswa',
                     'url' => '#',
                 ],
                 [
-                    'text' => 'level_one',
+                    'text' => 'Dosen',
                     'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    // 'submenu' => [
+                    //     [
+                    //         'text' => 'Koordinator TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     [
+                    //         'text' => 'Pembimbing TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     [
+                    //         'text' => 'Penguji TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     // [
+                    //     //     'text' => 'level_two',
+                    //     //     'url' => '#',
+                    //     //     'submenu' => [
+                    //     //         [
+                    //     //             'text' => 'level_three',
+                    //     //             'url' => '#',
+                    //     //         ],
+                    //     //         [
+                    //     //             'text' => 'level_three',
+                    //     //             'url' => '#',
+                    //     //         ],
+                    //     //     ],
+                    //     // ],
+                    // ],
                 ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
+                // [
+                //     'text' => 'level_one',
+                //     'url' => '#',
+                // ],
             ],
         ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+        // ['header' => 'labels'],
+        // [
+        //     'text' => 'important',
+        //     'icon_color' => 'red',
+        //     'url' => '#',
+        // ],
+        // [
+        //     'text' => 'warning',
+        //     'icon_color' => 'yellow',
+        //     'url' => '#',
+        // ],
+        // [
+        //     'text' => 'information',
+        //     'icon_color' => 'cyan',
+        //     'url' => '#',
+        // ],
     ],
 
     /*
