@@ -77,7 +77,9 @@ class ComponentServiceProvider extends ServiceProvider
     protected function getComponentAliasFromClass(string $class): string
     {
         $alias = Str::kebab(class_basename($class));
-        return 'pengajuan-alokasi-pembimbing.kesediaan-membimbing.' . $alias;
+        $rootNamespace = explode('\\', $class)[0];
+        return $rootNamespace . '.' . $alias;
+
     }
 
 }
