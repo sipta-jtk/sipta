@@ -12,4 +12,9 @@ class PengajuanAlokasiPembimbingController extends Controller
     {
         return view('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.Bidang');
     }
+
+    public function view_dataKelompok(): View
+    {
+        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.DataKelompok');
+    }
 }
