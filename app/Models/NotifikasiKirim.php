@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotifikasiKirim extends Model
 {
-    protected $table = 'notifikasi_kirim' // Nama tabel
+    protected $table = 'notifikasi_kirim'; // Nama tabel
 
-    protected $primaryKey = 'id_kirim' // Primary key
+    protected $primaryKey = 'id_kirim'; // Primary key
 
     protected $fillable = [
-        'id_notifikasi'
-        'username'
-        'kanal'
-        'status'
-        'waktu_kirim'
+        'id_notifikasi',
+        'username',
+        'kanal',
+        'status',
+        'waktu_kirim',
         'respon_log'
-    ]
+    ];
 }

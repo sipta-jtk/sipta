@@ -10,8 +10,8 @@ class MahasiswaDosenDokumen extends Model
     protected $table = 'MahasiswaDosenDokumen'; // Nama tabel
 
     protected $fillable = [
-        'nip'
-        'nim'
+        'nip',
+        'nim',
         'id_dokumen'
     ];
 }
