@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 class TablePengajuan extends Component
 {
-    public array $data;
     public string $title;
     public string $subtitle;
     public string $tableId;
@@ -18,18 +17,16 @@ class TablePengajuan extends Component
     public string $tbodyStyle;
 
     public function __construct(
-        array $data = [],
         string $title = 'Daftar Pengajuan Dosen Pembimbing',
         string $subtitle = 'Daftar Pengajuan Dosen Pembimbing',
         string $tableId = 'tablePengajuan',
         string $tableClass = 'table table-bordered table-hover',
         string $tableStyle = 'width: 100%',
-        string $theadClass = 'thead-dark',
+        string $theadClass = 'table-dark',
         string $theadStyle = '',
         string $tbodyClass = '',
         string $tbodyStyle = ''
     ) {
-        $this->data = $data;
         $this->title = $title;
         $this->subtitle = $subtitle;
         $this->tableId = $tableId;
