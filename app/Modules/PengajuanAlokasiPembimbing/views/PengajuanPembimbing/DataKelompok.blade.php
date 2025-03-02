@@ -15,56 +15,57 @@
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="1"
                 activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#', '#']" />
         </div>
+
             <!-- Form Pengajuan -->
-    <div class="col-md-9">
-        <div class="card p-4 bg-light">
-            <h5 class="mb-3">Data Mahasiswa</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama">
+        <div class="col-md-9">
+            <div class="card p-4 bg-light">
+                <h5 class="mb-3">Data Mahasiswa</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" placeholder="Masukkan nama">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Kelas</label>
+                        <input type="text" class="form-control" placeholder="Masukkan kelas">
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Kelas</label>
-                    <input type="text" class="form-control" placeholder="Masukkan kelas">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">NIM</label>
+                        <input type="text" class="form-control" placeholder="Masukkan NIM">
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label class="form-label">NIM</label>
-                    <input type="text" class="form-control" placeholder="Masukkan NIM">
-                </div>
-            </div>
 
-            <h5 class="mb-3">Data Kelompok</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nama Anggota 1</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama">
+                <h5 class="mb-3">Data Kelompok</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Anggota 1</label>
+                        <input type="text" class="form-control" placeholder="Masukkan nama">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">NIM</label>
+                        <input type="text" class="form-control" placeholder="Masukkan NIM">
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">NIM</label>
-                    <input type="text" class="form-control" placeholder="Masukkan NIM">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Anggota 2</label>
+                        <input type="text" class="form-control" placeholder="Masukkan nama">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">NIM</label>
+                        <input type="text" class="form-control" placeholder="Masukkan NIM">
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nama Anggota 2</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">NIM</label>
-                    <input type="text" class="form-control" placeholder="Masukkan NIM">
-                </div>
-            </div>
 
-            <!-- Tombol Simpan & Selanjutnya -->
-            <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-primary ml-3">Simpan</button>
-                <button class="btn btn-info ml-3">Selanjutnya</button>
+                <!-- Tombol Simpan & Selanjutnya -->
+                <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-primary ml-3">Simpan</button>
+                    <button class="btn btn-info ml-3">Selanjutnya</button>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     

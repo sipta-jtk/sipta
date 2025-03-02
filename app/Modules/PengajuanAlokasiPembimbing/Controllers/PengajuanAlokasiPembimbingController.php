@@ -17,4 +17,9 @@ class PengajuanAlokasiPembimbingController extends Controller
     {
         return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.DataKelompok');
     }
+
+    public function view_topikTugasAkhir(): View
+    {
+        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir');
+    }
 }

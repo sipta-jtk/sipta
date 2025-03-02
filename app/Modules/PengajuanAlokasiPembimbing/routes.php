@@ -10,5 +10,6 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing'], function () {
 
     Route::group(['prefix' => 'pengajuan-pembimbing'], function () {
         Route::get('/data-kelompok', [PengajuanAlokasiPembimbingController::class, 'view_dataKelompok']);
+        Route::get('/topik-tugas-akhir', [PengajuanAlokasiPembimbingController::class, 'view_topikTugasAkhir']);
     });
 });
