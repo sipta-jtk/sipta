@@ -12,23 +12,24 @@
 
     <div class="row w-100 justify-content-center">
         <div class="col-lg-3 col-6 ml-2 mr-2">
-            <x-pengajuan-alokasi-pembimbing.kesediaan-membimbing.card-banner type="info"
+            <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="info"
                 innerHtml="<h3>150</h3><p>Bidang Diminati</p>" icon="fas fa-graduation-cap" href="#"
                 hrefText="More info" />
         </div>
         <div class="col-lg-3 col-6 ml-2 mr-2">
-            <x-pengajuan-alokasi-pembimbing.kesediaan-membimbing.card-banner type="success"
+            <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="success"
                 innerHtml="<h3 class='mb-2'>5<sup style='font-size: 20px'> mahasiswa D3</sup><br>6<sup style='font-size: 20px'> mahasiswa D4</sup></h3>"
                 icon="fas fa-users" href="#" hrefText="More info" />
         </div>
         <div class="col-lg-3 col-6 ml-2 mr-2">
-            <x-pengajuan-alokasi-pembimbing.kesediaan-membimbing.card-banner type="warning"
+            <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="warning"
                 innerHtml="<h3>3 <sup style='font-size: 20px'>Hari</sup><br>5 <sup style='font-size: 20px'>Sesi</sup></h3>"
                 icon="fas fa-calendar-alt" href="#" hrefText="More info" />
         </div>
     </div>
 
-    <x-pengajuan-alokasi-pembimbing.kesediaan-membimbing.horizontal-progress number="3" active="1" activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#']" />
+    <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="1"
+        activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#']" />
 
     <div class="container-fluid bg-gradient-info rounded-top">
         <div class="container">

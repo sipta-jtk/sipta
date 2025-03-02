@@ -58,7 +58,7 @@ class ComponentServiceProvider extends ServiceProvider
      */
     protected function getComponentClassFromFile(\SplFileInfo $file): string
     {
-        $relativePath = Str::after($file->getRealPath(), base_path() . DIRECTORY_SEPARATOR);
+        $relativePath = Str::after($file->getRealPath(), base_path('app') . DIRECTORY_SEPARATOR);
         $class = str_replace(
             [DIRECTORY_SEPARATOR, '.php'],
             ['\\', ''],
@@ -76,10 +76,10 @@ class ComponentServiceProvider extends ServiceProvider
      */
     protected function getComponentAliasFromClass(string $class): string
     {
-        $alias = Str::kebab(class_basename($class));
-        $rootNamespace = explode('\\', $class)[0];
-        return $rootNamespace . '.' . $alias;
+        $pathParts = explode('\\', $class);
+        $aliasParts = array_slice($pathParts, 2); // Skip 'App' and 'Modules'
+        $alias = implode('.', array_map([Str::class, 'kebab'], $aliasParts));
 
+        return $alias;
     }
-
 }
