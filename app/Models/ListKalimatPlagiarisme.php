@@ -14,8 +14,8 @@ class ListKalimatPlagiarisme extends Model
     public $timestamps = false; // Tidak menggunakan created_at & update_at
 
     protected $fillable = [
-        'id_dokumen'
-        'id_jurnal'
+        'id_dokumen',
+        'id_jurnal',
         'kalimat_plagiat'
     ];
 }

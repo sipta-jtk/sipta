@@ -14,11 +14,11 @@ class Mahasiswa extends Model
     public $timestamps = false; // Tidak menggunakan created_at & update_at
 
     protected $fillable = [
-        'tahun_masuk'
-        'kelas'
-        'id_prodi'
-        'status_ta'
-        'nilai_akhir_ta'
+        'tahun_masuk',
+        'kelas',
+        'id_prodi',
+        'status_ta',
+        'nilai_akhir_ta',
         'id_kota'
     ];
 }
