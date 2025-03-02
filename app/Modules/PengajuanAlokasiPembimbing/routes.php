@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengajuanAlokasiPembimbingController;
 
 Route::group(['prefix' => 'PengajuanAlokasiPembimbing'], function () {
-    // Route::get('/', [PengajuanAlokasiPembimbingController::class, 'index']);
-    Route::get('/kesediaan-membimbing', [PengajuanAlokasiPembimbingController::class, 'view_kesediaanMembimbing']);
+    Route::group(['prefix' => 'kesediaan-membimbing'], function () {
+        Route::get('/minat-bidang', [PengajuanAlokasiPembimbingController::class, 'view_minatTopik']);
+    });
 });
