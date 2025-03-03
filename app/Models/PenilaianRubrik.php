@@ -10,7 +10,6 @@ class PenilaianRubrik extends Model
     use HasFactory;
 
     protected $table = 'penilaian_rubrik';
-    protected $primaryKey = 'id_preferensi';
 
     protected $fillable = [
         'nim',
