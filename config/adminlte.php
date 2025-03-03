@@ -388,6 +388,11 @@ return [
             'url' => '#',
             'icon' => 'fas fa-book',
         ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => 'cek-plagiarisme',
+            'icon' => 'fas fa-book',
+        ],
         ['header' => 'Pengaturan Pengguna'],
         // [
         //     'text' => 'profile',
