@@ -8,8 +8,8 @@
 
 @section('content')
 
-    <p>Peminatan Bidang > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa') }}">Kuota
-            Bimbingan</a> > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal') }}">Jadwal
+    <p><a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang') }}">Peminatan Bidang</a> > Kuota
+        Bimbingan > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal') }}">Jadwal
             Kesediaan</a></p>
 
     <center>
@@ -35,7 +35,7 @@
         </div>
     </center>
 
-    <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="1"
+    <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="2"
         activeColor="primary" inactiveColor="secondary" :hrefs="[
             route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang'),
             route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa'),
@@ -44,36 +44,52 @@
 
     <div class="container-fluid m-0 p-0">
 
-
-        <div class="container-fluid bg-gradient-info rounded-top p-0">
-            <div class="container-fluid">
-                <div class="row row-cols-2 p-2">
-                    <div class="col">
-                        <p class="m-0">Daftar Bidang</p>
-                    </div>
-                    <div class="col text-right">
-                        <a class="m-0 text-light"> <i class="fas fa-plus"></i> Tambah Bidang</a>
-                    </div>
-                </div>
-            </div>
-        </div>
         {{-- ================== --}}
-        <div class="container-fluid bg-secondary rounded-bottom bg-opacity-25 pre-scrollable mb-4">
-
-            <div class="container text-center ">
-                <div class="row row-cols-lg-3 row-cols-1 p-3">
-                    @for ($i = 0; $i < 500; $i++)
-                        <div class="col">
-                            <div class="pretty p-default p-fill">
-                                <input type="checkbox" />
-                                <div class="state p-info text-left" style="min-width: 150px;">
-                                    <label>
-                                        Bidang {{ $i + 1 }}
-                                    </label>
+        <div class="container-fluid d-flex justify-content-center">
+            <div class="row w-100">
+                <div class="col d-flex justify-content-end">
+                    <div class="bg-gradient-success rounded w-100 w-md-100 w-lg-50">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="m-3">
+                                    <div class="form-group m-0">
+                                        <input type="number"
+                                            class="form-control bg-transparent border-0 text-light p-0 fs-1" value="0"
+                                            min="0">
+                                    </div>
+                                    <hr class="text-light m-0 border-light">
+                                    <small>Jumlah maksimal mahasiswa</small>
                                 </div>
                             </div>
+                            <div class="col-auto">
+                                <strong>
+                                    <h1 class="m-0 p-2 display-4"><strong>D3</strong></h1>
+                                </strong>
+                            </div>
                         </div>
-                    @endfor
+                    </div>
+                </div>
+                <div class="col d-flex justify-content-start">
+                    <div class="bg-gradient-info rounded w-100 w-md-100 w-lg-50">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="m-3">
+                                    <div class="form-group m-0">
+                                        <input type="number"
+                                            class="form-control bg-transparent border-0 text-light p-0 fs-1" value="0"
+                                            min="0">
+                                    </div>
+                                    <hr class="text-light m-0 border-light">
+                                    <small>Jumlah maksimal mahasiswa</small>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <strong>
+                                    <h1 class="m-0 p-2 display-4"><strong>D4</strong></h1>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
