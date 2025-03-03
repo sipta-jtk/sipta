@@ -65,6 +65,7 @@
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-info ml-3">Sebelumnya</button>
                     <button class="btn btn-primary ml-3">Simpan</button>
                     <button class="btn btn-info ml-3">Selanjutnya</button>
                 </div>
