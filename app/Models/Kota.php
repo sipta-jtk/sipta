@@ -17,5 +17,9 @@ class Kota extends Model
 
     protected $fillable = [
         'judul_ta',
+        'id_bidang',
+        'nama_kota',
+        'tahun_kota',
+        'status_kota'
     ];
 }

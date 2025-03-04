@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PenilaianRubrik extends Model
+class Subkategori extends Model
 {
     use HasFactory;
 
-    protected $table = 'penilaian_rubrik';
+    protected $table = 'subkategori';
+
+    protected $primaryKey = 'id_subkategori';
 
     protected $fillable = [
-        'nim',
-        'nip',
-        'id_rubrik',
-        'nilai_rubrik',
-        'detail_feedback'
+        'nama_subkategori'
     ];
 }

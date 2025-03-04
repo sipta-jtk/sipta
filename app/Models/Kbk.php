@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PenilaianRubrik extends Model
+class Kbk extends Model
 {
     use HasFactory;
 
-    protected $table = 'penilaian_rubrik';
+    protected $table = 'kbk';
+
+    protected $primaryKey = 'id_kbk';
 
     protected $fillable = [
-        'nim',
-        'nip',
-        'id_rubrik',
-        'nilai_rubrik',
-        'detail_feedback'
+        'kbk'
     ];
+
 }

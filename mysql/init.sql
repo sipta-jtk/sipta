@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS sipta;
+USE sipta;
+
 CREATE TABLE `gedung` (
   `kode_gedung` varchar(1) PRIMARY KEY,
   `nama_gedung` varchar(100) UNIQUE
