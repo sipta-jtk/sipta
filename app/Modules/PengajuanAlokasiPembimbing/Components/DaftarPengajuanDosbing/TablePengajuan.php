@@ -6,6 +6,8 @@ use Illuminate\View\Component;
 
 class TablePengajuan extends Component
 {
+    public array $kelompokData;
+
     public string $title;
     public string $subtitle;
     public string $tableId;
@@ -17,6 +19,7 @@ class TablePengajuan extends Component
     public string $tbodyStyle;
 
     public function __construct(
+        array $kelompokData = [],
         string $title = 'Daftar Pengajuan Dosen Pembimbing',
         string $subtitle = 'Daftar Pengajuan Dosen Pembimbing',
         string $tableId = 'tablePengajuan',
@@ -27,6 +30,7 @@ class TablePengajuan extends Component
         string $tbodyClass = '',
         string $tbodyStyle = ''
     ) {
+        $this->kelompokData = $kelompokData;
         $this->title = $title;
         $this->subtitle = $subtitle;
         $this->tableId = $tableId;

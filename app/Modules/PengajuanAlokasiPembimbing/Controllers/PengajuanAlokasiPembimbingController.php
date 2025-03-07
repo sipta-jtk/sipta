@@ -13,8 +13,8 @@ class PengajuanAlokasiPembimbingController extends Controller
         return view('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.Bidang');
     }
 
-    public function view_daftarPengajuanDosbing(): View
-    {
-        return view('PengajuanAlokasiPembimbing.views.DaftarPengajuanDosbing.topik');
-    }
+    // public function view_daftarPengajuanDosbing(): View
+    // {
+    //     return view('PengajuanAlokasiPembimbing.views.DaftarPengajuanDosbing.topik');
+    // }
 }
