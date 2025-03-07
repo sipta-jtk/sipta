@@ -1,7 +1,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function SweetAlert(icon, title, text, confirmButtonText, cancelButtonText, confirmButtonColor, cancelButtonColor, showCancelButton, showConfirmButton) {
+    function SweetAlert(icon, title, text, confirmButtonText, cancelButtonText, confirmButtonColor, cancelButtonColor,
+        showCancelButton, showConfirmButton) {
         Swal.fire({
             icon: icon,
             title: title,
@@ -15,7 +16,7 @@
         });
     }
 
-    function toast(icon, title, text, timer) {
+    function toast(icon, title, text, timer = 5000) {
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',

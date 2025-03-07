@@ -60,8 +60,8 @@
         {{-- ================== --}}
         <div class="container-fluid bg-secondary rounded-bottom bg-opacity-25 pre-scrollable mb-4">
 
-            <div class="container text-center ">
-                <div class="row row-cols-lg-3 row-cols-1 p-3">
+            <div class="container text-left text-md-center">
+                <div class="row row-cols-lg-3 row-cols-1 p-0 pt-2 pb-2 p-md-3 pt-md-3 pb-md-3">
                     @for ($i = 0; $i < 500; $i++)
                         <div class="col">
                             <div class="pretty p-default p-fill">

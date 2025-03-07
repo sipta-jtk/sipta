@@ -45,6 +45,7 @@
     <div class="container-fluid m-0 p-0">
 
         {{-- ================== --}}
+
         <div class="container-fluid d-flex justify-content-center">
             <div class="row w-100">
                 <div class="col d-flex justify-content-end">
@@ -55,7 +56,7 @@
                                     <div class="form-group m-0">
                                         <input type="number"
                                             class="form-control bg-transparent border-0 text-light p-0 fs-1" value="0"
-                                            min="0">
+                                            min="0" id="valD3">
                                     </div>
                                     <hr class="text-light m-0 border-light">
                                     <small>Jumlah maksimal mahasiswa</small>
@@ -77,7 +78,7 @@
                                     <div class="form-group m-0">
                                         <input type="number"
                                             class="form-control bg-transparent border-0 text-light p-0 fs-1" value="0"
-                                            min="0">
+                                            min="0" id="valD4">
                                     </div>
                                     <hr class="text-light m-0 border-light">
                                     <small>Jumlah maksimal mahasiswa</small>
@@ -93,8 +94,17 @@
                 </div>
             </div>
         </div>
+        <div class="container-fluid mt-3 d-none" id="warning">
+            <center>
+                <span class="btn rounded-pill badge-danger p-1">
+                    <small>
+                        Dengan mengisi kuota 0, anda menyatakan bahwa tidak bersedia membimbing!
+                    </small>
+                </span>
+            </center>
+        </div>
         {{-- ================== --}}
-        <div class="container-fluid d-flex justify-content-end p-3 p-md-0">
+        <div class="container-fluid d-flex justify-content-end p-3 p-md-0 d-none">
             <button type="button" class="btn btn-primary ml-3">Simpan <i class="fas fa-save pl-1"></i></button>
             <button type="button" class="btn btn-info ml-3">Berikutnya <i class="fas fa-chevron-right pl-1"></i></button>
         </div>
@@ -111,5 +121,33 @@
     @include('PengajuanAlokasiPembimbing.Helper.CSS.BoostrapExtend')
 @stop
 
-{{-- @section('js')
-@stop --}}
+@section('js')
+    @include('pengajuanalokasipembimbing.Helper.JS.SweetAlert')
+
+    <script>
+        $(document).ready(function() {
+            checkWarning();
+        });
+
+        $("#valD3").bind('keyup mouseup', function() {
+            checkWarning();
+        });
+        $("#valD4").bind('keyup mouseup', function() {
+            checkWarning();
+        });
+
+        function checkWarning() {
+            var D3 = $('#valD3').val();
+            var D4 = $('#valD4').val();
+
+            if (D3 == 0 && D4 == 0) {
+                $('#warning').removeClass('d-none');
+                toast('warning', 'Peringatan', 'Dengan mengisi kuota 0, anda menyatakan bahwa tidak bersedia membimbing!',
+                    5000);
+
+            } else {
+                $('#warning').addClass('d-none');
+            }
+        }
+    </script>
+@stop
