@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class MahasiswaDosenDokumen extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     
-    protected $table = 'MahasiswaDosenDokumen'; // Nama tabel
+    
+    protected $table = 'mahasiswa_dosen_dokumen'; // Nama tabel
 
     protected $fillable = [
         'nip',

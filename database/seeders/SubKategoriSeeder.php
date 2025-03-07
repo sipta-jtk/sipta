@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subkategori;
+use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Schema;
 
 class SubKategoriSeeder extends Seeder
 {
