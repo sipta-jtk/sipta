@@ -43,13 +43,20 @@ CREATE TABLE `user` (
   `nama` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role_user` ENUM ('mahasiswa', 'dosen') NOT NULL
+  `role_user` ENUM ('mahasiswa', 'dosen') NOT NULL,
+  `no_whatsapp` varchar(15) NOT NULL,
+  `photo` varchar(255) NOT NULL
 );
 
 CREATE TABLE `dosen` (
+  `maks_bimbingan_d4` int(4) NOT NULL,
+  `maks_bimbingan_d3` int(4) NOT NULL,
+  `id_kbk` int(4),
   `nip` varchar(22) PRIMARY KEY,
+  `id_dosen` varchar(3) NOT NULL,
+  `kode_dosen` varchar(8) NOT NULL,
   `status_dosen` ENUM ('aktif', 'nonaktif') NOT NULL,
-  `role_dosen` ENUM ('dosen', 'koordinator_ta', 'kajur') NOT NULL
+  `role_dosen` ENUM ('dosen', 'koordinator_ta', 'kajur', 'dosen_pembimbing') NOT NULL
 );
 
 CREATE TABLE `mahasiswa` (
@@ -60,13 +67,6 @@ CREATE TABLE `mahasiswa` (
   `status_ta` ENUM ('mahasiswa_ta', 'mahasiswa_non_ta') NOT NULL,
   `nilai_akhir_ta` float NOT NULL,
   `id_kota` int(4)
-);
-
-CREATE TABLE `dosen_pembimbing` (
-  `nip` varchar(22) PRIMARY KEY,
-  `kbk` varchar(40) NOT NULL,
-  `maksimal_d4` int(4) NOT NULL,
-  `maksimal_d3` int(4) NOT NULL
 );
 
 CREATE TABLE `prodi` (
@@ -80,6 +80,17 @@ CREATE TABLE `kaprodi` (
   `id_prodi` int(4)
 );
 
+CREATE TABLE `pengajuan_pisah_kota` (
+  `id_pengajuan` int(4) PRIMARY KEY AUTO_INCREMENT,
+  `nim` varchar(22),
+  `id_kota` int(7)
+);
+
+CREATE TABLE `kbk` (
+  `id_kbk` int(4) PRIMARY KEY AUTO_INCREMENT,
+  `kbk` varchar(100) NOT NULL
+);
+
 CREATE TABLE `jadwal_dosen_pembimbing` (
   `id_jadwal_dosbim` int(7) PRIMARY KEY AUTO_INCREMENT,
   `nip` varchar(22),
@@ -88,20 +99,24 @@ CREATE TABLE `jadwal_dosen_pembimbing` (
   `jam_selesai` time NOT NULL
 );
 
-CREATE TABLE `ketertarikan_topik` (
-  `id_ketertarikan_topik` int(7) PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `ketertarikan_bidang` (
+  `id_ketertarikan_bidang` int(7) PRIMARY KEY AUTO_INCREMENT,
   `nip` varchar(22),
-  `id_topik` int(5)
+  `id_bidang` int(5)
 );
 
-CREATE TABLE `topik` (
-  `id_topik` int(5) PRIMARY KEY AUTO_INCREMENT,
-  `topik` text NOT NULL
+CREATE TABLE `bidang` (
+  `id_bidang` int(5) PRIMARY KEY AUTO_INCREMENT,
+  `bidang` text NOT NULL
 );
 
 CREATE TABLE `kota` (
   `id_kota` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `judul_ta` text NOT NULL
+  `judul_ta` text NOT NULL,
+  `id_bidang` int(5),
+  `nama_kota` varchar(255) NOT NULL,
+  `tahun_kota` year NOT NULL,
+  `status_kota` ENUM ('pra_kota', 'aktif', 'lulus', 'bubar')
 );
 
 CREATE TABLE `prioritas_pembimbing` (
@@ -114,13 +129,15 @@ CREATE TABLE `prioritas_pembimbing` (
 CREATE TABLE `pengajuan_pembimbing` (
   `id_pengajuan_pembimbing` int(7) PRIMARY KEY AUTO_INCREMENT,
   `id_kota` int(7),
-  `status_pengajuan` ENUM ('pending', 'diterima') NOT NULL DEFAULT 'pending'
+  `status_pengajuan` ENUM ('pending', 'diterima') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE `alokasi_pembimbing` (
   `id_alokasi_pembimbing` int(7) PRIMARY KEY AUTO_INCREMENT,
   `id_pengajuan_pembimbing` int(7),
-  `nip` varchar(22)
+  `nip` varchar(22),
+  `urutan_prioritas_terpilih` int(4)
 );
 
 CREATE TABLE `periode_pengajuan` (
@@ -212,19 +229,22 @@ CREATE TABLE `preferensi_notifikasi` (
 
 CREATE TABLE `dokumen` (
   `id_dokumen` int(10) PRIMARY KEY AUTO_INCREMENT,
-  `id_kategori` int(7) NOT NULL,
   `judul` varchar(255) NOT NULL,
   `persentase_plagiarisme` float NOT NULL,
   `highlight_dokumen` boolean NOT NULL,
   `status_plagiarisme` ENUM ('plagiarisme', 'tidak_plagiarisme') NOT NULL,
   `review` text NOT NULL,
+  `kategori` ENUM ('laporan', 'poster', 'presentasi'),
   `deskripsi` text,
-  `url_file` varchar(255) NOT NULL,
   `versi` int(4) NOT NULL,
   `ukuran_file` float NOT NULL,
+  `notes` text,
   `id_kota` int(7) NOT NULL,
+  `id_label` int(7),
+  `id_subkategori` int(7),
+  `username` varchar(22) NOT NULL,
   `status_berkas` ENUM ('valid', 'tidak_valid', 'belum_unggah', 'ditunda'),
-  `created_at` timestamp NOT NULL DEFAULT (now()),
+  `uploaded_at` timestamp NOT NULL DEFAULT (now()),
   `updated_at` timestamp NOT NULL DEFAULT (now())
 );
 
@@ -253,39 +273,24 @@ CREATE TABLE `mahasiswa_dosen_dokumen` (
   `id_dokumen` int(10)
 );
 
-CREATE TABLE `kategori` (
-  `id_kategori` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `nama_kategori` varchar(255) UNIQUE NOT NULL
-);
-
 CREATE TABLE `label` (
   `id_label` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `nama_label` varchar(255) UNIQUE NOT NULL
+  `nama_label` varchar(255) UNIQUE NOT NULL,
+  `id_kota` int(7) NOT NULL
 );
 
-CREATE TABLE `label_dokumen` (
-  `id_label_dokumen` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `id_dokumen` int(10) NOT NULL,
-  `id_label` int(7)
+CREATE TABLE `subkategori` (
+  `id_subkategori` int(7) PRIMARY KEY AUTO_INCREMENT,
+  `nama_subkategori` varchar(100) NOT NULL
 );
 
-CREATE TABLE `versi_dokumen` (
-  `id_versi_dokumen` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `id_dokumen` int(10) NOT NULL,
-  `versi` int(4) NOT NULL,
-  `url_file` varchar(255) NOT NULL,
-  `uploaded_at` timestamp NOT NULL DEFAULT (now())
-);
-
-CREATE TABLE `hak_akses` (
-  `id_hak_akses` int(7) PRIMARY KEY AUTO_INCREMENT,
-  `id_dokumen` int(10) NOT NULL,
+CREATE TABLE `log_aktivitas` (
+  `id_log_aktivitas` int(10) PRIMARY KEY AUTO_INCREMENT,
   `id_kota` int(7) NOT NULL,
   `username` varchar(22) NOT NULL,
-  `view` boolean DEFAULT true,
-  `download` boolean DEFAULT false,
-  `edit` boolean DEFAULT false,
-  `delete` boolean DEFAULT false
+  `id_dokumen` int(10) NOT NULL,
+  `action` ENUM ('upload', 'edit', 'delete', 'download', 'review'),
+  `waktu_aktivitas` timestamp NOT NULL DEFAULT (now())
 );
 
 ALTER TABLE `ruangan` ADD FOREIGN KEY (`kode_gedung`) REFERENCES `gedung` (`kode_gedung`);
@@ -300,6 +305,8 @@ ALTER TABLE `ruang_fasilitas` ADD FOREIGN KEY (`id_fasilitas`) REFERENCES `fasil
 
 ALTER TABLE `ruang_fasilitas` ADD FOREIGN KEY (`id_ruangan`) REFERENCES `ruangan` (`id_ruangan`);
 
+ALTER TABLE `dosen` ADD FOREIGN KEY (`id_kbk`) REFERENCES `kbk` (`id_kbk`);
+
 ALTER TABLE `dosen` ADD FOREIGN KEY (`nip`) REFERENCES `user` (`username`);
 
 ALTER TABLE `mahasiswa` ADD FOREIGN KEY (`id_prodi`) REFERENCES `prodi` (`id_prodi`);
@@ -308,21 +315,25 @@ ALTER TABLE `mahasiswa` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`
 
 ALTER TABLE `mahasiswa` ADD FOREIGN KEY (`nim`) REFERENCES `user` (`username`);
 
-ALTER TABLE `dosen_pembimbing` ADD FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
-
 ALTER TABLE `kaprodi` ADD FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
 
 ALTER TABLE `kaprodi` ADD FOREIGN KEY (`id_prodi`) REFERENCES `prodi` (`id_prodi`);
 
-ALTER TABLE `jadwal_dosen_pembimbing` ADD FOREIGN KEY (`nip`) REFERENCES `dosen_pembimbing` (`nip`);
+ALTER TABLE `pengajuan_pisah_kota` ADD FOREIGN KEY (`nim`) REFERENCES `mahasiswa` (`nim`);
 
-ALTER TABLE `ketertarikan_topik` ADD FOREIGN KEY (`nip`) REFERENCES `dosen_pembimbing` (`nip`);
+ALTER TABLE `pengajuan_pisah_kota` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`);
 
-ALTER TABLE `ketertarikan_topik` ADD FOREIGN KEY (`id_topik`) REFERENCES `topik` (`id_topik`);
+ALTER TABLE `jadwal_dosen_pembimbing` ADD FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
+
+ALTER TABLE `ketertarikan_bidang` ADD FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
+
+ALTER TABLE `ketertarikan_bidang` ADD FOREIGN KEY (`id_bidang`) REFERENCES `bidang` (`id_bidang`);
+
+ALTER TABLE `kota` ADD FOREIGN KEY (`id_bidang`) REFERENCES `bidang` (`id_bidang`);
 
 ALTER TABLE `prioritas_pembimbing` ADD FOREIGN KEY (`id_pengajuan`) REFERENCES `pengajuan_pembimbing` (`id_pengajuan_pembimbing`);
 
-ALTER TABLE `prioritas_pembimbing` ADD FOREIGN KEY (`nip`) REFERENCES `dosen_pembimbing` (`nip`);
+ALTER TABLE `prioritas_pembimbing` ADD FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
 
 ALTER TABLE `pengajuan_pembimbing` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`);
 
@@ -358,9 +369,13 @@ ALTER TABLE `notifikasi_kirim` ADD FOREIGN KEY (`username`) REFERENCES `user` (`
 
 ALTER TABLE `preferensi_notifikasi` ADD FOREIGN KEY (`username`) REFERENCES `user` (`username`);
 
-ALTER TABLE `dokumen` ADD FOREIGN KEY (`id_kategori`) REFERENCES `kategori` (`id_kategori`) ON DELETE CASCADE;
-
 ALTER TABLE `dokumen` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`) ON DELETE CASCADE;
+
+ALTER TABLE `dokumen` ADD FOREIGN KEY (`id_label`) REFERENCES `label` (`id_label`) ON DELETE CASCADE;
+
+ALTER TABLE `dokumen` ADD FOREIGN KEY (`id_subkategori`) REFERENCES `subkategori` (`id_subkategori`) ON DELETE CASCADE;
+
+ALTER TABLE `dokumen` ADD FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE;
 
 ALTER TABLE `list_kalimat_plagiarisme` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`);
 
@@ -372,14 +387,10 @@ ALTER TABLE `mahasiswa_dosen_dokumen` ADD FOREIGN KEY (`nim`) REFERENCES `mahasi
 
 ALTER TABLE `mahasiswa_dosen_dokumen` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`);
 
-ALTER TABLE `label_dokumen` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`) ON DELETE CASCADE;
+ALTER TABLE `label` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`) ON DELETE CASCADE;
 
-ALTER TABLE `label_dokumen` ADD FOREIGN KEY (`id_label`) REFERENCES `label` (`id_label`) ON DELETE CASCADE;
+ALTER TABLE `log_aktivitas` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`) ON DELETE CASCADE;
 
-ALTER TABLE `versi_dokumen` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`) ON DELETE CASCADE;
+ALTER TABLE `log_aktivitas` ADD FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE;
 
-ALTER TABLE `hak_akses` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`) ON DELETE CASCADE;
-
-ALTER TABLE `hak_akses` ADD FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id_kota`) ON DELETE CASCADE;
-
-ALTER TABLE `hak_akses` ADD FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE;
+ALTER TABLE `log_aktivitas` ADD FOREIGN KEY (`id_dokumen`) REFERENCES `dokumen` (`id_dokumen`) ON DELETE CASCADE;

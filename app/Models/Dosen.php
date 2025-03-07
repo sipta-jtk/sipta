@@ -11,6 +11,11 @@ class Dosen extends Model
     protected $primaryKey = 'nip';
 
     protected $fillable = [
+        'maks_bimbingan_d4',
+        'maks_bimbingan_d3',
+        'id_kbk',
+        'id_dosen',
+        'kode_dosen',
         'status_dosen',
         'role_dosen'
     ];

@@ -23,7 +23,9 @@ class User extends Authenticatable
         'nama',
         'email',
         'password',
-        'role_user'
+        'role_user',
+        'no_whatsapp',
+        'photo'
     ];
 
     protected $hidden = [

@@ -14,6 +14,7 @@ class PengajuanPembimbing extends Model
     
     protected $fillable = [
         'id_kota',
-        'status_pengajuan'
+        'status_pengajuan',
+        'created_at'
     ];
 }

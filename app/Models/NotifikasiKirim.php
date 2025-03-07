@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotifikasiKirim extends Model
 {
+    use HasFactory;
+
     protected $table = 'notifikasi_kirim'; // Nama tabel
 
     protected $primaryKey = 'id_kirim'; // Primary key
