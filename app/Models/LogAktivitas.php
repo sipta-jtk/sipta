@@ -11,7 +11,7 @@ class LogAktivitas extends Model
 
     protected $table = 'log_aktivitas';
 
-    protected $primaryKey = 'id_log_aktivitas';
+    protected $primaryKey = 'id_log_aktivitas'
 
     protected $fillable = [
         'id_kota',
