@@ -8,7 +8,8 @@
 
 @section('content')
 
-    <p><a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang') }}">Peminatan Bidang</a> > Kuota
+    <p><a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}">Peminatan Bidang</a> >
+        Kuota
         Bimbingan > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal') }}">Jadwal
             Kesediaan</a></p>
 
@@ -17,7 +18,8 @@
             <div class="col-lg-3 col ml-2 mr-2">
                 <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="info"
                     innerHtml="<h3>150</h3><p>Bidang Diminati</p>" icon="fas fa-graduation-cap"
-                    href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang') }}" hrefText="More info" />
+                    href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}"
+                    hrefText="More info" />
             </div>
             <div class="col-lg-3 col ml-2 mr-2">
                 <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="success"
@@ -37,7 +39,7 @@
 
     <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="2"
         activeColor="primary" inactiveColor="secondary" :hrefs="[
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang'),
+            route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
             route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa'),
             route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal'),
         ]" />
