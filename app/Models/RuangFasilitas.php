@@ -15,6 +15,8 @@ class RuangFasilitas extends Model
     
     protected $primaryKey = ['id_ruangan', 'id_fasilitas']; 
     public $incrementing = false; 
+    public $timestamps = false;
+
     protected $fillable = [
         'id_ruangan',
         'id_fasilitas',
