@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\PreferensiNotifikasi;
@@ -13,9 +13,11 @@ class PreferensiNotifikasiSeeder extends Seeder
      */
     public function run(): void
     {
+
+
         PreferensiNotifikasi::create
         ([
-            'username' => 'user1',
+            'username' => 'admin123',
             'tipe_notifikasi' => 'pengajuan_pembimbing',
             'whatsapp' => 1,
             'in_app' => 1,
@@ -24,7 +26,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => 'user2',
+            'username' => 'mahasiswa001',
             'tipe_notifikasi' => 'pengajuan_pembimbing',
             'whatsapp' => 1,
             'in_app' => 0,
