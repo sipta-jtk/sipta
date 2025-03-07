@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use App\Models\RubrikPenilaian;
 
 class RubrikPenilaianSeeder extends Seeder
 {
@@ -16,7 +19,9 @@ class RubrikPenilaianSeeder extends Seeder
             return;
         }
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('rubrik_penilaian')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
             ['id_kategori' => 1, 'judul_rubrik' => 'Kualitas Konten', 'detail_rubrik' => 'Menilai seberapa baik konten yang dibuat.', 'bobot_rubrik' => 40],
