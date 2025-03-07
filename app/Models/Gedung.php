@@ -9,5 +9,7 @@ class Gedung extends Model
 {
     protected $table = 'gedung';
     protected $primaryKey = 'kode_gedung';
+    public $timestamps = false;
+
     protected $fillable = ['nama_gedung'];
 }

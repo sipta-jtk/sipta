@@ -9,5 +9,7 @@ class JadwalDosenPembimbing extends Model
 {
     protected $table = 'jadwal_dosen_pembimbing';
     protected $primaryKey = 'id_jadwal_pembimbing';
+    public $timestamps = false;
+
     protected $fillable = ['nip', 'hari', 'jam_mulai', 'jam_selesai'];
 }

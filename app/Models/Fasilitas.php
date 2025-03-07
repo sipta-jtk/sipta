@@ -9,5 +9,7 @@ class Fasilitas extends Model
 {
     protected $table = 'fasilitas';
     protected $primaryKey = 'id_fasilitas';
+    public $timestamps = false;
+
     protected $fillable = ['nama_fasilitas', 'jumlah_total_fasilitas'];
 }

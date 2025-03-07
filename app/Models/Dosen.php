@@ -10,7 +10,10 @@ class Dosen extends Model
     protected $table = 'dosen';
     protected $primaryKey = 'nip';
 
+    public $timestamps = false;
+
     protected $fillable = [
+        'nip',
         'maks_bimbingan_d4',
         'maks_bimbingan_d3',
         'id_kbk',

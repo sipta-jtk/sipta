@@ -10,6 +10,7 @@ class PenilaianRubrik extends Model
     use HasFactory;
 
     protected $table = 'penilaian_rubrik';
+    public $timestamps = false;
 
     protected $fillable = [
         'nim',
