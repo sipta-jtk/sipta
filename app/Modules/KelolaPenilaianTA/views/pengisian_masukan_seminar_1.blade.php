@@ -82,7 +82,7 @@
         <h3 class="heading-spacing text-center">EVALUASI</h3>
 
         <!-- Form -->
-        <form action="{{ route('feedback.store') }}"> <!-- method="POST" -->
+        <form action="{{ url('/KelolaPenilaianTA') }}"> <!-- route('feedback.store') method="POST" -->
             @csrf
 
             <!-- Deskripsi Topik -->
