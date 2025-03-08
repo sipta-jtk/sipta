@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dosen extends Model
 {
+    public $timestamps = false; // Nonaktifkan timestamps otomatis
     protected $table = 'dosen';
     protected $primaryKey = 'nip';
 

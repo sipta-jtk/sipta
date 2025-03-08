@@ -404,12 +404,12 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
-                    'text' => 'Mahasiswa',
-                    'url' => '#',
+                    'text' => 'Manajemen Akun Dosen',
+                    'url' => '/manage_dosen',
                 ],
                 [
-                    'text' => 'Dosen',
-                    'url' => '#',
+                    'text' => 'Manajemen Akun Mahasiswa',
+                    'url' => '/manage_mhs',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',
