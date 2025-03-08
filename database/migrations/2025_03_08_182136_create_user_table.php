@@ -9,18 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('user', function (Blueprint $table) {
             $table->string('username', 22)->primary();
             $table->string('nama', 100);
-            $table->string('email', 255)->unique();
-            // $table->timestamp('email_verified_at')->nullable();
+            $table->string('email', 255);
             $table->string('password', 255);
-            $table->enum('role_user',['mahasiswa','dosen']);
-            $table->rememberToken();
-            $table->timestamps();
+            $table->enum('role_user', ['mahasiswa', 'dosen']);
+            $table->string('no_whatsapp', 15);
+            $table->string('photo', 255);
         });
+        
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('user');
     }
 };
