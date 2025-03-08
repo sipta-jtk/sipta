@@ -104,9 +104,13 @@
             </table>
         </div>
 
-        {{-- Tombol Aksi --}}
+        <form id="exportForm" action="{{ route('rekapitulasi-nilai.export') }}" method="POST" style="display: none;">
+            @csrf
+            <input type="hidden" name="data" id="exportData">
+        </form>
+
         <div class="d-flex justify-content-end mt-3">
-            <button type="button" class="btn btn-success">
+            <button type="button" class="btn btn-success" onclick="exportToExcel()">
                 <i class="fas fa-file-excel"></i> Export to Excel
             </button>
         </div>
@@ -214,6 +218,12 @@
 
         function hideTooltip(id) {
             document.getElementById(id).classList.add('d-none');
+        }
+
+        function exportToExcel() {
+            var data = {!! json_encode($data) !!};
+            document.getElementById('exportData').value = JSON.stringify(data);
+            document.getElementById('exportForm').submit();
         }
     </script>
 @stop

@@ -4,6 +4,9 @@ namespace App\Modules\KelolaPenilaianTA\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
+use App\Exports\RekapitulasiNilaiExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
 class KelolaPenilaianTAController extends Controller
 {
@@ -14,7 +17,6 @@ class KelolaPenilaianTAController extends Controller
         for ($i = 1; $i <= 100; $i++) {
             $data[] = [
                 'nim' => "221524" . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'kota' => "KoTA " . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nama' => "Nama Mahasiswa #" . $i,
                 'prodi' => (rand(0, 1) == 0) ? "D3-Teknik Informatika" : "D4-Teknik Informatika",
                 'kelas' => (rand(0, 1) == 0) ? "4A" : "4B",
@@ -36,9 +38,14 @@ class KelolaPenilaianTAController extends Controller
                 'nilai_akhir' => rand(50, 100),
                 'predikat' => ["A", "B", "C", "D", "E"][rand(0, 4)]
             ];
-            
         }
 
         return view('KelolaPenilaianTA.views.RekapitulasiNilai', compact('data'));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $data = json_decode($request->input('data'), true);
+        return Excel::download(new RekapitulasiNilaiExport($data), 'rekapitulasi_nilai.xlsx');
     }
 }
