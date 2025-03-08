@@ -24,13 +24,13 @@ class PenilaianKategoriSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         PenilaianKategori::create([
-            'nim' => '221524029', // Ubah Manual
+            'nim' => '2201234567', // Ubah Manual
             'id_kategori' => '1', // Ubah Manual
             'nilai_kategori' => '85.5' // Ubah Manual
         ]);
 
         PenilaianKategori::create([
-            'nim' => '221524030',
+            'nim' => '2201234568',
             'id_kategori' => '2',
             'nilai_kategori' => '75.5'
         ]);

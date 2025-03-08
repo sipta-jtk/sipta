@@ -28,8 +28,8 @@ class PenjadwalanSeeder extends Seeder
             'agenda' => 'seminar_1', // Ubah Manual
             'id_ruangan' => '1', // Ubah Manual
             'tanggal' => 'now()', // Ubah Manual
-            'id_kota' => '1', // Ubah Manual
-            'nip' => '1234567' // Ubah Manual
+            'id_kota' => '10', // Ubah Manual
+            'nip' => '1987654322' // Ubah Manual
         ]);
 
         Penjadwalan::create([
@@ -37,8 +37,8 @@ class PenjadwalanSeeder extends Seeder
             'agenda' => 'seminar_2', // Ubah Manual
             'id_ruangan' => '2', // Ubah Manual
             'tanggal' => 'now()', // Ubah Manual
-            'id_kota' => '2', // Ubah Manual
-            'nip' => '12345678' // Ubah Manual
+            'id_kota' => '12', // Ubah Manual
+            'nip' => '1987654322' // Ubah Manual
         ]);
 
     }
