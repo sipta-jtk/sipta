@@ -1,8 +1,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function SweetAlert(icon, title, text, confirmButtonText, cancelButtonText, confirmButtonColor, cancelButtonColor,
-        showCancelButton, showConfirmButton) {
+    function SweetAlert(icon = 'info', title = '', text = '', confirmButtonText = 'OK', cancelButtonText = 'Cancel',
+        confirmButtonColor = '#3085d6', cancelButtonColor = '#d33',
+        showCancelButton = false, showConfirmButton = true, callback = () => {}) {
         Swal.fire({
             icon: icon,
             title: title,
@@ -13,10 +14,12 @@
             cancelButtonColor: cancelButtonColor,
             showCancelButton: showCancelButton,
             showConfirmButton: showConfirmButton,
+        }).then((result) => {
+            callback(result.isConfirmed);
         });
     }
 
-    function toast(icon, title, text, timer = 5000) {
+    function toast(icon = 'info', title = '', text = '', timer = 5000) {
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',

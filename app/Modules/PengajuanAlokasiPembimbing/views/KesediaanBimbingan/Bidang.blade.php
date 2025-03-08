@@ -8,39 +8,18 @@
 
 @section('content')
 
-    <p>Peminatan Bidang > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa') }}">Kuota
-            Bimbingan</a> > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal') }}">Jadwal
+    <p>Peminatan Bidang > <a
+            href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}">Kuota
+            Bimbingan</a> > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index') }}">Jadwal
             Kesediaan</a></p>
 
-    <center>
-        <div class="row w-100 justify-content-center">
-            <div class="col-lg-3 col ml-2 mr-2">
-                <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="info"
-                    innerHtml="<h3 id='jmlMinatBidangText'>0</h3><p>Bidang Diminati</p>" icon="fas fa-graduation-cap"
-                    href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}"
-                    hrefText="More info" />
-            </div>
-            <div class="col-lg-3 col ml-2 mr-2">
-                <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="success"
-                    innerHtml="<h3 class='mb-2'>5<sup style='font-size: 20px'> mahasiswa D3</sup><br>6<sup style='font-size: 20px'> mahasiswa D4</sup></h3>"
-                    icon="fas fa-users"
-                    href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa') }}"
-                    hrefText="More info" />
-            </div>
-            <div class="col-lg-3 col ml-2 mr-2">
-                <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="warning"
-                    innerHtml="<h3>3 <sup style='font-size: 20px'>Hari</sup><br>5 <sup style='font-size: 20px'>Sesi</sup></h3>"
-                    icon="fas fa-calendar-alt" href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal') }}"
-                    hrefText="More info" />
-            </div>
-        </div>
-    </center>
+    @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.CardBar')
 
     <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="1"
         activeColor="primary" inactiveColor="secondary" :hrefs="[
             route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa'),
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal'),
+            route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index'),
+            route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index'),
         ]" />
 
     <div class="container-fluid m-0 p-0">
@@ -55,14 +34,18 @@
                         <p class="m-0">Daftar Bidang</p>
                     </div>
                     <div class="col text-right">
-                        <a class="m-0 text-light"> <i class="fas fa-plus"></i> Tambah Bidang</a>
+                        <button type="button" class="btn btn-sm p-0 m-0 bg-transparent text-light" data-toggle="modal"
+                            data-target="#AddNewModal">
+                            <i class="fas fa-plus"></i> Tambah Bidang
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         {{-- ================== --}}
 
-        <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.store') }}" method="POST">
+        <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.store') }}" method="POST"
+            id="MinatForm">
             @csrf
             <div class="container-fluid bg-secondary rounded-bottom bg-opacity-25 pre-scrollable mb-4">
 
@@ -83,14 +66,75 @@
                 </div>
             </div>
             {{-- ================== --}}
-            <div class="container-fluid d-flex justify-content-end p-3 p-md-0">
+            <div class="container-fluid d-flex justify-content-end p-3 p-md-0 mt-2">
                 <button type="submit" class="btn btn-primary ml-3">Simpan <i class="fas fa-save pl-1"></i></button>
-                <button type="button" class="btn btn-info ml-3">Berikutnya <i
+                <button type="button" onclick="nextPage()" form="nextForm" class="btn btn-info ml-3">Berikutnya <i
                         class="fas fa-chevron-right pl-1"></i></button>
             </div>
         </form>
     </div>
 
+    <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.add') }}"
+                    method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah bidang baru</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="form-group m-0">
+                                <label for="bidang">Bidang</label>
+
+                                @php
+                                    $oldBidangValue = old('bidang');
+                                    if (is_array($oldBidangValue)) {
+                                        $oldBidangValue = null;
+                                    }
+                                @endphp
+
+                                <input type="text" id="bidang" name="bidang" class="form-control"
+                                    value="{{ $oldBidangValue }}" required>
+                            </div>
+                            <small class="text-danger d-none" id="addBidangError">* Bidang yang sudah ada tidak bisa
+                                ditambahkan</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-sm btn-primary" disabled id="modalSaveBtn">Simpan <i
+                                class="fas fa-save"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let bidang_list = [];
+        @foreach ($bidang as $bidangitem)
+            bidang_list.push(`{{ $bidangitem->bidang }}`);
+        @endforeach
+
+        $('#bidang').on('input', function() {
+            if (bidang_list.includes($(this).val())) {
+                $('#modalSaveBtn').prop('disabled', true);
+                $('#modalSaveBtn').addClass('btn-danger');
+                $('#modalSaveBtn').removeClass('btn-primary');
+                $('#addBidangError').removeClass('d-none');
+            } else {
+                $('#modalSaveBtn').prop('disabled', false);
+                $('#modalSaveBtn').addClass('btn-primary');
+                $('#modalSaveBtn').removeClass('btn-danger');
+                $('#addBidangError').addClass('d-none');
+            }
+        });
+    </script>
 @stop
 
 @section('css')
@@ -108,6 +152,13 @@
 
     <script>
         $('.form-check-input').on('click', function() {
+
+            if ($('.form-check-input:checked').length > 5) {
+                $(this).prop('checked', false);
+                toast('warning', 'Peringatan', 'Maksimal 5 bidang yang dapat dipilih', 5000);
+                return;
+            }
+
             if ($(this).prop('checked')) {
                 $(this).next().addClass('text-success');
                 $(this).next().addClass('text-bold');
@@ -121,5 +172,13 @@
         @foreach ($savedBidang as $bidang)
             $('#bidang{{ $bidang->id_bidang }}').trigger('click');
         @endforeach
+
+        function nextPage() {
+            $('#MinatForm').attr('action',
+                "{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.next', ['previous' => '1', 'target' => '2']) }}"
+            );
+            $('#MinatForm').submit();
+        }
     </script>
+
 @stop
