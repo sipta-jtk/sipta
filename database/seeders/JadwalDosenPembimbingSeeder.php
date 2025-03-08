@@ -14,21 +14,21 @@ class JadwalDosenPembimbingSeeder extends Seeder
     public function run(): void
     {
         JadwalDosenPembimbing::create([
-            'nip' => '1234567890',
+            'nip' => '197312271999031003',
             'hari' => 'senin',
             'jam_mulai' => '08:00:00',
             'jam_selesai' => '10:00:00'
         ]);
 
         JadwalDosenPembimbing::create([
-            'nip' => '1234567891',
+            'nip' => '197312271999031003',
             'hari' => 'selasa',
             'jam_mulai' => '11:00:00',
             'jam_selesai' => '13:00:00'
         ]);
 
         JadwalDosenPembimbing::create([
-            'nip' => '1234567892',
+            'nip' => '197312271999031003',
             'hari' => 'rabu',
             'jam_mulai' => '13:00:00',
             'jam_selesai' => '15:00:00'

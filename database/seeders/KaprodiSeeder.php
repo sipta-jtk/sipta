@@ -14,12 +14,12 @@ class KaprodiSeeder extends Seeder
     public function run(): void
     {
         Kaprodi::create([
-            'nip' => '1234567890',
+            'nip' => '197312271999031003',
             'id_prodi' => 1
         ]);
 
         Kaprodi::create([
-            'nip' => '1234567891',
+            'nip' => '198502102015042001',
             'id_prodi' => 2
         ]);
 

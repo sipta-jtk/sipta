@@ -15,7 +15,7 @@ class FormPenilaianSeeder extends Seeder
     {
         FormPenilaian::create([
             'nama_formulir_penilaian' => 'Form Penilaian 1',
-            'nip' => '1234567890',
+            'nip' => '197312271999031003',
             'tahun_ajaran' => 2020,
             'status_form' => 'pending',
             'created_at' => now(),
@@ -24,7 +24,7 @@ class FormPenilaianSeeder extends Seeder
 
         FormPenilaian::create([
             'nama_formulir_penilaian' => 'Form Penilaian 2',
-            'nip' => '1234567890',
+            'nip' => '197312271999031003',
             'tahun_ajaran' => 2021,
             'status_form' => 'draft',
             'created_at' => now(),
@@ -32,7 +32,7 @@ class FormPenilaianSeeder extends Seeder
         ]);
         FormPenilaian::create([
             'nama_formulir_penilaian' => 'Form Penilaian 3',
-            'nip' => '1234567890',
+            'nip' => '197312271999031003',
             'tahun_ajaran' => 2022,
             'status_form' => 'published',
             'created_at' => now(),
