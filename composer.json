@@ -9,7 +9,7 @@
         "barryvdh/laravel-dompdf": "^2.2",
         "guzzlehttp/guzzle": "^7.2",
         "jeroennoten/laravel-adminlte": "^3.14",
-        "laravel/fortify": "^1.7",
+        "laravel/fortify": "^1.25",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
