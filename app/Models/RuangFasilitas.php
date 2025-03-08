@@ -11,6 +11,8 @@ class RuangFasilitas extends Model
     use Compoships;
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'ruang_fasilitas';
     
     protected $primaryKey = ['id_ruangan', 'id_fasilitas']; 
