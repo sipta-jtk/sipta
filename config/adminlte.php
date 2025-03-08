@@ -347,7 +347,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Perencanaan Seminar dan Sidang',
-                    'url' => 'admin/pages',
+                    'url' => 'pengajuan',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
