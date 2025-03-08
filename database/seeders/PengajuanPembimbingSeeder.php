@@ -16,13 +16,13 @@ class PengajuanPembimbingSeeder extends Seeder
     {
         PengajuanPembimbing::create([
             'id_kota' => 10,
-            'status_pengajuan' => 'diproses',
+            'status_pengajuan' => 'pending',
             'created_at' => Carbon::now()
         ]);
 
         PengajuanPembimbing::create([
             'id_kota' => 12,
-            'status_pengajuan' => 'disetujui',
+            'status_pengajuan' => 'diterima',
             'created_at' => Carbon::now()
         ]);
     }
