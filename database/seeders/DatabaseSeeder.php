@@ -17,12 +17,19 @@ class DatabaseSeeder extends Seeder
         $this->call(NotifikasiKirimSeeder::class);
         $this->call(NotifikasiSeeder::class);
         $this->call(PengajuanPembimbingSeeder::class);
+        $this->call(RuangFasilitasSeeder::class);
+        $this->call(RubrikPenilaianSeeder::class);
+        $this->call(SubKategoriSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(ProdiSeeder::class);
+        $this->call(PreferensiNotifikasiSeeder::class);
+        $this->call(PrioritasPembimbingSeeder::class);
+        $this->call(RuanganSeeder::class);
         $this->call(DosenSeeder::class);
         $this->call(AlokasiPembimbingSeeder::class);
         $this->call(AmbangBatasSeeder::class);
         $this->call(BidangSeeder::class);
         $this->call(DokumenSeeder::class);
-
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
