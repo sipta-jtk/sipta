@@ -9,6 +9,8 @@ class Subkategori extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'subkategori';
 
     protected $primaryKey = 'id_subkategori';

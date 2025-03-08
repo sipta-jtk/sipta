@@ -9,6 +9,8 @@ class RubrikPenilaian extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'rubrik_penilaian';
     protected $primaryKey = 'id_rubrik';
 
