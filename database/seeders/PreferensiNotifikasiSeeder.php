@@ -19,7 +19,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => 'admin123',
+            'username' => '221524049',
             'tipe_notifikasi' => 'pengajuan_pembimbing',
             'whatsapp' => 1,
             'in_app' => 1,
@@ -28,7 +28,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => 'mahasiswa001',
+            'username' => '221524059',
             'tipe_notifikasi' => 'pengajuan_pembimbing',
             'whatsapp' => 1,
             'in_app' => 0,
