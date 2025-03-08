@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
 
         $data = [
             [
-                'username' => '19731227 199903 1 003',
+                'username' => '197312271999031003',
                 'nama' => 'Dosen Satu',
                 'email' => 'dosen1@example.com',
                 'password' => Hash::make('dosen123'),
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 'photo' => 'default.png'
             ],
             [
-                'username' => '19850210 201504 2 001',
+                'username' => '198502102015042001',
                 'nama' => 'Dosen Dua',
                 'email' => 'dosen2@example.com',
                 'password' => Hash::make('dosen123'),
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
                 'photo' => 'default.png'
             ],
             [
-                'username' => '19720106 199903 1 002',
+                'username' => '197201061999031002',
                 'nama' => 'Dosen Tiga',
                 'email' => 'dosen3@example.com',
                 'password' => Hash::make('dosen123'),
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
                 'photo' => 'default.png'
             ],
             [
-                'username' => '19681014 199303 2 002',
+                'username' => '196810141993032002',
                 'nama' => 'Dosen Empat',
                 'email' => 'dosen4@example.com',
                 'password' => Hash::make('dosen123'),
@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
                 'photo' => 'default.png'
             ],
             [
-                'username' => '19760418 200112 1 004',
+                'username' => '197604182001121004',
                 'nama' => 'Dosen Lima',
                 'email' => 'dosen5@example.com',
                 'password' => Hash::make('dosen123'),

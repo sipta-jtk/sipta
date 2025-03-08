@@ -14,13 +14,13 @@ class MahasiswaDosenDokumenSeeder extends Seeder
     public function run(): void
     {
         MahasiswaDosenDokumen::create([
-            'nip' => '19731227 199903 1 003',
+            'nip' => '197312271999031003',
             'nim' => '221524059',
             'id_dokumen' => 1
         ]);
 
         MahasiswaDosenDokumen::create([
-            'nip' => '19850210 201504 2 001',
+            'nip' => '198502102015042001',
             'nim' => '221524049',
             'id_dokumen' => 2
         ]);

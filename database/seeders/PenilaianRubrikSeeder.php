@@ -25,7 +25,7 @@ class PenilaianRubrikSeeder extends Seeder
 
         PenilaianRubrik::create([
             'nim' => '221524059', // Ubah Manual
-            'nip' => '19731227 199903 1 003', // Ubah Manual
+            'nip' => '197312271999031003', // Ubah Manual
             'id_rubrik' => '1', // Ubah Manual
             'nilai_rubrik' => '90', // Ubah Manual
             'detail_feedback' => 'Mantap Jiwa' // Ubah Manual
@@ -33,7 +33,7 @@ class PenilaianRubrikSeeder extends Seeder
 
         PenilaianRubrik::create([
             'nim' => '221524049', // Ubah Manual
-            'nip' => '19850210 201504 2 001', // Ubah Manual
+            'nip' => '198502102015042001', // Ubah Manual
             'id_rubrik' => '2', // Ubah Manual
             'nilai_rubrik' => '10', // Ubah Manual
             'detail_feedback' => 'Jos' // Ubah Manual

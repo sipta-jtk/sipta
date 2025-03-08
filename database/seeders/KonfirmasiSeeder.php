@@ -24,14 +24,14 @@ class KonfirmasiSeeder extends Seeder
         // Create sample konfirmasi records
         $konfirmasiData = [
             [
-            'id_penjadwalan' => 1,
-            'nip' => '19731227 199903 1 003', // AD
-            'status_konfirmasi' => 'disetujui',
+                'id_penjadwalan' => 1,
+                'nip' => '197312271999031003', // AD
+                'status_konfirmasi' => 'disetujui',
             ],
             [
-            'id_penjadwalan' => 2,
-            'nip' => '19850210 201504 2 001', // AN
-            'status_konfirmasi' => 'tidak_disetujui',
+                'id_penjadwalan' => 2,
+                'nip' => '198502102015042001', // AN
+                'status_konfirmasi' => 'tidak_disetujui',
             ]
         ];
 

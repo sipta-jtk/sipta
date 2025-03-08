@@ -30,7 +30,7 @@ class PenjadwalanSeeder extends Seeder
             'id_ruangan' => '1', // Ubah Manual
             'tanggal' => Carbon::now(), // Ubah Manual
             'id_kota' => '1', // Ubah Manual
-            'nip' => '19731227 199903 1 003' // Ubah Manual
+            'nip' => '197312271999031003' // Ubah Manual
         ]);
 
         Penjadwalan::create([
@@ -39,8 +39,7 @@ class PenjadwalanSeeder extends Seeder
             'id_ruangan' => '2', // Ubah Manual
             'tanggal' => Carbon::now(), // Ubah Manual
             'id_kota' => '2', // Ubah Manual
-            'nip' => '19850210 201504 2 001' // Ubah Manual
+            'nip' => '198502102015042001' // Ubah Manual
         ]);
-
     }
 }

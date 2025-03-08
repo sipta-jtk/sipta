@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -20,13 +21,13 @@ class PrioritasPembimbingSeeder extends Seeder
 
         PrioritasPembimbing::create([
             'id_pengajuan' => 2,
-            'nip' => '19731227 199903 1 003',
+            'nip' => '197312271999031003',
             'urutan_prioritas' => 1
         ]);
 
         PrioritasPembimbing::create([
             'id_pengajuan' => 3,
-            'nip' => '19850210 201504 2 001',
+            'nip' => '198502102015042001',
             'urutan_prioritas' => 2
         ]);
     }
