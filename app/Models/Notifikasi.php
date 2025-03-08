@@ -13,6 +13,8 @@ class Notifikasi extends Model
 
     protected $primaryKey = 'id_notifikasi'; // Primary key
 
+    public $timestamps = false;
+
     protected $fillable = [
         'tipe_notifikasi',
         'judul',
