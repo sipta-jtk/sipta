@@ -89,11 +89,11 @@ class KetertarikanBidangSeeder extends Seeder
             ],
             [
                 'nip' => '197604182001121004', // IA
-                'id_bidang' => 6,
+                'id_bidang' => 9,
             ],
             [
                 'nip' => '197604182001121004', // IA
-                'id_bidang' => 1,
+                'id_bidang' => 8,
             ],
             [
                 'nip' => '198012122008122001', // ID
@@ -101,11 +101,11 @@ class KetertarikanBidangSeeder extends Seeder
             ],
             [
                 'nip' => '198012122008122001', // ID
-                'id_bidang' => 3,
+                'id_bidang' => 7,
             ],
             [
                 'nip' => '198004192005011002', // IS
-                'id_bidang' => 4,
+                'id_bidang' => 9,
             ],
             [
                 'nip' => '198004192005011002', // IS
@@ -113,11 +113,11 @@ class KetertarikanBidangSeeder extends Seeder
             ],
             [
                 'nip' => '196208151990031001', // IW
-                'id_bidang' => 5,
+                'id_bidang' => 10,
             ],
             [
                 'nip' => '196208151990031001', // IW
-                'id_bidang' => 1,
+                'id_bidang' => 11,
             ],
         ];
         

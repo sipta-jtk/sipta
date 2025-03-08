@@ -26,32 +26,32 @@ class KategoriPenilaianSeeder extends Seeder
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 2,
             'nama_kategori' => 'Metodologi Penelitian',
             'bobot_kategori' => 25,
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 3,
             'nama_kategori' => 'Tinjauan Pustaka',
             'bobot_kategori' => 20,
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 4,
             'nama_kategori' => 'Presentasi',
             'bobot_kategori' => 15,
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 5,
             'nama_kategori' => 'Penguasaan Materi',
             'bobot_kategori' => 15,
         ]);
 
         // Form penilaian 2: Sidang Tugas Akhir
         KategoriPenilaian::create([
-            'id_form_penilaian' => 2,
+            'id_form_penilaian' => 1,
             'nama_kategori' => 'Hasil Implementasi',
             'bobot_kategori' => 25,
         ]);
@@ -63,13 +63,13 @@ class KategoriPenilaianSeeder extends Seeder
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 2,
+            'id_form_penilaian' => 4,
             'nama_kategori' => 'Kualitas Penulisan',
             'bobot_kategori' => 15,
         ]);
 
         KategoriPenilaian::create([
-            'id_form_penilaian' => 2,
+            'id_form_penilaian' => 3,
             'nama_kategori' => 'Presentasi Hasil',
             'bobot_kategori' => 15,
         ]);

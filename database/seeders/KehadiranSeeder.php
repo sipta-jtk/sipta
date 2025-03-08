@@ -25,47 +25,47 @@ class KehadiranSeeder extends Seeder
         $kehadiran = [
             [
             'id_penjadwalan' => 1,
-            'username' => 'mahasiswa101',
+            'username' => '221524047',
             'status_hadir' => 'hadir',
             ],
             [
             'id_penjadwalan' => 1,
-            'username' => 'mahasiswa102',
+            'username' => '221524049',
             'status_hadir' => 'tidak_hadir',
             ],
             [
             'id_penjadwalan' => 2,
-            'username' => 'mahasiswa101',
+            'username' => '221524049',
             'status_hadir' => 'tidak_hadir',
             ],
             [
             'id_penjadwalan' => 2,
-            'username' => 'mahasiswa103',
+            'username' => '221524049',
             'status_hadir' => 'tidak_hadir',
             ],
             [
-            'id_penjadwalan' => 3,
-            'username' => 'mahasiswa102',
+            'id_penjadwalan' => 1,
+            'username' => '221524049',
             'status_hadir' => 'hadir',
             ],
             [
-            'id_penjadwalan' => 3,
-            'username' => 'mahasiswa104',
+            'id_penjadwalan' => 2,
+            'username' => '221524041',
             'status_hadir' => 'hadir',
             ],
             [
-            'id_penjadwalan' => 4,
-            'username' => 'mahasiswa105',
+            'id_penjadwalan' => 1,
+            'username' => '221524041',
             'status_hadir' => 'tidak_hadir',
             ],
             [
-            'id_penjadwalan' => 5,
-            'username' => 'mahasiswa101',
+            'id_penjadwalan' => 1,
+            'username' => '221524041',
             'status_hadir' => 'hadir',
             ],
             [
-            'id_penjadwalan' => 5,
-            'username' => 'mahasiswa106',
+            'id_penjadwalan' => 2,
+            'username' => '221524041',
             'status_hadir' => 'tidak_hadir',
             ],
         ];
