@@ -1,28 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR 2')
+@section('title', 'PENILAIAN SEMINAR 1')
 
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-3">
+        <ol class="breadcrumb bg-transparent p-0 mb-3">
                 <li class="breadcrumb-item">
                     <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
                 </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA/nilai-seminar-2') }}">
-                        Penilaian Seminar 2
-                    </a>
-                </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Masukan Seminar 2
+                    Penilaian Seminar 1
                 </li>
             </ol>
         </nav>
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">MASUKAN SEMINAR 2</h1>
+        <h1 class="mb-0">SEMINAR 1</h1>
     </div>
 @stop
 
@@ -50,31 +45,65 @@
             </div>
         </div>
 
-        <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
+        <!-- Data Mahasiswa dalam Tabel -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No</th>
+                                <th>NIM</th>
+                                <th>Nama Mahasiswa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $mhs['nim'] }}</td>
+                                    <td>{{ $mhs['nama'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usulan Topik Tugas Akhir -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <strong>Usulan Topik Tugas Akhir</strong> <br>
+                <span>{{ $mahasiswa['topik_ta'] }}</span>
+            </div>
+        </div>
+
+        <h3 class="heading-spacing text-center">EVALUASI</h3>
 
         <!-- Form -->
         <form action="{{ route('feedback.store') }}"> <!-- method="POST" -->
             @csrf
 
-            <!-- Dokumen -->
+            <!-- Deskripsi Topik -->
             <div class="form-group">
-                <label for="dokumen">Dokumen</label>
-                <input id="dokumen" type="hidden" name="dokumen">
-                <trix-editor input="dokumen"></trix-editor>
+                <label for="deskripsi_topik">Deskripsi Topik</label>
+                <input id="deskripsi_topik" type="hidden" name="deskripsi_topik">
+                <trix-editor input="deskripsi_topik"></trix-editor>
             </div>
 
-            <!-- Presentasi -->
+            <!-- Problem Definition -->
             <div class="form-group">
-                <label for="presentasi">Presentasi</label>
-                <input id="presentasi" type="hidden" name="presentasi">
-                <trix-editor input="presentasi"></trix-editor>
+                <label for="problem_definition">Problem Definition</label>
+                <input id="problem_definition" type="hidden" name="problem_definition">
+                <trix-editor input="problem_definition"></trix-editor>
             </div>
 
-            <!-- Penguasaan Topik -->
+            <!-- Metodologi Penyelesaian TA -->
             <div class="form-group">
-                <label for="penguasaan">Penguasaan Topik</label>
-                <input id="penguasaan" type="hidden" name="penguasaan">
-                <trix-editor input="penguasaan"></trix-editor>
+                <label for="metodologi">Metodologi Penyelesaian TA</label>
+                <input id="metodologi" type="hidden" name="metodologi">
+                <trix-editor input="metodologi"></trix-editor>
             </div>
 
             <!-- Tombol Simpan -->

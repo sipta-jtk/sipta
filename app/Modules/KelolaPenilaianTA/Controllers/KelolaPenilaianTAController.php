@@ -12,6 +12,25 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.view');
     }
 
+    public function pengisianFeedbackSeminar1(): View
+    {
+        // Data Mahasiswa
+        $mahasiswa = [
+            'kode_fta' => 'FTA-04',
+            'tanggal' => '7 Maret 2025',
+            'waktu' => '10:00 - 11:00',
+            'id_kota' => 'KoTA-313',
+            'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring',
+            'list_mahasiswa' => [
+                ['nim' => '221524044', 'nama' => 'Mahardika Pratama'],
+                ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra'],
+                ['nim' => '221524058', 'nama' => 'Salsabil Khoirunisa']
+            ]
+        ];
+
+        return view('KelolaPenilaianTA.views.pengisian_feedback_seminar_1', compact('mahasiswa'));
+    }
+
     public function pengisianNilaiSeminar2(): View
     {
         // Data Mahasiswa
@@ -103,9 +122,9 @@ class KelolaPenilaianTAController extends Controller
             'id_kota' => 'KoTA-313',
             'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring',
             'list_mahasiswa' => [
+                ['nim' => '221524044', 'nama' => 'Mahardika Pratama'],
                 ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra'],
-                ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra'],
-                ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra']
+                ['nim' => '221524058', 'nama' => 'Salsabil Khoirunisa']
             ]
         ];
 

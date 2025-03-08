@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR II')
+@section('title', 'PENILAIAN SEMINAR 2')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -11,13 +11,13 @@
                     <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Penilaian Seminar II
+                    Penilaian Seminar 2
                 </li>
             </ol>
         </nav>
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN SEMINAR II</h1>
+        <h1 class="mb-0">PENILAIAN SEMINAR 2</h1>
     </div>
 @stop
 
@@ -80,7 +80,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/KelolaPenilaianTA/nilai-seminar-2/feedback-seminar-2') }}" > <!-- method="POST" -->
+        <form action="{{ url('/KelolaPenilaianTA/nilai-seminar-2/masukan-seminar-2') }}" > <!-- method="POST" -->
             @csrf
 
             <div class="row mt-3 p-4 col-md-12">
