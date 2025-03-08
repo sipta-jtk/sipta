@@ -110,7 +110,7 @@
         </form>
 
         <div class="d-flex justify-content-end mt-3">
-            <button type="button" class="btn btn-success" onclick="exportToExcel()">
+            <button id="exportExcel" type="button" class="btn btn-success"">
                 <i class="fas fa-file-excel"></i> Export to Excel
             </button>
         </div>
@@ -220,10 +220,13 @@
             document.getElementById(id).classList.add('d-none');
         }
 
-        function exportToExcel() {
-            var data = {!! json_encode($data) !!};
-            document.getElementById('exportData').value = JSON.stringify(data);
-            document.getElementById('exportForm').submit();
-        }
+        document.getElementById("exportExcel").addEventListener("click", function () {
+            let filterProdi = document.getElementById("filterProdi").value;
+            let filterKelas = document.getElementById("filterKelas").value;
+            
+            let url = "{{ route('rekapitulasi.export') }}?prodi=" + filterProdi + "&kelas=" + filterKelas;
+            window.location.href = url;
+        });
+
     </script>
 @stop
