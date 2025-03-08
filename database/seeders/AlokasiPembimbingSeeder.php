@@ -15,7 +15,7 @@ class AlokasiPembimbingSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!Schema::hasTable('alokasi_pembimbing')) 
+        if (!Schema::hasTable('alokasi_pembimbing'))
         {
             return;
         }
@@ -26,17 +26,17 @@ class AlokasiPembimbingSeeder extends Seeder
 
         $data = [
             [
-                'id_pengajuan_pembimbing' => 1,
+                'id_pengajuan_pembimbing' => 3,
                 'nip' => '19731227 199903 1 003',
                 'urutan_prioritas_terpilih' => 1,
             ],
             [
-                'id_pengajuan_pembimbing' => 1,
+                'id_pengajuan_pembimbing' => 3,
                 'nip' => '19850210 201504 2 001',
                 'urutan_prioritas_terpilih' => 2,
             ],
             [
-                'id_pengajuan_pembimbing' => 1,
+                'id_pengajuan_pembimbing' => 3,
                 'nip' => '19720106 199903 1 002',
                 'urutan_prioritas_terpilih' => 3,
             ],
@@ -52,7 +52,7 @@ class AlokasiPembimbingSeeder extends Seeder
             ],
         ];
 
-        foreach ($data as $item) 
+        foreach ($data as $item)
         {
             AlokasiPembimbing::create($item);
         }

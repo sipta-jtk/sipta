@@ -16,9 +16,9 @@ class KbkSeeder extends Seeder
      */
     public function run(): void
     {
-        // Schema::disableForeignKeyConstraints();
+        Schema::disableForeignKeyConstraints();
         DB::table('kbk')->truncate();
-        // Schema::enableForeignKeyConstraints();
+        Schema::enableForeignKeyConstraints();
 
         $data = [
             ['kbk' => 'Rekayasa Perangkat Lunak'],

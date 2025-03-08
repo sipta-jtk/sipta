@@ -15,21 +15,25 @@ class AmbangBatasSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!Schema::hasTable('ambang_batas')) 
+        if (!Schema::hasTable('ambang_batas'))
         {
             return;
         }
 
+        DB::table('ambang_batas')->truncate();
+
         $data = [
             [
+                'id_ambang_batas' => '1',
                 'ambang_batas' => 50.0
             ],
             [
+                'id_ambang_batas' => '2',
                 'ambang_batas' => 70.0
             ],
         ];
 
-        foreach ($data as $item) 
+        foreach ($data as $item)
         {
             AmbangBatas::create($item);
         }

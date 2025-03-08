@@ -1,12 +1,8 @@
 <?php
-
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use App\Models\KategoriPenilaian;
 
 class KategoriPenilaianSeeder extends Seeder
@@ -16,11 +12,18 @@ class KategoriPenilaianSeeder extends Seeder
      */
     public function run(): void
     {
-        // Schema::disableForeignKeyConstraints();
+        // Menonaktifkan foreign key checks sementara
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Truncate tabel kategori_penilaian
         DB::table('kategori_penilaian')->truncate();
-        // Form penilaian 1: Seminar Proposal Tugas Akhir
+
+        // Mengaktifkan kembali foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Menambahkan data ke tabel kategori_penilaian
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 6,
             'nama_kategori' => 'Kualitas Proposal',
             'bobot_kategori' => 25,
         ]);
@@ -51,7 +54,7 @@ class KategoriPenilaianSeeder extends Seeder
 
         // Form penilaian 2: Sidang Tugas Akhir
         KategoriPenilaian::create([
-            'id_form_penilaian' => 1,
+            'id_form_penilaian' => 6,
             'nama_kategori' => 'Hasil Implementasi',
             'bobot_kategori' => 25,
         ]);
@@ -79,7 +82,5 @@ class KategoriPenilaianSeeder extends Seeder
             'nama_kategori' => 'Kemampuan Menjawab Pertanyaan',
             'bobot_kategori' => 25,
         ]);
-
-        // Schema::enableForeignKeyConstraints();
     }
 }

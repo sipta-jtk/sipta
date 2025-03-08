@@ -24,16 +24,16 @@ class PenilaianRubrikSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         PenilaianRubrik::create([
-            'nim' => '2201234567', // Ubah Manual
-            'nip' => '1987654321', // Ubah Manual
+            'nim' => '221524059', // Ubah Manual
+            'nip' => '19731227 199903 1 003', // Ubah Manual
             'id_rubrik' => '1', // Ubah Manual
             'nilai_rubrik' => '90', // Ubah Manual
             'detail_feedback' => 'Mantap Jiwa' // Ubah Manual
         ]);
 
         PenilaianRubrik::create([
-            'nim' => '2201234568', // Ubah Manual
-            'nip' => '1987654322', // Ubah Manual
+            'nim' => '221524049', // Ubah Manual
+            'nip' => '19850210 201504 2 001', // Ubah Manual
             'id_rubrik' => '2', // Ubah Manual
             'nilai_rubrik' => '10', // Ubah Manual
             'detail_feedback' => 'Jos' // Ubah Manual

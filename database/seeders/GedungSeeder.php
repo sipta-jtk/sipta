@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Gedung;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class GedungSeeder extends Seeder
 {
@@ -13,6 +14,13 @@ class GedungSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nonaktifkan foreign key checks sementara
+        Schema::disableForeignKeyConstraints();
+
+        // Menghapus data yang sudah ada sebelumnya
+        DB::table('gedung')->truncate();
+
+        // Menambahkan data baru
         Gedung::create([
             'kode_gedung' => 'A',
             'nama_gedung' => 'Gedung A',
@@ -22,5 +30,8 @@ class GedungSeeder extends Seeder
             'kode_gedung' => 'B',
             'nama_gedung' => 'Gedung B',
         ]);
+
+        // Mengaktifkan kembali foreign key checks
+        Schema::enableForeignKeyConstraints();
     }
 }

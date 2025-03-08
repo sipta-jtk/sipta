@@ -12,46 +12,62 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            // Base tables with no dependencies
+            UserSeeder::class,
+            GedungSeeder::class,
+            FasilitasSeeder::class,
+            KbkSeeder::class,
+            BidangSeeder::class,
+            ProdiSeeder::class,
+            PeriodePengajuanSeeder::class,
+            SubKategoriSeeder::class,
+            AmbangBatasSeeder::class,
 
-        $this->call(PengajuanPisahKotaSeeder::class);
-        $this->call(PenilaianKategoriSeeder::class);
-        $this->call(PenilaianRubrikSeeder::class);
-        $this->call(PenjadwalanSeeder::class);
-        $this->call(PeriodePengajuanSeeder::class);
-        $this->call(KotaSeeder::class);
-        $this->call(FasilitasSeeder::class);
-        $this->call(FormPenilaianSeeder::class);
-        $this->call(JadwalDosenPembimbingSeeder::class);
-        $this->call(KaprodiSeeder::class);
-        $this->call(GedungSeeder::class);
-        $this->call(KategoriPenilaianSeeder::class);
-        $this->call(KbkSeeder::class);
-        $this->call(KehadiranSeeder::class);
-        $this->call(KetertarikanBidangSeeder::class);
-        $this->call(KonfirmasiSeeder::class);
-        $this->call(MahasiswaDosenDokumenSeeder::class);
-        $this->call(MahasiswaSeeder::class);
-        $this->call(NotifikasiKirimSeeder::class);
-        $this->call(NotifikasiSeeder::class);
-        $this->call(PengajuanPembimbingSeeder::class);
-        $this->call(RuangFasilitasSeeder::class);
-        $this->call(RubrikPenilaianSeeder::class);
-        $this->call(SubKategoriSeeder::class);
-        $this->call(UserSeeder::class);
-        $this->call(ProdiSeeder::class);
-        $this->call(PreferensiNotifikasiSeeder::class);
-        $this->call(PrioritasPembimbingSeeder::class);
-        $this->call(RuanganSeeder::class);
-        $this->call(DosenSeeder::class);
-        $this->call(AlokasiPembimbingSeeder::class);
-        $this->call(AmbangBatasSeeder::class);
-        $this->call(BidangSeeder::class);
-        $this->call(DokumenSeeder::class);
-        // \App\Models\User::factory(10)->create();
+            // First level dependencies
+            DosenSeeder::class, // depends on User, KBK
+            RuanganSeeder::class, // depends on Gedung
+            KotaSeeder::class, // depends on Bidang
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+            // Second level dependencies
+            MahasiswaSeeder::class, // depends on User, Prodi, Kota
+            KaprodiSeeder::class, // depends on Dosen, Prodi
+            JadwalDosenPembimbingSeeder::class, // depends on Dosen
+            KetertarikanBidangSeeder::class, // depends on Dosen, Bidang
+            RuangFasilitasSeeder::class, // depends on Fasilitas, Ruangan
+            LabelSeeder::class, // depends on Kota
+
+            // Higher level dependencies
+            PengajuanPembimbingSeeder::class, // depends on Kota
+            PrioritasPembimbingSeeder::class, // depends on PengajuanPembimbing, Dosen
+            AlokasiPembimbingSeeder::class, // depends on PengajuanPembimbing, Dosen
+            PengajuanPisahKotaSeeder::class, // depends on Mahasiswa, Kota
+
+            // Assessment related
+            FormPenilaianSeeder::class, // depends on Dosen
+            KategoriPenilaianSeeder::class, // depends on FormPenilaian
+            RubrikPenilaianSeeder::class, // depends on KategoriPenilaian
+            PenilaianRubrikSeeder::class, // depends on Mahasiswa, Dosen, RubrikPenilaian
+            PenilaianKategoriSeeder::class, // depends on Mahasiswa
+
+            // Document related
+            DokumenSeeder::class, // depends on Kota, Label, SubKategori, User
+            ListJurnalPlagiarismeSeeder::class, // no dependencies
+            ListKalimatPlagiarismeSeeder::class, // depends on Dokumen, ListJurnalPlagiarisme
+            MahasiswaDosenDokumenSeeder::class, // depends on Dosen, Mahasiswa, Dokumen
+
+            // Scheduling related
+            PenjadwalanSeeder::class, // depends on Ruangan, Kota, Dosen
+            KehadiranSeeder::class, // depends on Penjadwalan, User
+            KonfirmasiSeeder::class, // depends on Penjadwalan, Dosen
+
+            // Notification related
+            NotifikasiSeeder::class, // no dependencies
+            NotifikasiKirimSeeder::class, // depends on Notifikasi, User
+            PreferensiNotifikasiSeeder::class, // depends on User
+
+            // Logs (should be last as they depend on many entities)
+            LogAktivitasSeeder::class, // depends on Kota, User, Dokumen
+        ]);
     }
 }

@@ -15,13 +15,13 @@ class PengajuanPembimbingSeeder extends Seeder
     public function run(): void
     {
         PengajuanPembimbing::create([
-            'id_kota' => 10,
+            'id_kota' => 1,
             'status_pengajuan' => 'pending',
             'created_at' => Carbon::now()
         ]);
 
         PengajuanPembimbing::create([
-            'id_kota' => 12,
+            'id_kota' => 2,
             'status_pengajuan' => 'diterima',
             'created_at' => Carbon::now()
         ]);

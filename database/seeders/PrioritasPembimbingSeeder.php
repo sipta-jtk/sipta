@@ -19,13 +19,13 @@ class PrioritasPembimbingSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         PrioritasPembimbing::create([
-            'id_pengajuan' => 1,
+            'id_pengajuan' => 2,
             'nip' => '19731227 199903 1 003',
             'urutan_prioritas' => 1
         ]);
 
         PrioritasPembimbing::create([
-            'id_pengajuan' => 2,
+            'id_pengajuan' => 3,
             'nip' => '19850210 201504 2 001',
             'urutan_prioritas' => 2
         ]);

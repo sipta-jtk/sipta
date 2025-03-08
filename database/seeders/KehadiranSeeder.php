@@ -25,47 +25,12 @@ class KehadiranSeeder extends Seeder
         $kehadiran = [
             [
             'id_penjadwalan' => 1,
-            'username' => '221524047',
-            'status_hadir' => 'hadir',
-            ],
-            [
-            'id_penjadwalan' => 1,
-            'username' => '221524049',
-            'status_hadir' => 'tidak_hadir',
-            ],
-            [
-            'id_penjadwalan' => 2,
-            'username' => '221524049',
-            'status_hadir' => 'tidak_hadir',
-            ],
-            [
-            'id_penjadwalan' => 2,
-            'username' => '221524049',
-            'status_hadir' => 'tidak_hadir',
-            ],
-            [
-            'id_penjadwalan' => 1,
-            'username' => '221524049',
+            'username' => '221524059',
             'status_hadir' => 'hadir',
             ],
             [
             'id_penjadwalan' => 2,
-            'username' => '221524041',
-            'status_hadir' => 'hadir',
-            ],
-            [
-            'id_penjadwalan' => 1,
-            'username' => '221524041',
-            'status_hadir' => 'tidak_hadir',
-            ],
-            [
-            'id_penjadwalan' => 1,
-            'username' => '221524041',
-            'status_hadir' => 'hadir',
-            ],
-            [
-            'id_penjadwalan' => 2,
-            'username' => '221524041',
+            'username' => '221524049',
             'status_hadir' => 'tidak_hadir',
             ],
         ];
