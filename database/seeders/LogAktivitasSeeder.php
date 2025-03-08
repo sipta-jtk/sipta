@@ -21,43 +21,29 @@ class LogAktivitasSeeder extends Seeder
         // Data dummy untuk seed
         LogAktivitas::create([
             'id_kota' => 1,
-            'username' => 'user1',
-            'id_dokumen' => 101,
+            'username' => '221524039',
+            'id_dokumen' => 1,
             'action' => 'upload',
             'waktu_aktivitas' => now()
         ]);
 
         LogAktivitas::create([
             'id_kota' => 2,
-            'username' => 'user2',
-            'id_dokumen' => 102,
+            'username' => '221524049',
+            'id_dokumen' => 2,
             'action' => 'edit',
             'waktu_aktivitas' => now()
         ]);
 
         LogAktivitas::create([
             'id_kota' => 3,
-            'username' => 'user3',
-            'id_dokumen' => 103,
+            'username' => '221524059',
+            'id_dokumen' => 3,
             'action' => 'delete',
             'waktu_aktivitas' => now()
         ]);
 
-        LogAktivitas::create([
-            'id_kota' => 4,
-            'username' => 'user4',
-            'id_dokumen' => 104,
-            'action' => 'download',
-            'waktu_aktivitas' => now()
-        ]);
-
-        LogAktivitas::create([
-            'id_kota' => 5,
-            'username' => 'user5',
-            'id_dokumen' => 105,
-            'action' => 'review',
-            'waktu_aktivitas' => now()
-        ]);
+        
     }
 }
 
