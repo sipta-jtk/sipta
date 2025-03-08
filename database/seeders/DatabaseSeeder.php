@@ -25,7 +25,11 @@ class DatabaseSeeder extends Seeder
         $this->call(PreferensiNotifikasiSeeder::class);
         $this->call(PrioritasPembimbingSeeder::class);
         $this->call(RuanganSeeder::class);
-        
+        $this->call(DosenSeeder::class);
+        $this->call(AlokasiPembimbingSeeder::class);
+        $this->call(AmbangBatasSeeder::class);
+        $this->call(BidangSeeder::class);
+        $this->call(DokumenSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
