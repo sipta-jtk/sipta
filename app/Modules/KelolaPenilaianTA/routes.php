@@ -33,4 +33,8 @@ Route::group(['prefix' => 'KelolaPenilaianTA'], function () {
     Route::get('/nilai-sidang-akhir/masukan-sidang-akhir', [KelolaPenilaianTAController::class, 'pengisianMasukanSidangAkhir']);
 });
 
+Route::group(['prefix' => 'KelolaPenilaianTA'], function () {
+    Route::get('/nilai-tugas-akhir', [KelolaPenilaianTAController::class, 'pengisianNilaiTA']);
+});
+
 // Route::post('/KelolaPenilaianTA/masukan-seminar-II', 'FeedbackController@store')->name('feedback.store');

@@ -86,7 +86,7 @@
             <div class="row mt-3 p-4 col-md-12">
                 <table class="table table-bordered text-center">
                     <thead class="thead-dark">
-                        <tr>
+                            <tr>
                             <th rowspan="2">No</th>
                             <th rowspan="2">Kriteria Penilaian Penguji</th>
                             <th rowspan="2">Detail Kriteria</th>

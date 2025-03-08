@@ -96,7 +96,7 @@
                             <th colspan="{{ count($mahasiswa['list_mahasiswa']) }}">Nilai Perorangan</th>
                         </tr>
                         <tr>
-                        <th>≥ 80 (A)</th>
+                            <th>≥ 80 (A)</th>
                             <th>75 - 79.99 (AB)</th>
                             <th>70 - 74.99 (B)</th>
                             <th>65 - 69.99 (BC)</th>

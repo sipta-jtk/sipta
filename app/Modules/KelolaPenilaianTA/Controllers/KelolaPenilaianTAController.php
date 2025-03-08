@@ -364,4 +364,63 @@ class KelolaPenilaianTAController extends Controller
 
         return view('KelolaPenilaianTA.views.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
     }
+    
+    public function pengisianNilaiTA(): View
+    {
+        // Data Mahasiswa
+        $mahasiswa = [
+            'kode_fta' => 'FTA-017',
+            'tanggal' => '7 Maret 2025',
+            'waktu' => '10:00 - 11:00',
+            'id_kota' => 'KoTA-313',
+            'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring',
+            'list_mahasiswa' => [
+                ['nim' => '221524044', 'nama' => 'Mahardika Pratama'],
+                ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra'],
+                ['nim' => '221524058', 'nama' => 'Salsabil Khoirunisa']
+            ]
+        ];
+
+        // Data penilaian berdasarkan kategori
+        $penilaian = [
+            [
+                'kategori' => 'A',
+                'judul' => 'Luaran Tugas Akhir',
+                'sub_kriteria' => [
+                    [
+                        'kode' => 'a.1',
+                        'kriteria' => 'Dokumen',
+                        'bobot' => '30%',
+                        'deskripsi' => null
+                    ],
+                    [
+                        'kode' => 'a.2',
+                        'kriteria' => 'Produk Perangkat Lunak/Hasil Penelitian',
+                        'bobot' => '30%',
+                        'deskripsi' => '(produk aplikasi (sistem, tools, atau yg lain) atau prototype / simulator atau model)'
+                    ]
+                ]
+            ],
+            [
+                'kategori' => 'B',
+                'judul' => 'Proses Bimbingan',
+                'sub_kriteria' => [
+                    [
+                        'kode' => 'b.1',
+                        'kriteria' => 'Softskill',
+                        'bobot' => '20%',
+                        'deskripsi' => '(Komunikasi (verbal dan tertulis), Kolaborasi / Kerja Tim, Kesungguhan, Manajemen Waktu)'
+                    ],
+                    [
+                        'kode' => 'b.2',
+                        'kriteria' => 'Hardskill',
+                        'bobot' => '20%',
+                        'deskripsi' => '(Kemampuan menganalisis/berpikir logis, merancang, coding, menguji produk PL atau hasil penelitian; technical writting)'
+                    ]
+                ]
+            ]
+        ];      
+
+        return view('KelolaPenilaianTA.views.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
+    }
 }
