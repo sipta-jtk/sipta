@@ -9,7 +9,9 @@ class MahasiswaDosenDokumen extends Model
 {
     use HasFactory;
     
-    protected $table = 'MahasiswaDosenDokumen'; // Nama tabel
+    protected $table = 'mahasiswa_dosen_dokumen';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'nip',
