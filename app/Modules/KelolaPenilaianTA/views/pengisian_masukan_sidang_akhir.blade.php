@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR III')
+@section('title', 'PENILAIAN SIDANG D3')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -11,18 +11,18 @@
                     <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA/nilai-seminar-III') }}">
-                        Penilaian Seminar III
+                    <a href="{{ url('/KelolaPenilaianTA/nilai-sidang-akhir') }}">
+                        Penilaian Sidang D3
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Masukan Seminar III
+                    Catatan Perbaikan Laporan
                 </li>
             </ol>
         </nav>
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">MASUKAN SEMINAR III</h1>
+        <h1 class="mb-0">CATATAN PERBAIKAN LAPORAN</h1>
     </div>
 @stop
 
@@ -50,7 +50,33 @@
             </div>
         </div>
 
-        <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
+        <!-- Data Mahasiswa dalam Tabel -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No</th>
+                                <th>NIM</th>
+                                <th>Nama Mahasiswa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $mhs['nim'] }}</td>
+                                    <td>{{ $mhs['nama'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="heading-spacing text-center">CATATAN PERBAIKAN LAPORAN</h3>
 
         <!-- Form -->
         <form action="{{ url('/KelolaPenilaianTA') }}"> <!-- route('feedback.store') method="POST" -->
@@ -58,23 +84,8 @@
 
             <!-- Dokumen -->
             <div class="form-group">
-                <label for="dokumen">Dokumen</label>
                 <input id="dokumen" type="hidden" name="dokumen">
                 <trix-editor input="dokumen"></trix-editor>
-            </div>
-
-            <!-- Presentasi -->
-            <div class="form-group">
-                <label for="presentasi">Presentasi</label>
-                <input id="presentasi" type="hidden" name="presentasi">
-                <trix-editor input="presentasi"></trix-editor>
-            </div>
-
-            <!-- Penguasaan Topik -->
-            <div class="form-group">
-                <label for="penguasaan">Penguasaan Topik</label>
-                <input id="penguasaan" type="hidden" name="penguasaan">
-                <trix-editor input="penguasaan"></trix-editor>
             </div>
 
             <!-- Tombol Simpan -->

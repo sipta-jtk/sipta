@@ -105,8 +105,9 @@
         }
 
         .heading-spacing {
-            margin-top: 30px;
+            margin-top: 50px;
             margin-bottom: 30px;
+            font-weight: bold;
         }
     </style>
 @stop

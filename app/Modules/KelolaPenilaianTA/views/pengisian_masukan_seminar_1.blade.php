@@ -30,9 +30,9 @@
                 <span>{{ $mahasiswa['kode_fta'] }}</span>
             </div>
 
-            <!-- Tanggal, Waktu, ID Kota -->
+            <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
-                <strong>Pada Hari/Tanggal</strong> <br>
+                <strong>Pada hari/tanggal</strong> <br>
                 <span>{{ $mahasiswa['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -134,8 +134,9 @@
         }
 
         .heading-spacing {
-            margin-top: 30px;
+            margin-top: 50px;
             margin-bottom: 30px;
+            font-weight: bold;
         }
     </style>
 @stop
