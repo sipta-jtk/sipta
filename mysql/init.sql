@@ -26,7 +26,7 @@ CREATE TABLE `penjadwalan` (
 );
 
 CREATE TABLE `fasilitas` (
-  `id_fasililtas` int(4) PRIMARY KEY AUTO_INCREMENT,
+  `id_fasilitas` int(4) PRIMARY KEY AUTO_INCREMENT,
   `nama_fasilitas` varchar(100),
   `jumlah_total_fasilitas` int(4) NOT NULL
 );

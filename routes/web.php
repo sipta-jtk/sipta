@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\GedungController;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +37,22 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('auth.register');
 });
+
+// Route untuk manajemen ruangan
+Route::resource('ruangan', RuanganController::class);
+Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
+Route::post('/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
+
+// Route untuk manajemen gedung (jika belum ada)
+Route::resource('gedung', GedungController::class);
+
+Route::get('ruangan/{filename}', function ($filename) {
+    $path = base_path('ruangan/' . $filename);
+    
+    if (!File::exists($path)) {
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->where('filename', '.*');

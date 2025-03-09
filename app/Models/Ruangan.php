@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Ruangan extends Model
 {
     use HasFactory;
-    protected $table = 'ruangan';  
-    protected $primaryKey = 'id_ruang';
+
+    protected $table = 'ruangan';
+    protected $primaryKey = 'id_ruangan';
+    public $timestamps = false;
+    protected $keyType = 'integer';
+    public $incrementing = true;
+    
     protected $fillable = [
-        
         'nama_ruangan',
         'kode_ruangan',
         'status_ruangan',
@@ -19,4 +23,16 @@ class Ruangan extends Model
         'link_ruangan'
     ];
 
+    // Relasi dengan model Gedung
+    public function gedung()
+    {
+        return $this->belongsTo(Gedung::class, 'kode_gedung', 'kode_gedung');
+    }
+
+    // Relasi dengan model Fasilitas melalui tabel pivot
+    public function fasilitas()
+    {
+        return $this->belongsToMany(Fasilitas::class, 'ruang_fasilitas', 'id_ruangan', 'id_fasilitas')
+                    ->withPivot('jumlah_fasilitas');
+    }
 }

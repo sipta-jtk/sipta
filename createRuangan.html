@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create/Update Ruangan</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .card {
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 70px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-area:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+        
+        .facility-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .facility-item .facility-info {
+            flex-grow: 1;
+        }
+
+        .facility-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-input {
+            width: 80px;
+        }
+        
+        .btn-submit {
+            background-color: #198754;
+            color: white;
+            padding: 10px 30px;
+        }
+        
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 30px;
+        }
+
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: #0d6efd;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card p-4">
+            <h2 class="text-center mb-4">Create/Update Ruangan</h2>
+            
+            <form>
+                <div class="row">
+                    <!-- Data Ruangan Section -->
+                    <div class="col-12 mb-4">
+                        <div class="form-section">
+                            <h3 class="section-title">Data Ruangan</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code Ruangan</label>
+                                        <input type="text" class="form-control" placeholder="Masukan Code Ruangan Anda">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Ruangan</label>
+                                        <input type="text" class="form-control" placeholder="Masukan Nama Ruangan Anda">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code Gedung</label>
+                                        <select class="form-select">
+                                            <option selected>Pilih Code Gedung</option>
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-select">
+                                            <option selected>Pilih Status Ruangan</option>
+                                            <option value="1">Tersedia</option>
+                                            <option value="2">Tidak Tersedia</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foto dan Fasilitas Section -->
+                    <div class="col-md-6">
+                        <div class="form-section h-100">
+                            <h3 class="section-title">Foto Ruangan</h3>
+                            <div class="upload-area" id="uploadArea">
+                                <div id="uploadPrompt">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                    <p class="mb-0">Klik untuk upload foto</p>
+                                    <small class="text-muted">atau drag and drop file di sini</small>
+                                </div>
+                                <img id="imagePreview" class="img-fluid d-none" style="max-height: 100%; width: auto; border-radius: 10px;">
+                                <input type="file" class="d-none" id="photoInput" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-section h-100">
+                            <h3 class="section-title">Fasilitas Ruangan</h3>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <select class="form-select" id="facilityInput">
+                                        <option value="" selected disabled>Pilih Fasilitas</option>
+                                        <option value="Meja">Meja</option>
+                                        <option value="Kursi">Kursi</option>
+                                        <option value="Proyektor">Proyektor</option>
+                                        <option value="Papan Tulis">Papan Tulis</option>
+                                        <option value="AC">AC</option>
+                                        <option value="Stop Kontak">Stop Kontak</option>
+                                        <option value="Speaker">Speaker</option>
+                                    </select>
+                                    <input type="number" class="form-control quantity-input" id="facilityQuantity" placeholder="Jumlah" min="1">
+                                    <button class="btn btn-primary" type="button" id="addFacility">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="facilityList">
+                                <!-- Fasilitas akan ditambahkan di sini -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tombol Submit dan Cancel -->
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-cancel me-2">Cancel</button>
+                    <button type="submit" class="btn btn-submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS dan dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script untuk upload foto dan preview
+        document.getElementById('photoInput').addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const uploadPrompt = document.getElementById('uploadPrompt');
+                    const imagePreview = document.getElementById('imagePreview');
+                    
+                    uploadPrompt.classList.add('d-none');
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Script untuk drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('bg-light');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('bg-light');
+        }
+
+        // Script untuk menambah fasilitas
+        document.getElementById('addFacility').addEventListener('click', function() {
+            const select = document.getElementById('facilityInput');
+            const quantity = document.getElementById('facilityQuantity');
+            
+            if (select.value !== '' && quantity.value > 0) {
+                const facilityList = document.getElementById('facilityList');
+                const facilityItem = document.createElement('div');
+                facilityItem.className = 'facility-item';
+                facilityItem.innerHTML = `
+                    <div class="facility-info">
+                        <strong>${select.value}</strong>
+                        <div class="text-muted">Jumlah: ${quantity.value}</div>
+                    </div>
+                    <div class="facility-controls">
+                        <button type="button" class="btn btn-sm btn-outline-primary edit-facility">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-facility">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                facilityList.appendChild(facilityItem);
+                select.value = '';
+                quantity.value = '';
+            }
+        });
+
+        // Script untuk menghapus fasilitas
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-facility')) {
+                e.target.closest('.facility-item').remove();
+            }
+        });
+
+        // Script untuk edit fasilitas
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.edit-facility')) {
+                const facilityItem = e.target.closest('.facility-item');
+                const facilityName = facilityItem.querySelector('strong').textContent;
+                const facilityQuantity = facilityItem.querySelector('.text-muted').textContent.split(': ')[1];
+                
+                const select = document.getElementById('facilityInput');
+                const quantity = document.getElementById('facilityQuantity');
+                
+                select.value = facilityName;
+                quantity.value = facilityQuantity;
+                
+                facilityItem.remove();
+            }
+        });
+
+        // Script untuk drag and drop
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const uploadPrompt = document.getElementById('uploadPrompt');
+                    const imagePreview = document.getElementById('imagePreview');
+                    
+                    uploadPrompt.classList.add('d-none');
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
