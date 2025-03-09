@@ -404,6 +404,11 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
+                    'text' => 'Pengajuan Cerai KoTA',
+                    'url' => 'pengajuan-cerai-kota',
+                    'icon' => 'fas fa-users-slash',
+                ],
+                [
                     'text' => 'Mahasiswa',
                     'url' => '#',
                 ],
