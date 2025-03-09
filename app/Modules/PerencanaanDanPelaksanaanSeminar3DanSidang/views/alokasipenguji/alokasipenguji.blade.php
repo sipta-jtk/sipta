@@ -30,10 +30,17 @@
     </table>
 
     <x-adminlte-modal id="modalMin" title="Alokasi Penguji">
+        <label for="">Dosen Penguji 1</label>
         <x-adminlte-select name="selBasic">
-            <option>Option 1</option>
-            <option disabled>Option 2</option>
-            <option selected>Option 3</option>
+            @foreach($dosen as $s)
+                <option>{{ $s->nama }}</option>
+            @endforeach
+        </x-adminlte-select>
+        <label for="">Dosen Penguji 2</label>
+        <x-adminlte-select name="selBasic">
+            @foreach($dosen as $s)
+                <option>{{ $s->nama }}</option>
+            @endforeach
         </x-adminlte-select>
         <x-slot name="footerSlot">
             <x-adminlte-button class="d-flex ml-auto" theme="primary" label="submit"
