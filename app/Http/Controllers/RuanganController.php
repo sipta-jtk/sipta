@@ -174,99 +174,98 @@ class RuanganController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
             
-        //     $ruangan = Ruangan::findOrFail($id);
+            $ruangan = Ruangan::findOrFail($id);
             
-        //     // Validasi input
-        //     $request->validate([
-        //         'nama_ruangan' => 'required|string|max:127|unique:ruangan,nama_ruangan,'.$id.',id_ruangan',
-        //         'kode_ruangan' => 'required|string|max:6',
-        //         'status_ruangan' => 'required|in:tersedia,tidak_tersedia',
-        //         'kode_gedung' => 'required|exists:gedung,kode_gedung',
-        //         'fasilitas' => 'array',
-        //         'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        //     ]);
+            // Validasi input
+            $request->validate([
+                'nama_ruangan' => 'required|string|max:127|unique:ruangan,nama_ruangan,'.$id.',id_ruangan',
+                'kode_ruangan' => 'required|string|max:6',
+                'status_ruangan' => 'required|in:tersedia,tidak_tersedia',
+                'kode_gedung' => 'required|exists:gedung,kode_gedung',
+                'fasilitas' => 'array',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
 
-        //     try {
-        //         // Handle foto
-        //         if ($request->remove_foto == '1' && $ruangan->link_ruangan) {
-        //             // Hapus foto lama jika diminta
-        //             $oldImagePath = public_path('image/ruangan/' . $ruangan->link_ruangan);
-        //             if (File::exists($oldImagePath)) {
-        //                 File::delete($oldImagePath);
-        //             }
-        //             $ruangan->link_ruangan = null;
-        //         } 
-        //         elseif ($request->hasFile('foto')) {
-        //             // Upload foto baru
-        //             $imageName = Str::uuid() . '.' . $request->foto->extension();
-        //             $path = public_path('image/ruangan');
+            try {
+                // Handle foto
+                if ($request->remove_foto == '1' && $ruangan->link_ruangan) {
+                    // Hapus foto lama jika diminta
+                    $oldImagePath = public_path('image/ruangan/' . $ruangan->link_ruangan);
+                    if (File::exists($oldImagePath)) {
+                        File::delete($oldImagePath);
+                    }
+                    $ruangan->link_ruangan = null;
+                } 
+                elseif ($request->hasFile('foto')) {
+                    // Upload foto baru
+                    $imageName = Str::uuid() . '.' . $request->foto->extension();
+                    $path = public_path('image/ruangan');
 
-        //             // Pastikan direktori ada
-        //             if (!File::exists($path)) {
-        //                 File::makeDirectory($path, 0777, true);
-        //             }
+                    // Pastikan direktori ada
+                    if (!File::exists($path)) {
+                        File::makeDirectory($path, 0777, true);
+                    }
 
-        //             // Hapus foto lama jika ada
-        //             if ($ruangan->link_ruangan) {
-        //                 $oldImagePath = $path . '/' . $ruangan->link_ruangan;
-        //                 if (File::exists($oldImagePath)) {
-        //                     File::delete($oldImagePath);
-        //                 }
-        //             }
+                    // Hapus foto lama jika ada
+                    if ($ruangan->link_ruangan) {
+                        $oldImagePath = $path . '/' . $ruangan->link_ruangan;
+                        if (File::exists($oldImagePath)) {
+                            File::delete($oldImagePath);
+                        }
+                    }
 
-        //             // Upload foto baru
-        //             $request->foto->move($path, $imageName);
-        //             $ruangan->link_ruangan = $imageName;
-        //         }
+                    // Upload foto baru
+                    $request->foto->move($path, $imageName);
+                    $ruangan->link_ruangan = $imageName;
+                }
 
-        //         // Update data ruangan
-        //         $ruangan->update([
-        //             'nama_ruangan' => $request->nama_ruangan,
-        //             'kode_ruangan' => $request->kode_ruangan,
-        //             'status_ruangan' => $request->status_ruangan,
-        //             'kode_gedung' => $request->kode_gedung,
-        //             'link_ruangan' => $ruangan->link_ruangan
-        //         ]);
+                // Update data ruangan
+                $ruangan->update([
+                    'nama_ruangan' => $request->nama_ruangan,
+                    'kode_ruangan' => $request->kode_ruangan,
+                    'status_ruangan' => $request->status_ruangan,
+                    'kode_gedung' => $request->kode_gedung,
+                    'link_ruangan' => $ruangan->link_ruangan
+                ]);
 
-        //         // Update fasilitas
-        //         // Hapus semua fasilitas yang ada
-        //         RuangFasilitas::where('id_ruangan', $ruangan->id_ruangan)->delete();
+                // Update fasilitas
+                // Hapus semua fasilitas yang ada
+                RuangFasilitas::where('id_ruangan', $ruangan->id_ruangan)->delete();
 
-        //         // Tambahkan fasilitas baru
-        //         if ($request->has('fasilitas')) {
-        //             foreach ($request->fasilitas as $idFasilitas => $jumlah) {
-        //                 if ($jumlah > 0) {
-        //                     RuangFasilitas::create([
-        //                         'id_ruangan' => $ruangan->id_ruangan,
-        //                         'id_fasilitas' => $idFasilitas,
-        //                         'jumlah_fasilitas' => $jumlah
-        //                     ]);
-        //                 }
-        //             }
-        //         }
+                // Tambahkan fasilitas baru
+                if ($request->has('fasilitas')) {
+                    foreach ($request->fasilitas as $idFasilitas => $jumlah) {
+                        if ($jumlah > 0) {
+                            RuangFasilitas::create([
+                                'id_ruangan' => $ruangan->id_ruangan,
+                                'id_fasilitas' => $idFasilitas,
+                                'jumlah_fasilitas' => $jumlah
+                            ]);
+                        }
+                    }
+                }
 
-        //         DB::commit();
-        //         return redirect()->route('ruangan.index')
-        //             ->with('success', 'Ruangan berhasil diperbarui!');
+                DB::commit();
+                return redirect()->route('ruangan.index')
+                    ->with('success', 'Ruangan berhasil diperbarui!');
 
-        //     } catch (\Exception $e) {
-        //         // Jika ada foto yang baru diupload, hapus
-        //         if (isset($imageName) && File::exists($path . '/' . $imageName)) {
-        //             File::delete($path . '/' . $imageName);
-        //         }
-        //         DB::rollback();
-        //         throw $e;
-        //     }
+            } catch (\Exception $e) {
+                // Jika ada foto yang baru diupload, hapus
+                if (isset($imageName) && isset($path) && File::exists($path . '/' . $imageName)) {
+                    File::delete($path . '/' . $imageName);
+                }
+                DB::rollback();
+                throw $e;
+            }
 
-        // } catch (\Exception $e) {
-        //     return redirect()->back()
-        //         ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])
-        //         ->withInput();
-        // }
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**

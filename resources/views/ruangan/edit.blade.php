@@ -346,7 +346,6 @@
                             <div class="facility-input-container">
                                 <div class="facility-input-group">
                                     <select class="form-select" id="facilityInput">
-                                        <option value="" selected disabled>Pilih Fasilitas</option>
                                         @foreach($fasilitas as $f)
                                             @if(!isset($ruangan) || !$ruangan->fasilitas->contains('id_fasililtas', $f->id_fasililtas))
                                                 <option value="{{ $f->id_fasililtas }}" data-nama="{{ $f->nama_fasilitas }}">
@@ -374,7 +373,7 @@
                                             <strong>{{ $f->nama_fasilitas }}</strong>
                                             <div class="text-muted">Jumlah: {{ $f->pivot->jumlah_fasilitas }}</div>
                                         </div>
-                                        <input type="hidden" name="fasilitas[{{ $f->id_fasilitas }}]" value="{{ $f->pivot->jumlah_fasilitas }}">
+                                        <input type="hidden" name="fasilitas[{{ $f->id_fasililtas }}]" value="{{ $f->pivot->jumlah_fasilitas }}">
                                         <div class="facility-controls">
                                             <button type="button" class="btn btn-sm btn-outline-primary edit-facility">
                                                 <i class="fas fa-edit"></i>
@@ -477,114 +476,121 @@
     // Script untuk mengelola fasilitas
     document.addEventListener('DOMContentLoaded', function() {
         const facilityInput = document.getElementById('facilityInput');
-        const facilityQuantity = document.getElementById('facilityQuantity');
+        const quantityInput = document.getElementById('facilityQuantity');
         const addButton = document.getElementById('addFacility');
         const facilityList = document.getElementById('facilityList');
         
         // Simpan semua opsi original untuk digunakan nanti
-        const originalOptions = Array.from(facilityInput.options).map(option => ({
-            value: option.value,
-            text: option.text,
-            dataNama: option.dataset.nama
-        }));
+        const originalOptions = Array.from(document.querySelectorAll('#facilityInput option'));
         
-        // Fungsi untuk mendapatkan ID fasilitas yang sudah ditambahkan
-        function getUsedFacilityIds() {
-            return Array.from(document.querySelectorAll('.facility-item'))
-                .map(item => {
-                    const hiddenInput = item.querySelector('input[type="hidden"]');
-                    if (hiddenInput && hiddenInput.name) {
-                        // Ekstrak ID dari name attribute (format: fasilitas[ID])
-                        const match = hiddenInput.name.match(/\[(\d+)\]/);
-                        return match ? match[1] : null;
-                    }
-                    return null;
-                })
-                .filter(id => id !== null);
-        }
+        // Tambahkan opsi untuk fasilitas yang sudah ada
+        @foreach($ruangan->fasilitas as $f)
+        originalOptions.push({
+            value: "{{ $f->id_fasililtas }}",
+            text: "{{ $f->nama_fasilitas }}"
+        });
+        @endforeach
         
         // Fungsi untuk memperbarui dropdown options
         function updateDropdownOptions() {
-            // Dapatkan semua ID fasilitas yang sudah ditambahkan
-            const usedFacilityIds = getUsedFacilityIds();
-            
-            console.log("Fasilitas yang digunakan (ID):", usedFacilityIds);
-            
-            // Reset dropdown dan tambahkan opsi placeholder
-            facilityInput.innerHTML = '<option value="" selected disabled>Pilih Fasilitas</option>';
-            
-            // Tambahkan hanya fasilitas yang belum digunakan
-            let availableCount = 0;
-            
+            const usedFacilities = Array.from(document.querySelectorAll('input[name^="fasilitas["]'))
+                .map(input => input.name.match(/\[(\d+)\]/)[1]);
+
+            facilityInput.innerHTML = ''; // Kosongkan dropdown
+
+            // Tambahkan opsi default
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.text = 'Pilih Fasilitas';
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            facilityInput.appendChild(defaultOption);
+
+            // Tambahkan opsi-opsi lainnya
             originalOptions.forEach(option => {
-                // Skip opsi placeholder
-                if (!option.value) return;
-                
-                // Cek apakah fasilitas ini sudah digunakan
-                if (!usedFacilityIds.includes(option.value)) {
-                    const newOption = document.createElement('option');
-                    newOption.value = option.value;
-                    newOption.text = option.text;
-                    if (option.dataNama) {
-                        newOption.dataset.nama = option.dataNama;
+                // Jika option adalah DOM element
+                if (option instanceof HTMLOptionElement) {
+                    const optionClone = option.cloneNode(true);
+                    if (option.value === '' || !usedFacilities.includes(option.value)) {
+                        facilityInput.appendChild(optionClone);
                     }
-                    facilityInput.appendChild(newOption);
-                    availableCount++;
+                } 
+                // Jika option adalah object dari data yang sudah ada
+                else {
+                    if (!usedFacilities.includes(option.value)) {
+                        const newOption = document.createElement('option');
+                        newOption.value = option.value;
+                        newOption.text = option.text;
+                        facilityInput.appendChild(newOption);
+                    }
                 }
             });
-            
-            console.log(`Total opsi tersedia: ${availableCount}`);
-            
-            // Jika tidak ada opsi yang tersedia, tampilkan pesan
-            if (availableCount === 0) {
-                const noOptionMessage = document.createElement('option');
-                noOptionMessage.value = "";
-                noOptionMessage.text = "Semua fasilitas sudah ditambahkan";
-                noOptionMessage.disabled = true;
-                facilityInput.appendChild(noOptionMessage);
-            }
+        }
+
+        // Fungsi untuk mengecek duplikasi
+        function isFacilityDuplicate(facilityId) {
+            const selector = `input[name="fasilitas[${facilityId}]"]`;
+            const existingFacility = document.querySelector(selector);
+            return existingFacility !== null;
         }
         
         // Fungsi untuk menampilkan error
         function showError(message) {
             const errorContainer = document.getElementById('facilityError');
+            
+            // Hapus error yang ada dengan animasi
+            const existingError = errorContainer.querySelector('.facility-error');
+            if (existingError) {
+                existingError.classList.add('removing');
+                setTimeout(() => {
+                    existingError.remove();
+                }, 300);
+            }
+            
+            // Buat element error baru
             const errorDiv = document.createElement('div');
             errorDiv.className = 'facility-error';
             errorDiv.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i>${message}`;
             
-            errorContainer.innerHTML = '';
-            errorContainer.appendChild(errorDiv);
-            
+            // Tunggu animasi penghapusan selesai sebelum menambahkan pesan baru
             setTimeout(() => {
-                errorDiv.classList.add('removing');
+                errorContainer.appendChild(errorDiv);
+                
+                // Hapus pesan error setelah 3 detik
                 setTimeout(() => {
-                    errorContainer.innerHTML = '';
-                }, 300);
-            }, 3000);
+                    errorDiv.classList.add('removing');
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 300);
+                }, 3000);
+            }, existingError ? 300 : 0);
         }
         
         // Event listener untuk tombol tambah
         addButton.addEventListener('click', function() {
+            const selectedOption = facilityInput.options[facilityInput.selectedIndex];
+            
             // Validasi pilihan fasilitas
             if (facilityInput.selectedIndex === 0) {
                 showError('Silakan pilih fasilitas terlebih dahulu');
                 return;
             }
-            
-            const selectedOption = facilityInput.options[facilityInput.selectedIndex];
-            
+
             // Validasi jumlah
-            const quantity = parseInt(facilityQuantity.value);
+            const quantity = parseInt(quantityInput.value);
             if (!quantity || quantity < 1) {
                 showError('Jumlah fasilitas minimal 1');
                 return;
             }
-            
+
             const facilityId = selectedOption.value;
-            const facilityName = selectedOption.dataset.nama || selectedOption.text;
+            const facilityName = selectedOption.text;
             
-            console.log(`Menambahkan fasilitas: ${facilityName} (ID: ${facilityId}) dengan jumlah: ${quantity}`);
-            
+            if (isFacilityDuplicate(facilityId)) {
+                showError('Fasilitas ini sudah ditambahkan');
+                return;
+            }
+
             // Buat dan tambahkan item fasilitas
             const facilityItem = document.createElement('div');
             facilityItem.className = 'facility-item';
@@ -603,7 +609,7 @@
                     </button>
                 </div>
             `;
-            
+
             facilityList.appendChild(facilityItem);
             
             // Update dropdown options
@@ -611,7 +617,7 @@
             
             // Reset input
             facilityInput.selectedIndex = 0;
-            facilityQuantity.value = '';
+            quantityInput.value = '';
         });
         
         // Event delegation untuk tombol edit dan hapus
@@ -620,69 +626,82 @@
             if (!button) return;
             
             const facilityItem = button.closest('.facility-item');
-            
-            // Dapatkan ID fasilitas dari input hidden
-            const hiddenInput = facilityItem.querySelector('input[type="hidden"]');
-            if (!hiddenInput || !hiddenInput.name) {
-                console.error('Error: Input hidden tidak ditemukan atau tidak memiliki atribut name');
-                return;
-            }
-            
-            const match = hiddenInput.name.match(/\[(\d+)\]/);
-            if (!match) {
-                console.error('Error: Format name pada input hidden tidak sesuai');
-                return;
-            }
-            
-            const facilityId = match[1];
+            console.log('Clicked facility item:', facilityItem);
             
             if (button.classList.contains('remove-facility')) {
-                const facilityName = facilityItem.querySelector('strong').textContent;
-                
-                console.log(`Menghapus fasilitas: ${facilityName} (ID: ${facilityId})`);
-                
-                facilityItem.style.opacity = '0';
-                setTimeout(() => {
-                    facilityItem.remove();
-                    updateDropdownOptions();
-                }, 300);
+                console.log('Removing facility item');
+                facilityItem.remove();
+                updateDropdownOptions(); // Perbarui dropdown setelah fasilitas dihapus
             }
             
             if (button.classList.contains('edit-facility')) {
-                const facilityName = facilityItem.querySelector('strong').textContent;
-                const quantity = hiddenInput.value;
+                console.log('Editing facility item');
+                const facilityInputHidden = facilityItem.querySelector('input[type="hidden"]');
+                console.log('Hidden input:', facilityInputHidden);
                 
-                console.log(`Mengedit fasilitas: ${facilityName} (ID: ${facilityId}) dengan jumlah: ${quantity}`);
+                if (!facilityInputHidden) {
+                    console.error('Hidden input not found!');
+                    return;
+                }
                 
-                // Hapus item yang diedit
+                const facilityId = facilityInputHidden.name.match(/\[(\d+)\]/)?.[1];
+                console.log('Facility ID:', facilityId);
+                
+                if (!facilityId) {
+                    console.error('Could not extract facility ID from:', facilityInputHidden.name);
+                    return;
+                }
+                
+                const quantity = facilityInputHidden.value;
+                console.log('Quantity:', quantity);
+                
+                // Cari nama fasilitas dari data asli atau dari DOM
+                let facilityName = facilityItem.querySelector('.facility-info strong').textContent;
+                console.log('Facility name:', facilityName);
+                
                 facilityItem.remove();
+                updateDropdownOptions(); // Perbarui dropdown setelah fasilitas dihapus
                 
-                // Update dropdown options
-                updateDropdownOptions();
-                
-                // Tambahkan opsi yang diedit kembali ke dropdown
-                const editOption = document.createElement('option');
-                editOption.value = facilityId;
-                editOption.text = facilityName;
-                facilityInput.appendChild(editOption);
-                
-                // Pilih opsi yang baru ditambahkan
-                facilityInput.value = facilityId;
-                
-                // Set nilai jumlah
-                facilityQuantity.value = quantity;
+                // Tunggu dropdown diperbarui
+                setTimeout(() => {
+                    console.log('Dropdown options after update:', facilityInput.options);
+                    
+                    // Cari opsi yang sesuai di dropdown
+                    let optionFound = false;
+                    for (let i = 0; i < facilityInput.options.length; i++) {
+                        console.log(`Checking option ${i}:`, facilityInput.options[i].value, 'against', facilityId);
+                        if (facilityInput.options[i].value === facilityId) {
+                            facilityInput.selectedIndex = i;
+                            optionFound = true;
+                            console.log('Option found at index:', i);
+                            break;
+                        }
+                    }
+                    
+                    // Jika opsi tidak ditemukan, tambahkan opsi baru
+                    if (!optionFound) {
+                        console.log('Option not found, creating new option');
+                        const newOption = document.createElement('option');
+                        newOption.value = facilityId;
+                        newOption.text = facilityName;
+                        facilityInput.add(newOption);
+                        facilityInput.value = facilityId;
+                    }
+                    
+                    quantityInput.value = quantity;
+                }, 0);
             }
         });
-        
+
         // Event listener untuk menghapus class invalid saat input berubah
         facilityInput.addEventListener('change', function() {
             this.classList.remove('is-invalid');
         });
-        
-        facilityQuantity.addEventListener('input', function() {
+
+        quantityInput.addEventListener('input', function() {
             this.classList.remove('is-invalid');
         });
-        
+
         // Jalankan updateDropdownOptions saat halaman dimuat
         updateDropdownOptions();
     });
