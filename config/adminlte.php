@@ -355,6 +355,11 @@ return [
                     'url' => 'admin/pages',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
+                [
+                    'text' => 'Alokasi Penguji',
+                    'url' => 'alokasi-penguji',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
             ]
             // 'label' => 4,
             // 'label_color' => 'success',
