@@ -192,59 +192,7 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        .table-container {
-            max-height: 500px;
-            overflow-y: auto;
-            overflow-x: auto;
-            border: 1px solid #ddd;
-            position: relative;
-            scrollbar-width: thin;
-            -ms-overflow-style: auto;
-        }
-        .table-container::-webkit-scrollbar {
-            height: 12px;
-        }
-        .table-container::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ccc !important;
-            padding: 10px;
-            text-align: center;
-        }
-        thead {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-        }
-        thead th {
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border-bottom: 2px solid #fff;
-        }
-        tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        tbody tr:hover {
-            background-color: #e2e6ea;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/detail_fta_011.css') }}">
 @stop
 
 @section('js')
