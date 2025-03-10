@@ -16,7 +16,7 @@
 
 @section('content')
     <div class="shadow p-3 mb-5 bg-body rounded">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered text-center">
             <thead class="bg-brown text-white">
                 <tr>
                     <th>Kategori</th>
@@ -28,8 +28,10 @@
                     <tr>
                         <td> {{ $kategori }} </td>
                         <td>
-                            <div class="action d-flex flex-row align-items-center"> 
-                                <button type="button" class="btn btn-primary">Kunci Penilaian</button>
+                            <div class="action d-flex flex-row align-items-center justify-content-center"> 
+                                @if (!in_array(strtolower($kategori), ['seminar 1', 'seminar 2']))
+                                    <button type="button" class="btn btn-primary">Kunci Penilaian</button>
+                                @endif
                                 <a href="{{ url('KelolaPenilaianTA/detail/' . Str::slug($kategori)) }}" class="btn btn-primary">Buka Detail</a>
                             </div>
                         </td>
@@ -64,6 +66,5 @@
 @stop
 
 @section('js')
-
     <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop
