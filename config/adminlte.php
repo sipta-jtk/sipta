@@ -403,6 +403,11 @@ return [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
             'submenu' => [
+           
+                [
+                    'text' => 'Kelola KBK',
+                    'url'  => 'kelola-kbk',
+                ],
                 [
                     'text' => 'Mahasiswa',
                     'url' => '#',

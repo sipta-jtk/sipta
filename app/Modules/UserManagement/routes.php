@@ -1,8 +1,9 @@
 <?php
 
-use App\Modules\UserManagement\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\UserManagement\Controllers\KBKController;
 
-Route::group(['prefix' => 'user_management'], function () {
-    Route::get('/', [UserManagementController::class, 'render']);
-});
+Route::get('/kelola-kbk', [KBKController::class, 'index'])->name('kelola-kbk');
+Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
+Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
+Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
