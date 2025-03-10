@@ -34,21 +34,21 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-Route::get('/register', function () {
+Route::get('/admin/register', function () {
     return view('auth.register');
 });
 
 // Route untuk manajemen ruangan
-Route::resource('ruangan', RuanganController::class);
-Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
-Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
-Route::post('/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
+Route::resource('admin/ruangan', RuanganController::class);
+Route::get('/admin/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+Route::get('/admin/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
+Route::post('/admin/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
 
 // Route untuk manajemen gedung (jika belum ada)
 Route::resource('gedung', GedungController::class);
 
-Route::get('ruangan/{filename}', function ($filename) {
-    $path = base_path('ruangan/' . $filename);
+Route::get('admin/ruangan/{filename}', function ($filename) {
+    $path = base_path('admin/ruangan/' . $filename);
     
     if (!File::exists($path)) {
         abort(404);

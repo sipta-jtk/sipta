@@ -366,7 +366,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengelolaan Ruangan',
-                    'url' => 'admin/pages',
+                    'url' => 'admin/ruangan',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
