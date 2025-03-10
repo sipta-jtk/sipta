@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mahasiswa extends Model
 {
+    use HasFactory;
+
     protected $table = 'mahasiswa'; // Nama tabel
  
     protected $primaryKey = 'nim'; // Primary key

@@ -17,5 +17,6 @@ class Label extends Model
 
     protected $fillable = [
         'nama_label',
+        'id_kota'
     ];
 }

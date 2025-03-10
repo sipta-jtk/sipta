@@ -11,10 +11,10 @@ class Konfirmasi extends Model
 
     protected $table = 'konfirmasi';
 
-    protected $primaryKey = 'id_penjadwalan';
-
     public $timestamps = false;
-
+    
+    public $incrementing = false; // Menonaktifkan auto-increment
+    
     protected $fillable = [
         'id_penjadwalan',
         'nip',
