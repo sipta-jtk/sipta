@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class KelolaPenilaianTAController extends Controller
 {
-    public function index_form(): View
+    public function indexForm(): View
     {
         for ($i = 1; $i <= 100; $i++) {
             $data = [
@@ -40,7 +40,7 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.FormulirPenilaianTA', compact('data'));
+        return view('KelolaPenilaianTA.views.formulir_penilaian_ta', compact('data'));
     }
 
     public function index(): View
@@ -50,7 +50,7 @@ class KelolaPenilaianTAController extends Controller
 
     public function create(): View
     {
-        return view('KelolaPenilaianTA.views.TambahFormulirPenilaian');
+        return view('KelolaPenilaianTA.views.tambah_formulir_penilaian');
     }
 
     public function edit()
@@ -76,7 +76,7 @@ class KelolaPenilaianTAController extends Controller
             ],
         ];
 
-        return view('KelolaPenilaianTA.views.UbahFormulirTA', compact('formulir'));
+        return view('KelolaPenilaianTA.views.ubah_formulir_ta', compact('formulir'));
     }
 
     public function update(Request $request)
@@ -99,7 +99,7 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.monitoring_rubrik');
     }
 
-    public function kelola_nilai(): View
+    public function kelolaNilai(): View
     {
         $data = [
             'header' => 'Kelola Penilaian',
@@ -111,10 +111,10 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.KelolaPenilaianTA', compact('data'));
+        return view('KelolaPenilaianTA.views.kelola_penilaian_ta', compact('data'));
     }
 
-    public function detail_nilai_mahasiswa($kategori): View
+    public function detailNilaiMahasiswa($kategori): View
     {
         $data = [];
         $kategori = Str::title(str_replace('-', ' ', $kategori));
@@ -135,7 +135,7 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.DetailNilaiMahasiswa', compact('data', 'kategori'));
+        return view('KelolaPenilaianTA.views.detail_nilai_mahasiswa', compact('data', 'kategori'));
     }
 
     public function getRekapNilai(): View
@@ -168,7 +168,7 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.RekapitulasiNilai', compact('data'));
+        return view('KelolaPenilaianTA.views.rekapitulasi_nilai', compact('data'));
     }
 
     public function exportExcel(Request $request)

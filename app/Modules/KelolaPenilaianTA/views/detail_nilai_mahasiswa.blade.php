@@ -150,6 +150,10 @@
                 "ordering": true,
                 "info": true,
                 "autoWidth": false,
+                "columnDefs": [
+                    { "searchable": false, "targets": [6, 7, 8, 9, 10] },
+                    { "orderable": false, "targets": [3, 4, 5, 10] }
+                ]
             });
 
             $('#dataTableControls').html($('.dataTables_length'));
