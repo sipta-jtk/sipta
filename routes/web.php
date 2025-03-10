@@ -49,5 +49,7 @@ Route::get('/log-admin', function() {
 });
 
 Route::get('/edit-notif', function() {
-    return view('NotificationAndReminder::NotificationTemplate.notificationTemplate'); // Sesuaikan dengan nama view yang kamu buat
+    return view('NotificationAndReminder::SettingNotification.SettingAwalNotif'); // Sesuaikan dengan nama view yang kamu buat
 });
+
+

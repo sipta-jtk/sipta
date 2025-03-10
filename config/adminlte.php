@@ -369,6 +369,25 @@ return [
             // 'label_color' => 'success',
         ],
         [
+            'text' => 'Azhar Plagiat',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Perencanaan Seminar dan Sidang',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pelanaksanaan Seminar dan Sidang',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
             'text' => 'Pengelolaan dan Penjadwalan Ruangan',
             // 'url' => 'admin/pages',
             'icon' => 'fas fa-home',
