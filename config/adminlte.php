@@ -404,6 +404,14 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
+                    'text' => 'Pengajuan KoTA',
+                    'url' => 'pengajuan-kota',
+                ],
+                [
+                    'text' => 'Detail KoTA',
+                    'url' => 'detail-kota',
+                ],
+                [
                     'text' => 'Mahasiswa',
                     'url' => '#',
                 ],
