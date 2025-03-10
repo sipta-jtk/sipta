@@ -11,6 +11,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {     
     use HasFactory, Notifiable;
+
+    public $timestamps = false;
     
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -23,7 +25,9 @@ class User extends Authenticatable
         'nama',
         'email',
         'password',
-        'role_user'
+        'role_user',
+        'no_whatsapp',
+        'photo'
     ];
 
     protected $hidden = [

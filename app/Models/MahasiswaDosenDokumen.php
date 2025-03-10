@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class MahasiswaDosenDokumen extends Model
 {
-    protected $table = 'MahasiswaDosenDokumen'; // Nama tabel
+    use HasFactory;
+    
+    protected $table = 'mahasiswa_dosen_dokumen';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'nip',
