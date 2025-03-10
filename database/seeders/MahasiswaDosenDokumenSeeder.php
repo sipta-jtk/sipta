@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Mahasiswa;
+use App\Models\MahasiswaDosenDokumen;
 
 class MahasiswaDosenDokumenSeeder extends Seeder
 {
@@ -14,14 +14,14 @@ class MahasiswaDosenDokumenSeeder extends Seeder
     public function run(): void
     {
         MahasiswaDosenDokumen::create([
-            'nip' => '1987654321',
-            'nim' => '2201234567',
+            'nip' => '197312271999031003',
+            'nim' => '221524059',
             'id_dokumen' => 1
         ]);
 
         MahasiswaDosenDokumen::create([
-            'nip' => '1987654322',
-            'nim' => '2201234568',
+            'nip' => '198502102015042001',
+            'nim' => '221524049',
             'id_dokumen' => 2
         ]);
     }

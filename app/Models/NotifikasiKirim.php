@@ -13,6 +13,8 @@ class NotifikasiKirim extends Model
 
     protected $primaryKey = 'id_kirim'; // Primary key
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id_notifikasi',
         'username',

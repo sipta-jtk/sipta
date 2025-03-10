@@ -24,9 +24,9 @@ class NotifikasiSeeder extends Seeder
 
         Notifikasi::create([
             'tipe_notifikasi' => 'peringatan',
-            'judul' => 'Batas Pembayaran',
-            'isi_notifikasi' => 'Jangan lupa untuk membayar tagihan sebelum 10 Maret!',
-            'sumber_notifikasi' => 'Finance',
+            'judul' => 'Reminder Pengumpulan Progres',
+            'isi_notifikasi' => 'Jangan lupa untuk menyelesaikan progres kemarin',
+            'sumber_notifikasi' => 'Pembimbing TA',
             'created_at' => Carbon::now()
         ]);
     }

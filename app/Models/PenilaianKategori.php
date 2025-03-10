@@ -9,6 +9,8 @@ class PenilaianKategori extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'penilaian_kategori';
 
     protected $fillable = [
@@ -17,5 +19,5 @@ class PenilaianKategori extends Model
         'nilai_kategori'
     ];
 
-    
+
 }
