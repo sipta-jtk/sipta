@@ -301,6 +301,15 @@ return [
     'menu' => [
         // Navbar items:
         [
+            'text' => '',  // Hapus teks "Notifications"
+            'url' => '#',
+            'icon' => 'fas fa-bell',  // Ikon lonceng
+            'topnav_right' => true,  // Menampilkan di navbar kanan
+            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
+            'label_color' => 'danger',
+            'id' => 'notificationBell',
+        ],
+        [
             'type' => 'navbar-search',
             'text' => 'search',
             'topnav_right' => true,
@@ -444,6 +453,23 @@ return [
                 //     'url' => '#',
                 // ],
             ],
+        ],
+        [
+            'text' => 'Notifikasi dan Reminder',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Edit Template Notifikasi',
+                    'url' => 'edit-notif',                    
+                ],
+                [
+                    'text' => 'Log Notifikasi Admin',
+                    'url' => 'log-admin',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
         ],
         // ['header' => 'labels'],
         // [
