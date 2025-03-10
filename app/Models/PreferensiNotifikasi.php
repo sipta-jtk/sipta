@@ -11,6 +11,7 @@ class PreferensiNotifikasi extends Model
 
     protected $table = 'preferensi_notifikasi';
     protected $primaryKey = 'id_preferensi';
+    public $timestamps = false;
 
     protected $fillable = [
         'username',

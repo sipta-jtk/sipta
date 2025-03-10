@@ -9,6 +9,8 @@ class PenilaianRubrik extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'penilaian_rubrik';
 
     protected $fillable = [
