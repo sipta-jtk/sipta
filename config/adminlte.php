@@ -371,7 +371,7 @@ return [
                 ],
                 [
                     'text' => 'Penjadwalan Ruangan',
-                    'url' => 'admin/pages',
+                    'url' => 'penjadwalan-ruangan',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
