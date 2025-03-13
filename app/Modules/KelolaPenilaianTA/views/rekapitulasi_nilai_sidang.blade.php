@@ -1,15 +1,15 @@
 @extends('adminlte::page')
 
-@section('title', 'Rekapitulasi Nilai')
+@section('title', 'Rekapitulasi Nilai Sidang')
 
 @section('content_header')
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="">Monitoring Penilaian</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Rekapitulasi Nilai</li>
+            <li class="breadcrumb-item active" aria-current="page">Rekapitulasi Nilai Sidang</li>
         </ol>
     </nav>
-    <h1>Rekapitulasi Nilai</h1>
+    <h1>Rekapitulasi Nilai Sidang</h1>
 @stop
 
 @section('content')
@@ -36,37 +36,36 @@
 
         {{-- Tabel Scrollable --}}
         <div class="table-container">
-            <table id="alokasiTable" class="table text-center">
+            <table id="nilaiTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="2" class="align-middle" style="width: 3%;">No</th>
-                        <th rowspan="2" class="align-middle" style="width: 5%;">NIM</th>
+                        <th rowspan="2" class="align-middle" style="width: 1%;">No</th>
+                        <th rowspan="2" class="align-middle" style="width: 3%;">NIM</th>
                         <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
                         <th rowspan="2" class="align-middle" style="width: 5%;">Prodi</th>
                         <th rowspan="2" class="align-middle" style="width: 2%;">Kelas</th>
                         <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
-                        <th colspan="3" style="width: 10%;">Seminar 2</th>
-                        <th colspan="3" style="width: 10%;">Seminar 3</th>
-                        <th colspan="3" style="width: 10%;">Sidang Akhir</th>
-                        <th colspan="2" style="width: 10%;">Dosen Pembimbing</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">UTS</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">UAS</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">Lain-Lain</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">Nilai Akhir</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">Predikat</th>
+                        <th colspan="4" style="width: 10%;">Seminar 2</th>
+                        <th colspan="4" style="width: 10%;">Seminar 3</th>
+                        <th colspan="4" style="width: 10%;">Sidang Akhir</th>
+                        <th colspan="3" style="width: 10%;">Dosen Pembimbing</th>
                     </tr>
                     <tr class="bg-secondary text-white">
                         <th style="width: 2%;">P1</th>
                         <th style="width: 2%;">P2</th>
                         <th style="width: 2%;">P3</th>
+                        <th style="width: 2%;">Rata-rata</th>
                         <th style="width: 2%;">P1</th>
                         <th style="width: 2%;">P2</th>
                         <th style="width: 2%;">P3</th>
+                        <th style="width: 2%;">Rata-rata</th>
                         <th style="width: 2%;">P1</th>
                         <th style="width: 2%;">P2</th>
                         <th style="width: 2%;">P3</th>
+                        <th style="width: 2%;">Rata-rata</th>
                         <th style="width: 2%;">PM1</th>
                         <th style="width: 2%;">PM2</th>
+                        <th style="width: 2%;">Rata-rata</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,25 +77,21 @@
                             <td class="align-middle">{{ $row['prodi'] }}</td>
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>
-                            @foreach (['seminar2_penguji1', 'seminar2_penguji2', 'seminar2_penguji3', 'seminar3_penguji1', 'seminar3_penguji2', 'seminar3_penguji3', 'sidang_penguji1', 'sidang_penguji2', 'sidang_penguji3', 'pembimbing1', 'pembimbing2'] as $field)
-                                <td class="align-middle position-relative">
-                                    @if ($row[$field] == -1)
-                                        <span class="text-danger cursor-pointer" onmouseover="showTooltip('tooltip-{{ $field }}-{{ $index }}')" onmouseout="hideTooltip('tooltip-{{ $field }}-{{ $index }}')">
-                                            {{ $row[$field] }}
-                                        </span>
-                                        <div id="tooltip-{{ $field }}-{{ $index }}" class="tooltip-box d-none position-absolute bg-white border p-3 shadow rounded text-left">
-                                            <strong>Perhatian!</strong> Dosen belum menginput nilai.
-                                        </div>
-                                    @else
-                                        {{ $row[$field] }}
-                                    @endif
-                                </td>
-                            @endforeach
-                            <td class="align-middle">{{ $row['uts'] }}</td>
-                            <td class="align-middle">{{ $row['uas'] }}</td>
-                            <td class="align-middle">{{ $row['lain_lain'] }}</td>
-                            <td class="align-middle">{{ $row['nilai_akhir'] }}</td>
-                            <td class="align-middle">{{ $row['predikat'] }}</td>
+                            <td class="align-middle">{{ $row['seminar2Penguji1'] }}</td>
+                            <td class="align-middle">{{ $row['seminar2Penguji2'] }}</td>
+                            <td class="align-middle">{{ $row['seminar2Penguji3'] }}</td>
+                            <td class="align-middle">{{ $row['rataSeminar2'] }}</td>
+                            <td class="align-middle">{{ $row['seminar3Penguji1'] }}</td>
+                            <td class="align-middle">{{ $row['seminar3Penguji2'] }}</td>
+                            <td class="align-middle">{{ $row['seminar3Penguji3'] }}</td>
+                            <td class="align-middle">{{ $row['rataSeminar3'] }}</td>
+                            <td class="align-middle">{{ $row['sidangPenguji1'] }}</td>
+                            <td class="align-middle">{{ $row['sidangPenguji2'] }}</td>
+                            <td class="align-middle">{{ $row['sidangPenguji3'] }}</td>
+                            <td class="align-middle">{{ $row['rataSidang'] }}</td>
+                            <td class="align-middle">{{ $row['pembimbing1'] }}</td>
+                            <td class="align-middle">{{ $row['pembimbing2'] }}</td>
+                            <td class="align-middle">{{ $row['rataPembimbing'] }}</td>
                         </tr>
                         
                     @endforeach
@@ -191,7 +186,7 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            var table = $('#alokasiTable').DataTable({
+            var table = $('#nilaiTable').DataTable({
                 "paging": true,
                 "lengthMenu": [10, 25, 50, 100],
                 "pageLength": 10,

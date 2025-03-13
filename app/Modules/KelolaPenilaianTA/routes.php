@@ -4,10 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
 
 Route::group(['prefix' => 'KelolaPenilaianTA'], function () {
-    Route::get('/fomulir-penilaian', [KelolaPenilaianTAController::class, 'index']);
+    Route::get('/fomulir-penilaian', [KelolaPenilaianTAController::class, 'indexForm']);
     Route::get('/formulir-penilaian/create', [KelolaPenilaianTAController::class, 'create'])->name('formulir-penilaian.create');
     Route::get('/formulir-penilaian/detail', function () {
-        return view('KelolaPenilaianTA.views.DetailFTA011');
+        return view('KelolaPenilaianTA.views.detail_fta_011');
     })->name('formulir-penilaian.detail');
     Route::get('/formulir-penilaian/edit', function () {
         return view('KelolaPenilaianTA.views.UbahFormulirTA');
@@ -20,8 +20,8 @@ Route::group(['prefix' => 'KelolaPenilaianTA'], function () {
     Route::get('/monitoring-rubrik', [KelolaPenilaianTAController::class, 'indexMonitoringRubrik']);
     Route::get('/pengelolaan-nilai', [KelolaPenilaianTAController::class, 'kelolaNilai']);
     Route::get('/detail/{kategori}', [KelolaPenilaianTAController::class, 'detailNilaiMahasiswa']);
-    Route::get('/rekapitulasi-nilai', [KelolaPenilaianTAController::class, 'getRekapNilai']);
-    Route::post('/rekapitulasi-nilai/export', [KelolaPenilaianTAController::class, 'exportExcel'])->name('rekapitulasi-nilai.export');
+    Route::get('/rekapitulasi-nilai', [KelolaPenilaianTAController::class, 'getRekapNilaiSidang']);
+    Route::post('/rekapitulasi-nilai/export', [KelolaPenilaianTAController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi-nilai.export');
     Route::get('/rekapitulasi/export', [KelolaPenilaianTAController::class, 'exportExcel'])->name('rekapitulasi.export');
     Route::get('/masukan-seminar-1', [KelolaPenilaianTAController::class, 'pengisianMasukanSeminar1']);
     Route::get('/nilai-seminar-II', [KelolaPenilaianTAController::class, 'pengisianNilaiSeminarII']);
