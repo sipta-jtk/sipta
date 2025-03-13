@@ -74,8 +74,7 @@
               <tr class="bg-dark text-white" style="text-align: center">
                 <th>Nama Kategori</th>
                 <th>Rubrik</th>
-                <th>Status Penilaian</th>
-                <th>Detail</th>
+                <th>Feedback</th>
               </tr>
             </thead>
             <tbody>
@@ -83,9 +82,6 @@
                     <td style="vertical-align: middle; white-space: nowrap;">Seminar 1</td>
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        <span class="badge bg-success px-3 py-2 rounded-pill">Sudah Dinilai</span>
                     </td>
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
@@ -96,11 +92,6 @@
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
                     </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        <span class="badge px-3 py-2 rounded-pill" style="background-color: #ffc107; color: white;">
-                            Sedang Dinilai
-                        </span>
-                    </td>
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
                     </td>
@@ -109,9 +100,6 @@
                     <td style="vertical-align: middle; white-space: nowrap;">Seminar 3</td>
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        <span class="badge bg-gray px-3 py-2 rounded-pill">Belum Dinilai</span>
                     </td>
                     <td style="text-align: center;">
                         <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
