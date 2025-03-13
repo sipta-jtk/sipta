@@ -189,7 +189,7 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
     
-        return view('KelolaPenilaianTA.views.rekapitulasi_nilai_sidang', compact('data'));
+        return view('KelolaPenilaianTA.views.rekapitulasi-nilai.rekapitulasi_nilai_sidang', compact('data'));
     }
     
 
@@ -284,7 +284,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_1', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1', compact('mahasiswa'));
     }
 
     public function pengisianNilaiSeminarII(): View
@@ -365,7 +365,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_seminar_II', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('mahasiswa', 'penilaian'));
     }
 
     public function pengisianMasukanSeminarII(): View
@@ -384,7 +384,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_II', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('mahasiswa'));
     }
 
     public function pengisianNilaiSeminarIII(): View
@@ -482,7 +482,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
     }
 
     public function pengisianMasukanSeminarIII(): View
@@ -599,7 +599,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian'));
     }
 
     public function pengisianMasukanSidangAkhir(): View
@@ -618,7 +618,7 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
     }
 
     public function pengisianNilaiTA(): View
@@ -677,6 +677,6 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
     }
 }

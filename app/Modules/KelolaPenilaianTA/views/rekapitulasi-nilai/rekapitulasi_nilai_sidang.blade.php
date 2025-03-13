@@ -113,115 +113,12 @@
 @stop
 
 @section('css')
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/rekapitulasi_nilai.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <style>
-        .table-container {
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            position: relative;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .table-container::-webkit-scrollbar {
-            display: none; /* Untuk Chrome, Safari, dan Opera */
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ccc !important; /* Tambahkan border untuk outline */
-            padding: 10px;
-            text-align: center;
-        }
-
-        thead {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-        }
-
-        thead th {
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border-bottom: 2px solid #fff;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f8f9fa; /* Warna striping */
-        }
-
-        tbody tr:hover {
-            background-color: #e2e6ea;
-        }
-
-        .tooltip-box {
-            width: 280px;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: white;
-            border: 1px solid #ccc;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            font-size: 14px;
-            line-height: 1.5;
-            left: 0;
-            transform: translateX(0);
-            top: 130%;
-            z-index: 10;
-        }
-    </style>
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var table = $('#nilaiTable').DataTable({
-                "paging": true,
-                "lengthMenu": [10, 25, 50, 100],
-                "pageLength": 10,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
-            $('#filterProdi').on('change', function () {
-                table.column(3).search(this.value).draw();
-            });
-
-            // Filter Kelas
-            $('#filterKelas').on('change', function () {
-                table.column(4).search(this.value).draw();
-            });
-            $('#dataTableControls').html($('.dataTables_length'));
-            $('#searchBox').html($('.dataTables_filter'));
-        });
-
-        function showTooltip(id) {
-            document.getElementById(id).classList.remove('d-none');
-        }
-
-        function hideTooltip(id) {
-            document.getElementById(id).classList.add('d-none');
-        }
-
-        document.getElementById("exportExcel").addEventListener("click", function () {
-            let filterProdi = document.getElementById("filterProdi").value;
-            let filterKelas = document.getElementById("filterKelas").value;
-            
-            let url = "{{ route('rekapitulasi.export') }}?prodi=" + filterProdi + "&kelas=" + filterKelas;
-            window.location.href = url;
-        });
-
-    </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/rekapitulasi_nilai.js') }}"></script>
 @stop

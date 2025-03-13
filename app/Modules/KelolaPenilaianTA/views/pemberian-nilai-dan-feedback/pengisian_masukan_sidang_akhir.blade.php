@@ -119,69 +119,12 @@
 @section('css')
     <!-- Trix Editor Styling -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
-    <style>
-        /* Styling untuk Trix Editor */
-        trix-editor {
-            min-height: 150px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 12px;
-            font-size: 14px;
-        }
-        .trix-button-group {
-            background: white;
-        }
-
-        .heading-spacing {
-            margin-top: 50px;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-
-        /* Perkecil ukuran input datetime */
-        .date-small {
-            width: 50%;
-            max-width: 250px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 @stop
 
 @section('js')
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tanggalInput = document.getElementById("tanggal_catatan");
-            const hariPerbaikan = document.getElementById("hari_perbaikan");
-            const tanggalPerbaikan = document.getElementById("tanggal_perbaikan");
-
-            // Fungsi untuk mengubah tanggal menjadi format hari & tanggal
-            function formatTanggal(dateString) {
-                if (!dateString) return { hari: "________", tanggal: "________" };
-
-                const hariList = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-                const bulanList = [
-                    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-                ];
-
-                let date = new Date(dateString);
-                let hari = hariList[date.getDay()];
-                let tanggal = date.getDate();
-                let bulan = bulanList[date.getMonth()];
-                let tahun = date.getFullYear();
-
-                return { hari, tanggal: `${tanggal} ${bulan} ${tahun}` };
-            }
-
-            // Event listener ketika user memilih tanggal
-            tanggalInput.addEventListener("change", function () {
-                let hasilFormat = formatTanggal(this.value);
-                hariPerbaikan.textContent = hasilFormat.hari;
-                tanggalPerbaikan.textContent = hasilFormat.tanggal;
-            });
-        });
-    </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
 @stop
