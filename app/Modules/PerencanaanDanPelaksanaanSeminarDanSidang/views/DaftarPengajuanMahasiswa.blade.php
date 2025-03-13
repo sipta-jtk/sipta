@@ -100,42 +100,6 @@
                 }
             });
 
-            // Fungsi pencarian berdasarkan urutan huruf yang sesuai di seluruh kolom
-            function filterTable() {
-                let inputValue = $('#search-input').val().toLowerCase();
-
-                table.rows().every(function() {
-                    let rowData = this.data();
-                    let allFields = `${rowData.tanggal} ${rowData.kelompok} ${rowData.judul} ${rowData.jenis_pengajuan}`.toLowerCase();
-
-                    // Cek apakah inputValue muncul dengan urutan yang benar dalam salah satu kolom
-                    if (inputValue.length < 3 || allFields.indexOf(inputValue) !== -1) {
-                        $(this.node()).show();
-                    } else {
-                        $(this.node()).hide();
-                    }
-                });
-            }
-
-            // Debounce pencarian untuk menghindari spam saat mengetik
-            let delayTimer;
-            $('#search-input').on('keyup', function() {
-                clearTimeout(delayTimer);
-                delayTimer = setTimeout(() => {
-                    filterTable();
-                }, 300);
-            });
-
-            // Event untuk tombol "Search"
-            $('#search-btn').on('click', function() {
-                let inputValue = $('#search-input').val();
-                if (inputValue.length >= 3) {
-                    filterTable();
-                } else {
-                    alert("Masukkan minimal 3 karakter untuk mencari!");
-                }
-            });
-
             $('.filter-status[data-filter=""]').removeClass('btn-secondary').addClass('btn-success');
 
             // Fungsi untuk mengatur warna tombol filter status yang aktif
