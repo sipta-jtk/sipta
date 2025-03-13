@@ -58,21 +58,21 @@
 
             <!-- Dokumen -->
             <div class="form-group">
-                <label for="dokumen">Dokumen</label>
+                <label for="dokumen">Masukan untuk Dokumen</label>
                 <input id="dokumen" type="hidden" name="dokumen">
                 <trix-editor input="dokumen"></trix-editor>
             </div>
 
             <!-- Presentasi -->
             <div class="form-group">
-                <label for="presentasi">Presentasi</label>
+                <label for="presentasi">Masukan untuk Presentasi</label>
                 <input id="presentasi" type="hidden" name="presentasi">
                 <trix-editor input="presentasi"></trix-editor>
             </div>
 
             <!-- Penguasaan Topik -->
             <div class="form-group">
-                <label for="penguasaan">Penguasaan Topik</label>
+                <label for="penguasaan">Masukan untuk Penguasaan Topik</label>
                 <input id="penguasaan" type="hidden" name="penguasaan">
                 <trix-editor input="penguasaan"></trix-editor>
             </div>

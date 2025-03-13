@@ -87,21 +87,21 @@
 
             <!-- Deskripsi Topik -->
             <div class="form-group">
-                <label for="deskripsi_topik">Deskripsi Topik</label>
+                <label for="deskripsi_topik">Evaluasi untuk Deskripsi Topik</label>
                 <input id="deskripsi_topik" type="hidden" name="deskripsi_topik">
                 <trix-editor input="deskripsi_topik"></trix-editor>
             </div>
 
             <!-- Problem Definition -->
             <div class="form-group">
-                <label for="problem_definition">Problem Definition</label>
+                <label for="problem_definition">Evaluasi untuk Problem Definition</label>
                 <input id="problem_definition" type="hidden" name="problem_definition">
                 <trix-editor input="problem_definition"></trix-editor>
             </div>
 
             <!-- Metodologi Penyelesaian TA -->
             <div class="form-group">
-                <label for="metodologi">Metodologi Penyelesaian TA</label>
+                <label for="metodologi">Evaluasi untuk Metodologi Penyelesaian TA</label>
                 <input id="metodologi" type="hidden" name="metodologi">
                 <trix-editor input="metodologi"></trix-editor>
             </div>
