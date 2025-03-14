@@ -55,5 +55,4 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     
 });
 
-// ================= HALAMAN UTAMA KELOLA PENILAIAN TA =================
 Route::get('/KelolaPenilaianTA', [KelolaPenilaianTAController::class, 'index']);
