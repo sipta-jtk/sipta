@@ -20,3 +20,10 @@ trix-editor {
     width: 50%;
     max-width: 250px;
 }
+.sticky-row th {
+    position: sticky;
+    top: 0;
+    background-color: #343a40;
+    color: white;
+    z-index: 1020;
+}
