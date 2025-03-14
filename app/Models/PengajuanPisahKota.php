@@ -9,11 +9,10 @@ class PengajuanPisahKota extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $table = 'pengajuan_pisah_kota';
 
     protected $primaryKey = 'id_pengajuan';
+    public $timestamps = false;
 
     protected $fillable = [
         'nim',
