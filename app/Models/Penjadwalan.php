@@ -8,11 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Penjadwalan extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
-
     protected $table = 'penjadwalan';
     protected $primaryKey = 'id_penjadwalan';
+    public $timestamps = false;
 
     protected $fillable = [
         'sesi',

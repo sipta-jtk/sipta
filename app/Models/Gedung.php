@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Gedung extends Model
 {
     protected $table = 'gedung';
-    public $timestamps = false;
     protected $primaryKey = 'kode_gedung';
+    public $timestamps = false;
+
     protected $fillable = ['nama_gedung'];
 }

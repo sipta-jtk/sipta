@@ -21,11 +21,15 @@ class DatabaseSeeder extends Seeder
         $this->call(PeriodePengajuanSeeder::class);
         $this->call(SubKategoriSeeder::class);
         $this->call(AmbangBatasSeeder::class);
+        $this->call(KategoriArtefak::class);
+        $this->call(TimelineSeeder::class);
 
         // Second batch: First level dependencies
+        $this->call(ArtefakSeeder::class);
         $this->call(DosenSeeder::class); // depends on User, KBK
         $this->call(RuanganSeeder::class); // depends on Gedung
         $this->call(KotaSeeder::class); // depends on Bidang
+        $this->call(TimelineArtefakSeeder::class); // depends on Timeline, KategoriArtefak
 
         // Third batch: Second level dependencies
         $this->call(MahasiswaSeeder::class); // depends on User, Prodi, Kota
@@ -34,6 +38,7 @@ class DatabaseSeeder extends Seeder
         $this->call(KetertarikanBidangSeeder::class); // depends on Dosen, Bidang
         $this->call(RuangFasilitasSeeder::class); // depends on Fasilitas, Ruangan
         $this->call(LabelSeeder::class); // depends on Kota
+        $this->call(KotaUserSeeder::class); // depends on Kota, User
 
         // Fourth batch: Higher level dependencies
         $this->call(PengajuanPembimbingSeeder::class); // depends on Kota
