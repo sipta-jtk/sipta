@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class KelolaPenilaianTAController extends Controller
 {
-    public function indexForm(): View
+    public function formulirPenilaian(): View
     {
         for ($i = 1; $i <= 100; $i++) {
             $data = [
@@ -40,20 +40,15 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.formulir_penilaian_ta', compact('data'));
+        return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
-    public function index(): View
+    public function tambahFormulir(): View
     {
-        return view('KelolaPenilaianTA.views.view');
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_formulir_penilaian');
     }
 
-    public function create(): View
-    {
-        return view('KelolaPenilaianTA.views.tambah_formulir_penilaian');
-    }
-
-    public function edit()
+    public function ubahFormulir()
     {
         // Data dummy untuk sementara
         $formulir = (object) [
@@ -76,29 +71,43 @@ class KelolaPenilaianTAController extends Controller
             ],
         ];
 
-        return view('KelolaPenilaianTA.views.ubah_formulir_ta', compact('formulir'));
+        return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta', compact('formulir'));
     }
 
-    public function update(Request $request)
+    public function updateFormulir(Request $request)
     {
         return redirect()->route('formulir-penilaian.index')->with('success', 'Formulir penilaian berhasil diperbarui.');
     }
 
-    public function indexMonitoringMahasiswa(): View
+    /**
+     * Menampilkan halaman monitoring nilai mahasiswa
+     */
+    public function monitoringMahasiswa(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_mahasiswa');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa');
     }
 
-    public function indexMonitoringFeedback(): View
+    /**
+     * Menampilkan halaman monitoring feedback
+     * 
+     */
+    public function monitoringFeedback(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_feedback');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_feedback');
     }
 
-    public function indexMonitoringRubrik(): View
+    /**
+     * Menampilkan halaman monitoring rubrik
+     */
+    public function monitoringRubrik(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_rubrik');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik');
     }
 
+    /**
+     * Menampilkan halaman kelola penilaian
+     * 
+     */
     public function kelolaNilai(): View
     {
         $data = [
@@ -111,9 +120,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.kelola_penilaian_ta', compact('data'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('data'));
     }
 
+    /**
+     * Menampilkan halaman detail nilai mahasiswa
+     * 
+     */
     public function detailNilaiMahasiswa($kategori): View
     {
         $data = [];
@@ -135,95 +148,143 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.detail_nilai_mahasiswa', compact('data', 'kategori'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('data', 'kategori'));
     }
-
-    public function getRekapNilai(): View
+    
+    /**
+     * Menampilkan halaman rekapitulasi nilai
+     * 
+     */
+    public function getRekapNilaiSidang(): View
     {
         $data = [];
-
+    
         for ($i = 1; $i <= 100; $i++) {
+            $seminar2Penguji1 = rand(50, 100);
+            $seminar2Penguji2 = rand(50, 100);
+            $seminar2Penguji3 = rand(50, 100);
+            $seminar3Penguji1 = rand(50, 100);
+            $seminar3Penguji2 = rand(50, 100);
+            $seminar3Penguji3 = rand(50, 100);
+            $sidangPenguji1 = rand(50, 100);
+            $sidangPenguji2 = rand(50, 100);
+            $sidangPenguji3 = rand(50, 100);
+            $pembimbing1 = rand(50, 100);
+            $pembimbing2 = rand(50, 100);
+    
+            // Menghitung rata-rata nilai
+            $rataSeminar2 = round(($seminar2Penguji1 + $seminar2Penguji2 + $seminar2Penguji3) / 3, 2);
+            $rataSeminar3 = round(($seminar3Penguji1 + $seminar3Penguji2 + $seminar3Penguji3) / 3, 2);
+            $rataSidang = round(($sidangPenguji1 + $sidangPenguji2 + $sidangPenguji3) / 3, 2);
+            $rataPembimbing = round(($pembimbing1 + $pembimbing2) / 2, 2);
+    
             $data[] = [
                 'nim' => "221524" . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nama' => "Nama Mahasiswa #" . $i,
                 'prodi' => (rand(0, 1) == 0) ? "D3-Teknik Informatika" : "D4-Teknik Informatika",
                 'kelas' => (rand(0, 1) == 0) ? "4A" : "4B",
                 'kelompok' => "Kelompok " . rand(1, 5),
-                'seminar2_penguji1' => rand(50, 100),
-                'seminar2_penguji2' => rand(50, 100),
-                'seminar2_penguji3' => -1,
-                'seminar3_penguji1' => rand(50, 100),
-                'seminar3_penguji2' => rand(50, 100),
-                'seminar3_penguji3' => rand(50, 100),
-                'sidang_penguji1' => rand(50, 100),
-                'sidang_penguji2' => rand(50, 100),
-                'sidang_penguji3' => rand(50, 100),
-                'pembimbing1' => rand(50, 100),
-                'pembimbing2' => rand(50, 100),
-                'uts' => rand(50, 100),
-                'uas' => rand(50, 100),
-                'lain_lain' => rand(50, 100),
-                'nilai_akhir' => rand(50, 100),
-                'predikat' => ["A", "B", "C", "D", "E"][rand(0, 4)]
+                'seminar2Penguji1' => $seminar2Penguji1,
+                'seminar2Penguji2' => $seminar2Penguji2,
+                'seminar2Penguji3' => $seminar2Penguji3,
+                'rataSeminar2' => $rataSeminar2, // Menambahkan rata-rata seminar 2
+                'seminar3Penguji1' => $seminar3Penguji1,
+                'seminar3Penguji2' => $seminar3Penguji2,
+                'seminar3Penguji3' => $seminar3Penguji3,
+                'rataSeminar3' => $rataSeminar3, // Menambahkan rata-rata seminar 3
+                'sidangPenguji1' => $sidangPenguji1,
+                'sidangPenguji2' => $sidangPenguji2,
+                'sidangPenguji3' => $sidangPenguji3,
+                'rataSidang' => $rataSidang, // Menambahkan rata-rata sidang akhir
+                'pembimbing1' => $pembimbing1,
+                'pembimbing2' => $pembimbing2,
+                'rataPembimbing' => $rataPembimbing, // Menambahkan rata-rata pembimbing
             ];
         }
-
-        return view('KelolaPenilaianTA.views.rekapitulasi_nilai', compact('data'));
+    
+        return view('KelolaPenilaianTA.views.rekapitulasi-nilai.rekapitulasi_nilai_sidang', compact('data'));
     }
+    
 
-    public function exportExcel(Request $request)
+
+    /**
+     * Export data rekapitulasi nilai ke dalam file excel
+     * 
+     */
+    public function exportExcelNilaiSidang(Request $request)
     {
         // Ambil filter dari request
         $filterProdi = $request->query('prodi');
         $filterKelas = $request->query('kelas');
-
+    
         $data = [];
         for ($i = 1; $i <= 100; $i++) {
+            $seminar2Penguji1 = rand(50, 100);
+            $seminar2Penguji2 = rand(50, 100);
+            $seminar2Penguji3 = rand(50, 100);
+            $seminar3Penguji1 = rand(50, 100);
+            $seminar3Penguji2 = rand(50, 100);
+            $seminar3Penguji3 = rand(50, 100);
+            $sidangPenguji1 = rand(50, 100);
+            $sidangPenguji2 = rand(50, 100);
+            $sidangPenguji3 = rand(50, 100);
+            $pembimbing1 = rand(50, 100);
+            $pembimbing2 = rand(50, 100);
+    
+            // Menghitung rata-rata nilai
+            $rataSeminar2 = round(($seminar2Penguji1 + $seminar2Penguji2 + $seminar2Penguji3) / 3, 2);
+            $rataSeminar3 = round(($seminar3Penguji1 + $seminar3Penguji2 + $seminar3Penguji3) / 3, 2);
+            $rataSidang = round(($sidangPenguji1 + $sidangPenguji2 + $sidangPenguji3) / 3, 2);
+            $rataPembimbing = round(($pembimbing1 + $pembimbing2) / 2, 2);
+    
             $data[] = [
                 'nim' => "221524" . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nama' => "Nama Mahasiswa #" . $i,
                 'prodi' => (rand(0, 1) == 0) ? "D3-Teknik Informatika" : "D4-Teknik Informatika",
                 'kelas' => (rand(0, 1) == 0) ? "4A" : "4B",
                 'kelompok' => "Kelompok " . rand(1, 5),
-                'seminar2_penguji1' => rand(50, 100),
-                'seminar2_penguji2' => rand(50, 100),
-                'seminar2_penguji3' => -1,
-                'seminar3_penguji1' => rand(50, 100),
-                'seminar3_penguji2' => rand(50, 100),
-                'seminar3_penguji3' => rand(50, 100),
-                'sidang_penguji1' => rand(50, 100),
-                'sidang_penguji2' => rand(50, 100),
-                'sidang_penguji3' => rand(50, 100),
-                'pembimbing1' => rand(50, 100),
-                'pembimbing2' => rand(50, 100),
-                'uts' => rand(50, 100),
-                'uas' => rand(50, 100),
-                'lain_lain' => rand(50, 100),
-                'nilai_akhir' => rand(50, 100),
-                'predikat' => ["A", "B", "C", "D", "E"][rand(0, 4)]
+                'seminar2Penguji1' => $seminar2Penguji1,
+                'seminar2Penguji2' => $seminar2Penguji2,
+                'seminar2Penguji3' => $seminar2Penguji3,
+                'rataSeminar2' => $rataSeminar2,
+                'seminar3Penguji1' => $seminar3Penguji1,
+                'seminar3Penguji2' => $seminar3Penguji2,
+                'seminar3Penguji3' => $seminar3Penguji3,
+                'rataSeminar3' => $rataSeminar3,
+                'sidangPenguji1' => $sidangPenguji1,
+                'sidangPenguji2' => $sidangPenguji2,
+                'sidangPenguji3' => $sidangPenguji3,
+                'rataSidang' => $rataSidang,
+                'pembimbing1' => $pembimbing1,
+                'pembimbing2' => $pembimbing2,
+                'rataPembimbing' => $rataPembimbing,
             ];
         }
-
-        // Terapkan filter
+    
+        // Terapkan filter jika ada
         if ($filterProdi) {
             $data = array_filter($data, function ($item) use ($filterProdi) {
                 return $item['prodi'] == $filterProdi;
             });
         }
-
+    
         if ($filterKelas) {
             $data = array_filter($data, function ($item) use ($filterKelas) {
                 return $item['kelas'] == $filterKelas;
             });
         }
-
+    
         // Ubah ke array agar bisa diekspor
         $data = array_values($data);
-
+    
         return Excel::download(new RekapitulasiNilaiExport($data), 'rekapitulasi_nilai.xlsx');
     }
+    
 
-
+    /**
+     * Menampilkan halaman pemberian nilai seminar 1
+     * 
+     */
     public function pengisianMasukanSeminar1(): View
     {
         // Data Mahasiswa
@@ -240,9 +301,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_1', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai seminar 2
+     * 
+     */
     public function pengisianNilaiSeminarII(): View
     {
         // Data Mahasiswa
@@ -321,9 +386,14 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_seminar_II', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('mahasiswa', 'penilaian'));
     }
 
+
+    /**
+     * Menampilkan halaman pemberian masukan seminar 2
+     * 
+     */
     public function pengisianMasukanSeminarII(): View
     {
         // Data Mahasiswa
@@ -340,9 +410,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_II', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai seminar 3
+     * 
+     */
     public function pengisianNilaiSeminarIII(): View
     {
         // Data Mahasiswa
@@ -438,9 +512,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
     }
 
+    /**
+     * Menampilkan halaman pemberian masukan seminar 3
+     * 
+     */
     public function pengisianMasukanSeminarIII(): View
     {
         // Data Mahasiswa
@@ -457,9 +535,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_III', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai sidang akhir
+     * 
+     */
     public function pengisianNilaiSidangAkhir(): View
     {
         // Data Mahasiswa
@@ -555,9 +637,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian'));
     }
 
+    /**
+     * Menampilkan halaman pemberian masukan sidang akhir
+     * 
+     */
     public function pengisianMasukanSidangAkhir(): View
     {
         // Data Mahasiswa
@@ -574,9 +660,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai tugas akhir
+     * 
+     */
     public function pengisianNilaiTA(): View
     {
         // Data Mahasiswa
@@ -633,6 +723,6 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
     }
 }

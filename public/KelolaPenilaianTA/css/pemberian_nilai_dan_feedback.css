@@ -1,0 +1,22 @@
+trix-editor {
+    min-height: 150px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 14px;
+}
+.trix-button-group {
+    background: white;
+}
+
+.heading-spacing {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.date-small {
+    width: 50%;
+    max-width: 250px;
+}

@@ -1,14 +1,51 @@
 services:
-  sipta-mysql:
+  app:
+    build:
+      context: .
+      dockerfile: Docker/dockerfile/app.Dockerfile.dev
+    container_name: sipta-app-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - /var/www/vendor
+    depends_on:
+      - cache
+      - database
+    ports:
+      - "8000:8000"
+    networks:
+      - sipta-dev
+
+  cache:
+    image: redis:alpine
+    container_name: cache-dev
+    restart: unless-stopped
+    networks:
+      - sipta-dev
+
+  database:
     image: mysql:8.0
-    container_name: sipta-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    container_name: sipta-db-dev
+    restart: unless-stopped
     ports:
       - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sipta-dev
+
+networks:
+  sipta-dev:
+    driver: bridge
 
 volumes:
-  db-data: ~
+  db-data:
