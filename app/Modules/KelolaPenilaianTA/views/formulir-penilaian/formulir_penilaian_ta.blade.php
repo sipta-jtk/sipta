@@ -21,7 +21,7 @@
     <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Daftar Formulir Penilaian TA</h3>
-            <a href="{{ route('formulir-penilaian.tambah-formulir') }}" class="btn btn-dark">
+            <a href="{{ route('formulir-penilaian.tambah-aspek-formulir') }}" class="btn btn-dark">
                 <i class="fa-solid fa-plus"></i> Tambah
             </a>
         </div>
