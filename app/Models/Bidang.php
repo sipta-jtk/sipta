@@ -8,6 +8,7 @@ class Bidang extends Model
 {
     protected $table = 'bidang';
     protected $primaryKey = 'id_bidang';
+
     public $timestamps = false;
 
     protected $fillable = [

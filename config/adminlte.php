@@ -382,6 +382,28 @@ return [
             'text' => 'Pengelolaan Penilaian',
             'url' => '#',
             'icon' => 'fas fa-scroll',
+            'submenu' => [
+                [
+                    'text' => 'Monitoring Penilaian Mahasiswa',
+                    'url' => 'kelola-penilaian-ta/monitoring/mahasiswa',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Kelola Formulir Penilaian',
+                    'url' => 'kelola-penilaian-ta/formulir-penilaian',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengelolaan Nilai',
+                    'url' => 'kelola-penilaian-ta/pengelolaan-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
         ],
         [
             'text' => 'Repository Tugas Akhir',
@@ -404,12 +426,12 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
-                    'text' => 'Manajemen Akun Dosen',
-                    'url' => '/manage_dosen',
+                    'text' => 'Mahasiswa',
+                    'url' => '#',
                 ],
                 [
-                    'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/manage_mhs',
+                    'text' => 'Dosen',
+                    'url' => '#',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',
