@@ -411,6 +411,8 @@ return [
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
         ],
         [
             'text' => 'Repository Tugas Akhir',
@@ -455,8 +457,8 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
-                    'text' => 'Manajemen Akun Dosen',
-                    'url' => '/manage_dosen',
+                    'text' => 'Mahasiswa',
+                    'url' => '#',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
