@@ -376,6 +376,18 @@ return [
             // 'label_color' => 'success',
         ],
         [
+            'text' => 'Pengelolaan Penilaian',
+            'url' => '#',
+            'icon' => 'fas fa-scroll',
+            'submenu' => [
+                [
+                    'text' => 'Monitoring Penilaian Mahasiswa',
+                    'url' => 'kelola-penilaian-ta/monitoring/mahasiswa',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Kelola Formulir Penilaian',
+                    'url' => 'kelola-penilaian-ta/formulir-penilaian',
             'text' => 'Kelola Penilaian Tugas Akhir',
             // 'url' => '/KelolaPenilaianTA',
             'icon' => 'fas fa-fw fa-file',
@@ -409,11 +421,16 @@ return [
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
+                    'url' => 'kelola-penilaian-ta/pengelolaan-nilai',
                     'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
                     'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
                     // 'icon' => 'far fa-fw fa-file',
                 ],

@@ -54,5 +54,3 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     Route::get('/nilai-tugas-akhir', [KelolaPenilaianTAController::class, 'pengisianNilaiTA']);
     
 });
-
-Route::get('/KelolaPenilaianTA', [KelolaPenilaianTAController::class, 'index']);
