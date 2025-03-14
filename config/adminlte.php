@@ -376,74 +376,6 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Kelola Penilaian Tugas Akhir',
-            // 'url' => '/KelolaPenilaianTA',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Penilaian Tugas Akhir',
-                    // 'url' => '/KelolaPenilaianTA',
-                    // 'icon' => 'fas fa-fw fa-file',
-                    'submenu' => [
-                        [
-                            'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Timeline',
-            'url' => '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Artefak',
-            'url' => '/#',
-            'icon' => 'fas fa-fw fa-folder',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Dokumen dan FTA',
-                    'url' => '/artefak',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                // [
-                //     'text' => 'Resume Bimbingan',
-                //     'url' => '/#',
-                //     // 'icon' => 'far fa-fw fa-file',
-                // ],
-            ]
             'text' => 'Pengelolaan Penilaian',
             'url' => '#',
             'icon' => 'fas fa-scroll',
@@ -471,9 +403,28 @@ return [
             ]
         ],
         [
-            'text' => 'Repository Tugas Akhir',
-            'url' => '#',
-            'icon' => 'fas fa-book',
+            'text' => 'Timeline',
+            'url' => '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Artefak',
+            'url' => '/#',
+            'icon' => 'fas fa-fw fa-folder',
+            'submenu' => [
+                [
+                    'text' => 'Kelola Dokumen dan FTA',
+                    'url' => '/artefak',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                // [
+                //     'text' => 'Resume Bimbingan',
+                //     'url' => '/#',
+                //     // 'icon' => 'far fa-fw fa-file',
+                // ],
+            ]
         ],
         ['header' => 'Pengaturan Pengguna'],
         // [
