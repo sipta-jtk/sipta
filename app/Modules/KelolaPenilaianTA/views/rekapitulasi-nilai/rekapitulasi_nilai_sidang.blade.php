@@ -3,13 +3,18 @@
 @section('title', 'Rekapitulasi Nilai Sidang')
 
 @section('content_header')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="">Monitoring Penilaian</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Rekapitulasi Nilai Sidang</li>
-        </ol>
-    </nav>
-    <h1>Rekapitulasi Nilai Sidang</h1>
+    <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => '', 'label' => 'Rekapitulasi Nilai Sidang']
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">Rekapitulasi Nilai Sidang</h1>
+    </div>
 @stop
 
 @section('content')

@@ -1,32 +1,38 @@
+.bg-brown {
+    background-color: #3E3E3E;
+}
+
+.w-40 {
+    width: 40%;
+}
+
+.action {
+    gap: 1rem;
+}
+
 .table-container {
     max-height: 500px;
     overflow-y: auto;
-    overflow-x: auto;
     border: 1px solid #ddd;
     position: relative;
-    scrollbar-width: thin;
-    -ms-overflow-style: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 .table-container::-webkit-scrollbar {
-    height: 12px;
-}
-.table-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-}
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    display: none; /* Untuk Chrome, Safari, dan Opera */
 }
 table {
     width: 100%;
     border-collapse: collapse;
 }
+
 th,
 td {
-    border: 1px solid #ccc !important;
+    border: 1px solid #ccc !important; /* Tambahkan border untuk outline */
     padding: 10px;
     text-align: center;
 }
+
 thead {
     position: sticky;
     top: 0;
@@ -34,6 +40,7 @@ thead {
     background: rgba(0, 0, 0, 0.9);
     color: white;
 }
+
 thead th {
     position: sticky;
     top: 0;
@@ -44,9 +51,26 @@ thead th {
     padding: 12px;
     border-bottom: 2px solid #fff;
 }
+
 tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Warna striping */
 }
+
 tbody tr:hover {
     background-color: #e2e6ea;
+}
+
+.tooltip-box {
+    width: 280px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    left: 0;
+    transform: translateX(0);
+    top: 130%;
+    z-index: 10;
 }

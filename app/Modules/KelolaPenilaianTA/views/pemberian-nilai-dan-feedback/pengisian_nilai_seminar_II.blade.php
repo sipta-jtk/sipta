@@ -5,16 +5,13 @@
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-3">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Penilaian Seminar II
-                </li>
-            </ol>
-        </nav>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => '', 'label' => 'Penilaian Seminar II']
+            ]
+        ])
+        @endcomponent
 
         <!-- Judul Halaman -->
         <h1 class="mb-0">PENILAIAN SEMINAR II</h1>
@@ -80,7 +77,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/KelolaPenilaianTA/nilai-seminar-II/masukan-seminar-II') }}" > <!-- method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/2/masukan') }}" > <!-- method="POST" -->
             @csrf
 
             <div class="row mt-3 p-4 col-md-12">

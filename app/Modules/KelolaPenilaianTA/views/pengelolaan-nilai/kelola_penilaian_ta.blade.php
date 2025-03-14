@@ -3,14 +3,17 @@
 @section('title', 'KelolaPenilaianTA')
 
 @section('content_header')
-    <div class="d-flex flex-column pl-5">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Kelola Penilaian</li>
-            </ol>
-        </nav>
-        <h1>{{ $data['header'] }}</h1>
+    <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => '', 'label' =>  $data['header'] ]
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">{{ $data['header'] }}</h1>
     </div>
 @stop
 
@@ -32,7 +35,7 @@
                                 @if (!in_array(strtolower($kategori), ['seminar 1', 'seminar 2']))
                                     <button type="button" class="btn btn-primary">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ url('KelolaPenilaianTA/detail/' . Str::slug($kategori)) }}" class="btn btn-primary">Buka Detail</a>
+                                <a href="{{ url('kelola-penilaian-ta/detail/' . Str::slug($kategori)) }}" class="btn btn-primary">Buka Detail</a>
                             </div>
                         </td>
                     </tr>
@@ -41,28 +44,14 @@
         </table>
         <div class="action d-flex justify-content-end">
             <button type="button" class="btn btn-primary">Kunci Semua Penilaian</button>
-            <a href=" {{ url('KelolaPenilaianTA/rekapitulasi-nilai') }}" class="btn btn-primary">Rekap Nilai</a>
         </div>
     </div>
 @stop
 
+
 @section('css')
-    <style>
-        .bg-brown {
-            background-color: #3E3E3E;
-        }
-
-        .w-40 {
-            width: 40%;
-        }
-
-        .action {
-            gap: 1rem;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kekola_penilaian_ta.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')

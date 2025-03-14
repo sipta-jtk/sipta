@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class KelolaPenilaianTAController extends Controller
 {
-    public function indexForm(): View
+    public function formulirPenilaian(): View
     {
         for ($i = 1; $i <= 100; $i++) {
             $data = [
@@ -40,20 +40,15 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.formulir_penilaian_ta', compact('data'));
+        return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
-    public function index(): View
+    public function tambahFormulir(): View
     {
-        return view('KelolaPenilaianTA.views.view');
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_formulir_penilaian');
     }
 
-    public function create(): View
-    {
-        return view('KelolaPenilaianTA.views.tambah_formulir_penilaian');
-    }
-
-    public function edit()
+    public function ubahFormulir()
     {
         // Data dummy untuk sementara
         $formulir = (object) [
@@ -76,29 +71,43 @@ class KelolaPenilaianTAController extends Controller
             ],
         ];
 
-        return view('KelolaPenilaianTA.views.ubah_formulir_ta', compact('formulir'));
+        return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta', compact('formulir'));
     }
 
-    public function update(Request $request)
+    public function updateFormulir(Request $request)
     {
         return redirect()->route('formulir-penilaian.index')->with('success', 'Formulir penilaian berhasil diperbarui.');
     }
 
-    public function indexMonitoringMahasiswa(): View
+    /**
+     * Menampilkan halaman monitoring nilai mahasiswa
+     */
+    public function monitoringMahasiswa(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_mahasiswa');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa');
     }
 
-    public function indexMonitoringFeedback(): View
+    /**
+     * Menampilkan halaman monitoring feedback
+     * 
+     */
+    public function monitoringFeedback(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_feedback');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_feedback');
     }
 
-    public function indexMonitoringRubrik(): View
+    /**
+     * Menampilkan halaman monitoring rubrik
+     */
+    public function monitoringRubrik(): View
     {
-        return view('KelolaPenilaianTA.views.monitoring_rubrik');
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik');
     }
 
+    /**
+     * Menampilkan halaman kelola penilaian
+     * 
+     */
     public function kelolaNilai(): View
     {
         $data = [
@@ -111,9 +120,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.kelola_penilaian_ta', compact('data'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('data'));
     }
 
+    /**
+     * Menampilkan halaman detail nilai mahasiswa
+     * 
+     */
     public function detailNilaiMahasiswa($kategori): View
     {
         $data = [];
@@ -135,7 +148,7 @@ class KelolaPenilaianTAController extends Controller
             ];
         }
 
-        return view('KelolaPenilaianTA.views.detail_nilai_mahasiswa', compact('data', 'kategori'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('data', 'kategori'));
     }
     
     /**
@@ -268,6 +281,10 @@ class KelolaPenilaianTAController extends Controller
     }
     
 
+    /**
+     * Menampilkan halaman pemberian nilai seminar 1
+     * 
+     */
     public function pengisianMasukanSeminar1(): View
     {
         // Data Mahasiswa
@@ -287,6 +304,10 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai seminar 2
+     * 
+     */
     public function pengisianNilaiSeminarII(): View
     {
         // Data Mahasiswa
@@ -368,6 +389,11 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('mahasiswa', 'penilaian'));
     }
 
+
+    /**
+     * Menampilkan halaman pemberian masukan seminar 2
+     * 
+     */
     public function pengisianMasukanSeminarII(): View
     {
         // Data Mahasiswa
@@ -387,6 +413,10 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai seminar 3
+     * 
+     */
     public function pengisianNilaiSeminarIII(): View
     {
         // Data Mahasiswa
@@ -485,6 +515,10 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
     }
 
+    /**
+     * Menampilkan halaman pemberian masukan seminar 3
+     * 
+     */
     public function pengisianMasukanSeminarIII(): View
     {
         // Data Mahasiswa
@@ -501,9 +535,13 @@ class KelolaPenilaianTAController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pengisian_masukan_seminar_III', compact('mahasiswa'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai sidang akhir
+     * 
+     */
     public function pengisianNilaiSidangAkhir(): View
     {
         // Data Mahasiswa
@@ -602,6 +640,10 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian'));
     }
 
+    /**
+     * Menampilkan halaman pemberian masukan sidang akhir
+     * 
+     */
     public function pengisianMasukanSidangAkhir(): View
     {
         // Data Mahasiswa
@@ -621,6 +663,10 @@ class KelolaPenilaianTAController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir', compact('mahasiswa'));
     }
 
+    /**
+     * Menampilkan halaman pemberian nilai tugas akhir
+     * 
+     */
     public function pengisianNilaiTA(): View
     {
         // Data Mahasiswa

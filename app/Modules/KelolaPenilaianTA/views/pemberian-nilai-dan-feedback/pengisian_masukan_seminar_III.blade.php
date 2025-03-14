@@ -4,22 +4,14 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-3">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA/nilai-seminar-III') }}">
-                        Penilaian Seminar III
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Masukan Seminar III
-                </li>
-            </ol>
-        </nav>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar III'],
+                ['url' => '', 'label' => 'Masukan Seminar III']
+            ]
+        ])
+        @endcomponent
 
         <!-- Judul Halaman -->
         <h1 class="mb-0">MASUKAN SEMINAR III</h1>
@@ -53,7 +45,7 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/KelolaPenilaianTA') }}"> <!-- route('feedback.store') method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta') }}"> <!-- route('feedback.store') method="POST" -->
             @csrf
 
             <!-- Dokumen -->

@@ -3,17 +3,23 @@
 @section('title', 'Informasi Detail Formulir Penilaian')
 
 @section('content_header')
-    <h1>Informasi Detail Formulir Penilaian</h1>
+    <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta/formulir-penilaian/'), 'label' => 'Formulir Penilaian'],
+                ['url' => '', 'label' => 'Detail Formulir Penilaian']
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">Informasi Detail Formulir Penilaian</h1>
+    </div>
 @stop
 
 @section('content')
     <div class="p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ url('KelolaPenilaianTA/formulir-penilaian') }}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
-        </div>
-
         <div class="row mb-4">
             <div class="col-md-6">
                 <div class="form-group">
@@ -192,7 +198,7 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/detail_fta_011.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/formulir_penilaian.css') }}">
 @stop
 
 @section('js')

@@ -3,7 +3,18 @@
 @section('title', 'Monitoring Mahasiswa')
 
 @section('content_header')
-    <h1>Monitoring Mahasiswa</h1>
+    <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">Informasi Penilaian Mahasiswa</h1>
+    </div>
 @stop
 
 @section('content')

@@ -4,22 +4,14 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-3">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA/nilai-sidang-akhir') }}">
-                        Penilaian Sidang D3
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Catatan Perbaikan Laporan
-                </li>
-            </ol>
-        </nav>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta/nilai-sidang/akhir'), 'label' => 'Penilaian Sidang D3'],
+                ['url' => '', 'label' => 'Catatan Perbaikan Laporan']
+            ]
+        ])
+        @endcomponent
 
         <!-- Judul Halaman -->
         <h1 class="mb-0">CATATAN PERBAIKAN LAPORAN</h1>
@@ -97,7 +89,7 @@
         <h3 class="heading-spacing text-center">CATATAN PERBAIKAN LAPORAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/KelolaPenilaianTA') }}">
+        <form action="{{ url('/kelola-penilaian-ta') }}">
             @csrf
 
             <!-- Dokumen -->

@@ -3,17 +3,22 @@
 @section('title', 'Rekapitulasi Nilai')
 
 @section('content_header')
-    <div class="d-flex flex-column pl-5">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item"><a href="/KelolaPenilaianTA/pengelolaan-nilai">Kelola Penilaian</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Data</li>
-            </ol>
-        </nav>
-        <h1>Detail Nilai {{ $kategori }}</h1>
+    <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta/pengelolaan-nilai'), 'label' => 'Kelola Nilai'],
+                ['url' => '', 'label' =>  'Data' ]
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">Detail Nilai {{ $kategori }}</h1>
     </div>
 @stop
+
+
 
 @section('content')
     <div class="p-4">
@@ -67,13 +72,12 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/detail_nilai_mahasiswa.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola-penilaian.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('KelolaPenilaianTA/js/detail_nilai_mahasiswa.js') }}">
-    </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
 @stop
