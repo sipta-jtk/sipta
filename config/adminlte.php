@@ -422,6 +422,32 @@ return [
             // 'label_color' => 'success',
         ],
         [
+            'text' => 'Kelola Seminar dan Sidang',
+            // 'url' => '/KelolaSeminarSidang',
+            'icon' => 'fas fa-fw fa-calendar',
+            'submenu' => [
+                [
+                    'text' => 'Kelola Seminar dan Sidang',
+                    // 'url' => '/KelolaSeminarSidang',
+                    // 'icon' => 'fas fa-fw fa-file',
+                    'submenu' => [
+                        [
+                            'text' => 'Pengelolaan Jadwal',
+                            'url' => '/KelolaSeminar/pengelolaan-jadwal',     
+                            // 'icon' => 'far fa-fw fa-file',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Formulir Seminar dan Sidang',
+                    'url' => '/KelolaSeminarSidang/formulir-seminar-sidang',     
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
             'text' => 'Timeline',
             'url' => '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
