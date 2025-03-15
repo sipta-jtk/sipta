@@ -47,6 +47,11 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_formulir_penilaian');
     }
 
+    public function tambahAspekFormulir(): View
+    {
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_aspek_formulir');
+    }
+
     public function ubahFormulir()
     {
         // Data dummy untuk sementara
