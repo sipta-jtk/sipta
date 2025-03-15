@@ -42,9 +42,9 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
-    public function tambahFormulir(): View
+    public function tambahRubrikPenilaian(): View
     {
-        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_formulir_penilaian');
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian');
     }
 
     public function tambahAspekFormulir(): View
@@ -78,9 +78,39 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta', compact('formulir'));
     }
 
+    public function ubahAspek($id): View
+    {
+        // Data dummy untuk aspek penilaian
+        $aspek = (object) [
+            'id' => $id,
+            'kodeFTA' => 'FTA001',
+            'namaFTA' => 'Nama FTA Dummy',
+            'jenisForm' => 'Penilaian',
+            'penilaian' => [
+                (object) ['kriteria' => 'Kriteria 1', 'bobot' => 20],
+                (object) ['kriteria' => 'Kriteria 2', 'bobot' => 30],
+            ],
+            'feedback' => [
+                (object) ['kriteria' => 'Kriteria Feedback 1'],
+                (object) ['kriteria' => 'Kriteria Feedback 2'],
+            ],
+            'tanggalTenggat' => '2025-03-15',
+            'waktuTenggat' => '23:59',
+        ];
+
+        return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_aspek_penilaian', compact('aspek'));
+    }
+
     public function updateFormulir(Request $request)
     {
         return redirect()->route('formulir-penilaian.index')->with('success', 'Formulir penilaian berhasil diperbarui.');
+    }
+
+    public function updateAspek(Request $request)
+    {
+        // Logika untuk memperbarui aspek penilaian di database
+
+        return redirect()->route('formulir-penilaian.index')->with('success', 'Aspek penilaian berhasil diperbarui.');
     }
 
 }
