@@ -82,13 +82,13 @@
 
             <div class="row mt-4">
                 <div class="table-container">
-                    <table class="table text-center">
+                    <table id="myTable" class="display nowrap table text-center" style="width:100%"> 
                         <thead class="sticky-header">
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
                                 <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th>
-                                <th style="min-width: 100px;" colspan="3">Nilai Perorangan</th>
+                                <th style="min-width: 100px;" colspan="3" >Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 <th style="min-width: 200px;">≥ 80 (A)</th>
@@ -104,7 +104,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="9" class="bg-light text-left"><strong>1. Dokumen</strong></td>
+                                <td colspan="11" class="bg-light text-left"><strong>1. Dokumen</strong></td>
                             </tr>
                             <tr>
                                 <td>Kejelasan kaitan antar bab/ sub kajian (hubungan sebab akibat/ reasoning, rasionalitas)</td>
@@ -127,6 +127,10 @@
                                 <td>Mahasiswa menguasai penerapan cara-cara/metoda pengembangan aplikasi tetapi tidak menguasai modelling tools pada pengembangan aplikasi.</td>
                                 <td>Mahasiswa tidak menguasai atau penerapan cara-cara/metoda pengembangan aplikasi dan modelling tools pada pengembangan aplikasi.</td>
                                 <td>Tidak ada metodologi dan modelling tools yang digunakan pada pengembangan aplikasi.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
                                 <td>Kesesuaian studi pustaka dan daftar pustaka yang digunakan.</td>
@@ -136,6 +140,10 @@
                                 <td>Pustaka yang digunakan cukup sesuai dengan penelitian dan kualitas yang cukup baik.</td>
                                 <td>Pustaka yang digunakan cukup sesuai dengan penelitian tetapi kualitas pustaka hanya kurang baik.</td>
                                 <td>Pustaka yang digunakan tidak sesuai dengan penelitian dan kualitas pustaka hanya kurang baik.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
                                 <td>Tata tulis laporan
@@ -149,9 +157,13 @@
                                 <td>Dokumen yang dibuat memenuhi kriteria a dan c dengan cukup baik/jelas.</td>
                                 <td>Dokumen yang dibuat memenuhi kriteria a dan b dengan baik/jelas.</td>
                                 <td>Dokumen yang dibuat memenuhi kriteria b saja dengan baik/jelas</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
-                                <td colspan="9" class="bg-light text-left"><strong>2. Presentasi</strong></td>
+                                <td colspan="11" class="bg-light text-left"><strong>2. Presentasi</strong></td>
                             </tr>
                             <tr>
                                 <td>Materi presentasi
@@ -165,6 +177,10 @@
                                 <td>Mahasiswa menguasai penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria b, c) tetapi tidak menguasai atau memahami domain TA yang dikerjakan (kriteria a).</td>
                                 <td>Mahasiswa menguasai atau memahami salah satu dari: domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (Salah satu dari kriteria a, b, c).</td>
                                 <td>Mahasiswa Tidak Menguasai atau memahami seluruh kriteria berikut: domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria a, b, c).</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
                                 <td>Kejelasan presentasi dan kemampuan membangkitkan minat pemirsa.</td>
@@ -174,6 +190,10 @@
                                 <td>Mahasiswa menjelaskan dengan kurang baik dan kurang menyeluruh serta kurang membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
                                 <td>Mahasiswa menjelaskan dengan kurang baik dan kurang menyeluruh serta tidak membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
                                 <td>Mahasiswa menjelaskan dengan tidak baik dan tidak menyeluruh serta tidak membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
                                 <td>Kebebasan dari catatan</td>
@@ -183,9 +203,13 @@
                                 <td>Mahasiswa hanya membaca poin - poin penting dengan uraiannya pada bahan presentasi.</td>
                                 <td>Mahasiswa tidak menjelaskan poin - poin penting dan uraiannya pada bahan presentasi.</td>
                                 <td>Tidak ada poin penting pada uraian pembahasan pada bahan presentasi.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
-                                <td colspan="9" class="bg-light text-left"><strong>3. Tanya Jawab</strong></td>
+                                <td colspan="11" class="bg-light text-left"><strong>3. Tanya Jawab</strong></td>
                             </tr>
                             <tr>
                                 <td>Tanya Jawab (Penguasaan materi terkait tugas yang dikerjakan).</td>
@@ -195,9 +219,13 @@
                                 <td>Mahasiswa dapat menjawab dengan kurang baik beserta reasoning dan rasionalitas yang kurang.</td>
                                 <td>Mahasiswa dapat menjawab dengan kurang baik beserta tidak ada reasoning dan rasionalitas.</td>
                                 <td>Mahasiswa tidak dapat menjawab.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                             <tr>
-                                <td colspan="9" class="bg-light text-left"><strong>4. Prototipe yang dihasilkan</strong></td>
+                                <td colspan="11" class="bg-light text-left"><strong>4. Prototipe yang dihasilkan</strong></td>
                             </tr>
                             <tr>
                                 <td>Prototipe yang dihasilkan</td>
@@ -207,6 +235,10 @@
                                 <td>Produk yang dihasilkan kurang dari target Seminar III, tidak memenuhi spesifikasi, dan rancangan yang tidak sesuai spesifikasi (not sufficient).</td>
                                 <td>Produk yang dihasilkan kurang dari target Seminar III, tidak memenuhi spesifikasi, dan tidak ada rancangan.</td>
                                 <td>Produk yang dihasilkan tidak memenuhi target Seminar III dan tidak memenuhi spesifikasi.</td>
+                                <td>0-100</td>
+                                <td><input type="number" class="form-control" name="nilai[1][1]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][2]" min="0" max="100"></td>
+                                <td><input type="number" class="form-control" name="nilai[1][3]" min="0" max="100"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -214,7 +246,7 @@
             </div>
 
             <!-- Tombol Simpan dan Selanjutnya -->
-            <div class="row mt-0">
+            <div class="row mt-3">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-primary">Selanjutnya</button>
                 </div>
@@ -225,10 +257,13 @@
 
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/formulir_penilaian.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
 @stop

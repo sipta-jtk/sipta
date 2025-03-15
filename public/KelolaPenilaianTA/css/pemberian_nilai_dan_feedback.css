@@ -20,10 +20,48 @@ trix-editor {
     width: 50%;
     max-width: 250px;
 }
-.sticky-row th {
+
+.table-container {
+    max-height: 500px;
+    overflow-y: auto; /* overflow-y untuk mengaktifkan scroll vertikal jika konten melebihi tinggi maksimal */
+    overflow-x: auto; /* overflow-x untuk mengaktifkan scroll horizontal*/
+    border: 1px solid #ddd;
+    position: relative;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.table-container::-webkit-scrollbar {
+    display: none;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc !important;
+    padding: 10px;
+    text-align: center;
+}
+thead {
     position: sticky;
     top: 0;
-    background-color: #343a40;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
     color: white;
-    z-index: 1020;
+}
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-bottom: 2px solid #fff;
+}
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+tbody tr:hover {
+    background-color: #e2e6ea;
 }
