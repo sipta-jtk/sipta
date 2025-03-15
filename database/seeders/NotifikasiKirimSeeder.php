@@ -31,7 +31,7 @@ class NotifikasiKirimSeeder extends Seeder
         NotifikasiKirim::create([
             'id_notifikasi' => 2,
             'username' => '221524059',
-            'kanal' => 'sms',
+            'kanal' => 'whatsapp',
             'status' => 'gagal',
             'waktu_kirim' => Carbon::now(),
             'respon_log' => 'Nomor tidak valid.'

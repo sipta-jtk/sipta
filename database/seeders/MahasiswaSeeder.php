@@ -26,7 +26,6 @@ class MahasiswaSeeder extends Seeder
             'kelas' => 'D4A',
             'id_prodi' => 1,
             'status_ta' => 'mahasiswa_ta',
-            'nilai_akhir_ta' => 85,
             'id_kota' => 1
         ]);
 
@@ -35,8 +34,7 @@ class MahasiswaSeeder extends Seeder
             'tahun_masuk' => 2022,
             'kelas' => 'D4B',
             'id_prodi' => 1,
-            'status_ta' => 'mahasiswa_ta',
-            'nilai_akhir_ta' => 90,
+            'status_ta' => 'mahasiswa_non_ta',
             'id_kota' => 2
         ]);
 

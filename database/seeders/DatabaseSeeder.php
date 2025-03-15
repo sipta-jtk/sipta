@@ -13,8 +13,6 @@ class DatabaseSeeder extends Seeder
     {
         // First batch: Base tables with no dependencies
         $this->call(UserSeeder::class);
-        $this->call(GedungSeeder::class);
-        $this->call(FasilitasSeeder::class);
         $this->call(KbkSeeder::class);
         $this->call(BidangSeeder::class);
         $this->call(ProdiSeeder::class);
@@ -27,7 +25,6 @@ class DatabaseSeeder extends Seeder
         // Second batch: First level dependencies
         $this->call(ArtefakSeeder::class);
         $this->call(DosenSeeder::class); // depends on User, KBK
-        $this->call(RuanganSeeder::class); // depends on Gedung
         $this->call(KotaSeeder::class); // depends on Bidang
         $this->call(TimelineArtefakSeeder::class); // depends on Timeline, KategoriArtefak
 
@@ -36,9 +33,8 @@ class DatabaseSeeder extends Seeder
         $this->call(KaprodiSeeder::class); // depends on Dosen, Prodi
         $this->call(JadwalDosenPembimbingSeeder::class); // depends on Dosen
         $this->call(KetertarikanBidangSeeder::class); // depends on Dosen, Bidang
-        $this->call(RuangFasilitasSeeder::class); // depends on Fasilitas, Ruangan
-        $this->call(LabelSeeder::class); // depends on Kota
-        $this->call(KotaUserSeeder::class); // depends on Kota, User
+        // $this->call(LabelSeeder::class); // depends on Kota
+        // $this->call(KotaUserSeeder::class); // depends on Kota, User
 
         // Fourth batch: Higher level dependencies
         $this->call(PengajuanPembimbingSeeder::class); // depends on Kota
@@ -50,8 +46,8 @@ class DatabaseSeeder extends Seeder
         $this->call(FormPenilaianSeeder::class); // depends on Dosen
         $this->call(KategoriPenilaianSeeder::class); // depends on FormPenilaian
         $this->call(RubrikPenilaianSeeder::class); // depends on KategoriPenilaian
-        $this->call(PenilaianRubrikSeeder::class); // depends on Mahasiswa, Dosen, RubrikPenilaian
-        $this->call(PenilaianKategoriSeeder::class); // depends on Mahasiswa
+        // $this->call(PenilaianRubrikSeeder::class); // depends on Mahasiswa, Dosen, RubrikPenilaian
+        // $this->call(PenilaianKategoriSeeder::class); // depends on Mahasiswa
 
         // Sixth batch: Document related
         $this->call(DokumenSeeder::class); // depends on Kota, Label, SubKategori, User
@@ -62,7 +58,7 @@ class DatabaseSeeder extends Seeder
         // Seventh batch: Scheduling related
         $this->call(PenjadwalanSeeder::class); // depends on Ruangan, Kota, Dosen
         $this->call(KehadiranSeeder::class); // depends on Penjadwalan, User
-        $this->call(KonfirmasiSeeder::class); // depends on Penjadwalan, Dosen
+        // $this->call(KonfirmasiSeeder::class); // depends on Penjadwalan, Dosen
 
         // Eighth batch: Notification related
         $this->call(NotifikasiSeeder::class); // no dependencies
