@@ -15,41 +15,24 @@ use Illuminate\Support\Facades\Route;
 
 $modulesPath = base_path('app/Modules');
 
-foreach (scandir($modulesPath) as $module) {
-    $routesFile = "{$modulesPath}/{$module}/routes.php";
+if (is_dir($modulesPath)) {
+    foreach (scandir($modulesPath) as $module) {
+        if ($module === '.' || $module === '..') {
+            continue;
+        }
+        $routesFile = "{$modulesPath}/{$module}/routes.php";
 
-    if (is_file($routesFile)) {
-        require $routesFile; 
+        if (is_file($routesFile)) {
+            require $routesFile; 
+        }
     }
 }
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth'); // Hanya user login yang bisa akses
 
-Route::get('/login', function () {
-    return view('auth.login');
-});
-
-Route::get('/register', function () {
-    return view('auth.register');
-});
-
-// routes/web.php
-// Route::get('/settings', function() {
-//     return view('settings'); // Sesuaikan dengan nama view yang kamu buat
-// });
-
-Route::get('/seeallnotif', function() {
-    return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
-});
-
-Route::get('/log-admin', function() {
-    return view('NotificationAndReminder::LogAdmin.logAdmin'); // Sesuaikan dengan nama view yang kamu buat
-});
-
-Route::get('/edit-notif', function() {
-    return view('NotificationAndReminder::SettingNotification.SettingAwalNotif'); // Sesuaikan dengan nama view yang kamu buat
-});
-
-
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect('/login');
+})->name('logout');

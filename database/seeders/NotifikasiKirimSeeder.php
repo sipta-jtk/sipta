@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\NotifikasiKirim;
@@ -14,6 +15,10 @@ class NotifikasiKirimSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('notifikasi_kirim')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         NotifikasiKirim::create([
             'id_notifikasi' => 1,
             'username' => '221524049',
