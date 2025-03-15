@@ -7,13 +7,13 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => '', 'label' =>  $data['header'] ]
+                ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">{{ $data['header'] }}</h1>
+        <h1 class="mb-0">{{ $data['header'] ?? 'Kelola Penilaian' }}</h1>
     </div>
 @stop
 
@@ -27,13 +27,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($data['kategori'] as $kategori)
+                @foreach ($data['kategori'] ?? [] as $kategori)
                     <tr>
-                        <td> {{ $kategori }} </td>
+                        <td>{{ $kategori }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
                                 @if (!in_array(strtolower($kategori), ['seminar 1', 'seminar 2']))
-                                    <button type="button" class="btn btn-primary">Kunci Penilaian</button>
+                                    <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
                                 <a href="{{ url('kelola-penilaian-ta/detail/' . Str::slug($kategori)) }}" class="btn btn-primary">Buka Detail</a>
                             </div>
@@ -48,9 +48,8 @@
     </div>
 @stop
 
-
 @section('css')
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kekola_penilaian_ta.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/kelola_penilaian_ta.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 @stop
 
