@@ -1,19 +1,17 @@
 <?php
 
 use App\Models\User;
-use App\Modules\UserManagement\Controllers\UserManagementController;
-<<<<<<< HEAD
-use App\Modules\UserManagement\Controllers\DosenController;
-use FontLib\Table\Type\name;
-=======
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
->>>>>>> d2fb12f5a3e97020aaa4de7d1934135340e89047
+use App\Modules\UserManagement\Controllers\UserManagementController;
+use App\Modules\UserManagement\Controllers\DosenController;
+use App\Modules\UserManagement\Controllers\AuthenticatedSessionController;
+
+use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Route;
 
 // Route untuk login
-Route::get('/login', function () {
-    return view('UserManagement.views.auth.login');
-})->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
 
 // Route untuk register
 Route::get('/register', function () {
@@ -40,14 +38,27 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/', [UserManagementController::class, 'render']);
 });
 
-Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('role_no_auth:admin')
+
+Route::post('/logout', [UserManagementController::class, 'logout'])->name('logout');
+
+
+Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manage_mhs'])
+    ->middleware(['auth', 'role:admin'])
+    ->name('manage.mhs');
+
+Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manageDosen'])
+    ->middleware(['auth', 'role:admin'])
     ->name('manage.dosen');
 
-
+Route::get('/dosen',function(){
+    return '<h1> hello dosen </h1>';
+})->middleware(['auth', 'role:dosen']);
     
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
+Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
+Route::post('/updateDosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
+
 
 
 // Route::get('/test-spatie', function () {

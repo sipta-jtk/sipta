@@ -123,7 +123,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Menu
+    | User Menuff
     |--------------------------------------------------------------------------
     |
     | Here you can activate and change the user menu.
@@ -305,6 +305,10 @@ return [
             'text' => 'search',
             'topnav_right' => true,
         ],
+        [
+            'type' => 'fullscreen-widget',
+            'topnav_right' => true,
+        ],       
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
