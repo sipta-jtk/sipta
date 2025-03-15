@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Rekap Presensi Sidang TA')
+@section('title', 'Rekap Presensi Seminar 3')
 
 @section('content_header')
-    <h1>Rekap Presensi Sidang TA</h1>
+    <h1>Rekap Presensi Seminar 3</h1>
 @stop
 
 @section('content')
@@ -16,25 +16,25 @@
             @endif
 
             <div class="table-responsive">
-                <table id="presensiSidangTA" class="table table-striped table-bordered">
+                <table id="presensiSeminar" class="table table-striped table-bordered">
                     <thead class="thead-light">
                         <tr>
-                            <th class="w-20">NIM</th>
-                            <th class="w-20">MAHASISWA</th>
-                            <th class="w-10">KOTA</th>
-                            <th class="w-15">TANGGAL</th>
-                            <th class="w-15">RUANGAN</th>
-                            <th class="w-10">SESI</th>
-                            <th class="w-10">STATUS</th>
-                            <th class="w-20">DOKUMENTASI</th>
+                            <th class="w-20">Nim</th>
+                            <th class="w-20">Nama Mahasiswa</th>
+                            <th class="w-10">KoTA</th>
+                            <th class="w-15">Tanggal</th>
+                            <th class="w-15">Ruangan</th>
+                            <th class="w-10">Sesi</th>
+                            <th class="w-10">Status Kehadiran</th>
+                            <th class="w-20">Dokumentasi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($presensiSidangTA as $index => $item)
-                            @php
-                                $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
-                                $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
-                            @endphp
+                        @foreach($beritaAcaraSeminar3 as $index => $item)
+                        @php
+                            $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
+                            $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
+                        @endphp
 
                             <tr>
                                 <td>{{ $item['nim'] }}</td>
@@ -84,7 +84,7 @@
         <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         <script>
             $(document).ready(function() {
-            $('#presensiSidangTA').DataTable();
-        });
+            $('#presensiSeminar').DataTable();
+    });
     </script>
 @stop

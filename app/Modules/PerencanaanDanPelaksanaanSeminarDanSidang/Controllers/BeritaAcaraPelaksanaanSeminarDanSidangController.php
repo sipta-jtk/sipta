@@ -8,61 +8,81 @@ use Illuminate\View\View;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
+class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 {
     public function index(): View
     {
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.view');
+    }
+
+    public function indexBeritaAcaraSeminar3(): View
+    {
         // Simulasikan waktu sekarang
-        $sekarang = Carbon::parse('2025-08-22 11:30:00'); // Untuk simulasi
+        $sekarang = Carbon::parse('2025-06-22 11:30:00'); // Untuk simulasi
+        // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
+        //$sekarang = Carbon::now('Asia/Jakarta');
 
         // Data presensi sementara
-        $presensiSeminar3 = [
+        $beritaAcaraSeminar3 = [
             [
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'KoTA' => 'KoTA-001',
+                'id_kota' => 'KoTA 001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
-                'waktu_sidang' => '2025-06-22 12:00:00', // Waktu sidang
+                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sm3_221524033', 'belum_absensi'),//default status hadir
                 'dokumentasi' => session('dok_sm3_221524033', '') // Ambil data dokumentasi dari session
             ],
         ];
 
-        $presensiSidangTA = [
+        // Teruskan $sekarang dan $presensi ke view
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSeminar3', compact('beritaAcaraSeminar3', 'sekarang'));
+    }
+
+
+    public function indexBeritaAcaraSidangTA(): View
+    {
+        // Simulasikan waktu sekarang
+        $sekarang = Carbon::parse('2025-08-22 11:30:00'); // Untuk simulasi
+        // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
+        //$sekarang = Carbon::now('Asia/Jakarta');
+
+        // Data presensi sementara
+        $beritaAcaraSidangTA = [
             [
                 'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'KoTA' => '2',
+                'id_kota' => 'KoTA 001',
                 'tanggal' => '22-08-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
-                'waktu_sidang' => '2025-08-22 12:00:00', // Waktu sidang
+                'waktu' => '2025-08-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),//default status hadir
                 'dokumentasi' => session('dok_sa_221524033', '') // Ambil data dokumentasi dari session
             ],
         ];
 
         // Teruskan $sekarang dan $presensi ke view
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.view', compact('presensiSeminar3','presensiSidangTA', 'sekarang'));
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSidangTA', compact('beritaAcaraSidangTA', 'sekarang'));
     }
 
-    public function rekapPresensi(): View
+    public function rekapBeritaAcaraSeminar3(): View
     {
         // Data presensi sementara
-        $presensiSeminar3 = [
+        $beritaAcaraSeminar3 = [
             [
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'KoTA' => '2',
+                'id_kota' => 'KoTA 001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
-                'waktu_sidang' => '2025-06-22 12:00:00', // Waktu sidang
+                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sm3_221524033', 'belum_absensi'),
                 'dokumentasi' => session('dok_sm3_221524033', '') // Ambil data dokumentasi dari session
             ],
@@ -70,11 +90,11 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524034',
                 'nim' => '221524034',
                 'mahasiswa' => 'Bang Jono',
-                'KoTA' => '2',
+                'id_kota' => 'KoTA 001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
-                'waktu_sidang' => '2025-06-22 12:00:00', // Waktu sidang
+                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sm3_221524034', 'belum_absensi'),
                 'dokumentasi' => session('dok_sm3_221524034', '') // Ambil data dokumentasi dari session
             ],
@@ -82,33 +102,33 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524035', 
                 'nim' => '221524035',
                 'mahasiswa' => 'Bang Jarwo',
-                'KoTA' => '2',
+                'id_kota' => 'KoTA 002',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
-                'sesi' => '2',
-                'waktu_sidang' => '2025-06-22 12:00:00', // Waktu sidang
+                'sesi' => '3',
+                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sm3_221524035', 'belum_absensi'),
                 'dokumentasi' => session('dok_sm3_221524035', '') // Ambil data dokumentasi dari session
             ]
         ];
 
         // Teruskan $presensi ke view rekap
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.rekap_presensi_seminar_3', compact('presensiSeminar3'));
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSeminar3', compact('beritaAcaraSeminar3'));
     }
     
-    public function rekapPresensiSidangTA(): View
+    public function rekapBeritaAcaraSidangTA(): View
 {
-    // Data presensi Sidang TA
-    $presensiSidangTA = [
+    // Data Berita Acara Sidang TA Semua MHS Sementara
+    $beritaAcaraSidangTA = [
         [
             'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
             'nim' => '221524033',
             'mahasiswa' => 'Bang Jay',
-            'KoTA' => '2',
+            'id_kota' => 'KoTA 001',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
             'sesi' => '2',
-            'waktu_sidang' => '2025-08-22 12:00:00', // Waktu sidang
+            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),
             'dokumentasi' => session('dok_sa_221524033', '') // Ambil data dokumentasi dari session
         ],
@@ -116,11 +136,11 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
             'id_kehadiran' => 'sa_221524034',
             'nim' => '221524034',
             'mahasiswa' => 'Bang Jono',
-            'KoTA' => '2',
+            'id_kota' => 'KoTA 001',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
             'sesi' => '2',
-            'waktu_sidang' => '2025-08-22 12:00:00', // Waktu sidang
+            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524034', 'belum_absensi'),
             'dokumentasi' => session('dok_sa_221524034', '') // Ambil data dokumentasi dari session
         ],
@@ -128,18 +148,18 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
             'id_kehadiran' => 'sa_221524035', // ID unik untuk Sidang TA
             'nim' => '221524035',
             'mahasiswa' => 'Bang Jarwo',
-            'KoTA' => '2',
+            'id_kota' => 'KoTA 002',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
-            'sesi' => '2',
-            'waktu_sidang' => '2025-08-22 12:00:00', // Waktu sidang
+            'sesi' => '3',
+            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524035', 'belum_absensi'),
             'dokumentasi' => session('dok_sa_221524035', '') // Ambil data dokumentasi dari session
         ]
     ];
 
-    // Teruskan $presensiSidangTA ke view rekap
-    return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.rekap_presensi_sidang_ta', compact('presensiSidangTA'));
+    // Teruskan $ ke view rekap
+    return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));
 }
 
 
