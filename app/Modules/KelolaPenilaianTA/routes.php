@@ -37,6 +37,11 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai']);
     Route::get('/detail/{kategori}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
 
+    // *********************** DUMMY PENILAIAN SEMINAR 2 ***********************
+    Route::get('/seminar-2/tambah', [PengelolaanNilaiController::class, 'formPenilaianSeminar2']);
+    Route::post('/seminar-2/tambah', [PengelolaanNilaiController::class, 'simpanNilaiMahasiswa'])->name('dummy.seminar-2.simpan-nilai');
+    // Route::put('/seminar-2/edit/{nim}', [PengelolaanNilaiController::class, 'editNilaiMahasiswa'])->name('dummy.seminar-2.edit-nilai');
+
     // ================= REKAPITULASI NILAI =================
     Route::get('/rekapitulasi-nilai-sidang', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
     Route::get('/rekapitulasi-nilai-akhir', [RekapitulasiNilaiController::class, 'getRekapNilaiAkhir']);
