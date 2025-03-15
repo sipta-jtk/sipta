@@ -11,6 +11,7 @@ class Prodi extends Model
     use HasFactory;
     protected $table = 'prodi';
     protected $primaryKey = 'id_prodi';
+    public $timestamps = false;
 
     protected $fillable = [
         'nama_prodi',

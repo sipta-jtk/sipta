@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS sipta;
+USE sipta;
+
 CREATE TABLE `gedung` (
   `kode_gedung` varchar(1) PRIMARY KEY,
   `nama_gedung` varchar(100) UNIQUE
@@ -146,7 +149,7 @@ CREATE TABLE `periode_pengajuan` (
 CREATE TABLE `form_penilaian` (
   `id_form_penilaian` int(5) PRIMARY KEY AUTO_INCREMENT,
   `nama_formulir_penilaian` varchar(50) NOT NULL,
-  `nip` varchar(20),
+  `nip` varchar(22),
   `tahun_ajaran` year NOT NULL,
   `status_form` ENUM ('pending', 'draft', 'published', 'used', 'finished') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT (now()),
@@ -156,7 +159,7 @@ CREATE TABLE `form_penilaian` (
 CREATE TABLE `kategori_penilaian` (
   `id_kategori` int(5) PRIMARY KEY AUTO_INCREMENT,
   `id_form_penilaian` int,
-  `nama_kategori` varchar(20) NOT NULL,
+  `nama_kategori` varchar(50) NOT NULL,
   `bobot_kategori` int NOT NULL
 );
 
@@ -170,7 +173,7 @@ CREATE TABLE `rubrik_penilaian` (
 
 CREATE TABLE `penilaian_rubrik` (
   `nim` varchar(22),
-  `nip` varchar(20),
+  `nip` varchar(22),
   `id_rubrik` int(4),
   `nilai_rubrik` float NOT NULL,
   `detail_feedback` text,
