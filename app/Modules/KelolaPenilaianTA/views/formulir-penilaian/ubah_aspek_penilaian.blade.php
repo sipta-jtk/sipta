@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Penambahan Aspek Penilaian')
+@section('title', 'Ubah Aspek Penilaian')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -8,27 +8,28 @@
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/formulir-penilaian'), 'label' => 'Formulir Penilaian'],
-                ['url' => '', 'label' => 'Tambah Aspek Penilaian']
+                ['url' => '', 'label' => 'Ubah Aspek Penilaian']
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Penambahan Aspek Penilaian</h1>
+        <h1 class="mb-0">Ubah Aspek Penilaian</h1>
     </div>
 @stop
 
 @section('content')
     <div class="p-4">
-        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-aspek-formulir') }}" method="POST">
+        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/update-aspek-penilaian/' . $aspek->id) }}" method="POST">
             @csrf
+            @method('PUT')
 
             <div class="row">
                 <!-- Kode FTA -->
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="kodeFTA">Kode FTA</label>
-                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" required>
+                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" value="{{ $aspek->kodeFTA }}" required>
                     </div>
                 </div>
 
@@ -36,7 +37,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="namaFTA">Nama FTA</label>
-                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" required>
+                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" value="{{ $aspek->namaFTA }}" required>
                     </div>
                 </div>
             </div>
@@ -46,9 +47,9 @@
                     <div class="form-group">
                         <label for="jenisForm">Jenis Formulir</label>
                         <select class="form-control" id="jenisForm" name="jenisForm" required>
-                            <option value="" disabled selected>Pilih Jenis Formulir</option>
-                            <option value="Penilaian">Penilaian</option>
-                            <option value="Feedback">Feedback</option>
+                            <option value="" disabled>Pilih Jenis Formulir</option>
+                            <option value="Penilaian" {{ $aspek->jenisForm == 'Penilaian' ? 'selected' : '' }}>Penilaian</option>
+                            <option value="Feedback" {{ $aspek->jenisForm == 'Feedback' ? 'selected' : '' }}>Feedback</option>
                         </select>
                     </div>
                 </div>
@@ -63,7 +64,7 @@
             </div>
 
             <div class="table-container mb-3">
-                <table class="table text-center" id="tablePenilaian">
+                <table class="table text-center" id="tablePenilaian" style="{{ $aspek->jenisForm == 'Penilaian' ? '' : 'display: none;' }}">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
                             <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
@@ -72,19 +73,21 @@
                         </tr>
                     </thead>
                     <tbody id="aspekPenilaianTable">
+                        @foreach($aspek->penilaian as $penilaian)
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" required></td>
-                            <td><input type="number" class="form-control" name="bobot[]" required></td>
+                            <td><input type="text" class="form-control" name="kriteria[]" value="{{ $penilaian->kriteria }}" required></td>
+                            <td><input type="number" class="form-control" name="bobot[]" value="{{ $penilaian->bobot }}" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
 
-                <table class="table text-center" id="tableFeedback" style="display: none;">
+                <table class="table text-center" id="tableFeedback" style="{{ $aspek->jenisForm == 'Feedback' ? '' : 'display: none;' }}">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
                             <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
@@ -92,14 +95,16 @@
                         </tr>
                     </thead>
                     <tbody id="aspekFeedbackTable">
+                        @foreach($aspek->feedback as $feedback)
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" required></td>
+                            <td><input type="text" class="form-control" name="kriteria[]" value="{{ $feedback->kriteria }}" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -109,7 +114,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
-                        <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" required>
+                        <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" value="{{ $aspek->tanggalTenggat }}" required>
                     </div>
                 </div>
 
@@ -117,7 +122,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="waktuTenggat">Waktu Tenggat</label>
-                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" required>
+                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" value="{{ $aspek->waktuTenggat }}" required>
                     </div>
                 </div>
             </div>

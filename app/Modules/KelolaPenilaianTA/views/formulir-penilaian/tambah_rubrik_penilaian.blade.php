@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Penambahan Formulir Penilaian')
+@section('title', 'Penambahan Rubrik Penilaian')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -8,42 +8,48 @@
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/formulir-penilaian'), 'label' => 'Formulir Penilaian'],
-                ['url' => '', 'label' => 'Tambah Formulir Penilaian']
+                ['url' => '', 'label' => 'Tambah Rubrik Penilaian']
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Penambahan Formulir Penilaian</h1>
+        <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
     </div>
 @stop
 
 @section('content')
     <div class="p-4">
-        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-formulir') }}" method="POST">
+        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST">
             @csrf
 
             <div class="row">
                 <!-- Kode FTA -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="kodeFTA">Kode FTA</label>
-                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" required>
+                        <label for="kode_fta">Kode FTA</label>
+                        <select class="form-control" id="kode_fta" name="kode_fta" required>
+                            <option value="" disabled selected>Pilih Kode FTA</option>
+                            <option value="FTA001">FTA001</option>
+                            <option value="FTA002">FTA002</option>
+                            <option value="FTA003">FTA003</option>
+                            <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
+                        </select>
                     </div>
                 </div>
 
                 <!-- Nama FTA -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="namaFTA">Nama FTA</label>
-                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" required>
+                        <label for="nama_fta">Nama FTA</label>
+                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" value="PENILAIAN SEMINAR III" readonly>
                     </div>
                 </div>
             </div>
 
             <!-- Aspek Penilaian -->
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <h6><strong>Aspek Penilaian</strong></h6>
+                <h6><strong>Rubrik Penilaian</strong></h6>
                 <button type="button" class="btn btn-dark btn-sm" id="addRow">
                     <i class="fa-solid fa-plus"></i>
                 </button>
@@ -65,10 +71,18 @@
                             <th style="min-width: 100px;">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="aspekPenilaianTable">
+                    <tbody id="rubrikPenilaianTable">
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" required></td>
-                            <td><input type="number" class="form-control" name="bobot[]" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled selected>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" required></td>
@@ -76,37 +90,14 @@
                             <td><input type="text" class="form-control" name="enamPuluhLima[]" required></td>
                             <td><input type="text" class="form-control" name="enamPuluh[]" required></td>
                             <td><input type="text" class="form-control" name="kurang60[]" required></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                            </td>
+                            <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="row">
-                <!-- Tanggal Tenggat -->
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
-                        <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" required>
-                    </div>
-                </div>
-
-                <!-- Waktu Tenggat -->
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="waktuTenggat">Waktu Tenggat</label>
-                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" required>
-                    </div>
-                </div>
-            </div>
-
             <!-- Tombol Submit -->
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary mr-2" onclick="window.location.href='{{ url('/kelola-penilaian-ta/formulir-penilaian') }}'">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
@@ -116,10 +107,10 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/tambah_formulir_penilaian.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/tambah_rubrik_penilaian.css') }}">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ asset('KelolaPenilaianTA/js/tambah_formulir_penilaian.js') }}"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
 @stop

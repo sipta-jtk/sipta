@@ -4,7 +4,7 @@
     overflow-x: auto;
     border: 1px solid #ddd;
     position: relative;
-    /* scrollbar-width: thin; */
+    scrollbar-width: thin;
     -ms-overflow-style: auto;
 }
 .table-container::-webkit-scrollbar {
