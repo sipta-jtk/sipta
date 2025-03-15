@@ -3,7 +3,7 @@
 @section('title', 'PerencanaanDanPelaksanaanSeminarDanSidang')
 
 @section('content_header')
-    <h1>Presensi Pelaksanaan Seminar 3 dan Sidang TA</h1>
+    <h1>Berita Acara Pelaksanaan Seminar 3 dan Sidang TA</h1>
 @stop
 
 @section('content')
@@ -15,7 +15,7 @@
                 </div>
             @endif
 
-            <h3>Presensi Seminar 3</h3>
+            <h3>Berita Acara Pelaksanaan Seminar 3</h3>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="thead-light">
@@ -69,7 +69,7 @@
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ basename($dokumentasi) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi),20) }}
                                             </a>
                                         </div>
                                     @endif
@@ -98,7 +98,7 @@
 
     <div class="card mt-4">
         <div class="card-body">
-            <h3>Presensi Sidang TA</h3>
+            <h3>Berita Acara Pelaksanaan Sidang TA</h3>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="thead-light">
@@ -152,7 +152,7 @@
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ basename($dokumentasi) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi),20) }}
                                             </a>
                                         </div>
                                     @endif
@@ -220,32 +220,8 @@
 @stop
 
 @section('css')
-    <style>
-        .table th, .table td {
-            vertical-align: middle;
-            text-align: center;
-        }
-        .form-control-sm {
-            height: calc(1.5em + 0.5rem + 2px);
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }
-        .form-group {
-            margin-bottom: 0.5rem;
-        }
-    </style>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-    <script>
-        console.log("Hi, I'm using the Laravel-AdminLTE package!");
-    </script>
 @stop

@@ -13,7 +13,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
     public function index(): View
     {
         // Simulasikan waktu sekarang
-        $sekarang = Carbon::parse('2025-06-22 12:30:00'); // Untuk simulasi
+        $sekarang = Carbon::parse('2025-08-22 11:30:00'); // Untuk simulasi
 
         // Data presensi sementara
         $presensiSeminar3 = [
@@ -21,7 +21,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'id_kota' => '2',
+                'KoTA' => 'KoTA-001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
@@ -36,7 +36,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'id_kota' => '2',
+                'KoTA' => '2',
                 'tanggal' => '22-08-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
@@ -58,7 +58,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
                 'mahasiswa' => 'Bang Jay',
-                'id_kota' => '2',
+                'KoTA' => '2',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
@@ -70,7 +70,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524034',
                 'nim' => '221524034',
                 'mahasiswa' => 'Bang Jono',
-                'id_kota' => '2',
+                'KoTA' => '2',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
@@ -82,7 +82,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
                 'id_kehadiran' => 'sm3_221524035', 
                 'nim' => '221524035',
                 'mahasiswa' => 'Bang Jarwo',
-                'id_kota' => '2',
+                'KoTA' => '2',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
                 'sesi' => '2',
@@ -104,7 +104,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
             'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
             'nim' => '221524033',
             'mahasiswa' => 'Bang Jay',
-            'id_kota' => '2',
+            'KoTA' => '2',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
             'sesi' => '2',
@@ -116,7 +116,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
             'id_kehadiran' => 'sa_221524034',
             'nim' => '221524034',
             'mahasiswa' => 'Bang Jono',
-            'id_kota' => '2',
+            'KoTA' => '2',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
             'sesi' => '2',
@@ -128,7 +128,7 @@ class PerencanaanDanPelaksanaanSeminarDanSidangController extends Controller
             'id_kehadiran' => 'sa_221524035', // ID unik untuk Sidang TA
             'nim' => '221524035',
             'mahasiswa' => 'Bang Jarwo',
-            'id_kota' => '2',
+            'KoTA' => '2',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',
             'sesi' => '2',

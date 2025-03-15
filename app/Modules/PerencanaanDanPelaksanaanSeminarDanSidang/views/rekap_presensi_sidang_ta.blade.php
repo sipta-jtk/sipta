@@ -16,7 +16,7 @@
             @endif
 
             <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+                <table id="presensiSidangTA" class="table table-striped table-bordered">
                     <thead class="thead-light">
                         <tr>
                             <th class="w-20">NIM</th>
@@ -52,12 +52,12 @@
                                         <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
                                     @endif
                                 </td>
-                                <td style="width: 250px;">
+                                <td style="width: 50px;">
                                     @if($dokumentasi)
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ basename($dokumentasi) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 20) }}
                                             </a>
                                         </div>
                                     @else
@@ -76,22 +76,15 @@
 @stop
 
 @section('css')
-    <style>
-        .table th, .table td {
-            vertical-align: middle;
-            text-align: center;
-        }
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }
-    </style>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-    <script>
-        console.log("Hi, I'm using the Laravel-AdminLTE package!");
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $(document).ready(function() {
+            $('#presensiSidangTA').DataTable();
+        });
     </script>
 @stop
