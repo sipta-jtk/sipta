@@ -27,7 +27,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             [
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
-                'mahasiswa' => 'Bang Jay',
+                'mahasiswa' => 'Mees Victor Joseph Hilgers',
                 'id_kota' => 'KoTA 001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
@@ -55,7 +55,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             [
                 'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
                 'nim' => '221524033',
-                'mahasiswa' => 'Bang Jay',
+                'mahasiswa' => 'Mees Victor Joseph Hilgers',
                 'id_kota' => 'KoTA 001',
                 'tanggal' => '22-08-2025',
                 'ruangan' => '22jtk44',
@@ -77,7 +77,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             [
                 'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
                 'nim' => '221524033',
-                'mahasiswa' => 'Bang Jay',
+                'mahasiswa' => 'Mees Victor Joseph Hilgers',
                 'id_kota' => 'KoTA 001',
                 'tanggal' => '22-06-2025',
                 'ruangan' => '22jtk44',
@@ -123,7 +123,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         [
             'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
             'nim' => '221524033',
-            'mahasiswa' => 'Bang Jay',
+            'mahasiswa' => 'Mees Victor Joseph Hilgers',
             'id_kota' => 'KoTA 001',
             'tanggal' => '22-08-2025',
             'ruangan' => '22jtk44',

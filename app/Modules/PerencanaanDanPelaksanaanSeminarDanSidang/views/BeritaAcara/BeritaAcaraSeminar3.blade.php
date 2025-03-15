@@ -84,7 +84,7 @@
                                             <input type="file" name="dokumentasi" class="form-control-file form-control-sm" accept=".jpg,.jpeg,.png,.pdf">
                                             <small class="text-muted">Maksimal 5 MB (JPG, JPEG, PNG, PDF)</small>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Upload</button>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah</button>
                                     </form>
                                 </td>
                             </tr>

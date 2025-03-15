@@ -57,11 +57,11 @@
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 20) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 15) }}
                                             </a>
                                         </div>
                                     @else
-                                        <div class="alert alert-warning">
+                                        <div class="alert alert-warning p-1" style="font-size: 0.7rem;">
                                             Dokumentasi belum diupload.
                                         </div>
                                     @endif

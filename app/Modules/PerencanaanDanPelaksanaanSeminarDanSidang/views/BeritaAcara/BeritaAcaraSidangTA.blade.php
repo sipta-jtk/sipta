@@ -3,13 +3,11 @@
 @section('title', 'PerencanaanDanPelaksanaanSeminarDanSidang')
 
 @section('content_header')
-    <h1>Berita Acara Pelaksanaan Seminar 3 dan Sidang TA</h1>
+    <h1>Berita Acara Pelaksanaan Sidang TA</h1>
 @stop
 
 @section('content')
-    <div class="card mt-4">
         <div class="card-body">
-            <h3>Berita Acara Pelaksanaan Sidang TA</h3>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="thead-light">
@@ -79,7 +77,7 @@
                                             <input type="file" name="dokumentasi" class="form-control-file form-control-sm" accept=".jpg,.jpeg,.png,.pdf">
                                             <small class="text-muted">Maksimal 5 MB (JPG, JPEG, PNG, PDF)</small>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Upload</button>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah</button>
                                     </form>
                                 </td>
                             </tr>
@@ -88,9 +86,7 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    <div class="card mt-4">
         <div class="card-body">
             <h3>Status Kelulusan Sidang TA</h3>
             <div class="table-responsive">
@@ -127,7 +123,7 @@
                 </table>
             </div>
         </div>
-    </div>
+
 @stop
 
 @section('css')
