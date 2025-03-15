@@ -44,9 +44,6 @@
             <!-- Aspek Penilaian -->
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <h6><strong>Aspek Penilaian</strong></h6>
-                <button type="button" class="btn btn-dark btn-sm" id="addRow">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
             </div>
 
             <div class="table-container mb-3">
@@ -55,18 +52,12 @@
                         <tr class="bg-dark text-white">
                             <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
                             <th style="min-width: 100px;">Bobot (%)</th>
-                            <th style="min-width: 100px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="aspekFormulirTable">
                         <tr>
                             <td><input type="text" class="form-control" name="kriteria[]" required></td>
                             <td><input type="number" class="form-control" name="bobot[]" required></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

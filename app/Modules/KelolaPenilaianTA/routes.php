@@ -14,6 +14,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     Route::prefix('formulir-penilaian')->group(function () {
         Route::get('/', [FormulirPenilaianController::class, 'formulirPenilaian']);
         Route::get('/tambah-formulir', [FormulirPenilaianController::class, 'tambahFormulir'])->name('formulir-penilaian.tambah-formulir');
+        Route::get('/tambah-aspek', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek');
+
         Route::get('/detail', function () {
             return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');})->name('formulir-penilaian.detail');
         Route::get('/ubah-formulir', function () {
