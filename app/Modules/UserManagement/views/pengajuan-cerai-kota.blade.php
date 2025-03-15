@@ -24,10 +24,10 @@
             <tbody>
                 @foreach ($pengajuan as $item)
                 <tr>
-                    <td>{{ $item->nama }}</td>
-                    <td>{{ $item->kelompok_ta}}</td>
+                    <td>{{ $item->mahasiswa->user->nama }}</td>
+                    <td>{{ $item->kota->nama_kota }}</td>
                     <td>
-                    <a href="{{ route('pengajuan.cerai.kota.show', $item->id) }}" class="btn btn-sm btn-info">
+                    <a href="{{ route('pengajuan.cerai.kota.show', $item->id_pengajuan) }}" class="btn btn-sm btn-info">
                         Tinjau <i class="mx-1 fas fa-arrow-circle-right"></i>
                     </a>
                     </td>

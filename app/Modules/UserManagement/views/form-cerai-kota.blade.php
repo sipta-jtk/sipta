@@ -20,7 +20,7 @@
         <!-- Nama Mahasiswa -->
         <div class="mb-3">
             <label class="form-label">Nama Mahasiswa</label>
-            <input type="text" class="form-control" value="{{ $item->nama }}" readonly>
+            <input type="text" class="form-control" value="{{ $item->mahasiswa->user->nama }}" readonly>
         </div>
 
         <!-- Info KoTA -->
@@ -28,15 +28,15 @@
         <div class="row mb-3">
             <div class="col-md-4">
                 <label class="form-label">Judul TA</label>
-                <input type="text" class="form-control" value="{{ $item->judul_ta }}" readonly>
+                <input type="text" class="form-control" value="{{ $item->kota->judul_ta}}" readonly>
             </div>
             <div class="col-md-4">
                 <label class="form-label">Tahun TA</label>
-                <input type="text" class="form-control" value="{{ $item->tahun_ta }}" readonly>
+                <input type="text" class="form-control" value="{{ $item->kota->tahun_kota }}" readonly>
             </div>
             <div class="col-md-4">
                 <label class="form-label">Nama KoTA</label>
-                <input type="text" class="form-control" value="{{ $item->kelompok_ta }}" readonly>
+                <input type="text" class="form-control" value="{{ $item->kota->nama_kota }}" readonly>
             </div>
         </div>
 
