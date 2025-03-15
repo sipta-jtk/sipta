@@ -17,7 +17,7 @@
                 <p><strong>Kelompok:</strong> {{ $dataKota->kelompok }}</p>
                 <p><strong>Judul:</strong> {{ $dataKota->judul_ta }}</p>
                 <p><strong>Status:</strong> {{ $dataKota->jenis_pengajuan }}</p>
-                <p><strong>Tanggal:</strong> {{ $dataKota->tanggal }}</p>
+                <p><strong>Tanggal Pengajuan:</strong> {{ $dataKota->tanggal_pengajuan }}</p>
             </div>
         </div>
 
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Form Verifikasi -->
-        <form action="{{ route('perencanaan.kelola-pengajuan.verifikasi', ['id' => $dataKota->kelompok]) }}" method="POST">
+        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->kelompok]) }}" method="POST">
             @csrf
             <input type="hidden" name="keputusan" id="keputusan" value="">
             <input type="hidden" name="catatan" id="catatan_input" value="">
