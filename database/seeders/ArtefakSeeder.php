@@ -10,6 +10,8 @@ class ArtefakSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+
+    
     public function run(): void
     {
         Artefak::create([

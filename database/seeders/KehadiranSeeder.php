@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Kehadiran;
 
 class KehadiranSeeder extends Seeder
@@ -16,22 +14,25 @@ class KehadiranSeeder extends Seeder
      */
     public function run(): void
     {
-        // Clear the table first
-        // Schema::disableForeignKeyConstraints();
-        Kehadiran::truncate();
-        // Schema::enableForeignKeyConstraints();
+        if (!Schema::hasTable('kehadiran')) {
+            return;
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('kehadiran')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Create sample attendance data
         $kehadiran = [
             [
-            'id_penjadwalan' => 1,
-            'username' => '221524059',
-            'status_hadir' => 'hadir',
+                'id_penjadwalan' => 1,
+                'username' => '221524059',
+                'status_hadir' => 'hadir',
             ],
             [
-            'id_penjadwalan' => 2,
-            'username' => '221524049',
-            'status_hadir' => 'tidak_hadir',
+                'id_penjadwalan' => 2,
+                'username' => '221524049',
+                'status_hadir' => 'tidak_hadir',
             ],
         ];
 
