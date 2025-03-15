@@ -49,7 +49,7 @@ class PengelolaanNilaiController extends Controller{
 
         $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
 
-        Log::info('Filtered data:' . JSON_ENCODE($filteredData, JSON_PRETTY_PRINT));
+        // Log::info('Filtered data:' . JSON_ENCODE($filteredData, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'kategori'));
     }
@@ -97,7 +97,12 @@ class PengelolaanNilaiController extends Controller{
      */
     public function formPenilaianSeminar2(): View
     {
-        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2');
+        // Data statis untuk kota yang akan nilai
+        $kota = 2;
+
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
+
+        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2'. compact('mahasiswa'));
     }
 
     /**
@@ -105,20 +110,48 @@ class PengelolaanNilaiController extends Controller{
      * 
      */
     public function simpanNilaiMahasiswa(Request $request): View
-    {
-        Log::info('Request data:', $request->all());
-    
-        $nilai_mahasiswa = [];
+    {   
+        // Data statis untuk id penyimpanan nilai
+        $kota = 2;
+        $nip = 198502102015042001;
         
         $nilai = $request->except('_token');
-
+        $nilai_mahasiswa = [];
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
+        
         // Menghitung rata-rata nilai untuk setiap mahasiswa
-        foreach ($nilai as $key => $values) {
-            $average = array_sum($values) / count($values);
-            $nilai_mahasiswa[$key] = $average;
-            Log::info("Rata-rata nilai $key: " . $average);
+        foreach ($nilai as $index => $values) {
+            $average = $this->hitungRataRataNilai($values);
+            $nilai_mahasiswa[] = $average;
         }
+
+        Log::info('Nilai mahasiswa: ' . JSON_ENCODE($nilai_mahasiswa, JSON_PRETTY_PRINT));
+
+        $this->inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip);
     
         return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2');
+    }
+
+    /**
+     * Helper function untuk menghitung rata-rata nilai
+     */
+    public static function hitungRataRataNilai(array $nilai): float
+    {
+        return count($nilai) > 0 ? array_sum($nilai) / count($nilai) : 0;
+    }
+
+    /**
+     * Helper function untuk input nilai ke database
+     */
+    private function inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip): void
+    {
+        foreach ($mahasiswa as $index => $mhs) {
+            $mhs->nilaiKategori()->create([
+                'nim' => $mhs->nim,
+                'nip' => $nip,
+                'id_kategori' => 1,
+                'nilai' => $nilai_mahasiswa[$index],
+            ]);
+        }
     }
 }
