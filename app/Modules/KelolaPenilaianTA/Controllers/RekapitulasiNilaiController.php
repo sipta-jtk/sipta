@@ -66,7 +66,68 @@ class RekapitulasiNilaiController extends Controller{
         return view('KelolaPenilaianTA.views.rekapitulasi-nilai.rekapitulasi_nilai_sidang', compact('data'));
     }
     
+    
+    public function getRekapNilaiAkhir(): View
+    {
+        $data = [];
+    
+        for ($i = 1; $i <= 100; $i++) {
+            $nilaiUts = rand(50, 100);
+            $nilaiUas = rand(50, 100);
+            $nilaiLainLain = rand(50, 100);
+            $bobotUts = 0.4;
+            $bobotUas = 0.4;
+            $bobotLainLain = 0.2;
 
+            // Menghitung nilai akhir
+            $nilaiAkhir = round((($nilaiUts * $bobotUts) + ($nilaiUas * $bobotUas) + ($nilaiLainLain * $bobotLainLain)) / ($bobotUts + $bobotUas + $bobotLainLain), 2);
+            
+            switch (true) {
+                case $nilaiAkhir >= 85:
+                    $predikat = 'A';
+                    break;
+                case $nilaiAkhir >= 80:
+                    $predikat = 'A-';
+                    break;
+                case $nilaiAkhir >= 75:
+                    $predikat = 'B+';
+                    break;
+                case $nilaiAkhir >= 70:
+                    $predikat = 'B';
+                    break;
+                case $nilaiAkhir >= 65:
+                    $predikat = 'B-';
+                    break;
+                case $nilaiAkhir >= 60:
+                    $predikat = 'C+';
+                    break;
+                case $nilaiAkhir >= 55:
+                    $predikat = 'C';
+                    break;
+                case $nilaiAkhir >= 50:
+                    $predikat = 'C-';
+                    break;
+                default:
+                    $predikat = 'D';
+                    break;
+            }
+
+            $data[] = [
+                'nim' => "221524" . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'nama' => "Nama Mahasiswa #" . $i,
+                'prodi' => (rand(0, 1) == 0) ? "D3-Teknik Informatika" : "D4-Teknik Informatika",
+                'kelas' => (rand(0, 1) == 0) ? "4A" : "4B",
+                'kelompok' => "Kelompok " . rand(1, 5),
+                'nilaiUts' => $nilaiUts,
+                'nilaiUas' => $nilaiUas,
+                'nilaiLainLain' => $nilaiLainLain,
+                'nilaiAkhir' => $nilaiAkhir,
+                'predikat' => $predikat,
+            ];
+        }
+    
+        return view('KelolaPenilaianTA.views.rekapitulasi-nilai.rekapitulasi_nilai_akhir', compact('data'));
+    }
 
     /**
      * Export data rekapitulasi nilai ke dalam file excel

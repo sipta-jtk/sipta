@@ -388,69 +388,6 @@ return [
                 [
                     'text' => 'Kelola Formulir Penilaian',
                     'url' => 'kelola-penilaian-ta/formulir-penilaian',
-            'text' => 'Kelola Penilaian Tugas Akhir',
-            // 'url' => '/KelolaPenilaianTA',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Penilaian Tugas Akhir',
-                    // 'url' => '/KelolaPenilaianTA',
-                    // 'icon' => 'fas fa-fw fa-file',
-                    'submenu' => [
-                        [
-                            'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengelolaan Nilai',
-                    'url' => 'kelola-penilaian-ta/pengelolaan-nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Rekapitulasi Nilai',
-                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Pengelolaan Penilaian',
-            'url' => '#',
-            'icon' => 'fas fa-scroll',
-            'submenu' => [
-                [
-                    'text' => 'Monitoring Penilaian Mahasiswa',
-                    'url' => 'kelola-penilaian-ta/monitoring/mahasiswa',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Kelola Formulir Penilaian',
-                    'url' => 'kelola-penilaian-ta/formulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
@@ -459,8 +396,13 @@ return [
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Rekapitulasi Nilai',
-                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai',
+                    'text' => 'Rekapitulasi Nilai Sidang',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai Sidang',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]

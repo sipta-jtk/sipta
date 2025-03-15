@@ -3,6 +3,7 @@
 # Load environment variables dari .env
 export $(grep -v '^#' .env | xargs)
 
+
 php artisan key:generate
 
 # Fungsi untuk menunggu database siap

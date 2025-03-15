@@ -7,13 +7,13 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => '', 'label' => 'Rekapitulasi Nilai Sidang']
+                ['url' => '', 'label' => 'Rekapitulasi Nilai Akhir']
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Rekapitulasi Nilai Sidang</h1>
+        <h1 class="mb-0">Rekapitulasi Nilai Akhir</h1>
     </div>
 @stop
 
@@ -41,7 +41,7 @@
 
         {{-- Tabel Scrollable --}}
         <div class="table-container">
-            <table id="nilaiTable" class="table text-center">
+            <table id="nilaiAkhirTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th rowspan="2" class="align-middle" style="width: 1%;">No</th>
@@ -50,29 +50,12 @@
                         <th rowspan="2" class="align-middle" style="width: 5%;">Prodi</th>
                         <th rowspan="2" class="align-middle" style="width: 2%;">Kelas</th>
                         <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
-                        <th colspan="4" style="width: 10%;">Seminar 2</th>
-                        <th colspan="4" style="width: 10%;">Seminar 3</th>
-                        <th colspan="4" style="width: 10%;">Sidang Akhir</th>
-                        <th colspan="3" style="width: 10%;">Dosen Pembimbing</th>
+                        <th colspan="1" style="width: 5%;">UTS</th>
+                        <th colspan="1" style="width: 5%;">UAS</th>
+                        <th colspan="1" style="width: 5%;">Lain-Lain</th>
+                        <th colspan="1" style="width: 5%;">Nilai Akhir</th>
+                        <th colspan="1" style="width: 5%;">Predikat</th>
                     </tr>
-                    <tr class="bg-secondary text-white">
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">PM1</th>
-                        <th style="width: 2%;">PM2</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                    </tr>
-                </thead>
                 <tbody>
                     @foreach ($data as $index => $row)
                         <tr class="bg-light">
@@ -82,21 +65,11 @@
                             <td class="align-middle">{{ $row['prodi'] }}</td>
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>
-                            <td class="align-middle">{{ $row['seminar2Penguji1'] }}</td>
-                            <td class="align-middle">{{ $row['seminar2Penguji2'] }}</td>
-                            <td class="align-middle">{{ $row['seminar2Penguji3'] }}</td>
-                            <td class="align-middle">{{ $row['rataSeminar2'] }}</td>
-                            <td class="align-middle">{{ $row['seminar3Penguji1'] }}</td>
-                            <td class="align-middle">{{ $row['seminar3Penguji2'] }}</td>
-                            <td class="align-middle">{{ $row['seminar3Penguji3'] }}</td>
-                            <td class="align-middle">{{ $row['rataSeminar3'] }}</td>
-                            <td class="align-middle">{{ $row['sidangPenguji1'] }}</td>
-                            <td class="align-middle">{{ $row['sidangPenguji2'] }}</td>
-                            <td class="align-middle">{{ $row['sidangPenguji3'] }}</td>
-                            <td class="align-middle">{{ $row['rataSidang'] }}</td>
-                            <td class="align-middle">{{ $row['pembimbing1'] }}</td>
-                            <td class="align-middle">{{ $row['pembimbing2'] }}</td>
-                            <td class="align-middle">{{ $row['rataPembimbing'] }}</td>
+                            <td class="align-middle">{{ $row['nilaiUts'] }}</td>
+                            <td class="align-middle">{{ $row['nilaiUas'] }}</td>
+                            <td class="align-middle">{{ $row['nilaiLainLain'] }}</td>
+                            <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
+                            <td class="align-middle">{{ $row['predikat'] }}</td>
                         </tr>
                         
                     @endforeach
@@ -125,6 +98,33 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $.noConflict(); // Hindari konflik dengan jQuery versi lain
+    </script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('KelolaPenilaianTA/js/rekapitulasi_nilai.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#nilaiAkhirTable').DataTable({
+                "paging": true,
+                "lengthMenu": [10, 25, 50, 100],
+                "pageLength": 10,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+
+            $('#filterProdi').on('change', function () {
+                table.column(3).search(this.value).draw();
+            });
+
+            $('#filterKelas').on('change', function () {
+                table.column(4).search(this.value).draw();
+            });
+
+            $('#dataTableControls').html($('.dataTables_length'));
+            $('#searchBox').html($('.dataTables_filter'));
+        });
+    </script>
 @stop
+
