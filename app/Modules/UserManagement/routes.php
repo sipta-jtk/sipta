@@ -6,8 +6,13 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('login');
+
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
 })->name('login');

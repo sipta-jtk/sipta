@@ -257,12 +257,12 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => '/',
-    'logout_url' => 'logout',
-    'login_url' => 'login',
-    'register_url' => 'register',
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
+    'dashboard_url' => env('PREFIX_URL', 'sipta') . '/',
+    'logout_url' => env('PREFIX_URL', 'sipta') . '/logout',
+    'login_url' => env('PREFIX_URL', 'sipta') . '/login',
+    'register_url' => env('PREFIX_URL', 'sipta') . '/register',
+    'password_reset_url' => env('PREFIX_URL', 'sipta') . '/password/reset',
+    'password_email_url' => env('PREFIX_URL', 'sipta') . '/password/email',
     'profile_url' => false,
     'disable_darkmode_routes' => false,
 
@@ -309,7 +309,7 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
-
+    
         // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
@@ -317,207 +317,122 @@ return [
         ],
         [
             'text' => 'blog',
-            'url' => 'admin/blog',
+            'url' => env('PREFIX_URL', 'sipta') . '/admin/blog',
             'can' => 'manage-blog',
         ],
         ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-home',
             'submenu' => [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
-                    'url' => '/#',
+                    'url' => env('PREFIX_URL', 'sipta') . '/#',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
-                            // 'icon' => 'fas fa-fw fa-file',
-                            'url' => '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
-                    'url' => '/#',
+                    'url' => env('PREFIX_URL', 'sipta') . '/#',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Pembimbing',
-                            // 'icon' => 'fas fa-fw fa-file',
-                            'url' => '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                         ],
                         [
                             'text' => 'Formulir Kesediaan Membimbing',
-                            'url' => '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Pengelolaan Periode',
-                    'url' => '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
-                    'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                 ],
                 [
                     'text' => 'Rekap FTA',
-                    'url' => '/PengajuanAlokasiPembimbing/RekapFTA02',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/RekapFTA02',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Kelola Penilaian Tugas Akhir',
-            // 'url' => '/KelolaPenilaianTA',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
                     'text' => 'Kelola Penilaian Tugas Akhir',
-                    // 'url' => '/KelolaPenilaianTA',
-                    // 'icon' => 'fas fa-fw fa-file',
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-mahasiswa',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-feedback',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-rubrik',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/fomulir-penilaian',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/rekapitulasi-nilai',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Timeline',
-            'url' => '/timeline',
+            'url' => env('PREFIX_URL', 'sipta') . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Artefak',
-            'url' => '/#',
+            'url' => env('PREFIX_URL', 'sipta') . '/#',
             'icon' => 'fas fa-fw fa-folder',
             'submenu' => [
                 [
                     'text' => 'Kelola Dokumen dan FTA',
-                    'url' => '/artefak',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => env('PREFIX_URL', 'sipta') . '/artefak',
                 ],
-                // [
-                //     'text' => 'Resume Bimbingan',
-                //     'url' => '/#',
-                //     // 'icon' => 'far fa-fw fa-file',
-                // ],
             ]
         ],
         ['header' => 'Pengaturan Pengguna'],
-        // [
-        //     'text' => 'profile',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'change_password',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
         [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => '/manage_dosen',
+                    'url' => env('PREFIX_URL', 'sipta') . '/manage_dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/#',
-                    // 'submenu' => [
-                    //     [
-                    //         'text' => 'Koordinator TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Pembimbing TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Penguji TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     // [
-                    //     //     'text' => 'level_two',
-                    //     //     'url' => '#',
-                    //     //     'submenu' => [
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //     ],
-                    //     // ],
-                    // ],
+                    'url' => env('PREFIX_URL', 'sipta') . '/#',
                 ],
-                // [
-                //     'text' => 'level_one',
-                //     'url' => '#',
-                // ],
             ],
         ],
-        // ['header' => 'labels'],
-        // [
-        //     'text' => 'important',
-        //     'icon_color' => 'red',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url' => '#',
-        // ],
     ],
 
     /*
