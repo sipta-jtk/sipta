@@ -21,7 +21,7 @@
     <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Daftar Formulir Penilaian TA</h3>
-            <a href="{{ route('formulir-penilaian.tambah-formulir') }}" class="btn btn-dark">
+            <a href="{{ route('formulir-penilaian.tambah-aspek-formulir') }}" class="btn btn-dark">
                 <i class="fa-solid fa-plus"></i> Tambah
             </a>
         </div>
@@ -31,17 +31,23 @@
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th style="width: 3%;">No</th>
-                        <th style="width: 32%;">Kode Formulir</th>
-                        <th style="width: 35%;">Nama Formulir</th>
-                        <th style="width: 20%;">Aksi</th>
+                        <th style="width: 12%;">Kode Formulir</th>
+                        <th style="width: 19%;">Nama Formulir</th>
+                        <th style="width: 12%;">Program Studi</th>
+                        <th style="width: 19%;">Jenis Formulir</th>
+                        <th style="width: 15%;">Tanggal Tenggat Pengisian</th>
+                        <th style="width: 15%;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($data as $index => $row)
                         <tr class="bg-light">
-                            <td class="align-middle">{{ $index + 1 }}</td>
-                            <td class="align-middle">{{ $row['kode'] }}</td>
-                            <td class="align-middle">{{ $row['nama'] }}</td>
+                        <td class="align-middle">{{ $index + 1 }}</td>
+                        <td class="align-middle">{{ $row->kode_fta }}</td>
+                        <td class="align-middle">{{ $row->nama_fta }}</td>
+                        <td class="align-middle">{{ $row->id_prodi }}</td>
+                        <td class="align-middle">{{ $row->jenis_form }}</td>
+                        <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
                             <td class="align-middle">
                                 <a href="{{ url('kelola-penilaian-ta/formulir-penilaian/detail') }}" class="btn btn-info btn-sm">Lihat Detail</a>
                                 <a href="{{ url('kelola-penilaian-ta/formulir-penilaian/ubah-formulir') }}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pen"></i></a>

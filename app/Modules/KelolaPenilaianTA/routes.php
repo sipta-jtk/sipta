@@ -3,21 +3,34 @@
 use App\Exports\RekapitulasiNilaiExport;
 use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
+use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
+use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
+use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
+use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
+use Illuminate\Support\Facades\DB;
 
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= FORMULIR PENILAIAN =================
     Route::prefix('formulir-penilaian')->group(function () {
-        Route::get('/', [KelolaPenilaianTAController::class, 'formulirPenilaian']);
-        Route::get('/tambah-formulir', [KelolaPenilaianTAController::class, 'tambahFormulir'])->name('formulir-penilaian.tambah-formulir');
+        // Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian']);
+        Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');
+        Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
+        Route::get('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek-formulir');
+        // Route::post('/kelola-penilaian-ta/formulir-penilaian/tambah-aspek-formulir', [FormulirPenilaianController::class, 'simpanAspekFormulir'])->name('formulir-penilaian.simpan');
+        // Route::post('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'simpanAspekFormulir'])->name('formulir-penilaian.simpan');
+        Route::post('/formulir-penilaian/simpan', [FormulirPenilaianController::class, 'store'])->name('formulir-penilaian.simpan');
+
         Route::get('/detail', function () {
             return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');
         })->name('formulir-penilaian.detail');
         Route::get('/ubah-formulir', function () {
-            return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta');
-        })->name('formulir-penilaian.edit');
-        Route::put('/update', [KelolaPenilaianTAController::class, 'updateFormulir'])->name('formulir-penilaian.update');
+            return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta');})->name('formulir-penilaian.edit');
+        Route::put('/update', [FormulirPenilaianController::class, 'updateFormulir'])->name('formulir-penilaian.update');
+
+        Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
+        Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
+        
     });
 
 
