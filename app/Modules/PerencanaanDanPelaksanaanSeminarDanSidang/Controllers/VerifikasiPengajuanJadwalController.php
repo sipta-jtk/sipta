@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
-    public function getList(Request $request): View
+    public function getList(Request $request, String $tipe): View
     {
-
-        $tipe = 'seminar-3';
         $role = auth()->check() ? auth()->user()->role : 'unauthorized';
 
         if ($tipe === 'seminar-3') {
@@ -34,7 +32,7 @@ class VerifikasiPengajuanJadwalController extends Controller
                     'tanggal_pengajuan' => '2023-01-01',
                     'judul_ta' => 'Sistem AI untuk Diagnosis Penyakit',
                     'tanggal_kegiatan' => '2023-01-02',
-                    'sesi' => 1,
+                    'sesi' => 3,
                     'ruangan' => 'D221',
                     'status_mahasiswa' => '',
                     'status_pembimbing1' => '',
@@ -47,33 +45,35 @@ class VerifikasiPengajuanJadwalController extends Controller
             ];
         }
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwal', compact('dataPengajuan'));
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwal', compact('dataPengajuan', 'tipe'));
     }
 
     public function verifikasi(Request $request, int $id, string $tipe)
     {
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
-    
+
         // Menentukan status verifikasi berdasarkan keputusan
         $status = ($keputusan === 'Ditolak') ? false : true;
         session()->put("status_verifikasi_$id", $status);
-    
+
         // Cek apakah ada data sebelumnya di session
         $pengajuanSebelumnya = session()->get("pengajuan_$id", (object) []);
-    
+
         // Simpan data ke session
         session()->put("pengajuan_$id", (object) [
             'kelompok' => $pengajuanSebelumnya->kelompok ?? 'KoTA 002',
             'judul_ta' => $pengajuanSebelumnya->judul_ta ?? 'Judul Tidak Diketahui',
-            'status' => $status ? ($pengajuanSebelumnya->status ?? []) : [],
+            'status' => $status, // Simpan status sebagai boolean
             'catatan' => $catatan,
             'tanggal_pengajuan' => $pengajuanSebelumnya->tanggal_pengajuan ?? now(),
         ]);
-        
-        $tipe = 'seminar-3';
-        return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])->with('success', "Pengajuan telah " . ($status ? 'Disetujui' : 'Ditolak') . ".");
+
+        // Redirect ke halaman yang sesuai
+        return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
+                        ->with('success', "Pengajuan telah " . ($status ? 'Disetujui' : 'Ditolak') . ".");
     }
+
 
 }
 
