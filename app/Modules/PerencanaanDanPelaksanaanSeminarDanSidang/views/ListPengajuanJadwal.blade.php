@@ -111,7 +111,7 @@
                         render: function(data, type, row) {
                             return `<button class="btn btn-primary btn-proses" 
                                         data-id="${row.ID}" 
-                                        data-kelompok="${row.kelompok}" 
+                                        data-kelompok="KoTA ${row.kelompok}" 
                                         data-judul="${row.judul_ta}" 
                                         data-tanggal="${row.tanggal_kegiatan}" 
                                         data-ruangan="${row.ruangan}" 
