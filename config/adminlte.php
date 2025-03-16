@@ -518,7 +518,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Edit Template Notifikasi',
-                    'url' => 'edit-notif',                    
+                    'url' => '/notification/admin/settingawal',                    
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',

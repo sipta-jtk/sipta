@@ -1,7 +1,6 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <!-- Header Modal -->
             <div class="modal-header">
                 <h3 class="modal-title" id="notificationModalLabel">Notification</h3>
                 <a href="#" id="openPreferences" class="close" aria-label="Close">
@@ -15,7 +14,6 @@
     </div>
 </div>
 
-<!-- Styling CSS untuk Modal dan Notifikasi -->
 <style>
     .modal-content {
         border-radius: 10px;
@@ -34,7 +32,7 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid #ddd;
-        padding-bottom: 15px;
+        padding-bottom: 20px;
         position: relative;
     }
 
@@ -51,7 +49,7 @@
     }
 
     .modal-header a.close:hover {
-        color: #f44336; /* Warna ketika hover */
+        color: #f44336;
     }
 
     .notification-item {
