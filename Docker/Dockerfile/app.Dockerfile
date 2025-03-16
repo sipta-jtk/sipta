@@ -38,19 +38,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy project ke dalam container
 COPY . /var/www/
 
-# Tambahkan Git safe.directory sebelum composer install
-RUN git config --global --add safe.directory /var/www
-RUN git config --global --add safe.directory /var/www/vendor/symfony/var-exporter
-
 # Copy directory project permission ke container
 COPY --chown=www-data:www-data . /var/www/
 RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /var/log/supervisor
-RUN chmod -R 755 /var/www/public
-RUN chown -R www-data:www-data /var/www/public
 
-# Install dependency dengan mengabaikan masalah platform jika diperlukan
-RUN composer install --ignore-platform-reqs
+# Install dependency
+RUN composer install
 
 # Expose port 9000
 EXPOSE 9000
