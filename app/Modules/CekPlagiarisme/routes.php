@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\CekPlagiarisme\Controllers\PenentuanAmbangBatas;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
+use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
 Route::get('/cek-plagiarisme', [CekPlagiarismeController::class, 'index']);
-Route::get('/cek-plagiarisme/{id}', [CekPlagiarismeController::class, 'show'])->name('plagiarism.detail');
+Route::get('/cek-plagiarisme/{id}', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
 Route::get('/penentuan-ambang-batas', [CekPlagiarismeController::class, 'PenentuanAmbangBatas']);
