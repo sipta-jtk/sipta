@@ -1,0 +1,78 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use App\Models\Dosen;
+
+class DosenSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        if (!Schema::hasTable('dosen')) {
+            return;
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('dosen')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        $data = [
+            [
+                'nip' => '197312271999031003',
+                'id_kbk' => 1,
+                'id_dosen' => 'AD',
+                'kode_dosen' => 'KO001N',
+                'status_dosen' => 'aktif',
+                'role_dosen' => 'dosen',
+                'bersedia_membimbing' => 'bersedia'
+            ],
+            [
+                'nip' => '198502102015042001',
+                'id_kbk' => 2,
+                'id_dosen' => 'HA',
+                'kode_dosen' => 'KO060N',
+                'status_dosen' => 'aktif',
+                'role_dosen' => 'koordinator_ta',
+                'bersedia_membimbing' => 'bersedia'
+            ],
+            [
+                'nip' => '197201061999031002',
+                'id_kbk' => 1,
+                'id_dosen' => 'BW',
+                'kode_dosen' => 'KO003N',
+                'status_dosen' => 'aktif',
+                'role_dosen' => 'kajur',
+                'bersedia_membimbing' => 'tidak_bersedia'
+            ],
+            [
+                'nip' => '196810141993032002',
+                'id_kbk' => 3,
+                'id_dosen' => 'AN',
+                'kode_dosen' => 'KO002N',
+                'status_dosen' => 'nonaktif',
+                'role_dosen' => 'dosen',
+                'bersedia_membimbing' => 'tidak_bersedia'
+            ],
+            [
+                'nip' => '197604182001121004',
+                'id_kbk' => 4,
+                'id_dosen' => 'IA',
+                'kode_dosen' => 'KO023N',
+                'status_dosen' => 'aktif',
+                'role_dosen' => 'dosen',
+                'bersedia_membimbing' => 'bersedia'
+            ]
+        ];
+
+        foreach ($data as $item) {
+            Dosen::create($item);
+        }
+    }
+}
