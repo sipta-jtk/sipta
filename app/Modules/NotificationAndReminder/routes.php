@@ -3,14 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\NotificationAndReminder\Controllers\SettingNotification\SettingAwalNotif as SettingAwalNotifController;
 
-Route::get('/notification_reminder/admin/settingawal', [SettingAwalNotifController::class, 'render']);
-    
-Route::post('/notification_reminder/admin/settingawal', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
+Route::get('/notification/admin/settingawal', [SettingAwalNotifController::class, 'index'])->name('notification_reminder.admin.notifikasi');
+Route::post('/notification/admin/settingawal/store', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
+Route::get('/notification/admin/settingawal/edit/{id}', [SettingAwalNotifController::class, 'edit'])->name('notifikasi.edit');
+Route::post('/notification/admin/settingawal/update/{id}', [SettingAwalNotifController::class, 'update'])->name('notifikasi.update');
+Route::delete('/notification/admin/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])->name('notifikasi.delete');
 
 
 Route::get('/notification_reminder/admin/notifikasi', function () {
     return view('NotificationAndReminder::LogAdmin.logAdmin');
-});
+}); 
 
 Route::get('/notification_reminder/user/notifikasi', function () {
     return view('NotificationAndReminder::LogUser.logUser');

@@ -4,35 +4,56 @@ namespace App\Modules\NotificationAndReminder\Controllers\SettingNotification;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\TemplateNotifikasi;
 
 class SettingAwalNotif extends Controller
 {
-    public function render()
+    public function index()
     {
-        // Dummy data notifikasi
-        $notifikasi = [
-            (object) ['judul' => 'Notifikasi 1', 'isi' => 'Ini adalah notifikasi pertama', 'trigger' => 'Login'],
-            (object) ['judul' => 'Notifikasi 2', 'isi' => 'Ini adalah notifikasi kedua', 'trigger' => 'Logout'],
-            (object) ['judul' => 'Notifikasi 3', 'isi' => 'Ini adalah notifikasi ketiga', 'trigger' => 'Pendaftaran'],
-        ];
-
-        // Merender view dengan path relatif yang benar
-        return view('NotificationAndReminder::SettingNotification.SettingAwalNotif', compact('notifikasi'));
+        $notifikasis = TemplateNotifikasi::all(); // Ambil semua data notifikasi dari database
+        return view('NotificationAndReminder.views.SettingNotification.SettingAwalNotif', compact('notifikasis'));
     }
 
     public function store(Request $request)
     {
-        // Validasi inputan
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi' => 'required|string',
-            'trigger' => 'required|string|max:255',
+            'judul_notifikasi' => 'required|string|max:255',
+            'jenis_notifikasi' => 'required|string|max:20',
+            'isi_in_apps' => 'required|string',
+            'isi_in_email' => 'required|string',
         ]);
 
-        // Simulasi penyimpanan data
-        session()->flash('success', 'Notifikasi berhasil disimpan.');
+        TemplateNotifikasi::create($validated); // Simpan ke database
 
-        // Redirect kembali ke halaman yang sesuai
-        return redirect()->route('notification_reminder.admin.notifikasi');
+        return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil disimpan.');
+    }
+
+    public function edit($id)
+    {
+        $notifikasi = TemplateNotifikasi::where('id_template_notifikasi', $id)->firstOrFail();
+        return view('NotificationAndReminder.views.modals.edit-notifikasi', compact('notifikasi'));
+    }
+    
+    public function update(Request $request, $id)
+    {
+        $notifikasi = TemplateNotifikasi::findOrFail($id);
+
+        $validated = $request->validate([
+            'judul_notifikasi' => 'required|string|max:255',
+            'jenis_notifikasi' => ['required', 'string', 'max:20', 'not_in:default'],
+            'isi_in_apps' => 'required|string',
+            'isi_in_email' => 'required|string',
+        ]);
+
+        $notifikasi->update($validated);
+
+        return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        TemplateNotifikasi::destroy($id);
+
+        return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil dihapus.');
     }
 }

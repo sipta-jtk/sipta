@@ -13,8 +13,8 @@ class TemplateNotifikasi extends Model
 
     protected $fillable = [
         'judul_notifikasi',
+        'jenis_notifikasi',
         'isi_in_apps',
         'isi_in_email',
-        'jenis_notifikasi',
     ];
 }
