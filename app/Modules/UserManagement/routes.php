@@ -6,8 +6,8 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\UserManagement\Controllers\PengajuanCeraiKoTAController;
-use App\Modules\UserManagement\Controllers\FormCeraiKoTAController;
+use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
+use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 
 // Route untuk login
 Route::get('/login', function () {
@@ -39,18 +39,28 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/user_management', [UserManagementController::class, 'render']);
 });
 
-Route::get('/pengajuan-cerai-kota', [PengajuanCeraiKoTAController::class, 'index'])->name('pengajuan.cerai.kota');
-Route::get('/pengajuan-cerai-kota/{id}', [PengajuanCeraiKoTAController::class, 'show'])->name('pengajuan.cerai.kota.show');
-Route::get('/form-cerai-kota', [FormCeraiKoTAController::class, 'index'])->name('form.cerai.kota');
-Route::post('/form-cerai-kota', [FormCeraiKoTAController::class, 'submit'])->name('form.cerai.kota.submit');
+//Pengajuan Pisah KoTA
+// Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])->name('pengajuan.pisah.kota');
+// Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])->name('pengajuan.pisah.kota.show');
 
+Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])
+        ->name('pengajuan.pisah.kota');
+});
+Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
+        ->name('pengajuan.pisah.kota.show');
+});
+
+Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
+Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
+Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
+Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('role_no_auth:admin')
     ->name('manage.dosen');
 
-
-    
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 

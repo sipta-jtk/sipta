@@ -461,9 +461,19 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
-                    'text' => 'Pengajuan Cerai KoTA',
-                    'url' => 'pengajuan-cerai-kota',
-                    'icon' => 'fas fa-users-slash',
+                    'text' => 'Pengajuan Pisah KoTA',
+                    'url' => 'pengajuan-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Form Pisah KoTA',
+                    'url' => 'form-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'mahasiswa_ta',
+                    // 'can' => function() {
+                    //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
+                    //         },
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
