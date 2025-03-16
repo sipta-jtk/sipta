@@ -2,16 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Notifikasi extends Model
 {
-    use HasFactory;
-
-    protected $table = 'notifikasi'; // Nama tabel
-
-    protected $primaryKey = 'id_notifikasi'; // Primary key
+    protected $table = 'notifikasi'; 
+    protected $primaryKey = 'id_notifikasi'; 
 
     public $timestamps = false;
 
@@ -19,7 +15,11 @@ class Notifikasi extends Model
         'tipe_notifikasi',
         'judul',
         'isi_notifikasi',
-        'sumber_notifikasi',
-        'created_at'
+        'sumber_notifikasi'
     ];
+
+    public function notifikasiKirim()
+    {
+        return $this->hasMany(NotifikasiKirim::class, 'id_notifikasi', 'id_notifikasi');
+    }
 }
