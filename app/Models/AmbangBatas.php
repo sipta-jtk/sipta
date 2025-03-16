@@ -8,22 +8,10 @@ class AmbangBatas extends Model
 {    
     protected $table = 'ambang_batas';
     protected $primaryKey = 'id_ambang_batas';
-        
+    
+    public $timestamps = false;
+    
     protected $fillable = [
-        'ambang_batas',
-        'status_ambang_batas',
-        'nip',
-        'created_at',
-        'updated_at'
+        'ambang_batas'
     ];
-
-    public function dokumen()
-    {
-        return $this->hasMany(Dokumen::class, 'id_ambang_batas', 'id_ambang_batas');
-    }
-
-    public function dosen()
-    {
-        return $this->belongsTo(Dosen::class, 'nip', 'nip');
-    }
 }

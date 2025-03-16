@@ -16,6 +16,5 @@
 @stop
 
 @section('js')
-    <h1>Hai</h1>
-    <script> console.log("Ini user management bang!"); </script>
+    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop

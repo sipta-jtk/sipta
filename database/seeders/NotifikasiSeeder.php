@@ -19,8 +19,7 @@ class NotifikasiSeeder extends Seeder
             'judul' => 'Pembaruan Sistem',
             'isi_notifikasi' => 'Sistem akan diperbarui pada pukul 23:00 WIB.',
             'sumber_notifikasi' => 'Admin',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'created_at' => Carbon::now()
         ]);
 
         Notifikasi::create([
@@ -28,8 +27,7 @@ class NotifikasiSeeder extends Seeder
             'judul' => 'Reminder Pengumpulan Progres',
             'isi_notifikasi' => 'Jangan lupa untuk menyelesaikan progres kemarin',
             'sumber_notifikasi' => 'Pembimbing TA',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'created_at' => Carbon::now()
         ]);
     }
 }

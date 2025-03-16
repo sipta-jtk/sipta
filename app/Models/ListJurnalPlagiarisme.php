@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ListJurnalPlagiarisme extends Model
 {
-    protected $table = 'list_jurnal_plagiarisme'; 
-    protected $primaryKey = 'id_jurnal'; 
+    use HasFactory;
 
-    public $timestamps = false; 
+    protected $table = 'list_jurnal_plagiarisme'; // Nama tabel
+
+    protected $primaryKey = 'id_jurnal'; // Primary key
+
+    public $timestamps = false; // Tidak menggunakan created_at & updated_at
 
     protected $fillable = [
         'link_jurnal',
         'judul',
         'persentase_kemunculan'
     ];
-
-    public function listKalimatPlagiarisme()
-    {
-        return $this->hasMany(ListKalimatPlagiarisme::class, 'id_jurnal', 'id_jurnal');
-    }
 }
