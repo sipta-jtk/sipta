@@ -12,22 +12,25 @@ class Dokumen extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'judul',
+        'judul', // 1
         'persentase_plagiarisme',
         'highlight_dokumen',
         'status_plagiarisme',
         'review',
-        'kategori',
-        'deskripsi',
-        'versi',
-        'ukuran_file',
-        'notes',
+        'kategori', // 2
+        'deskripsi', // 3
+        'versi', // 4
+        'file_path',
+        'ukuran_file', // 5
+        'kode_fta',
+        'notes', // 6
         'id_kota',
         'id_label',
         'id_subkategori',
         'username',
         'status_berkas',
-        'uploaded_at',
-        'updated_at'
+        'uploaded_at', // 7
+        'updated_at' // 8
     ];
+    
 }
