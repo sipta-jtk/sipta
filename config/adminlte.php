@@ -402,7 +402,13 @@ return [
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai Sidang',
+                    'text' => 'Rekapitulasi Nilai Sidang',
                     'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengaturan Nilai Akhir',
+                    'url' => 'kelola-penilaian-ta/pengaturan-nilai-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -456,8 +462,8 @@ return [
                     'url' => '#',
                 ],
                 [
-                    'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/#',
+                    'text' => 'Dosen',
+                    'url' => '#',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',

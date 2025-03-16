@@ -7,13 +7,13 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
+                ['url' => '', 'label' =>  $data['header'] ]
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">{{ $data['header'] ?? 'Kelola Penilaian' }}</h1>
+        <h1 class="mb-0">{{ $data['header'] }}</h1>
     </div>
 @stop
 
@@ -47,6 +47,7 @@
         </div>
     </div>
 @stop
+
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola_penilaian_ta.css') }}">

@@ -110,10 +110,9 @@
         </form>
 
         <div class="d-flex justify-content-end mt-3">
-        <button id="exportExcel" type="button" class="btn btn-success"
-            data-url="{{ route('rekapitulasi.export') }}">
-            <i class="fas fa-file-excel"></i> Export to Excel
-        </button>
+            <button id="exportExcel" type="button" class="btn btn-success"">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
         </div>
     </div>
 @stop

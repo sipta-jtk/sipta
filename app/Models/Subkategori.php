@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subkategori extends Model
 {
+    use HasFactory;
+
+    public $timestamps = false;
+
     protected $table = 'subkategori';
     protected $primaryKey = 'id_subkategori';
-    
-    public $timestamps = false;
 
     protected $fillable = [
         'nama_subkategori'

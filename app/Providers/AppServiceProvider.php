@@ -21,9 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(UrlGenerator $url): void
     {
-        If(env('APP_ENV') !== 'local') { 
-            $url->forceScheme('https'); 
-        }
-        View::addLocation(base_path('app/Modules'));
+        View::addLocation(base_path('app/modules'));
     }
 }
