@@ -54,6 +54,7 @@ Route::get('/dosen',function(){
     return '<h1> hello dosen </h1>';
 })->middleware(['auth', 'role:dosen']);
     
+
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
