@@ -401,13 +401,8 @@ return [
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Rekapitulasi Nilai Akhir',
+                    'text' => 'Rekapitulasi Nilai Sidang',
                     'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-akhir',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengaturan Nilai Akhir',
-                    'url' => 'kelola-penilaian-ta/pengaturan-nilai-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
