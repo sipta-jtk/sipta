@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Rekapitulasi Nilai Sidang')
+@section('title', 'Rekapitulasi Nilai Akhir')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -44,35 +44,39 @@
             <table id="nilaiAkhirTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="2" class="align-middle" style="width: 1%;">No</th>
-                        <th rowspan="2" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
-                        <th rowspan="2" class="align-middle" style="width: 5%;">Prodi</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">Kelas</th>
-                        <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
+                        <th rowspan="1" class="align-middle" style="width: 1%;">No</th>
+                        <th rowspan="1" class="align-middle" style="width: 3%;">NIM</th>
+                        <th rowspan="1" class="align-middle" style="width: 20%;">Nama</th>
+                        <th rowspan="1" class="align-middle" style="width: 5%;">Prodi</th>
+                        <th rowspan="1" class="align-middle" style="width: 2%;">Kelas</th>
+                        <th rowspan="1" class="align-middle" style="width: 4%;">Kelompok</th>
                         <th colspan="1" style="width: 5%;">UTS</th>
                         <th colspan="1" style="width: 5%;">UAS</th>
                         <th colspan="1" style="width: 5%;">Lain-Lain</th>
                         <th colspan="1" style="width: 5%;">Nilai Akhir</th>
                         <th colspan="1" style="width: 5%;">Predikat</th>
                     </tr>
+                </thead>
                 <tbody>
-                    @foreach ($data as $index => $row)
-                        <tr class="bg-light">
-                            <td class="align-middle">{{ $index + 1 }}</td>
-                            <td class="align-middle">{{ $row['nim'] }}</td>
-                            <td class="align-middle">{{ $row['nama'] }}</td>
-                            <td class="align-middle">{{ $row['prodi'] }}</td>
-                            <td class="align-middle">{{ $row['kelas'] }}</td>
-                            <td class="align-middle">{{ $row['kelompok'] }}</td>
-                            <td class="align-middle">{{ $row['nilaiUts'] }}</td>
-                            <td class="align-middle">{{ $row['nilaiUas'] }}</td>
-                            <td class="align-middle">{{ $row['nilaiLainLain'] }}</td>
-                            <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
-                            <td class="align-middle">{{ $row['predikat'] }}</td>
-                        </tr>
-                        
-                    @endforeach
+                    @if(empty($data) || count($data) == 0)
+                        <tr><td colspan="11" class="text-center">Data tidak tersedia</td></tr>
+                    @else
+                        @foreach ($data as $index => $row)
+                            <tr class="bg-light">
+                                <td class="align-middle">{{ $index + 1 }}</td>
+                                <td class="align-middle">{{ $row['nim'] }}</td>
+                                <td class="align-middle">{{ $row['nama'] }}</td>
+                                <td class="align-middle">{{ $row['prodi'] }}</td>
+                                <td class="align-middle">{{ $row['kelas'] }}</td>
+                                <td class="align-middle">{{ $row['kelompok'] }}</td>
+                                <td class="align-middle">{{ $row['nilaiUts'] }}</td>
+                                <td class="align-middle">{{ $row['nilaiUas'] }}</td>
+                                <td class="align-middle">{{ $row['nilaiLainLain'] }}</td>
+                                <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
+                                <td class="align-middle">{{ $row['predikat'] }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -97,10 +101,7 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $.noConflict(); // Hindari konflik dengan jQuery versi lain
-    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
