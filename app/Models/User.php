@@ -36,4 +36,29 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
+
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class, 'nim', 'username'); 
+    }
+
+    public function dosen()
+    {
+        return $this->hasOne(Dosen::class, 'nip', 'username'); 
+    }
+
+    public function adminlte_image()
+    {
+        return 'https://picsum.photos/300/300';
+    }
+
+    public function adminlte_desc()
+    {
+        return 'I\'m a nice guy';
+    }
+
+    public function adminlte_profile_url()
+    {
+        return 'profile.index';
+    }
 }
