@@ -5,13 +5,8 @@ use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;
 use App\Modules\UserManagement\Controllers\AuthenticatedSessionController;
-
-use FontLib\Table\Type\name;
-<<<<<<< Updated upstream
-=======
-use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use App\Modules\UserManagement\Controllers\ProfileController;
->>>>>>> Stashed changes
+use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Route;
 
 // Route untuk login
@@ -43,7 +38,6 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/', [UserManagementController::class, 'render']);
 });
 
-<<<<<<< Updated upstream
 
 Route::post('/logout', [UserManagementController::class, 'logout'])->name('logout');
 
@@ -60,13 +54,6 @@ Route::get('/dosen',function(){
     return '<h1> hello dosen </h1>';
 })->middleware(['auth', 'role:dosen']);
     
-=======
-Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-->middleware('role_no_auth:admin')
-->name('manage.dosen');
-
-
->>>>>>> Stashed changes
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
