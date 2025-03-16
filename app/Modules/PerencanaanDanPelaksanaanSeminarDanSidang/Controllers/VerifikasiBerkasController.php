@@ -5,6 +5,7 @@ namespace App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers;
 use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Models\Kota;
 
 class VerifikasiBerkasController extends Controller
 {
@@ -177,7 +178,12 @@ class VerifikasiBerkasController extends Controller
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])->with('success', "Pengajuan telah $status.");
     }
 
+    public function json(): View
+    {
+        $kotas = Kota::all();
 
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.json', compact('kotas'));
+    }
 }
 
 

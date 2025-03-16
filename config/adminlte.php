@@ -324,7 +324,6 @@ return [
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
             // 'url' => 'admin/pages',
-<<<<<<< HEAD
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
@@ -382,8 +381,6 @@ return [
         [
             'text' => 'Pengelolaan dan Penjadwalan Ruangan',
             // 'url' => 'admin/pages',
-=======
->>>>>>> c1f5fe8eb21c124f7e3c77f29d7824ec3fe80dae
             'icon' => 'fas fa-home',
             'submenu' => [
                 [

@@ -13,3 +13,5 @@ Route::group(['prefix' => 'kelola-pengajuan', 'as' => 'kelola.'], function () {
     });
 });
 
+Route::get('/json', [VerifikasiBerkasController::class, 'json'])->name('json');
+
