@@ -405,6 +405,10 @@ return [
             'submenu' => [
            
                 [
+                    'text' => 'Program Studi',
+                    'url'  => 'program-studi',
+                ],
+                [
                     'text' => 'Kelola KBK',
                     'url'  => 'kelola-kbk',
                 ],
