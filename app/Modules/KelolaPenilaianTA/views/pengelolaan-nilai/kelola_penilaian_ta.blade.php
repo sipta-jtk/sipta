@@ -27,15 +27,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($data['kategori'] ?? [] as $kategori)
+                @foreach ($kategori as $data)
                     <tr>
-                        <td>{{ $kategori }}</td>
+                        <td>{{ $data['nama_kategori'] }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
-                                @if (!in_array(strtolower($kategori), ['seminar 1', 'seminar 2']))
+                                @if (!in_array(strtolower($data['nama_kategori']), ['seminar 1', 'seminar 2']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ url('kelola-penilaian-ta/detail/' . Str::slug($kategori)) }}" class="btn btn-primary">Buka Detail</a>
+                                <a href="{{ url('kelola-penilaian-ta/detail/' . Str::slug($data['nama_kategori'])) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
                             </div>
                         </td>
                     </tr>
@@ -49,10 +49,11 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/kelola_penilaian_ta.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola_penilaian_ta.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 @stop

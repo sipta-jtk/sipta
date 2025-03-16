@@ -16,3 +16,10 @@ $(document).ready(function () {
     $("#dataTableControls").html($(".dataTables_length"));
     $("#searchBox").html($(".dataTables_filter"));
 });
+
+$(document).ready(function () {
+    $(".buka-detail").on("click", function (event) {
+        var idKategori = $(this).data("id");
+        localStorage.setItem("id_kategori", idKategori);
+    });
+});

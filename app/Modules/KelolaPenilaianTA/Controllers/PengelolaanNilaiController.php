@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mahasiswa;
+use App\Models\kategoriPenilaian;
 
 class PengelolaanNilaiController extends Controller{
     /**
@@ -19,17 +20,9 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-        $data = [
-            'header' => 'Kelola Penilaian',
-            'kategori' => [
-                'Seminar 1',
-                'Seminar 2',
-                'Seminar 3',
-                'Sidang Akhir'
-            ]
-        ];
+        $kategori = kategoriPenilaian::whereIn('kode_fta', [2, 4, 5, 6])->orderBy('nama_kategori')->get();
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('data'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('kategori'));
     }
 
     /**
@@ -38,18 +31,21 @@ class PengelolaanNilaiController extends Controller{
      */
     public function detailNilaiMahasiswa($kategori): View
     {
-        $data = [];
         $kategori = Str::title(str_replace('-', ' ', $kategori));
 
+        $kategoriPenilaian = kategoriPenilaian::where('nama_kategori', $kategori)->firstOrFail();
+        $id_kategori = $kategoriPenilaian->id_kategori;
 
         // angka 1 dibawah untuk menandakan kategori mana yang ingin diambil
-        $data = Mahasiswa::with(['nilaiKategori' => function ($query) {
-            $query->where('id_kategori', 1);
+        $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($id_kategori) {
+            $query->where('id_kategori', $id_kategori);
         }, 'nilaiKategori.dosen', 'user'])->get();
+
+        Log::info('Data mahasiswa: ' . JSON_ENCODE($data, JSON_PRETTY_PRINT));
 
         $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
 
-        // Log::info('Filtered data:' . JSON_ENCODE($filteredData, JSON_PRETTY_PRINT));
+        Log::info('Filtered data:' . JSON_ENCODE($filteredData, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'kategori'));
     }
@@ -102,7 +98,7 @@ class PengelolaanNilaiController extends Controller{
 
         $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
 
-        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2'. compact('mahasiswa'));
+        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2', compact('mahasiswa'));
     }
 
     /**
@@ -125,7 +121,7 @@ class PengelolaanNilaiController extends Controller{
             $nilai_mahasiswa[] = $average;
         }
 
-        Log::info('Nilai mahasiswa: ' . JSON_ENCODE($nilai_mahasiswa, JSON_PRETTY_PRINT));
+        // Log::info('Nilai mahasiswa: ' . JSON_ENCODE($nilai_mahasiswa, JSON_PRETTY_PRINT));
 
         $this->inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip);
     
