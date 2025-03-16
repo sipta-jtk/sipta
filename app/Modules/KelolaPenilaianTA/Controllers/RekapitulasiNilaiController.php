@@ -289,21 +289,21 @@ class RekapitulasiNilaiController extends Controller{
             $nilaiKategori['rataPembimbing'] = $this->calculateAverage([$nilaiKategori['pembimbing1'], $nilaiKategori['pembimbing2']]);
 
             // Dapatkan sumber nilai dan bobot uts, uas, dan lain-lain dari kategori penilaian apa
-            // $komponen_nilai_akhir = KomponenNilaiAkhir::select(
-            //     'komponen_nilai_akhir.nama_komponen',
-            //     'komponen_nilai_akhir.bobot_komponen as bobot',
-            //     'kategori_penilaian.nama_kategori'
-            // )
-            // ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
-            // ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
-            // ->get()
-            // ->map(function ($item) {
-            //     return [
-            //         'komponen' => $item->nama_komponen,
-            //         'bobot' => $item->bobot,
-            //         'sumber_nilai' => $item->nama_kategori
-            //     ];
-            // });
+            $komponen_nilai_akhir = KomponenNilaiAkhir::select(
+                'komponen_nilai_akhir.nama_komponen',
+                'komponen_nilai_akhir.bobot_komponen as bobot',
+                'kategori_penilaian.nama_kategori'
+            )
+            ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
+            ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'komponen' => $item->nama_komponen,
+                    'bobot' => $item->bobot,
+                    'sumber_nilai' => $item->nama_kategori
+                ];
+            });
 
             // // Hitung nilai uts
             // if ($komponen_nilai_akhir->komponen == "uts"){
