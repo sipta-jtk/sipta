@@ -31,7 +31,8 @@ function hideTooltip(id) {
 document.getElementById("exportExcel").addEventListener("click", function () {
     let filterProdi = document.getElementById("filterProdi").value;
     let filterKelas = document.getElementById("filterKelas").value;
-    
-    let url = "{{ route('rekapitulasi.export') }}?prodi=" + filterProdi + "&kelas=" + filterKelas;
+    let exportUrl = this.getAttribute("data-url");
+
+    let url = exportUrl + "?prodi=" + encodeURIComponent(filterProdi) + "&kelas=" + encodeURIComponent(filterKelas);
     window.location.href = url;
 });

@@ -42,9 +42,16 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     // Route::put('/seminar-2/edit/{nim}', [PengelolaanNilaiController::class, 'editNilaiMahasiswa'])->name('dummy.seminar-2.edit-nilai');
 
     // ================= REKAPITULASI NILAI =================
+<<<<<<< HEAD
     Route::get('/rekapitulasi-nilai', [KelolaPenilaianTAController::class, 'getRekapNilaiSidang']);
     Route::post('/rekapitulasi-nilai/export', [KelolaPenilaianTAController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi-nilai.export');
     Route::get('/rekapitulasi/export', [KelolaPenilaianTAController::class, 'exportExcel'])->name('rekapitulasi.export');
+=======
+    Route::get('/rekapitulasi-nilai-sidang', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
+    Route::get('/rekapitulasi-nilai-akhir', [RekapitulasiNilaiController::class, 'getRekapNilaiAkhir']);
+    Route::post('/rekapitulasi-nilai/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi-nilai.export');
+    Route::get('/rekapitulasi/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi.export');
+>>>>>>> parent of c670a01 ([Feature] add backend rekapitulasi nilai sidang dan pengaturan bobot)
 
     // ================= PEMBERIAN NILAI DAN FEEDBACK =================
     Route::prefix('nilai-seminar')->group(function () {
