@@ -14,6 +14,18 @@ class AlokasiPembimbing extends Model
     protected $fillable = [
         'id_pengajuan_pembimbing',
         'nip',
-        'urutan_prioritas_terpilih'
+        'urutan_prioritas_terpilih',
+        'status_alokasi',
+        'catatan'
     ];
+
+    public function pengajuanPembimbing()
+    {
+        return $this->belongsTo(PengajuanPembimbing::class, 'id_pengajuan_pembimbing', 'id_pengajuan_pembimbing');
+    }
+
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'nip', 'nip');
+    }
 }
