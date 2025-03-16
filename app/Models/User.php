@@ -2,21 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {     
-    use HasFactory, Notifiable;
-    
+    use Notifiable;
+
     protected $table = 'user';
     protected $primaryKey = 'username';
 
     protected $keyType = 'string';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'username',
@@ -31,4 +29,39 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
+
+    public function dosen()
+    {
+        return $this->hasOne(Dosen::class, 'nip', 'username');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class, 'nim', 'username');
+    }
+
+    public function kehadiran()
+    {
+        return $this->hasMany(Kehadiran::class, 'username', 'username');
+    }
+
+    public function notifikasiKirim()
+    {
+        return $this->hasMany(NotifikasiKirim::class, 'username', 'username');
+    }
+
+    public function preferensiNotifikasi()
+    {
+        return $this->hasMany(PreferensiNotifikasi::class, 'username', 'username');
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'username', 'username');
+    }
+
+    public function logAktivitas()
+    {
+        return $this->hasMany(LogAktivitas::class, 'username', 'username');
+    }
 }
