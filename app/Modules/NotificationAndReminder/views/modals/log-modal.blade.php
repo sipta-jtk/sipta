@@ -5,53 +5,16 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="notificationModalLabel">Notification</h3>
                 <a href="#" id="openPreferences" class="close" aria-label="Close">
-                    <i class="fas fa-cog"></i> <!-- Ikon pengaturan -->
+                    <i class="fas fa-cog"></i> 
                 </a>
             </div>
+            <div id="notification-list"></div>
 
-            <!-- Notifikasi 1 -->
-            <div class="notification-item d-flex justify-content-between align-items-center mb-3">
-                <i class="fas fa-exclamation-circle"></i> <!-- Ikon Pemberitahuan -->
-                <div>
-                    <p><strong>Deadline Tugas Akhir Anda Mendekat!</strong></p>
-                    <p>Harap periksa tenggat tugas akhir Anda dan pastikan semua persyaratan sudah lengkap.</p>
-                </div>
-                <button type="button" class="close close-notification" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <!-- Notifikasi 2 -->
-            <div class="notification-item d-flex justify-content-between align-items-center mb-3">
-                <i class="fas fa-exclamation-circle"></i> <!-- Ikon Pemberitahuan -->
-                <div>
-                    <p><strong>Pengingat: 5 Hari Menuju Tenggat Tugas Akhir</strong></p>
-                    <p>Pastikan Anda menyelesaikan revisi dan persiapan akhir sebelum tenggat tugas akhir.</p>
-                </div>
-                <button type="button" class="close close-notification" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <!-- Notifikasi 3 -->
-            <div class="notification-item d-flex justify-content-between align-items-center mb-3">
-                <i class="fas fa-exclamation-circle"></i> <!-- Ikon Pemberitahuan -->
-                <div>
-                    <p><strong>10 Hari Menuju Pengumpulan Tugas Akhir</strong></p>
-                    <p>Harap tinjau kembali semua instruksi dan pastikan tidak ada yang terlewat sebelum pengumpulan tugas akhir.</p>
-                </div>
-                <button type="button" class="close close-notification" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <!-- Tombol untuk melihat semua notifikasi -->
             <a href="/seeallnotif" class="btn btn-secondary w-100">Lihat semua notifikasi</a>
         </div>
     </div>
 </div>
 
-    
 <!-- Styling CSS untuk Modal dan Notifikasi -->
 <style>
     .modal-content {
@@ -105,7 +68,6 @@
         width: 100%;
     }
 
-    /* Memperbaiki alignment teks dalam notifikasi */
     .notification-item div {
         text-align: left;
         margin-left: 10px;
@@ -129,13 +91,12 @@
         margin-bottom: 5px; 
     }
 
-    /* Tombol close untuk setiap notifikasi (close-notification) */
     .notification-item button.close-notification {
         background: none;
         border: none;
         font-size: 20px;
         color: #888;
-        position: absolute; /* Menempatkan close button di kanan atas notifikasi */
+        position: absolute;
         top: 10px;
         right: 10px;
     }
@@ -144,19 +105,7 @@
         color: #f44336;
     }
 
-    .notification-item button.close {
-        background: none;
-        border: none;
-        font-size: 20px;
-        color:rgb(105, 96, 96);
-    }
-
-    .notification-item button.close:hover {
-        color: #f44336;
-    }
-
     .btn-secondary {
-        /* background-color:rgb(135, 216, 121); */
         border: none;
         border-radius: 5px;
         padding: 8px;
@@ -172,31 +121,61 @@
 
     @media (max-width: 768px) {
         .modal-content {
-            padding: 10px; /* Mengurangi padding pada layar kecil */
+            padding: 10px; 
             max-height: 60vh;
         }
 
         .notification-item {
-            padding: 10px; /* Mengurangi padding pada notifikasi */
+            padding: 10px; 
         }
     }
 </style>
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Menghapus notifikasi ketika tombol 'x' diklik
-    document.querySelectorAll('.close-notification').forEach(function(button) {
-        button.addEventListener('click', function() {
-            this.closest('.notification-item').remove();
-        });
-    });
+    $(document).ready(function() {
+        $('#myModal').on('show.bs.modal', function() {
+            $.get('/api/notifications', function(data) {
+                $('#notification-list').empty();
 
-    // Arahkan ke halaman lain ketika "Lihat semua notifikasi" diklik
-    document.querySelector('.btn-secondary').addEventListener('click', function() {
-        window.location.href = '/seeallnotif'; // Ubah dengan URL halaman notifikasi jika sudah ada
+                data.forEach(function(notification) {
+                    let notificationHtml = `
+                        <div class="notification-item d-flex justify-content-between align-items-center mb-3" data-id="${notification.id_notifikasi}">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <div>
+                                <p><strong>${notification.judul}</strong></p>
+                                <p>${notification.isi_notifikasi}</p>
+                            </div>
+                            <button type="button" class="close close-notification" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `;
+                    $('#notification-list').append(notificationHtml);
+                });
+                $('.close-notification').on('click', function() {
+                    $(this).closest('.notification-item').remove();
+                });
+            });
+        });
+
+        // Delegasi event untuk menutup notifikasi dengan tombol 'x'
+        // $(document).on('click', '.close-notification', function() {
+        //     var notificationId = $(this).closest('.notification-item').data('id'); 
+
+        // });
+        // $(document).querySelectorAll('.close-notification').forEach(function(button) {
+        //     button.addEventListener('click', function() {
+        //         this.closest('.notification-item').remove();
+        //     });
+        // });
+
+        // Arahkan ke halaman lain ketika "Lihat semua notifikasi" diklik
+        $('.btn-secondary').on('click', function() {
+            window.location.href = '/seeallnotif';
+        });
     });
 </script>
 
-<!-- Menyertakan jQuery dan Bootstrap JS untuk modal interactivity -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>

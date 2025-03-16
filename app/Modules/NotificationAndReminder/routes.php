@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\NotificationAndReminder\Controllers\SettingNotification\SettingAwalNotif as SettingAwalNotifController;
+use App\Modules\NotificationAndReminder\Controllers\LogModal\LogModalNotifController;
+use App\Modules\NotificationAndReminder\Controllers\LogAdmin\LogAdminController;
 
 Route::get('/notification/admin/settingawal', [SettingAwalNotifController::class, 'index'])->name('notification_reminder.admin.notifikasi');
 Route::post('/notification/admin/settingawal/store', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
@@ -18,3 +20,7 @@ Route::get('/notification_reminder/user/notifikasi', function () {
     return view('NotificationAndReminder::LogUser.logUser');
 });
 
+// Route untuk mengambil notifikasi
+Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
+
+Route::get('/api/admin/log-admin', [LogAdminController::class, 'getLogNotifications']);

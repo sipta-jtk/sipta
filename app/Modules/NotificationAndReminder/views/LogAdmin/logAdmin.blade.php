@@ -6,37 +6,14 @@
     <h1>Log Notifikasi Admin</h1>
     @include('NotificationAndReminder::modals.log-modal')
     @include('NotificationAndReminder::modals.preferences-modal')
-
 @stop
 
 @section('content')
-
-    {{-- Data Dummy Log Notifikasi --}}
-    @php
-        $notifikasi = [
-            (object) [
-                'tipe_notifikasi' => 'Notifikasi',
-                'judul' => 'Jadwal Sidang Mahasiswa A 3 hari lagi',
-                'isi_notifikasi' => 'Jadwal Sidang mahasiswa A.....3 hari lagi, harap menyiapkan keperluan untuk sidang',
-                'penerima_notif' => 'Mahasiswa',
-                'created_at' => \Carbon\Carbon::now(),
-            ],
-            (object) [
-                'tipe_notifikasi' => 'Notifikasi',
-                'judul' => 'Jadwal Sidang Mahasiswa A 3 hari lagi',
-                'isi_notifikasi' => 'Jadwal Sidang mahasiswa A.....3 hari lagi, harap menyiapkan keperluan untuk sidang',
-                'penerima_notif' => 'Mahasiswa',
-                'created_at' => \Carbon\Carbon::now(),
-            ],
-        ];
-    @endphp
-
-    {{-- Tabel Daftar Log Notifikasi --}}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Daftar Log Notifikasi Admin</h3>
         </div>
-        <div class="card-body" style="max-height: 400px; overflow-y: auto;" data-title="{{ $notifikasi[0]->judul }}" data-content="{{ $notifikasi[0]->isi_notifikasi }}">
+        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -48,77 +25,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($notifikasi as $index => $notif)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $notif->created_at->toDateTimeString() }}</td>
-                            <td>{{ $notif->judul }}</td>
-                            <td>{{ $notif->isi_notifikasi }}</td>
-                            <td>{{ $notif->penerima_notif }}</td>
-                        </tr>
-                    @endforeach
+                    {{-- Data Log Notifikasi akan diisi dengan jQuery --}}
                 </tbody>
             </table>
         </div>
     </div>
-
-    <!-- Modal untuk Detail Notifikasi -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <!-- Header Modal -->
-                <div class="modal-header">
-                    <h3 class="modal-title" id="detailModalLabel"></h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <!-- Isi Modal -->
-                <div class="modal-body" id="detailModalContent"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-@stop
-
-@section('css')
-    {{-- Tambahkan stylesheet tambahan di sini --}}
 @stop
 
 @section('js')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            console.log("Hi, I'm using the Laravel-AdminLTE package!");
+            $.get('/api/notifications', function(data) {
+                $('tbody').empty();
 
-            // Menangani klik pada card body untuk menampilkan detail
-            $('.card-body').on('click', function() {
-                var title = $(this).data('title');
-                var content = $(this).data('content');
-                $('#detailModalLabel').text(title);
-                $('#detailModalContent').text(content);
-                $('#detailModal').modal('show');
+                // Iterasi data dan tambahkan ke tabel
+                data.forEach(function(notif, index) {
+                    let row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${notif.created_at}</td>
+                            <td>${notif.judul}</td>
+                            <td>${notif.isi_notifikasi}</td>
+                            <td>${notif.username}</td> 
+                        </tr>
+                    `;
+                    $('tbody').append(row);
+                });
             });
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Menangani klik pada ikon lonceng
-            $('#notificationBell').on('click', function() {
-                // Tampilkan modal log saat ikon lonceng diklik
-                $('#myModal').modal('show');
-            });
-
-            // Klik ikon pengaturan untuk membuka modal preferensi
-            $('#openPreferences').on('click', function(e) {
-                e.preventDefault();  // Menghindari aksi default
-                $('#myModal').modal('hide');  // Menutup modal log
-                $('#myModals').modal('show');  // Menampilkan modal preferensi
-            });
-        });
-    </script>   
 @stop
