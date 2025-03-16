@@ -86,36 +86,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 1</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 2</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 3</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                    </td>
-                </tr>                
+                @foreach ($kategoriList as $kategori)
+                    <tr>
+                        <td style="vertical-align: middle; white-space: nowrap;">{{ $kategori->nama_kategori }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('monitoring.rubrik') }}" class="btn btn-primary btn-sm px-3">Lihat Rubrik</a>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>            
         </table>
-    </div>    
+    </div>
+      
 @stop
 
 @section('js')
