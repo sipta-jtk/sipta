@@ -2,71 +2,70 @@
 
 namespace App\Modules\CekPlagiarisme\Controllers;
 
-use App\Modules\Controller;
+set_time_limit(300);
+
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\View\View;
+use App\Modules\CekPlagiarisme\Services\PlagiarismChecker;
+use App\Models\Dokumen;
 
 class CekPlagiarismeController extends Controller
 {
-    public function index(): View
+    public function getData()
     {
-        // Data dummy untuk daftar dokumen
-        $cekPlagiarisme = [
-            (object) [
-                'id' => 1,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 21:00:11',
-                'penulis' => 'Maman Sumaman',
-                'presentase' => null, // Masih dalam proses
-                'komentar' => null,
-            ],
-            (object) [
-                'id' => 2,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 19:28:24',
-                'penulis' => 'Maman Samaman',
-                'presentase' => 15,
-                'komentar' => null,
-            ],
-            (object) [
-                'id' => 3,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 14:20:14',
-                'penulis' => 'Mumun Sumumun',
-                'presentase' => 50,
-                'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
-            ],
-            (object) [
-                'id' => 4,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 09:30:45',
-                'penulis' => 'Mimin Simimin',
-                'presentase' => 80,
-                'komentar' => 'Di Parafrase yaa!!',
-            ],
-        ];
-        
-        return view('CekPlagiarisme.views.DaftarDokumen', compact('cekPlagiarisme'));
+        // Ambil semua data dokumen beserta relasi ke ambang batas
+        $dokumen = Dokumen::with('AmbangBatas', 'User')->get();
+
+        // Format data agar sesuai dengan struktur jsGrid
+        $data = $dokumen->map(function ($item) {
+            return [
+                'id_dokumen' => $item->id_dokumen,
+                'judul' => $item->judul,
+                'waktu' => $item->created_at->format('Y-m-d H:i:s'),
+                'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
+                'persentase_plagiarisme' => $item->persentase_plagiarisme,
+                'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
+                'status' => $this->getStatus($item->persentase_plagiarisme, $item->ambangBatas ? $item->ambangBatas->ambang_batas : 20), // Default 20 jika tidak ada
+                'review' => $item->review
+            ];
+        });
+
+        return response()->json($data);
     }
 
+    private function getStatus($persentase, $ambangBatas)
+    {
+        if ($persentase === null) {
+            return '<span class="badge badge-warning">Processing</span>';
+        } elseif ($persentase < $ambangBatas) {
+            return '<span class="badge badge-success">Tidak Plagiat</span>';
+        } else {
+            return '<span class="badge badge-danger">Plagiat</span>';
+        }
+    }
     public function show($id): View
     {
-        // Data dummy untuk detail dokumen
-        $dokumen = (object) [
-            'id' => $id,
-            'judul' => 'Implementasi Algoritma Naive',
-            'waktu' => '28-02-2025 14:20:14',
-            'penulis' => 'Mumun Sumumun',
-            'file' => null, // Jika ingin menampilkan file, gunakan 'contoh.pdf'
-            'isi' => 'Ini adalah contoh isi dokumen.',
-            'presentase' => 50,
-            'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
-        ];
+        return view('CekPlagiarisme.views.detail', [
+            'id' => $id
+        ]);
+    }
 
-        return view('CekPlagiarisme.views.detail', compact('dokumen'));
-    }   
-
-    public function PenentuanAmbangBatas(): View
+    public function process(Request $request)
     {
-        return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+        $request->validate([
+            'file' => 'required|mimes:pdf,doc,docx|max:15360',
+        ]);
+
+        $filePath = $request->file('file')->store('uploads');
+        $checker = new PlagiarismChecker();
+        
+        // Ekstrak teks dari file
+        $result = $checker->checkPlagiarism(storage_path('app/' . $filePath));
+
+        return view('CekPlagiarisme.views.view', [
+            'results' => $result['results'],
+            'percentage' => $result['percentage']
+        ]);
     }
 }

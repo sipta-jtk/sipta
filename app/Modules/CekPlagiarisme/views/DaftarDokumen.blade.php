@@ -7,137 +7,138 @@
 @stop
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="search-box d-flex align-items-center">
-            <select class="form-control" id="sortSelect" style="width: 200px; margin-right: 10px;">
-                <option>Urutkan berdasarkan</option>
-                <option value="judul">Judul</option>
-                <option value="waktu">Waktu Pengecekan</option>
-                <option value="penulis">Penulis</option>
-                <option value="presentase">Presentase</option>
-            </select>
-            <input type="text" class="form-control" id="searchInput" placeholder="Cari">
-            <button class="btn btn-outline-secondary">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-        <button class="btn btn-outline-secondary">
-            <i class="fas fa-filter"></i>
-        </button>
-    </div>
-
+<section class="content">
     <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="search-box d-flex align-items-center">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari...">
+            </div>
+        </div>
         <div class="card-body">
-            <table class="table table-bordered text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Judul</th>
-                        <th>Waktu Pengecekan</th>
-                        <th>Penulis</th>
-                        <th>Presentase</th>
-                        <th>Status</th>
-                        <th>Komentar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cekPlagiarisme as $index => $data)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $data->judul }}</td>
-                        <td>{{ $data->waktu }}</td>
-                        <td>{{ $data->penulis }}</td>
-                        <td>
-                            @if(is_null($data->presentase))
-                            <i class="fas fa-spinner fa-spin"></i>
-                            @else
-                            <a href="{{ route('plagiarism.detail', ['id' => $data->id]) }}" class="text-primary">
-                                {{ $data->presentase }}%
-                            </a>
-                            @endif
-                        </td>
-                        <td>
-                            @if(is_null($data->presentase))
-                            <span class="badge badge-warning">Processing</span>
-                            @elseif($data->presentase < 20)
-                                <span class="badge badge-success">Tidak Plagiat</span>
-                                @elseif($data->presentase >= 20 && $data->presentase < 50)
-                                    <span class="badge badge-warning">Perlu Ditinjau</span>
-                                    @else
-                                    <span class="badge badge-danger">Plagiat</span>
-                                    @endif
-                        </td>
-                        <td>
-                            @if($data->komentar)
-                            <a href="{{ route('plagiarism.detail', ['id' => $data->id]) }}" class="text-primary">Komentar diberikan</a>
-                            @else
-                            <span class="text-muted">Belum ada komentar</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div id="jsGridPlagiarism"></div>
         </div>
     </div>
-</div>
-@stop
-
-@section('css')
-<style>
-    .table th,
-    .table td {
-        vertical-align: middle;
-    }
-
-    .container-fluid {
-        padding-bottom: 20px;
-    }
-
-    .card {
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-
-    .badge {
-        padding: 5px 10px;
-        font-size: 0.9rem;
-    }
-
-    .badge-warning {
-        background-color: yellow;
-        color: black;
-    }
-
-    .badge-success {
-        background-color: green;
-        color: white;
-    }
-
-    .badge-danger {
-        background-color: red;
-        color: white;
-    }
-
-    .table {
-        margin-bottom: 0;
-    }
-</style>
+</section>
 @stop
 
 @section('js')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <script>
-    console.log("Laporan TA page loaded.");
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "/api/cek-plagiarisme",
+            dataType: "json",
+            success: function(response) {
+                console.log("Data dari API:", response);
 
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        let filter = this.value.toLowerCase();
-        let rows = document.querySelectorAll("tbody tr");
+                response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
 
-        rows.forEach(row => {
-            let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? "" : "none";
+                response = response.map((item, index) => ({
+                    id_dokumen: item.id_dokumen,
+                    nomor: index + 1,
+                    judul: item.judul,
+                    waktu: item.waktu,
+                    penulis: item.penulis,
+                    presentase: item.persentase_plagiarisme + "%",
+                    status: item.status,
+                    komentar: getKomentarLink(item.review, item.id_dokumen)
+                }));
+
+                $("#jsGridPlagiarism").jsGrid({
+                    width: "100%",
+                    height: "450px",
+                    sorting: true,
+                    paging: true,
+                    rowClick: function(args) {
+                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen;
+                    },
+                    data: response,
+                    fields: [{
+                            name: "nomor",
+                            type: "number",
+                            title: "No",
+                            width: 50,
+                            align: "center"
+                        },
+                        {
+                            name: "judul",
+                            type: "text",
+                            title: "Judul",
+                            width: 200
+                        },
+                        {
+                            name: "waktu",
+                            type: "text",
+                            title: "Waktu Pengecekan",
+                            width: 150,
+                            align: "center"
+                        },
+                        {
+                            name: "penulis",
+                            type: "text",
+                            title: "Penulis",
+                            width: 150,
+                            align: "center"
+                        },
+                        {
+                            name: "presentase",
+                            type: "text",
+                            title: "Presentase",
+                            width: 100,
+                            align: "center"
+                        },
+                        {
+                            name: "status",
+                            type: "html",
+                            title: "Status",
+                            width: 150,
+                            align: "center"
+                        },
+                        {
+                            name: "komentar",
+                            type: "html",
+                            title: "Komentar",
+                            width: 150,
+                            align: "center"
+                        }
+                    ]
+                });
+
+                $("#searchInput").on("keyup", function() {
+                    var searchValue = $(this).val().toLowerCase();
+                    var filteredData = response.filter(item =>
+                        Object.values(item).some(value => String(value).toLowerCase().includes(searchValue))
+                    );
+                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Gagal mengambil data dari API:", status, error);
+            }
         });
     });
+
+    function getStatusBadge(persentase, ambangBatas) {
+        if (persentase === null) {
+            return '<span class="badge badge-warning">Processing</span>';
+        } else if (persentase < ambangBatas) {
+            return '<span class="badge badge-success">Tidak Plagiat</span>';
+        } else {
+            return '<span class="badge badge-danger">Plagiat</span>';
+        }
+    }
+
+    function getKomentarLink(komentar, id) {
+        if (komentar) {
+            return '<span class="text-primary">Komentar diberikan</span>';
+        } else {
+            return '<span class="text-muted">Belum ada komentar</span>';
+        }
+    }
 </script>
 @stop
