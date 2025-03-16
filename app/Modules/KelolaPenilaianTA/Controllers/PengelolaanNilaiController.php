@@ -102,7 +102,7 @@ class PengelolaanNilaiController extends Controller{
 
         $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
 
-        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2'. compact('mahasiswa'));
+        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2', compact('mahasiswa'));
     }
 
     /**
