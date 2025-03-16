@@ -28,15 +28,4 @@ document.addEventListener("DOMContentLoaded", function () {
         hariPerbaikan.textContent = hasilFormat.hari;
         tanggalPerbaikan.textContent = hasilFormat.tanggal;
     });
-
-    // Event listener untuk freeze kolom nilai
-    $(document).ready(function() {
-        $('#myTable').DataTable({
-            scrollX: true, // Mengaktifkan scrolling horizontal
-            fixedColumns: {
-                left: 1,   // Menjadikan kolom pertama tetap diam
-                right: 3   // Membuat 3 kolom terakhir tetap freeze
-            }
-        });
-    });
 });
