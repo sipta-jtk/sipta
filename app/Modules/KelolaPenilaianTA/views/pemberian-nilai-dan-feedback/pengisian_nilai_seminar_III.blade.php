@@ -46,7 +46,7 @@
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-bordered table-secondary">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -82,7 +82,7 @@
 
             <div class="row mt-4">
                 <div class="table-container">
-                    <table id="myTable" class="display nowrap table text-center" style="width:100%"> 
+                    <table id="myTable" class="display nowrap table text-center table-bordered table-secondary" style="width:100%"> 
                         <thead class="sticky-header">
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>

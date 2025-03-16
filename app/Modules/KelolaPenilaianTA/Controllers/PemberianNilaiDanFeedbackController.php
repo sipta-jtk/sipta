@@ -10,10 +10,10 @@ use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
-class PemberianNilaiDanFeedbackController extends Controller{
+class PemberianNilaiDanFeedbackController extends Controller
+{
      /**
      * Menampilkan halaman pemberian nilai seminar 1
-     * 
      */
     public function pengisianMasukanSeminar1(): View
     {
