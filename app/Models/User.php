@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Laravel\Sanctum\HasApiTokens;
 
 
 class User extends Authenticatable
 {     
-    use Notifiable;
+    use Notifiable, HasFactory;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -67,5 +68,20 @@ class User extends Authenticatable
     public function logAktivitas()
     {
         return $this->hasMany(LogAktivitas::class, 'username', 'username');
+    }
+
+    public function adminlte_image()
+    {
+        return 'https://picsum.photos/300/300';
+    }
+
+    public function adminlte_desc()
+    {
+        return 'I\'m a nice guy';
+    }
+
+    public function adminlte_profile_url()
+    {
+        return 'profile';
     }
 }

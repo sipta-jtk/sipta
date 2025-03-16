@@ -7,7 +7,6 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use App\Modules\UserManagement\Controllers\AuthenticatedSessionController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use FontLib\Table\Type\name;
-use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
 
 // Route untuk login
