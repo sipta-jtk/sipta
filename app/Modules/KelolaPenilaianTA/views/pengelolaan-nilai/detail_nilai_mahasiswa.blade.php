@@ -46,22 +46,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $item)
+                    @foreach ($filteredData as $data)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item['nama'] }}</td>
-                            <td>{{ $item['kelompok'] }}</td>
-                            <td>{{ $item['penguji1'] }}</td>
-                            <td>{{ $item['penguji2'] }}</td>
-                            <td>{{ $item['penguji3'] }}</td>
-                            <td>{{ $item['p1'] }}</td>
-                            <td>{{ $item['p2'] }}</td>
-                            <td>{{ $item['p3'] }}</td>
-                            <td>{{ $item['rata_rata'] }}</td>
+                            <td> {{ $data['index']}} </td>
+                            <td> {{ $data['nama'] }} </td>
+                            <td> {{ $data['kelompok'] }} </td>
+                            @foreach ($data['kode_dosen'] as $kode)
+                                <td> {{ $kode }} </td>
+                            @endforeach
+                            @foreach ($data['nilai'] as $nilai)
+                                <td> {{ $nilai }} </td>
+                            @endforeach
+                            <td> {{ $data['rata-rata'] }} </td>
                             @if (strtolower($kategori) == 'seminar 1' || strtolower($kategori) == 'seminar 2')
-                                <td>
-                                    <button type="button" class="btn btn-primary">Input Nilai</button>
-                                </td>
+                                @if (count(array_filter($data['nilai'], fn($value) => $value !== null && $value !== 0)) == 3)
+                                    <td> <a class="btn btn-danger">Nilai</a> </td> 
+                                @else
+                                    <td> <a href="{{ url('kelola-penilaian-ta/seminar-2/tambah') }}" class="btn btn-primary">Nilai</a> </td>
+                                @endif
                             @endif
                         </tr>
                     @endforeach
