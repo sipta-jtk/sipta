@@ -15,11 +15,16 @@ use Illuminate\Support\Facades\Route;
 
 $modulesPath = base_path('app/Modules');
 
-foreach (scandir($modulesPath) as $module) {
-    $routesFile = "{$modulesPath}/{$module}/routes.php";
+if (is_dir($modulesPath)) {
+    foreach (scandir($modulesPath) as $module) {
+        if ($module === '.' || $module === '..') {
+            continue;
+        }
+        $routesFile = "{$modulesPath}/{$module}/routes.php";
 
-    if (is_file($routesFile)) {
-        require $routesFile; 
+        if (is_file($routesFile)) {
+            require $routesFile; 
+        }
     }
 }
 
