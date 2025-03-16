@@ -385,7 +385,7 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => '#',
+            'url' => 'repository',
             'icon' => 'fas fa-book',
         ],
         ['header' => 'Pengaturan Pengguna'],
