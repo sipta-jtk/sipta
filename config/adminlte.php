@@ -361,10 +361,6 @@ return [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                 ],
-                [
-                    'text' => 'Rekap FTA',
-                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/RekapFTA02',
-                ],
             ]
         ],
         [
@@ -376,29 +372,35 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-feedback',
+                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
+                            // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-rubrik',
+                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
+                            // 'icon' => 'far fa-fw fa-file',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/fomulir-penilaian',
+                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
+                    // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/pengelolaan-nilai',
+                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/rekapitulasi-nilai',
+                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
         ],

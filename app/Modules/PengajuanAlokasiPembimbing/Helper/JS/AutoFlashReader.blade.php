@@ -1,4 +1,4 @@
-@include('pengajuanalokasipembimbing.Helper.JS.SweetAlert')
+@include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
 
 <script>
     $(document).ready(function() {
