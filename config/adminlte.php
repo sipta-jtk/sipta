@@ -422,25 +422,18 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Kelola Seminar dan Sidang',
-            // 'url' => '/KelolaSeminarSidang',
-            'icon' => 'fas fa-fw fa-calendar',
+            'text' => 'Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Kelola Seminar dan Sidang',
-                    // 'url' => '/KelolaSeminarSidang',
-                    // 'icon' => 'fas fa-fw fa-file',
-                    'submenu' => [
-                        [
-                            'text' => 'Pengelolaan Jadwal',
-                            'url' => '/KelolaSeminar/pengelolaan-jadwal',     
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                    ],
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => '/kelola-pengajuan-jadwal/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Formulir Seminar dan Sidang',
-                    'url' => '/KelolaSeminarSidang/formulir-seminar-sidang',     
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => '/kelola-pengajuan-jadwal/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
