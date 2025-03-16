@@ -24,11 +24,11 @@
             <tbody>
                 <tr>
                     <th class="bg-dark text-white w-25 text-center p-2">Kode KoTA</th>
-                    <td class="w-75 p-2">103</td>
+                    <td class="w-75 p-2">{{ $kotaInfo->nama_kota }}</td>
                 </tr>
                 <tr>
                     <th class="bg-dark text-white w-25 text-center p-2">Judul Topik</th>
-                    <td class="w-75 p-2">Pengembangan Aplikasi SipTa</td>
+                    <td class="w-75 p-2">{{ $kotaInfo->judul_ta }}</td>
                 </tr>
             </tbody>
         </table>
@@ -39,19 +39,17 @@
         <table class="table table-bordered w-50">
             <thead>
                 <tr class="bg-dark text-white" style="text-align: center;">
-                    <th rowspan="2" class="align-middle text-center w-25">NIM</th>
-                    <th rowspan="2" class="align-middle text-center w-75">Nama</th>
+                    <th class="align-middle text-center w-25">NIM</th>
+                    <th class="align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>221524049</td>
-                    <td>Muhammad Daffa</td>
-                </tr>
-                <tr>
-                    <td>221524048</td>
-                    <td>Muhammad Agim</td>
-                </tr>
+                @foreach ($mahasiswaList as $mahasiswa)
+                    <tr>
+                        <td>{{ $mahasiswa->nim }}</td>
+                        <td>{{ $mahasiswa->user->nama }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -60,63 +58,55 @@
         <h4>Data Dosen Pembimbing</h4>
         <table class="table table-bordered w-50">
             <thead>
-                <tr class="bg-dark text-white"  style="text-align: center;">
+                <tr class="bg-dark text-white" style="text-align: center;">
                     <th class="align-middle text-center w-25">NIP</th>
                     <th class="align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1111111</td>
-                    <td>Bu Sri</td>
-                </tr>
-                <tr>
-                    <td>22222222</td>
-                    <td>Pak Joe</td>
-                </tr>
+                @foreach($dosenPembimbing as $dosen)
+                    <tr>
+                        <td class="text-center">{{ $dosen->nip }}</td>
+                        <td>{{ $dosen->nama_dosen }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
+    
 
     <div class="card-Progress-Penilaian">
         <h4>Progress Penilaian oleh Dosen</h4>
-          <table class="table table-bordered">
+        <table class="table table-bordered">
             <thead>
-              <tr class="bg-dark text-white" style="text-align: center">
-                <th>Nama Kategori</th>
-                <th>Rubrik</th>
-                <th>Feedback</th>
-              </tr>
+                <tr class="bg-dark text-white text-center">
+                    <th>Nama Kategori</th>
+                    <th>Rubrik</th>
+                    <th>Feedback</th>
+                </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 1</td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 2</td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 3</td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                    </td>
-                </tr>
+                @foreach ($kategoriList as $kategori)
+                    <tr>
+                        <td style="vertical-align: middle; white-space: nowrap;">{{ $kategori->nama_kategori }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('monitoring.rubrik') }}" class="btn btn-primary btn-sm px-3">Lihat Rubrik</a>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>            
-          </table>
+        </table>
     </div>
+      
 @stop
+
+@section('js')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/monitoring_mahasiswa.js') }}"></script>
+@stop
+
+
