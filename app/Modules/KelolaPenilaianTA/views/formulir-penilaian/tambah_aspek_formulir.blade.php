@@ -20,7 +20,7 @@
 
 @section('content')
     <div class="p-4">
-        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-aspek-formulir') }}" method="POST">
+        <form id="aspekFormulirForm" action="{{ route('formulir-penilaian.simpan') }}" method="POST">
             @csrf
 
             <div class="row">
@@ -52,6 +52,18 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="namaProdi">Nama Prodi</label>
+                        <select class="form-control" id="namaProdi" name="namaProdi" required>
+                            <option value="" disabled selected>Pilih Nama Prodi</option>
+                            @foreach ($prodiList as $prodi)
+                                <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- Aspek Penilaian -->
@@ -73,8 +85,8 @@
                     </thead>
                     <tbody id="aspekPenilaianTable">
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" required></td>
-                            <td><input type="number" class="form-control" name="bobot[]" required></td>
+                            <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
+                            <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
@@ -93,7 +105,7 @@
                     </thead>
                     <tbody id="aspekFeedbackTable">
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" required></td>
+                            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
@@ -110,14 +122,6 @@
                     <div class="form-group">
                         <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
                         <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" required>
-                    </div>
-                </div>
-
-                <!-- Waktu Tenggat -->
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="waktuTenggat">Waktu Tenggat</label>
-                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" required>
                     </div>
                 </div>
             </div>
