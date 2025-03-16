@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -13,15 +11,14 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {     
-    use HasFactory, Notifiable, HasRoles;
+    use Notifiable;
 
-    public $timestamps = false;
-    
     protected $table = 'user';
     protected $primaryKey = 'username';
 
     protected $keyType = 'string';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'username',
@@ -37,28 +34,38 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function mahasiswa()
-    {
-        return $this->hasOne(Mahasiswa::class, 'nim', 'username'); 
-    }
-
     public function dosen()
     {
-        return $this->hasOne(Dosen::class, 'nip', 'username'); 
+        return $this->hasOne(Dosen::class, 'nip', 'username');
     }
 
-    public function adminlte_image()
+    public function mahasiswa()
     {
-        return 'https://picsum.photos/300/300';
+        return $this->hasOne(Mahasiswa::class, 'nim', 'username');
     }
 
-    public function adminlte_desc()
+    public function kehadiran()
     {
-        return 'I\'m a nice guy';
+        return $this->hasMany(Kehadiran::class, 'username', 'username');
     }
 
-    public function adminlte_profile_url()
+    public function notifikasiKirim()
     {
-        return 'profile.index';
+        return $this->hasMany(NotifikasiKirim::class, 'username', 'username');
+    }
+
+    public function preferensiNotifikasi()
+    {
+        return $this->hasMany(PreferensiNotifikasi::class, 'username', 'username');
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'username', 'username');
+    }
+
+    public function logAktivitas()
+    {
+        return $this->hasMany(LogAktivitas::class, 'username', 'username');
     }
 }

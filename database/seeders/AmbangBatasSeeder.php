@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -20,19 +19,28 @@ class AmbangBatasSeeder extends Seeder
             return;
         }
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('ambang_batas')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
             [
-                'id_ambang_batas' => '1',
-                'ambang_batas' => 50.0
+                'ambang_batas' => 50.0,
+                'status_ambang_batas' => 'digunakan', 
+                'nip' => '197312271999031003', 
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'id_ambang_batas' => '2',
-                'ambang_batas' => 70.0
+                'ambang_batas' => 70.0,
+                'status_ambang_batas' => 'tidak_digunakan',
+                'nip' => '198502102015042001',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ];
 
+        foreach ($data as $item)
         foreach ($data as $item)
         {
             AmbangBatas::create($item);
