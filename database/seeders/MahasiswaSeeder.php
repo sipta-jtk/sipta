@@ -27,7 +27,7 @@ class MahasiswaSeeder extends Seeder
             'id_prodi' => 1,
             'status_ta' => 'mahasiswa_ta',
             'nilai_akhir_ta' => 85,
-            'id_kota' => 1
+            'id_kota' => null
         ]);
 
         Mahasiswa::create([
@@ -37,7 +37,7 @@ class MahasiswaSeeder extends Seeder
             'id_prodi' => 1,
             'status_ta' => 'mahasiswa_ta',
             'nilai_akhir_ta' => 90,
-            'id_kota' => 2
+            'id_kota' => null
         ]);
 
         // Mengaktifkan kembali foreign key checks

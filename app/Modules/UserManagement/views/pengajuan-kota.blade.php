@@ -15,8 +15,10 @@
         <form action="{{ route('pengajuan-kota.submit') }}" method="POST" id="pengajuan-form">
             @csrf
             <div class="row">
-                <x-adminlte-input name="anggota1" label="Anggota 1 (Akun Anda)" value="John Doe"
+                <x-adminlte-input name="anggota1" label="Anggota 1 (Akun Anda)" 
+                    value="{{ $mahasiswaAnggota1->nama }} - {{ $mahasiswaAnggota1->nim }}"
                     fgroup-class="col-md-6" readonly/>
+                <input type="hidden" name="anggota1" value="{{ $mahasiswaAnggota1->nim }}">
             </div>
 
             <div class="mb-4">
@@ -30,6 +32,8 @@
         </form>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () 
@@ -50,9 +54,9 @@
                     <div class="col-md-5">
                         <x-adminlte-select name="anggota${anggotaCount}" label="Anggota ${anggotaCount}">
                             <option value="">Pilih anggota</option>
-                            <option value="User A">User A</option>
-                            <option value="User B">User B</option>
-                            <option value="User C">User C</option>
+                            @foreach ($mahasiswa as $mhs)
+                                <option value="{{ $mhs->nim }}">{{ $mhs->nama }} - {{ $mhs->nim }}</option>
+                            @endforeach
                         </x-adminlte-select>
                     </div>
                     <div class="col-md-2 d-flex align-items-center">
@@ -91,33 +95,108 @@
             }
         }
 
+        {{-- Event submit form untuk pop-up konfirmasi --}}
         document.getElementById('pengajuan-form').addEventListener('submit', function (event) 
         {
+            event.preventDefault();
+
             let anggotaElements = anggotaContainer.querySelectorAll('select');
             let selectedValues = new Set();
             let totalAnggota = 1;
+            let isValid = true;
+            let errorMessage = '';
+
+            // Hapus pesan error sebelumnya
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            // Cek apakah Anggota 1 sudah masuk kelompok TA
+            let isAnggota1HasKelompokTA = '{{ $mahasiswaAnggota1->id_kota }}'.trim();
+
+            if (isAnggota1HasKelompokTA)
+            {
+                isValid = false;
+                errorMessage = 'Anda sudah tergabung dalam kelompok TA dan tidak bisa mengajukan form lagi.';
+
+                // Tampilkan Peringatan
+                Swal.fire({
+                    title: "Peringatan!",
+                    text: errorMessage,
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+
+                return;
+            }
+
+            selectedValues.add('{{ $mahasiswaAnggota1->nim }}');
 
             for (let select of anggotaElements) 
             {
                 let value = select.value.trim();
-                if (value === "") 
+                if (value !== "") 
                 {
                     if (selectedValues.has(value)) 
                     {
-                        event.preventDefault();
-                        alert('Anggota tidak boleh duplikat.');
-                        return;
+                        isValid = false;
+                        select.classList.add('is-invalid');
+
+                        let errorDiv = document.createElement('div');
+                        errorDiv.classList.add('invalid-feedback');
+                        errorDiv.textContent = 'Anggota tidak boleh duplikat';
+                        select.parentNode.appendChild(errorDiv);
+
+                        errorMessage = 'Anggota tidak boleh duplikat';
+                    } else 
+                    {
+                        selectedValues.add(value);
+                        totalAnggota++;
                     }
-                    selectedValues.add(value);
-                    totalAnggota++;
                 }
             }
 
             if (totalAnggota < 1 || totalAnggota > 3)
             {
-                event.preventDefault();
-                alert('Jumlah anggota harus minimal 1 dan maksimal 3.');
+                isValid = false;
+                errorMessage = 'Jumlah anggota harus minimal 1 dan maksimal 3.';
+
+                // Tampilkan pesan error di bawah anggota terakhir
+                if (anggotaElements.length > 0) 
+                {
+                    let lastElement = anggotaElements[anggotaElements.length - 1];
+                    lastElement.classList.add('is-invalid');
+
+                    let errorDiv = document.createElement('div');
+                    errorDiv.classList.add('invalid-feedback');
+                    errorDiv.textContent = errorMessage;
+                    lastElement.parentNode.appendChild(errorDiv);
+                }
             }
+
+            if (!isValid) 
+            {
+                Swal.fire({
+                    title: "Kesalahan!",
+                    text: errorMessage,
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            // Konfirmasi sebelum menyimpan
+            Swal.fire({
+                title: "Konfirmasi Pengajuan",
+                text: "Apakah Anda yakin ingin mengajukan kelompok TA ini?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ya, Simpan!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.submit();
+                }
+            });
         });
     });
 </script>

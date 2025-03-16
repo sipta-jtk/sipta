@@ -13,4 +13,4 @@ Route::group(['prefix' => 'user_management'], function () {
 Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
 Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
-Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail-kota');
+Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail-kota');

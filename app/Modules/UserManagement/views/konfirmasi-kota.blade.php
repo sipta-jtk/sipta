@@ -12,6 +12,11 @@
         <h3 class="card-title">Detail Kelompok TA</h3>
     </div>
     <div class="card-body">
+        <div class="alert alert-success">
+            <h5><i class="icon fas fa-check"></i> Berhasil</h5>
+            Kelompok TA berhasil dibuat dengan nama <strong>{{ session('nama_kota') }}</strong> untuk tahun ajaran <strong>{{ session('tahun_kota') }}</strong>.
+        </div>
+
         <div class="row">
             <x-adminlte-input name="anggota1" label="Anggota 1 (Akun Anda)" value="{{ session('anggota1', 'Nama Anda') }}"
                 fgroup-class="col-md-6" readonly/>

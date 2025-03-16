@@ -9,27 +9,31 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title font-weight-bold">KoTA 404</h3>
+        <h3 class="card-title font-weight-bold">{{ $kota->nama_kota }}</h3>
     </div>
     <div class="card-body">
         <div class="row">
-            
-            <x-adminlte-input name="anggota1" label="Anggota 1" value="Banteng Harisantoso"
-                fgroup-class="col-md-6" readonly/>
-            
-            <x-adminlte-input name="anggota2" label="Anggota 2" value="Keanu Rayhan H"
-                fgroup-class="col-md-6" readonly/>
+            @foreach($anggota as $key => $mhs)
+                <x-adminlte-input name="anggota{{ $key + 1 }}" 
+                    label="Anggota {{ $key + 1 }}" 
+                    value="{{ $mhs->nama }} - {{ $mhs->nim }}"
+                    fgroup-class="col-md-6" readonly/>
+            @endforeach
 
-            <x-adminlte-input name="anggota3" label="Anggota 3" value="Muhammad Hanif"
-                fgroup-class="col-md-6" readonly/>
+            @for($i = count($anggota); $i < 3; $i++)
+                <x-adminlte-input name="anggota{{ $i + 1 }}" 
+                    label="Anggota {{ $i + 1 }}" 
+                    value="Tidak Ada"
+                    fgroup-class="col-md-6" readonly/>
+            @endfor
 
-            <x-adminlte-input name="topik" label="Topik" value="Pengembangan Aplikasi Pendeteksi Capybara"
+            <x-adminlte-input name="topik" label="Topik" value="{{ $judulTA }}"
                 fgroup-class="col-md-12" readonly/>
 
-            <x-adminlte-input name="bidang_ta" label="Bidang TA" value="Computer Vision"
+            <x-adminlte-input name="bidang_ta" label="Bidang TA" value="{{ $bidangTA }}"
                 fgroup-class="col-md-6" readonly/>
 
-            <x-adminlte-input name="tahun_ta" label="Tahun TA" value="2026"
+            <x-adminlte-input name="tahun_ta" label="Tahun TA" value="{{ $kota->tahun_kota }}"
                 fgroup-class="col-md-6" readonly/>
             
             <x-adminlte-input name="pembimbing1" label="Dosen Pembimbing 1"
