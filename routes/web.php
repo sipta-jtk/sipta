@@ -33,8 +33,3 @@ if (is_dir($modulesPath)) {
 Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
-
-Route::post('/logout', function () {
-    auth()->logout();
-    return redirect('/login');
-})->name('logout');

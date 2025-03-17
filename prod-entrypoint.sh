@@ -10,7 +10,7 @@ done || { echo "Gagal terhubung ke database."; exit 1; }
 echo "Database siap."
 
 if [ "$RUN_MIGRATIONS" = "true" ]; then
-  php artisan migrate --force
+  php artisan migrate:fresh --force
   php artisan db:seed --force
 fi
 

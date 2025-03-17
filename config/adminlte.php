@@ -372,34 +372,34 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-mahasiswa',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-feedback',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
+                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-rubrik',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/fomulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/pengelolaan-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
+                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/rekapitulasi-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
