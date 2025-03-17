@@ -24,21 +24,21 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $mahasiswa['kode_fta'] }}</span>
+                <span>{{ $data['nama_fta'] }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
-                <span>{{ $mahasiswa['tanggal'] }}</span>
+                <span>{{ $data['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $mahasiswa['waktu'] }}</span>
+                <span>{{ $data['start'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $kotaInfo->nama_kota }}</span>
+                <span>{{ $data['kota'] }}</span>
             </div>
         </div>
 
@@ -72,7 +72,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $kotaInfo->judul_ta }}</span>
+                <span>{{ $data['judul_ta'] }}</span>
             </div>
         </div>
 
@@ -107,7 +107,7 @@
                                 <td>40 %</td>
                                 <td>0 - 100</td>
                                 @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai1[]" min="0" max="100"></td>
+                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                             <tr>
@@ -125,7 +125,7 @@
                                 <td>20 %</td>
                                 <td>0 - 100</td>
                                 @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai2[]" min="0" max="100"></td>
+                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                             <tr>
@@ -134,7 +134,7 @@
                                 <td>40 %</td>
                                 <td>0 - 100</td>
                                 @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai3[]" min="0" max="100"></td>
+                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                         </tbody>

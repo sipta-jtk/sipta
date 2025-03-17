@@ -50,13 +50,16 @@ class PemberianNilaiDanFeedbackController extends Controller
      */
     private function pengisianNilaiSeminarII($id, $nim): View
     {
-
         $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
         $mahasiswa = Mahasiswa::where('nim', $nim)->with('user', 'kota.penjadwalan')->first();
+        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $mahasiswa->id_kota)->get();
+
+        // Log::info('Nilai mahasiswa: ' . JSON_ENCODE($nilai_mahasiswa, JSON_PRETTY_PRINT));
+        // Log::info('Mahasiswa List: ' . JSON_ENCODE($mahasiswaList, JSON_PRETTY_PRINT));
 
         $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
 
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('data'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('data', 'mahasiswaList'));
     }
 
     /**
@@ -69,12 +72,12 @@ class PemberianNilaiDanFeedbackController extends Controller
             'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
             'nama' => $mahasiswa->user->nama,
             'judul_ta' => $mahasiswa->kota->judul_ta,
-            'start' => date('H:i', strtotime($mahasiswa->kota->penjadwalan[0]->start))
+            'start' => date('H:i', strtotime($mahasiswa->kota->penjadwalan[0]->start)),
+            'kota' => $mahasiswa->id_kota
         ];
     
         return $data;
     }
-
 
     /**
      * Menampilkan halaman pemberian masukan seminar 2
