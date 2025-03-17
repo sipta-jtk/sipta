@@ -30,6 +30,11 @@ class User extends Authenticatable
         'password'
     ];
 
+    /**
+     * Get the dosen record associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function dosen()
     {
         return $this->hasOne(Dosen::class, 'nip', 'username');

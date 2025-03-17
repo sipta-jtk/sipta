@@ -445,6 +445,11 @@ return [
                 // ],
             ]
         ],
+        [
+            'text' => 'Repository TA',
+            'url' => '/repository',
+            'icon' => 'fas fa-fw fa-folder',
+        ],
         ['header' => 'Pengaturan Pengguna'],
         // [
         //     'text' => 'profile',
