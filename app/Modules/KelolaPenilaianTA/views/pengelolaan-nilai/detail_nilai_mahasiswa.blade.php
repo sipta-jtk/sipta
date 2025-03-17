@@ -61,8 +61,12 @@
                             @if (strtolower($kategori) == 'seminar 1' || strtolower($kategori) == 'seminar 2')
                                 @if (count(array_filter($data['nilai'], fn($value) => $value !== null && $value !== 0)) == 3)
                                     <td> <a class="btn btn-danger">Nilai</a> </td> 
+                                    <td> <a class="btn btn-danger">Feedback</a> </td>
                                 @else
-                                    <td> <a href="{{ url('kelola-penilaian-ta/seminar-2/tambah') }}" class="btn btn-primary">Nilai</a> </td>
+                                    <td> 
+                                        <a href="{{ url('kelola-penilaian-ta/seminar-2/nilai-seminar-2/tambah') }}" class="btn btn-primary">Nilai</a> 
+                                        <a href="{{ url('kelola-penilaian-ta/seminar-2/feedback-seminar-2/tambah') }}" class="btn btn-primary">Nilai</a> 
+                                    </td>
                                 @endif
                             @endif
                         </tr>

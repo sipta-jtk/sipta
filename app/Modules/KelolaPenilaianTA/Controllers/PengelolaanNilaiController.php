@@ -20,7 +20,7 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-        $kategori = kategoriPenilaian::whereIn('kode_fta', [2, 4, 5, 6])->orderBy('nama_kategori')->get();
+        $kategori = kategoriPenilaian::whereIn('kode_fta', [1, 2, 3, 4])->orderBy('nama_kategori')->get(); // 1, 2, 3, 4 adalah kode fta yang akan diambil masih statis
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('kategori'));
     }
@@ -69,13 +69,14 @@ class PengelolaanNilaiController extends Controller{
             $kodeDosenArray[$index] = $nilaiKategori->dosen->id_dosen;
         }
 
+        $filtered = array_filter($nilaiArray, fn($nilai) => $nilai > 0);
         $filteredData[] = [
             'index' => $index + 1,
             'nama' => $mahasiswa->user->nama,
             'kelompok' => $mahasiswa->id_kota,
             'nilai' => $nilaiArray,
             'kode_dosen' => $kodeDosenArray,
-            'rata-rata' => count($nilaiArray) > 0 ? array_sum($nilaiArray) / count($nilaiArray) : 0,
+            'rata-rata' => count($filtered) > 0 ? array_sum($filtered) / count($filtered) : 0,
             'nim' => $mahasiswa->nim
         ];
     }
