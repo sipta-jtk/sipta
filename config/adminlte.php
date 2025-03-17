@@ -440,6 +440,16 @@ return [
                 // ],
             ]
         ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
+        ],
         ['header' => 'Pengaturan Pengguna'],
         // [
         //     'text' => 'profile',
