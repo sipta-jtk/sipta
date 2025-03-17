@@ -15,4 +15,13 @@ class LogModalNotifController extends Controller
         return response()->json($notifikasi);
     }
 
+    public function show($id)
+    {
+        $notification = Notifikasi::where('id_notifikasi', $id)->first();
+        if (!$notification) {
+            return response()->json(['error' => 'Notifikasi tidak ditemukan'], 404);
+        }
+        return response()->json($notification);
+    }
+
 }
