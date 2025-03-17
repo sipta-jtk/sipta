@@ -24,3 +24,5 @@ Route::get('/notification_reminder/user/notifikasi', function () {
 Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
 
 Route::get('/api/admin/log-admin', [LogAdminController::class, 'getLogNotifications']);
+
+Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
