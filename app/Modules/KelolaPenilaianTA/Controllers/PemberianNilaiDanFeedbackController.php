@@ -3,7 +3,11 @@
 namespace App\Modules\KelolaPenilaianTA\Controllers;
 
 use App\Modules\Controller;
+use App\Models\Mahasiswa;
+use App\Models\Kota;
+use App\Models\KategoriPenilaian;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\RekapitulasiNilaiExport;
@@ -148,19 +152,30 @@ class PemberianNilaiDanFeedbackController extends Controller
      * 
      */
     public function pengisianNilaiSeminarIII(): View
-    {
+    {   
+
+        // Ambil nama fta
+        // $ftaInfo
+
+        // Ambil kode fta
+        $kodeFTA = KategoriPenilaian::where('id_kategori', 3)->first()->kode_fta; // masih blm bisa
+
+        // ID kota statis
+        $idKota = 1;
+
+        // Ambil hanya mahasiswa dengan id_kota = 1
+        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+
+        // Ambil informasi KoTA berdasarkan id_kota = 1
+        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+
         // Data Mahasiswa
         $mahasiswa = [
             'kode_fta' => 'FTA-011',
             'tanggal' => '7 Maret 2025',
             'waktu' => '10:00 - 11:00',
-            'id_kota' => 'KoTA-313',
-            'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring',
-            'list_mahasiswa' => [
-                ['nim' => '221524044', 'nama' => 'Mahardika Pratama'],
-                ['nim' => '221524052', 'nama' => 'Naia Siti Az-zahra'],
-                ['nim' => '221524058', 'nama' => 'Salsabil Khoirunisa']
-            ]
+            // 'id_kota' => 'KoTA-313',
+            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
         ];
 
         // Data Penilaian
@@ -242,7 +257,11 @@ class PemberianNilaiDanFeedbackController extends Controller
             ]
         ];
 
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
+        // return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'penilaian'));
+        // Kirimkan data ke tampilan Blade
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+        // Kirimkan data ke tampilan Blade
+        // return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact('mahasiswaList', 'kotaInfo', 'dosenPembimbing'));
     }
 
     /**
@@ -454,5 +473,20 @@ class PemberianNilaiDanFeedbackController extends Controller
         ];
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_tugas_akhir', compact('mahasiswa', 'penilaian'));
+    }
+
+    /**
+     * Helper function untuk input nilai mahasiswa ke database
+     */
+    private function inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip): void
+    {
+        foreach ($mahasiswa as $index => $mhs) {
+            $mhs->nilaiKategori()->create([
+                'nim' => $mhs->nim,
+                'nip' => $nip,
+                'id_kategori' => 1,
+                'nilai' => $nilai_mahasiswa[$index],
+            ]);
+        }
     }
 }
