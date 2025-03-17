@@ -14,3 +14,4 @@ docker-compose.override.yml
 vendor
 !docker-entrypoint.sh
 !app.Dockerfile.dev
+docker/mysql/data
