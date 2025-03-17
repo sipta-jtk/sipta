@@ -3,46 +3,44 @@
 @section('title', 'Pengajuan Seminar dan Sidang')
 
 @section('content_header')
-    <h1>Pengajuan Seminar 3</h1>
+    <h1><strong>Pengajuan Seminar 3</strong></h1>
 @stop
 
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h4><strong>{{ $dataKota->kota_no }}</strong></h4>
-        <p>{{ $dataKota->judul_ta }}</p>
+        <h4><strong>KoTA {{ $dataKota->kota_no }}</strong></h4>
+        <p class="text-uppercase">{{ $dataKota->judul_ta }}</p>
         
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Mahasiswa</th>
-                    <th>NIM</th>
-                    <th>Pembimbing</th>
-                    <th>NIP Pembimbing</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($dataKota->mahasiswa as $index => $mahasiswa)
-                    <tr>
-                        <td>{{ $mahasiswa->nama }}</td>
-                        <td>{{ $mahasiswa->nim }}</td>
-                        @if (isset($dataKota->pembimbing[$index]))
-                            <td>{{ $dataKota->pembimbing[$index]->nama }}</td>
-                            <td>{{ $dataKota->pembimbing[$index]->nip }}</td>
+        <div class="row">
+            <div class="col">
+                <h4 class="text-bold px-3">Mahasiswa</h4>
+                <ul>
+                    @foreach($dataKota->mahasiswa as $mhs)
+                        <li><h5>{{ $mhs->nim }} - {{ $mhs->nama }}</h5></li>
+                    @endforeach
+                </ul>
+            </div> 
+            <div class="col">
+                <h4 class="text-bold px-3">Pembimbing</h4>
+                <ul>
+                    @foreach($dataKota->pembimbing as $index => $mhs)
+                        @if(isset($dataKota->pembimbing[$index]))
+                            <li><h5>{{ $dataKota->pembimbing[$index]->nip }} - {{ $dataKota->pembimbing[$index]->nama }}</h5></li>
                         @else
-                            <td></td>
-                            <td></td>
+                            <li>Data tidak ditemukan</li>
                         @endif
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <div class="card mt-4">
     <div class="card-body">
-        <h4>Pengajuan Seminar 3</h4>
+        <h4>Waktu dan Tempat Pelaksanaan</h4>
         <form action="" method="POST">
             @csrf
             
@@ -62,7 +60,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="tempat_seminar3" class="form-label">Tempat Sidang:</label>
+                <label for="tempat_seminar3" class="form-label">Ruangan:</label>
                 <input type="text" id="tempat_seminar3" name="tempat_seminar3" class="form-control" required>
             </div>
 

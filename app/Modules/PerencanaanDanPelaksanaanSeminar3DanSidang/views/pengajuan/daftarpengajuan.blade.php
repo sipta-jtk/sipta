@@ -15,7 +15,7 @@
         @endphp
         <x-adminlte-card title="Pengajuan Seminar 3" theme="{{ $seminar3Enabled ? 'primary' : 'secondary' }}" icon="fas fa-file-alt"
             style="{{ $seminar3Enabled ? '' : 'opacity: 0.5; pointer-events: none;' }}">
-            <p>Sidang akhir dapat diajukan setelah menyelesaikan tahap seminar 3 serta seluruh berkas yang dibutuhkan telah diupload.</p>
+            <p>Seminar 3 dapat diajukan setelah menyelesaikan tahap seminar 1 dan 2 serta telah melengkapi seluruh berkas yang dibutuhkan.</p>
             <div class="text-center">
                 @if ($seminar3Enabled)
                     <a href="{{ route('pengajuan-seminar3') }}" class="btn btn-primary">Buat Pengajuan</a>
@@ -33,7 +33,7 @@
         @endphp
         <x-adminlte-card title="Pengajuan Sidang Akhir" theme="{{ $sidangEnabled ? 'primary' : 'secondary' }}" icon="fas fa-graduation-cap"
             style="{{ $sidangEnabled ? '' : 'opacity: 0.5; pointer-events: none;' }}">
-            <p>Sidang akhir dapat diajukan setelah menyelesaikan tahap seminar 1 dan 2 serta seluruh berkas yang dibutuhkan telah diupload.</p>
+            <p>Sidang akhir dapat diajukan setelah menyelesaikan tahap seminar 3 serta telah melengkapi seluruh berkas yang dibutuhkan.</p>
             <div class="text-center">
                 @if ($sidangEnabled)
                     <a href="{{ route('pengajuan-sidang') }}" class="btn btn-primary">Buat Pengajuan</a>

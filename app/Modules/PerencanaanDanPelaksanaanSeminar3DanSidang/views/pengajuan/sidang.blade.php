@@ -3,16 +3,44 @@
 @section('title', 'Pengajuan Sidang')
 
 @section('content_header')
-    <h1>Pengajuan Sidang</h1>
+    <h1><strong>Pengajuan Sidang</strong></h1>
 @stop
 
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h4><strong>KoTA 101</strong></h4>
-        <p>PENGEMBANGAN APLIKASI MONITORING TUGAS AKHIR DI JURUSAN TEKNIK KOMPUTER DAN INFORMATIKA</p>
+        <h4><strong>KoTA {{ $dataKota->kota_no }}</strong></h4>
+        <p class="text-uppercase">{{ $dataKota->judul_ta }}</p>
         
-        <table class="table table-bordered">
+        <div class="row">
+            <div class="col">
+                <h4 class="text-bold px-3">Mahasiswa</h4>
+                <ul>
+                    @foreach($dataKota->mahasiswa as $mhs)
+                        <li><h5>{{ $mhs->nim }} - {{ $mhs->nama }}</h5></li>
+                    @endforeach
+                </ul>
+            </div> 
+            <div class="col">
+                <h4 class="text-bold px-3">Pembimbing</h4>
+                <ul>
+                    <li><h5>{{ $dataKota->pembimbing->nip }} - {{ $dataKota->pembimbing->nama }}</h5></li>
+                </ul>
+            </div>
+            <div class="col">
+                <h4 class="text-bold px-3">Penguji</h4>
+                <ul>
+                    @foreach($dataKota->penguji as $index => $mhs)
+                        @if(isset($dataKota->penguji[$index]))
+                            <li><h5>{{ $dataKota->penguji[$index]->nip }} - {{ $dataKota->penguji[$index]->nama }}</h5></li>
+                        @else
+                            <li>Data tidak ditemukan</li>
+                        @endif
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        <!-- <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Mahasiswa</th>
@@ -47,13 +75,13 @@
                     </tr>
                 @endforeach
             </tbody>
-        </table>
+        </table> -->
     </div>
 </div>
 
 <div class="card mt-4">
     <div class="card-body">
-        <h4>Pengajuan Sidang</h4>
+        <h4>Waktu dan Tempat Pelaksanaan</h4>
         <form action="" method="POST">
             @csrf
             
@@ -73,7 +101,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="tempat_sidang" class="form-label">Tempat Sidang:</label>
+                <label for="tempat_sidang" class="form-label">Ruangan:</label>
                 <input type="text" id="tempat_sidang" name="tempat_sidang" class="form-control" required>
             </div>
 

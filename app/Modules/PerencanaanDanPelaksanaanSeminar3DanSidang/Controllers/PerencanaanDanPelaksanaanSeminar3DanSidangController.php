@@ -30,13 +30,13 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
             'kota_no' => '103',
             'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
             'mahasiswa' => [
-                (object) ['nama' => 'Mahasiswa 1', 'nim' => 'NIM 1'],
-                (object) ['nama' => 'Mahasiswa 2', 'nim' => 'NIM 2'],
-                (object) ['nama' => 'Mahasiswa 3', 'nim' => 'NIM 3'],
+                (object) ['nama' => 'Mahasiswa 1', 'nim' => '101010101'],
+                (object) ['nama' => 'Mahasiswa 2', 'nim' => '202020202'],
+                (object) ['nama' => 'Mahasiswa 3', 'nim' => '303030303'],
             ],
             'pembimbing' => [
-                (object) ['nama' => 'Dosen Pembimbing 1', 'nip' => 'NIP Pembimbing 1'],
-                (object) ['nama' => 'Dosen Pembimbing 2', 'nip' => 'NIP Pembimbing 2']
+                (object) ['nama' => 'Dosen Pembimbing 1', 'nip' => '101010101'],
+                (object) ['nama' => 'Dosen Pembimbing 2', 'nip' => '202020202']
             ]
         ];
 
@@ -49,17 +49,17 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
             'kota_no' => '101',
             'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
             'mahasiswa' => [
-                (object) ['nama' => 'Mahasiswa 1', 'nim' => 'NIM 1'],
-                (object) ['nama' => 'Mahasiswa 2', 'nim' => 'NIM 2'],
-                (object) ['nama' => 'Mahasiswa 3', 'nim' => 'NIM 3'],
+                (object) ['nama' => 'Mahasiswa 1', 'nim' => '101010101'],
+                (object) ['nama' => 'Mahasiswa 2', 'nim' => '202020202'],
+                (object) ['nama' => 'Mahasiswa 3', 'nim' => '303030303'],
             ],
             'pembimbing' => (object) [
                 'nama' => 'Dosen Pembimbing',
-                'nip' => 'NIP Pembimbing'
+                'nip' => '101010101'
             ],
             'penguji' => [
-                (object) ['nama' => 'Penguji 1', 'nip' => 'NIP Penguji 1'],
-                (object) ['nama' => 'Penguji 2', 'nip' => 'NIP Penguji 2']
+                (object) ['nama' => 'Penguji 1', 'nip' => '101010101'],
+                (object) ['nama' => 'Penguji 2', 'nip' => '202020202']
             ]
         ];
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.sidang', compact('dataKota'));
