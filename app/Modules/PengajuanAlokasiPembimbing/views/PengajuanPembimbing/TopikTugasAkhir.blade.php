@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PengajuanAlokasiPembimbing')
+@section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
     <div class="m-3">
@@ -15,7 +15,8 @@
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="2"
-                activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#', '#']" />
+                activeColor="primary" inactiveColor="secondary" 
+                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
         </div>
             <!-- Form Pengajuan -->
         <div class="col">
@@ -24,7 +25,7 @@
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
-                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul"></textarea>
+                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul" required></textarea>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -36,32 +37,24 @@
                                     <div class="col">
                                         <p class="m-0">Daftar Bidang</p>
                                     </div>
-                                    <div class="col text-right">
-                                        <a class="m-0 text-light"> <i class="fas fa-plus"></i> Tambah Bidang</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                         {{-- ================== --}}
                         <div class="container-fluid bg-white border rounded-bottom bg-opacity-25 pre-scrollable mb-4">
-                    
-                            <div class="container text-center ">
-                                <div class="row row-cols-2 p-3">
-                                    @for ($i = 0; $i < 50; $i++)
-                                        <div class="col">
-                                            <div class="pretty p-default p-fill">
-                                                <input type="checkbox" />
-                                                <div class="state p-info text-left" style="min-width: 150px;">
-                                                    <label>
-                                                        Bidang {{ $i + 1 }}
-                                                    </label>
-                                                </div>
-                                            </div>
+                            <div class="container">
+                                <div class="row d-flex flex-wrap pl-4 py-3">
+                                    @foreach ($namaBidang as $bidang)
+                                        <div class="col-md-6 d-flex align-items-center mb-2">
+                                            <input type="checkbox" id="bidang-{{$loop->index}}" class="form-check-input" style="accent-color: #17a2b8;">
+                                            <label for="bidang-{{$loop->index}}" class="m-0 flex-grow-1" style="word-break: break-word; white-space: normal; font-weight: normal;">
+                                                {{$bidang->bidang}}
+                                            </label>
                                         </div>
-                                    @endfor
-                                </div>
+                                    @endforeach
+                                </div>                                
                             </div>
-                        </div>
+                        </div>                                            
                     </div>
                 </div>
 
@@ -69,7 +62,7 @@
                 <div class="d-flex justify-content-between mt-3">
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info ml-3">Sebelumnya</a>
                     <button type="button" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing') }} class="btn btn-info ml-3">Selanjutnya</a>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
         </div>
@@ -111,7 +104,7 @@
 
             // Simpan checkbox yang dicentang
             $("input[type='checkbox']:checked").each(function () {
-                draftData.bidang.push($(this).next("div").text().trim());
+                draftData.bidang.push($(this).next("label").text().trim());
             });
 
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
@@ -125,7 +118,7 @@
                 $("textarea[name='topik']").val(savedData.topik);
 
                 $("input[type='checkbox']").each(function () {
-                    let label = $(this).next("div").text().trim();
+                    let label = $(this).next("label").text().trim();
                     if (savedData.bidang.includes(label)) {
                         $(this).prop("checked", true);
                     }
