@@ -1,0 +1,56 @@
+FROM php:8.3-cli
+
+# Set working directory
+WORKDIR /var/www/
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    libonig-dev \
+    libzip-dev \
+    jpegoptim optipng pngquant gifsicle \
+    ca-certificates \
+    vim \
+    tmux \
+    unzip \
+    git \
+    curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/
+RUN docker-php-ext-install gd
+RUN pecl install -o -f redis &&  rm -rf /tmp/pear && docker-php-ext-enable redis
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Create necessary directories
+RUN mkdir -p /var/www/app/Modules
+
+# Copy project files into the container
+COPY . /var/www/
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www
+RUN chmod -R 755 /var/www/public
+RUN chown -R www-data:www-data /var/www/public
+
+# Install dependencies with composer
+RUN composer install --ignore-platform-reqs
+
+# Expose port 8000
+EXPOSE 8000
+
+# Copy entrypoint script and give execution permission
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Run entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]

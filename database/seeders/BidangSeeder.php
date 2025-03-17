@@ -14,6 +14,7 @@ class BidangSeeder extends Seeder
      * Run the database seeds.
      */
 
+
      var $bidang = [
         "Penerapan dan pengkajian teknik dan best practice dalam pengembangan perangkat lunak (improvement pada seluruh / sebagian tahap SDLC) apapun platform nya",
         "Machine Learning (Information Retrieval, Data Mining, Text Mining, AI, dll)",
