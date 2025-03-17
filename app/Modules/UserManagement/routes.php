@@ -6,6 +6,8 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
+use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
 
@@ -37,15 +39,31 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 
 // Route lainnya
 Route::group(['prefix' => 'user_management'], function () {
-    Route::get('/', [UserManagementController::class, 'render']);
+    Route::get('/user_management', [UserManagementController::class, 'render']);
 });
+
+//Pengajuan Pisah KoTA
+// Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])->name('pengajuan.pisah.kota');
+// Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])->name('pengajuan.pisah.kota.show');
+
+Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])
+        ->name('pengajuan.pisah.kota');
+});
+Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
+        ->name('pengajuan.pisah.kota.show');
+});
+
+Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
+Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
+Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
+Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('role_no_auth:admin')
     ->name('manage.dosen');
 
-
-    
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 

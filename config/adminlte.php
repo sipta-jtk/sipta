@@ -470,6 +470,21 @@ return [
                     'url'  => 'kelola-kbk',
                 ],
                 [
+                    'text' => 'Pengajuan Pisah KoTA',
+                    'url' => 'pengajuan-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Form Pisah KoTA',
+                    'url' => 'form-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'mahasiswa_ta',
+                    // 'can' => function() {
+                    //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
+                    //         },
+                ],
+                [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => '/manage_dosen',
                 ],
