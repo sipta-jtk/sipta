@@ -7,7 +7,9 @@ use App\Models\Dosen;
 use App\Models\JadwalDosenPembimbing;
 use App\Models\KetertarikanBidang;
 use App\Models\Kota;
+use App\Models\KuotaMembimbing;
 use App\Models\PeriodePengajuan;
+use App\Models\Prodi;
 use App\Modules\Controller;
 use DB;
 use Illuminate\View\View;
@@ -15,24 +17,61 @@ use Validator;
 
 class KesediaanBimbinganController extends Controller
 {
-    private $USER_ID = '196810141993032002';
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    private $USER_ID = '197312271999031003';
 
     public function get_info(): array
     {
         $currentdate = date('Y-m-d');
+        $MaxBimbingan = Prodi::leftJoin('kuota_membimbing', function ($join) {
+            $join->on('prodi.id_prodi', '=', 'kuota_membimbing.id_prodi')
+                ->where('kuota_membimbing.nip', $this->USER_ID);
+        })
+            ->select('prodi.nama_prodi', 'prodi.id_prodi', DB::raw('COALESCE(kuota_membimbing.jumlah, 0) as jumlah'))
+            // ->pluck('jumlah', 'id_prodi')
+            ->get()
+            ->toArray();
 
         return [
             'BidangInterestTotal' => KetertarikanBidang::where('nip', $this->USER_ID)->count() ?: 0,
-            'MaxBimbingan' => [
-                'MaxD3' => Dosen::where('nip', $this->USER_ID)->first()->maks_bimbingan_d3 ?? 0,
-                'MaxD4' => Dosen::where('nip', $this->USER_ID)->first()->maks_bimbingan_d4 ?? 0,
-            ],
+            'MaxBimbingan' => $MaxBimbingan,
             'JadwalTotal' => [
                 'Day' => JadwalDosenPembimbing::where('nip', $this->USER_ID)->distinct('hari')->count() ?: 0,
                 'Session' => JadwalDosenPembimbing::where('nip', $this->USER_ID)->count() ?: 0,
             ],
+            'StatusBersediaMembimbing' => Dosen::where('nip', $this->USER_ID)->value('bersedia_membimbing') ?: 'tidak_bersedia',
             'Periode' => PeriodePengajuan::where('periode_mulai', '<=', $currentdate)->where('periode_akhir', '>=', $currentdate)->exists()
         ];
+    }
+
+    public function konfirmasi_kesediaan($value)
+    {
+        $data = [
+            'nip' => $this->USER_ID,
+            'bersedia_membimbing' => $value
+        ];
+
+        $validator = Validator::make($data, [
+            'bersedia_membimbing' => 'required|in:bersedia,tidak_bersedia,belum_konfirmasi'
+        ], [
+            'bersedia_membimbing.in' => 'Status kesediaan membimbing tidak valid'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        Dosen::where('nip', $data['nip'])->update([
+            'bersedia_membimbing' => $data['bersedia_membimbing']
+        ]);
+
+        session()->flash('success', 'Status kesediaan membimbing berhasil diubah');
+
+        return redirect()->back();
     }
 
     public function view_minatTopik(): View
@@ -60,29 +99,35 @@ class KesediaanBimbinganController extends Controller
 
         $data = request()->all();
         $data['nip'] = $this->USER_ID;
-        $data['bidang'] = $data['bidang'] ?? [];
+        $data['bidang'] = $data['bidang'] ?? null;
 
         $validator = Validator::make($data, [
-            'bidang.*' => 'nullable|exists:bidang,id_bidang'
+            'bidang.*' => 'required|exists:bidang,id_bidang'
         ], [
-            'bidang.*.exists' => 'Bidang yang dipilih tidak valid atau tidak tersedia. Input ID: ' . implode(', ', array_map(fn($id) => "bidang$id", $data['bidang']))
+            'bidang.*.exists' => 'Bidang yang dipilih tidak valid atau tidak tersedia. Input ID: ' . implode(', ', array_map(fn($id) => "bidang$id", $data['bidang'] ?? []))
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails() || !$data['bidang']) {
+            if (!$data['bidang']) {
+                $validator->errors()->add('bidang', 'Bidang minat tidak boleh kosong');
+            }
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        if (count($data['bidang']) > 5) {
-            session()->flash('error', 'Maksimal 5 bidang yang dapat dipilih');
+        DB::beginTransaction();
+        try {
+            KetertarikanBidang::where('nip', $data['nip'])->delete();
+            foreach ($data['bidang'] as $bidang) {
+                KetertarikanBidang::create([
+                    'nip' => $data['nip'],
+                    'id_bidang' => $bidang
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Terjadi kesalahan saat menyimpan data ketertarikan bidang');
             return redirect()->back();
-        }
-
-        KetertarikanBidang::where('nip', $data['nip'])->delete();
-        foreach ($data['bidang'] as $bidang) {
-            KetertarikanBidang::create([
-                'nip' => $data['nip'],
-                'id_bidang' => $bidang
-            ]);
         }
 
         session()->flash('success', 'Data ketertarikan bidang berhasil disimpan');
@@ -100,6 +145,7 @@ class KesediaanBimbinganController extends Controller
         }
 
         $data = request()->all();
+        $data['bidang'] = ucwords(strtolower($data['bidang']));
         $data['nip'] = $this->USER_ID;
         $validator = Validator::make($data, [
             'bidang' => 'required|string|max:255|unique:bidang,bidang'
@@ -115,12 +161,10 @@ class KesediaanBimbinganController extends Controller
             $bidang = Bidang::create([
                 'bidang' => $data['bidang']
             ]);
-            if ($this->get_info()['BidangInterestTotal'] < 5) {
-                KetertarikanBidang::create([
-                    'nip' => $data['nip'],
-                    'id_bidang' => $bidang->id_bidang
-                ]);
-            }
+            KetertarikanBidang::create([
+                'nip' => $data['nip'],
+                'id_bidang' => $bidang->id_bidang
+            ]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -136,7 +180,8 @@ class KesediaanBimbinganController extends Controller
     public function view_kuotaMahasiswa(): View
     {
         $data = [
-            'savedInformation' => $this->get_info()
+            'savedInformation' => $this->get_info(),
+            'batas_bimbingan' => Prodi::all(),
         ];
         return view('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.JumlahMahasiswa', $data);
     }
@@ -153,23 +198,37 @@ class KesediaanBimbinganController extends Controller
         $data = request()->all();
         $data['nip'] = $this->USER_ID;
 
-        $validator = Validator::make($data, [
-            'valD3' => 'required|integer|min:0',
-            'valD4' => 'required|integer|min:0'
-        ], [
-            'valD3.integer' => 'Kuota mahasiswa D3 harus berupa angka. Input ID: valD3',
-            'valD4.integer' => 'Kuota mahasiswa D4 harus berupa angka. Input ID: valD4',
-            'valD3.min' => 'Kuota mahasiswa D3 tidak boleh kurang dari 0. Input ID: valD3',
-            'valD4.min' => 'Kuota mahasiswa D4 tidak boleh kurang dari 0. Input ID: valD4'
-        ]);
+        $listProdi = Prodi::select('id_prodi')->get();
+        $rules = [];
+        $messages = [];
+        foreach ($listProdi as $prodi) {
+            $rules['val' . $prodi->id_prodi] = 'required|integer|min:0';
+            $messages['val' . $prodi->id_prodi . '.integer'] = 'Kuota mahasiswa ' . $prodi->nama_prodi . ' harus berupa angka. Input ID: val' . $prodi->id_prodi;
+        }
+        $validator = Validator::make($data, $rules, $messages);
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        Dosen::where('nip', $data['nip'])->update([
-            'maks_bimbingan_d3' => $data['valD3'],
-            'maks_bimbingan_d4' => $data['valD4']
-        ]);
+        DB::beginTransaction();
+        try {
+            KuotaMembimbing::where('nip', $data['nip'])->delete();
+
+            foreach ($listProdi as $prodi) {
+                KuotaMembimbing::create([
+                    'nip' => $data['nip'],
+                    'id_prodi' => $prodi->id_prodi,
+                    'jumlah' => $data['val' . $prodi->id_prodi]
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Terjadi kesalahan saat menyimpan data kuota mahasiswa');
+            return redirect()->back();
+        }
 
         session()->flash('success', 'Data kuota mahasiswa berhasil disimpan');
 
@@ -238,14 +297,22 @@ class KesediaanBimbinganController extends Controller
             return redirect()->back();
         }
 
-        JadwalDosenPembimbing::where('nip', $data['nip'])->delete();
-        foreach ($data['jadwals'] as $jadwal) {
-            JadwalDosenPembimbing::create([
-                'nip' => $data['nip'],
-                'hari' => strtolower($jadwal['day']),
-                'jam_mulai' => $jadwal['time'][0],
-                'jam_selesai' => $jadwal['time'][1]
-            ]);
+        DB::beginTransaction();
+        try {
+            JadwalDosenPembimbing::where('nip', $data['nip'])->delete();
+            foreach ($data['jadwals'] as $jadwal) {
+                JadwalDosenPembimbing::create([
+                    'nip' => $data['nip'],
+                    'hari' => strtolower($jadwal['day']),
+                    'jam_mulai' => $jadwal['time'][0],
+                    'jam_selesai' => $jadwal['time'][1]
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Terjadi kesalahan saat menyimpan data jadwal');
+            return redirect()->back();
         }
 
         session()->flash('success', 'Data jadwal berhasil disimpan');
