@@ -95,6 +95,3 @@ Route::get('/penentuan-ambang-batas', function () {
 Route::get('/cek-plagiarisme', function () {
     return view('CekPlagiarisme.views.DaftarDokumen');
 });
-
-
-
