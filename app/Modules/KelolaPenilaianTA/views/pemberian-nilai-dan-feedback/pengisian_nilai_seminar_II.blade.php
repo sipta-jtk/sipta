@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $mahasiswa['id_kota'] }}</span>
+                <span>{{ $kotaInfo->nama_kota }}</span>
             </div>
         </div>
 
@@ -55,11 +55,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                            @foreach($mahasiswaList as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $mhs['nim'] }}</td>
-                                    <td>{{ $mhs['nama'] }}</td>
+                                    <td>{{ $mhs->nim }}</td>
+                                    <td>{{ $mhs->user->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,7 +72,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $mahasiswa['topik_ta'] }}</span>
+                <span>{{ $kotaInfo->judul_ta }}</span>
             </div>
         </div>
 
@@ -80,112 +80,66 @@
         <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/2/masukan') }}" > <!-- method="POST" -->
             @csrf
 
-            <div class="row mt-3 p-4 col-md-12">
-                <table class="table table-bordered text-center">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th rowspan="2">No</th>
-                            <th rowspan="2">Kriteria Penilaian Penguji</th>
-                            <th rowspan="2">Detail Kriteria</th>
-                            <th colspan="6">Rentang Nilai</th>
-                            <th rowspan="2">Bobot Nilai</th>
-                            <th rowspan="2">Rentang Nilai</th>
-                            <th colspan="{{ count($mahasiswa['list_mahasiswa']) }}">Nilai Perorangan</th>
-                        </tr>
-                        <tr>
-                            <th>≥ 80 (A)</th>
-                            <th>75 - 79.99 (AB)</th>
-                            <th>70 - 74.99 (B)</th>
-                            <th>65 - 69.99 (BC)</th>
-                            <th>60 - 64.99 (C)</th>
-                            <th>< 60 (CD)</th>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
-                                <th>{{ $key + 1 }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($penilaian as $p)
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
                             <tr>
-                                <td>{{ $p['no'] }}</td>
-                                <td>{{ $p['kriteria'] }}</td>
+                                <th>No</th>
+                                <th>Kriteria Penilaian Penguji</th>
+                                <th>Bobot Nilai</th>
+                                <th>Rentang Nilai</th>
+                                <th style="min-width: 100px;" colspan="{{ count($mahasiswaList) }}">Nilai Perorangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
                                 <td>
-                                    <ul class="text-left">
-                                        @foreach ($p['detail_kriteria'] as $detail)
-                                            <li>{{ $detail }}</li>
-                                        @endforeach
+                                    Kejelasan isi dokumen : 
+                                    <ul>
+                                        <li>kejelasan kaitan antar bab/sub kajian (hubungan sebab akibat/reasoning, rasionalitas),</li>
+                                        <li>kesesuaian dan ketepatan penggunaan metodologi dan modelling tools,</li>
+                                        <li>kejelasan dan kesesuaian studi pustaka beserta daftar pustakanya,</li>
+                                        <li>tata tulis laporan.</li>
                                     </ul>
                                 </td>
-
-                                <!-- Rentang Nilai per Kategori -->
-                                <td>
-                                    @if(isset($p['nilai']['≥ 80 (A)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['≥ 80 (A)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if(isset($p['nilai']['75 - 79.99 (AB)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['75 - 79.99 (AB)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if(isset($p['nilai']['70 - 74.99 (B)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['70 - 74.99 (B)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if(isset($p['nilai']['65 - 69.99 (BC)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['65 - 69.99 (BC)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if(isset($p['nilai']['60 - 64.99 (C)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['60 - 64.99 (C)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if(isset($p['nilai']['< 60 (CD)']))
-                                        <ul class="text-left">
-                                            @foreach ($p['nilai']['< 60 (CD)'] as $nilai)
-                                                <li>{{ $nilai }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </td>
-
-                                <td>{{ $p['bobot'] }}</td>
-                                <td>{{ $p['rentang_nilai'] }}</td>
-
-                                <!-- Input Nilai Perorangan -->
-                                @foreach($mahasiswa['list_mahasiswa'] as $mhs)
-                                    <td>
-                                        <input type="number" class="form-control" name="nilai[{{ $mhs['nim'] }}][{{ $p['no'] }}]" min="0" max="100">
-                                    </td>
+                                <td>40 %</td>
+                                <td>0 - 100</td>
+                                @foreach($mahasiswaList as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai1[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    Presentasi : 
+                                    <ul>
+                                        <li>materi presentasi,</li>
+                                        <li>kejelasan presentasi & kemampuan membangkitkan minat pemirsa,</li>
+                                        <li>penggunaan alat bantu,</li>
+                                        <li>ketepatan waktu,</li>
+                                        <li>kebebasan dari catatan.</li>
+                                    </ul>
+                                </td>
+                                <td>20 %</td>
+                                <td>0 - 100</td>
+                                @foreach($mahasiswaList as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai2[]" min="0" max="100"></td>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Tanya Jawab (penguasaan materi terkait tugas yang dikerjakan)</td>
+                                <td>40 %</td>
+                                <td>0 - 100</td>
+                                @foreach($mahasiswaList as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai3[]" min="0" max="100"></td>
+                                @endforeach
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Tombol Simpan dan Selanjutnya -->
@@ -196,4 +150,17 @@
             </div>
         </form>
     </div>
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
+@stop
+
+@section('js')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
 @stop
