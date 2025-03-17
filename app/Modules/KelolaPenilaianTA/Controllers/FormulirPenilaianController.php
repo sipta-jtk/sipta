@@ -56,11 +56,6 @@ class FormulirPenilaianController extends Controller {
     //     return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     // }
 
-    public function tambahRubrikPenilaian(): View
-    {
-        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian');
-    }
-
     // public function tambahAspekFormulir(): View
     // {
     //     return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_aspek_formulir');
@@ -120,6 +115,13 @@ class FormulirPenilaianController extends Controller {
     {
         $prodiList = Prodi::all(); // Ambil semua data Prodi dari database
         return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_aspek_formulir', compact('prodiList'));
+    }
+
+    public function tambahRubrikPenilaian(): View
+    {
+        $formPenilaianList = FormPenilaian::all(); // Ambil semua data Form Penilaian dari database
+        $kriteriaList = KriteriaPenilaian::all(); // Ambil semua data Kriteria Penilaian dari database
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian', compact('formPenilaianList', 'kriteriaList'));
     }
 
     public function simpanAspekFormulir(Request $request)
