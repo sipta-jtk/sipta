@@ -5,7 +5,7 @@ namespace App\Modules\Repository\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Dokumen;
 use App\Models\Subkategori;
-use App\Modules\Controller;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class RepositoryController extends Controller
