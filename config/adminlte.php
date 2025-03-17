@@ -1,5 +1,7 @@
 <?php
 
+$prefix = env('PREFIX_URL', 'sipta');
+
 return [
 
     /*
@@ -317,7 +319,7 @@ return [
         ],
         [
             'text' => 'blog',
-            'url' => env('PREFIX_URL', 'sipta') . '/admin/blog',
+            'url' => $prefix . '/admin/blog',
             'can' => 'manage-blog',
         ],
         ['header' => 'Layanan Tugas Akhir'],
@@ -327,99 +329,63 @@ return [
             'submenu' => [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
-                    'url' => env('PREFIX_URL', 'sipta') . '/#',
+                    'url' => $prefix . '/#',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
-                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
-                    'url' => env('PREFIX_URL', 'sipta') . '/#',
+                    'url' => $prefix . '/#',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Pembimbing',
-                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                         ],
                         [
                             'text' => 'Formulir Kesediaan Membimbing',
-                            'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Pengelolaan Periode',
-                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
-                    'url' => env('PREFIX_URL', 'sipta') . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                 ],
             ]
         ],
         [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
                     'text' => 'Jadwal Seminar 3',
-                    'url' => 'jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/jadwal-seminar',
                 ],
                 [
                     'text' => 'Jadwal Sidang',
-                    'url' => 'jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/jadwal-sidang',
                 ],
                 [
                     'text' => 'Pembatalan Seminar 3',
-                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
                 ],
                 [
                     'text' => 'Pembatalan Sidang',
-                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Jadwal Seminar 3',
-                    'url' => 'jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Jadwal Sidang',
-                    'url' => 'jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pembatalan Seminar 3',
-                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pembatalan Sidang',
-                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Kelola Penilaian Tugas Akhir',
@@ -430,79 +396,56 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-mahasiswa',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-mahasiswa',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-feedback',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-feedback',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/monitoring-rubrik',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-rubrik',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/fomulir-penilaian',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/fomulir-penilaian',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/pengelolaan-nilai',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => env('PREFIX_URL', 'sipta') . '/KelolaPenilaianTA/rekapitulasi-nilai',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/rekapitulasi-nilai',
                 ],
             ]
         ],
         [
             'text' => 'Timeline',
-            'url' => '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Timeline',
-            'url' => env('PREFIX_URL', 'sipta') . '/timeline',
+            'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
         ],
         [
             'text' => 'Artefak',
-            'url' => env('PREFIX_URL', 'sipta') . '/#',
+            'url' => $prefix . '/#',
             'icon' => 'fas fa-fw fa-folder',
             'submenu' => [
                 [
                     'text' => 'Kelola Dokumen dan FTA',
-                    'url' => env('PREFIX_URL', 'sipta') . '/artefak',
+                    'url' => $prefix . '/artefak',
                 ],
             ]
         ],
         [
             'text' => 'Cek Plagiarisme',
-            'url' => '/cek-plagiarisme',
+            'url' => $prefix . '/cek-plagiarisme',
             'icon' => 'fas fa-fw fa-file',
         ],
         [
             'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => '/penentuan-ambang-batas',
-            'icon' => 'fas fa-scroll',
-        ],
-        [
-            'text' => 'Cek Plagiarisme',
-            'url' => '/cek-plagiarisme',
-            'icon' => 'fas fa-fw fa-file',
-        ],
-        [
-            'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => '/penentuan-ambang-batas',
+            'url' => $prefix . '/penentuan-ambang-batas',
             'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
@@ -512,11 +455,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => env('PREFIX_URL', 'sipta') . '/manage_dosen',
+                    'url' => $prefix . '/manage_dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => env('PREFIX_URL', 'sipta') . '/#',
+                    'url' => $prefix . '/#',
                 ],
             ],
         ],

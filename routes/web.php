@@ -34,10 +34,10 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
 
-Route::post('/logout', function () {
-    auth()->logout();
-    return redirect('/login');
-})->name('logout');
+// Route::post('/logout', function () {
+//     auth()->logout();
+//     return redirect('/login');
+// })->name('logout');
 
 Route::get('/penentuan-ambang-batas', function () {
     return view('CekPlagiarisme.views.PenentuanAmbangBatas');
