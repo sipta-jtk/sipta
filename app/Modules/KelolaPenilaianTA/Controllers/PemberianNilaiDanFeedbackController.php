@@ -391,12 +391,13 @@ class PemberianNilaiDanFeedbackController extends Controller
     {
         if($id == 1) {
             // return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1');
+            // return $this->pengisianNilaiSeminarI();
         } else if($id == 2) {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II');
+            return $this->pengisianNilaiSeminarII();
         } else if($id == 3) {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III');
+            return $this->pengisianNilaiSeminarIII();
         } else {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir');
+            return $this->pengisianNilaiSidangAkhir();
         } 
     }
 
@@ -406,13 +407,13 @@ class PemberianNilaiDanFeedbackController extends Controller
     public function pengisianMasukanSeminar($id): View
     {
         if($id == 1) {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1');
+            return $this->pengisianMasukanSeminar1();
         } else if($id == 2) {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II');
+            return $this->pengisianMasukanSeminarII();
         } else if($id == 3) {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III');
+            return $this->pengisianMasukanSeminarIII();
         } else {
-            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir');
+            return $this->pengisianMasukanSidangAkhir();
         } 
     }
 }
