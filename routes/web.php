@@ -52,4 +52,35 @@ Route::get('/edit-notif', function() {
     return view('NotificationAndReminder::SettingNotification.SettingAwalNotif'); // Sesuaikan dengan nama view yang kamu buat
 });
 
+// Array statis untuk menyimpan data
+$dataStore = [];
+
+Route::post('/create-data', function (\Illuminate\Http\Request $request) use (&$dataStore) {
+    // Buat ID unik untuk data baru
+    $id = uniqid();
+
+    // Simpan data baru ke array statis
+    $dataStore[$id] = [
+        'id' => $id,
+        'value' => $request->input('value'),
+    ];
+
+    return response()->json($dataStore[$id]);
+});
+
+Route::put('/update-data/{id}', function ($id, \Illuminate\Http\Request $request) use (&$dataStore) {
+    // Cek apakah data dengan ID tertentu ada
+    if (!isset($dataStore[$id])) {
+        return response()->json(['error' => 'Data tidak ditemukan.'], 404);
+    }
+
+    // Perbarui nilai data
+    $dataStore[$id]['value'] = $request->input('value');
+
+    return response()->json([
+        'message' => 'Data berhasil diperbarui.',
+        'new_value' => $dataStore[$id]['value'],
+    ]);
+});
+
 
