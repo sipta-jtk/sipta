@@ -5,40 +5,16 @@ namespace App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers;
 use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\Kota;
+use App\Models\VerifikasiBerkasPengajuan;
 
 class VerifikasiBerkasController extends Controller
 {
     public function index(Request $request, string $tipe): View
     {
         if ($tipe === 'berkas-seminar-3'){
-            $dataKota = [
-                (object) [
-                    'id' => 1,
-                    'kelompok' => '001', // FK
-                    'judul_ta' => 'Sistem Informasi Akademik Berbasis Web', // data ta
-                    'nip' => '1234567890',
-                    'status' => 'pending',
-                    'catatan' => '',
-                    'jenis_pengajuan' => 'Seminar 3',
-                    'tanggal_pengajuan' => '2025-03-05',
-                    'tanggal_verifikasi' => '',
-                ],
-            ];
+            $dataKota = VerifikasiBerkasPengajuan::all()->where('status_konfirmasi', 'disetujui');
         } else {
-            $dataKota = [
-                (object) [
-                    'id' => 1,
-                    'kelompok' => '001', // FK
-                    'judul_ta' => 'Sistem Informasi Informasi Akademik Berbasis Web', // data ta
-                    'nip' => '1234567890',
-                    'status' => 'pending',
-                    'catatan' => '',
-                    'jenis_pengajuan' => 'Sidang Akhir',
-                    'tanggal_pengajuan' => '2025-03-05',
-                    'tanggal_verifikasi' => '',
-                ],
-            ];
+            $dataKota = VerifikasiBerkasPengajuan::all()->where('status_konfirmasi', 'disetujui');
         }
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
@@ -180,7 +156,7 @@ class VerifikasiBerkasController extends Controller
 
     public function json(): View
     {
-        $kotas = Kota::all();
+        $kotas = VerifikasiBerkasPengajuan::all()->where('status_konfirmasi', 'disetujui');
 
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.json', compact('kotas'));
     }

@@ -104,7 +104,7 @@
                     { 
                         data: "judul_ta",
                         className: "judul-ta-column",
-                        render: function(data, type, row) {
+                        render: function(data, type) {
                             return `<div class="judul-ta-scroll">${data}</div>`; // Bungkus dalam div
                         }
                     },
