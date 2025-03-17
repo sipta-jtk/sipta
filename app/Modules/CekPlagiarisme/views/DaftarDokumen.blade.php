@@ -69,7 +69,8 @@
                             name: "judul",
                             type: "text",
                             title: "Judul",
-                            width: 200
+                            width: 200,
+                            align: "center"
                         },
                         {
                             name: "waktu",

@@ -44,7 +44,7 @@ class CekPlagiarismeDetailController extends Controller
                 'komentar' => 'Di Parafrase yaa!!',
             ],
         ];
-        
+
         return view('CekPlagiarisme.views.DaftarDokumen', compact('cekPlagiarisme'));
     }
 
@@ -61,7 +61,7 @@ class CekPlagiarismeDetailController extends Controller
             'presentase' => 50,
             'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
         ];
-    
+
         // Data dummy untuk komentar
         $catatan = [
             [
@@ -83,11 +83,11 @@ class CekPlagiarismeDetailController extends Controller
                 'content' => 'Silakan sertakan jurnal yang relevan, kamu bisa memanfaatkan sciencesdirect, google scholar, atau web sejenisnya untuk mencari jurnal yang bisa dibuka untuk umum'
             ]
         ];
-    
+
         // Kirimkan variabel catatan ke view juga
         return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan'));
     }
-        public function PenentuanAmbangBatas(): View
+    public function PenentuanAmbangBatas(): View
     {
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
     }
