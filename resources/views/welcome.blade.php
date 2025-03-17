@@ -8,6 +8,10 @@
 
 @section('content')
     <p>Welcome to sipta.</p>
+    <!-- Include modal preferences-modal.blade.php -->
+    @include('NotificationAndReminder::modals.log-modal')
+    @include('NotificationAndReminder::modals.preferences-modal')
+    
 @stop
 
 @section('css')
@@ -16,5 +20,20 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#notificationBell').on('click', function() {
+                $('#myModal').modal('show');
+            });
+            $('#openPreferences').on('click', function(e) {
+                e.preventDefault();  
+                $('#myModal').modal('hide');  
+                $('#myModals').modal('show');  
+            });
+        });
+    </script>
+    
 @stop

@@ -13,7 +13,7 @@ class PengelolaanPeriodeController extends Controller
         $data = [
             'periodes' => PeriodePengajuan::all()
         ];
-        return view('PengajuanAlokasiPembimbing.Views.PengelolaanPeriode.PengelolaanPeriode', $data);
+        return view('PengajuanAlokasiPembimbing.views.PengelolaanPeriode.PengelolaanPeriode', $data);
     }
 
     public function save_PengelolaanPeriode($mode = 'add')
