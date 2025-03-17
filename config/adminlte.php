@@ -133,12 +133,12 @@ return [
     |
     */
 
-    'usermenu_enabled' => false,
-    'usermenu_header' => true,
+    'usermenu_enabled' => true,
+    'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -263,7 +263,7 @@ return [
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => 'profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -366,11 +366,6 @@ return [
                     'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
-                [
-                    'text' => 'Rekap FTA',
-                    'url' => '/PengajuanAlokasiPembimbing/RekapFTA02',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
             ]
             // 'label' => 4,
             // 'label_color' => 'success',
@@ -387,34 +382,34 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
+                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
+                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
+                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
+                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
+                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
+                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -444,6 +439,16 @@ return [
                 //     // 'icon' => 'far fa-fw fa-file',
                 // ],
             ]
+        ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
         // [

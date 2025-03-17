@@ -15,6 +15,7 @@ use App\Modules\UserManagement\Controllers\ProgramStudiController;
 use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
+use App\Modules\UserManagement\Controllers\ProfileController;
 
 // Route untuk login
 Route::get('/login', function () {
@@ -75,6 +76,11 @@ Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('auth');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+});
 
 
 // Route::get('/test-spatie', function () {

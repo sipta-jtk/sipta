@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PengajuanAlokasiPembimbing')
+@section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
     <div class="m-3">
@@ -13,7 +13,8 @@
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="3"
-                activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#', '#']" />
+                activeColor="primary" inactiveColor="secondary" 
+                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
         </div>
 
         <div class="col">
@@ -28,7 +29,7 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span>{{ $d->nama }}</span>
                                         <div>
-                                            <button class="btn btn-sm btn-secondary viewHistory" data-name="{{ $d->nama }}">
+                                            <button class="btn btn-sm btn-secondary viewHistory" data-name="{{ $d->nama }}" data-nip="{{ $d->nip }}">
                                                 <i class="fas fa-file-alt"></i>
                                             </button>
                                             <button class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
@@ -57,7 +58,7 @@
                 <div class="d-flex justify-content-between mt-3">
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info ml-3">Sebelumnya</a>
                     <button type="submit" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir') }} class="btn btn-info ml-3">Selanjutnya</a>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
     </div>
@@ -67,7 +68,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="historyModalLabel">Riwayat Topik</h5>
+                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -76,7 +77,7 @@
                         <thead>
                             <tr>
                                 <th>Tahun</th>
-                                <th>Riwayat Topik</th>
+                                <th>Bidang</th>
                             </tr>
                         </thead>
                         <tbody id="historyContent">
@@ -96,6 +97,7 @@
 @stop
 
 @section ('js')
+
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $(document).ready(function () {
@@ -131,48 +133,93 @@
             });
         });
 
-        // // Mengaktifkan fitur drag-and-drop untuk mengurutkan dosen tanpa mengubah nomor urut
-        // $("#prioritasList").sortable({
-        //     axis: "y",
-        //     opacity: 0.8,
-        //     cursor: "move",
-        //     items: "> li",
-        //     update: function () {
-        //         console.log("Urutan dosen diperbarui");
-        //     }
-        // }).disableSelection();
+        // Menyimpan Draft
+        $(".btn-primary[type='submit']").click(function () {
+            let prioritasDosen = [];
+            
+            $("#prioritasList .priority-name").each(function () {
+                let name = $(this).text();
+                if (name !== "-") {
+                    let priority = $(this).siblings(".priority-number").text();
+                    prioritasDosen.push({ name: name, priority: priority });
+                }
+            });
+
+            // Simpan data prioritas dosen ke localStorage
+            localStorage.setItem("prioritasDosen", JSON.stringify(prioritasDosen));
+            alert("Draft berhasil disimpan!");
+        });
+
+        // Menampilkan prioritas dosen yang sudah disimpan di localStorage
+        let prioritasDosen = JSON.parse(localStorage.getItem("prioritasDosen"));
+        if (prioritasDosen) {
+            // Menampilkan nama dosen dan urutan prioritas yang sudah disimpan
+            prioritasDosen.forEach(function (dosen, index) {
+                if (index < 5) {  // Hanya tampilkan maksimal 5 prioritas dosen
+                    let priorityNumber = index + 1;
+                    let listItem = $("#prioritasList li").eq(index);
+                    listItem.find(".priority-name").text(dosen.name);
+                    listItem.find(".removeDosen").show(); // Tampilkan tombol hapus
+                }
+            });
+        }
+
+        // Menonaktifkan tombol "Tambah Dosen" untuk dosen yang sudah ada di prioritas
+        let existingPrioritas = JSON.parse(localStorage.getItem("prioritasDosen")) || [];
+        $(".addDosen").each(function () {
+            let dosenName = $(this).data("name");
+
+            // Jika dosen sudah ada di prioritas, nonaktifkan tombol "Tambah Dosen"
+            let isAlreadyAdded = existingPrioritas.some(function (prioritas) {
+                return prioritas.name === dosenName;
+            });
+
+            if (isAlreadyAdded) {
+                $(this).prop("disabled", true); // Nonaktifkan tombol
+            }
+        });
 
         // Fungsi untuk menampilkan riwayat topik dosen pembimbing
         $(".viewHistory").click(function (event) {
-            event.preventDefault(); // Mencegah event default agar modal muncul dengan benar
-
+            event.preventDefault();
+            
+            let nip = $(this).data("nip"); // Ambil NIP dari atribut data
             let name = $(this).data("name");
             $("#dosenName").text(name);
+            
             let historyContent = $("#historyContent");
-            historyContent.html(`
-                <tr>
-                    <td>2024</td>
-                    <td>
-                        <ul>
-                            <li>Data and Information Management</li>
-                            <li>Machine Learning</li>
-                            <li>Computer Vision</li>
-                            <li>Pengembangan Perangkat Lunak</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2025</td>
-                    <td>
-                        <ul>
-                            <li>Pengembangan Perangkat Lunak</li>
-                            <li>Data and Information Management</li>
-                        </ul>
-                    </td>
-                </tr>
-            `);
+            historyContent.html("<tr><td colspan='2' class='text-center'>Loading...</td></tr>");
 
-            // Panggil modal agar muncul
+            $.ajax({
+                url: `/prioritas-dosen-pembimbing/dosen/history/${nip}`,
+                type: "GET",
+                success: function (response) {
+                    historyContent.empty(); // Kosongkan tabel sebelum memasukkan data
+
+                    if (Object.keys(response).length === 0) {
+                        historyContent.html("<tr><td colspan='2' class='text-center'>Tidak ada data</td></tr>");
+                    } else {
+                        $.each(response, function (tahun, bidangList) {
+                            let bidangHtml = "<ul>";
+                            bidangList.forEach(function (bidang) {
+                                bidangHtml += `<li>${bidang.bidang}</li>`;
+                            });
+                            bidangHtml += "</ul>";
+
+                            historyContent.append(`
+                                <tr>
+                                    <td>${tahun}</td>
+                                    <td>${bidangHtml}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+                },
+                error: function () {
+                    historyContent.html("<tr><td colspan='2' class='text-center text-danger'>Gagal mengambil data</td></tr>");
+                }
+            });
+
             $("#historyModal").modal("show");
         });
     });
