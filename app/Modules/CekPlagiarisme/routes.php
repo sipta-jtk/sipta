@@ -11,3 +11,9 @@ Route::post('/api/ambang-batas', [AmbangBatasController::class, 'store']);
 // Route::middleware('auth')->post('/api/ambang-batas', [AmbangBatasController::class, 'store'])->name('cekplagiarisme.index');
 Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
 
+Route::get('/penentuan-ambang-batas', function () {
+    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+});
+Route::get('/cek-plagiarisme', function () {
+    return view('CekPlagiarisme.views.DaftarDokumen');
+});
