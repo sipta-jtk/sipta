@@ -518,7 +518,7 @@ return [
                     'text' => 'Form Pisah KoTA',
                     'url'  => 'form-pisah-kota',
                     'icon' => 'fas fa-sign-out-alt',
-                    'can' => 'akses-form-pisah-kota',
+                    'can' => 'mahasiswa_ta',
                 ],
                 [
                     'text' => 'Pengajuan KoTA',
