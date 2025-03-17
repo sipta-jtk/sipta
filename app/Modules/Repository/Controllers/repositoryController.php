@@ -12,9 +12,9 @@ class RepositoryController extends Controller
         return view('Repository.Views.view');
     }
 
-    public function logAktifitas(): View
+    public function logAktivitas(): View
     {
-        return view('Repository.Views.log_aktifitas');
+        return view('Repository.Views.log_aktivitas');
     }
 
     public function monitoringPenyimpanan(): View
