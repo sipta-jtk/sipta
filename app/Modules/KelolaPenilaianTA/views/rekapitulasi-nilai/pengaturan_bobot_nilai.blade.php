@@ -29,6 +29,7 @@
                             <th>Komponen Nilai Akhir</th>
                             <th>Bobot (%)</th>
                             <th>Sumber Nilai</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,15 +38,18 @@
                                 <td class="align-middle">{{ $loop->iteration }}</td>
                                 <td class="align-middle">{{ $row['komponen'] }}</td>
                                 <td class="align-middle">
-                                    <input type="number" name="bobot[{{ $row['komponen'] }}]" class="form-control bobot-input"value="{{ $row['bobot'] }}" min="0" max="100" required>
+                                    <input type="number" name="bobot[{{ $row['komponen'] }}]" class="form-control bobot-input" value="{{ $row['bobot'] }}" min="0" max="100" required disabled>
                                 </td>
                                 <td class="align-middle">
-                                    <select name="sumber_nilai[{{ $row['komponen'] }}]" class="form-control sumber-nilai">
+                                    <select name="sumber_nilai[{{ $row['komponen'] }}]" class="form-control sumber-nilai" disabled>
                                         <option value="Seminar 2" {{ $row['sumber_nilai'] == 'Seminar 2' ? 'selected' : '' }}>Seminar 2</option>
                                         <option value="Seminar 3" {{ $row['sumber_nilai'] == 'Seminar 3' ? 'selected' : '' }}>Seminar 3</option>
                                         <option value="Sidang Akhir" {{ $row['sumber_nilai'] == 'Sidang Akhir' ? 'selected' : '' }}>Sidang Akhir</option>
                                         <option value="Dosen Pembimbing" {{ $row['sumber_nilai'] == 'Dosen Pembimbing' ? 'selected' : '' }}>Dosen Pembimbing</option>
                                     </select>
+                                </td>
+                                <td class="align-middle">
+                                    <button type="button" class="btn btn-primary btn-edit"><i class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
                         @endforeach
@@ -87,6 +91,10 @@
     
     <script>
         $(document).ready(function () {
+            $('.btn-edit').click(function () {
+                let row = $(this).closest('tr');
+                row.find('.bobot-input, .sumber-nilai').prop('disabled', false);
+            });
             function validateBobot() {
                 let totalBobot = 0;
                 let allValid = true;

@@ -383,48 +383,92 @@ class RekapitulasiNilaiController extends Controller{
         $filterProdi = $request->query('prodi');
         $filterKelas = $request->query('kelas');
     
+        $mahasiswaList = Mahasiswa::select(
+            'mahasiswa.nim',
+            'user.nama as nama',
+            'mahasiswa.kelas',
+            'prodi.nama_prodi as prodi',
+            'kota.nama_kota as kelompok'
+        )
+        ->leftJoin('user', 'mahasiswa.nim', '=', 'user.username')
+        ->leftJoin('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
+        ->leftJoin('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
+        ->with(['nilaiKategori.kategoriPenilaian', 'nilaiKategori.dosen']) // Eager load
+        ->get();    
+
         $data = [];
-        for ($i = 1; $i <= 100; $i++) {
-            $seminar2Penguji1 = rand(50, 100);
-            $seminar2Penguji2 = rand(50, 100);
-            $seminar2Penguji3 = rand(50, 100);
-            $seminar3Penguji1 = rand(50, 100);
-            $seminar3Penguji2 = rand(50, 100);
-            $seminar3Penguji3 = rand(50, 100);
-            $sidangPenguji1 = rand(50, 100);
-            $sidangPenguji2 = rand(50, 100);
-            $sidangPenguji3 = rand(50, 100);
-            $pembimbing1 = rand(50, 100);
-            $pembimbing2 = rand(50, 100);
-    
-            // Menghitung rata-rata nilai
-            $rataSeminar2 = round(($seminar2Penguji1 + $seminar2Penguji2 + $seminar2Penguji3) / 3, 2);
-            $rataSeminar3 = round(($seminar3Penguji1 + $seminar3Penguji2 + $seminar3Penguji3) / 3, 2);
-            $rataSidang = round(($sidangPenguji1 + $sidangPenguji2 + $sidangPenguji3) / 3, 2);
-            $rataPembimbing = round(($pembimbing1 + $pembimbing2) / 2, 2);
-    
-            $data[] = [
-                'nim' => "221524" . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'nama' => "Nama Mahasiswa #" . $i,
-                'prodi' => (rand(0, 1) == 0) ? "D3-Teknik Informatika" : "D4-Teknik Informatika",
-                'kelas' => (rand(0, 1) == 0) ? "4A" : "4B",
-                'kelompok' => "Kelompok " . rand(1, 5),
-                'seminar2Penguji1' => $seminar2Penguji1,
-                'seminar2Penguji2' => $seminar2Penguji2,
-                'seminar2Penguji3' => $seminar2Penguji3,
-                'rataSeminar2' => $rataSeminar2,
-                'seminar3Penguji1' => $seminar3Penguji1,
-                'seminar3Penguji2' => $seminar3Penguji2,
-                'seminar3Penguji3' => $seminar3Penguji3,
-                'rataSeminar3' => $rataSeminar3,
-                'sidangPenguji1' => $sidangPenguji1,
-                'sidangPenguji2' => $sidangPenguji2,
-                'sidangPenguji3' => $sidangPenguji3,
-                'rataSidang' => $rataSidang,
-                'pembimbing1' => $pembimbing1,
-                'pembimbing2' => $pembimbing2,
-                'rataPembimbing' => $rataPembimbing,
+
+        foreach ($mahasiswaList as $mahasiswa) {
+            // Default nilai null
+            $nilaiKategori = [
+                'seminar2Penguji1' => null,
+                'seminar2Penguji2' => null,
+                'seminar2Penguji3' => null,
+                'seminar3Penguji1' => null,
+                'seminar3Penguji2' => null,
+                'seminar3Penguji3' => null,
+                'sidangPenguji1' => null,
+                'sidangPenguji2' => null,
+                'sidangPenguji3' => null,
+                'pembimbing1' => null,
+                'pembimbing2' => null,
             ];
+
+            // Mengelompokkan nilai berdasarkan kategori dan penguji
+            foreach ($mahasiswa->nilaiKategori as $nilai) {
+                if (!$nilai->kategoriPenilaian || !$nilai->dosen) {
+                    continue; // Lewati jika kategori atau dosen null
+                }
+
+                $kategoriNama = strtolower(str_replace(' ', '', $nilai->kategoriPenilaian->nama_kategori));
+
+                if ($kategoriNama == "seminar2") {
+                    if (is_null($nilaiKategori['seminar2Penguji1'])) {
+                        $nilaiKategori['seminar2Penguji1'] = $nilai->nilai;
+                    } elseif (is_null($nilaiKategori['seminar2Penguji2'])) {
+                        $nilaiKategori['seminar2Penguji2'] = $nilai->nilai;
+                    } else {
+                        $nilaiKategori['seminar2Penguji3'] = $nilai->nilai;
+                    }
+                } elseif ($kategoriNama == "seminar3") {
+                    if (is_null($nilaiKategori['seminar3Penguji1'])) {
+                        $nilaiKategori['seminar3Penguji1'] = $nilai->nilai;
+                    } elseif (is_null($nilaiKategori['seminar3Penguji2'])) {
+                        $nilaiKategori['seminar3Penguji2'] = $nilai->nilai;
+                    } else {
+                        $nilaiKategori['seminar3Penguji3'] = $nilai->nilai;
+                    }
+                } elseif ($kategoriNama == "sidangakhir") {
+                    if (is_null($nilaiKategori['sidangPenguji1'])) {
+                        $nilaiKategori['sidangPenguji1'] = $nilai->nilai;
+                    } elseif (is_null($nilaiKategori['sidangPenguji2'])) {
+                        $nilaiKategori['sidangPenguji2'] = $nilai->nilai;
+                    } else {
+                        $nilaiKategori['sidangPenguji3'] = $nilai->nilai;
+                    }
+                } elseif ($kategoriNama == "dosenpembimbing") {
+                    if (is_null($nilaiKategori['pembimbing1'])) {
+                        $nilaiKategori['pembimbing1'] = $nilai->nilai;
+                    } else {
+                        $nilaiKategori['pembimbing2'] = $nilai->nilai;
+                    }
+                }
+            }
+
+            // Hitung rata-rata dengan validasi null
+            $nilaiKategori['rataSeminar2'] = $this->calculateAverage([$nilaiKategori['seminar2Penguji1'], $nilaiKategori['seminar2Penguji2'], $nilaiKategori['seminar2Penguji3']]);
+            $nilaiKategori['rataSeminar3'] = $this->calculateAverage([$nilaiKategori['seminar3Penguji1'], $nilaiKategori['seminar3Penguji2'], $nilaiKategori['seminar3Penguji3']]);
+            $nilaiKategori['rataSidang'] = $this->calculateAverage([$nilaiKategori['sidangPenguji1'], $nilaiKategori['sidangPenguji2'], $nilaiKategori['sidangPenguji3']]);
+            $nilaiKategori['rataPembimbing'] = $this->calculateAverage([$nilaiKategori['pembimbing1'], $nilaiKategori['pembimbing2']]);
+
+            // Masukkan ke array data
+            $data[] = array_merge([
+                'nim' => $mahasiswa->nim,
+                'nama' => $mahasiswa->nama,
+                'prodi' => $mahasiswa->prodi,
+                'kelas' => $mahasiswa->kelas,
+                'kelompok' => $mahasiswa->kelompok
+            ], $nilaiKategori);
         }
     
         // Terapkan filter jika ada
