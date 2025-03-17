@@ -21,7 +21,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
     public function monitoringMahasiswa(): View
     {
         // Username yang diketahui
-        $username = '221524059';
+        $username = '221524049';
 
         // Ambil role_user dari tabel user
         $user = DB::table('user')->where('username', $username)->first();
@@ -38,9 +38,9 @@ class MonitoringNilaiMahasiswaController extends Controller{
         }
         
         $idKota = $mahasiswa->id_kota;
-        $idProdi = $mahasiswa->id_prodi; // Ambil id_prodi mahasiswa
+        $idProdi = $mahasiswa->id_prodi;
 
-        // Ambil hanya mahasiswa dengan id_kota yang ditemukan
+        // Ambil mahasiswa dengan id_kota yang sama
         $mahasiswaList = Mahasiswa::with('user')
             ->where('id_kota', $idKota)
             ->get();
@@ -48,36 +48,41 @@ class MonitoringNilaiMahasiswaController extends Controller{
         // Ambil informasi Kota berdasarkan id_kota
         $kotaInfo = Kota::where('id_kota', $idKota)->first();
 
-        // Ambil nama dosen pembimbing berdasarkan id_kota
-        $dosenPembimbing = DB::table('kota')
-            ->join('pengajuan_pembimbing', 'kota.id_kota', '=', 'pengajuan_pembimbing.id_kota')
+        // Ambil nama dosen pembimbing dengan query yang lebih singkat
+        $dosenPembimbing = DB::table('pengajuan_pembimbing')
             ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
             ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
             ->join('user', 'dosen.nip', '=', 'user.username')
-            ->where('kota.id_kota', $idKota)
+            ->where('pengajuan_pembimbing.id_kota', $idKota)
             ->where('alokasi_pembimbing.status_alokasi', 'fix')
-            ->select('dosen.nip', 'user.nama as nama_dosen') // Ambil nama (dari user) dan nip (dari dosen)
+            ->select('dosen.nip', 'user.nama as nama_dosen')
             ->get();
 
-        // Ambil kode_fta yang memiliki id_prodi yang sama DAN jenis_form = 'penilaian'
+        /// 1. Ambil semua kode_fta yang ada dalam kategori_penilaian berdasarkan id_prodi mahasiswa
         $kodeFtaList = DB::table('form_penilaian')
-            ->where('id_prodi', $idProdi)
-            ->where('jenis_form', 'penilaian') // Filter jenis_form
-            ->pluck('kode_fta');
+        ->where('id_prodi', $idProdi)
+        ->pluck('kode_fta');
 
-        // Ambil semua nama kategori dari kategori_penilaian yang memiliki kode_fta yang sesuai
+        // 2. Dari hasil kode_fta yang diambil, cari yang memiliki jenis_form = 'penilaian' pada tabel form_penilaian
+        $kodeFtaFiltered = DB::table('form_penilaian')
+        ->whereIn('kode_fta', $kodeFtaList)
+        ->where('jenis_form', 'penilaian')
+        ->pluck('kode_fta');
+
+        // 3. Ambil semua nama kategori yang memiliki kode_fta sesuai hasil filter sebelumnya
         $kategoriList = DB::table('kategori_penilaian')
-            ->whereIn('kode_fta', $kodeFtaList)
-            ->select('nama_kategori')
-            ->orderBy('nama_kategori', 'asc') // Urutkan dari A-Z
-            ->get();
+        ->whereIn('kode_fta', $kodeFtaFiltered)
+        ->select('kode_fta', 'nama_kategori')
+        ->orderBy('nama_kategori', 'asc')
+        ->get();
 
 
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
-            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kategoriList'
+            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kategoriList', 'idProdi'
         ));
     }
+
 
 
     /**
@@ -92,9 +97,23 @@ class MonitoringNilaiMahasiswaController extends Controller{
     /**
      * Menampilkan halaman monitoring rubrik
      */
-    public function monitoringRubrik(): View
+    public function monitoringRubrik($kodeFta, $idProdi): View
     {
-        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik');
+        // Ambil nama_kategori dari kategori_penilaian berdasarkan kode_fta
+        $kategori = DB::table('kategori_penilaian')
+            ->where('kode_fta', $kodeFta)
+            ->select('nama_kategori')
+            ->first();
+
+        // // Ambil rubrik berdasarkan kode_fta dan id_prodi
+        // $rubrikList = DB::table('rubrik_penilaian')
+        //     ->where('kode_fta', $kodeFta)
+        //     ->where('id_prodi', $idProdi)
+        //     ->orderBy('nama_rubrik', 'asc')
+        //     ->get();
+
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik', compact('kategori'));
     }
+
 
 }

@@ -19,7 +19,7 @@
 @stop
 
 @section('content')
-<h6>Kategori : Seminar 1</h6>
+<h6>Kategori : {{ $kategori->nama_kategori }}</h6>
 <h6>Rubrik Penilaian</h6>
 <div class="card">
     <!-- /.card-header -->

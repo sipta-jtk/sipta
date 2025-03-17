@@ -90,7 +90,10 @@
                     <tr>
                         <td style="vertical-align: middle; white-space: nowrap;">{{ $kategori->nama_kategori }}</td>
                         <td class="text-center">
-                            <a href="{{ route('monitoring.rubrik') }}" class="btn btn-primary btn-sm px-3">Lihat Rubrik</a>
+                            <a href="{{ route('monitoring.rubrik', ['kodeFta' => $kategori->kode_fta, 'idProdi' => $idProdi]) }}" 
+                                class="btn btn-primary btn-sm px-3">
+                                 Lihat Rubrik
+                             </a>                             
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
