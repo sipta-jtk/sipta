@@ -47,23 +47,22 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/user_management', [UserManagementController::class, 'render']);
 });
 
-//Pengajuan Pisah KoTA
-// Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])->name('pengajuan.pisah.kota');
-// Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])->name('pengajuan.pisah.kota.show');
-
-Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])
-        ->name('pengajuan.pisah.kota');
-});
-Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    ->name('pengajuan.pisah.kota');
+    
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
-        ->name('pengajuan.pisah.kota.show');
+    ->name('pengajuan.pisah.kota.show');
 });
+
 
 Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
-Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
+Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
+        ->name('pengajuan.pisah.kota.terima')
+        ->middleware('can:koordinator_ta');
+
 
 Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
 Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');

@@ -482,12 +482,9 @@ return [
                 ],
                 [
                     'text' => 'Form Pisah KoTA',
-                    'url' => 'form-pisah-kota',
+                    'url'  => 'form-pisah-kota',
                     'icon' => 'fas fa-sign-out-alt',
-                    'can' => 'mahasiswa_ta',
-                    // 'can' => function() {
-                    //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
-                    //         },
+                    'can' => 'akses-form-pisah-kota',
                 ],
                 [
                     'text' => 'Pengajuan KoTA',
