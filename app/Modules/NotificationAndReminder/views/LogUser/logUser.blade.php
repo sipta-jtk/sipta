@@ -26,7 +26,7 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="notifications-table-body">
                     {{-- Data Log Notifikasi akan dimuat dengan jQuery --}}
                 </tbody>
             </table>
@@ -64,7 +64,14 @@
         $(document).ready(function() {
             // Memuat data notifikasi dari API
             $.get('/api/mahasiswa/notifications', function(data) {
-                $('tbody').empty();
+                const $tbody = $('#notifications-table-body');
+                $tbody.empty();
+
+                // Jika data kosong, tampilkan pesan
+                if (!Array.isArray(data) || data.length === 0) {
+                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
+                    return;
+                }
 
                 // Iterasi data dan menambahkan ke tabel
                 data.forEach(function(notif, index) {
@@ -75,9 +82,9 @@
                             <td>${notif.judul}</td>
                             <td>${notif.sumber_notifikasi}</td>
                             <td>
-                                <button class="btn btn-info btn-sm btn-detail" 
-                                    data-title="${notif.judul}"
-                                    data-content="${notif.isi_notifikasi}"
+                                <button class="btn btn-info btn-sm btn-detail"
+                                    data-title="${encodeURIComponent(notif.judul)}"
+                                    data-content="${encodeURIComponent(notif.isi_notifikasi)}"
                                     data-date="${notif.created_at}"
                                     data-source="${notif.sumber_notifikasi}">
                                     Detail
@@ -85,23 +92,23 @@
                             </td>
                         </tr>
                     `;
-                    $('tbody').append(row);
+                    $tbody.append(row);
                 });
+            });
 
-                // Menangani klik tombol "Detail"
-                $('.btn-detail').on('click', function() {
-                    let title = $(this).data('title');
-                    let content = $(this).data('content');
-                    let date = $(this).data('date');
-                    let source = $(this).data('source');
+            // Delegasi event untuk tombol "Detail"
+            $(document).on('click', '.btn-detail', function() {
+                let title = decodeURIComponent($(this).data('title'));
+                let content = decodeURIComponent($(this).data('content'));
+                let date = $(this).data('date');
+                let source = $(this).data('source');
 
-                    $('#detailModalLabel').text(title);
-                    $('#modalDate').text(date);
-                    $('#modalSource').text(source);
-                    $('#modalContent').text(content);
+                $('#detailModalLabel').text(title);
+                $('#modalDate').text(date);
+                $('#modalSource').text(source);
+                $('#modalContent').text(content);
 
-                    $('#detailModal').modal('show');
-                });
+                $('#detailModal').modal('show');
             });
         });
     </script>
