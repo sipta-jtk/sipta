@@ -22,7 +22,7 @@ trix-editor {
 }
 
 .table-container {
-    max-height: 500px;
+    max-height: 600px;
     overflow-y: auto; /* overflow-y untuk mengaktifkan scroll vertikal jika konten melebihi tinggi maksimal */
     overflow-x: auto; /* overflow-x untuk mengaktifkan scroll horizontal*/
     border: 1px solid #ddd;
@@ -40,7 +40,7 @@ table {
 th, td {
     border: 1px solid #ccc !important;
     padding: 10px;
-    text-align: center;
+    text-align: left;
 }
 thead {
     position: sticky;
