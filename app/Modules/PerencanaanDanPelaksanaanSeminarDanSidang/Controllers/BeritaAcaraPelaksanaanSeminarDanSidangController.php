@@ -208,6 +208,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
         return redirect()->back()->with('success', 'Dokumentasi berhasil diupload.');
     }
+<<<<<<< HEAD:app/Modules/PerencanaanDanPelaksanaanSeminarDanSidang/Controllers/BeritaAcaraPelaksanaanSeminarDanSidangController.php
 
     public function simpanBatasRevisi(Request $request)
     {
@@ -240,3 +241,6 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     }
 
 }
+=======
+}
+>>>>>>> ccb2c1c70a56531448274efb5000b7781e575414:app/Modules/PerencanaanDanPelaksanaanSeminarDanSidang/Controllers/PerencanaanDanPelaksanaanSeminarDanSidangController.php

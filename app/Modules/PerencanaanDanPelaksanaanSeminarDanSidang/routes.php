@@ -21,6 +21,7 @@ Route::post('/presensi/dokumentasi', [BeritaAcaraPelaksanaanSeminarDanSidangCont
 // Route untuk rekap presensi Sidang TA
 Route::get('/rekap-berita-acara-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSidangTa'])->name('rekap.presensi.sidang.ta');
 
+
 // routes/web.php
 Route::post('/simpan-batas-revisi', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanBatasRevisi'])
     ->name('simpan.batas.revisi');
