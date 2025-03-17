@@ -40,15 +40,12 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-<<<<<<< HEAD
-=======
     networks:
       - sipta-dev
 
 networks:
   sipta-dev:
     driver: bridge
->>>>>>> c1f5fe8eb21c124f7e3c77f29d7824ec3fe80dae
 
 volumes:
   db-data:

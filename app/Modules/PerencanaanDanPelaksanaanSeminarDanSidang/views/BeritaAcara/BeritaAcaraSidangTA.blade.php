@@ -20,6 +20,8 @@
                             <th class="w-10">Sesi</th>
                             <th class="w-10">Status Kehadiran</th>
                             <th class="w-20">Dokumentasi</th>
+                            <th class="w-10">Batas Revisi</th>
+                            <th class="w-15">Status Kelulusan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,6 +32,8 @@
                                 $empatJamSetelahSidang = (clone $waktuSidang)->modify('+4 hours');
                                 $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
                                 $dokumentasi = session("dokumentasi_{$item['id_kehadiran']}", $item['dokumentasi']);
+                                $batasRevisi = session("batas_revisi_{$item['id_kehadiran']}", $item['batas_revisi'] ?? '');
+                                $statusKelulusan = session("status_kelulusan_{$item['id_kehadiran']}", $item['status_kelulusan'] ?? '');
                             @endphp
 
                             <tr>
@@ -79,6 +83,18 @@
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah</button>
                                     </form>
+                                </td>
+                                <td>
+                                    @if($batasRevisi)
+                                        {{ $batasRevisi }}
+                                    @else
+                                        <form action="{{ route('simpan.batas.revisi') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
+                                            <input type="date" name="batas_revisi" class="form-control form-control-sm" value="{{ $batasRevisi }}">
+                                            <button type="submit" class="btn btn-primary btn-sm mt-2">Simpan</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

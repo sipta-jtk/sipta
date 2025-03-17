@@ -63,6 +63,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
                 'waktu' => '2025-08-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),//default status hadir
                 'dokumentasi' => session('dok_sa_221524033', '') // Ambil data dokumentasi dari session
+
             ],
         ];
 
@@ -96,7 +97,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
                 'sesi' => '2',
                 'waktu' => '2025-06-22 12:00:00', // Waktu sidang
                 'status_hadir' => session('status_hadir_sm3_221524034', 'belum_absensi'),
-                'dokumentasi' => session('dok_sm3_221524034', '') // Ambil data dokumentasi dari session
+                'dokumentasi' => session('dok_sm3_221524034', ''), // Ambil data dokumentasi dari session
             ],
             [
                 'id_kehadiran' => 'sm3_221524035', 
@@ -130,7 +131,8 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             'sesi' => '2',
             'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),
-            'dokumentasi' => session('dok_sa_221524033', '') // Ambil data dokumentasi dari session
+            'dokumentasi' => session('dok_sa_221524033', ''), // Ambil data dokumentasi dari session
+            'batas_revisi' => session('batas_revisi_sa_221524033', '') 
         ],
         [
             'id_kehadiran' => 'sa_221524034',
@@ -142,7 +144,8 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             'sesi' => '2',
             'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524034', 'belum_absensi'),
-            'dokumentasi' => session('dok_sa_221524034', '') // Ambil data dokumentasi dari session
+            'dokumentasi' => session('dok_sa_221524034', ''), // Ambil data dokumentasi dari session
+            'batas_revisi' => session('batas_revisi_sa_221524034', '')
         ],
         [
             'id_kehadiran' => 'sa_221524035', // ID unik untuk Sidang TA
@@ -205,4 +208,35 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
         return redirect()->back()->with('success', 'Dokumentasi berhasil diupload.');
     }
+
+    public function simpanBatasRevisi(Request $request)
+    {
+        // Validasi request
+        $request->validate([
+            'id_kehadiran' => 'required|string',
+            'batas_revisi' => 'required|date',
+        ]);
+
+        // Simpan batas revisi di session
+        session(["batas_revisi_{$request->input('id_kehadiran')}" => $request->input('batas_revisi')]);
+
+        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+        return redirect()->back()->with('success', 'Batas revisi berhasil disimpan.');
+    }
+
+    public function simpanStatusKelulusan(Request $request)
+    {
+        // Validasi request
+        $request->validate([
+            'id_kehadiran' => 'required|string',
+            'status_kelulusan' => 'required|string|in:Lulus Tanpa Perbaikan,Lulus Dengan Perbaikan,Mengulang Sidang,Tidak Lulus',
+        ]);
+
+        // Simpan status kelulusan di session
+        session(["status_kelulusan_{$request->input('id_kehadiran')}" => $request->input('status_kelulusan')]);
+
+        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+        return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
+    }
+
 }
