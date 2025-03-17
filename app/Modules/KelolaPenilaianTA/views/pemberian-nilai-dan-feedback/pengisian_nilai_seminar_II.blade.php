@@ -46,7 +46,7 @@
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -142,10 +142,10 @@
                 </div>
             </div>
 
-            <!-- Tombol Simpan dan Selanjutnya -->
+            <!-- Tombol Simpan -->
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary">Selanjutnya</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </div>
         </form>

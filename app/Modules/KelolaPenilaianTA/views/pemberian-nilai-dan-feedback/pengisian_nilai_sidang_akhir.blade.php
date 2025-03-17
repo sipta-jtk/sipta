@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $mahasiswa['id_kota'] }}</span>
+                <span>{{ $kotaInfo->nama_kota }}</span>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -55,11 +55,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                            @foreach($mahasiswaList as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $mhs['nim'] }}</td>
-                                    <td>{{ $mhs['nama'] }}</td>
+                                    <td>{{ $mhs->nim }}</td>
+                                    <td>{{ $mhs->user->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,7 +72,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $mahasiswa['topik_ta'] }}</span>
+                <span>{{ $kotaInfo->judul_ta }}</span>
             </div>
         </div>
 
@@ -90,7 +90,7 @@
                             <th colspan="6">Rentang Nilai</th>
                             <th rowspan="2">Bobot Nilai</th>
                             <th rowspan="2">Rentang Nilai</th>
-                            <th colspan="{{ count($mahasiswa['list_mahasiswa']) }}">Nilai Perorangan</th>
+                            <th style="min-width: 100px;" colspan="{{ count($mahasiswaList) }}">Nilai Perorangan</th>
                         </tr>
                         <tr>
                         <th>≥ 80 (A)</th>
@@ -99,8 +99,8 @@
                             <th>65 - 69.99 (BC)</th>
                             <th>60 - 64.99 (C)</th>
                             <th>< 60 (CD)</th>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
-                                <th>{{ $key + 1 }}</th>
+                            @foreach($mahasiswaList as $key => $mhs)
+                                <th>{{ $key + 1 }}</th>  
                             @endforeach
                         </tr>
                     </thead>
@@ -177,9 +177,9 @@
                                 <td>{{ $p['rentang_nilai'] }}</td>
 
                                 <!-- Input Nilai Perorangan -->
-                                @foreach($mahasiswa['list_mahasiswa'] as $mhs)
+                                @foreach($mahasiswaList as $key => $mhs)
                                     <td>
-                                        <input type="number" class="form-control" name="nilai[{{ $mhs['nim'] }}][{{ $p['no'] }}]" min="0" max="100">
+                                        <input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100">
                                     </td>
                                 @endforeach
                             </tr>

@@ -29,7 +29,7 @@
 
             <!-- Tanggal, Waktu, ID Kota -->
             <div class="col-md-2 mt-3">
-                <strong>Pada Hari/Tanggal</strong> <br>
+                <strong>Pada hari/tanggal</strong> <br>
                 <span>{{ $mahasiswa['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $mahasiswa['id_kota'] }}</span>
+                <span>{{ $kotaInfo->nama_kota }}</span>
             </div>
         </div>
 

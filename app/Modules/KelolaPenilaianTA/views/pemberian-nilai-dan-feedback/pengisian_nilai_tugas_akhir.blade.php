@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $mahasiswa['id_kota'] }}</span>
+                <span>{{ $kotaInfo->nama_kota }}</span>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -55,11 +55,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                            @foreach($mahasiswaList as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $mhs['nim'] }}</td>
-                                    <td>{{ $mhs['nama'] }}</td>
+                                    <td>{{ $mhs->nim }}</td>
+                                    <td>{{ $mhs->user->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,7 +72,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $mahasiswa['topik_ta'] }}</span>
+                <span>{{ $kotaInfo->judul_ta }}</span>
             </div>
         </div>
 
@@ -87,12 +87,7 @@
                             <th rowspan="2">No</th>
                             <th rowspan="2">Materi Penilaian</th>
                             <th rowspan="2">Bobot Nilai</th>
-                            <th colspan="{{ count($mahasiswa['list_mahasiswa']) }}">Nilai Perorangan</th>
-                        </tr>
-                        <tr>
-                            @foreach($mahasiswa['list_mahasiswa'] as $mhs)
-                                <th>{{ $loop->iteration }}</th> <!-- Nomor Mahasiswa -->
-                            @endforeach
+                            <th rowspan="2" style="min-width: 100px;" colspan="{{ count($mahasiswaList) }}">Nilai Perorangan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,7 +95,7 @@
                             <!-- Row untuk kategori utama -->
                             <tr class="fw-bold">
                                 <td>{{ $kategori['kategori'] }}</td>
-                                <td class="text-start bg-light text-white" colspan="{{ 3 + count($mahasiswa['list_mahasiswa']) }}">
+                                <td class="text-start bg-light text-white" colspan="{{ 3 + count($mahasiswaList) }}">
                                     {{ $kategori['judul'] }}
                                 </td>
                             </tr>
@@ -111,7 +106,7 @@
                                     <td>{{ $sub['kode'] }}</td>
                                     <td class="text-start">{{ $sub['kriteria'] }}</td>
                                     <td>{{ $sub['bobot'] }}</td>
-                                    @foreach($mahasiswa['list_mahasiswa'] as $mhs)
+                                    @foreach($mahasiswaList as $mhs)
                                         <td>
                                             <input type="number" class="form-control" 
                                                 name="nilai[{{ $mhs['nim'] }}][{{ $sub['kode'] }}]" 
@@ -123,7 +118,7 @@
                                 <!-- Jika ada deskripsi tambahan, tambahkan row baru -->
                                 @if ($sub['deskripsi'])
                                 <tr>
-                                    <td colspan="{{ 3 + count($mahasiswa['list_mahasiswa']) }}" class="text-start fst-italic">{{ $sub['deskripsi'] }}</td>
+                                    <td colspan="{{ 3 + count($mahasiswaList) }}" class="text-start fst-italic">{{ $sub['deskripsi'] }}</td>
                                 </tr>
                                 @endif
                             @endforeach

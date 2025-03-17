@@ -29,7 +29,7 @@
 
             <!-- Tanggal, Waktu, ID Kota -->
             <div class="col-md-2 mt-3">
-                <strong>Pada Hari/Tanggal</strong> <br>
+                <strong>Pada hari/tanggal</strong> <br>
                 <span>{{ $mahasiswa['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $mahasiswa['id_kota'] }}</span>
+                <span>{{ $kotaInfo->nama_kota }}</span>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -55,11 +55,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa['list_mahasiswa'] as $key => $mhs)
+                            @foreach($mahasiswaList as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $mhs['nim'] }}</td>
-                                    <td>{{ $mhs['nama'] }}</td>
+                                    <td>{{ $mhs->nim }}</td>
+                                    <td>{{ $mhs->user->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -111,8 +111,8 @@
 @section('css')
     <!-- Trix Editor Styling -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
 @section('js')
