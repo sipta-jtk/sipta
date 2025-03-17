@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {     
-    use Notifiable;
+    use Notifiable, HasRoles;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
