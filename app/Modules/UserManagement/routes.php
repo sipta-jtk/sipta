@@ -12,6 +12,10 @@ use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
 
 
+use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
+use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
+use App\Modules\UserManagement\Controllers\DetailKoTAController;
+
 // Route untuk login
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
@@ -59,6 +63,11 @@ Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah']
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
+
+Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
+Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
+Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
+Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail-kota');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('role_no_auth:admin')

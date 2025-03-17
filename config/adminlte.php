@@ -485,6 +485,18 @@ return [
                     //         },
                 ],
                 [
+                    'text' => 'Pengajuan KoTA',
+                    'url' => 'pengajuan-kota',
+                ],
+                [
+                    'text' => 'Detail KoTA',
+                    'url' => 'detail-kota',
+                ],
+                [
+                    'text' => 'Mahasiswa',
+                    'url' => '#',
+                ],
+                [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => '/manage_dosen',
                 ],
