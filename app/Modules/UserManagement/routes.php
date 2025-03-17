@@ -35,7 +35,6 @@ Route::get('/forgot-password', function () {
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-// Route lainnya
 Route::group(['prefix' => 'user_management'], function () {
     Route::get('/user_management', [UserManagementController::class, 'render']);
 });
@@ -58,12 +57,15 @@ Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
 
-Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('role_no_auth:admin')
+Route::middleware(['auth', 'admin'])->group(function () {
+
+Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
     ->name('manage.dosen');
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
+
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('auth');
@@ -71,14 +73,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// Route::get('/test-spatie', function () {
-//     $user = User::where('username', 'dosen001')->first(); // Sesuaikan dengan username yang ada
 
-//     // Tambahkan role dan permission
-//     return [
-//         'has_dosen_role' => $user->hasRole('dosen'),
-//         'can_edit_post' => $user->can('edit-profil')
-//     ];
-// }
-
-// );
