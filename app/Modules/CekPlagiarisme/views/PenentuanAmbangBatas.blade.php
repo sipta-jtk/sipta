@@ -61,10 +61,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
-    #jsGrid1 .jsgrid-row, #jsGrid1 .jsgrid-alt-row {
-        pointer-events: none; 
-        cursor: default !important; 
-        user-select: none; 
+    #jsGrid1 .jsgrid-row,
+    #jsGrid1 .jsgrid-alt-row {
+        pointer-events: none;
+        cursor: default !important;
+        user-select: none;
     }
 </style>
 
@@ -167,14 +168,21 @@
                 data: formData,
                 dataType: "json",
                 success: function(response) {
-                    alert(response.message); // Tampilkan pesan sukses
+                    Swal.fire({
+                        title: "Berhasil!",
+                        text: "Ambang Batas berhasil ditambahkan!",
+                        icon: "success"
+                    }),
                     $("#addAmbangBatasModal").modal('hide'); // Tutup modal
                     $("#ambangBatasForm")[0].reset(); // Reset form
                     $("#jsGrid1").jsGrid("loadData"); // Refresh tabel
                 },
                 error: function(xhr) {
-                    console.error("Error response:", xhr.responseText);
-                    alert("Terjadi kesalahan! Cek console untuk detail.");
+                    Swal.fire({
+                        title: "Gagal Menambahkan!",
+                        text: "Ambang Batas gagal ditambahkan!",
+                        icon: "error"
+                    });                    
                 }
             });
         });
