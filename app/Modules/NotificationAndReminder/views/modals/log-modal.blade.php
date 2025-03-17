@@ -27,6 +27,7 @@
             <div class="modal-body">
                 <h5 id="detail-title"></h5>
                 <p id="detail-content"></p>
+                <p id="create-at"></p>
             </div>
         </div>
     </div>
@@ -125,6 +126,7 @@
                     } else {
                         $('#detail-title').text(data.judul);
                         $('#detail-content').text(data.isi_notifikasi);
+                        $('#detail-content').text(data.create_at);
                         $('#detailModal').modal('show');
                     }
                 });
