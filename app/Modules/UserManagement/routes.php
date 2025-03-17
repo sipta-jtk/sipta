@@ -6,6 +6,9 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\UserManagement\Controllers\KBKController;
+use App\Modules\UserManagement\Controllers\ProgramStudiController;
+
 
 // Route untuk login
 Route::get('/login', function () {
@@ -58,10 +61,6 @@ Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('
 // }
 
 // );
-
-use App\Modules\UserManagement\Controllers\KBKController;
-use App\Modules\UserManagement\Controllers\ProgramStudiController;
-
 
 Route::get('/kelola-kbk', [KBKController::class, 'index'])->name('kelola-kbk');
 Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');

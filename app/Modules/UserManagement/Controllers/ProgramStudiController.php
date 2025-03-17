@@ -7,24 +7,28 @@ use App\Http\Controllers\Controller;
 use App\Models\Prodi;
 use App\Models\Kaprodi;
 use App\Models\Dosen;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ProgramStudiController extends Controller
 {
     // Menampilkan daftar Prodi
     public function index()
     {
-        $programStudi = Prodi::leftJoin('kaprodi', 'prodi.id_prodi', '=', 'kaprodi.id_prodi')
-            ->leftJoin('dosen', 'kaprodi.nip', '=', 'dosen.nip')
-            ->select('prodi.*', 'dosen.nama as ketua_prodi')
+        $programStudi = Prodi::leftJoin('kaprodi as k', 'prodi.id_prodi', '=', 'k.id_prodi')
+            ->leftJoin('dosen as d', 'k.nip', '=', 'd.nip')
+            ->leftJoin('user as u', 'd.nip', '=', 'u.username')
+            ->select(
+                'prodi.id_prodi',
+                'prodi.nama_prodi',
+                DB::raw('MAX(u.nama) as ketua_prodi'), // Menggunakan MAX untuk menangani duplikasi
+                'prodi.maksimal_anggota_kota as maksimal_mahasiswa_bimbingan'
+            )
+            ->groupBy('prodi.id_prodi', 'prodi.nama_prodi', 'prodi.maksimal_anggota_kota')
+            ->limit(1000)
             ->get();
 
-        return view('prodi.index', compact('programStudi'));
-    }
-
-    // Menampilkan form tambah Prodi
-    public function create()
-    {
-        return view('prodi.create');
+        return view('UserManagement.views.programstudi', compact('programStudi'));
     }
 
     // Menyimpan data baru ke database
@@ -45,7 +49,7 @@ class ProgramStudiController extends Controller
     public function edit($id)
     {
         $prodi = Prodi::findOrFail($id);
-        return view('prodi.edit', compact('prodi'));
+        return view('UserManagement.views.prodi_edit', compact('prodi'));
     }
 
     // Memperbarui data Prodi
