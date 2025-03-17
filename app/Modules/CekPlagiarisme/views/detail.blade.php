@@ -25,6 +25,34 @@
             </div>
         </div>
 
+<<<<<<< HEAD
+        <!-- Sidebar dengan Tab -->
+        <div class="col-md-3">
+            <div class="offcanvas offcanvas-end d-none" tabindex="-1" id="sidebar">
+                <div class="offcanvas-header">
+                    <button id="closeSidebar" class="btn btn-dark btn-sm">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="offcanvas-body">
+                    
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs mb-3" id="sidebarTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab" aria-controls="sumber" aria-selected="true">📄</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab" aria-controls="detail" aria-selected="false">📋</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab" aria-controls="unduh" aria-selected="false">⬇️</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('povMahasiswa') }}" aria-controls="catatan" aria-selected="false">💬</a>
+                        </li>
+
+                    </ul>
+=======
         <!-- Navigasi Tab -->
         <div class="col-md-4">
             <ul class="nav nav-tabs mb-3" id="detailTabs" role="tablist">
@@ -41,6 +69,7 @@
                     <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab">💬 Catatan</a>
                 </li>
             </ul>
+>>>>>>> ffefe625c6f86e1c7b94969ab5f602046fd845c7
 
             <!-- Tab Content -->
             <div class="tab-content" id="tabContent">
