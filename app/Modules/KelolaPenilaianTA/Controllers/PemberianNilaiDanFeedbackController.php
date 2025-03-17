@@ -432,4 +432,36 @@ class PemberianNilaiDanFeedbackController extends Controller
             ]);
         }
     }
+
+    /**
+     * 
+     */
+    public function pengisianNilaiSeminar($id): View
+    {
+        if($id == 1) {
+            // return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1');
+        } else if($id == 2) {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II');
+        } else if($id == 3) {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III');
+        } else {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir');
+        } 
+    }
+
+    /**
+     * 
+     */
+    public function pengisianMasukanSeminar($id): View
+    {
+        if($id == 1) {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1');
+        } else if($id == 2) {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II');
+        } else if($id == 3) {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III');
+        } else {
+            return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir');
+        } 
+    }
 }

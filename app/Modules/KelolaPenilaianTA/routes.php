@@ -35,12 +35,6 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PENGELOLAAN NILAI =================
     Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai']);
-    Route::get('/detail/{kategori}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
-
-    // *********************** DUMMY PENILAIAN SEMINAR 2 ***********************
-    Route::get('/seminar-2/tambah', [PengelolaanNilaiController::class, 'formPenilaianSeminar2']);
-    Route::post('/seminar-2/tambah', [PengelolaanNilaiController::class, 'simpanNilaiMahasiswa'])->name('dummy.seminar-2.simpan-nilai');
-    // Route::put('/seminar-2/edit/{nim}', [PengelolaanNilaiController::class, 'editNilaiMahasiswa'])->name('dummy.seminar-2.edit-nilai');
 
     // ================= REKAPITULASI NILAI =================
     Route::get('/rekapitulasi-nilai', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
@@ -48,14 +42,13 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PEMBERIAN NILAI DAN FEEDBACK =================
     Route::prefix('nilai-seminar')->group(function () {
-        Route::get('/1/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar1']);
-        Route::get('/2', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminarII']);
-        Route::get('/2/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminarII']);
-        Route::get('/3', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminarIII']);
-        Route::get('/3/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminarIII']);
+        Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
+        Route::get('/{id}/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
+        Route::get('/{id}/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
     });
+
     Route::prefix('nilai-sidang')->group(function () {
-        Route::get('/akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);
+        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);
         Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir']);
     });
     Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA']);
