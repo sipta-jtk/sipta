@@ -366,9 +366,33 @@ return [
                     'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
                 [
-                    'text' => 'Rekap FTA',
-                    'url' => '/PengajuanAlokasiPembimbing/RekapFTA02',
+                    'text' => 'Jadwal Seminar 3',
+                    'url' => 'jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Jadwal Sidang',
+                    'url' => 'jadwal-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Seminar 3',
+                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Sidang',
+                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -387,37 +411,42 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
+                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
+                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
+                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
+                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
+                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
+                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
+        ],
+        [
+            'text' => 'Timeline',
+            'url' => '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -444,6 +473,16 @@ return [
                 //     // 'icon' => 'far fa-fw fa-file',
                 // ],
             ]
+        ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
         // [

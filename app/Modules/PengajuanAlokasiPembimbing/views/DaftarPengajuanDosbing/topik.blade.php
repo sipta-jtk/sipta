@@ -22,6 +22,7 @@
     <p>Beranda > <a href="www">Daftar Pengajuan Dosen Pembimbing</a>
         <div class="justify-content-center">
             <div class="mr-2">
+                {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
                 <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
             </div>
         </div>
