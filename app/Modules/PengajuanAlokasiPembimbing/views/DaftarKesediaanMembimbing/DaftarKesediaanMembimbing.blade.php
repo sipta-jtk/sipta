@@ -27,8 +27,8 @@
 
 <p>Beranda > <a href="www">Daftar Kesediaan Menjadi Dosen Pembimbing</a></p>
 
-<div class="table-responsive">
-    <table id="kesediaanTable" class="table table-bordered">
+<div >
+    <table id="kesediaanTable" class="table table-responsive table-bordered w-100">
         <thead>
             <tr class="bg-dark text-white">
                 <th colspan="6" class="text-center">Dosen Eligible Sebagai Pembimbing 1</th>
