@@ -19,9 +19,7 @@ class Dokumen extends Model
         'kategori', // 2
         'deskripsi', // 3
         'versi', // 4
-        'file_path',
         'ukuran_file', // 5
-        'kode_fta',
         'notes', // 6
         'id_kota',
         'id_subkategori',

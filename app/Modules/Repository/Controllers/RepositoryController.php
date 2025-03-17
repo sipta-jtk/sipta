@@ -4,6 +4,7 @@ namespace App\Modules\Repository\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Dokumen;
+use App\Models\Subkategori;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,7 +36,12 @@ class RepositoryController extends Controller
     public function index($kategori)
     {
         $dokumen = Dokumen::where('kategori', $kategori)->get();
-        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori'));
+        $subkategoris = [];
+        if ($kategori === 'artefak') {
+            $subkategoris = Subkategori::all(); // Ambil semua data subkategori
+        }
+
+        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris'));
     }
 
     /**
@@ -55,6 +61,12 @@ class RepositoryController extends Controller
         if ($kategori === 'fta') {
             $request->validate([
                 'kode_fta' => 'required|string|max:10', // Sesuaikan aturan validasi sesuai kebutuhan
+            ]);
+        }
+
+        if ($kategori === 'artefak') {
+            $request->validate([
+                'id_subkategori' => 'required|exists:subkategori,id_subkategori',
             ]);
         }
 
@@ -92,12 +104,12 @@ class RepositoryController extends Controller
             'kategori' => $kategori,
             'deskripsi' => $request->deskripsi,
             'id_kota' => 1, // Sesuaikan dengan kebutuhan
-            'id_subkategori' => null, // Sesuaikan dengan kebutuhan
+            'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null, // Sesuaikan dengan kebutuhan
             'file_path' => $fileName,
             'ukuran_file' => $fileSize,
             'status_berkas' => 'valid',
             'username' => '221524059', // Sesuaikan dengan kebutuhan
-            'uploaded_at' => now()->timezone('Asia/Jakarta'),
+            'created_at' => now()->timezone('Asia/Jakarta'),
             'updated_at' => now()->timezone('Asia/Jakarta'),
         ];
 

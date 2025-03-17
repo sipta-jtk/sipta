@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\Repository\Controllers\RepositoryController;
+use App\Modules\Repository\Controllers\SubkategoriController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +31,6 @@ Route::prefix('repository')->group(function () {
     // Route untuk mendownload dokumen berdasarkan kategori dan ID
     Route::get('/{kategori}/{id}/download', [RepositoryController::class, 'download'])->name('Repository.download');
     
+    Route::post('/subkategori', [SubkategoriController::class, 'store'])->name('subkategori.store');
 });
  

@@ -13,6 +13,8 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 </script>
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,7 +74,7 @@
                 @endif
                 <td>{{ $doc->versi }}</td>
                 <td>{{ $doc->judul }}</td>
-                <td>{{ $doc->uploaded_at }}</td>
+                <td>{{ $doc->created_at }}</td>
                 <td>{{ $doc->updated_at }}</td>
                 <td>
                     <!-- Edit button -->
@@ -120,22 +122,30 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
+                <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
                         <label for="judul" class="form-label">Judul:</label>
                         <input class="form-control" id="judul" name="judul" required>
                     </div>
 
-                    <!-- Dropdown untuk FTA -->
-                    @if ($kategori === 'fta')
+                    <!-- Dropdown untuk Subkategori (hanya untuk kategori "artefak") -->
+                    @if ($kategori === 'artefak')
                     <div class="mb-3">
-                        <label for="kode_fta" class="form-label">Kode FTA:</label>
-                        <select class="form-control" id="kode_fta" name="kode_fta" required>
-                            @for ($i = 1; $i <= 23; $i++)
-                                <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                @endfor
-                        </select>
+                        <label for="subkategori" class="form-label">Subkategori:</label>
+                        <div class="input-group">
+                            <select class="form-control" id="subkategori" name="id_subkategori" required>
+                                <option value="">Pilih Subkategori</option>
+                                @foreach ($subkategoris as $subkategori)
+                                <option value="{{ $subkategori->id_subkategori }}">{{ $subkategori->nama_subkategori }}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#tambahSubkategoriModal">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     @endif
 
@@ -150,6 +160,33 @@
                     <div class="d-flex justify-content-between">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Back</button>
                         <button type="submit" class="btn btn-dark">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tambah Subkategori -->
+<div class="modal fade" id="tambahSubkategoriModal" tabindex="-1" aria-labelledby="tambahSubkategoriModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahSubkategoriModalLabel">Tambah Subkategori</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="tambahSubkategoriForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="nama_subkategori" class="form-label">Nama Subkategori:</label>
+                        <input type="text" class="form-control" id="nama_subkategori" name="nama_subkategori" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -476,6 +513,57 @@
                 // Set the download link on the confirm button
                 document.getElementById('confirmDownloadBtn').href = "{{ route('Repository.download', [$kategori, 'ID_PLACEHOLDER']) }}".replace('ID_PLACEHOLDER', id);
             });
+        });
+
+        // Handle tambah subkategori
+        document.getElementById('tambahSubkategoriForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Create FormData from the form
+            const formData = new FormData(this);
+
+            // Send request to server
+            fetch("{{ route('subkategori.store') }}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add new subcategory to dropdown
+                        const select = document.getElementById('subkategori');
+                        const option = document.createElement('option');
+                        option.value = data.subkategori.id_subkategori;
+                        option.text = data.subkategori.nama_subkategori;
+                        select.appendChild(option);
+
+                        // Select new subcategory
+                        select.value = data.subkategori.id_subkategori;
+
+                        // Close modal
+                        $('#tambahSubkategoriModal').modal('hide');
+
+                        // Reset form
+                        document.getElementById('tambahSubkategoriForm').reset();
+                    } else {
+                        alert('Gagal menambahkan subkategori');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan: ' + error.message);
+                });
         });
 
         // Auto-close alert messages
