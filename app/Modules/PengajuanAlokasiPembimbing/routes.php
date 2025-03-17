@@ -34,7 +34,6 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    //add routes for daftar kesediaan membimbing
     Route::group(['prefix' => 'daftar-kesediaan-membimbing'], function () {
         Route::get('/', [DaftarKesediaanMembimbingController::class, 'view_daftarKesediaanMembimbing']);
     });

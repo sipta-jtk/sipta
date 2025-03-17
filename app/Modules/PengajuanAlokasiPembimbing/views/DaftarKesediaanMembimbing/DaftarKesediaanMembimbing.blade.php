@@ -53,29 +53,35 @@
         </thead>
 
         <tbody>
-            @foreach ($data as $item)
-            <tr>
-                <td class="text-center align-middle">{{ $loop->iteration }}</td>
-                <td class="text-center align-middle">
-                    {{ $item['kode_dosen'] }}<br>
-                    {{ $item['id_dosen'] }}<br>
-                </td>
-                <td class="text-center align-middle">{{ $item['nama'] }}</td>
-                <td class="text-center align-middle">{{ $item['nip'] }}</td>
-                <td class="text-center align-middle">{{ $item['kbk'] }}</td>
-                <td class="text-center align-middle">{{ $item['Status_Pengumpulan'] }}</td>
+            @if (count($data) > 0)
+                @foreach ($data as $item)
+                <tr>
+                    <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                    <td class="text-center align-middle">
+                        {{ $item['kode_dosen'] }}<br>
+                        {{ $item['id_dosen'] }}<br>
+                    </td>
+                    <td class="text-center align-middle">{{ $item['nama'] }}</td>
+                    <td class="text-center align-middle">{{ $item['nip'] }}</td>
+                    <td class="text-center align-middle">{{ $item['kbk'] }}</td>
+                    <td class="text-center align-middle">{{ $item['Status_Pengumpulan'] }}</td>
 
-                @foreach ($prodiList as $prodi)
-                <td class="text-center align-middle">{{ $item[$prodi] ?? '-' }}</td>
+                    @foreach ($prodiList as $prodi)
+                    <td class="text-center align-middle">{{ $item[$prodi] ?? '-' }}</td>
+                    @endforeach
+
+                    @foreach ($prodiList as $prodi)
+                    <td class="text-center align-middle">{{ $item['Kesediaan_' . $prodi] ?? '-' }}</td>
+                    @endforeach
+
+                    <td class="text-left truncate">{{ $item['bidang'] }}</td>
+                </tr>
                 @endforeach
-
-                @foreach ($prodiList as $prodi)
-                <td class="text-center align-middle">{{ $item['Kesediaan_' . $prodi] ?? '-' }}</td>
-                @endforeach
-
-                <td class="text-left truncate">{{ $item['bidang'] }}</td>
-            </tr>
-            @endforeach
+            @else
+                <tr>
+                    <td colspan="{{ 6 + 2 * count($prodiList) + 1 }}" class="text-center">Tidak ada data</td>
+                </tr>
+            @endif
         </tbody>
 
     </table>
