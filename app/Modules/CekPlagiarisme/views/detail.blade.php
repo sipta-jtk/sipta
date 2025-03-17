@@ -10,13 +10,10 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <!-- Kolom untuk Dokumen -->
-        <div class="col-md-8 me-3">
+        <div class="col-md-8">
             <div class="card shadow-lg">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header">
                     <h3 class="mb-0">{{ $dokumen->judul ?? 'Judul Dokumen Contoh' }}</h3>
-                    <button id="toggleSidebar" class="btn btn-dark btn-sm position-absolute" style="top: 10px; right: 10px;">
-                        <i id="toggleIcon" class="fas fa-chevron-left"></i>
-                    </button>
                 </div>
                 <div class="card-body text-center">
                     @if(isset($dokumen->file))
@@ -28,82 +25,106 @@
             </div>
         </div>
 
-        <!-- Sidebar dengan Tab -->
-        <div class="col-md-3">
-            <div class="offcanvas offcanvas-end d-none" tabindex="-1" id="sidebar">
-                <div class="offcanvas-header">
-                    <button id="closeSidebar" class="btn btn-dark btn-sm">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+        <!-- Navigasi Tab -->
+        <div class="col-md-4">
+            <ul class="nav nav-tabs mb-3" id="detailTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋 Detail</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">📄 Sumber</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab">⬇️ Unduh</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab">💬 Catatan</a>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="tabContent">
+                <!-- Detail Dokumen -->
+                <div class="tab-pane fade show active" id="detail" role="tabpanel">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h5>Detail Dokumen</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr><th>Penulis</th><td>Mumun Sumumun</td></tr>
+                                    <tr><th>Judul Dokumen</th><td>Implementasi Algoritma Naive</td></tr>
+                                    <tr><th>Nama Dokumen</th><td>CONTOH FIX.PDF</td></tr>
+                                    <tr><th>Tanggal Unggah</th><td>28-02-2025</td></tr>
+                                    <tr><th>Jumlah Halaman</th><td>30</td></tr>
+                                    <tr><th>Ukuran Dokumen</th><td>2MB</td></tr>
+                                    <tr><th>Ambang Batas</th><td>50%</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="offcanvas-body">
-                    
-                    <!-- Tabs Navigation -->
-                    <ul class="nav nav-tabs mb-3" id="sidebarTabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab" aria-controls="sumber" aria-selected="true">📄</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab" aria-controls="detail" aria-selected="false">📋</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab" aria-controls="unduh" aria-selected="false">⬇️</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('povMahasiswa') }}" aria-controls="catatan" aria-selected="false">💬</a>
-                        </li>
 
-                    </ul>
+                <!-- Daftar Sumber -->
+                <div class="tab-pane fade" id="sumber" role="tabpanel">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-danger text-white">
+                            <h5>Daftar Sumber - 15% Index Kesamaan</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr><td>arxiv.org</td><td>4%</td></tr>
+                                    <tr><td>jurnal.itscience.org</td><td>12%</td></tr>
+                                    <tr><td>ejurnal.umri.ac.id</td><td>2%</td></tr>
+                                    <tr><td>Fei Li et al.</td><td><1%</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Tab Content -->
-                    <div class="tab-content" id="sidebarContent">
-                        <!-- Daftar Sumber -->
-                        <div class="tab-pane fade show active" id="sumber" role="tabpanel">
-                            <h5 class="text-danger">15% Index Kesamaan</h5>
-                            <ul class="list-group">
-                                <li class="list-group-item">arxiv.org - 4%</li>
-                                <li class="list-group-item">jurnal.itscience.org - 12%</li>
-                                <li class="list-group-item">ejurnal.umri.ac.id - 2%</li>
-                                <li class="list-group-item">Fei Li et al. - <1%</li>
-                            </ul>
+                <!-- Unduh Dokumen -->
+                <div class="tab-pane fade" id="unduh" role="tabpanel">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-secondary text-white">
+                            <h5>Unduh Dokumen</h5>
                         </div>
-                        <!-- Detail Dokumen -->
-                        <div class="tab-pane fade" id="detail" role="tabpanel">
-                            <p><strong>Penulis:</strong> Mumun Sumumun</p>
-                            <p><strong>Judul Dokumen:</strong> Implementasi Algoritma Naive</p>
-                            <p><strong>Nama Dokumen:</strong> CONTOH FIX.PDF</p>
-                            <p><strong>Tanggal Unggah:</strong> 28-02-2025</p>
-                            <p><strong>Jumlah Halaman:</strong> 30</p>
-                            <p><strong>Ukuran Dokumen:</strong> 2MB</p>
-                            <p><strong>Ambang Batas Yang Digunakan:</strong> 50%</p>
-                        </div>
-                        <!-- Unduh Dokumen -->
-                        <div class="tab-pane fade" id="unduh" role="tabpanel">
+                        <div class="card-body">
                             <button class="btn btn-primary w-100">📥 Unduh Dokumen Hasil Pengecekan</button>
                             <button class="btn btn-secondary w-100 mt-2">📥 Unduh Bukti Penerimaan Digital</button>
                             <button class="btn btn-success w-100 mt-2">📥 Unduh Dokumen Asli</button>
                         </div>
-                        <!-- Catatan -->
-                        <div class="tab-pane fade" id="catatan" role="tabpanel">
-                            <div class="list-group">
-                                <div class="list-group-item">
+                    </div>
+                </div>
+
+                <!-- Catatan -->
+                <div class="tab-pane fade" id="catatan" role="tabpanel">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-info text-white">
+                            <h5>Catatan</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">
                                     <strong>Nana Mardiana</strong> - 01 Maret 2025, 20:20:20
                                     <p>Gunakan sumber referensi yang sahih, minimal Sinta 3</p>
-                                </div>
-                                <div class="list-group-item">
+                                </li>
+                                <li class="list-group-item">
                                     <strong>Cinta Laura</strong> - 02 Maret 2025, 10:12:09
                                     <p>Di Parafrase yaa!!</p>
-                                </div>
-                                <div class="list-group-item">
+                                </li>
+                                <li class="list-group-item">
                                     <strong>Zayn Malik</strong> - 02 Maret 2025, 13:09:01
                                     <p>Di Parafrase yaa!!</p>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
-                    </div> <!-- End Tab Content -->
+                    </div>
+                </div>
 
-                </div> <!-- End Offcanvas Body -->
-            </div> <!-- End Sidebar -->
+            </div> <!-- End Tab Content -->
         </div> <!-- End Col -->
     </div> <!-- End Row -->
 </div> <!-- End Container -->
@@ -112,21 +133,8 @@
 @section('js')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var sidebar = document.getElementById('sidebar');
-
-        // Pastikan sidebar tetap tersembunyi saat awal
-        sidebar.classList.add("d-none");
-
-        document.getElementById('toggleSidebar').addEventListener('click', function () {
-            sidebar.classList.toggle("d-none");
-        });
-
-        document.getElementById('closeSidebar').addEventListener('click', function () {
-            sidebar.classList.add("d-none");
-        });
-
         // Bootstrap Tab Switching
-        var sidebarTabs = document.querySelectorAll("#sidebarTabs .nav-link");
+        var sidebarTabs = document.querySelectorAll("#detailTabs .nav-link");
         sidebarTabs.forEach(function (tab) {
             tab.addEventListener("click", function (event) {
                 event.preventDefault(); // Hindari reload halaman

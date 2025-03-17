@@ -70,6 +70,7 @@ class CekPlagiarismeDetailController extends Controller
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
     }
 
+<<<<<<< HEAD
     public function povMahasiswa(): View
     {
         $catatan = [
@@ -95,4 +96,32 @@ class CekPlagiarismeDetailController extends Controller
     
         return view('CekPlagiarisme.views.catatan', compact('catatan'));
     }
+=======
+     public function povMahasiswa(): View
+     {
+         // Data dummy untuk komentar
+         $comments = [
+             [
+                 'user' => 'Nana Mardiana',
+                 'role' => 'Dosen Pembimbing 1',
+                 'date' => '2025-03-01 20:01:01',
+                 'content' => 'Gunakan sumber referensi yang sahih, minimal sinta 3'
+             ],
+             [
+                 'user' => 'Cinta Laura',
+                 'role' => 'Dosen Pembimbing 2',
+                 'date' => '2025-03-02 10:12:09',
+                 'content' => 'Silakan sertakan jurnal yang relevan, kamu bisa memanfaatkan sciencesdirect, google scholar, atau web sejenisnya untuk mencari jurnal yang bisa dibuka untuk umum'
+             ],
+             [
+                 'user' => 'Zayn Malik',
+                 'role' => 'Dosen Pembimbing 3',
+                 'date' => '2025-03-03 12:15:30',
+                 'content' => 'Silakan sertakan jurnal yang relevan, kamu bisa memanfaatkan sciencesdirect, google scholar, atau web sejenisnya untuk mencari jurnal yang bisa dibuka untuk umum'
+             ]
+         ];
+ 
+         return view('CekPlagiarisme.views.komentar', compact('comments'));
+     }
+>>>>>>> ffefe625c6f86e1c7b94969ab5f602046fd845c7
 }
