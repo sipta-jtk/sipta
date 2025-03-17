@@ -135,7 +135,7 @@
 
     function getKomentarLink(komentar, id) {
         if (komentar) {
-            return '<span class="text-primary">Komentar diberikan</span>';
+            return '<span class="text-dark">Komentar diberikan</span>';
         } else {
             return '<span class="text-muted">Belum ada komentar</span>';
         }

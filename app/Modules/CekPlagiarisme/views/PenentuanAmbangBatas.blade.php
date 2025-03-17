@@ -60,6 +60,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+    #jsGrid1 .jsgrid-row, #jsGrid1 .jsgrid-alt-row {
+        pointer-events: none; 
+        cursor: default !important; 
+        user-select: none; 
+    }
+</style>
 
 <script>
     $(document).ready(function() {
@@ -136,7 +143,7 @@
                         return Object.values(item).some(value =>
                             String(value).toLowerCase().includes(searchValue) || statusText.toLowerCase().includes(searchValue)
                         );
-                    }); 
+                    });
                     $("#jsGrid1").jsGrid("option", "data", filteredData);
                 });
             },
