@@ -50,8 +50,9 @@
                             <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab" aria-controls="unduh" aria-selected="false">⬇️</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab" aria-controls="catatan" aria-selected="false">💬</a>
+                            <a class="nav-link" href="{{ route('povMahasiswa') }}" aria-controls="catatan" aria-selected="false">💬</a>
                         </li>
+
                     </ul>
 
                     <!-- Tab Content -->

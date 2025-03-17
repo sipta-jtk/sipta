@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Komentar CekPlagiarisme')
+@section('title', 'Catatan Dosen')
 
 @section('content_header')
     <h1>Pengecekan Plagiarisme</h1>
@@ -35,11 +35,11 @@
                     <h4>CATATAN</h4>
 
                     <div id="comments-list">
-                        @foreach($comments as $index => $comment)
+                        @foreach($catatan as $index => $catatan)
                             <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <strong>
-                                        {{ $comment['user'] }} <span class="text-muted small">({{ $comment['role'] }})</span>
+                                        {{ $catatan['user'] }} <span class="text-muted small">({{ $catatan['role'] }})</span>
                                     </strong>
 
                                     <!-- Dropdown Menu -->
@@ -67,8 +67,8 @@
                                     </div>
                                 </div>
 
-                                <p class="mt-2 mb-1 comment-text">{{ $comment['content'] }}</p>
-                                <small class="text-muted comment-date">{{ \Carbon\Carbon::parse($comment['date'])->format('d/m/Y, H:i:s') }}</small>
+                                <p class="mt-2 mb-1 comment-text">{{ $catatan['content'] }}</p>
+                                <small class="text-muted comment-date">{{ \Carbon\Carbon::parse($catatan['date'])->format('d/m/Y, H:i:s') }}</small>
                             </div>
                         @endforeach
                     </div>
