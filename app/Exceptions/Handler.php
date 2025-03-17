@@ -47,13 +47,9 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception)
-    {
-        if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $exception->getStatusCode() === 403) {
-            return response()->view('UserManagement.views.error403', [], 403);
-        }
-    
-        return parent::render($request, $exception);
-    }
-    
+    // public function render($request, Throwable $e){
+    //     if($e instanceof UnauthorizedException){
+    //         return response()->view('')
+    //     }
+    // }
 }

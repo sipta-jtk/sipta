@@ -82,6 +82,8 @@
         <div class="login-box">
             <h2>Welcome</h2>
             <p>Please log in to continue</p>
+
+            {{-- Menampilkan pesan error jika email atau password salah --}}
             @if ($errors->any())
                 <div class="error-message">
                     @foreach ($errors->all() as $error)

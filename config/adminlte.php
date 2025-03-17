@@ -123,7 +123,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Menuff
+    | User Menu
     |--------------------------------------------------------------------------
     |
     | Here you can activate and change the user menu.
@@ -134,10 +134,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => true,
+    'usermenu_header' => ,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
-    'usermenu_desc' => true,
+    'usermenu_desc' => false,
     'usermenu_profile_url' => true,
 
     /*
@@ -305,10 +305,6 @@ return [
             'text' => 'search',
             'topnav_right' => true,
         ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],       
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
