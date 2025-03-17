@@ -15,22 +15,34 @@ use Illuminate\Support\Facades\Route;
 
 $modulesPath = base_path('app/Modules');
 
-foreach (scandir($modulesPath) as $module) {
-    $routesFile = "{$modulesPath}/{$module}/routes.php";
+if (is_dir($modulesPath)) {
+    foreach (scandir($modulesPath) as $module) {
+        if ($module === '.' || $module === '..') {
+            continue;
+        }
+        $routesFile = "{$modulesPath}/{$module}/routes.php";
 
-    if (is_file($routesFile)) {
-        require $routesFile; 
+        if (is_file($routesFile)) {
+            require $routesFile; 
+        }
     }
 }
 
 Route::get('/', function () {
     return view('welcome');
+})->middleware('auth'); // Hanya user login yang bisa akses
+
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect('/login');
+})->name('logout');
+
+Route::get('/penentuan-ambang-batas', function () {
+    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+});
+Route::get('/cek-plagiarisme', function () {
+    return view('CekPlagiarisme.views.DaftarDokumen');
 });
 
-Route::get('/login', function () {
-    return view('auth.login');
-});
 
-Route::get('/register', function () {
-    return view('auth.register');
-});
+

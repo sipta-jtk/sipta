@@ -1,7 +1,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+<<<<<<< HEAD
     function SweetAlert(icon = 'info', title = '', text = '', confirmButtonText = 'OK', cancelButtonText = 'Cancel',
+=======
+    function FireSweetAlert(icon = 'info', title = '', text = '', confirmButtonText = 'OK', cancelButtonText = 'Cancel',
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
         confirmButtonColor = '#3085d6', cancelButtonColor = '#d33',
         showCancelButton = false, showConfirmButton = true, callback = () => {}) {
         Swal.fire({

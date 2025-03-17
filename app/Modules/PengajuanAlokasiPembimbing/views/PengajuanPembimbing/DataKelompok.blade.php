@@ -1,8 +1,14 @@
 @extends('adminlte::page')
 
+<<<<<<< HEAD
 @section('title', 'PengajuanAlokasiPembimbing')
 
 @section('content_header')  
+=======
+@section('title', 'Formulir Pengajuan Dosen Pembimbing')
+
+@section('content_header')
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
     <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
     </div>
@@ -15,31 +21,51 @@
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="1"
+<<<<<<< HEAD
                 activeColor="primary" inactiveColor="secondary" :hrefs="['#', '#', '#', '#']" />
         </div>
 
             <!-- Form Pengajuan -->
+=======
+                activeColor="primary" inactiveColor="secondary" :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
+        </div>
+
+        <!-- Form Pengajuan -->
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
         <div class="col">
             <div class="card p-4 bg-light">
                 <h5 class="mb-3">Data Mahasiswa</h5>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Lengkap</label>
+<<<<<<< HEAD
                         <input type="text" class="form-control" placeholder="Masukkan nama">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Kelas</label>
                         <input type="text" class="form-control" placeholder="Masukkan kelas">
+=======
+                        <input type="text" class="form-control" value="{{ $sessionUser['nama'] }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Kelas</label>
+                        <input type="text" class="form-control" value="{{ $sessionUser['kelas'] }}" readonly>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">NIM</label>
+<<<<<<< HEAD
                         <input type="text" class="form-control" placeholder="Masukkan NIM">
+=======
+                        <input type="text" class="form-control" value="{{ $sessionUser['nim'] }}" readonly>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                     </div>
                 </div>
 
                 <h5 class="mb-3">Data Kelompok</h5>
+<<<<<<< HEAD
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Anggota 1</label>
@@ -48,29 +74,60 @@
                     <div class="col-md-6">
                         <label class="form-label">NIM</label>
                         <input type="text" class="form-control" placeholder="Masukkan NIM">
+=======
+                @php
+                    $anggota1 = $dataAnggota[0] ?? (object) ['nama' => '-', 'nim' => '-'];
+                    $anggota2 = $dataAnggota[1] ?? (object) ['nama' => '-', 'nim' => '-'];
+                @endphp
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Anggota 1</label>
+                        <input type="text" class="form-control" value="{{ $anggota1->nama }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">NIM</label>
+                        <input type="text" class="form-control" value="{{ $anggota1->nim }}" readonly>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Anggota 2</label>
+<<<<<<< HEAD
                         <input type="text" class="form-control" placeholder="Masukkan nama">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">NIM</label>
                         <input type="text" class="form-control" placeholder="Masukkan NIM">
+=======
+                        <input type="text" class="form-control" value="{{ $anggota2->nama }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">NIM</label>
+                        <input type="text" class="form-control" value="{{ $anggota2->nim }}" readonly>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                     </div>
                 </div>
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-end mt-3">
+<<<<<<< HEAD
                     <button type="submit" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info ml-3">Selanjutnya</a>
+=======
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }}
+                        class="btn btn-info ml-3">Selanjutnya</a>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                 </div>
             </div>
         </div>
     </div>
 
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
 @stop
 
 @section('css')
@@ -80,5 +137,35 @@
     <link href=" https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
 @stop
 
+<<<<<<< HEAD
 {{-- @section('js')
 @stop --}}
+=======
+@section('js')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Periksa kembali data anggota kelompok',
+                text: 'Jika ingin melakukan perubahan, harap lakukan pada pengaturan pengguna sebelum mengajukan dosen pembimbing',
+                cancelButtonText: 'Ubah Data',
+                confirmButtonText: 'OK',
+                showCancelButton: true,
+                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#3085d6',
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Handle OK Button Click (optional)
+                    console.log('User clicked OK');
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Redirect user when clicking "Ubah Data"
+                    window.location.href = 'topik-tugas-akhir'; // Ganti dengan URL yang sesuai
+                }
+            });
+        });
+    </script>
+@stop
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b

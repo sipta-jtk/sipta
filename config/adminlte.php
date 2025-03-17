@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -133,8 +133,8 @@ return [
     |
     */
 
-    'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_enabled' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
@@ -154,8 +154,8 @@ return [
 
     'layout_topnav' => null,
     'layout_boxed' => null,
-    'layout_fixed_sidebar' => null,
-    'layout_fixed_navbar' => null,
+    'layout_fixed_sidebar' => true,
+    'layout_fixed_navbar' => true,
     'layout_fixed_footer' => null,
     'layout_dark_mode' => null,
 
@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => '',
+    'dashboard_url' => '/',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -320,20 +320,50 @@ return [
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
-        ['header' => 'Pelayanan Tugas Akhir'],
+        ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
             // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
+            'icon' => 'fas fa-home',
             'submenu' => [
                 [
-                    'text' => 'Pengajuan Pembimbing',
-                    'url' => 'admin/pages',
+                    'text' => 'Daftar Kesediaan dan Pengajuan',
+                    'url' => '/#',
+                    'submenu' => [
+                        [
+                            'text' => 'Daftar Kesediaan Membimbing',
+                            // 'icon' => 'fas fa-fw fa-file',
+                            'url' => '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                        ],
+                        [
+                            'text' => 'Daftar Pengajuan Dosen Pembimbing',
+                            'url' => '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Formulir Pengajuan dan Kesediaan',
+                    'url' => '/#',
+                    'submenu' => [
+                        [
+                            'text' => 'Formulir Pengajuan Pembimbing',
+                            // 'icon' => 'fas fa-fw fa-file',
+                            'url' => '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                        ],
+                        [
+                            'text' => 'Formulir Kesediaan Membimbing',
+                            'url' => '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Pengelolaan Periode',
+                    'url' => '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Alokasi Pembimbing',
-                    'url' => 'admin/pages',
+                    'text' => 'Alokasi Dosen Pembimbing',
+                    'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -346,13 +376,23 @@ return [
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Perencanaan Seminar dan Sidang',
-                    'url' => 'admin/pages',
+                    'text' => 'Jadwal Seminar 3',
+                    'url' => 'jadwal-seminar',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Pelanaksanaan Seminar dan Sidang',
-                    'url' => 'admin/pages',
+                    'text' => 'Jadwal Sidang',
+                    'url' => 'jadwal-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Seminar 3',
+                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Sidang',
+                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -360,33 +400,94 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Pengelolaan dan Penjadwalan Ruangan',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-home',
+            'text' => 'Kelola Penilaian Tugas Akhir',
+            // 'url' => '/KelolaPenilaianTA',
+            'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Pengelolaan Ruangan',
-                    'url' => 'admin/pages',
+                    'text' => 'Kelola Penilaian Tugas Akhir',
+                    // 'url' => '/KelolaPenilaianTA',
+                    // 'icon' => 'fas fa-fw fa-file',
+                    'submenu' => [
+                        [
+                            'text' => 'Monitoring Mahasiswa',
+                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            // 'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Monitoring Feedback',
+                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
+                            // 'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Monitoring Rubrik',
+                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
+                            // 'icon' => 'far fa-fw fa-file',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Formulir Penilaian',
+                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Penjadwalan Ruangan',
-                    'url' => 'admin/pages',
+                    'text' => 'Pengelolaan Nilai',
+                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai',
+                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
-            'text' => 'Pengelolaan Penilaian',
-            'url' => '#',
-            'icon' => 'fas fa-scroll',
+            'text' => 'Timeline',
+            'url' => '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
+            // 'label' => 4,
+            // 'label_color' => 'success',
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => '/repository',
+            'url' => 'repository',
             'icon' => 'fas fa-book',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Timeline',
+            'url' => '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
+        ],
+        [
+            'text' => 'Artefak',
+            'url' => '/#',
+            'icon' => 'fas fa-fw fa-folder',
+            'submenu' => [
+                [
+                    'text' => 'Kelola Dokumen dan FTA',
+                    'url' => '/artefak',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                // [
+                //     'text' => 'Resume Bimbingan',
+                //     'url' => '/#',
+                //     // 'icon' => 'far fa-fw fa-file',
+                // ],
+            ]
+        ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
         // [
@@ -404,12 +505,12 @@ return [
             'icon' => 'fas fa-user',
             'submenu' => [
                 [
-                    'text' => 'Mahasiswa',
-                    'url' => '#',
+                    'text' => 'Manajemen Akun Dosen',
+                    'url' => '/manage_dosen',
                 ],
                 [
-                    'text' => 'Dosen',
-                    'url' => '#',
+                    'text' => 'Manajemen Akun Mahasiswa',
+                    'url' => '/#',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',

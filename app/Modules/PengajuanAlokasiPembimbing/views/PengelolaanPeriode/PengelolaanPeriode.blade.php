@@ -3,7 +3,11 @@
 @section('title', 'PengelolaanPeriode')
 
 @section('content_header')
+<<<<<<< HEAD
     <h1>Pengelolaan Periode</h1>
+=======
+    <h1>Pengelolaan Periode Pengisian FTA01 dan FTA02</h1>
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
     <br>
 
     <div class="container-fluid d-flex justify-content-end mb-2 p-0">
@@ -52,7 +56,11 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="btn btn-danger"
+<<<<<<< HEAD
                                     onclick="SweetAlert('warning', 'Apakah anda yakin?', 'Data yang dihapus tidak dapat dikembalikan', 'Ya', 'Tidak', '#d33', 'gray', true, true, (result) => {if(result) {
+=======
+                                    onclick="FireSweetAlert('warning', 'Apakah anda yakin?', 'Data yang dihapus tidak dapat dikembalikan', 'Ya', 'Tidak', '#d33', 'gray', true, true, (result) => {if(result) {
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
                                     this.closest('form').submit();
                                 }})"><i
                                         class="fas fa-trash-alt"></i></button>
@@ -107,9 +115,15 @@
 @endsection
 
 @section('js')
+<<<<<<< HEAD
     @include('pengajuanalokasipembimbing.Helper.JS.SweetAlert')
     @include('pengajuanalokasipembimbing.Helper.JS.AutoFlashReader')
     @include('pengajuanalokasipembimbing.Helper.JS.AutoErrorShower')
+=======
+    @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.AutoFlashReader')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.AutoErrorShower')
+>>>>>>> 58f96f1821308e854679e72c61ec57c4ccb8db0b
 
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> --}}
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
