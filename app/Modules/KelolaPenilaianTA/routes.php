@@ -44,7 +44,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     Route::prefix('nilai-seminar')->group(function () {
         Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
         Route::get('/{id}/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
-        Route::get('/{id}/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
+        Route::get('/{id}/nilai/{nim}', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
     });
 
     Route::prefix('nilai-sidang')->group(function () {

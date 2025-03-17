@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\Log;
 
 class PemberianNilaiDanFeedbackController extends Controller
 {
@@ -47,28 +48,31 @@ class PemberianNilaiDanFeedbackController extends Controller
      * Menampilkan halaman pemberian nilai seminar 2
      * 
      */
-    public function pengisianNilaiSeminarII(): View
+    private function pengisianNilaiSeminarII($id, $nim): View
     {
 
-        // ID kota statis
-        $idKota = 2;
+        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
+        $mahasiswa = Mahasiswa::where('nim', $nim)->with('user', 'kota.penjadwalan')->first();
 
-        // Ambil hanya mahasiswa dengan id_kota = 2
-        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
 
-        // Ambil informasi KoTA berdasarkan id_kota = 2
-        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('data'));
+    }
 
-        // Data Mahasiswa
-        $mahasiswa = [
-            'kode_fta' => 'FTA-07',
-            'tanggal' => '7 Maret 2025',
-            'waktu' => '10:00 - 11:00'
-            // 'id_kota' => 'KoTA-313',
-            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring',
+    /**
+     * Helper mapping untuk data mahasiswa di form pengisian nilai seminar 2
+     */
+     private function mappingDataMahasiswa($seminar, $mahasiswa)
+    {
+        $data = [
+            'nama_fta' => $seminar->formulirPenilaian->nama_fta,
+            'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
+            'nama' => $mahasiswa->user->nama,
+            'judul_ta' => $mahasiswa->kota->judul_ta,
+            'start' => date('H:i', strtotime($mahasiswa->kota->penjadwalan[0]->start))
         ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+    
+        return $data;
     }
 
 
@@ -385,15 +389,14 @@ class PemberianNilaiDanFeedbackController extends Controller
     }
 
     /**
-     * 
+     * Akses halaman pemberian nilai
      */
-    public function pengisianNilaiSeminar($id): View
+    public function pengisianNilaiSeminar($id, $nim): View
     {
         if($id == 1) {
             // return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1');
-            // return $this->pengisianNilaiSeminarI();
         } else if($id == 2) {
-            return $this->pengisianNilaiSeminarII();
+            return $this->pengisianNilaiSeminarII($id, $nim);
         } else if($id == 3) {
             return $this->pengisianNilaiSeminarIII();
         } else {
@@ -402,7 +405,7 @@ class PemberianNilaiDanFeedbackController extends Controller
     }
 
     /**
-     * 
+     * Akses halaman pemberian masukan
      */
     public function pengisianMasukanSeminar($id): View
     {
