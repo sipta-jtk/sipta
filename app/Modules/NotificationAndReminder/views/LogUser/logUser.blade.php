@@ -10,38 +10,26 @@
 
 @section('content')
 
-    {{-- Data Dummy Log Notifikasi --}}
-    @php
-        $notifikasi = [
-            (object) [
-                'tipe_notifikasi' => 'Notifikasi',
-                'judul' => 'Deadline Reminder: Pengumpulan Berkas',
-                'isi_notifikasi' => 'Diberitahukan kepada seluruh mahasiswa yang sedang menempuh Tugas Akhir bahwa batas waktu pengumpulan seluruh dokumen terkait Tugas Akhir adalah 3 (tiga) hari dari sekarang. Mohon segera melengkapi dan menyerahkan dokumen-dokumen yang diperlukan termasuk naskah final, lembar pengesahan, lampiran pendukung, dan berkas administrasi lainnya sesuai dengan panduan yang telah diberikan. Pengumpulan dokumen dilakukan melalui sistem akademik dan dalam bentuk hardcopy di Sekretariat Program Studi. Keterlambatan pengumpulan akan mempengaruhi proses evaluasi dan penilaian akhir. Untuk informasi lebih lanjut, silakan menghubungi dosen pembimbing atau Sekretariat Program Studi.',
-                'sumber_notifikasi' => 'Sistem',
-                'created_at' => \Carbon\Carbon::now(),
-            ],
-            (object) [
-                'tipe_notifikasi' => 'Reminder',
-                'judul' => 'Pengumuman: Seminar Proposal',
-                'isi_notifikasi' => 'Diberitahukan kepada mahasiswa yang telah mendaftarkan diri untuk Seminar Proposal bahwa acara tersebut akan dilaksanakan pada hari Senin, 15 Maret 2025 di Aula Gedung Utama. Mohon hadir tepat waktu dan membawa semua persyaratan yang diperlukan. Untuk informasi lebih lanjut, silakan menghubungi panitia Seminar Proposal.',
-                'sumber_notifikasi' => 'Sistem',
-                'created_at' => \Carbon\Carbon::now()->subDay(),
-            ],
-        ];
-    @endphp
-
-    {{-- Daftar Log Notifikasi dalam Satu Baris --}}
+    {{-- Daftar Log Notifikasi --}}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Daftar Log Notifikasi Mahasiswa</h3>
         </div>
-        <div class="card-body">
-            @foreach ($notifikasi as $notif)
-                <div class="notification-item" style="padding: 10px; border-bottom: 1px solid #ddd;" data-content="{{ $notif->isi_notifikasi }}" data-date="{{ $notif->created_at->toDateTimeString() }}" data-source="{{ $notif->sumber_notifikasi }}">
-                    <strong>{{ $notif->judul }}</strong>
-                    <small class="text-muted" style="position: absolute; bottom: 10px; right: 10px;">{{ $notif->created_at->toDateTimeString() }}</small>
-                </div>
-            @endforeach
+        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal & Waktu</th>
+                        <th>Judul Notifikasi</th>
+                        <th>Sumber</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- Data Log Notifikasi akan dimuat dengan jQuery --}}
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -49,18 +37,17 @@
     <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <!-- Header Modal -->
                 <div class="modal-header">
                     <h3 class="modal-title" id="detailModalLabel"></h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <!-- Isi Modal -->
-                <div class="modal-body" id="detailModalContent">
-                    <p id="detailModalDate"></p>
-                    <p id="detailModalSource"></p>
-                    <p id="detailModalText"></p>
+                <div class="modal-body">
+                    <p><strong>Tanggal:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Sumber:</strong> <span id="modalSource"></span></p>
+                    <p><strong>Isi Notifikasi:</strong></p>
+                    <p id="modalContent"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -71,46 +58,51 @@
 
 @stop
 
-@section('css')
-    {{-- Tambahkan stylesheet tambahan di sini --}}
-@stop
-
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Menangani klik pada notifikasi untuk menampilkan detail
-            $('.notification-item').on('click', function() {
-                var title = $(this).find('strong').text();
-                var content = $(this).data('content');
-                var date = $(this).data('date');
-                var source = $(this).data('source');
-                $('#detailModalLabel').text(title);
-                $('#detailModalDate').text("Tanggal: " + date);
-                $('#detailModalSource').text("Sumber: " + source);
-                $('#detailModalText').text(content);
-                $('#detailModal').modal('show');
-            });
-        });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Menangani klik pada ikon lonceng
-            $('#notificationBell').on('click', function() {
-                // Tampilkan modal log saat ikon lonceng diklik
-                $('#myModal').modal('show');
-            });
+            // Memuat data notifikasi dari API
+            $.get('/api/mahasiswa/notifications', function(data) {
+                $('tbody').empty();
 
-            // Klik ikon pengaturan untuk membuka modal preferensi
-            $('#openPreferences').on('click', function(e) {
-                e.preventDefault();  // Menghindari aksi default
-                $('#myModal').modal('hide');  // Menutup modal log
-                $('#myModals').modal('show');  // Menampilkan modal preferensi
+                // Iterasi data dan menambahkan ke tabel
+                data.forEach(function(notif, index) {
+                    let row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${notif.created_at}</td>
+                            <td>${notif.judul}</td>
+                            <td>${notif.sumber_notifikasi}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm btn-detail" 
+                                    data-title="${notif.judul}"
+                                    data-content="${notif.isi_notifikasi}"
+                                    data-date="${notif.created_at}"
+                                    data-source="${notif.sumber_notifikasi}">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    $('tbody').append(row);
+                });
+
+                // Menangani klik tombol "Detail"
+                $('.btn-detail').on('click', function() {
+                    let title = $(this).data('title');
+                    let content = $(this).data('content');
+                    let date = $(this).data('date');
+                    let source = $(this).data('source');
+
+                    $('#detailModalLabel').text(title);
+                    $('#modalDate').text(date);
+                    $('#modalSource').text(source);
+                    $('#modalContent').text(content);
+
+                    $('#detailModal').modal('show');
+                });
             });
         });
     </script>
-    
 @stop
