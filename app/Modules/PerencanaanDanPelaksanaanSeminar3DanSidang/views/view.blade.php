@@ -1,5 +1,13 @@
 @extends('adminlte::page')
 
+@section('title', 'PembatalanJadwalSeminarSidang')
+
+@section('content_header')
+    <h1>PembatalanJadwalSeminarSidang</h1>
+@stop
+
+@section('content')
+    <p>Welcome to PembatalanJadwalSeminarSidang Page.</p>
 @section('title', 'PerencanaanDanPelaksanaanSeminar3DanSidang')
 
 @section('content_header')
