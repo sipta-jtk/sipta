@@ -422,6 +422,13 @@ return [
             // 'label_color' => 'success',
         ],
         [
+            'text' => 'Pengajuan',
+            'url' => '/pengajuan',
+            'icon' => 'fas fa-fw fa-file',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
             'text' => 'Timeline',
             'url' => '/timeline',
             'icon' => 'fas fa-fw fa-calendar',

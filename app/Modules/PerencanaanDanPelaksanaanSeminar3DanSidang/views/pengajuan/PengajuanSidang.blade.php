@@ -1,0 +1,119 @@
+@extends('adminlte::page')
+
+@section('title', 'Pengajuan Sidang')
+
+@section('content_header')
+    <h1 class="mx-2"><strong>Pengajuan Sidang</strong></h1>
+@stop
+
+@section('content')
+<div class="container-fluid">
+    <div class="row w-100 justify-content-start d-flex align-items-stretch">
+        <!-- Kolom Identitas KoTA -->
+        <div class="col-md-6">
+            <div class="card p-4 bg-light h-100">
+                <h4><strong>KoTA {{ $dataKota->nama_kota }}</strong></h4>
+                <p class="text-uppercase">{{ $dataKota->judul_ta }}</p>
+                
+                <div>
+                    <h4 class="text-bold px-3">Mahasiswa</h4>
+                    <ul>
+                        @foreach($mahasiswa as $mhs)
+                            <li><h5>{{ $mhs->user->nim }} - {{ $mhs->user->nama }}</h5></li>
+                        @endforeach
+                    </ul>
+                </div> 
+                
+                <div>
+                    <h4 class="text-bold px-3">Pembimbing</h4>
+                    <ul>
+                        @foreach($pembimbing as $pb)
+                            <li><h5>{{ $pb->nip }} - {{ $pb->nama }}</h5></li>
+                        @endforeach
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-bold px-3">Penguji</h4>
+                    <ul>
+                        @foreach($penguji as $pj)
+                            <li><h5>{{ $pj->nip }} - {{ $pj->nama }}</h5></li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kolom Waktu dan Tempat Pelaksanaan -->
+        <div class="col-md-6">
+            <div class="card p-4 bg-light h-100">
+                <h4>Waktu dan Tempat Pelaksanaan</h4>
+                <form action="" method="POST">
+                <!-- <form action="{ route('pengajuan-tambah', ['id_kota' => $dataKota->id_kota]) }}" method="POST"> -->
+                    @csrf
+                    
+                    <div class="mb-3">
+                        <label for="tanggal_pengajuan" class="form-label">Tanggal:</label>
+                        <input type="date" id="tanggal_pengajuan" name="tanggal_pengajuan" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sesi_pengajuan" class="form-label">Sesi:</label>
+                        <select id="sesi_pengajuan" name="sesi_pengajuan" class="form-control" required>
+                            <option value="" disabled selected>Pilih Sesi</option>
+                            <option value="1">Sesi I</option>
+                            <option value="2">Sesi II</option>
+                            <option value="3">Sesi III</option>
+                            <option value="4">Sesi IV</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="ruangan_pengajuan" class="form-label">Ruangan:</label>
+                        <select id="ruangan_pengajuan" name="ruangan_seminar3" class="form-control" required>
+                            <option value="" disabled selected>Pilih Ruangan</option>
+                            @foreach($ruanganTersedia as $ruangan)
+                                <option value="{{ $ruangan['id_ruangan'] }}">
+                                    {{ $ruangan['kode_ruangan'] }} - {{ $ruangan['nama_ruangan'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Input hidden untuk mengirim agenda -->
+                    <input type="hidden" name="agenda" value="sidang">
+
+                    <!-- Checkbox untuk menyetujui -->
+                    <div class="mb-3 form-check text-center">
+                        <input type="checkbox" id="setuju" class="form-check-input">
+                        <label for="setuju" class="form-check-label">Saya menyetujui data yang diajukan sudah benar</label>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" id="ajukan-btn" disabled>Ajukan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@stop
+
+
+@section('css')
+    {{-- Add here extra stylesheets --}}
+    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+@stop
+
+@section('js')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("setuju");
+        const submitButton = document.getElementById("ajukan-btn");
+
+        checkbox.addEventListener("change", function() {
+            submitButton.disabled = !checkbox.checked;
+        });
+    });
+</script>
+@stop
