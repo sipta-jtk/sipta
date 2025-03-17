@@ -91,11 +91,7 @@
                 bidangList.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
 
                 if (savedData.bidang.length > 0) {
-                    savedData.bidang.forEach(function(bidang) {
-                        let li = document.createElement("li");
-                        li.textContent = bidang;
-                        bidangList.appendChild(li);
-                    });
+                    bidangList.innerHTML = savedData.bidang; 
                 } else {
                     bidangList.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
                 }
@@ -141,6 +137,11 @@
                         prioritas: prioritasDosen
                     };
 
+                    FireSweetAlert('question', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
+                    if (confirmed) { 
+
+                    
+
                     // Kirim data ke backend dengan fetch
                     fetch('{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.finalisasi') }}', {
                             method: 'POST',
@@ -164,6 +165,8 @@
                             console.error('Error:', error);
                             alert("Terjadi kesalahan saat menyimpan data.");
                         });
+                    }
+                });
                 } else {
                     alert("Data tidak lengkap.");
                 }
