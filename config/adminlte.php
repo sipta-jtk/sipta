@@ -396,13 +396,26 @@ return [
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Rekapitulasi Nilai',
-                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai',
+                    'text' => 'Rekapitulasi Nilai Sidang',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai Akhir',
+                    'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengaturan Nilai Akhir',
+                    'url' => 'kelola-penilaian-ta/pengaturan-nilai-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
         ],
         [
+            'text' => 'Repository Tugas Akhir',
+            'url' => '#',
+            'icon' => 'fas fa-book',
             'text' => 'Timeline',
             'url' => '/timeline',
             'icon' => 'fas fa-fw fa-calendar',

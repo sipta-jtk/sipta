@@ -3,6 +3,8 @@
 # Load environment variables dari .env
 export $(grep -v '^#' .env | xargs)
 
+
+
 # Generate APP_KEY
 php artisan key:generate
 
