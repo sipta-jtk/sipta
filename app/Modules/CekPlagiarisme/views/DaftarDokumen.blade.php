@@ -46,7 +46,7 @@
                     penulis: item.penulis,
                     presentase: item.persentase_plagiarisme + "%",
                     status: item.status,
-                    komentar: getKomentarLink(item.review, item.id_dokumen)
+                    komentar: getKomentar(item.review, item.id_dokumen)
                 }));
 
                 $("#jsGridPlagiarism").jsGrid({
@@ -134,7 +134,7 @@
         }
     }
 
-    function getKomentarLink(komentar, id) {
+    function getKomentar(komentar, id) {
         if (komentar) {
             return '<span class="text-dark">Komentar diberikan</span>';
         } else {
