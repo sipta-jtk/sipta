@@ -21,16 +21,22 @@ class PengajuanPisahKotaSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('pengajuan_pisah_kota')->truncate();
+
+        PengajuanPisahKota::create([
+            'nim' => '221524033', 
+            'id_kota' => '1' 
+        ]);
+
+        PengajuanPisahKota::create([
+            'nim' => '221524042',
+            'id_kota' => '5'
+        ]);
+
+        PengajuanPisahKota::create([
+            'nim' => '221524061',
+            'id_kota' => '8'
+        ]);
+
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        PengajuanPisahKota::create([
-            'nim' => '221524059', // Ubah Manual
-            'id_kota' => '1' // Ubah Manual
-        ]);
-
-        PengajuanPisahKota::create([
-            'nim' => '221524049',
-            'id_kota' => '2'
-        ]);
     }
 }
