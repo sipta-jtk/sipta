@@ -226,7 +226,10 @@ return new class extends Migration
         });
         
         DB::statement("ALTER TABLE `nilai_kriteria` MODIFY `status_penilaian_dosen` ENUM('draf', 'dipublikasikan', 'belum_dinilai') NOT NULL DEFAULT 'belum_dinilai'");
-        
+
+        // 23. Delete Table mahasiswa_dosen_dokumen
+        Schema::dropIfExists('mahasiswa_dosen_dokumen');
+
         Schema::enableForeignKeyConstraints();
     }
 
@@ -236,7 +239,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
-        
+        //23. Create Table mahasiswa_dosen_dokumen
+        Schema::create('mahasiswa_dosen_dokumen', function (Blueprint $table) {
+            $table->string('nip', 22);
+            $table->string('nim', 22);
+            $table->integer('id_dokumen');
+        });
+
         // === Romusa (Reverse) ===
         // 22. Revert status_penilaian_dosen back to status_penilaian in nilai_kriteria
         try {
