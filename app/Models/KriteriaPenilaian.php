@@ -12,14 +12,14 @@ class KriteriaPenilaian extends Model
     public $timestamps = false; 
 
     protected $fillable = [
-        'kode_fta',
+        'id_fta',
         'nama_kriteria',
         'bobot_kriteria',
     ];
 
     public function formPenilaian()
     {
-        return $this->belongsTo(FormPenilaian::class, 'kode_fta', 'kode_fta');
+        return $this->belongsTo(FormPenilaian::class, 'id_fta', 'id_fta');
     }
 
     public function nilaiKriteria()

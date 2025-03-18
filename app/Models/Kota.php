@@ -68,4 +68,9 @@ class Kota extends Model
     {
         return $this->hasMany(LogAktivitas::class, 'id_kota', 'id_kota');
     }
+
+    public function verifikasiBerkasPengajuan()
+    {
+        return $this->hasMany(VerifikasiBerkasPengajuan::class, 'id_kota', 'id_kota');
+    }
 }
