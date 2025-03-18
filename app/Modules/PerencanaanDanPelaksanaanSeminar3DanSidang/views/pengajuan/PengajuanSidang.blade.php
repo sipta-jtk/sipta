@@ -7,6 +7,12 @@
 @stop
 
 @section('content')
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
+    </div>
+@endif
 <div class="container-fluid">
     <div class="row w-100 justify-content-start d-flex align-items-stretch">
         <!-- Kolom Identitas KoTA -->
@@ -48,8 +54,7 @@
         <div class="col-md-6">
             <div class="card p-4 bg-light h-100">
                 <h4>Waktu dan Tempat Pelaksanaan</h4>
-                <form action="" method="POST">
-                <!-- <form action="{ route('pengajuan-tambah', ['id_kota' => $dataKota->id_kota]) }}" method="POST"> -->
+                <form action="{{ route('pengajuan-tambah', ['id_kota' => $dataKota->id_kota]) }}" method="POST">
                     @csrf
                     
                     <div class="mb-3">
@@ -70,7 +75,7 @@
 
                     <div class="mb-5">
                         <label for="ruangan_pengajuan" class="form-label">Ruangan:</label>
-                        <select id="ruangan_pengajuan" name="ruangan_seminar3" class="form-control" required>
+                        <select id="ruangan_pengajuan" name="ruangan_pengajuan" class="form-control" required>
                             <option value="" disabled selected>Pilih Ruangan</option>
                             @foreach($ruanganTersedia as $ruangan)
                                 <option value="{{ $ruangan['id_ruangan'] }}">
@@ -99,12 +104,6 @@
 </div>
 @stop
 
-
-@section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-@stop
-
 @section('js')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -116,4 +115,19 @@
         });
     });
 </script>
+<script>
+    setTimeout(function() {
+        let alert = document.querySelector(".alert");
+        if (alert) {
+            alert.style.transition = "opacity 0.5s";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 7000);
+</script>
+@stop
+
+@section('css')
+    {{-- Add here extra stylesheets --}}
+    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop

@@ -7,6 +7,12 @@
 @stop
 
 @section('content')
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
+    </div>
+@endif
 <div class="container-fluid row w-100 d-flex align-items-stretch">
     <!-- Kolom Identitas KoTA -->
     <div class="col-md-6 d-flex">
@@ -42,8 +48,8 @@
         <div class="card p-4 bg-light w-100">
             <div>
                 <h4>Waktu dan Tempat Pelaksanaan</h4>
-                <form action="" method="POST">
-                <!-- <form action=" route('pengajuan-tambah', ['id_kota' => $dataKota->id_kota]) }}" method="POST"> -->
+                <!-- <form action="" method="POST"> -->
+                <form action="{{ route('pengajuan-tambah', ['id_kota' => $dataKota->id_kota]) }}" method="POST">
                     @csrf
                     
                     <div class="mb-3">
@@ -103,6 +109,16 @@
             submitButton.disabled = !checkbox.checked;
         });
     });
+</script>
+<script>
+    setTimeout(function() {
+        let alert = document.querySelector(".alert");
+        if (alert) {
+            alert.style.transition = "opacity 0.5s";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 7000);
 </script>
 @stop
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
+namespace App\Modules\PengajuanJadwalKotaSeminar3DanSidang\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
@@ -9,7 +9,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
 {
     public function index(): View
     {
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.view');
+        return view('PengajuanJadwalKotaSeminar3DanSidang.views.view');
     }
 
     public function indexPersetujuanPembatalanJadwalSeminar(): View
@@ -52,7 +52,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
                 'alasan_pembatalan' => 'Tanggal tidak sesuai kesepakatan'
             ],
         ]);
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalseminar', compact('jadwal'));
+        return view('PengajuanJadwalKotaSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalseminar', compact('jadwal'));
     }
 
     public function indexPersetujuanPembatalanJadwalSidang(): View
@@ -92,7 +92,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
                 'alasan_pembatalan' => 'Tanggal tidak sesuai kesepakatan'
             ],
         ]);
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalsidang', compact('jadwal'));
+        return view('PengajuanJadwalKotaSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalsidang', compact('jadwal'));
     }
 
     public function indexJadwalSeminar(): View
@@ -135,7 +135,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
                 'alasan_pembatalan' => 'Tanggal tidak sesuai kesepakatan'
             ],
         ]);
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.jadwalseminar', compact('jadwal'));
+        return view('PengajuanJadwalKotaSeminar3DanSidang.views.jadwal.jadwalseminar', compact('jadwal'));
     }
 
     public function indexJadwalSidang(): View
@@ -178,7 +178,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
                 'alasan_pembatalan' => 'Tanggal tidak sesuai kesepakatan'
             ],
         ]);
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.jadwalsidang', compact('jadwal'));
+        return view('PengajuanJadwalKotaSeminar3DanSidang.views.jadwal.jadwalsidang', compact('jadwal'));
     }
 
 }

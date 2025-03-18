@@ -2,83 +2,44 @@
 
 namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
+use Carbon\Carbon;
 use App\Modules\Controller;
+use App\Models\Kota;
+use App\Models\Mahasiswa;
+use App\Models\Penjadwalan;
+use App\Models\PengajuanJadwalKota;
+use App\Models\VerifikasiBerkasPengajuan;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\RedirectResponse;
 
-class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
+class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 {
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.view');
+        // dd(Auth::user());
+        $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
+        if (session()->has('success')) {
+            return redirect()->route('pengajuan-id', ['id_kota' => $id_kota])->with('success', session('success'));
+        }
+        
+        return redirect()->route('pengajuan-id', ['id_kota' => $id_kota]);
     }
 
-    // public function indexPengajuan(): View
-    // {
-    //     $artifact = (object) [
-    //         'seminar1' => true,
-    //         'seminar2' => true,
-    //         'seminar3' => false, // Misalnya seminar 3 belum selesai
-    //         'berkas' => true
-    //     ];
-
-    //     return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.daftarpengajuan', compact('artifact'));
-    // }
-    public function indexPengajuan(): View
+    public function indexPengajuan($id_kota): View
     {
-        // Ambil semua data verifikasi berdasarkan id_kota (tidak memfilter status)
-        // $verifikasi = VerifikasiBerkasPengajuan::where('id_kota', $id_kota)->get(); 
-
-        // Data dummy atau dari database
-        $verifikasi = collect([
-            (object) ['jenis_pangajuan' => 'seminar_3', 'status_konfirmasi' => 'disetujui'],
-            (object) ['jenis_pangajuan' => 'sidang', 'status_konfirmasi' => 'tidak_disetujui'],
-        ]);
+        // Ambil semua data verifikasi berdasarkan id_kota
+        $verifikasi = VerifikasiBerkasPengajuan::all();
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
     }
 
-    // public function indexPengajuanSeminar3($id_kota, Request $request): View
-    // {
-    //     // Ambil data kota dengan mahasiswa dan pembimbing
-    //     $kota = Kota::with([
-    //         'mahasiswa.user',
-    //         'pengajuanPembimbing.alokasiPembimbing.dosen' => function ($query) {
-    //             $query->where('status_alokasi', 'diterima');
-    //         }
-    //     ])->find($id_kota);
-
-    //     if (!$kota) {
-    //         return response()->json(['message' => 'Kota tidak ditemukan'], 404);
-    //     }
-
-    //     $mahasiswa = $kota->mahasiswa;
-    //     $pembimbing = $kota->pengajuanPembimbing->flatMap->alokasiPembimbing;
-
-    //     // Ambil data ruangan (dari database atau stub)
-    //     $useStub = $request->query('stub', false);
-
-    //     if ($useStub) {
-    //         $ruangan = collect(RuanganStub::getData());
-    //     } else {
-    //         $ruangan = Ruangan::all();
-    //     }
-
-    //     // Filter hanya ruangan yang tersedia
-    //     $ruanganTersedia = $ruangan->where('status_ruangan', 'tersedia');
-
-    //     return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.seminar3', [
-    //         'dataKota' => $kota,
-    //         'mahasiswa' => $mahasiswa,
-    //         'pembimbing' => $pembimbing,
-    //         'ruanganTersedia' => $ruanganTersedia
-    //     ]);
-    // }
-
     public function indexPengajuanSeminar3(Request $request): View
     {
         $dataKota = (object) [
+            'id_kota' => 1,
             'nama_kota' => '101',
             'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
             'mahasiswa' => collect([
@@ -138,7 +99,7 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
                     'link_photo' => 'https://example.com/photo2.jpg'
                 ],
                 [
-                    'id_ruangan' => 3,
+                    'id_ruangan' => 5,
                     'kode_ruangan' => 'D226',
                     'nama_ruangan' => 'Ruang Rapat',
                     'status_ruangan' => 'tersedia',
@@ -160,31 +121,10 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
         ]);
     }
 
-
-    // public function indexPengajuanSidang(): View
-    // {
-    //     $dataKota = (object) [
-    //         'kota_no' => '101',
-    //         'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
-    //         'mahasiswa' => [
-    //             (object) ['nama' => 'Mahasiswa 1', 'nim' => '101010101'],
-    //             (object) ['nama' => 'Mahasiswa 2', 'nim' => '202020202'],
-    //             (object) ['nama' => 'Mahasiswa 3', 'nim' => '303030303'],
-    //         ],
-    //         'pembimbing' => (object) [
-    //             'nama' => 'Dosen Pembimbing',
-    //             'nip' => '101010101'
-    //         ],
-    //         'penguji' => [
-    //             (object) ['nama' => 'Penguji 1', 'nip' => '101010101'],
-    //             (object) ['nama' => 'Penguji 2', 'nip' => '202020202']
-    //         ]
-    //     ];
-    //     return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.PengajuanSidang', compact('dataKota'));
-    // }
     public function indexPengajuanSidang(Request $request): View
     {
         $dataKota = (object) [
+            'id_kota' => 1,
             'nama_kota' => '101',
             'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
             'mahasiswa' => collect([
@@ -260,7 +200,7 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
                     'link_photo' => 'https://example.com/photo2.jpg'
                 ],
                 [
-                    'id_ruangan' => 3,
+                    'id_ruangan' => 5,
                     'kode_ruangan' => 'D226',
                     'nama_ruangan' => 'Ruang Rapat',
                     'status_ruangan' => 'tersedia',
@@ -299,7 +239,7 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
         }
 
         // Tentukan waktu `start` dan `end` berdasarkan sesi
-        $tanggal = Carbon\Carbon::parse($request->input('tanggal_pengajuan'));
+        $tanggal = Carbon::parse($request->input('tanggal_pengajuan'));
         $jadwal_waktu = [
             1 => ['start' => '07:00', 'end' => '09:00'],
             2 => ['start' => '09:00', 'end' => '11:00'],
@@ -307,26 +247,109 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
             4 => ['start' => '15:00', 'end' => '17:00'],
         ];
 
-        $sesi = $request->input('sesi_seminar3');
-        $start = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['start']);
-        $end = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['end']);
+        $sesi = $request->input('sesi_pengajuan');
+        $id_ruangan = $request->input('ruangan_pengajuan');
+
+        $start = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['start'])->format('Y-m-d H:i:s');
+        $end = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
+
+
+        // Dummy API Response http://127.0.0.1:8080/api/v1/schedules
+        $useStub = $request->query('stub', true);
+        if ($useStub) {
+            $schedules = collect([
+                [                  
+                    "id"=>1,
+                    "title"=>"seminar_3",
+                    "sesi"=>"2",
+                    "start"=>"2025-03-22T09:00:00+00:00",
+                    "end"=>"2025-03-22T11:00:00+00:00",
+                    "id_ruangan"=>5,
+                    "resourceId"=>5
+                ],
+                [                    
+                    "id"=>2,
+                    "title"=>"sidang",
+                    "sesi"=>"4",
+                    "start"=>"2025-03-20T15:00:00+00:00",
+                    "end"=>"2025-03-20T17:00:00+00:00",
+                    "id_ruangan"=>2,
+                    "resourceId"=>2
+                ],
+                [
+                    "id"=>3,
+                    "title"=>"sidang",
+                    "sesi"=>"3",
+                    "start"=>"2025-03-20T13:00:00+00:00",
+                    "end"=>"2025-03-20T15:00:00+00:00",
+                    "id_ruangan"=>2,
+                    "resourceId"=>2
+                ],
+                [ 
+                    "id"=>4,
+                    "title"=>"sidang",
+                    "sesi"=>"4",
+                    "start"=>"2025-03-19T15:00:00+00:00",
+                    "end"=>"2025-03-19T17:00:00+00:00",
+                    "id_ruangan"=>2,
+                    "resourceId"=>2                    
+                ],
+                [
+                    "id"=>5,
+                    "title"=>"seminar_1",
+                    "sesi"=>"1",
+                    "start"=>"2025-03-17T07:00:00+00:00",
+                    "end"=>"2025-03-17T09:00:00+00:00",
+                    "id_ruangan"=>2,
+                    "resourceId"=>2
+                ],
+                [
+                    "id"=>6,
+                    "title"=>"sidang",
+                    "sesi"=>"1",
+                    "start"=>"2025-03-22T07:00:00+00:00",
+                    "end"=>"2025-03-22T09:00:00+00:00",
+                    "id_ruangan"=>1,
+                    "resourceId"=>1
+                ],
+                [
+                    "id"=>8,
+                    "title"=>"sidang",
+                    "sesi"=>"3",
+                    "start"=>"2025-03-17T13:00:00+00:00",
+                    "end"=>"2025-03-17T15:00:00+00:00",
+                    "id_ruangan"=>5,
+                    "resourceId"=>5
+                ]                
+            ]);
+        }
+
+        // Cek apakah jadwal bentrok
+        $conflict = $schedules->contains(function ($schedule) use ($sesi, $id_ruangan, $tanggal) {
+            return $schedule['sesi'] == $sesi && $schedule['id_ruangan'] == $id_ruangan && Carbon::parse($schedule['start'])->toDateString() == $tanggal->format('Y-m-d');
+        });
+
+        if ($conflict) {
+            return redirect()->back()->with('error', 'Jadwal sudah terisi pada sesi dan ruangan yang dipilih. Silakan pilih sesi atau ruangan lain.');
+        }
 
         // Buat entry baru di tabel penjadwalan
         $penjadwalan = Penjadwalan::create([
-            'sesi' => $rsesi,
+            'sesi' => $sesi,
             'agenda' => $request->input('agenda'),
             'id_ruangan' => $request->input('ruangan_pengajuan'),
             'tanggal' => $request->input('tanggal_pengajuan'),
             'id_kota' => $id_kota,
-            'nip' => '',            //// belum tau
-            'start' => $start->toISOString(),
-            'end' => $end->toISOString(),
+            'nip' => '197312271999031003',            
+            'start' => $start,
+            'end' => $end,
         ]);
 
         // Tambahkan pengajuan jadwal kota yang baru
         PengajuanJadwalKota::create([
             'id_kota' => $id_kota,
             'id_penjadwalan' => $penjadwalan->id_penjadwalan,
+            'nip' => '197312271999031003',  
             'status_mahasiswa' => true,
             'status_dosen_pembimbing_1' => false,
             'status_dosen_pembimbing_2' => false,
@@ -335,6 +358,6 @@ class PerencanaanDanPelaksanaanSeminar3DanSidangController extends Controller
             'status_koordinator_ta' => false,
         ]);
 
-        return redirect()->back()->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
+        return redirect()->route('pengajuan')->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
     }
 }
