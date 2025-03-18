@@ -3,7 +3,15 @@
         <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}">
             <div class="d-flex justify-content-between align-items-center">
                 <strong>
-                    {{ $item['user'] }} <span class="text-muted small">({{ $item['role'] }})</span>
+                    {{ $item->dosen->id_dosen ?? 'Id Dosen Tidak Tersedia' }}
+
+                    <span class="text-muted small">
+                        @if($item->dosen && $item->dosen->role_dosen)
+                            ({{ $item->dosen->role_dosen }})
+                        @else
+                            (Role Tidak Tersedia)
+                        @endif
+                    </span>
                 </strong>
 
                 <div class="dropdown">
@@ -32,21 +40,23 @@
                 </div>
             </div>
 
-            <p class="mt-2 mb-1 comment-text">{{ $item['content'] }}</p>
+            <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
             <small
-                class="text-muted comment-date">{{ \Carbon\Carbon::parse($item['date'])->format('d/m/Y, H:i:s') }}</small>
+                class="text-muted comment-date">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y, H:i:s') }}</small>
         </div>
     @endforeach
+</div>
 
-    <!-- Form Input Komentar Baru -->
-    <form id="comment-form">
-        <div class="mt-3">
-            <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan komentar baru..."
-                rows="3" required></textarea>
-            <small class="text-muted float-end mt-1" id="word-count">0/500 kata</small>
-            <button type="submit" class="btn btn-primary mt-2">Kirim Komentar</button>
-        </div>
-    </form>
+
+<!-- Form Input Komentar Baru -->
+<form id="comment-form">
+    <div class="mt-3">
+        <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan komentar baru..."
+            rows="3" required></textarea>
+        <small class="text-muted float-end mt-1" id="word-count">0/500 kata</small>
+        <button type="submit" class="btn btn-primary mt-2">Kirim Komentar</button>
+    </div>
+</form>
 </div>
 
 <!-- Modal konfirmasi penghapusan -->

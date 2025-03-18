@@ -114,7 +114,7 @@
                                     <tr>
                                         <td>Fei Li et al.</td>
                                         <td>
-                                            <1%< /td>
+                                            <1%</td>
                                     </tr>
                                 </tbody>
                             </table>

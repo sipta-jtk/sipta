@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
+use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
 Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
 Route::get('/cek-plagiarisme/{id}', [CekPlagiarismeController::class, 'show'])->name('plagiarism.detail');
@@ -17,3 +18,6 @@ Route::get('/penentuan-ambang-batas', function () {
 Route::get('/cek-plagiarisme', function () {
     return view('CekPlagiarisme.views.DaftarDokumen');
 });
+
+Route::get('/cek-plagiarisme/{id}', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
+Route::get('/cek-plagiarisme-catatan', [CekPlagiarismeDetailController::class, 'povMahasiswa'])->name('povMahasiswa');
