@@ -22,11 +22,6 @@ class Dosen extends Model
         'bersedia_membimbing'
     ];
 
-    public function penjadwalan()
-    {
-        return $this->hasMany(Penjadwalan::class, 'nip', 'nip');
-    }
-
     public function kbk()
     {
         return $this->belongsTo(Kbk::class, 'id_kbk', 'id_kbk');
@@ -92,11 +87,6 @@ class Dosen extends Model
         return $this->hasMany(VerifikasiBerkasPengajuan::class, 'nip', 'nip');
     }
 
-    public function pengajuanJadwalKota()
-    {
-        return $this->hasMany(PengajuanJadwalKota::class, 'nip', 'nip');
-    }
-
     public function ambangBatas()
     {
         return $this->hasMany(AmbangBatas::class, 'nip', 'nip');
@@ -110,5 +100,10 @@ class Dosen extends Model
     public function reviewDosenPembimbing()
     {
         return $this->hasMany(ReviewDosenPembimbing::class, 'nip', 'nip');
+    }
+
+    public function pembatalan()
+    {
+        return $this->hasMany(Pembatalan::class, 'nip', 'nip');
     }
 }

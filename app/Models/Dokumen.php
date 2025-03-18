@@ -15,7 +15,6 @@ class Dokumen extends Model
         'highlight_dokumen',
         'status_plagiarisme',
         'id_ambang_batas',
-        'review',
         'kategori',
         'deskripsi',
         'versi',
@@ -25,6 +24,8 @@ class Dokumen extends Model
         'id_subkategori',
         'username',
         'status_berkas',
+        'file_path',
+        'kode_fta',
         'created_at',
         'updated_at'
     ];
