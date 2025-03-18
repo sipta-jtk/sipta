@@ -54,12 +54,7 @@ class Dokumen extends Model
     {
         return $this->hasMany(ListKalimatPlagiarisme::class, 'id_dokumen', 'id_dokumen');
     }
-
-    public function mahasiswaDosenDokumen()
-    {
-        return $this->hasMany(MahasiswaDosenDokumen::class, 'id_dokumen', 'id_dokumen');
-    }
-
+    
     public function reviewDosenPembimbing()
     {
         return $this->hasMany(ReviewDosenPembimbing::class, 'id_dokumen', 'id_dokumen');

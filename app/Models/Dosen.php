@@ -92,11 +92,6 @@ class Dosen extends Model
         return $this->hasMany(AmbangBatas::class, 'nip', 'nip');
     }
 
-    public function mahasiswaDosenDokumen()
-    {
-        return $this->hasMany(MahasiswaDosenDokumen::class, 'nip', 'nip');
-    }
-
     public function reviewDosenPembimbing()
     {
         return $this->hasMany(ReviewDosenPembimbing::class, 'nip', 'nip');
