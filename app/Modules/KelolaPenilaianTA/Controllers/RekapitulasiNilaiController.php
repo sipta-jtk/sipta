@@ -287,7 +287,7 @@ class RekapitulasiNilaiController extends Controller{
             $nilaiKategori['rataSeminar3'] = $this->calculateAverage([$nilaiKategori['seminar3Penguji1'], $nilaiKategori['seminar3Penguji2'], $nilaiKategori['seminar3Penguji3']]);
             $nilaiKategori['rataSidang'] = $this->calculateAverage([$nilaiKategori['sidangPenguji1'], $nilaiKategori['sidangPenguji2'], $nilaiKategori['sidangPenguji3']]);
             $nilaiKategori['rataPembimbing'] = $this->calculateAverage([$nilaiKategori['pembimbing1'], $nilaiKategori['pembimbing2']]);
-
+            
             // Dapatkan sumber nilai dan bobot uts, uas, dan lain-lain dari kategori penilaian apa
             $komponen_nilai_akhir = KomponenNilaiAkhir::select(
                 'komponen_nilai_akhir.nama_komponen',
@@ -296,82 +296,135 @@ class RekapitulasiNilaiController extends Controller{
             )
             ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
             ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'komponen' => $item->nama_komponen,
-                    'bobot' => $item->bobot,
-                    'sumber_nilai' => $item->nama_kategori
-                ];
-            });
+            ->get();
 
-            // // Hitung nilai uts
-            // if ($komponen_nilai_akhir->komponen == "uts"){
-            //     switch ($komponen_nilai_akhir->sumber_nilai) {
-            //         case "Seminar 2":
-            //             $nilai_komponen['uts'] = $nilaiKategori['rataSeminar2'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Seminar 3":
-            //             $nilai_komponen['uts'] = $nilaiKategori['rataSeminar3'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Sidang Akhir":
-            //             $nilai_komponen['uts'] = $nilaiKategori['rataSidang'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Dosen Pembimbing":
-            //             $nilai_komponen['uts'] = $nilaiKategori['rataPembimbing'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         default:
-            //             $nilai_komponen['uts'] = 0;
-            //     }
-            // }else if ($komponen_nilai_akhir->komponen == "uas"){
-            //     switch ($komponen_nil_akhir->sumber_nilai) {
-            //         case "Seminar 2":
-            //             $nilai_komponen['uas'] = $nilaiKategori['rataSeminar2'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Seminar 3":
-            //             $nilai_komponen['uas'] = $nilaiKategori['rataSeminar3'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Sidang Akhir":
-            //             $nilai_komponen['uas'] = $nilaiKategori['rataSidang'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Dosen Pembimbing":
-            //             $nilai_komponen['uas'] = $nilaiKategori['rataPembimbing'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         default:
-            //             $nilai_komponen['uas'] = 0;
-            //     }
-            // }else{
-            //     switch ($komponen_nilai_akhir->sumber_nilai) {
-            //         case "Seminar 2":
-            //             $nilai_komponen['lain-lain'] = $nilaiKategori['rataSeminar2'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Seminar 3":
-            //             $nilai_komponen['lain-lain'] = $nilaiKategori['rataSeminar3'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Sidang Akhir":
-            //             $nilai_komponen['lain-lain'] = $nilaiKategori['rataSidang'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         case "Dosen Pembimbing":
-            //             $nilai_komponen['lain-lain'] = $nilaiKategori['rataPembimbing'] * $komponen_nilai_akhir->bobot;
-            //             break;
-            //         default:
-            //             $nilai_komponen['lain-lain'] = 0;
-            //     }
-            // }
-
-            Log::info("Nilai kategori: " . json_encode($nilaiKategori));
-            // Log::info("Nilai komponen: " . json_encode($nilai_komponen));
+            // Hitung nilai uts
+            foreach ($komponen_nilai_akhir as $komponen) {
+                if ($komponen->nama_komponen == "uts") {
+                    switch ($komponen->nama_kategori) {
+                        case "Seminar 2":
+                            $nilai_asli['uts'] = $nilaiKategori['rataSeminar2'];
+                            $nilai_komponen['uts'] = $nilaiKategori['rataSeminar2'] * $komponen->bobot / 100;
+                            break;
+                        case "Seminar 3":
+                            $nilai_asli['uts'] = $nilaiKategori['rataSeminar3'];
+                            $nilai_komponen['uts'] = $nilaiKategori['rataSeminar3'] * $komponen->bobot / 100;
+                            break;
+                        case "Sidang Akhir":
+                            $nilai_asli['uts'] = $nilaiKategori['rataSidang'];
+                            $nilai_komponen['uts'] = $nilaiKategori['rataSidang'] * $komponen->bobot / 100;
+                            break;
+                        case "Dosen Pembimbing":
+                            $nilai_asli['uts'] = $nilaiKategori['rataPembimbing'];
+                            $nilai_komponen['uts'] = $nilaiKategori['rataPembimbing'] * $komponen->bobot / 100;
+                            break;
+                        default:
+                            $nilai_asli['uts'] = 0;
+                            $nilai_komponen['uts'] = 0;
+                            break;
+                    }
+                } elseif ($komponen->nama_komponen == "uas") {
+                    switch ($komponen->nama_kategori) {
+                        case "Seminar 2":
+                            $nilai_asli['uas'] = $nilaiKategori['rataSeminar2'];
+                            $nilai_komponen['uas'] = $nilaiKategori['rataSeminar2'] * $komponen->bobot / 100;
+                            break;
+                        case "Seminar 3":
+                            $nilai_asli['uas'] = $nilaiKategori['rataSeminar3'];
+                            $nilai_komponen['uas'] = $nilaiKategori['rataSeminar3'] * $komponen->bobot / 100;
+                            break;
+                        case "Sidang Akhir":
+                            $nilai_asli['uas'] = $nilaiKategori['rataSidang'];
+                            $nilai_komponen['uas'] = $nilaiKategori['rataSidang'] * $komponen->bobot / 100;
+                            break;
+                        case "Dosen Pembimbing":
+                            $nilai_asli['uas'] = $nilaiKategori['rataPembimbing'];
+                            $nilai_komponen['uas'] = $nilaiKategori['rataPembimbing'] * $komponen->bobot / 100;
+                            break;
+                        default:
+                            $nilai_asli['uas'] = 0;
+                            $nilai_komponen['uas'] = 0;
+                            break;
+                    }
+                } else {
+                    switch ($komponen->nama_kategori) {
+                        case "Seminar 2":
+                            $nilai_asli['lain-lain'] = $nilaiKategori['rataSeminar2'];
+                            $nilai_komponen['lain-lain'] = $nilaiKategori['rataSeminar2'] * $komponen->bobot / 100;
+                            break;
+                        case "Seminar 3":
+                            $nilai_asli['lain-lain'] = $nilaiKategori['rataSeminar3'];
+                            $nilai_komponen['lain-lain'] = $nilaiKategori['rataSeminar3'] * $komponen->bobot / 100;
+                            break;
+                        case "Sidang Akhir":
+                            $nilai_asli['lain-lain'] = $nilaiKategori['rataSidang'];
+                            $nilai_komponen['lain-lain'] = $nilaiKategori['rataSidang'] * $komponen->bobot / 100;
+                            break;
+                        case "Dosen Pembimbing":
+                            $nilai_asli['lain-lain'] = $nilaiKategori['rataPembimbing'];
+                            $nilai_komponen['lain-lain'] = $nilaiKategori['rataPembimbing'] * $komponen->bobot / 100;
+                            break;
+                        default:
+                            $nilai_asli['lain-lain'] = 0;
+                            $nilai_komponen['lain-lain'] = 0;
+                            break;
+                    }
+                }
+            }
+            
 
             // Hitung nilai akhir
+            $nilai_akhir = $nilai_komponen['uts'] + $nilai_komponen['uas'] + $nilai_komponen['lain-lain'];
 
             // Konversi nilai akhir ke huruf
+            $nilai_akhir_huruf = $this->konversiNilaiHuruf($nilai_akhir);
+            
 
             // Masukkan ke array data
+            $data[] = [
+                'nim' => $mahasiswa->nim,
+                'nama' => $mahasiswa->nama,
+                'prodi' => $mahasiswa->prodi,
+                'kelas' => $mahasiswa->kelas,
+                'kelompok' => $mahasiswa->kelompok,
+                'nilaiUts' => number_format($nilai_asli['uts'], 2), // Format angka agar lebih rapi
+                'nilaiUas' => number_format($nilai_asli['uas'], 2),
+                'nilaiLainLain' => number_format($nilai_asli['lain-lain'], 2),
+                'nilaiAkhir' => number_format($nilai_akhir, 2),
+                'predikat' => $nilai_akhir_huruf, // Nilai huruf hasil konversi
+            ];
+            
             
         }
     
         return view('KelolaPenilaianTA.views.rekapitulasi-nilai.rekapitulasi_nilai_akhir', compact('data'));
     }
+
+    private function konversiNilaiHuruf($nilai)
+    {
+        if ($nilai >= 85) {
+            return 'A';
+        } elseif ($nilai >= 80) {
+            return 'A-';
+        } elseif ($nilai >= 75) {
+            return 'B+';
+        } elseif ($nilai >= 70) {
+            return 'B';
+        } elseif ($nilai >= 65) {
+            return 'B-';
+        } elseif ($nilai >= 60) {
+            return 'C+';
+        } elseif ($nilai >= 55) {
+            return 'C';
+        } elseif ($nilai >= 50) {
+            return 'C-';
+        } elseif ($nilai >= 40) {
+            return 'D';
+        } else {
+            return 'E';
+        }
+    }
+
 
     /**
      * Export data rekapitulasi nilai ke dalam file excel
