@@ -55,7 +55,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswaList as $key => $mhs)
+                            @foreach($mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/2/masukan') }}" > <!-- method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $id . '/nilai/' . $data['kota']) }}"  method="POST"> <!-- method="POST" -->
             @csrf
 
             <div class="row mt-4">
@@ -89,7 +89,7 @@
                                 <th>Kriteria Penilaian Penguji</th>
                                 <th>Bobot Nilai</th>
                                 <th>Rentang Nilai</th>
-                                <th style="min-width: 100px;" colspan="{{ count($mahasiswaList) }}">Nilai Perorangan</th>
+                                <th style="min-width: 100px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,8 +106,8 @@
                                 </td>
                                 <td>40 %</td>
                                 <td>0 - 100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
+                                @foreach($mahasiswa as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                             <tr>
@@ -124,8 +124,8 @@
                                 </td>
                                 <td>20 %</td>
                                 <td>0 - 100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
+                                @foreach($mahasiswa as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                             <tr>
@@ -133,8 +133,8 @@
                                 <td>Tanya Jawab (penguasaan materi terkait tugas yang dikerjakan)</td>
                                 <td>40 %</td>
                                 <td>0 - 100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[]" min="0" max="100"></td>
+                                @foreach($mahasiswa as $key => $mhs)
+                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
                                 @endforeach
                             </tr>
                         </tbody>

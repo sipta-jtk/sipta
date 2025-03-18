@@ -64,7 +64,7 @@
                                     <td> <a class="btn btn-danger">Feedback</a> </td>
                                 @else
                                     <td> 
-                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/2/nilai') }}" class="btn btn-primary">Nilai</a> 
+                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
                                         <a href="{{ url('kelola-penilaian-ta/nilai-seminar/2/masukan') }}" class="btn btn-primary">Feedback</a> 
                                     </td>
                                 @endif

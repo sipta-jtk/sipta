@@ -35,18 +35,14 @@ class PengelolaanNilaiController extends Controller{
         $id_kategori = $kategoriPenilaian->id_kategori;
         $nama_kategori = $kategoriPenilaian->nama_kategori;
 
-        // angka 1 dibawah untuk menandakan kategori mana yang ingin diambil
         $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($id_kategori) {
             $query->where('id_kategori', $id_kategori);
         }, 'nilaiKategori.dosen', 'user'])->get();
 
-        // Log::info('Data mahasiswa: ' . JSON_ENCODE($data, JSON_PRETTY_PRINT));
 
         $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
 
-        // Log::info('Filtered data:' . JSON_ENCODE($filteredData, JSON_PRETTY_PRINT));
-
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'nama_kategori'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'nama_kategori', 'id'));
     }
 
     /**
@@ -58,8 +54,6 @@ class PengelolaanNilaiController extends Controller{
     $startTime = microtime(true);
 
     $filteredData = [];
-
-    Log::info('Data mahasiswa: ' . JSON_ENCODE($data, JSON_PRETTY_PRINT));
 
     foreach ($data as $index => $mahasiswa) {
         $nilaiArray = [0, 0, 0];
@@ -73,13 +67,12 @@ class PengelolaanNilaiController extends Controller{
         $filtered = array_filter($nilaiArray, fn($nilai) => $nilai > 0);
         $filteredData[] = [
             'index' => $index + 1,
-            'nim' => $mahasiswa->nim,
+            'kota' => $mahasiswa->kota->id_kota,
             'nama' => $mahasiswa->user->nama,
             'kelompok' => $mahasiswa->id_kota,
             'nilai' => $nilaiArray,
             'kode_dosen' => $kodeDosenArray,
             'rata-rata' => count($filtered) > 0 ? array_sum($filtered) / count($filtered) : 0,
-            'nim' => $mahasiswa->nim
         ];
     }
 
