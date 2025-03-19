@@ -14,11 +14,9 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Nilai {{ $nama_kategori }}</h1>
+        <h1 class="mb-0">Detail Nilai {{ $namaKategori }}</h1>
     </div>
 @stop
-
-
 
 @section('content')
     <div class="p-4">
@@ -35,7 +33,7 @@
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         <th rowspan="2" class="align-middle">Rata-rata</th>
-                        @if (strtolower($nama_kategori) == 'seminar 1' || strtolower($nama_kategori) == 'seminar 2')
+                        @if (strtolower($namaKategori) == 'seminar 1' || strtolower($namaKategori) == 'seminar 2')
                             <th rowspan="2" class="align-middle">Aksi</th>
                         @endif
                     </tr>
@@ -58,15 +56,17 @@
                                 <td> {{ $nilai }} </td>
                             @endforeach
                             <td> {{ $data['rata-rata'] }} </td>
-                            @if (strtolower($nama_kategori) == 'seminar 1' || strtolower($nama_kategori) == 'seminar 2')
+                            @if (strtolower($namaKategori) == 'seminar 1' || strtolower($namaKategori) == 'seminar 2')
                                 @if (count(array_filter($data['nilai'], fn($value) => $value !== null && $value !== 0)) == 3)
                                     <td> <a class="btn btn-danger">Nilai</a> </td> 
                                     <td> <a class="btn btn-danger">Feedback</a> </td>
                                 @else
                                     <td> 
                                         <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
-                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/2/masukan') }}" class="btn btn-primary">Feedback</a> 
-                                    </td>
+                                        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
+                                        </form>
                                 @endif
                             @endif
                         </tr>
@@ -86,4 +86,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const finalisasiButtons = document.querySelectorAll('.finalisasi-button');
+            finalisasiButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const form = this.closest('form');
+                    if (confirm('Apakah Anda yakin ingin memfinalisasi nilai ini?')) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @stop

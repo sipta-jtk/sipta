@@ -31,18 +31,17 @@ class PengelolaanNilaiController extends Controller{
      */
     public function detailNilaiMahasiswa($id): View
     {
-        $kategoriPenilaian = kategoriPenilaian::where('kode_fta', $id)->firstOrFail();
-        $id_kategori = $kategoriPenilaian->id_kategori;
-        $nama_kategori = $kategoriPenilaian->nama_kategori;
+        $kategoriPenilaian = kategoriPenilaian::where('nama_kategori','Seminar ' . $id)->firstOrFail();
+        $idKategori = $kategoriPenilaian->id_kategori;
+        $namaKategori = $kategoriPenilaian->nama_kategori;
 
-        $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($id_kategori) {
-            $query->where('id_kategori', $id_kategori);
+        $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($idKategori) {
+            $query->where('id_kategori', $idKategori);
         }, 'nilaiKategori.dosen', 'user'])->get();
-
 
         $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'nama_kategori', 'id'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'namaKategori', 'id'));
     }
 
     /**

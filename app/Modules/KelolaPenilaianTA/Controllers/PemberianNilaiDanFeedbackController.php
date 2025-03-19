@@ -18,60 +18,52 @@ use Illuminate\Support\Facades\Log;
 
 class PemberianNilaiDanFeedbackController extends Controller
 {
-     /**
-     * Menampilkan halaman pemberian nilai seminar 1
+    /**
+     * Akses halaman pemberian nilai
      */
-    public function pengisianMasukanSeminar1(): View
+    public function pengisianNilaiSeminar($seminar, $kota): View
     {
-
-        // ID kota statis
-        $idKota = 2;
-
-        // Ambil hanya mahasiswa dengan id_kota = 2
-        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
-
-        // Ambil informasi KoTA berdasarkan id_kota = 2
-        $kotaInfo = Kota::where('id_kota', $idKota)->first();
-
-        // Data Mahasiswa
-        $mahasiswa = [
-            'kode_fta' => 'FTA-04',
-            'tanggal' => '7 Maret 2025',
-            'waktu' => '10:00 - 11:00'
-            // 'id_kota' => 'KoTA-313',
-            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
-        ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+        if($seminar == 1) {
+            
+        } else if($seminar == 2) {
+            return $this->pengisianNilaiSeminarII($seminar, $kota);
+        } else if($seminar == 3) {
+            return $this->pengisianNilaiSeminarIII();
+        } else {
+            return $this->pengisianNilaiSidangAkhir();
+        } 
     }
 
+    
     /**
      * Menampilkan halaman pemberian nilai seminar 2
      * 
      */
-    private function pengisianNilaiSeminarII($id, $kota): View
+    private function pengisianNilaiSeminarII($seminar, $kota): View
     {
+        $kodeFta = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)->first()->kode_fta;
+
         // Mengambil semua kriteria beserta rubriknya
-        $kriteria = KriteriaPenilaian::with('rubrik')
-                ->where('kode_fta', $id)
+        $kriteria = KriteriaPenilaian::with('nilaiKriteria')
+                ->where('kode_fta', $kodeFta)
                 ->get();
 
-        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $id
-        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $id)
-                    ->where('kode_fta', $id) 
+        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $seminar
+        $kategoriPenilaian = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)
+                    ->where('kode_fta', $seminar) 
                     ->with('formulirPenilaian')
                     ->first();
 
         // Mengambil mahasiswa berdasarkan kota yang sesuai dengan seminar
         $mahasiswa = Mahasiswa::where('id_kota', $kota)
                     ->with('user', 'kota.penjadwalan')
-                    ->get();
+                    ->get();       
 
         // Melakukan mapping data mahasiswa
-        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
+        $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa);
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', 
-                    compact('data', 'mahasiswa', 'id', 'kriteria'));
+                    compact('data', 'mahasiswa', 'seminar', 'kriteria'));
     }
 
     /**
@@ -90,21 +82,7 @@ class PemberianNilaiDanFeedbackController extends Controller
         return $data;
     }
 
-    /**
-     * Menampilkan halaman pemberian masukan seminar 2
-     * 
-     */
-    public function pengisianMasukanSeminarII($id, $kota): View
-    {
-        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->with('user', 'kota.penjadwalan')->get();
-
-        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('data', 'mahasiswa', 'id'));
-    }
-
-    /**
+     /**
      * Menampilkan halaman pemberian nilai seminar 3
      * 
      */
@@ -137,36 +115,6 @@ class PemberianNilaiDanFeedbackController extends Controller
 
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
-    }
-
-    /**
-     * Menampilkan halaman pemberian masukan seminar 3
-     * 
-     */
-    public function pengisianMasukanSeminarIII(): View
-    {
-        // Ambil kode fta
-        $kodeFTA = KategoriPenilaian::where('id_kategori', 3)->first()->kode_fta; // masih blm bisa
-
-        // ID kota statis
-        $idKota = 1;
-
-        // Ambil hanya mahasiswa dengan id_kota = 1
-        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
-
-        // Ambil informasi KoTA berdasarkan id_kota = 1
-        $kotaInfo = Kota::where('id_kota', $idKota)->first();
-
-        // Data Mahasiswa
-        $mahasiswa = [
-            'kode_fta' => 'FTA-012',
-            'tanggal' => '7 Maret 2025',
-            'waktu' => '10:00 - 11:00'
-            // 'id_kota' => 'KoTA-313',
-            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
-        ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
     }
 
     /**
@@ -277,35 +225,81 @@ class PemberianNilaiDanFeedbackController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_sidang_akhir', compact('mahasiswa', 'penilaian', 'mahasiswaList', 'kotaInfo'));
     }
 
-    /**
-     * Menampilkan halaman pemberian masukan sidang akhir
-     * 
-     */
-    public function pengisianMasukanSidangAkhir(): View
+    public function simpanNilaiSeminar(Request $request, $seminar, $kota): View
     {
-        // Ambil kode fta
-        $kodeFTA = KategoriPenilaian::where('id_kategori', 3)->first()->kode_fta; // masih blm bisa
+        if ($seminar == 1) {
+            $this->simpanNilaiSeminarI($request, $seminar, $kota);
+        } else if ($seminar == 2) {
+            $id_kategori = KategoriPenilaian::where('nama_kategori', 'Seminar '. $seminar)->first()->id_kategori;
+            return $this->simpanNilaiSeminarII($request, $id_kategori, $kota);
+        } else if ($seminar == 3) {
+            $this->simpanNilaiSeminarIII($request, $kota);
+        } else {
+            $this->simpanNilaiSidangAkhir($request, $kota);
+        }
+    }
 
-        // ID kota statis
-        $idKota = 1;
+    private function simpanNilaiSeminarII(Request $request, $idKategori, $kota): View
+    {
+        $nip = auth()->user()->username;
+        $nilai = $request->except('_token');
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
+    
+        $this->inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idKategori);
+        $this->inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idKategori);
+    
+        $pengelolaanNilai = new PengelolaanNilaiController();
+        return $pengelolaanNilai->detailNilaiMahasiswa(2);
+    }
+    
 
-        // Ambil hanya mahasiswa dengan id_kota = 1
-        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+    /**
+     * Helper function untuk input nilai mahasiswa ke database
+     */
+    private function inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idKategori): void
+    {
+        $nilai_rata_rata = [];
+        $bobot = [0.4, 0.2, 0.4];
+        
+        // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
+        foreach ($nilai as $index => $values) {
+            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobot);
+            $nilai_rata_rata[] = $average;
+        }
 
-        // Ambil informasi KoTA berdasarkan id_kota = 1
-        $kotaInfo = Kota::where('id_kota', $idKota)->first();
-
-        // Data Mahasiswa
-        $mahasiswa = [
-            'kode_fta' => 'FTA-015',
-            'tanggal' => '7 Maret 2025',
-            'waktu' => '10:00 - 11:00'
-        ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+        foreach ($mahasiswa as $index => $mhs) {
+            $mhs->nilaiKategori()->create([
+                'nim' => $mhs->nim,
+                'nip' => $nip,
+                'id_kategori' => $idKategori,
+                'nilai' => $nilai_rata_rata[$index],
+            ]);
+        }
     }
 
     /**
+     * Helper function untuk input nilai kriteria penilaian ke database
+     */
+    private function inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idKategori): void
+    {
+        $kodeFTA = KategoriPenilaian::where('id_kategori', $idKategori)->first()->kode_fta;
+        $kriteriaPenilaian = KriteriaPenilaian::where('kode_fta', $kodeFTA)->get();
+    
+        foreach($mahasiswa as $index => $mhs) {
+            foreach($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
+                $nilaiKriteria = $nilai['nilai' . $index][$kriteriaIndex];
+                $mhs->nilaiKriteria()->create([
+                    'nim' => $mhs->nim,
+                    'nip' => $nip,
+                    'id_kriteria' => $kriteria->id_kriteria,
+                    'nilai_kriteria' => $nilaiKriteria,
+                    'status_nilai' => 0
+                ]);
+            }
+        }
+    }
+
+        /**
      * Menampilkan halaman pemberian nilai tugas akhir
      * 
      */
@@ -389,55 +383,6 @@ class PemberianNilaiDanFeedbackController extends Controller
     }
 
     /**
-     * Akses halaman pemberian nilai
-     */
-    public function pengisianNilaiSeminar($id, $kota): View
-    {
-        if($id == 1) {
-            
-        } else if($id == 2) {
-            return $this->pengisianNilaiSeminarII($id, $kota);
-        } else if($id == 3) {
-            return $this->pengisianNilaiSeminarIII();
-        } else {
-            return $this->pengisianNilaiSidangAkhir();
-        } 
-    }
-
-    public function simpanNilaiSeminar(Request $request, $id, $kota): View
-    {
-        if ($id == 1) {
-            $this->simpanNilaiSeminarI($request, $id, $kota);
-        } else if ($id == 2) {
-            return $this->simpanNilaiSeminarII($request, $id, $kota);
-        } else if ($id == 3) {
-            $this->simpanNilaiSeminarIII($request, $kota);
-        } else {
-            $this->simpanNilaiSidangAkhir($request, $kota);
-        }
-    }
-
-    private function simpanNilaiSeminarII(Request $request, $id, $kota): View
-    {
-        $nip = '197312271999031003';
-        $nilai = $request->except('_token');
-        $nilai_mahasiswa = [];
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
-        $bobot = [0.4, 0.2, 0.4];
-        
-        // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
-        foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobot);
-            $nilai_mahasiswa[] = $average;
-        }
-    
-        $this->inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip, $id);
-    
-        $pengelolaanNilai = new PengelolaanNilaiController();
-        return $pengelolaanNilai->detailNilaiMahasiswa($id);
-    }
-
-    /**
      * Helper function untuk menghitung rata-rata nilai
      */
     public function hitungRataRataNilaiDenganBobot(array $nilai, array $bobot): float
@@ -468,4 +413,104 @@ class PemberianNilaiDanFeedbackController extends Controller
             return $this->pengisianMasukanSidangAkhir();
         } 
     }
+
+    /**
+     * Menampilkan halaman pemberian nilai seminar 1
+     */
+    public function pengisianMasukanSeminar1(): View
+    {
+
+        // ID kota statis
+        $idKota = 2;
+
+        // Ambil hanya mahasiswa dengan id_kota = 2
+        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+
+        // Ambil informasi KoTA berdasarkan id_kota = 2
+        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+
+        // Data Mahasiswa
+        $mahasiswa = [
+            'kode_fta' => 'FTA-04',
+            'tanggal' => '7 Maret 2025',
+            'waktu' => '10:00 - 11:00'
+            // 'id_kota' => 'KoTA-313',
+            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
+        ];
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_1', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+    }
+
+    /**
+     * Menampilkan halaman pemberian masukan seminar 2
+     * 
+     */
+    public function pengisianMasukanSeminarII($id, $kota): View
+    {
+        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)->with('user', 'kota.penjadwalan')->get();
+
+        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('data', 'mahasiswa', 'id'));
+    }
+
+    /**
+     * Menampilkan halaman pemberian masukan seminar 3
+     * 
+     */
+    public function pengisianMasukanSeminarIII(): View
+    {
+        // Ambil kode fta
+        $kodeFTA = KategoriPenilaian::where('id_kategori', 3)->first()->kode_fta; // masih blm bisa
+
+        // ID kota statis
+        $idKota = 1;
+
+        // Ambil hanya mahasiswa dengan id_kota = 1
+        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+
+        // Ambil informasi KoTA berdasarkan id_kota = 1
+        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+
+        // Data Mahasiswa
+        $mahasiswa = [
+            'kode_fta' => 'FTA-012',
+            'tanggal' => '7 Maret 2025',
+            'waktu' => '10:00 - 11:00'
+            // 'id_kota' => 'KoTA-313',
+            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
+        ];
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_III', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+    }
+
+    /**
+     * Menampilkan halaman pemberian masukan sidang akhir
+     * 
+     */
+    public function pengisianMasukanSidangAkhir(): View
+    {
+        // Ambil kode fta
+        $kodeFTA = KategoriPenilaian::where('id_kategori', 3)->first()->kode_fta; // masih blm bisa
+
+        // ID kota statis
+        $idKota = 1;
+
+        // Ambil hanya mahasiswa dengan id_kota = 1
+        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
+
+        // Ambil informasi KoTA berdasarkan id_kota = 1
+        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+
+        // Data Mahasiswa
+        $mahasiswa = [
+            'kode_fta' => 'FTA-015',
+            'tanggal' => '7 Maret 2025',
+            'waktu' => '10:00 - 11:00'
+        ];
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_sidang_akhir', compact('mahasiswa', 'mahasiswaList', 'kotaInfo'));
+    }
+
 }
