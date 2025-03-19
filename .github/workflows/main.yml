@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -i private_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << EOF
-            sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${{ env.RUN_MIGRATIONS }}/' ~/sipta/development/.env
+            sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${{ env.RUN_MIGRATIONS }}/' ~/sipta/production/.env
             echo "Updated RUN_MIGRATIONS=${{ env.RUN_MIGRATIONS }} in .env"
           EOF
           rm -f private_key
