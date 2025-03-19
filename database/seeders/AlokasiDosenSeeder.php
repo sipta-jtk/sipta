@@ -14,7 +14,15 @@ class AlokasiDosenSeeder extends Seeder
     public function run(): void
     {
         DB::table('alokasi_dosen')->insert([
-            ['id_alokasi' => 1, 'id_pengajuan_pembimbing' => 1, 'nip' => '197312271999031003', 'urutan_prioritas_terpilih' => 1, 'status_alokasi' => 'belum_fix', 'catatan' => null, 'tipe_alokasi' => 'pembimbing'],
+            [
+                'id_alokasi' => 1, 
+                'id_pengajuan_pembimbing' => 1, 
+                'nip' => '197312271999031003', 
+                'urutan_prioritas_terpilih' => 1, 
+                'status_alokasi' => 'belum_fix', 
+                'catatan' => null, 
+                'tipe_alokasi' => 'pembimbing'
+            ],
             ['id_alokasi' => 2, 'id_pengajuan_pembimbing' => 1, 'nip' => '196101141992021001', 'urutan_prioritas_terpilih' => 2, 'status_alokasi' => 'belum_fix', 'catatan' => null, 'tipe_alokasi' => 'pembimbing'],
             ['id_alokasi' => 3, 'id_pengajuan_pembimbing' => 1, 'nip' => '196210211993031002', 'urutan_prioritas_terpilih' => 1, 'status_alokasi' => 'fix', 'catatan' => null, 'tipe_alokasi' => 'penguji'],
             ['id_alokasi' => 4, 'id_pengajuan_pembimbing' => 2, 'nip' => '196610181995121001', 'urutan_prioritas_terpilih' => 1, 'status_alokasi' => 'fix', 'catatan' => null, 'tipe_alokasi' => 'pembimbing'],
