@@ -77,7 +77,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $id . '/nilai/' . $data['kota']) }}"  method="POST"> <!-- method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $id . '/nilai/' . $data['kota']) }}" method="POST">
             @csrf
 
             <div class="row mt-4">
@@ -85,11 +85,16 @@
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th>No</th>
-                                <th>Kriteria Penilaian Penguji</th>
-                                <th>Bobot Nilai</th>
-                                <th>Rentang Nilai</th>
-                                <th style="min-width: 100px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                                <th rowspan="2" class="align-content-center">No</th>
+                                <th rowspan="2" class="align-content-center">Kriteria Penilaian Penguji</th>
+                                <th rowspan="2" class="align-content-center">Bobot Nilai</th>
+                                <th rowspan="2" class="align-content-center">Rentang Nilai</th>
+                                <th colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                            </tr>
+                            <tr>
+                                @foreach($mahasiswa as $key => $mhs)
+                                    <th data-toggle="popover" data-content="{{ $mhs->user->nama }}">{{ $key + 1 }}</th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody>
@@ -156,6 +161,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
@@ -163,4 +169,22 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Menginisialisasi popover untuk elemen yang sudah ada
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover',
+                placement: 'top',
+                html: true
+            });
+
+            // Event delegation untuk elemen dinamis
+            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
+                $(this).popover('show');
+            }).on('mouseleave', '[data-toggle="popover"]', function () {
+                $(this).popover('hide');
+            });
+        });
+    </script>
 @stop
