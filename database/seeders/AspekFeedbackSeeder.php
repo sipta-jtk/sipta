@@ -20,7 +20,6 @@ class AspekFeedbackSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('aspek_feedback')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
             [
@@ -78,5 +77,7 @@ class AspekFeedbackSeeder extends Seeder
         foreach ($data as $item) {
             AspekFeedback::create($item);
         }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

@@ -58,7 +58,7 @@ class KehadiranSeeder extends Seeder
         'foto_sidang' => 'sidang5.png',
         'id_penjadwalan' => 5,
         'username' => '221524053',
-        'status_hadir' => 'pending',
+        'status_hadir' => 'hadir',
         ],
     ]);
     }

@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use App\Models\Dokumen;
+use Illuminate\Support\Str;
 
 class DokumenSeeder extends Seeder
 {

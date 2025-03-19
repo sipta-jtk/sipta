@@ -78,7 +78,7 @@ class KotaSeeder extends Seeder
                 'status_kota' => 'lulus'
             ],
             [
-                'id_kota' => 7,
+                'id_kota' => 8,
                 'judul_ta' => 'PENERAPAN KNOWLEDGE MANAGEMENT DALAM SISTEM PENDUKUNG KEPUTUSAN AKADEMIK',
                 'id_bidang' => 6,
                 'nama_kota' => 'Kota 203',

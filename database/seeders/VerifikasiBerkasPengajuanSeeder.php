@@ -27,7 +27,7 @@ class VerifikasiBerkasPengajuanSeeder extends Seeder
                 'catatan' => 'Berkas lengkap dan sesuai persyaratan.',
                 'tanggal_pengajuan' => '2025-01-05 00:00:00',
                 'tanggal_verifikasi' => '2025-01-12 00:00:00',
-                'jenis_pangajuan' => 'seminar_3',
+                'jenis_pengajuan' => 'seminar_3',
                 'id_kota' => 2,
             ],
             [
@@ -37,7 +37,7 @@ class VerifikasiBerkasPengajuanSeeder extends Seeder
                 'catatan' => 'Format dokumen tidak sesuai ketentuan.',
                 'tanggal_pengajuan' => '2025-01-10 00:00:00',
                 'tanggal_verifikasi' => '2025-04-17 00:00:00',
-                'jenis_pangajuan' => 'sidang_akhir',
+                'jenis_pengajuan' => 'sidang_akhir',
                 'id_kota' => 6,
             ],
         ]);

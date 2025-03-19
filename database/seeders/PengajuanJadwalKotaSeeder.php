@@ -32,9 +32,9 @@ class PengajuanJadwalKotaSeeder extends Seeder
         [
             'status_mahasiswa' => true,
             'status_dosen_pembimbing_1' => true,
-            'status_dosen_pembimbing_2' => null,
-            'status_dosen_penguji_1' => true,
-            'status_dosen_penguji_2' => null,
+            'status_dosen_pembimbing_2' => false,
+            'status_dosen_penguji_1' => false,
+            'status_dosen_penguji_2' => false,
             'status_koordinator_ta' => true,
             'id_penjadwalan' => 2,
             'id_kota' => 6,

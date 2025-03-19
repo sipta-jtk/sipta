@@ -15,18 +15,18 @@ class PembatalanSeeder extends Seeder
     {
         DB::table('pembatalan')->insert([
             [
-                'id' => 1,
-                'jadwal_id' => 5,
-                'alasan' => 'Salah satu penguji tidak bisa hadir, sehingga jadwal sidang harus diubah.',
+                'id_pembatalan' => 1,
+                'id_penjadwalan' => 5,
+                'alasan_pembatalan' => 'Salah satu penguji tidak bisa hadir, sehingga jadwal sidang harus diubah.',
                 'nip' => '198004192005011002',
-                'is_active' => true,
+                'status_pembatalan' => true,
             ],
             [
-                'id' => 2,
-                'jadwal_id' => 4,
-                'alasan' => 'Jadwal bentrok dengan acara lain di kampus yang memerlukan ruangan tersebut.',
+                'id_pembatalan' => 2,
+                'id_penjadwalan' => 4,
+                'alasan_pembatalan' => 'Jadwal bentrok dengan acara lain di kampus yang memerlukan ruangan tersebut.',
                 'nip' => '198004192005011002',
-                'is_active' => null,
+                'status_pembatalan' => false,
             ],
         ]);
     }

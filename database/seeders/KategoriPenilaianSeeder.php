@@ -44,7 +44,7 @@ class KategoriPenilaianSeeder extends Seeder
             [
                 'id_kategori' => 5,
                 'id_fta' => 8,
-                'nama_kategori' => 'Pelaksanaan Tugas Akhir',
+                'nama_kategori' => 'Pelaksanaan TA',
                 'kunci_penilaian' => false,
             ]
         ];

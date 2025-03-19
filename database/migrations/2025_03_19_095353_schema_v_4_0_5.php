@@ -34,6 +34,8 @@ return new class extends Migration
             $table->foreign('nip')->references('nip')->on('dosen')->onDelete('cascade');
             $table->foreign('nim')->references('nim')->on('mahasiswa')->onDelete('cascade');
         });
+
+        
     }
 
     /**

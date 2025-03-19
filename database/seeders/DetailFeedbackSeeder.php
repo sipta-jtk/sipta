@@ -24,7 +24,7 @@ class DetailFeedbackSeeder extends Seeder
             'id_feedback' => 1,
             'id_kota' => 5,
             'nip' => '199312282019031013',
-            'status_penilaian' => 'draf',
+            'status_penilaian_dosen' => 'draf',
             'isi_feedback' => "Struktur laporan sudah sistematis, mencakup pendahuluan, metode, hasil, dan kesimpulan.
         Penjelasan algoritma Content-Based Filtering cukup jelas dan menggunakan referensi yang relevan.
         Hasil evaluasi model sudah ditampilkan dengan metrik seperti Precision dan Recall, Penjelasan dataset perlu lebih rinci, misalnya jumlah data, sumber data, dan preprocessing yang dilakukan.

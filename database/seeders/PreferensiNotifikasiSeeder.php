@@ -21,7 +21,7 @@ class PreferensiNotifikasiSeeder extends Seeder
         ([
             'username' => '197312271999031003',
             'whatsapp' => 1,
-            'in_app' => 1,
+            'reminder_h5' => 1,
             'email' => 1
         ]);
 
@@ -29,7 +29,7 @@ class PreferensiNotifikasiSeeder extends Seeder
         ([
             'username' => '196810141993032002',
             'whatsapp' => 1,
-            'in_app' => 1,
+            'reminder_h5' => 1,
             'email' => 0
         ]);
 
@@ -37,7 +37,7 @@ class PreferensiNotifikasiSeeder extends Seeder
         ([
             'username' => '197201061999031002',
             'whatsapp' => 0,
-            'in_app' => 1,
+            'reminder_h5' => 1,
             'email' => 1
         ]);
     }

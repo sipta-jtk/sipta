@@ -49,7 +49,6 @@ class AmbangBatasSeeder extends Seeder
         ];
 
         foreach ($data as $item)
-        foreach ($data as $item)
         {
             AmbangBatas::create($item);
         }
