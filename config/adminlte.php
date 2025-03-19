@@ -366,9 +366,33 @@ return [
                     'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
                 [
-                    'text' => 'Rekap FTA',
-                    'url' => '/PengajuanAlokasiPembimbing/RekapFTA02',
+                    'text' => 'Jadwal Seminar 3',
+                    'url' => 'jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Jadwal Sidang',
+                    'url' => 'jadwal-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Seminar 3',
+                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Sidang',
+                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -432,24 +456,19 @@ return [
                     'url' => '/artefak',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
-                // [
-                //     'text' => 'Resume Bimbingan',
-                //     'url' => '/#',
-                //     // 'icon' => 'far fa-fw fa-file',
-                // ],
             ]
         ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
+        ],
         ['header' => 'Pengaturan Pengguna'],
-        // [
-        //     'text' => 'profile',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'change_password',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
         [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
@@ -461,57 +480,9 @@ return [
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => '/#',
-                    // 'submenu' => [
-                    //     [
-                    //         'text' => 'Koordinator TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Pembimbing TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Penguji TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     // [
-                    //     //     'text' => 'level_two',
-                    //     //     'url' => '#',
-                    //     //     'submenu' => [
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //     ],
-                    //     // ],
-                    // ],
                 ],
-                // [
-                //     'text' => 'level_one',
-                //     'url' => '#',
-                // ],
             ],
         ],
-        // ['header' => 'labels'],
-        // [
-        //     'text' => 'important',
-        //     'icon_color' => 'red',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url' => '#',
-        // ],
     ],
 
     /*
