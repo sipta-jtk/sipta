@@ -11,7 +11,6 @@ Route::group(['prefix' => 'kelola-pengajuan-jadwal', 'as' => 'kelola.'], functio
         Route::post('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasi'])->name('verifikasi');
     });
 });
-use App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers\PerencanaanDanPelaksanaanSeminarDanSidangController;
 
 // Route untuk menampilkan halaman presensi
 Route::get('/PerencanaanDanPelaksanaanSeminarDanSidang', [PerencanaanDanPelaksanaanSeminarDanSidangController::class, 'index']);
