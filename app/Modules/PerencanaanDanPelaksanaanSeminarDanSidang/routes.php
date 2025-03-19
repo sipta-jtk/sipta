@@ -12,6 +12,8 @@ Route::group(['prefix' => 'kelola-pengajuan-jadwal', 'as' => 'kelola.'], functio
     });
 });
 
+Route::get('/json', [VerifikasiPengajuanJadwalController::class, 'json']);
+
 // Route untuk menampilkan halaman presensi
 Route::get('/PerencanaanDanPelaksanaanSeminarDanSidang', [PerencanaanDanPelaksanaanSeminarDanSidangController::class, 'index']);
 
