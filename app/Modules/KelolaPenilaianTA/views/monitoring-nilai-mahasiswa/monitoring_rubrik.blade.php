@@ -6,8 +6,8 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => url('kelola-penilaian-ta/monitoring-mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                ['url' => url('/'), 'label' => 'Home'],
+                ['url' => url('kelola-penilaian-ta/monitoring/mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                 ['url' => '', 'label' => 'Detail Rubrik']
             ]
         ])
@@ -19,7 +19,7 @@
 @stop
 
 @section('content')
-<h6>Kategori : {{ $kategori->nama_kategori }}</h6>
+<h6>Kategori : {{ $kategori->nama_fta }}</h6>
 <h6>Rubrik Penilaian</h6>
 <div class="card">
     <!-- /.card-header -->

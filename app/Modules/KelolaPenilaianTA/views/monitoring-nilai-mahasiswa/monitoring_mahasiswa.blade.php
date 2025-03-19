@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
         ])
@@ -86,18 +86,27 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($kategoriList as $kategori)
+                @foreach ($ftaList as $fta)
                     <tr>
-                        <td style="vertical-align: middle; white-space: nowrap;">{{ $kategori->nama_kategori }}</td>
+                        <td style="vertical-align: middle; white-space: nowrap;">{{ $fta->nama_fta }}</td>
                         <td class="text-center">
-                            <a href="{{ route('monitoring.rubrik', ['kodeFta' => $kategori->kode_fta, 'idProdi' => $idProdi]) }}" 
+                            <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $fta->kode_fta, 'idProdi' => $idProdi]) }}'" 
                                 class="btn btn-primary btn-sm px-3">
-                                 Lihat Rubrik
-                             </a>                             
+                                Lihat Rubrik
+                            </button>                                                         
                         </td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                        </td>
+                            <div class="tooltip-wrapper position-relative">
+                                <button id="feedbackBtn"
+                                    class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled' }}"
+                                    data-url="{{ route('monitoring.feedback', $fta->kode_fta) }}">
+                                    Lihat Feedback
+                                </button>
+                                <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
+                                    <strong>Feedback belum tersedia!</strong>
+                                </div>
+                            </div>
+                        </td>                                               
                     </tr>
                 @endforeach
             </tbody>            

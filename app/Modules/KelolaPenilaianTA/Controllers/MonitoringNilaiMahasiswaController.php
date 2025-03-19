@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\RekapitulasiNilaiExport;
+use App\Models\AlokasiPembimbing;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
@@ -20,16 +21,6 @@ class MonitoringNilaiMahasiswaController extends Controller{
      */
     public function monitoringMahasiswa(): View
     {
-        // // Username yang diketahui
-        // $username = '221524049';
-
-        // // Ambil role_user dari tabel user
-        // $user = DB::table('user')->where('username', $username)->first();
-
-        // // Pastikan user ditemukan dan memiliki role mahasiswa
-        // if (!$user || $user->role_user !== 'mahasiswa') {
-        //     abort(403, 'Akses ditolak karena bukan mahasiswa');
-        // }
 
         // Ambil mahasiswa berdasarkan nim = username
         $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)
@@ -54,6 +45,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('pengajuan_pembimbing.id_kota', $idKota)
             ->where('alokasi_pembimbing.status_alokasi', 'fix')
+            ->where('alokasi_pembimbing.tipe_alokasi', 'pembimbing')
             ->select('dosen.nip', 'user.nama as nama_dosen')
             ->get();
 
@@ -68,30 +60,130 @@ class MonitoringNilaiMahasiswaController extends Controller{
         ->where('jenis_form', 'penilaian')
         ->pluck('kode_fta');
 
-        // 3. Ambil semua nama kategori yang memiliki kode_fta sesuai hasil filter sebelumnya
-        $kategoriList = DB::table('kategori_penilaian')
+        // 3. Ambil semua fta yang memiliki kode_fta sesuai hasil filter sebelumnya
+        $ftaList = DB::table('form_penilaian')
         ->whereIn('kode_fta', $kodeFtaFiltered)
-        ->select('kode_fta', 'nama_kategori')
-        ->orderBy('nama_kategori', 'asc')
+        ->select('kode_fta', 'nama_fta')
+        ->orderBy('nama_fta', 'asc')
         ->get();
 
+        $isFeedbackAvailable = true;
 
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
-            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kategoriList', 'idProdi'
+            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'ftaList', 'idProdi', 'isFeedbackAvailable'
         ));
     }
-
-
 
     /**
      * Menampilkan halaman monitoring feedback
      * 
      */
-    public function monitoringFeedback(): View
+    public function monitoringFeedback($kodeFta): View
     {
-        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_feedback');
-    }
+        // Ambil mahasiswa berdasarkan nim = username
+        $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)->first();
+
+        if (!$mahasiswa) {
+            abort(404, "Data mahasiswa tidak ditemukan.");
+        }
+
+        $idKota = $mahasiswa->id_kota;
+        $idProdi = $mahasiswa->id_prodi;
+
+        // Ambil informasi Kota berdasarkan id_kota
+        $kotaInfo = Kota::where('id_kota', $idKota)->first();
+
+        // Ambil mahasiswa dengan id_kota yang sama (anggota kelompok)
+        $mahasiswaList = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('mahasiswa.id_kota', $idKota)
+            ->select('mahasiswa.nim', 'user.nama')
+            ->get();
+
+        // Ambil dosen pembimbing
+        $dosenPembimbing = DB::table('pengajuan_pembimbing')
+            ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
+            ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
+            ->join('user', 'dosen.nip', '=', 'user.username')
+            ->where('pengajuan_pembimbing.id_kota', $idKota)
+            ->where('alokasi_pembimbing.status_alokasi', 'fix')
+            ->where('alokasi_pembimbing.tipe_alokasi', 'pembimbing')
+            ->select('dosen.nip', 'user.nama as nama_dosen')
+            ->get();
+
+        // Ambil data FTA yang sesuai dengan kodeFta yang dipilih
+        $ftaPenilaian = DB::table('form_penilaian')
+            ->where('kode_fta', $kodeFta)
+            ->select('kode_fta', 'nama_fta', 'id_prodi')
+            ->first();
+
+        if (!$ftaPenilaian) {
+            abort(404, "FTA tidak ditemukan.");
+        }
+
+        // Cari kode_fta yang memiliki nama_fta & id_prodi yang sama, tetapi jenis_form = 'feedback'
+        $ftaFeedback = DB::table('form_penilaian')
+            ->where('nama_fta', $ftaPenilaian->nama_fta)
+            ->where('id_prodi', $ftaPenilaian->id_prodi)
+            ->where('jenis_form', 'feedback')
+            ->select('kode_fta')
+            ->first();
+
+        if (!$ftaFeedback) {
+            abort(404, "FTA untuk feedback tidak ditemukan.");
+        }
+
+        $kodeFtaFeedback = $ftaFeedback->kode_fta; // Gunakan kodeFta yang baru ditemukan
+
+        // Ambil aspek feedback berdasarkan kodeFta baru
+        $aspekFeedback = DB::table('aspek_feedback')
+            ->where('kode_fta', $kodeFtaFeedback)
+            ->select('id_feedback', 'nama_aspek_feedback')
+            ->get();
+
+        // Ambil detail feedback dengan kondisi status_penilaian = 'dipublikasikan'
+        $detailFeedback = DB::table('detail_feedback')
+            ->where('id_kota', $idKota)
+            ->whereIn('id_feedback', $aspekFeedback->pluck('id_feedback'))
+            ->where('status_penilaian', 'dipublikasikan')
+            ->select('id_feedback', 'nip', 'isi_feedback')
+            ->get();
+
+        // Ambil dosen penguji dari feedback yang diberikan
+        $nipPenguji = $detailFeedback->pluck('nip')->unique();
+
+        $dosenPenguji = DB::table('dosen')
+            ->join('user', 'dosen.nip', '=', 'user.username')
+            ->whereIn('dosen.nip', $nipPenguji)
+            ->select('dosen.nip', 'user.nama as nama_dosen')
+            ->get();
+
+        // Ambil penjadwalan sesuai dengan FTA yang diklik
+        $agendaMapping = [
+            'Seminar I' => 'seminar_1',
+            'Seminar II' => 'seminar_2',
+            'Seminar III' => 'seminar_3',
+            'Sidang Akhir' => 'sidang'
+        ];
+
+        $agenda = $agendaMapping[$ftaPenilaian->nama_fta] ?? null;
+
+        $penjadwalan = DB::table('penjadwalan')
+            ->where('id_kota', $idKota)
+            ->where('agenda', $agenda)
+            ->orderBy('tanggal', 'desc')
+            ->first();
+
+        $hariTanggal = $penjadwalan ? $penjadwalan->tanggal : "Tanggal belum tersedia";
+
+        // Kirim data ke tampilan
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_feedback', compact(
+            'mahasiswa', 'kotaInfo', 'mahasiswaList', 'dosenPembimbing', 'ftaPenilaian', 'hariTanggal', 'dosenPenguji',
+            'aspekFeedback', 'detailFeedback'
+        ));
+    }   
+
 
     /**
      * Menampilkan halaman monitoring rubrik
@@ -99,9 +191,9 @@ class MonitoringNilaiMahasiswaController extends Controller{
     public function monitoringRubrik($kodeFta, $idProdi): View
     {
         // Ambil nama_kategori dari kategori_penilaian berdasarkan kode_fta
-        $kategori = DB::table('kategori_penilaian')
+        $kategori = DB::table('form_penilaian')
             ->where('kode_fta', $kodeFta)
-            ->select('nama_kategori')
+            ->select('nama_fta')
             ->first();
 
         // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD

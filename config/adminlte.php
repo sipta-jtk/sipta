@@ -407,6 +407,7 @@ return [
                 [
                     'text' => 'Monitoring Mahasiswa',
                     'url' => '/kelola-penilaian-ta/monitoring/mahasiswa',
+                    'can' => 'akses-penialain-mahasiswa'
                 ],
                 [
                     'text' => 'Formulir Penilaian',

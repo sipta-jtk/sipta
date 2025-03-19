@@ -38,10 +38,10 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     // Route::put('formulir-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
 
     // ================= MONITORING NILAI MAHASISWA =================
-    Route::prefix('monitoring')->middleware('auth')->group(function () {
+    Route::prefix('monitoring')->middleware('auth', 'can:akses-penialain-mahasiswa')->group(function () {
         Route::get('/mahasiswa', [MonitoringNilaiMahasiswaController::class, 'monitoringMahasiswa'])
         ->name('monitoring.mahasiswa');
-        Route::get('/feedback', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])
+        Route::get('/feedback/{kodeFta}', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])
         ->name('monitoring.feedback');
         Route::get('/rubrik/{kodeFta}/{idProdi}', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])
         ->name('monitoring.rubrik');
