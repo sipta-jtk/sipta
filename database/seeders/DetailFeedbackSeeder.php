@@ -15,107 +15,27 @@ class DetailFeedbackSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!Schema::hasTable('detail_feedback')) {
-            return;
-        }
+        Schema::disableForeignKeyConstraints();
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('detail_feedback')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $data = [
-            [
-                'id_fta' => 1,
-                'kode_fta' => 4,
-                'nama_fta' => 'Seminar I',
-                'id_prodi' => 1,
-                'jenis_form' => 'feedback',
-                'tanggal_tenggat_pengisian' => '20/02/2025',
-                'waktu_tenggat_pengisian' => '10:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 2,
-                'kode_fta' => 7,
-                'nama_fta' => 'Seminar II',
-                'id_prodi' => 1,
-                'jenis_form' => 'penilaian',
-                'tanggal_tenggat_pengisian' => '25/03/2025',
-                'waktu_tenggat_pengisian' => '13:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 3,
-                'kode_fta' => 7,
-                'nama_fta' => 'Seminar II',
-                'id_prodi' => 1,
-                'jenis_form' => 'feedback',
-                'tanggal_tenggat_pengisian' => '26/03/2025',
-                'waktu_tenggat_pengisian' => '8:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 4,
-                'kode_fta' => 11,
-                'nama_fta' => 'Seminar III',
-                'id_prodi' => 1,
-                'jenis_form' => 'penilaian',
-                'tanggal_tenggat_pengisian' => '10/04/2025',
-                'waktu_tenggat_pengisian' => '14:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 5,
-                'kode_fta' => 11,
-                'nama_fta' => 'Seminar III',
-                'id_prodi' => 1,
-                'jenis_form' => 'feedback',
-                'tanggal_tenggat_pengisian' => '11/04/2025',
-                'waktu_tenggat_pengisian' => '10:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 6,
-                'kode_fta' => 15,
-                'nama_fta' => 'Sidang Akhir',
-                'id_prodi' => 1,
-                'jenis_form' => 'penilaian',
-                'tanggal_tenggat_pengisian' => '18/04/2025',
-                'waktu_tenggat_pengisian' => '9:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 7,
-                'kode_fta' => 15,
-                'nama_fta' => 'Sidang Akhir',
-                'id_prodi' => 1,
-                'jenis_form' => 'feedback',
-                'tanggal_tenggat_pengisian' => '19/04/2025',
-                'waktu_tenggat_pengisian' => '11:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id_fta' => 8,
-                'kode_fta' => 17,
-                'nama_fta' => 'Dosen Pembimbing',
-                'id_prodi' => 1,
-                'jenis_form' => 'penilaian',
-                'tanggal_tenggat_pengisian' => '30/04/2025',
-                'waktu_tenggat_pengisian' => '15:30:00',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ]
-        ];
+        DetailFeedback::create([
+            'id_detail_feedback' => 1,
+            'id_feedback' => 1,
+            'id_kota' => 5,
+            'nip' => '199312282019031013',
+            'status_penilaian' => 'draf',
+            'isi_feedback' => "Struktur laporan sudah sistematis, mencakup pendahuluan, metode, hasil, dan kesimpulan.
+        Penjelasan algoritma Content-Based Filtering cukup jelas dan menggunakan referensi yang relevan.
+        Hasil evaluasi model sudah ditampilkan dengan metrik seperti Precision dan Recall, Penjelasan dataset perlu lebih rinci, misalnya jumlah data, sumber data, dan preprocessing yang dilakukan.
+        Harus ada analisis lebih dalam terhadap kelebihan dan kekurangan metode yang digunakan.
 
-        foreach ($data as $item) {
-            DetailFeedback::create($item);
-        }
+        Penjelasan mengenai proses rekomendasi cukup jelas dan runtut.
+        Pemaparan hasil uji coba sistem dilakukan dengan baik dan didukung dengan grafik/visualisasi.
+
+        Durasi presentasi perlu diperhatikan, bagian penjelasan metode agak terlalu panjang dibandingkan hasil analisis."
+        ]);
+
+        Schema::enableForeignKeyConstraints();
     }
 }
