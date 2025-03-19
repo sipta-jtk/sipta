@@ -24,21 +24,21 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $mahasiswa['kode_fta'] }}</span>
+                <span>{{ $data['nama_fta'] }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID Kota -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
-                <span>{{ $mahasiswa['tanggal'] }}</span>
+                <span>{{ $data['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $mahasiswa['waktu'] }}</span>
+                <span>{{ $data['start'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>ID KoTA</strong> <br>
-                <span>{{ $kotaInfo->nama_kota }}</span>
+                <span>{{ $data['kota'] }}</span>
             </div>
         </div>
 

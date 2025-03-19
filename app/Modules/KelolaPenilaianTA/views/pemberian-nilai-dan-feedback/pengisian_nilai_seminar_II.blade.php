@@ -145,7 +145,8 @@
             <!-- Tombol Simpan -->
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-warning">Simpan Draft</button>
+                    <button type="submit" class="btn btn-primary">Selanjutnya</button>
                 </div>
             </div>
         </form>
