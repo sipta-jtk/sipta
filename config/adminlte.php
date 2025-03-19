@@ -527,6 +527,14 @@ return [
                     'icon' => 'fas fa-info',
                 ],
                 [
+                    'text' => 'Management KoTA',
+                    'url' => 'management-kota',
+                ],
+                [
+                    'text' => 'Mahasiswa',
+                    'url' => '#',
+                ],
+                [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => '/manage_dosen',
                     'icon' => 'fas fa-user-tie',

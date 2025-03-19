@@ -36,12 +36,14 @@
             <x-adminlte-input name="tahun_ta" label="Tahun TA" value="{{ $kota->tahun_kota }}"
                 fgroup-class="col-md-6" readonly/>
             
+            @php $pembimbing1 = $pembimbing[0] ?? (object)['nama' => 'Belum ditentukan']; @endphp
             <x-adminlte-input name="pembimbing1" label="Dosen Pembimbing 1"
-                value="Dr. Mohammad Fathur Rabbani, S.Si., M.T"
+                value="{{ $pembimbing1->nama }}"
                 fgroup-class="col-md-6" readonly/>
 
+            @php $pembimbing2 = $pembimbing[1] ?? (object)['nama' => 'Belum ditentukan']; @endphp
             <x-adminlte-input name="pembimbing2" label="Dosen Pembimbing 2"
-                value="Muhammad Rizki Nurmuttaqin, M.T"
+                value="{{ $pembimbing2->nama }}"
                 fgroup-class="col-md-6" readonly/>
         </div>
 
