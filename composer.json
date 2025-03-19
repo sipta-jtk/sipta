@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "google/apiclient": "^2.18",
         "doctrine/dbal": "^3.9",
         "guzzlehttp/guzzle": "^7.2",
         "jeroennoten/laravel-adminlte": "^3.14",
@@ -17,6 +18,8 @@
         "laravel/ui": "^4.0",
         "maatwebsite/excel": "^1.1",
         "realrashid/sweet-alert": "^7.1",
+        "simplehtmldom/simplehtmldom": "dev-master",
+        "smalot/pdfparser": "^2.11",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-responsecache": "^7.6",
         "yajra/laravel-datatables-oracle": "^10.11"
