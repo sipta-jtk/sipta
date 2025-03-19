@@ -25,9 +25,8 @@ class KbkSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         $data = [
+            ['kbk' => 'SI & DB'],
             ['kbk' => 'Rekayasa Perangkat Lunak'],
-            ['kbk' => 'Database'],
-            ['kbk' => 'Sistem Informasi'],
             ['kbk' => 'Multimedia'],
         ];
 

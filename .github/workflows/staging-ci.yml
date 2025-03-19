@@ -3,7 +3,7 @@ name: Deploy Staging
 on:
   push:
     branches:
-      - develop
+      - staging
     paths-ignore:
       - '.github/workflows/**'
       - 'README.md'
