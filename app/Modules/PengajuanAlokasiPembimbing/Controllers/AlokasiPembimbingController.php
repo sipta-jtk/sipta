@@ -15,6 +15,7 @@ use App\Models\Dosen;
 use App\Models\Bidang;
 use App\Models\Mahasiswa;
 use App\Models\KetertarikanBidang;
+use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 
 class AlokasiPembimbingController extends Controller
@@ -51,16 +52,78 @@ class AlokasiPembimbingController extends Controller
         return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', $data);
 }
 
-    public function getDetailDosen($nama): JsonResponse
+    public function getDetailDosen($nip): JsonResponse
     {
-        return response()->json($this->generateDummyDosenDetail($nama));
+        $dosen = User::with('dosen')
+            ->whereHas('dosen', function ($query) use ($nip) {
+                $query->where('id_dosen', $nip);
+            })
+            ->where('role_user', 'dosen')
+            ->select('username', 'nama')
+            ->first();
+
+    if (!$dosen) {
+        return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
     }
+
+        $pembimbing1_KoTA = AlokasiPembimbing::where('nip', $dosen->dosen->nip)
+            ->where('urutan_prioritas_terpilih', '1')
+            ->where('status_alokasi', 'fix')
+            ->count();
+
+        $pembimbing2_KoTA = AlokasiPembimbing::where('nip', $dosen->dosen->nip)
+            ->where('urutan_prioritas_terpilih', '2')
+            ->where('status_alokasi', 'fix')
+            ->count();
+
+        $jumlah_KoTA = $pembimbing1_KoTA + $pembimbing2_KoTA;
+        
+        
+        $pembimbing1_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiPembimbing', function ($query) use ($dosen) {
+            $query->where('nip',  $dosen->dosen->nip)
+                  ->where('urutan_prioritas_terpilih', '1')
+                  ->where('status_alokasi', 'fix');
+        })->count();
+        // return response()->json(['error' => 'HASIL = '. $pembimbing1_Mhs], 500);
+
+        $pembimbing2_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiPembimbing', function ($query) use ($dosen) {
+            $query->where('nip', $dosen->dosen->nip)
+                  ->where('urutan_prioritas_terpilih', '2')
+                  ->where('status_alokasi', 'fix');
+        })->count();
+
+        $jumlahMahasiswa = $pembimbing1_Mhs + $pembimbing2_Mhs;
+
+        $kuota = KuotaMembimbing::where('nip', $dosen->dosen->nip)->sum('jumlah');
+
+        $kelebihan = $jumlahMahasiswa > $kuota ? ($jumlahMahasiswa - $kuota) . " (Overload)" : "Aman";
+
+        return response()->json([
+            "nama" => $dosen->nama,
+            'nip' => $dosen->username,
+            'id_kbk' => $dosen->dosen->id_kbk ?? null,
+            "pembimbing1_KoTA" => $pembimbing1_KoTA,
+            "pembimbing2_KoTA" => $pembimbing2_KoTA,
+            "jumlah_KoTA" => $jumlah_KoTA,
+            "pembimbing1_Mhs" => $pembimbing1_Mhs,
+            "pembimbing2_Mhs" => $pembimbing2_Mhs,
+            "jumlahMahasiswa" => $jumlahMahasiswa,
+            "kuota" => $kuota,
+            "kelebihan" => $kelebihan,
+            'status_dosen' => $dosen->dosen->status_dosen ?? null,
+            'role_dosen' => $dosen->dosen->role_dosen ?? null,
+            'bersedia_membimbing' => $dosen->dosen->bersedia_membimbing ?? null
+    
+        ]);
+    }
+
 
     private function generateDummyDosenDetail($nama): array
     {
         $pembimbing1_KoTA = rand(5, 15);
         $pembimbing2_KoTA = rand(3, 10);
         $jumlah_KoTA = $pembimbing1_KoTA + $pembimbing2_KoTA;
+        return response()->json(['error' => 'TESTING 123'], 500);
 
         $pembimbing1_Mhs = rand(10, 30);
         $pembimbing2_Mhs = rand(5, 20);
