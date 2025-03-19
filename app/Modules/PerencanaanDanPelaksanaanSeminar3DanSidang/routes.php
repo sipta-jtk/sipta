@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PembatalanJadwalSeminarSidangController;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiBerkasPengajuanMahasiswaController;
 
 // PENGAJUAN JADWAL
 //daftar pengajuan 
@@ -35,3 +36,7 @@ Route::get('/persetujuan-pembatalan-jadwal-seminar', [PembatalanJadwalSeminarSid
 
 //pembatalan jadwal sidang
 Route::get('/persetujuan-pembatalan-jadwal-sidang', [PembatalanJadwalSeminarSidangController::class, 'indexPersetujuanPembatalanJadwalSidang']);
+
+//verifikasi berkas pengajuan mahasiswa
+Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->name('verifikasi.create');
+Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->name('verifikasi.store');
