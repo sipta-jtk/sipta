@@ -15,11 +15,25 @@ Route::get('/rekap-presensi-seminar-3', [PerencanaanDanPelaksanaanSeminarDanSida
 // Route untuk menyimpan dokumentasi
 Route::post('/presensi/dokumentasi', [PerencanaanDanPelaksanaanSeminarDanSidangController::class, 'simpanDokumentasi'])->name('presensi.dokumentasi');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Route untuk rekap presensi Sidang TA
 Route::get('/rekap-presensi-sidang-ta', [PerencanaanDanPelaksanaanSeminarDanSidangController::class, 'rekapPresensiSidangTA'])->name('rekap.presensi.sidang.ta');
 Route::group(['prefix' => 'kelola-pengajuan', 'as' => 'kelola.'], function () {
     Route::group(['prefix' => '{tipe}', 'as' => 'berkas.'], function () {
-        Route::get('/', [VerifikasiBerkasController::class, 'index'])->name('list');
+        Route::get('/', [VerifikasiBerkasController::class, 'listPengajuan'])->name('list');
         Route::get('/ditolak', [VerifikasiBerkasController::class, 'pengajuanDitolak'])->name('ditolak');
         Route::get('/diterima', [VerifikasiBerkasController::class, 'pengajuanDiterima'])->name('diterima');
         Route::get('/detail/{id}', [VerifikasiBerkasController::class, 'show'])->name('detail');

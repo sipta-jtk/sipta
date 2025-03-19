@@ -77,7 +77,7 @@
 
     <script>
         $(document).ready(function() {
-            let data = @json($dataKota);
+            let data = @json($dataPengajuan); // Ambil data pengajuan dari controller
             let detailUrl = "{{ route('kelola.berkas.detail', ['id' => '__ID__', 'tipe' => $tipe]) }}";
             // Inisialisasi DataTables
             let table = $('#pengajuanTable').DataTable({

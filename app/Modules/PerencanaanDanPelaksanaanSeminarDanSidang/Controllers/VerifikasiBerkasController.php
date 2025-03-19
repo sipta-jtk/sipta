@@ -9,7 +9,7 @@ use App\Models\VerifikasiBerkasPengajuan;
 
 class VerifikasiBerkasController extends Controller
 {
-    public function index(Request $request, string $tipe): View
+    public function listPengajuan(Request $request, string $tipe): View
     {
         if ($tipe === 'berkas-seminar-3'){
             $dataKota = VerifikasiBerkasPengajuan::all()->where('status_konfirmasi', 'disetujui');
@@ -57,37 +57,9 @@ class VerifikasiBerkasController extends Controller
 
     public function pengajuanDiterima(Request $request, string $tipe): View
     {
-        if ($tipe === 'berkas-seminar-3'){
-            $dataKota = [
-                (object) [
-                    'id' => 1,
-                    'kelompok' => '001', // FK
-                    'judul_ta' => 'Sistem Informasi Akademik Berbasis Web', // data ta
-                    'nip' => '1234567890',
-                    'status' => 'diterima',
-                    'catatan' => '',
-                    'jenis_pengajuan' => 'Seminar 3',
-                    'tanggal_pengajuan' => '2025-03-05',
-                    'tanggal_verifikasi' => '2025-04-05',
-                ],
-            ];
-        } else {
-            $dataKota = [
-                (object) [
-                    'id' => 1,
-                    'kelompok' => '001', // FK
-                    'judul_ta' => 'Sistem Informasi Informasi Akademik Berbasis Web', // data ta
-                    'nip' => '1234567890',
-                    'status' => 'diterima',
-                    'catatan' => '',
-                    'jenis_pengajuan' => 'Sidang Akhir',
-                    'tanggal_pengajuan' => '2025-03-05',
-                    'tanggal_verifikasi' => '2025-04-05',
-                ],
-            ];
-        }
+        $dataPengajuan = VerifikasiBerkasPengajuan::all()->where('status_konfirmasi', 'disetujui');
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanDiterima', compact('dataPengajuan', 'tipe'));
     }
 
     public function show(String $tipe, $id){
