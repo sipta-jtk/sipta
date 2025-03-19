@@ -76,6 +76,36 @@
             </div>
         </div>
 
+        <!-- Preview File -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <strong>Preview File Dokumen Seminar III</strong> <br>
+                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1Lpfnr6FSr2Sa8laHnkz_tUPRTRfTmyi5/view?usp=drive_link')">
+                    File Dokumen
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Form Penilaian -->
         <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $seminar . '/nilai/' . $data['kota']) }}" method="POST">
             @csrf
@@ -98,50 +128,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    Kejelasan isi dokumen : 
-                                    <ul>
-                                        <li>kejelasan kaitan antar bab/sub kajian (hubungan sebab akibat/reasoning, rasionalitas),</li>
-                                        <li>kesesuaian dan ketepatan penggunaan metodologi dan modelling tools,</li>
-                                        <li>kejelasan dan kesesuaian studi pustaka beserta daftar pustakanya,</li>
-                                        <li>tata tulis laporan.</li>
-                                    </ul>
-                                </td>
-                                <td>40 %</td>
-                                <td>0 - 100</td>
-                                @foreach($mahasiswa as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    Presentasi : 
-                                    <ul>
-                                        <li>materi presentasi,</li>
-                                        <li>kejelasan presentasi & kemampuan membangkitkan minat pemirsa,</li>
-                                        <li>penggunaan alat bantu,</li>
-                                        <li>ketepatan waktu,</li>
-                                        <li>kebebasan dari catatan.</li>
-                                    </ul>
-                                </td>
-                                <td>20 %</td>
-                                <td>0 - 100</td>
-                                @foreach($mahasiswa as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Tanya Jawab (penguasaan materi terkait tugas yang dikerjakan)</td>
-                                <td>40 %</td>
-                                <td>0 - 100</td>
-                                @foreach($mahasiswa as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
+                            @foreach ($kriteria as $index => $item)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $item->nama_kriteria }}
+                                        @if ($item->rubrik->count() > 0)
+                                            <ul>
+                                                @foreach ($item->rubrik as $rubrik)
+                                                    <li>{{ $rubrik->nama_rubrik }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
+                                    <td>{{ $item->bobot_kriteria }} %</td>
+                                    <td>0 - 100</td>
+                                    @foreach($mahasiswa as $key => $mhs)
+                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -162,6 +167,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
@@ -171,21 +177,5 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Menginisialisasi popover untuk elemen yang sudah ada
-            $('[data-toggle="popover"]').popover({
-                trigger: 'hover',
-                placement: 'top',
-                html: true
-            });
-
-            // Event delegation untuk elemen dinamis
-            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
-                $(this).popover('show');
-            }).on('mouseleave', '[data-toggle="popover"]', function () {
-                $(this).popover('hide');
-            });
-        });
-    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 @stop

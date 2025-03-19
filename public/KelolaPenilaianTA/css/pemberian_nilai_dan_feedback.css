@@ -64,3 +64,26 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #e2e6ea;
 }
+
+.btn-prev {
+    max-width: 180px; /* Batas maksimal panjang tombol */
+    white-space: nowrap; /* Biar teks tidak turun ke bawah */
+    overflow: hidden;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    color: #fff; /* Warna teks putih */
+    background-color: #007bff; /* Warna biru Bootstrap */
+    border: 2px solid #007bff; /* Border sesuai warna */
+    border-radius: 5px; /* Sudut membulat */
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-prev:hover {
+    background-color: #0056b3; /* Warna biru lebih gelap saat hover */
+    border-color: #0056b3;
+}

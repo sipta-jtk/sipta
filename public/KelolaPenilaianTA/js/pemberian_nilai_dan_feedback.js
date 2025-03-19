@@ -28,4 +28,35 @@ document.addEventListener("DOMContentLoaded", function () {
         hariPerbaikan.textContent = hasilFormat.hari;
         tanggalPerbaikan.textContent = hasilFormat.tanggal;
     });
+
+    $(document).ready(function() {
+        // Menginisialisasi popover untuk elemen yang sudah ada
+        $('[data-toggle="popover"]').popover({
+            trigger: 'hover',
+            placement: 'top',
+            html: true
+        });
+
+        // Event delegation untuk elemen dinamis
+        $(document).on('mouseenter', '[data-toggle="popover"]', function () {
+            $(this).popover('show');
+        }).on('mouseleave', '[data-toggle="popover"]', function () {
+            $(this).popover('hide');
+        });
+    });
+
+    function loadPreview(url) {
+        let fileId = extractDriveFileId(url);
+        if (fileId) {
+            let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            document.getElementById('previewFrame').src = embedUrl;
+        } else {
+            alert("Format link tidak valid!");
+        }
+    }
+
+    function extractDriveFileId(url) {
+        let match = url.match(/[-\w]{25,}/);
+        return match ? match[0] : null;
+    }
 });
