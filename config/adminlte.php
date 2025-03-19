@@ -405,26 +405,8 @@ return [
             'icon' => 'fas fa-scroll',
             'submenu' => [
                 [
-                    'text' => 'Kelola Penilaian Tugas Akhir',
-                    // 'url' => '/KelolaPenilaianTA',
-                    // 'icon' => 'fas fa-fw fa-file',
-                    'submenu' => [
-                        [
-                            'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
-                            // 'icon' => 'far fa-fw fa-file',
-                        ],
-                    ],
+                    'text' => 'Monitoring Mahasiswa',
+                    'url' => '/kelola-penilaian-ta/monitoring/mahasiswa',
                 ],
                 [
                     'text' => 'Formulir Penilaian',

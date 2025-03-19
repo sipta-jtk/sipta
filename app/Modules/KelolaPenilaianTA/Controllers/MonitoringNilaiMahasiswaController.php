@@ -20,22 +20,21 @@ class MonitoringNilaiMahasiswaController extends Controller{
      */
     public function monitoringMahasiswa(): View
     {
-        // Username yang diketahui
-        $username = '221524049';
+        // // Username yang diketahui
+        // $username = '221524049';
 
-        // Ambil role_user dari tabel user
-        $user = DB::table('user')->where('username', $username)->first();
+        // // Ambil role_user dari tabel user
+        // $user = DB::table('user')->where('username', $username)->first();
 
-        // Pastikan user ditemukan dan memiliki role mahasiswa
-        if (!$user || $user->role_user !== 'mahasiswa') {
-            abort(403, 'Akses ditolak karena bukan mahasiswa');
-        }
+        // // Pastikan user ditemukan dan memiliki role mahasiswa
+        // if (!$user || $user->role_user !== 'mahasiswa') {
+        //     abort(403, 'Akses ditolak karena bukan mahasiswa');
+        // }
 
         // Ambil mahasiswa berdasarkan nim = username
-        $mahasiswa = DB::table('mahasiswa')->where('nim', $username)->first();
-        if (!$mahasiswa) {
-            abort(404, 'Mahasiswa tidak ditemukan');
-        }
+        $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)
+        ->first();
+
         
         $idKota = $mahasiswa->id_kota;
         $idProdi = $mahasiswa->id_prodi;
@@ -105,15 +104,42 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->select('nama_kategori')
             ->first();
 
-        // // Ambil rubrik berdasarkan kode_fta dan id_prodi
-        // $rubrikList = DB::table('rubrik_penilaian')
-        //     ->where('kode_fta', $kodeFta)
-        //     ->where('id_prodi', $idProdi)
-        //     ->orderBy('nama_rubrik', 'asc')
-        //     ->get();
+        // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
+        $rentangNilai = DB::table('rentang_nilai')
+            ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+            ->select('id_nilai', 'batas_atas', 'batas_bawah')
+            ->orderBy('batas_atas', 'desc')
+            ->get();
 
-        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik', compact('kategori'));
+        // Ambil data kriteria beserta rubriknya
+        $namaKriteria = DB::table('kriteria_penilaian')
+            ->where('kode_fta', $kodeFta)
+            ->select('id_kriteria', 'nama_kriteria', 'bobot_kriteria')
+            ->get()
+            ->map(function ($kriteria) use ($rentangNilai) {
+                // Ambil rubrik berdasarkan id_kriteria
+                $kriteria->rubrik = DB::table('rubrik')
+                    ->where('id_kriteria', $kriteria->id_kriteria)
+                    ->select('id_rubrik', 'nama_rubrik')
+                    ->get()
+                    ->map(function ($rubrik) use ($rentangNilai) {
+                        // Ambil detail rubrik berdasarkan id_rubrik dan id_nilai
+                        $rubrik->detail = collect();
+                        foreach ($rentangNilai as $nilai) {
+                            $deskripsi = DB::table('detail_rubrik')
+                                ->where('id_rubrik', $rubrik->id_rubrik)
+                                ->where('id_nilai', $nilai->id_nilai)
+                                ->select('detail_rubrik_penilaian')
+                                ->first();
+                            $rubrik->detail[$nilai->id_nilai] = $deskripsi->detail_rubrik_penilaian ?? '-';
+                        }
+                        return $rubrik;
+                    });
+
+                return $kriteria;
+            });
+
+        return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_rubrik', compact('kategori', 'rentangNilai', 'namaKriteria'));
     }
-
 
 }
