@@ -133,12 +133,12 @@ return [
     |
     */
 
-    'usermenu_enabled' => false,
-    'usermenu_header' => true,
+    'usermenu_enabled' => true,
+    'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -263,7 +263,7 @@ return [
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => 'profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -499,6 +499,27 @@ return [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
             'submenu' => [
+           
+                [
+                    'text' => 'Program Studi',
+                    'url'  => 'program-studi',
+                ],
+                [
+                    'text' => 'Kelola KBK',
+                    'url'  => 'kelola-kbk',
+                ],
+                [
+                    'text' => 'Pengajuan Pisah KoTA',
+                    'url' => 'pengajuan-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Form Pisah KoTA',
+                    'url'  => 'form-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'mahasiswa_ta',
+                ],
                 [
                     'text' => 'Pengajuan KoTA',
                     'url' => 'pengajuan-kota',
