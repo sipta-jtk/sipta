@@ -32,12 +32,45 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span class="dosen-name">{{ $d->nama }}</span>
                                         <div>
-                                            <button class="btn btn-sm btn-secondary viewHistory" data-name="{{ $d->nama }}" data-nip="{{ $d->nip }}">
+                                            <button class="btn btn-sm btn-secondary viewHistory" type="button" data-toggle="modal" data-target="#historyModal{{$d->nip}}">
                                                 <i class="fas fa-file-alt"></i>
                                             </button>
                                             <button class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
                                         </div>
                                     </li>
+
+                                    <!-- Modal untuk Riwayat Topik -->
+                                    <div class="modal fade" id="historyModal{{$d->nip}}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p id="dosenName">
+                                                        {{ $d->nama }}
+                                                    </p>
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Bidang</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="historyContent">
+                                                            @foreach ($d->history as $bidang)
+                                                                <tr>
+                                                                    <td>{{ $bidang->bidang }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </ul>
                         </div>
@@ -205,48 +238,28 @@
         });
 
         // Fungsi untuk menampilkan riwayat topik dosen pembimbing
-        $(".viewHistory").click(function (event) {
-            event.preventDefault();
+        // $(".viewHistory").click(function (event) {
+        //     event.preventDefault();
             
-            let nip = $(this).data("nip"); // Ambil NIP dari atribut data
-            let name = $(this).data("name");
-            $("#dosenName").text(name);
+        //     let nip = $(this).data("nip"); // Ambil NIP dari atribut data
+        //     let name = $(this).data("name");
+        //     $("#dosenName").text(name);
             
-            let historyContent = $("#historyContent");
-            historyContent.html("<tr><td colspan='2' class='text-center'>Loading...</td></tr>");
+        //     let historyContent = $("#historyContent");
+        //     historyContent.html("<tr><td colspan='2' class='text-center'>Loading...</td></tr>");
 
-            $.ajax({
-                url: `/prioritas-dosen-pembimbing/dosen/history/${nip}`,
-                type: "GET",
-                success: function (response) {
-                    historyContent.empty(); // Kosongkan tabel sebelum memasukkan data
+        //     let form = $('<form>', {
+        //         action: `/prioritas-dosen-pembimbing/dosen/history/${nip}`,
+        //         method: 'GET',
+        //         target: '_blank'
+        //     });
 
-                    if (Object.keys(response).length === 0) {
-                        historyContent.html("<tr><td colspan='2' class='text-center'>Tidak ada data</td></tr>");
-                    } else {
-                        $.each(response, function (tahun, bidangList) {
-                            let bidangHtml = "<ul>";
-                            bidangList.forEach(function (bidang) {
-                                bidangHtml += `<li>${bidang.bidang}</li>`;
-                            });
-                            bidangHtml += "</ul>";
+        //     $('body').append(form);
+        //     form.submit();
+        //     form.remove();
 
-                            historyContent.append(`
-                                <tr>
-                                    <td>${tahun}</td>
-                                    <td>${bidangHtml}</td>
-                                </tr>
-                            `);
-                        });
-                    }
-                },
-                error: function () {
-                    historyContent.html("<tr><td colspan='2' class='text-center text-danger'>Gagal mengambil data</td></tr>");
-                }
-            });
-
-            $("#historyModal").modal("show");
-        });
+        //     $("#historyModal").modal("show");
+        // });
     });
 
     // Mencari dosen berdasarkan nama

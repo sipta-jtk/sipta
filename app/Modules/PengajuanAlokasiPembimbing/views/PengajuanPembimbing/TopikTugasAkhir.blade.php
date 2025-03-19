@@ -122,10 +122,19 @@
 
                 $("input[type='radio']").each(function () {
                     let label = $(this).next("label").text().trim();
-                    if (savedData.bidang.includes(label)) {
-                        $(this).prop("checked", true);
+                    if (Array.isArray(savedData.bidang)) {
+                        // Jika bidang adalah array
+                        if (savedData.bidang.includes(label)) {
+                            $(this).prop("checked", true);
+                        }
+                    } else {
+                        // Jika bidang adalah string, cukup periksa kesesuaian langsung
+                        if (savedData.bidang === label) {
+                            $(this).prop("checked", true);
+                        }
                     }
                 });
+
             }
         }
     });
