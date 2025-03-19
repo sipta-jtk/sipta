@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +23,15 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        
+        /**********************************************************
+        ! Restricted    
+            * Role Access v.1
+            * Base role.
+            * Role dasar dari pengguna.
+            * Perubahan base role dilakukan oleh tim User Management.
+        ***********************************************************/
 
         //Admin
         Gate::define('admin', function ($user) {
@@ -59,6 +68,17 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('kajur', function ($user) {
             return $user->role_user === 'kajur';
         });
+
+        /***************************************************************
+            * CUSTOM GATE
+            * Silahkan definisikan gate untuk keperluan anda disini.
+            * Supaya readable, silahkan beri comment sebagai pembatas dari tiap fitur
+            * Format: [Topik n] - Fitur ...
+        ******************************************************************/
+
+        /**********************************
+         * [Topik 7] - Fitur Kelola Jurusan
+        ***********************************/
 
         //Contoh Akses Multirole
         Gate::define('akses-form-pisah-kota', function ($user) {
