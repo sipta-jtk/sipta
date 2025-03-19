@@ -508,13 +508,6 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Timeline',
-            'url' => '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Artefak',
             'url' => '/#',
             'icon' => 'fas fa-fw fa-folder',
@@ -524,11 +517,6 @@ return [
                     'url' => '/artefak',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
-                // [
-                //     'text' => 'Resume Bimbingan',
-                //     'url' => '/#',
-                //     // 'icon' => 'far fa-fw fa-file',
-                // ],
             ]
         ],
         [
@@ -542,16 +530,6 @@ return [
             'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
-        // [
-        //     'text' => 'profile',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'change_password',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
         [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
@@ -563,57 +541,9 @@ return [
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => '/#',
-                    // 'submenu' => [
-                    //     [
-                    //         'text' => 'Koordinator TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Pembimbing TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Penguji TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     // [
-                    //     //     'text' => 'level_two',
-                    //     //     'url' => '#',
-                    //     //     'submenu' => [
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //     ],
-                    //     // ],
-                    // ],
                 ],
-                // [
-                //     'text' => 'level_one',
-                //     'url' => '#',
-                // ],
             ],
         ],
-        // ['header' => 'labels'],
-        // [
-        //     'text' => 'important',
-        //     'icon_color' => 'red',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url' => '#',
-        // ],
     ],
 
     /*
