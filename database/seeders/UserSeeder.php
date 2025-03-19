@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -377,7 +376,7 @@ class UserSeeder extends Seeder
                 'nama' => 'Rahil Jumiyani, S.ST., M.Sc.',
                 'email' => 'rahil.jumiyani@polban.ac.id',
                 'password' => Hash::make('rahi123!#'),
-                'role_user' => 'admin',
+                'role_user' => 'dosen',
                 'no_whatsapp' => '081234567947',
                 'photo' => 'rahil_jumiyani,_s.st.,_m.sc..png'
             ],
@@ -386,7 +385,7 @@ class UserSeeder extends Seeder
                 'nama' => 'Djoko Cahyo Utomo Lieharyani, S.Kom., M.MT.',
                 'email' => 'djoko.lieharyani@polban.ac.id',
                 'password' => Hash::make('djok123!#'),
-                'role_user' => 'admin',
+                'role_user' => 'dosen',
                 'no_whatsapp' => '081234567948',
                 'photo' => 'djoko_cahyo_utomo_lieharyani,_s.kom.,_m.mt..png'
             ],
@@ -395,7 +394,7 @@ class UserSeeder extends Seeder
                 'nama' => 'Muhammad Riza Alifi, S.T., M.T.',
                 'email' => 'muhammad.riza@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
-                'role_user' => 'admin',
+                'role_user' => 'dosen',
                 'no_whatsapp' => '081234567949',
                 'photo' => 'muhammad_riza_alifi,_s.t.,_m.t..png'
             ],
@@ -404,9 +403,18 @@ class UserSeeder extends Seeder
                 'nama' => 'Sofy Fitriani, S.S.T., M.Kom',
                 'email' => 'sofy.fitriani@polban.ac.id',
                 'password' => Hash::make('sofy123!#'),
-                'role_user' => 'admin',
+                'role_user' => 'dosen',
                 'no_whatsapp' => '081234567950',
                 'photo' => 'sofy_fitriani,_s.s.t.,_m.kom.png'
+            ],
+            [
+                'username' => '199106142019032000',
+                'nama' => 'Lia Rahmawati',
+                'email' => 'lia.rahmawati@polban.ac.id',
+                'password' => Hash::make('liar123!#'),
+                'role_user' => 'admin',
+                'no_whatsapp' => '081234567950',
+                'photo' => 'lia_rahmawati.png'
             ],
             [
                 'username' => '221524033',

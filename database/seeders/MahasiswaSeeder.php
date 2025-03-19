@@ -32,7 +32,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524035',
@@ -56,7 +56,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524039',
@@ -80,7 +80,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524042',
@@ -104,7 +104,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524045',
@@ -128,7 +128,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524049',
@@ -152,7 +152,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524052',
@@ -176,7 +176,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524055',
@@ -200,7 +200,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
-                'id_kota' => 1
+                'id_kota' => null
             ],
             [
                 'nim' => '221524058',

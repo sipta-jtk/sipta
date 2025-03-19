@@ -24,21 +24,55 @@ class AspekFeedbackSeeder extends Seeder
 
         $data = [
             [
-                'kode_fta' => 1, // Sesuaikan dengan ID yang valid di form_penilaian
-                'nama_aspek_feedback' => 'Kejelasan materi presentasi',
+                'id_feedback' => 1,
+                'id_fta' => 4,
+                'nama_aspek_feedback' => 'Deskripsi Topik'
             ],
             [
-                'kode_fta' => 1,
-                'nama_aspek_feedback' => 'Penguasaan materi oleh pemateri',
+                'id_feedback' => 2,
+                'id_fta' => 4,
+                'nama_aspek_feedback' => 'Problem Definition'
             ],
             [
-                'kode_fta' => 2,
-                'nama_aspek_feedback' => 'Kualitas diskusi dan tanya jawab',
+                'id_feedback' => 3,
+                'id_fta' => 4,
+                'nama_aspek_feedback' => 'Metodologi Penyelesaian TA'
             ],
             [
-                'kode_fta' => 3,
-                'nama_aspek_feedback' => 'Relevansi konten dengan topik seminar',
+                'id_feedback' => 4,
+                'id_fta' => 7,
+                'nama_aspek_feedback' => 'Dokumen'
             ],
+            [
+                'id_feedback' => 5,
+                'id_fta' => 7,
+                'nama_aspek_feedback' => 'Presentasi'
+            ],
+            [
+                'id_feedback' => 6,
+                'id_fta' => 7,
+                'nama_aspek_feedback' => 'Penguasaan Materi'
+            ],
+            [
+                'id_feedback' => 7,
+                'id_fta' => 11,
+                'nama_aspek_feedback' => 'Dokumen'
+            ],
+            [
+                'id_feedback' => 8,
+                'id_fta' => 11,
+                'nama_aspek_feedback' => 'Presentasi'
+            ],
+            [
+                'id_feedback' => 9,
+                'id_fta' => 11,
+                'nama_aspek_feedback' => 'Penguasaan Materi'
+            ],
+            [
+                'id_feedback' => 10,
+                'id_fta' => 15,
+                'nama_aspek_feedback' => 'Catatan Perbaikan Laporan'
+            ]
         ];
 
         foreach ($data as $item) {
