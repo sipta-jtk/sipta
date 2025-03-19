@@ -5,6 +5,7 @@ namespace App\Modules\KelolaPenilaianTA\Controllers;
 use App\Modules\Controller;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
+use App\Models\KriteriaPenilaian;
 use App\Models\KategoriPenilaian;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -50,12 +51,27 @@ class PemberianNilaiDanFeedbackController extends Controller
      */
     private function pengisianNilaiSeminarII($id, $kota): View
     {
-        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->with('user', 'kota.penjadwalan')->get();
+        // Mengambil semua kriteria beserta rubriknya
+        $kriteria = KriteriaPenilaian::with('rubrik')
+                ->where('kode_fta', $id)
+                ->get();
 
+        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $id
+        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $id)
+                    ->where('kode_fta', $id) 
+                    ->with('formulirPenilaian')
+                    ->first();
+
+        // Mengambil mahasiswa berdasarkan kota yang sesuai dengan seminar
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)
+                    ->with('user', 'kota.penjadwalan')
+                    ->get();
+
+        // Melakukan mapping data mahasiswa
         $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
 
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('data', 'mahasiswa', 'id'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', 
+                    compact('data', 'mahasiswa', 'id', 'kriteria'));
     }
 
     /**
@@ -403,7 +419,7 @@ class PemberianNilaiDanFeedbackController extends Controller
 
     private function simpanNilaiSeminarII(Request $request, $id, $kota): View
     {
-        $nip = auth()->user()->username;
+        $nip = '197312271999031003';
         $nilai = $request->except('_token');
         $nilai_mahasiswa = [];
         $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
