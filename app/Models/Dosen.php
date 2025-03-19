@@ -52,9 +52,9 @@ class Dosen extends Model
         return $this->hasMany(PrioritasPembimbing::class, 'nip', 'nip');
     }
 
-    public function alokasiPembimbing()
+    public function alokasiDosen()
     {
-        return $this->hasMany(AlokasiPembimbing::class, 'nip', 'nip');
+        return $this->hasMany(AlokasiDosen::class, 'nip', 'nip');
     }
 
     public function kuotaMembimbing()
@@ -100,5 +100,10 @@ class Dosen extends Model
     public function pembatalan()
     {
         return $this->hasMany(Pembatalan::class, 'nip', 'nip');
+    }
+
+    public function nilaiRubrik()
+    {
+        return $this->hasMany(NilaiRubrik::class, 'nip', 'nip');
     }
 }
