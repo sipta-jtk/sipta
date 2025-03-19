@@ -15,7 +15,7 @@ class PreferensiNotifikasi extends Model
         'username',
         'tipe_notifikasi',
         'whatsapp',
-        'in_app',
+        'reminder_h5',
         'email'
     ];
 
