@@ -57,15 +57,19 @@ Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
 
-Route::middleware(['auth', 'admin'])->group(function () {
-
 Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
+    ->middleware('auth', 'can:admin')
+    ->name('manage.dosen');
+Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
+Route::post('/update-dosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
+
+Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manage_dosen'])
+    // ->middleware('auth')
     ->name('manage.dosen');
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 
-});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('auth');
@@ -73,4 +77,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+Route::get('/admin-dashboard', function () {
+    Gate::authorize('admin');
+    return "Selamat datang di Dashboard Admin!";
+});
 

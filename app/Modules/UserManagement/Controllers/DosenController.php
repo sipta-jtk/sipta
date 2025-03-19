@@ -3,6 +3,8 @@
 namespace App\Modules\UserManagement\Controllers;
 
 use App\Models\Dosen;
+use App\Models\AlokasiPembimbing;
+
 use App\Modules\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -41,9 +43,9 @@ class DosenController extends Controller
             'nama' => 'required|string|',
             'id' => 'required|string',
             'kode' => 'required|string',
-            'max_d4' => 'required|integer|min:0',
-            'max_d3' => 'required|integer|min:0',
-            'no_wa' => 'required'
+            'no_wa' => 'required',
+            'status_dosen' => 'required',
+            'id_kbk' => 'required',
         ]);
 
 
@@ -53,7 +55,8 @@ class DosenController extends Controller
             'email' => $request->email,
             'nama' => $request->nama,
             'no_whatsapp' => $request->no_wa,
-            'photo' => "default.jpg",
+            'photo' => 'default.jpg',
+            'role_user' => 'dosen',
             'password' => $randomCode // Default password, bisa diubah nanti
         ]);
 
@@ -62,16 +65,69 @@ class DosenController extends Controller
             'nip' => $request->nip,
             'id_dosen' => $request->id,
             'kode_dosen' => $request->kode,
+            'id_kbk' => $request->id_kbk,
             'maks_bimbingan_d4' => $request->max_d4,
             'maks_bimbingan_d3' => $request->max_d3,
-            'status_dosen' => 'aktif',
+            'status_dosen' => $request->status_dosen,
             'role_dosen' => 'dosen'
         ]);
 
         // Commit transaksi jika semua berhasil
         return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
 
+        
 
+}
+public function deleteDosen(Request $request)
+{
+    $request->validate([
+        'nip' => 'required'
+    ]);
+
+    $nip = $request->nip;
+    AlokasiPembimbing::where('nip', $nip)->delete();
+    Dosen::where('nip', $nip)->delete();
+    User::where('username', $nip)->delete();
+
+    return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil dihapus!');                    
+}
+
+public function updateDosen(Request $request)
+{
+    $request->validate([
+        'nip' => 'required',
+        'email' => 'required',
+        'nama' => 'required|string|',
+        'id' => 'required|string',
+        'kode' => 'required|string',
+        'max_d4' => 'required|integer|min:0',
+        'max_d3' => 'required|integer|min:0',
+        'no_wa' => 'required'
+    ]);
+
+
+    $nip = $request->nip;
+    // if($dosen->nip != $nip){
+    //     return redirect()->route('manage.dosen')->with('error', 'Dosen tidak ditemukan!');
+    // }
+   
+
+    $user = User::where('username', $nip)->first();
+    $user->update([
+        'username' => $request->nip,
+        'email' => $request->email,
+        'nama' => $request->nama,
+        'no_whatsapp' => $request->no_wa,
+    ]);
+    $dosen =  Dosen::where('nip', $request->nip)->first();
+    $dosen->update([
+        'id_dosen' => $request->id,
+        'kode_dosen' => $request->kode,
+        'maks_bimbingan_d4' => $request->max_d4,
+        'maks_bimbingan_d3' => $request->max_d3,
+    ]);
+
+    return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil dihapus!');                    
 }
 
 }

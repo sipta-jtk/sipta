@@ -482,7 +482,7 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => '/manage_dosen',
+                    'url' => '/manajemen-akun-dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
