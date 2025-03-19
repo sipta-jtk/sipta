@@ -53,6 +53,9 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
     ->name('pengajuan.pisah.kota.show');
+
+
+
 });
 
 
@@ -67,10 +70,11 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
 Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
 Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
-Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail-kota');
+Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('role_no_auth:admin')
+    ->middleware('can:admin')
     ->name('manage.dosen');
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');

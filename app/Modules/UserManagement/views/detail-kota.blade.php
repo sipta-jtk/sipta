@@ -46,8 +46,12 @@
         </div>
 
         <div class="d-flex justify-content-between">
-            <a href="#" class="btn btn-secondary">Kembali</a>
-            <a href="#" class="btn btn-danger">Ajukan Cerai</a>
+            @can('koordinator_ta')
+                <a href="#" class="btn btn-secondary">Kembali</a>
+            @endcan
+            @can('mahasiswa_kota', $kota->id_kota)
+                <a href="{{route('form.pisah.kota')}}" class="btn btn-danger">Ajukan Pisah</a>
+            @endcan
         </div>
     </div>
 </div>

@@ -78,6 +78,11 @@ class AuthServiceProvider extends ServiceProvider
          * [Topik 7] - Fitur Kelola Jurusan
         ***********************************/
 
+        // Mahasiswa KoTA sesuai
+        Gate::define('mahasiswa_kota', function ($user, $kotaId) {
+            return $user->mahasiswa->id_kota === $kotaId;
+        });
+
         //Contoh Akses Multirole
         Gate::define('akses-form-pisah-kota', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('koordinator_ta');

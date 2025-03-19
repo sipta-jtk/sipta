@@ -503,10 +503,12 @@ return [
                 [
                     'text' => 'Program Studi',
                     'url'  => 'program-studi',
+                    'icon' => 'fas fa-school',
                 ],
                 [
                     'text' => 'Kelola KBK',
                     'url'  => 'kelola-kbk',
+                    'icon' => 'fas fa-sitemap',
                 ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
@@ -515,30 +517,24 @@ return [
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Form Pisah KoTA',
-                    'url'  => 'form-pisah-kota',
-                    'icon' => 'fas fa-sign-out-alt',
-                    'can' => 'mahasiswa_ta',
-                ],
-                [
                     'text' => 'Pengajuan KoTA',
                     'url' => 'pengajuan-kota',
+                    'icon' => 'fas fa-users',
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url' => 'detail-kota',
-                ],
-                [
-                    'text' => 'Mahasiswa',
-                    'url' => '#',
+                    'url'  => $detailKotaUrl ?? 'detail-kota',
+                    'icon' => 'fas fa-info',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => '/manage_dosen',
+                    'icon' => 'fas fa-user-tie',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => '/#',
+                    'icon' => 'fas fa-user-graduate',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',
