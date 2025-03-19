@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     var table = $('#nilaiAkhirTable').DataTable({
         "paging": true,
         "lengthMenu": [10, 25, 50, 100],
@@ -8,6 +9,37 @@ $(document).ready(function () {
         "info": true,
         "autoWidth": false,
     });
+    // Mengambil data prodi dan kelas unik dari tabel
+    function updateFilterOptions() {
+        let prodiSet = new Set();
+        let kelasSet = new Set();
+
+        $('#nilaiAkhirTable tbody tr').each(function () {
+            let prodi = $(this).find("td:eq(3)").text().trim(); // Ambil nilai Prodi di kolom ke-3
+            let kelas = $(this).find("td:eq(4)").text().trim(); // Ambil nilai Kelas di kolom ke-4
+            if (prodi) prodiSet.add(prodi);
+            if (kelas) kelasSet.add(kelas);
+        });
+
+        // Update dropdown filter prodi
+        let prodiDropdown = $('#filterProdi');
+        prodiDropdown.empty().append('<option value="">Prodi</option>');
+        prodiSet.forEach(prodi => {
+            prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
+        });
+
+        // Update dropdown filter kelas
+        let kelasDropdown = $('#filterKelas');
+        kelasDropdown.empty().append('<option value="">Kelas</option>');
+        kelasSet.forEach(kelas => {
+            kelasDropdown.append(`<option value="${kelas}">${kelas}</option>`);
+        });
+    }
+
+    // Jalankan fungsi update filter setelah tabel dimuat
+    updateFilterOptions();
+
+    // Filter Prodi
     $('#filterProdi').on('change', function () {
         table.column(3).search(this.value).draw();
     });

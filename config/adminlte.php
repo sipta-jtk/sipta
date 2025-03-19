@@ -429,16 +429,19 @@ return [
                 [
                     'text' => 'Rekapitulasi Nilai Sidang',
                     'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                    'can' => 'akses-penilaian-koordinator-ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai Akhir',
                     'url' => 'kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                    'can' => 'akses-penilaian-koordinator-ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengaturan Nilai Akhir',
                     'url' => 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                    'can' => 'akses-penilaian-koordinator-ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]

@@ -69,9 +69,37 @@
                                 <td class="align-middle">{{ $row['prodi'] }}</td>
                                 <td class="align-middle">{{ $row['kelas'] }}</td>
                                 <td class="align-middle">{{ $row['kelompok'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiUts'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiUas'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiLainLain'] }}</td>
+                                <td class="align-middle nilai-cell">
+                                @if ($row['nilaiUts'] == 0)
+                                    <span class="text-danger nilai-tooltip">-1
+                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                    </span>
+                                @else
+                                    {{ $row['nilaiUts'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiUas'] == 0)
+                                    <span class="text-danger nilai-tooltip">-1
+                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                    </span>
+                                @else
+                                    {{ $row['nilaiUas'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiLainLain'] == 0)
+                                    <span class="text-danger nilai-tooltip">-1
+                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                    </span>
+                                @else
+                                    {{ $row['nilaiLainLain'] }}
+                                @endif
+                            </td>
+
+                                </td>
                                 <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
                                 <td class="align-middle">{{ $row['predikat'] }}</td>
                             </tr>
@@ -81,14 +109,14 @@
             </table>
         </div>
 
-        <form id="exportForm" action="{{ route('rekapitulasi-nilai.export') }}" method="POST" style="display: none;">
+        <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
             @csrf
             <input type="hidden" name="data" id="exportData">
         </form>
 
         <div class="d-flex justify-content-end mt-3">
         <button id="exportExcel" type="button" class="btn btn-success"
-            data-url="{{ route('rekapitulasi.export') }}">
+            data-url="{{ route('rekapitulasi-akhir.export') }}">
             <i class="fas fa-file-excel"></i> Export to Excel
         </button>
         </div>
@@ -103,29 +131,6 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var table = $('#nilaiAkhirTable').DataTable({
-                "paging": true,
-                "lengthMenu": [10, 25, 50, 100],
-                "pageLength": 10,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false
-            });
-
-            $('#filterProdi').on('change', function () {
-                table.column(3).search(this.value).draw();
-            });
-
-            $('#filterKelas').on('change', function () {
-                table.column(4).search(this.value).draw();
-            });
-
-            $('#dataTableControls').html($('.dataTables_length'));
-            $('#searchBox').html($('.dataTables_filter'));
-        });
-    </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/rekapitulasi_nilai_akhir.js') }}"></script>
 @stop
 

@@ -43,7 +43,16 @@ tbody tr:hover {
     background-color: #e2e6ea;
 }
 
+.nilai-tooltip {
+    position: relative;
+    cursor: pointer;
+    font-weight: bold;
+    color: red;
+}
+
 .tooltip-box {
+    display: none;
+    position: absolute;
     width: 280px;
     padding: 10px;
     border-radius: 6px;
@@ -52,8 +61,18 @@ tbody tr:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     font-size: 14px;
     line-height: 1.5;
-    left: 0;
-    transform: translateX(0);
+    left: 50%;
+    transform: translateX(-50%);
     top: 130%;
     z-index: 10;
+    text-align: center;
+}
+
+/* Menampilkan tooltip saat hover */
+.nilai-tooltip:hover .tooltip-box {
+    display: block;
+}
+
+.text-danger {
+    font-weight: bold;
 }
