@@ -78,28 +78,14 @@ class PemberianNilaiDanFeedbackController extends Controller
      * Menampilkan halaman pemberian masukan seminar 2
      * 
      */
-    public function pengisianMasukanSeminarII(): View
+    public function pengisianMasukanSeminarII($id, $kota): View
     {
+        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
+        $mahasiswa = Mahasiswa::where('id_kota', $kota)->with('user', 'kota.penjadwalan')->get();
 
-        // ID kota statis
-        $idKota = 2;
+        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
 
-        // Ambil hanya mahasiswa dengan id_kota = 2
-        $mahasiswaList = Mahasiswa::with('user')->where('id_kota', $idKota)->get();
-
-        // Ambil informasi KoTA berdasarkan id_kota = 2
-        $kotaInfo = Kota::where('id_kota', $idKota)->first();
-
-        // Data Mahasiswa
-        $mahasiswa = [
-            'kode_fta' => 'FTA-08',
-            'tanggal' => '7 Maret 2025',
-            'waktu' => '10:00 - 11:00',
-            // 'id_kota' => 'KoTA-313',
-            // 'topik_ta' => 'Analisis Perbandingan Performa Model x dan y dalam Memprediksi Skor Esai pada Automated Essay Scoring'
-        ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('mahasiswa', 'mahasiswaList','kotaInfo'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('data', 'mahasiswa', 'id'));
     }
 
     /**
@@ -454,12 +440,12 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Akses halaman pemberian masukan
      */
-    public function pengisianMasukanSeminar($id): View
+    public function pengisianMasukanSeminar($id, $kota): View
     {
         if($id == 1) {
-            return $this->pengisianMasukanSeminar1();
+            return $this->pengisianMasukanSeminar1($id, $kota);
         } else if($id == 2) {
-            return $this->pengisianMasukanSeminarII();
+            return $this->pengisianMasukanSeminarII($id, $kota);
         } else if($id == 3) {
             return $this->pengisianMasukanSeminarIII();
         } else {
