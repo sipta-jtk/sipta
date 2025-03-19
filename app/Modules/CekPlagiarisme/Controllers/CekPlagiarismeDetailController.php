@@ -4,6 +4,10 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
+use App\Models\Dokumen;
+use App\Models\Dosen;
+use App\Models\ReviewDosenPembimbing;
+
 
 class CekPlagiarismeDetailController extends Controller
 {
@@ -44,7 +48,7 @@ class CekPlagiarismeDetailController extends Controller
                 'komentar' => 'Di Parafrase yaa!!',
             ],
         ];
-        
+
         return view('CekPlagiarisme.views.DaftarDokumen', compact('cekPlagiarisme'));
     }
 
@@ -62,38 +66,16 @@ class CekPlagiarismeDetailController extends Controller
             'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
         ];
 
-        return view('CekPlagiarisme.views.detail', compact('dokumen'));
-    }   
+        // Mengambil review (komentar) terkait dokumen
+        $catatan = ReviewDosenPembimbing::where('id_dokumen', $id)
+            ->with('dosen')
+            ->get(); // Mendapatkan semua review yang ada
+
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan'));
+    }
 
     public function PenentuanAmbangBatas(): View
     {
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
     }
-
-     public function povMahasiswa(): View
-     {
-         // Data dummy untuk komentar
-         $comments = [
-             [
-                 'user' => 'Nana Mardiana',
-                 'role' => 'Dosen Pembimbing 1',
-                 'date' => '2025-03-01 20:01:01',
-                 'content' => 'Gunakan sumber referensi yang sahih, minimal sinta 3'
-             ],
-             [
-                 'user' => 'Cinta Laura',
-                 'role' => 'Dosen Pembimbing 2',
-                 'date' => '2025-03-02 10:12:09',
-                 'content' => 'Silakan sertakan jurnal yang relevan, kamu bisa memanfaatkan sciencesdirect, google scholar, atau web sejenisnya untuk mencari jurnal yang bisa dibuka untuk umum'
-             ],
-             [
-                 'user' => 'Zayn Malik',
-                 'role' => 'Dosen Pembimbing 3',
-                 'date' => '2025-03-03 12:15:30',
-                 'content' => 'Silakan sertakan jurnal yang relevan, kamu bisa memanfaatkan sciencesdirect, google scholar, atau web sejenisnya untuk mencari jurnal yang bisa dibuka untuk umum'
-             ]
-         ];
- 
-         return view('CekPlagiarisme.views.komentar', compact('comments'));
-     }
 }

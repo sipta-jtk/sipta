@@ -3,7 +3,7 @@
 @section('title', 'Detail Plagiarism Check')
 
 @section('content_header')
-    <h1 class="text-center">Detail Plagiarism Check</h1>
+<h1 class="text-center">Detail Plagiarism Check</h1>
 @stop
 
 @section('content')
@@ -19,7 +19,8 @@
                     @if(isset($dokumen->file))
                         <iframe src="{{ asset('storage/' . $dokumen->file) }}" width="100%" height="600px"></iframe>
                     @else
-                        <pre class="p-3 bg-light border rounded" style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
+                        <pre class="p-3 bg-light border rounded"
+                            style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
                     @endif
                 </div>
             </div>
@@ -29,7 +30,8 @@
         <div class="col-md-4">
             <ul class="nav nav-tabs mb-3" id="detailTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋 Detail</a>
+                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋
+                        Detail</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">📄 Sumber</a>
@@ -40,6 +42,7 @@
                 <li class="nav-item">
                     <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab">💬 Catatan</a>
                 </li>
+
             </ul>
 
             <!-- Tab Content -->
@@ -53,13 +56,34 @@
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr><th>Penulis</th><td>Mumun Sumumun</td></tr>
-                                    <tr><th>Judul Dokumen</th><td>Implementasi Algoritma Naive</td></tr>
-                                    <tr><th>Nama Dokumen</th><td>CONTOH FIX.PDF</td></tr>
-                                    <tr><th>Tanggal Unggah</th><td>28-02-2025</td></tr>
-                                    <tr><th>Jumlah Halaman</th><td>30</td></tr>
-                                    <tr><th>Ukuran Dokumen</th><td>2MB</td></tr>
-                                    <tr><th>Ambang Batas</th><td>50%</td></tr>
+                                    <tr>
+                                        <th>Penulis</th>
+                                        <td>Mumun Sumumun</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Judul Dokumen</th>
+                                        <td>Implementasi Algoritma Naive</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nama Dokumen</th>
+                                        <td>CONTOH FIX.PDF</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tanggal Unggah</th>
+                                        <td>28-02-2025</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jumlah Halaman</th>
+                                        <td>30</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ukuran Dokumen</th>
+                                        <td>2MB</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ambang Batas</th>
+                                        <td>50%</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -75,10 +99,23 @@
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr><td>arxiv.org</td><td>4%</td></tr>
-                                    <tr><td>jurnal.itscience.org</td><td>12%</td></tr>
-                                    <tr><td>ejurnal.umri.ac.id</td><td>2%</td></tr>
-                                    <tr><td>Fei Li et al.</td><td><1%</td></tr>
+                                    <tr>
+                                        <td>arxiv.org</td>
+                                        <td>4%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>jurnal.itscience.org</td>
+                                        <td>12%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ejurnal.umri.ac.id</td>
+                                        <td>2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fei Li et al.</td>
+                                        <td>
+                                            <1%</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -106,20 +143,7 @@
                             <h5>Catatan</h5>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <strong>Nana Mardiana</strong> - 01 Maret 2025, 20:20:20
-                                    <p>Gunakan sumber referensi yang sahih, minimal Sinta 3</p>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Cinta Laura</strong> - 02 Maret 2025, 10:12:09
-                                    <p>Di Parafrase yaa!!</p>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Zayn Malik</strong> - 02 Maret 2025, 13:09:01
-                                    <p>Di Parafrase yaa!!</p>
-                                </li>
-                            </ul>
+                            @include('CekPlagiarisme.views.catatan')
                         </div>
                     </div>
                 </div>
@@ -138,7 +162,7 @@
         sidebarTabs.forEach(function (tab) {
             tab.addEventListener("click", function (event) {
                 event.preventDefault(); // Hindari reload halaman
-                
+
                 // Aktifkan tab yang diklik
                 var tabTrigger = new bootstrap.Tab(this);
                 tabTrigger.show();
