@@ -77,7 +77,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $id . '/nilai/' . $data['kota']) }}" method="POST">
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $seminar . '/nilai/' . $data['kota']) }}" method="POST">
             @csrf
 
             <div class="row mt-4">

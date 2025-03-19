@@ -20,6 +20,11 @@ class KategoriPenilaian extends Model
     {
         return $this->hasMany(SumberNilai::class, 'sumber', 'id_kategori');
     }
+
+    public function kategoriPenilaian()
+    {
+        return $this->hasMany(KategoriPenilaian::class, 'kode_fta', 'kode_fta');
+    }
     
     public function formulirPenilaian()
     {
