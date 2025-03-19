@@ -505,7 +505,11 @@ return [
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url' => 'detail-kota',
+                    'url' => '#',
+                ],
+                [
+                    'text' => 'Management KoTA',
+                    'url' => 'management-kota',
                 ],
                 [
                     'text' => 'Mahasiswa',
