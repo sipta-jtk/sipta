@@ -81,4 +81,77 @@ class AlokasiPembimbingController extends Controller
             "kelebihan" => $kelebihan
         ];
     }
+    public function submit(Request $request)
+    {
+        $data = json_decode($request->input('dataToSend'));
+
+        foreach ($data as $value) {
+            $nip_dosen_1 = Dosen::where('id_dosen', $value->pembimbing1 ?? null)->select('nip')->first();
+            $nip_dosen_2 = Dosen::where('id_dosen', $value->pembimbing2 ?? null)->select('nip')->first();
+
+            $nip_penguji_1 = Dosen::where('id_dosen', $value->penguji1 ?? null)->select('nip')->first();
+            $nip_penguji_2 = Dosen::where('id_dosen', $value->penguji2 ?? null)->select('nip')->first();
+            $nip_penguji_3 = Dosen::where('id_dosen', $value->penguji3 ?? null)->select('nip')->first();
+
+            $catatan = $value->catatan ?? null;
+
+            if ($nip_dosen_1) {
+                AlokasiPembimbing::updateOrCreate(
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_1->nip],
+                    [
+                        'urutan_prioritas_terpilih' => '1',
+                        'status_alokasi' => $value->status_pembimbing1 ?? 'belum_fix',
+                        'catatan' => $catatan
+                    ]
+                );
+            }
+
+            if ($nip_dosen_2) {
+                AlokasiPembimbing::updateOrCreate(
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2->nip],
+                    [
+                        'urutan_prioritas_terpilih' => '2',
+                        'status_alokasi' => $value->status_pembimbing2 ?? 'belum_fix',
+                        'catatan' => $catatan
+                    ]
+                );
+            }
+
+            if ($nip_penguji_1) {
+                AlokasiPembimbing::updateOrCreate(
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_1->nip],
+                    [
+                        'urutan_prioritas_terpilih' => 'penguji_1',
+                        'status_alokasi' => 'fix',
+                        'catatan' => $catatan
+                    ]
+                );
+            }
+
+            if ($nip_penguji_2) {
+                AlokasiPembimbing::updateOrCreate(
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_2->nip],
+                    [
+                        'urutan_prioritas_terpilih' => 'penguji_2',
+                        'status_alokasi' => 'fix',
+                        'catatan' => $catatan
+                    ]
+                );
+            }
+
+            if ($nip_penguji_3) {
+                AlokasiPembimbing::updateOrCreate(
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_3->nip],
+                    [
+                        'urutan_prioritas_terpilih' => 'penguji_3',
+                        'status_alokasi' => 'fix',
+                        'catatan' => $catatan
+                    ]
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');
+    }
+
 }
