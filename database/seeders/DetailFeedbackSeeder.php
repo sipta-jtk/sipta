@@ -14,33 +14,27 @@ class DetailFeedbackSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!Schema::hasTable('detail_feedback')) {
-            return;
-        }
+        Schema::disableForeignKeyConstraints();
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('detail_feedback')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $data = [
-            [
-                'id_feedback' => 1,
-                'id_kota' => 2, 
-                'nip' => '197312271999031003', 
-                'status_penilaian' => 'draf', 
-                'isi_feedback' => 'Feedback mengenai presentasi sangat baik dan informatif.',
-            ],
-            [
-                'id_feedback' => 2,
-                'id_kota' => 1,
-                'nip' => '198502102015042001',
-                'status_penilaian' => 'dipublikasikan',
-                'isi_feedback' => 'Diskusi cukup baik, namun bisa lebih interaktif.',
-            ],
-        ];
+        DetailFeedback::create([
+            'id_detail_feedback' => 1,
+            'id_feedback' => 1,
+            'id_kota' => 5,
+            'nip' => '199312282019031013',
+            'status_penilaian' => 'draf',
+            'isi_feedback' => "Struktur laporan sudah sistematis, mencakup pendahuluan, metode, hasil, dan kesimpulan.
+        Penjelasan algoritma Content-Based Filtering cukup jelas dan menggunakan referensi yang relevan.
+        Hasil evaluasi model sudah ditampilkan dengan metrik seperti Precision dan Recall, Penjelasan dataset perlu lebih rinci, misalnya jumlah data, sumber data, dan preprocessing yang dilakukan.
+        Harus ada analisis lebih dalam terhadap kelebihan dan kekurangan metode yang digunakan.
 
-        foreach ($data as $item) {
-            DetailFeedback::create($item);
-        }
+        Penjelasan mengenai proses rekomendasi cukup jelas dan runtut.
+        Pemaparan hasil uji coba sistem dilakukan dengan baik dan didukung dengan grafik/visualisasi.
+
+        Durasi presentasi perlu diperhatikan, bagian penjelasan metode agak terlalu panjang dibandingkan hasil analisis."
+        ]);
+
+        Schema::enableForeignKeyConstraints();
     }
 }
