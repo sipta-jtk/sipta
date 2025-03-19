@@ -41,27 +41,29 @@ class PemberianNilaiDanFeedbackController extends Controller
      */
     private function pengisianNilaiSeminarII($seminar, $kota): View
     {
+        $kodeFta = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)->first()->kode_fta;
+
         // Mengambil semua kriteria beserta rubriknya
-        $kriteria = KriteriaPenilaian::with('rubrik')
-                ->where('kode_fta', $id)
+        $kriteria = KriteriaPenilaian::with('nilaiKriteria')
+                ->where('kode_fta', $kodeFta)
                 ->get();
 
-        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $id
+        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $seminar
         $kategoriPenilaian = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)
-                    ->where('kode_fta', $id) 
+                    ->where('kode_fta', $seminar) 
                     ->with('formulirPenilaian')
                     ->first();
 
         // Mengambil mahasiswa berdasarkan kota yang sesuai dengan seminar
         $mahasiswa = Mahasiswa::where('id_kota', $kota)
                     ->with('user', 'kota.penjadwalan')
-                    ->get();
+                    ->get();       
 
         // Melakukan mapping data mahasiswa
-        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
+        $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa);
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', 
-                    compact('data', 'mahasiswa', 'id', 'kriteria'));
+                    compact('data', 'mahasiswa', 'seminar', 'kriteria'));
     }
 
     /**

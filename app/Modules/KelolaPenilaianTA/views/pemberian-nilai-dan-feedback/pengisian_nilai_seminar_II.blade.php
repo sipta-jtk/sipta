@@ -143,7 +143,7 @@
                                     <td>{{ $item->bobot_kriteria }} %</td>
                                     <td>0 - 100</td>
                                     @foreach($mahasiswa as $key => $mhs)
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
+                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
                                     @endforeach
                                 </tr>
                             @endforeach
@@ -156,7 +156,7 @@
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <button type="submit" class="btn btn-primary">Selanjutnya</button>
+                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $seminar . '/masukan/' . $data['kota']) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>

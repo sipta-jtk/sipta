@@ -18,8 +18,6 @@
     </div>
 @stop
 
-
-
 @section('content')
     <div class="p-4">
         {{-- Tabel Scrollable --}}
@@ -65,7 +63,10 @@
                                 @else
                                     <td> 
                                         <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
-                                    </td>
+                                        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
+                                        </form>
                                 @endif
                             @endif
                         </tr>
@@ -85,4 +86,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const finalisasiButtons = document.querySelectorAll('.finalisasi-button');
+            finalisasiButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const form = this.closest('form');
+                    if (confirm('Apakah Anda yakin ingin memfinalisasi nilai ini?')) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @stop
