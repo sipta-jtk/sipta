@@ -403,14 +403,15 @@ class PemberianNilaiDanFeedbackController extends Controller
 
     private function simpanNilaiSeminarII(Request $request, $id, $kota): View
     {
-        $nip = 198502102015042001; // masih statis
+        $nip = auth()->user()->username;
         $nilai = $request->except('_token');
         $nilai_mahasiswa = [];
         $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
+        $bobot = [0.4, 0.2, 0.4];
         
-        // Menghitung rata-rata nilai untuk setiap mahasiswa
+        // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
         foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilai($values);
+            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobot);
             $nilai_mahasiswa[] = $average;
         }
     
@@ -423,9 +424,17 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Helper function untuk menghitung rata-rata nilai
      */
-    public function hitungRataRataNilai(array $nilai): float
+    public function hitungRataRataNilaiDenganBobot(array $nilai, array $bobot): float
     {
-        return count($nilai) > 0 ? array_sum($nilai) / count($nilai) : 0;
+        $totalNilai = 0;
+        $totalBobot = 0;
+    
+        foreach ($nilai as $index => $value) {
+            $totalNilai += $value * $bobot[$index];
+            $totalBobot += $bobot[$index];
+        }
+    
+        return $totalBobot > 0 ? $totalNilai / $totalBobot : 0;
     }
 
     /**
