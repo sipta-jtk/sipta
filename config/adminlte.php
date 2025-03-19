@@ -133,12 +133,12 @@ return [
     |
     */
 
-    'usermenu_enabled' => false,
-    'usermenu_header' => true,
+    'usermenu_enabled' => true,
+    'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -263,7 +263,7 @@ return [
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => 'profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -366,9 +366,33 @@ return [
                     'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
                 [
-                    'text' => 'Rekap FTA',
-                    'url' => '/PengajuanAlokasiPembimbing/RekapFTA02',
+                    'text' => 'Jadwal Seminar 3',
+                    'url' => 'jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Jadwal Sidang',
+                    'url' => 'jadwal-sidang',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Seminar 3',
+                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pembatalan Sidang',
+                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -387,37 +411,42 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',     
+                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',     
+                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',     
+                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
                             // 'icon' => 'far fa-fw fa-file',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',     
+                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',     
+                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',     
+                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
+        ],
+        [
+            'text' => 'Timeline',
+            'url' => '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -445,6 +474,16 @@ return [
                 // ],
             ]
         ],
+        [
+            'text' => 'Cek Plagiarisme',
+            'url' => '/cek-plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+        ],
+        [
+            'text' => 'Penentuan Ambang Batas Plagiarisme',
+            'url' => '/penentuan-ambang-batas',
+            'icon' => 'fas fa-scroll',
+        ],
         ['header' => 'Pengaturan Pengguna'],
         // [
         //     'text' => 'profile',
@@ -464,10 +503,12 @@ return [
                 [
                     'text' => 'Program Studi',
                     'url'  => 'program-studi',
+                    'icon' => 'fas fa-school',
                 ],
                 [
                     'text' => 'Kelola KBK',
                     'url'  => 'kelola-kbk',
+                    'icon' => 'fas fa-sitemap',
                 ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
@@ -476,21 +517,32 @@ return [
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Form Pisah KoTA',
-                    'url' => 'form-pisah-kota',
-                    'icon' => 'fas fa-sign-out-alt',
-                    'can' => 'mahasiswa_ta',
-                    // 'can' => function() {
-                    //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
-                    //         },
+                    'text' => 'Pengajuan KoTA',
+                    'url' => 'pengajuan-kota',
+                    'icon' => 'fas fa-users',
+                ],
+                [
+                    'text' => 'Detail KoTA',
+                    'url'  => $detailKotaUrl ?? 'detail-kota',
+                    'icon' => 'fas fa-info',
+                ],
+                [
+                    'text' => 'Management KoTA',
+                    'url' => 'management-kota',
+                ],
+                [
+                    'text' => 'Mahasiswa',
+                    'url' => '#',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => '/manage_dosen',
+                    'icon' => 'fas fa-user-tie',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => '/#',
+                    'icon' => 'fas fa-user-graduate',
                     // 'submenu' => [
                     //     [
                     //         'text' => 'Koordinator TA',

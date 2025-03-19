@@ -12,6 +12,12 @@ use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
 
 
+use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
+use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
+use App\Modules\UserManagement\Controllers\DetailKoTAController;
+use App\Modules\UserManagement\Controllers\ProfileController;
+use App\Modules\UserManagement\Controllers\ManagementKoTAController;
+
 // Route untuk login
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
@@ -42,30 +48,43 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/user_management', [UserManagementController::class, 'render']);
 });
 
-//Pengajuan Pisah KoTA
-// Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])->name('pengajuan.pisah.kota');
-// Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])->name('pengajuan.pisah.kota.show');
-
-Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])
-        ->name('pengajuan.pisah.kota');
-});
-Route::middleware(['auth', 'koordinator_ta'])->group(function () {
+    ->name('pengajuan.pisah.kota');
+    
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
-        ->name('pengajuan.pisah.kota.show');
+    ->name('pengajuan.pisah.kota.show');
+
+
+
 });
+
 
 Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
-Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
+Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
+        ->name('pengajuan.pisah.kota.terima')
+        ->middleware('can:koordinator_ta');
+
+
+Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
+Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
+Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
+Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('role_no_auth:admin')
+    ->middleware('can:admin')
     ->name('manage.dosen');
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('auth');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+});
 
 
 // Route::get('/test-spatie', function () {
@@ -91,3 +110,5 @@ Route::post('program-studi', [ProgramStudiController::class, 'store'])->name('pr
 Route::get('program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
 Route::put('program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
 Route::delete('program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
