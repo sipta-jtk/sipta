@@ -311,7 +311,7 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
-    
+
         // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
@@ -426,6 +426,9 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
+
+            // 'label' => 4,
+            // 'label_color' => 'success',
         ],
         [
             'text' => 'Artefak',
@@ -460,6 +463,7 @@ return [
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => $prefix . '/#',
+
                 ],
             ],
         ],
