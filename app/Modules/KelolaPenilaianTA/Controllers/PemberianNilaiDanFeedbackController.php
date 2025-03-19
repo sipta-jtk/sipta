@@ -7,7 +7,6 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
 use App\Models\KategoriPenilaian;
-use App\Models\KriteriaPenilaian;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -79,20 +78,6 @@ class PemberianNilaiDanFeedbackController extends Controller
         ];
     
         return $data;
-    }
-
-    /**
-     * Menampilkan halaman pemberian masukan seminar 2
-     * 
-     */
-    public function pengisianMasukanSeminarII($id, $kota): View
-    {
-        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar '. $id)->with('formulirPenilaian')->first();
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->with('user', 'kota.penjadwalan')->get();
-
-        $data = $this->mappingDataMahasiswa($seminar, $mahasiswa);
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', compact('data', 'mahasiswa', 'seminar'));
     }
 
      /**
@@ -264,6 +249,7 @@ class PemberianNilaiDanFeedbackController extends Controller
         $pengelolaanNilai = new PengelolaanNilaiController();
         return $pengelolaanNilai->detailNilaiMahasiswa(2);
     }
+    
 
     /**
      * Helper function untuk input nilai mahasiswa ke database
@@ -297,10 +283,6 @@ class PemberianNilaiDanFeedbackController extends Controller
         $kodeFTA = KategoriPenilaian::where('id_kategori', $idKategori)->first()->kode_fta;
         $kriteriaPenilaian = KriteriaPenilaian::where('kode_fta', $kodeFTA)->get();
     
-        Log::info('Nilai: ' . json_encode($nilai, JSON_PRETTY_PRINT));
-        Log::info('Kriteria Penilaian: ' . json_encode($kriteriaPenilaian, JSON_PRETTY_PRINT));
-        Log::info('Mahasiswa: ' . json_encode($mahasiswa, JSON_PRETTY_PRINT));
-    
         foreach($mahasiswa as $index => $mhs) {
             foreach($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
                 $nilaiKriteria = $nilai['nilai' . $index][$kriteriaIndex];
@@ -313,23 +295,6 @@ class PemberianNilaiDanFeedbackController extends Controller
                 ]);
             }
         }
-    }
-
-
-    /**
-     * Helper mapping untuk data mahasiswa di form pengisian nilai seminar 2
-     */
-    private function mappingDataMahasiswa($seminar, $mahasiswaList)
-    {
-        $data = [
-            'nama_fta' => $seminar->formulirPenilaian->nama_fta,
-            'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
-            'judul_ta' => $mahasiswaList->first()->kota->judul_ta,
-            'start' => date('H:i', strtotime($mahasiswaList->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswaList->first()->id_kota
-        ];
-    
-        return $data;
     }
 
         /**
@@ -416,55 +381,6 @@ class PemberianNilaiDanFeedbackController extends Controller
     }
 
     /**
-     * Akses halaman pemberian nilai
-     */
-    public function pengisianNilaiSeminar($id, $kota): View
-    {
-        if($id == 1) {
-            
-        } else if($id == 2) {
-            return $this->pengisianNilaiSeminarII($id, $kota);
-        } else if($id == 3) {
-            return $this->pengisianNilaiSeminarIII();
-        } else {
-            return $this->pengisianNilaiSidangAkhir();
-        } 
-    }
-
-    public function simpanNilaiSeminar(Request $request, $id, $kota): View
-    {
-        if ($id == 1) {
-            $this->simpanNilaiSeminarI($request, $id, $kota);
-        } else if ($id == 2) {
-            return $this->simpanNilaiSeminarII($request, $id, $kota);
-        } else if ($id == 3) {
-            $this->simpanNilaiSeminarIII($request, $kota);
-        } else {
-            $this->simpanNilaiSidangAkhir($request, $kota);
-        }
-    }
-
-    private function simpanNilaiSeminarII(Request $request, $id, $kota): View
-    {
-        $nip = auth()->user()->username;
-        $nilai = $request->except('_token');
-        $nilai_mahasiswa = [];
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
-        $bobot = [0.4, 0.2, 0.4];
-        
-        // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
-        foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobot);
-            $nilai_mahasiswa[] = $average;
-        }
-    
-        $this->inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip, $id);
-    
-        $pengelolaanNilai = new PengelolaanNilaiController();
-        return $pengelolaanNilai->detailNilaiMahasiswa($id);
-    }
-
-    /**
      * Helper function untuk menghitung rata-rata nilai
      */
     public function hitungRataRataNilaiDenganBobot(array $nilai, array $bobot): float
@@ -537,7 +453,7 @@ class PemberianNilaiDanFeedbackController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', compact('data', 'mahasiswa', 'id'));
     }
 
-        /**
+    /**
      * Menampilkan halaman pemberian masukan seminar 3
      * 
      */
