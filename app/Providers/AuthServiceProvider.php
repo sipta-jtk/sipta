@@ -94,7 +94,7 @@ class AuthServiceProvider extends ServiceProvider
         ***********************************/
         //All Mahasiswa 
         Gate::define('all_mahasiswa', function ($user) {
-            return $user->role_user === 'mahasiswa' && $user->mahasiswa->status_ta === 'mahasiswa_ta' && $user->mahasiswa->status_ta === 'mahasiswa_non_ta';
+            return Gate::allows('mahasiswa_ta') || Gate::allows('mahasiswa_non_ta');
         });
     }
 }

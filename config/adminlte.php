@@ -389,6 +389,12 @@ return [
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                     'can' => 'koordinator_ta'
                 ],
+                [
+                    'text' => 'Pengajuan',
+                    'url' => $prefix . '/pengajuan',
+                    'can' => 'all_mahasiswa',
+                    'icon' => 'fas fa-fw fa-file',
+                ],
             ]
         ],
         [
@@ -430,13 +436,6 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Pengajuan',
-            'url' => '/pengajuan',
-            'icon' => 'fas fa-fw fa-file',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
