@@ -44,17 +44,17 @@
             <table id="nilaiAkhirTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="1" class="align-middle" style="width: 1%;">No</th>
-                        <th rowspan="1" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="1" class="align-middle" style="width: 15%;">Nama</th>
-                        <th rowspan="1" class="align-middle" style="width: 5%;">Prodi</th>
-                        <th rowspan="1" class="align-middle" style="width: 2%;">Kelas</th>
-                        <th rowspan="1" class="align-middle" style="width: 4%;">Kelompok</th>
-                        <th colspan="1" style="width: 5%;">UTS</th>
-                        <th colspan="1" style="width: 5%;">UAS</th>
-                        <th colspan="1" style="width: 5%;">Lain-Lain</th>
-                        <th colspan="1" style="width: 5%;">Nilai Akhir</th>
-                        <th colspan="1" style="width: 5%;">Predikat</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 1%;">No</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 3%;">NIM</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 15%;">Nama</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 5%;">Prodi</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 2%;">Kelas</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 4%;">Kelompok</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">UTS</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">UAS</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Lain-Lain</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Nilai Akhir</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Predikat</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -25,11 +25,11 @@
                 <table id="nilaiAkhirTable" class="table text-center">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
-                            <th>No</th>
-                            <th>Komponen Nilai Akhir</th>
-                            <th>Bobot (%)</th>
-                            <th>Sumber Nilai</th>
-                            <th>Aksi</th>
+                            <th class="bg-dark">No</th>
+                            <th class="bg-dark">Komponen Nilai Akhir</th>
+                            <th class="bg-dark">Bobot (%)</th>
+                            <th class="bg-dark">Sumber Nilai</th>
+                            <th class="bg-dark">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

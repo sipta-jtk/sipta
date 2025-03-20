@@ -39,8 +39,8 @@
         <table class="table table-bordered w-50">
             <thead>
                 <tr class="bg-dark text-white" style="text-align: center;">
-                    <th class="align-middle text-center w-25">NIM</th>
-                    <th class="align-middle text-center w-75">Nama</th>
+                    <th class="bg-dark align-middle text-center w-25">NIM</th>
+                    <th class="bg-dark align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,8 +59,8 @@
         <table class="table table-bordered w-50">
             <thead>
                 <tr class="bg-dark text-white" style="text-align: center;">
-                    <th class="align-middle text-center w-25">NIP</th>
-                    <th class="align-middle text-center w-75">Nama</th>
+                    <th class="bg-dark align-middle text-center w-25">NIP</th>
+                    <th class="bg-dark align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,9 +82,9 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Nama FTA</th>
-                        <th class="text-center">Rubrik Penilaian</th>
-                        <th class="text-center">Feedback Dosen</th>
+                        <th class="bg-dark">Nama FTA</th>
+                        <th class="bg-dark text-center">Rubrik Penilaian</th>
+                        <th class="bg-dark text-center">Feedback Dosen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,42 +124,12 @@
                 </tbody>                
             </table>
         </div>
-    </div>
-    
-    <style>
-        /* Nonaktifkan link jika feedback belum tersedia */
-        .disabled-link {
-            pointer-events: none;
-            opacity: 0.5;
-        }
+    </div>      
+@stop
 
-        .tooltip-box {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            position: absolute;
-            width: 280px;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: white;
-            border: 1px solid #ccc;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            font-size: 14px;
-            line-height: 1.5;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 130%;
-            z-index: 10;
-            text-align: center;
-        }
-        .tooltip-wrapper:hover .tooltip-box {
-            visibility: visible;
-            opacity: 1;
-        }
-
-    </style>
-    
-      
+@section('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/monitoring_nilai_mahasiswa.css') }}">
 @stop
 
 @section('js')
