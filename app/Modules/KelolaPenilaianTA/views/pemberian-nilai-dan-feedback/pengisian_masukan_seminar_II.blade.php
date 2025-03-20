@@ -7,7 +7,7 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => url('/kelola-penilaian-ta/nilai-seminar/2'), 'label' => 'Penilaian Seminar II'],
+                ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar II'],
                 ['url' => '', 'label' => 'Masukan Seminar II']
             ]
         ])
@@ -45,36 +45,24 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/kelola-penilaian-ta') }}"> <!-- route('feedback.store') method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['kota'] . '/tambah') }}" method="POST">
             @csrf
 
-            <!-- Dokumen -->
-            <div class="form-group">
-                <label for="dokumen">Masukan untuk Dokumen</label>
-                <input id="dokumen" type="hidden" name="dokumen">
-                <trix-editor input="dokumen"></trix-editor>
-            </div>
+            @foreach ($aspekFeedback as $feedback)
+                <div class="form-group">
+                    <label for="{{ Str::slug($feedback->nama_aspek_feedback) }}">
+                        Masukan untuk {{ $feedback->nama_aspek_feedback }}
+                    </label>
+                    <input type="hidden" name="feedback[{{ $feedback->id }}][id_fta]" value="{{ $id }}">
+                    <input type="hidden" name="feedback[{{ $feedback->id }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
+                    
+                    <!-- Trix Editor -->
+                    <trix-editor input="feedback-{{ $feedback->id }}"></trix-editor>
+                    <input id="feedback-{{ $feedback->id }}" type="hidden" name="feedback[{{ $feedback->id }}][masukan]">
+                </div>
+            @endforeach
 
-            <!-- Presentasi -->
-            <div class="form-group">
-                <label for="presentasi">Masukan untuk Presentasi</label>
-                <input id="presentasi" type="hidden" name="presentasi">
-                <trix-editor input="presentasi"></trix-editor>
-            </div>
-
-            <!-- Penguasaan Topik -->
-            <div class="form-group">
-                <label for="penguasaan">Masukan untuk Penguasaan Topik</label>
-                <input id="penguasaan" type="hidden" name="penguasaan">
-                <trix-editor input="penguasaan"></trix-editor>
-            </div>
-
-            <!-- Tombol Simpan -->
-            <div class="text-right mt-3">
-                <button type="submit" class="btn btn-primary">
-                    Simpan
-                </button>
-            </div>
+            <button type="submit" class="btn btn-primary">Kirim Masukan</button>
         </form>
     </div>
 @stop
@@ -90,4 +78,11 @@
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
+    <script> 
+        document.addEventListener("trix-change", function(event) {
+            let editor = event.target;
+            let hiddenInput = document.getElementById(editor.getAttribute("input"));
+            hiddenInput.value = editor.value;
+        });
+    </script>
 @stop

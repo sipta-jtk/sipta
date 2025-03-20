@@ -48,9 +48,10 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     // ================= PEMBERIAN NILAI DAN FEEDBACK =================
     Route::prefix('nilai-seminar')->group(function () {
         Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
-        Route::get('/{id}/masukan/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
         Route::get('/{id}/nilai/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
+        Route::get('/{id}/masukan/{kota}', [PemberianNilaiDanFeedbackController::class, 'simpanMasukanSeminar']);
         Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanNilaiSeminar']);
+        Route::post('/{id}/masukan/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
     });
 
     Route::prefix('nilai-sidang')->group(function () {
