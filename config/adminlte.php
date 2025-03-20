@@ -474,6 +474,15 @@ return [
                     'can' => 'koordinator_ta',
                 ],
                 [
+                    'text' => 'Form Pisah KoTA',
+                    'url' => 'form-pisah-kota', 
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'mahasiswa_ta',
+                    // 'can' => function() {
+                    //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
+                    //         },
+                ],
+                [
                     'text' => 'Pengajuan KoTA',
                     'url' => $prefix . '/pengajuan-kota',
                     'icon' => 'fas fa-users',
@@ -485,11 +494,11 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => $prefix . '/manage_dosen',
+                    'url' => $prefix . '/manajemen-akun-dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => $prefix . '/#',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
 
                 ],
             ],

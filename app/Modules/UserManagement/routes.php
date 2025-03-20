@@ -2,6 +2,8 @@
 
 use App\Models\Mahasiswa;
 use App\Models\User;
+use App\Modules\UserManagement\Controllers\MahasiswaController;
+use Illuminate\Support\Facades\Gate;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
@@ -16,6 +18,8 @@ use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -75,6 +79,52 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
         ->middleware('can:koordinator_ta');
 
 
+Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
+    ->middleware('auth', 'can:admin')
+    ->name('manage.dosen');
+Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
+Route::post('/update-dosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
+
+Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
+Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
+
+Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manage_mhs'])
+        ->middleware('auth', 'can:admin')
+        ->name('manage.mhs');
+
+Route::post('/addNewMhs', [MahasiswaController::class, 'addNewMhs'])->name('mahasiswa.addNewMhs');
+Route::post('/updateMhs', [MahasiswaController::class, 'updateMhs'])->name('mahasiswa.updateMhs');
+
+
+Route::get('/download-template-mhs', function () {
+    $filePath = 'public/templateExcel/template-registrasi-mahasiswa.xlsx';
+    if (!Storage::exists($filePath)) {
+        abort(404, 'File tidak ditemukan');
+    }
+
+    return Storage::download($filePath, 'template-registrasi-mahasiswa.xlsx');
+})->name('download.template-mhs');
+
+Route::get('/previewDataMhs', [MahasiswaController::class, 'previewDataMhs'])->name('previewDataMhs');
+Route::post('/inputBulkMhs', [MahasiswaController::class, 'inputBulk'])->name('inputBulkMhs');
+
+
+Route::get('/download-template-dosen', function () {
+    $filePath = 'public/templateExcel/template-registrasi-dosen.xlsx';
+    if (!Storage::exists($filePath)) {
+        abort(404, 'File tidak ditemukan');
+    }
+
+    return Storage::download($filePath, 'template-registrasi-dosen.xlsx');
+})->name('download.template-dosen');
+
+Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import-mhs');
+Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
+Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
+Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
+
+
+
 Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
 Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
@@ -85,8 +135,6 @@ Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('can:admin')
     ->name('manage.dosen');
 
-Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
-Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
 
 
 Route::middleware(['auth'])->group(function () {
