@@ -95,5 +95,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('akses-penilaian-koordinator-ta', function ($user) {
             return Gate::allows('koordinator_ta');
         });
+
     }
 }
