@@ -15,6 +15,7 @@ class DaftarKesediaanMembimbingController extends Controller
     }
     public function view_daftarKesediaanMembimbing(): View
     {
+
         $prodiList = collect(DB::table('prodi')->pluck('nama_prodi')->toArray());
     
         $caseStatements = $prodiList->map(function ($prodi) {
