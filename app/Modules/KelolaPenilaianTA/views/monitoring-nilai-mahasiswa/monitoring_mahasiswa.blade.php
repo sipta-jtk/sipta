@@ -90,7 +90,7 @@
                     <tr>
                         <td style="vertical-align: middle; white-space: nowrap;">{{ $fta->nama_fta }}</td>
                         <td class="text-center">
-                            <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $fta->kode_fta, 'idProdi' => $idProdi]) }}'" 
+                            <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $fta->id_fta, 'idProdi' => $idProdi]) }}'" 
                                 class="btn btn-primary btn-sm px-3">
                                 Lihat Rubrik
                             </button>                                                         
@@ -99,7 +99,7 @@
                             <div class="tooltip-wrapper position-relative">
                                 <button id="feedbackBtn"
                                     class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled' }}"
-                                    data-url="{{ route('monitoring.feedback', $fta->kode_fta) }}">
+                                    data-url="{{ route('monitoring.feedback', $fta->id_fta) }}">
                                     Lihat Feedback
                                 </button>
                                 <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">

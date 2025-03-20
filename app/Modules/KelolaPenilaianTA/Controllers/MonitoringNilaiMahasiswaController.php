@@ -40,38 +40,38 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         // Ambil nama dosen pembimbing dengan query yang lebih singkat
         $dosenPembimbing = DB::table('pengajuan_pembimbing')
-            ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
-            ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
+            ->join('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+            ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('pengajuan_pembimbing.id_kota', $idKota)
-            ->where('alokasi_pembimbing.status_alokasi', 'fix')
-            ->where('alokasi_pembimbing.tipe_alokasi', 'pembimbing')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
             ->select('dosen.nip', 'user.nama as nama_dosen')
             ->get();
 
         /// 1. Ambil semua kode_fta yang ada dalam kategori_penilaian berdasarkan id_prodi mahasiswa
         $kodeFtaList = DB::table('form_penilaian')
         ->where('id_prodi', $idProdi)
-        ->pluck('kode_fta');
+        ->pluck('id_fta');
 
         // 2. Dari hasil kode_fta yang diambil, cari yang memiliki jenis_form = 'penilaian' pada tabel form_penilaian
         $kodeFtaFiltered = DB::table('form_penilaian')
-        ->whereIn('kode_fta', $kodeFtaList)
-        ->where('jenis_form', 'penilaian')
-        ->pluck('kode_fta');
+        ->whereIn('id_fta', $kodeFtaList)
+        ->where('jenis_form', 'feedback')
+        ->pluck('id_fta');
 
         // 3. Ambil semua fta yang memiliki kode_fta sesuai hasil filter sebelumnya
         $ftaList = DB::table('form_penilaian')
-        ->whereIn('kode_fta', $kodeFtaFiltered)
-        ->select('kode_fta', 'nama_fta')
-        ->orderBy('nama_fta', 'asc')
+        ->whereIn('id_fta', $kodeFtaFiltered)
+        ->select('id_fta', 'nama_fta')
+        ->orderBy('id_fta', 'asc')
         ->get();
 
         $isFeedbackAvailable = true;
 
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
-            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'ftaList', 'idProdi', 'isFeedbackAvailable'
+            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'ftaList', 'idProdi', 'isFeedbackAvailable'
         ));
     }
 
@@ -103,12 +103,12 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         // Ambil dosen pembimbing
         $dosenPembimbing = DB::table('pengajuan_pembimbing')
-            ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
-            ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
+            ->join('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+            ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('pengajuan_pembimbing.id_kota', $idKota)
-            ->where('alokasi_pembimbing.status_alokasi', 'fix')
-            ->where('alokasi_pembimbing.tipe_alokasi', 'pembimbing')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
             ->select('dosen.nip', 'user.nama as nama_dosen')
             ->get();
 
@@ -205,7 +205,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         // Ambil data kriteria beserta rubriknya
         $namaKriteria = DB::table('kriteria_penilaian')
-            ->where('kode_fta', $kodeFta)
+            ->where('id_fta', $kodeFta)
             ->select('id_kriteria', 'nama_kriteria', 'bobot_kriteria')
             ->get()
             ->map(function ($kriteria) use ($rentangNilai) {
