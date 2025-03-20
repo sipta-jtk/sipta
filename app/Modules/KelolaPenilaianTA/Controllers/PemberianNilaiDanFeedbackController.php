@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
 use App\Models\KategoriPenilaian;
+use App\Models\FormPenilaian;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -215,12 +216,11 @@ class PemberianNilaiDanFeedbackController extends Controller
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
     
-        Log::info(json_encode($request->all(), JSON_PRETTY_PRINT));
-        // $this->inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idFta);
+        $this->inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idFta);
         $this->inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idFta);
     
         $pengelolaanNilai = new PengelolaanNilaiController();
-        return $pengelolaanNilai->detailNilaiMahasiswa(2);
+        return $pengelolaanNilai->detailNilaiMahasiswa($idFta);
     }
     
 
@@ -230,19 +230,22 @@ class PemberianNilaiDanFeedbackController extends Controller
     private function inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idFta): void
     {
         $nilai_rata_rata = [];
-        $bobot = [0.4, 0.2, 0.4];
-        
+        $bobot = FormPenilaian::where('id_fta', $idFta)->with('kriteriaPenilaian')->first();
+        $bobotKriteria = $bobot->kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
+        $idKategori = KategoriPenilaian::where('id_fta', $idFta)->first()->id_kategori;
+
         // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
         foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobot);
+            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobotKriteria);
             $nilai_rata_rata[] = $average;
         }
 
+        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
         foreach ($mahasiswa as $index => $mhs) {
             $mhs->nilaiKategori()->create([
                 'nim' => $mhs->nim,
                 'nip' => $nip,
-                'id_kategori' => $idFta,
+                'id_kategori' => $idKategori,
                 'nilai' => $nilai_rata_rata[$index],
             ]);
         }
@@ -251,20 +254,20 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Helper function untuk input nilai kriteria penilaian ke database
      */
-    private function inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idKategori): void
+    private function inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idFta): void
     {
-        $kodeFTA = KategoriPenilaian::where('id_kategori', $idKategori)->first()->kode_fta;
-        $kriteriaPenilaian = KriteriaPenilaian::where('kode_fta', $kodeFTA)->get();
+        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->get();
     
         foreach($mahasiswa as $index => $mhs) {
             foreach($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
-                $nilaiKriteria = $nilai['nilai' . $index][$kriteriaIndex];
+                $nilaiKriteria = (double) $nilai['nilai' . $index][$kriteriaIndex];
+                Log::info(json_encode($nilaiKriteria, JSON_PRETTY_PRINT));
                 $mhs->nilaiKriteria()->create([
                     'nim' => $mhs->nim,
                     'nip' => $nip,
                     'id_kriteria' => $kriteria->id_kriteria,
                     'nilai_kriteria' => $nilaiKriteria,
-                    'status_nilai' => 0
+                    'status_nilai' => 'draf'
                 ]);
             }
         }
