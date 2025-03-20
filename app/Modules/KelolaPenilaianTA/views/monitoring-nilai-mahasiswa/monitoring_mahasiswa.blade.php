@@ -107,12 +107,12 @@
                             <td class="text-center">
                                 @if ($ftaFeedback)
                                     <div class="tooltip-wrapper position-relative">
-                                        <a href="{{ $isFeedbackAvailable ? route('monitoring.feedback', $ftaFeedback->id_fta) : '#' }}"
+                                        <a href="{{ $isFeedbackAvailable ? route('monitoring.feedback', ['id_fta' => $ftaFeedback->id_fta, 'id_kota' => $kotaInfo->id_kota]) : '#' }}"
                                             class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled-link' }}">
                                             Lihat Feedback
                                         </a>
                                         @if (!$isFeedbackAvailable)
-                                            <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
+                                            <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left">
                                                 <strong>Feedback belum tersedia!</strong>
                                             </div>
                                         @endif
@@ -132,6 +132,31 @@
             pointer-events: none;
             opacity: 0.5;
         }
+
+        .tooltip-box {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            position: absolute;
+            width: 280px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            line-height: 1.5;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 130%;
+            z-index: 10;
+            text-align: center;
+        }
+        .tooltip-wrapper:hover .tooltip-box {
+            visibility: visible;
+            opacity: 1;
+        }
+
     </style>
     
       

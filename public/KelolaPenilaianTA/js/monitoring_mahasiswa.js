@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     tooltipWrappers.forEach(function (wrapper) {
         var link = wrapper.querySelector("a"); // Ubah dari button ke a
         var tooltip = wrapper.querySelector(".tooltip-box");
-        var url = link.getAttribute("href"); // Ambil URL dari href
 
         // Pastikan parent memiliki posisi relatif
         wrapper.style.position = "relative";
@@ -14,18 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
         tooltip.style.transform = "translateX(-50%)";
         tooltip.style.whiteSpace = "nowrap";
         tooltip.style.zIndex = "1000";
-        tooltip.style.visibility = "hidden"; // Gunakan visibility daripada display
 
         // Event hover untuk tooltip (hanya muncul jika link 'disabled-link')
         wrapper.addEventListener("mouseover", function () {
             if (link.classList.contains("disabled-link")) {
                 tooltip.style.visibility = "visible"; // Tampilkan tooltip
+                tooltip.style.opacity = "1"; // Tampilkan tooltip
                 positionTooltip(tooltip, link);
             }
         });
 
         wrapper.addEventListener("mouseout", function () {
             tooltip.style.visibility = "hidden"; // Sembunyikan tooltip
+            tooltip.style.opacity = "0"; // Sembunyikan tooltip
         });
 
         // Klik link: jika tidak 'disabled-link', redirect ke route

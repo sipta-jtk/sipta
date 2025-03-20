@@ -85,13 +85,11 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->pluck('aspek_feedback.id_fta') // Ambil hanya id_fta
             ->unique()
             ->toArray(); // Konversi ke array
-        
+
 
         // 5. Ambil daftar nama FTA yang unik & urutkan berdasarkan kode_fta
         $ftaList = $namaFta->sortBy('id_fta')->pluck('nama_fta');
 
-        Log::info($ftaWithFeedback);
-        Log::info($idKota);
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
             'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'idProdi', 'ftaPenilaianList', 'ftaFeedbackList', 'ftaList', 'ftaWithFeedback'
@@ -103,7 +101,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
      * Menampilkan halaman monitoring feedback
      * 
      */
-    public function monitoringFeedback($kodeFta): View
+    public function monitoringFeedback($idFta, $idKota): View
     {
         // Ambil mahasiswa berdasarkan nim = username
         $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)->first();
@@ -138,7 +136,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         // Ambil data FTA yang sesuai dengan kodeFta yang dipilih
         $ftaPenilaian = DB::table('form_penilaian')
-            ->where('id_fta', $kodeFta)
+            ->where('id_fta', $idFta)
             ->select('id_fta', 'nama_fta', 'id_prodi')
             ->first();
 
