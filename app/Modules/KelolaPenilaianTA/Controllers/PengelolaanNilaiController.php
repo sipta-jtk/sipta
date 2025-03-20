@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mahasiswa;
 use App\Models\kategoriPenilaian;
+use App\Models\FormPenilaian;
 
 class PengelolaanNilaiController extends Controller{
     /**
@@ -20,8 +21,10 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-        $kategori = kategoriPenilaian::whereIn('kode_fta', [1, 2, 3, 4])->orderBy('nama_kategori')->get(); // 1, 2, 3, 4 adalah kode fta yang akan diambil masih statis
-
+        $kategori = FormPenilaian::whereIn('id_fta', [1, 2, 4, 6])
+            ->orderBy('id_fta', )
+            ->get();
+            
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('kategori'));
     }
 
@@ -29,19 +32,53 @@ class PengelolaanNilaiController extends Controller{
      * Menampilkan halaman detail nilai mahasiswa
      * 
      */
-    public function detailNilaiMahasiswa($id): View
+    public function detailNilaiMahasiswa($idFta): View
     {
-        $kategoriPenilaian = kategoriPenilaian::where('nama_kategori','Seminar ' . $id)->firstOrFail();
-        $idKategori = $kategoriPenilaian->id_kategori;
-        $namaKategori = $kategoriPenilaian->nama_kategori;
+        $formPenilaian = FormPenilaian::where('id_fta', $idFta)
+            ->with('kategoriPenilaian')
+            ->orderBy('id_fta')
+            ->first();
+        
+        $namaKategori = $formPenilaian->nama_fta;
+        $idKategori = $formPenilaian->kategoriPenilaian[0]->id_kategori;
 
         $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($idKategori) {
             $query->where('id_kategori', $idKategori);
-        }, 'nilaiKategori.dosen', 'user'])->get();
+        }, 'nilaiKategori.dosen', 'user', 'kota'])->get();
 
         $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'namaKategori', 'id'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'namaKategori', 'idFta'));
+    }
+
+    private function numberToRoman($number)
+    {
+        $map = [
+            'M' => 1000,
+            'CM' => 900,
+            'D' => 500,
+            'CD' => 400,
+            'C' => 100,
+            'XC' => 90,
+            'L' => 50,
+            'XL' => 40,
+            'X' => 10,
+            'IX' => 9,
+            'V' => 5,
+            'IV' => 4,
+            'I' => 1
+        ];
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
     }
 
     /**
@@ -68,7 +105,7 @@ class PengelolaanNilaiController extends Controller{
             'index' => $index + 1,
             'kota' => $mahasiswa->kota->id_kota,
             'nama' => $mahasiswa->user->nama,
-            'kelompok' => $mahasiswa->id_kota,
+            'kelompok' => $mahasiswa->kota->nama_kota,
             'nilai' => $nilaiArray,
             'kode_dosen' => $kodeDosenArray,
             'rata-rata' => count($filtered) > 0 ? array_sum($filtered) / count($filtered) : 0,

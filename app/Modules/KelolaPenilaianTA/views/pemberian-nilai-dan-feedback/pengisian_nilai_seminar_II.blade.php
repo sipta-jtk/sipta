@@ -14,7 +14,7 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN SEMINAR II</h1>
+        <h1 class="mb-0">PENILAIAN {{ ucwords(strtolower($data['nama_fta'])) }}</h1>
     </div>
 @stop
 
@@ -37,7 +37,7 @@
                 <span>{{ $data['start'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
-                <strong>ID KoTA</strong> <br>
+                <strong>KoTA</strong> <br>
                 <span>{{ $data['kota'] }}</span>
             </div>
         </div>
@@ -110,7 +110,7 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $seminar . '/nilai/' . $data['kota']) }}" method="POST">
+        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['kota']) }}" method="POST">
             @csrf
 
             <div class="row mt-4">
@@ -146,6 +146,7 @@
                                     <td>{{ $item->bobot_kriteria }} %</td>
                                     <td>0 - 100</td>
                                     @foreach($mahasiswa as $key => $mhs)
+                                        {{-- <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $mhs->nilaiKriteria[$index]->nilai_kriteria }}"></td> --}}
                                         <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
                                     @endforeach
                                 </tr>
@@ -159,7 +160,7 @@
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $seminar . '/masukan/' . $data['kota']) }}" class="btn btn-primary">Selanjutnya</a>
+                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['kota']) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>

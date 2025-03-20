@@ -39,7 +39,7 @@ return new class extends Migration
         // === Heaplow ===
         // 4. Modify dosen table
         Schema::table('dosen', function (Blueprint $table) {
-            // $table->enum('bersedia_membimbing', ['bersedia', 'tidak_bersedia']);
+            $table->enum('bersedia_membimbing', ['bersedia', 'tidak_bersedia']);
             $table->unsignedBigInteger('id_prodi');
             $table->foreign('id_prodi')->references('id_prodi')->on('prodi');
             $table->dropColumn('maks_bimbingan_d4');
