@@ -15,28 +15,57 @@
             <th>Tanggal Seminar</th>
             <th>Sesi Seminar</th>
             <th>Ruangan</th>
-            <th>Pembimbing</th>
-            <th>Penguji 1</th>
-            <th>Penguji 2</th>
+            <th>Dosen Pengaju</th>
             <th>Alasan</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach($jadwal as $s)
             <tr>
-                <td>{{ $s->kota_no }}</td>
+                <td>{{ $s->nama_kota }}</td>
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->ruangan }}</td>
-                <td>{{ $s->pembimbing }}</td>
-                <td>{{ $s->penguji1 }}</td>
-                <td>{{ $s->penguji2 }}</td>
+                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>
-                    <a href="" class="btn btn-primary">Setuju</a>
-                    <a href="" class="btn btn-danger">Tolak</a>
+                    @if ($s->status_pembatalan == 0)
+                        <span>Pembatalan Ditolak</span>
+                    @elseif ($s->status_pembatalan == 1)
+                        <span>Pembatalan Disetujui</span>
+                    @endif
+                </td>
+                <td>
+                    @if ($s->status_pembatalan == 1 || $s->status_pembatalan == 0)
+                    <form
+                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
+                        method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-primary" disabled>Setuju</button>
+                    </form>
+                    <form
+                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
+                        method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-danger" disabled>Tolak</button>
+                    </form>
+                    @else
+                    <form
+                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
+                        method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Setuju</button>
+                    </form>
+                    <form
+                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
+                        method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Tolak</button>
+                    </form>
+                    @endif
                 </td>
             </tr>
         @endforeach

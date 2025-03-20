@@ -370,19 +370,19 @@ return [
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Jadwal Seminar 3',
-                    'url' => $prefix . '/jadwal-seminar',
+                    'text' => 'Pembatalan Jadwal Seminar 3',
+                    'url' => $prefix . '/batal-jadwal-seminar',
                 ],
                 [
-                    'text' => 'Jadwal Sidang',
-                    'url' => $prefix . '/jadwal-sidang',
+                    'text' => 'Pembatalan Jadwal Sidang',
+                    'url' => $prefix . '/batal-jadwal-sidang',
                 ],
                 [
-                    'text' => 'Pembatalan Seminar 3',
+                    'text' => '(Koor)Pembatalan Seminar 3',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
                 ],
                 [
-                    'text' => 'Pembatalan Sidang',
+                    'text' => '(Koor)Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                 ],
             ]
