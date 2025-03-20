@@ -408,9 +408,11 @@ return [
                 [
                     'text' => 'Pengelolaan Nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                 ],
             ]

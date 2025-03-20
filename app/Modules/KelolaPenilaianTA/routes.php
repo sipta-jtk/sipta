@@ -7,18 +7,31 @@ use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
+use Illuminate\Support\Facades\DB;
 
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= FORMULIR PENILAIAN =================
     Route::prefix('formulir-penilaian')->group(function () {
-        Route::get('/', [FormulirPenilaianController::class, 'formulirPenilaian']);
-        Route::get('/tambah-formulir', [FormulirPenilaianController::class, 'tambahFormulir'])->name('formulir-penilaian.tambah-formulir');
-        Route::get('/detail', function () {
-            return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');})->name('formulir-penilaian.detail');
-        Route::get('/ubah-formulir', function () {
-            return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta');})->name('formulir-penilaian.edit');
-        Route::put('/update', [FormulirPenilaianController::class, 'updateFormulir'])->name('formulir-penilaian.update');
+        // Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian']);
+        Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');
+        Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
+        Route::get('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek-formulir');
+        Route::post('/formulir-penilaian/simpan', [FormulirPenilaianController::class, 'store'])->name('formulir-penilaian.simpan');
+
+        Route::get('/ubah-formulir/{id}', [FormulirPenilaianController::class, 'edit'])->name('formulir-penilaian.edit');
+        Route::put('/update-formulir/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
+    
+        Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
+        Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
+        Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
+
+        Route::get('/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
+
+        Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])
+        ->name('detail.penilaian');
+        Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])
+        ->name('detail.feedback');
     });
 
 
@@ -27,10 +40,13 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     // Route::put('formulir-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
 
     // ================= MONITORING NILAI MAHASISWA =================
-    Route::prefix('monitoring')->middleware('auth')->group(function () {
-        Route::get('/mahasiswa', [MonitoringNilaiMahasiswaController::class, 'monitoringMahasiswa'])->name('monitoring.mahasiswa');
-        Route::get('/feedback', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])->name('monitoring.feedback');
-        Route::get('/rubrik', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])->name('monitoring.rubrik');
+    Route::prefix('monitoring')->middleware('auth', 'can:akses-penialain-mahasiswa')->group(function () {
+        Route::get('/mahasiswa', [MonitoringNilaiMahasiswaController::class, 'monitoringMahasiswa'])
+        ->name('monitoring.mahasiswa');
+        Route::get('/feedback/{kodeFta}', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])
+        ->name('monitoring.feedback');
+        Route::get('/rubrik/{kodeFta}/{idProdi}', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])
+        ->name('monitoring.rubrik');
     });
 
     // ================= PENGELOLAAN NILAI =================
