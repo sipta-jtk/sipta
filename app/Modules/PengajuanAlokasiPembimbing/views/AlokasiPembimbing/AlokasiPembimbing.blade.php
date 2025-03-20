@@ -675,6 +675,45 @@
     $(document).on("input", ".pembimbing, .penguji", function() {
         updateDosenList();
     });
+    $(document).ready(function () {
+    function validateSelection() {
+        $(".pembimbing, .penguji").each(function () {
+            let row = $(this).closest("tr");
+            let pembimbing1 = row.find(".pembimbing").eq(0).val();
+            let pembimbing2 = row.find(".pembimbing").eq(1).val();
+            let penguji1 = row.find(".penguji").eq(0).val();
+            let penguji2 = row.find(".penguji").eq(1).val();
+            let penguji3 = row.find(".penguji").eq(2).val();
 
+            // **Validasi Pembimbing Tidak Boleh Sama dalam Satu KoTA**
+            if (pembimbing1 && pembimbing2 && pembimbing1 === pembimbing2) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan!',
+                    text: 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu kelompok.',
+                    confirmButtonText: 'OK'
+                });
+                row.find(".pembimbing").eq(1).val("");  // Kosongkan Pembimbing 2
+                return;
+            }
+
+            // **Validasi Penguji Tidak Boleh Sama dalam Satu KoTA**
+            let pengujiSet = new Set([penguji1, penguji2, penguji3].filter(Boolean)); // Buang yang kosong/null
+            if (pengujiSet.size < ([penguji1, penguji2, penguji3].filter(Boolean).length)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan!',
+                    text: 'Penguji dalam satu kelompok tidak boleh sama.',
+                    confirmButtonText: 'OK'
+                });
+
+                $(this).val("");  // Kosongkan input yang diubah terakhir
+                return;
+            }
+        });
+    }
+
+    $(".pembimbing, .penguji").on("change", validateSelection);
+});
 </script>
 @stop

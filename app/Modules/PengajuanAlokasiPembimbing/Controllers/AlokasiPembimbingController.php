@@ -118,43 +118,45 @@ class AlokasiPembimbingController extends Controller
         $data = json_decode($request->input('dataToSend'));
 
         foreach ($data as $value) {
-            // Hitung jumlah pembimbing yang diisi
-            $pembimbingCount = 0;
-            if (!empty($value->pembimbing1)) {
-                $pembimbingCount++;
-            }
-            if (!empty($value->pembimbing2)) {
-                $pembimbingCount++;
-            }
+            $id_kota = PengajuanPembimbing::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->pluck('id_kota')
+                ->first();
 
-            // Hitung jumlah penguji yang diisi
-            $pengujiCount = 0;
-            if (!empty($value->penguji1)) {
-                $pengujiCount++;
-            }
-            if (!empty($value->penguji2)) {
-                $pengujiCount++;
-            }
-            if (!empty($value->penguji3)) {
-                $pengujiCount++;
-            }
+            // Ambil NIP pembimbing dan penguji
+            $pembimbing1 = $value->pembimbing1 ?? null;
+            $pembimbing2 = $value->pembimbing2 ?? null;
 
-            // Validasi: Minimal 1 pembimbing harus diisi
-            if ($pembimbingCount < 1) {
+            $penguji1 = $value->penguji1 ?? null;
+            $penguji2 = $value->penguji2 ?? null;
+            $penguji3 = $value->penguji3 ?? null;
+
+            // Validasi: Minimal harus ada 1 pembimbing dan 1 penguji
+            if (empty($pembimbing1) && empty($pembimbing2)) {
                 return back()->with('error', 'Minimal 1 pembimbing harus diisi sebelum finalisasi.');
             }
 
-            // Validasi: Minimal 1 penguji harus diisi
-            if ($pengujiCount < 1) {
+            if (empty($penguji1) && empty($penguji2) && empty($penguji3)) {
                 return back()->with('error', 'Minimal 1 penguji harus diisi sebelum finalisasi.');
             }
 
-            $nip_dosen_1 = Dosen::where('id_dosen', $value->pembimbing1 ?? null)->select('nip')->first();
-            $nip_dosen_2 = Dosen::where('id_dosen', $value->pembimbing2 ?? null)->select('nip')->first();
+            // Validasi: Tidak boleh ada pembimbing yang sama dalam satu kelompok
+            if (!empty($pembimbing1) && !empty($pembimbing2) && $pembimbing1 == $pembimbing2) {
+                return back()->with('error', 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu KoTA.');
+            }
 
-            $nip_penguji_1 = Dosen::where('id_dosen', $value->penguji1 ?? null)->select('nip')->first();
-            $nip_penguji_2 = Dosen::where('id_dosen', $value->penguji2 ?? null)->select('nip')->first();
-            $nip_penguji_3 = Dosen::where('id_dosen', $value->penguji3 ?? null)->select('nip')->first();
+            // Validasi: Tidak boleh ada penguji yang sama dalam satu kelompok
+            $pengujiSet = array_filter([$penguji1, $penguji2, $penguji3]); // Buang null atau kosong
+            if (count($pengujiSet) !== count(array_unique($pengujiSet))) {
+                return back()->with('error', 'Penguji tidak boleh sama dalam satu KoTA.');
+            }
+
+            // Proses penyimpanan data
+            $nip_dosen_1 = Dosen::where('id_dosen', $pembimbing1)->select('nip')->first();
+            $nip_dosen_2 = Dosen::where('id_dosen', $pembimbing2)->select('nip')->first();
+
+            $nip_penguji_1 = Dosen::where('id_dosen', $penguji1)->select('nip')->first();
+            $nip_penguji_2 = Dosen::where('id_dosen', $penguji2)->select('nip')->first();
+            $nip_penguji_3 = Dosen::where('id_dosen', $penguji3)->select('nip')->first();
 
             $catatan = $value->catatan ?? null;
 
