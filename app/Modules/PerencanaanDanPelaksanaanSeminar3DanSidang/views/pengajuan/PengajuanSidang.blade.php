@@ -18,14 +18,14 @@
         <!-- Kolom Identitas KoTA -->
         <div class="col-md-6">
             <div class="card p-4 bg-light h-100">
-                <h4><strong>KoTA {{ $dataKota->nama_kota }}</strong></h4>
+                <h4><strong>{{ $dataKota->nama_kota }}</strong></h4>
                 <p class="text-uppercase">{{ $dataKota->judul_ta }}</p>
                 
                 <div>
                     <h4 class="text-bold px-3">Mahasiswa</h4>
                     <ul>
                         @foreach($mahasiswa as $mhs)
-                            <li><h5>{{ $mhs->user->nim }} - {{ $mhs->user->nama }}</h5></li>
+                            <li><h5>{{ $mhs->nim }} - {{ $mhs->nama }}</h5></li>
                         @endforeach
                     </ul>
                 </div> 
@@ -34,7 +34,7 @@
                     <h4 class="text-bold px-3">Pembimbing</h4>
                     <ul>
                         @foreach($pembimbing as $pb)
-                            <li><h5>{{ $pb->nip }} - {{ $pb->nama }}</h5></li>
+                            <li><h5>{{ $pb->username }} - {{ $pb->nama }}</h5></li>
                         @endforeach
                     </ul>
                 </div>
@@ -43,7 +43,7 @@
                     <h4 class="text-bold px-3">Penguji</h4>
                     <ul>
                         @foreach($penguji as $pj)
-                            <li><h5>{{ $pj->nip }} - {{ $pj->nama }}</h5></li>
+                            <li><h5>{{ $pj->username }} - {{ $pj->nama }}</h5></li>
                         @endforeach
                     </ul>
                 </div>

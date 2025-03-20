@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Modules\Controller;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
+use App\Models\User;
 use App\Models\Penjadwalan;
 use App\Models\PengajuanJadwalKota;
 use App\Models\VerifikasiBerkasPengajuan;
@@ -13,70 +14,82 @@ use App\Models\VerifikasiBerkasPengajuan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 
 class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 {
-    public function index(): RedirectResponse
+    public function indexPengajuan(): View
     {
-        // dd(Auth::user());
+        // mengambil id_kota dari mahasiswa by username
         $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
-        if (session()->has('success')) {
-            return redirect()->route('pengajuan-id', ['id_kota' => $id_kota])->with('success', session('success'));
-        }
-        
-        return redirect()->route('pengajuan-id', ['id_kota' => $id_kota]);
-    }
 
-    public function indexPengajuan($id_kota): View
-    {
-        // Ambil semua data verifikasi berdasarkan id_kota
-        $verifikasi = VerifikasiBerkasPengajuan::all();
+        // mengambil pembimbing dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan pembimbing
+        $pembimbing = User::select('user.username', 'user.nama')
+            ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+            ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+            ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+            ->where('pengajuan_pembimbing.id_kota', $id_kota) 
+            ->get();
+
+        // mengambil penguji dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan penguji
+        $penguji = User::select('user.username', 'user.nama')
+        ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+        ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+        ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
+        ->get();
+
+        // dd($pembimbing);
+
+        if (is_null($id_kota)) {
+            $verifikasi = (object) ['kota' => null];
+        } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
+            $verifikasi = (object) ['kota' => $id_kota, 'dosen' => null];
+        } else {
+            // Ambil semua data verifikasi berdasarkan id_kota
+            $verifikasi = VerifikasiBerkasPengajuan::with('kota')
+                            ->where('id_kota', $id_kota)
+                            ->get();
+        }
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
     }
 
     public function indexPengajuanSeminar3(Request $request): View
     {
-        $dataKota = (object) [
-            'id_kota' => 1,
-            'nama_kota' => '101',
-            'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
-            'mahasiswa' => collect([
-                (object) [
-                    'id' => 1,
-                    'user' => (object) ['nama' => 'Mahasiswa 1', 'nim' => '101010101']
-                ],
-                (object) [
-                    'id' => 2,
-                    'user' => (object) ['nama' => 'Mahasiswa 2', 'nim' => '202020202']
-                ],
-                (object) [
-                    'id' => 3,
-                    'user' => (object) ['nama' => 'Mahasiswa 3', 'nim' => '303030303']
-                ]
-            ]),
-            'pengajuanPembimbing' => collect([
-                (object) [
-                    'alokasiPembimbing' => collect([
-                        (object) [
-                            'dosen' => (object) ['nama' => 'Dosen Pembimbing 1', 'nip' => '101010101'],
-                            'status_alokasi' => 'diterima'
-                        ],
-                        (object) [
-                            'dosen' => (object) ['nama' => 'Dosen Pembimbing 2', 'nip' => '202020202'],
-                            'status_alokasi' => 'diterima'
-                        ]
-                    ])
-                ]
-            ])
-        ];
+        // mengambil id_kota dari mahasiswa by username
+        $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
 
-        // Simulasi filtering hanya pembimbing yang diterima
-        $pembimbing = $dataKota->pengajuanPembimbing
-            ->flatMap(fn($item) => $item->alokasiPembimbing)
-            ->where('status_alokasi', 'diterima')
-            ->map(fn($alokasi) => $alokasi->dosen);
+        // mengambil data kota berdasarkan id_kota
+        $dataKota = Kota::find($id_kota);
+        
+        $mahasiswa = Mahasiswa::select('mahasiswa.nim', 'user.nama', 'user.email', 'mahasiswa.kelas', 'mahasiswa.tahun_masuk')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('mahasiswa.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
+            ->get();
+
+        // mengambil pembimbing dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan pembimbing
+        $pembimbing = User::select('user.username', 'user.nama')
+            ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+            ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+            ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+            ->where('pengajuan_pembimbing.id_kota', $id_kota) 
+            ->get();
+
+        // mengambil penguji dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan penguji
+        $penguji = User::select('user.username', 'user.nama')
+        ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+        ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+        ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
+        ->get();
 
         // Ambil data ruangan (dari stub atau database)
         $useStub = $request->query('stub', true);
@@ -115,57 +128,46 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.PengajuanSeminar3', [
             'dataKota' => $dataKota,
-            'mahasiswa' => $dataKota->mahasiswa,
+            'mahasiswa' => $mahasiswa,
             'pembimbing' => $pembimbing,
+            'penguji' => $penguji,
             'ruanganTersedia' => $ruanganTersedia
         ]);
     }
 
     public function indexPengajuanSidang(Request $request): View
     {
-        $dataKota = (object) [
-            'id_kota' => 1,
-            'nama_kota' => '101',
-            'judul_ta' => 'Pengembangan Aplikasi Monitoring Tugas Akhir di Jurusan Teknik Komputer dan Informatika',
-            'mahasiswa' => collect([
-                (object) [
-                    'id' => 1,
-                    'user' => (object) ['nama' => 'Mahasiswa 1', 'nim' => '101010101']
-                ],
-                (object) [
-                    'id' => 2,
-                    'user' => (object) ['nama' => 'Mahasiswa 2', 'nim' => '202020202']
-                ],
-                (object) [
-                    'id' => 3,
-                    'user' => (object) ['nama' => 'Mahasiswa 3', 'nim' => '303030303']
-                ]
-            ]),
-            'pengajuanPembimbing' => collect([
-                (object) [
-                    'alokasiPembimbing' => collect([
-                        (object) [
-                            'dosen' => (object) ['nama' => 'Dosen Pembimbing 1', 'nip' => '101010101'],
-                            'status_alokasi' => 'diterima'
-                        ]
-                    ])
-                ]
-            ]),
-            'pengajuanPenguji' => collect([
-                (object) [
-                    'alokasiPenguji' => collect([
-                        (object) [
-                            'dosen' => (object) ['nama' => 'Penguji 1', 'nip' => '303030303'],
-                            'status_alokasi' => 'diterima'
-                        ],
-                        (object) [
-                            'dosen' => (object) ['nama' => 'Penguji 2', 'nip' => '404040404'],
-                            'status_alokasi' => 'diterima'
-                        ]
-                    ])
-                ]
-            ])
-        ];
+        // mengambil id_kota dari mahasiswa by username
+        $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
+
+        // mengambil data kota by id_kota
+        $dataKota = Kota::find($id_kota);
+        
+        // mengambil data seluruh mahasiswa pada satu kota berdasarkan id_kota
+        $mahasiswa = Mahasiswa::select('mahasiswa.nim', 'user.nama', 'user.email', 'mahasiswa.kelas', 'mahasiswa.tahun_masuk')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('mahasiswa.id_kota', $id_kota)
+            ->get();
+
+        // mengambil pembimbing dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan pembimbing
+        $pembimbing = User::select('user.username', 'user.nama')
+            ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+            ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+            ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+            ->where('pengajuan_pembimbing.id_kota', $id_kota) 
+            ->get();
+
+        // mengambil penguji dari tabel user berdasarkan alokasi dosen yang diberikan pada kota yang mengajukan penguji
+        $penguji = User::select('user.username', 'user.nama')
+        ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+        ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+        ->where('pengajuan_pembimbing.id_kota', $id_kota)
+        ->get();
 
         // Simulasi filtering hanya pembimbing yang diterima
         $pembimbing = $dataKota->pengajuanPembimbing
@@ -215,7 +217,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.PengajuanSidang', [
             'dataKota' => $dataKota,
-            'mahasiswa' => $dataKota->mahasiswa,
+            'mahasiswa' => $mahasiswa,
             'pembimbing' => $pembimbing,
             'penguji' => $penguji, 
             'ruanganTersedia' => $ruanganTersedia
@@ -339,17 +341,17 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'agenda' => $request->input('agenda'),
             'id_ruangan' => $request->input('ruangan_pengajuan'),
             'tanggal' => $request->input('tanggal_pengajuan'),
-            'id_kota' => $id_kota,
-            'nip' => '197312271999031003',            
+            'id_kota' => $id_kota,   
             'start' => $start,
             'end' => $end,
         ]);
 
-        // Tambahkan pengajuan jadwal kota yang baru
+        // Tambahkan pengajuan jadwal kota yang baru 
+        // Sebelum disetujui sampai koordinator akan disimpan pada tabel penjadwalan
+        // Untuk selanjutnya di post pada topik 3
         PengajuanJadwalKota::create([
             'id_kota' => $id_kota,
             'id_penjadwalan' => $penjadwalan->id_penjadwalan,
-            'nip' => '197312271999031003',  
             'status_mahasiswa' => true,
             'status_dosen_pembimbing_1' => null,
             'status_dosen_pembimbing_2' => null,

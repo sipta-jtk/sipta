@@ -18,7 +18,7 @@
     <div class="col-md-6 d-flex">
         <div class="card p-4 bg-light w-100">
             <div>
-                <h4><strong>KoTA {{ $dataKota->nama_kota }}</strong></h4>
+                <h4><strong>{{ $dataKota->nama_kota }}</strong></h4>
                 <p class="text-uppercase">{{ $dataKota->judul_ta }}</p>
                 
                 <div>
@@ -26,7 +26,7 @@
                         <h4 class="text-bold px-3">Mahasiswa</h4>
                         <ul>
                             @foreach($mahasiswa as $mhs)
-                                <li><h5>{{ $mhs->user->nim }} - {{ $mhs->user->nama }}</h5></li>
+                                <li><h5>{{ $mhs->nim }} - {{ $mhs->nama }}</h5></li>
                             @endforeach
                         </ul>
                     </div> 
@@ -34,7 +34,15 @@
                         <h4 class="text-bold px-3">Pembimbing</h4>
                         <ul>
                             @foreach($pembimbing as $dosen)
-                                <li><h5>{{ $dosen->nip }} - {{ $dosen->nama }}</h5></li>
+                                <li><h5>{{ $dosen->username }} - {{ $dosen->nama }}</h5></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-bold px-3">Penguji</h4>
+                        <ul>
+                            @foreach($penguji as $dosen)
+                                <li><h5>{{ $dosen->username }} - {{ $dosen->nama }}</h5></li>
                             @endforeach
                         </ul>
                     </div>
