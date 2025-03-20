@@ -17,11 +17,21 @@ use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('login');
+
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
 })->name('login');
+
+// Route untuk logout
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware(['auth', 'redirect.after.logout']);
 
 // Route untuk register
 Route::get('/register', function () {
@@ -54,6 +64,9 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
     ->name('pengajuan.pisah.kota.show');
+
+
+
 });
 
 
@@ -68,10 +81,11 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
 Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
 Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
-Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail-kota');
+Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('role_no_auth:admin')
+    ->middleware('can:admin')
     ->name('manage.dosen');
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');

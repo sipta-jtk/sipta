@@ -20,21 +20,33 @@ class ListJurnalPlagiarismeSeeder extends Seeder
 
         // Data dummy untuk seed
         ListJurnalPlagiarisme::create([
-            'link_jurnal' => 'https://example.com/jurnal1',
-            'judul' => 'Analisis Plagiarisme dalam Jurnal A',
-            'persentase_kemunculan' => 23.5
+            'link_jurnal' => 'https://openlibrarypublications.telkomuniversity.ac.id/index.php/engineering/article/view/12376/0',
+            'judul' => 'Pengembangan Sistem Deteksi Occupancy Menggunakan Computer Vision Untuk Smart Building Dan Automation',
+            'persentase_kemunculan' => 4.00
         ]);
 
         ListJurnalPlagiarisme::create([
-            'link_jurnal' => 'https://example.com/jurnal2',
-            'judul' => 'Studi Kasus Plagiarisme di Jurnal B',
-            'persentase_kemunculan' => 45.2
+            'link_jurnal' => 'https://ojs.uajy.ac.id/index.php/SENASTI/article/view/8013',
+            'judul' => 'Perancangan Model Konveyor Pemilah Produk Defect Berbasis Computer Vision untuk Flexible Manufacturing System   ',
+            'persentase_kemunculan' => 3.00
         ]);
 
         ListJurnalPlagiarisme::create([
-            'link_jurnal' => 'https://example.com/jurnal3',
-            'judul' => 'Deteksi Plagiarisme dengan Algoritma C',
-            'persentase_kemunculan' => 12.8
+            'link_jurnal' => 'https://journal.umtas.ac.id/index.php/produktif/article/view/386',
+            'judul' => 'Penerapan Teknologi Blockchain Dalam Lingkungan Pendidikan',
+            'persentase_kemunculan' => 7.00
+        ]);
+
+        ListJurnalPlagiarisme::create([
+            'link_jurnal' => 'https://jurnal.polban.ac.id/ialj/article/view/3516',
+            'judul' => 'Audit Tata Kelola IT dan Process Investasi Digital Library Menggunakan Pendekatan Framework Cobit 4.1',
+            'persentase_kemunculan' => 3.50
+        ]);
+        
+        ListJurnalPlagiarisme::create([
+            'link_jurnal' => 'https://jurnal.polban.ac.id/jaief/article/view/3871',
+            'judul' => 'Perancangan Aplikasi Sistem Informasi Keuangan Berbasis Web: Studi Kasus di Lembaga Keuangan Mikro Syariah Al-Falah POLBAN',
+            'persentase_kemunculan' => 5.00
         ]);
     }
 }

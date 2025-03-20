@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        
         /**********************************************************
         ! Restricted    
             * Role Access v.1
@@ -87,7 +89,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
         });
-
-
     }
 }
