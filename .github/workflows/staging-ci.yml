@@ -38,7 +38,6 @@ jobs:
   update-env:
     runs-on: ubuntu-latest
     needs: check-db-changes
-    environment: SSH_CREDENTIALS
     steps:
       - name: Update RUN_MIGRATIONS in Server
         env:
@@ -56,7 +55,6 @@ jobs:
   build-push-app:
     runs-on: ubuntu-latest
     needs: update-env
-    environment: DOCKER_CREDENTIALS
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -75,7 +73,6 @@ jobs:
   build-push-web-server:
     runs-on: ubuntu-latest
     needs: build-push-app
-    environment: DOCKER_CREDENTIALS
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
