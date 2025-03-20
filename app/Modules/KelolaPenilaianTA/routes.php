@@ -26,12 +26,19 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
         Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
 
+        // Route::get('/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
         Route::get('/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
 
         Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])
         ->name('detail.penilaian');
         Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])
         ->name('detail.feedback');
+
+        // Route::post('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'storeRubrik'])->name('formulir-penilaian.storeRubrik');
+        Route::post('/tambah-rubrik-penilaian', 
+        [FormulirPenilaianController::class, 'storeRubrik'])
+        ->name('formulir-penilaian.store-rubrik');
+        Route::get('/formulir-penilaian', [FormulirPenilaianController::class, 'showFormRubrik'])->name('formulirRubrik');
     });
 
 

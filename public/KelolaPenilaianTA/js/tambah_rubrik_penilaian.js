@@ -4,45 +4,77 @@ $(document).ready(function () {
         const selectedFormPenilaian = formPenilaianList.find(form => form.kode_fta == selectedKodeFTA);
         $('#nama_fta').val(selectedFormPenilaian ? selectedFormPenilaian.nama_fta : '');
 
-        // Fetch kriteria based on selected kode FTA
+        $('.kriteria').html('<option value="" disabled selected>Pilih Kriteria</option>');
+
         $.ajax({
-            url: `/kelola-penilaian-ta/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
+            url: `/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
             method: 'GET',
+            dataType: 'json',
             success: function (data) {
-                const kriteriaOptions = data.map(kriteria => `<option value="${kriteria.nama_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('');
-                $('.kriteria').html(`<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`);
+                console.log('Received data:', data);
+                
+                if (data.length > 0) {
+                    const kriteriaOptions = data.map(kriteria => 
+                        `<option value="${kriteria.id}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`
+                    ).join('');
+                    
+                    $('.kriteria').each(function() {
+                        $(this).html(`<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`);
+                    });
+                } else {
+                    console.log('No criteria found for this FTA code');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching criteria:', error);
+                console.log('Response:', xhr.responseText);
             }
         });
     });
 
     $('#addRow').on('click', function () {
+        const selectedKodeFTA = $('#kode_fta').val();
+        if (!selectedKodeFTA) {
+            alert('Silakan pilih Kode FTA terlebih dahulu.');
+            return;
+        }
+        
         var newRow = `
         <tr>
             <td>
-                <select class="form-control kriteria" name="kriteria[]" required>
+                <select class="form-control kriteria" name="nama_kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot"></p></td>
-            <td><input type="text" class="form-control" name="detail[]" required></td>
-            @foreach ($rentangNilai as $nilai)
-                <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
-            @endforeach
-            <td><button type="button" class="btn btn-danger btn-sm remove-row">
+            <td><input type="text" class="form-control" name="detail[]" required></td>`;
+            
+        rentangNilai.forEach(function(nilai) {
+            newRow += `<td><input type="text" class="form-control" name="nilai_${nilai.id_nilai}[]" required></td>`;
+        });
+            
+        newRow += `<td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>
             </button></td>
         </tr>`;
+        
         $('#rubrikPenilaianTable').append(newRow);
 
-        // Re-fetch kriteria options for the new row
-        const selectedKodeFTA = $('#kode_fta').val();
         if (selectedKodeFTA) {
             $.ajax({
-                url: `/kelola-penilaian-ta/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
+                url: `/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
                 method: 'GET',
+                dataType: 'json',
                 success: function (data) {
-                    const kriteriaOptions = data.map(kriteria => `<option value="${kriteria.nama_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('');
-                    $('#rubrikPenilaianTable tr:last .kriteria').html(`<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`);
+                    if (data.length > 0) {
+                        const kriteriaOptions = data.map(kriteria => 
+                            `<option value="${kriteria.id}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`
+                        ).join('');
+                        
+                        $('#rubrikPenilaianTable tr:last .kriteria').html(
+                            `<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`
+                        );
+                    }
                 }
             });
         }

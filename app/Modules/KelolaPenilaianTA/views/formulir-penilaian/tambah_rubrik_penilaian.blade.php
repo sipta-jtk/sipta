@@ -19,7 +19,7 @@
 @stop
 
 @section('content')
-    <div class="p-4">
+<div class="p-4">
         <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST">
             @csrf
 
@@ -70,8 +70,11 @@
                     <tbody id="rubrikPenilaianTable">
                         <tr>
                             <td>
-                                <select class="form-control kriteria" name="nama_kriteria[]" required>
+                                <select class="form-control" id="id_kriteria" name="nama_kriteria" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
+                                    @foreach ($kriteriaList as $kriteriaPenilaian)
+                                        <option value="{{ $kriteriaPenilaian->nama_kriteria }}">{{ $kriteriaPenilaian->nama_kriteria }}</option>
+                                    @endforeach
                                 </select>
                             </td>
                             <td><p class="form-control-plaintext bobot"></p></td>
@@ -105,5 +108,6 @@
     <script>
         const formPenilaianList = @json($formPenilaianList);
         const kriteriaList = @json($kriteriaList);
+        const rentangNilai = @json($rentangNilai);
     </script>
 @stop

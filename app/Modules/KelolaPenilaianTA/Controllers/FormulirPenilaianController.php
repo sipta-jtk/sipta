@@ -91,65 +91,6 @@ class FormulirPenilaianController extends Controller {
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    // public function store(Request $request)
-    // {
-    //     DB::beginTransaction();
-
-    //     try {
-    //         // Simpan ke tabel form_penilaian
-    //         $formPenilaian = FormPenilaian::create([
-    //             'kode_fta' => $request->kodeFTA,
-    //             'nama_fta' => $request->namaFTA,
-    //             'id_prodi' => $request->namaProdi,
-    //             'jenis_form' => $request->jenisForm,
-    //             'tanggal_tenggat_pengisian' => $request->tanggalTenggat,
-    //             'waktu_tenggat_pengisian' => $request->waktuTenggat,
-    //         ]);
-
-    //         // Simpan ke tabel kriteria_penilaian jika jenis form adalah "Penilaian"
-    //         if ($request->jenisForm === 'Penilaian') {
-    //             if ($request->has('nama_kriteria')) {
-    //                 // Calculate total weight
-    //                 $totalBobot = array_sum($request->bobot_kriteria);
-
-    //                 // Check if total weight is 100
-    //                 if ($totalBobot != 100) {
-    //                     return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
-    //                 }
-
-    //                 foreach ($request->nama_kriteria as $index => $kriteria) {
-    //                     KriteriaPenilaian::create([
-    //                         'kode_fta' => $formPenilaian->kode_fta,
-    //                         'nama_kriteria' => $kriteria,
-    //                         'bobot_kriteria' => $request->bobot_kriteria[$index] ?? null,
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-
-    //         // Simpan ke tabel aspek_feedback jika jenis form adalah "Feedback"
-    //         if ($request->jenisForm === 'Feedback') {
-    //             if ($request->has('nama_aspek_feedback')) {
-    //                 foreach ($request->nama_aspek_feedback as $kriteria) {
-    //                     AspekFeedback::create([
-    //                         'kode_fta' => $formPenilaian->kode_fta,
-    //                         'nama_aspek_feedback' => $kriteria,
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-
-    //         DB::commit();
-    //         return redirect()->route('formulir-penilaian.index')
-    //             ->with('success', 'Formulir dan Aspek berhasil ditambahkan.');
-
-    //     } catch (\Exception $e) {
-    //         DB::rollback(); // Batalkan perubahan jika ada error
-    //         return redirect()->back()
-    //             ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-    //     }
-    // }
     
     public function tambahAspekFormulir(): View
     {
@@ -182,7 +123,7 @@ class FormulirPenilaianController extends Controller {
         $kriteria = KriteriaPenilaian::where('kode_fta', $kodeFTA)
             ->select('id', 'nama_kriteria', 'bobot_kriteria')
             ->get();
-        
+
         return response()->json($kriteria);
     }
 
@@ -355,5 +296,102 @@ class FormulirPenilaianController extends Controller {
         
         return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_feedback', compact('kategori', 'aspekFeedback'));
     }
+
+    public function storeRubrik(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Get the selected form penilaian
+            $kodeFTA = $request->kode_fta;
+            $formPenilaian = FormPenilaian::where('kode_fta', $kodeFTA)->first();
+            
+            $idFTA = $formPenilaian->id_fta;
+            
+            // Get the selected criteria names and details
+            $namaKriteria = $request->nama_kriteria;
+            $detailKriteria = $request->detail;
+            
+            // Get rentang nilai for reference
+            $rentangNilai = DB::table('rentang_nilai')
+                ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+                ->select('id_nilai')
+                ->get();
+                
+            // Process each row of rubric data
+            if (is_array($namaKriteria)) {
+                foreach ($namaKriteria as $index => $kriteria) {
+                    // Find the id_kriteria based on nama_kriteria and kode_fta
+                    $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $kodeFTA)
+                        ->where('nama_kriteria', $kriteria)
+                        ->first();
+                    
+                    if (!$kriteriaPenilaian) {
+                        continue; // Skip if criteria not found
+                    }
+                    
+                    // Create a new rubrik
+                    $rubrik = DB::table('rubrik')->insertGetId([
+                        'id_kriteria' => $kriteriaPenilaian->id_kriteria,
+                        'nama_rubrik' => $detailKriteria[$index],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                    
+                    // Create detail_rubrik entries for each nilai
+                    foreach ($rentangNilai as $nilai) {
+                        $nilaiKey = 'nilai_' . $nilai->id_nilai;
+                        
+                        if (isset($request->$nilaiKey) && isset($request->$nilaiKey[$index])) {
+                            DB::table('detail_rubrik')->insert([
+                                'id_rubrik' => $rubrik,
+                                'id_nilai' => $nilai->id_nilai,
+                                'detail_rubrik_penilaian' => $request->$nilaiKey[$index],
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ]);
+                        }
+                    }
+                }
+            }
+            
+            DB::commit();
+            return redirect()->route('formulir-penilaian.index')
+                ->with('success', 'Rubrik penilaian berhasil ditambahkan.');
+                
+        } catch (\Exception $e) {
+            DB::rollback(); // Rollback if there's an error
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function showFormRubrik(Request $request)
+    {
+        $kodeFTA = $request->kode_fta;
+
+        // Jika kodeFTA dipilih, ambil id_fta dan kriteria yang sesuai
+        if ($kodeFTA) {
+            $formPenilaian = FormPenilaian::where('kode_fta', $kodeFTA)->first();
+
+            if ($formPenilaian) {
+                $idFTA = $formPenilaian->id_fta;
+
+                // Ambil daftar kriteria sesuai dengan id_fta
+                $kriteriaList = KriteriaPenilaian::where('id_fta', $idFTA)->get();
+            } else {
+                $kriteriaList = [];
+            }
+        } else {
+            $kriteriaList = []; // Jika belum ada kodeFTA yang dipilih
+        }
+
+        // Dapatkan data yang dibutuhkan untuk form (misalnya daftar form penilaian dan rentang nilai)
+        $formPenilaianList = FormPenilaian::all();
+        $rentangNilai = RentangNilai::all();
+
+        return view('formulir-rubrik', compact('formPenilaianList', 'kriteriaList', 'rentangNilai', 'kodeFTA'));
+    }
+
 
 }
