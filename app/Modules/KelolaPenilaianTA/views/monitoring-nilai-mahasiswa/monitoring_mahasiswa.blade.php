@@ -75,7 +75,7 @@
     </div>
     
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-dark text-white">
             <h3 class="card-title">Daftar Evaluasi</h3>
         </div>
         <div class="card-body">
@@ -92,37 +92,48 @@
                         @php
                             $ftaPenilaian = $ftaPenilaianList[$ftaNama] ?? null;
                             $ftaFeedback = $ftaFeedbackList[$ftaNama] ?? null;
+                            $isFeedbackAvailable = $ftaFeedback && in_array($ftaFeedback->id_fta, $ftaWithFeedback);
                         @endphp
                         <tr>
                             <td style="vertical-align: middle; white-space: nowrap;">{{ $ftaNama }}</td>
                             <td class="text-center">
                                 @if ($ftaPenilaian)
-                                    <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}'" 
+                                    <a href="{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
                                         class="btn btn-primary btn-sm px-3">
                                         Lihat Rubrik
-                                    </button>
+                                    </a>
                                 @endif
                             </td>
                             <td class="text-center">
                                 @if ($ftaFeedback)
                                     <div class="tooltip-wrapper position-relative">
-                                        <button id="feedbackBtn"
-                                            class="btn btn-primary btn-sm px-3"
-                                            data-url="{{ route('monitoring.feedback', $ftaFeedback->id_fta) }}">
+                                        <a href="{{ $isFeedbackAvailable ? route('monitoring.feedback', $ftaFeedback->id_fta) : '#' }}"
+                                            class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled-link' }}">
                                             Lihat Feedback
-                                        </button>
-                                        <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
-                                            <strong>Feedback belum tersedia!</strong>
-                                        </div>
+                                        </a>
+                                        @if (!$isFeedbackAvailable)
+                                            <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
+                                                <strong>Feedback belum tersedia!</strong>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
-                            </td>                                               
+                            </td>                                                                           
                         </tr>
                     @endforeach
-                </tbody>  
+                </tbody>                
             </table>
         </div>
-    </div>   
+    </div>
+    
+    <style>
+        /* Nonaktifkan link jika feedback belum tersedia */
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+    
       
 @stop
 

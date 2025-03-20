@@ -63,6 +63,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
         // 3. Ambil semua id_fta yang memiliki jenis_form = 'penilaian'
         $ftaPenilaianList = DB::table('form_penilaian')
             ->whereIn('id_fta', $kodeFtaList)
+            ->where('id_prodi', $idProdi)
             ->where('jenis_form', 'penilaian')
             ->select('id_fta', 'nama_fta')
             ->get()
@@ -71,21 +72,29 @@ class MonitoringNilaiMahasiswaController extends Controller{
         // 4. Ambil semua id_fta yang memiliki jenis_form = 'feedback'
         $ftaFeedbackList = DB::table('form_penilaian')
             ->whereIn('id_fta', $kodeFtaList)
+            ->where('id_prodi', $idProdi)
             ->where('jenis_form', 'feedback')
             ->select('id_fta', 'nama_fta')
             ->get()
             ->keyBy('nama_fta');
 
+        $ftaWithFeedback = DB::table('aspek_feedback')
+            ->join('detail_feedback', 'aspek_feedback.id_feedback', '=', 'detail_feedback.id_feedback')
+            ->whereIn('aspek_feedback.id_fta', $ftaFeedbackList->pluck('id_fta')) // Hanya id_fta yang ada di ftaFeedbackList
+            ->where('detail_feedback.status_penilaian_dosen', 'dipublikasikan')
+            ->pluck('aspek_feedback.id_fta') // Ambil hanya id_fta
+            ->unique()
+            ->toArray(); // Konversi ke array
+        
+
         // 5. Ambil daftar nama FTA yang unik & urutkan berdasarkan kode_fta
         $ftaList = $namaFta->sortBy('id_fta')->pluck('nama_fta');
 
-        $isFeedbackAvailable = true;
-
-        Log::info($dosenPembimbing);
+        Log::info($ftaWithFeedback);
         Log::info($idKota);
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
-            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'idProdi', 'ftaPenilaianList', 'ftaFeedbackList', 'ftaList', 'isFeedbackAvailable'
+            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'idProdi', 'ftaPenilaianList', 'ftaFeedbackList', 'ftaList', 'ftaWithFeedback'
         ));
     }
 

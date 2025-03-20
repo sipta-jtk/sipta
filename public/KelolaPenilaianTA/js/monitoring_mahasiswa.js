@@ -2,9 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var tooltipWrappers = document.querySelectorAll(".tooltip-wrapper");
 
     tooltipWrappers.forEach(function (wrapper) {
-        var button = wrapper.querySelector("button");
+        var link = wrapper.querySelector("a"); // Ubah dari button ke a
         var tooltip = wrapper.querySelector(".tooltip-box");
-        var url = button.dataset.url; // Ambil URL dari data attribute
+        var url = link.getAttribute("href"); // Ambil URL dari href
 
         // Pastikan parent memiliki posisi relatif
         wrapper.style.position = "relative";
@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
         tooltip.style.zIndex = "1000";
         tooltip.style.visibility = "hidden"; // Gunakan visibility daripada display
 
-        // Event hover untuk tooltip (hanya muncul jika tombol 'disabled')
+        // Event hover untuk tooltip (hanya muncul jika link 'disabled-link')
         wrapper.addEventListener("mouseover", function () {
-            if (button.classList.contains("disabled")) {
+            if (link.classList.contains("disabled-link")) {
                 tooltip.style.visibility = "visible"; // Tampilkan tooltip
-                positionTooltip(tooltip, button);
+                positionTooltip(tooltip, link);
             }
         });
 
@@ -28,18 +28,18 @@ document.addEventListener("DOMContentLoaded", function () {
             tooltip.style.visibility = "hidden"; // Sembunyikan tooltip
         });
 
-        // Klik tombol: jika tidak 'disabled', redirect ke route
-        button.addEventListener("click", function () {
-            if (!button.classList.contains("disabled")) {
-                window.location.href = url;
+        // Klik link: jika tidak 'disabled-link', redirect ke route
+        link.addEventListener("click", function (event) {
+            if (link.classList.contains("disabled-link")) {
+                event.preventDefault(); // Mencegah pengalihan halaman jika tombol dinonaktifkan
             }
         });
     });
 });
 
 // Fungsi untuk menyesuaikan posisi tooltip
-function positionTooltip(tooltip, button) {
-    var rect = button.getBoundingClientRect();
+function positionTooltip(tooltip, link) {
+    var rect = link.getBoundingClientRect();
     var tooltipHeight = tooltip.offsetHeight;
     var windowHeight = window.innerHeight;
 
