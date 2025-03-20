@@ -16,6 +16,7 @@ use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
+use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
@@ -123,3 +124,5 @@ Route::post('program-studi', [ProgramStudiController::class, 'store'])->name('pr
 Route::get('program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
 Route::put('program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
 Route::delete('program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
