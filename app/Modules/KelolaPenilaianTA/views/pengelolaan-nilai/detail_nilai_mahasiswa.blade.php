@@ -62,7 +62,7 @@
                                     <td> <a class="btn btn-danger">Feedback</a> </td>
                                 @else
                                     <td> 
-                                        <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
+                                        <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a>
                                         <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
                                             @csrf
                                             <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>

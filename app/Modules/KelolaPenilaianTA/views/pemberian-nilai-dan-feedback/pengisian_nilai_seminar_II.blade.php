@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>
-                <span>{{ $data['kota'] }}</span>
+                <span>{{ $data['nama_kota'] }}</span>
             </div>
         </div>
 
@@ -107,9 +107,9 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['kota']) }}" method="POST">
+        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah') }}" method="POST">
             @csrf
-
+            {{ Log::info(json_encode($data, JSON_PRETTY_PRINT)) }}
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -128,7 +128,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteria as $index => $item)
+                            @foreach ($kriteriaPenilaian as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $item->nama_kriteria }}
@@ -143,7 +143,6 @@
                                     <td>{{ $item->bobot_kriteria }} %</td>
                                     <td>0 - 100</td>
                                     @foreach($mahasiswa as $key => $mhs)
-                                        {{-- <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $mhs->nilaiKriteria[$index]->nilai_kriteria }}"></td> --}}
                                         <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
                                     @endforeach
                                 </tr>
@@ -157,7 +156,7 @@
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['kota']) }}" class="btn btn-primary">Selanjutnya</a>
+                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['id_fta']) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>
