@@ -36,7 +36,14 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="namaFTA">Nama FTA</label>
-                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" required>
+                        <select class="form-control" id="namaFTA" name="namaFTA" required>
+                            <option value="" disabled selected>Pilih Nama FTA</option>
+                            <option value="Seminar I">Seminar I</option>
+                            <option value="Seminar II">Seminar II</option>
+                            <option value="Seminar III">Seminar III</option>
+                            <option value="Sidang Akhir">Sidang Akhir</option>
+                            <option value="Dosen Pembimbing">Dosen Pembimbing</option>
+                        </select>
                     </div>
                 </div>
             </div>

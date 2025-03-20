@@ -20,7 +20,7 @@
 
 @section('content')
     <div class="p-4">
-        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/update-aspek-penilaian/' . $aspek->id) }}" method="POST">
+        <form action="{{ route('aspek-penilaian.update', $aspek->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -29,7 +29,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="kodeFTA">Kode FTA</label>
-                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" value="{{ $aspek->kodeFTA }}" required>
+                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" value="{{ $aspek->kodeFTA }}" readonly>
                     </div>
                 </div>
 
@@ -37,7 +37,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="namaFTA">Nama FTA</label>
-                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" value="{{ $aspek->namaFTA }}" required>
+                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" value="{{ $aspek->namaFTA }}" readonly>
                     </div>
                 </div>
             </div>
@@ -46,11 +46,15 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="jenisForm">Jenis Formulir</label>
-                        <select class="form-control" id="jenisForm" name="jenisForm" required>
-                            <option value="" disabled>Pilih Jenis Formulir</option>
-                            <option value="Penilaian" {{ $aspek->jenisForm == 'Penilaian' ? 'selected' : '' }}>Penilaian</option>
-                            <option value="Feedback" {{ $aspek->jenisForm == 'Feedback' ? 'selected' : '' }}>Feedback</option>
-                        </select>
+                        <input type="text" class="form-control" id="jenisForm" name="jenisForm" value="{{ $aspek->jenisForm }}" readonly>
+                    </div>
+                </div>
+
+                <!-- Nama Prodi -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="namaProdi">Nama Prodi</label>
+                        <input type="text" class="form-control" id="namaProdi" name="namaProdi" value="{{ $aspek->namaProdi }}" readonly>
                     </div>
                 </div>
             </div>
@@ -75,8 +79,8 @@
                     <tbody id="aspekPenilaianTable">
                         @foreach($aspek->penilaian as $penilaian)
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" value="{{ $penilaian->kriteria }}" required></td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="{{ $penilaian->bobot }}" required></td>
+                            <td><input type="text" class="form-control" name="nama_kriteria[]" value="{{ $penilaian->nama_kriteria }}" required></td>
+                            <td><input type="number" class="form-control" name="bobot_kriteria[]" value="{{ $penilaian->bobot_kriteria }}" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
@@ -97,7 +101,7 @@
                     <tbody id="aspekFeedbackTable">
                         @foreach($aspek->feedback as $feedback)
                         <tr>
-                            <td><input type="text" class="form-control" name="kriteria[]" value="{{ $feedback->kriteria }}" required></td>
+                            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value="{{ $feedback->nama_aspek_feedback }}" required></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm remove-row">
                                     <i class="fa-solid fa-minus"></i>
@@ -138,10 +142,10 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/tambah_aspek_formulir.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/ubah_aspek_formulir.css') }}">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ asset('KelolaPenilaianTA/js/tambah_aspek_formulir.js') }}"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/ubah_aspek_formulir.js') }}"></script>
 @stop
