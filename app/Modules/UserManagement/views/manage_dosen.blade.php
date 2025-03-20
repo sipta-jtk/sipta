@@ -7,20 +7,24 @@
 @stop
 
 @section('content')
+<!-- Button Tambah Dosen -->
+<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addNewDosen">
+    <i class="fa fa-plus"></i> Tambah Dosen
+</button>
+
+<button class="btn btn-success mb-3" data-toggle="modal" data-target="#uploadExcel">
+    <i class="fa fa-upload"></i> Upload Excel
+</button>
+
+<a href="{{ route('download.template-dosen') }}" class="btn btn-secondary mb-3">
+    <i class="fa fa-download"></i> Download Template Excel
+</a>
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-left">
-        <div>
-            <!-- Button Tambah Dosen -->
-            <button class="btn btn-success" data-toggle="modal" data-target="#addNewDosen">
-                <i class="fa fa-plus"></i> Tambah Dosen
-            </button>
-            <!-- Search Input -->
-            <input type="text" id="searchInput" class="form-control d-inline-block" placeholder="Cari..." style="width: 200px;">
-        </div>
     </div>
     <div class="card-body">
-        <table id="dosenTable" class="table table-bordered table-striped">
-            <thead>
+        <table id="datatable" class="table table-borderd">
+            <thead class="bg-primary text-white">
                 <tr>
                     <th>NIP</th>
                     <th>Nama</th>
@@ -59,19 +63,24 @@
                             data-id_dosen="{{ $d->id_dosen }}"
                             data-email="{{ $d->email }}"
                             data-no_whatsapp="{{ $d->no_whatsapp }}"
-                            data-kode_dosen="{{ $d->kode_dosen }}">
+                            data-kode_dosen="{{ $d->kode_dosen }}"
+                            data-status_dosen="{{ $d->status_dosen }}"
+                            data-id_kbk="{{ $d->id_kbk }}">
+
                             {{-- data-maks_bimbingan_d4="{{ $d->maks_bimbingan_d4 }}"
                             data-maks_bimbingan_d3="{{ $d->maks_bimbingan_d3 }}"> --}}
                             
                                 <i class="fa fa-lg fa-fw fa-pen"></i>
                             </button>
                         {{-- Management Role Button --}}
+                        @if($d->role_dosen != 'kajur')
                             <button class="btn btn-xs btn-default text-teal mx-1 shadow btn-change-role" title="Keys" data-toggle="modal" data-target="#changeRole" class="bg-purple"
                             data-nip="{{ $d->nip }}"
                             data-nama="{{ $d->nama }}"
                             data-role="{{ $d->role_dosen }}">
                                 <i class="fa fa-lg fa-fw fa-key"></i>
                             </button>
+                        @endif
                         
         
                 
@@ -118,15 +127,23 @@
                                      <x-adminlte-input name="kode" label="Kode" id="kode_dosen-update" placeholder="Kode"
                                                fgroup-class="col-md-6" disable-feedback  required  />
                                 </div>
-        
-                                <hr>
-                                <h4>Bimbingan</h4>
                                 <div class="row">
-                                    <x-adminlte-input name="max_d4" label="Jumlah Bimbingan Maksimal (D4)" placeholder="..."
-                                              fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5" id="maks_bimbingan_d4-update" />
-                                    <x-adminlte-input name="max_d3" label="Jumlah Bimbingan Maksimal (D3)" placeholder="..."
-                                              fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5" id="maks_bimbingan_d3-update"  />
-                               </div>
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" id="kbk-update" fgroup-class="col-md-6" required>
+                                        <option selected disabled>Pilih KBK ....</option>
+                                        @foreach($listkbk as $kbk)
+                                        <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
+                                    @endforeach
+                                </x-adminlte-select2>
+
+                                <x-adminlte-select2 name="status_dosen" label="Status" id="status_dosen-update" fgroup-class="col-md-6" required>
+                                    <option selected disabled>Pilih Status ....</option>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non Aktif</option>
+
+                            </x-adminlte-select2>
+                                </div>
+        
+
                                <x-adminlte-button type="submit" label="Update" theme="primary" />
         
                                <x-slot name="footerSlot">
@@ -190,14 +207,14 @@
                                             fgroup-class="col-md-6" disable-feedback  required  />
                                 </div>
                                 <div class="row">
-                                    <x-adminlte-select2 name="id_kbk" label="KBK" fgroup-class="col-md-6" >
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" fgroup-class="col-md-6" required>
                                         <option selected disabled>Pilih KBK ....</option>
                                         @foreach($listkbk as $kbk)
                                         <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
                                     @endforeach
                                 </x-adminlte-select2>
 
-                                <x-adminlte-select2 name="status_dosen" label="Status" fgroup-class="col-md-6">
+                                <x-adminlte-select2 name="status_dosen" label="Status" fgroup-class="col-md-6" required>
                                     <option selected disabled>Pilih Status ....</option>
                                     <option value="aktif">Aktif</option>
                                     <option value="nonaktif">Non Aktif</option>
@@ -213,6 +230,17 @@
                             </form>
                         </x-adminlte-modal>
 
+                        <x-adminlte-modal id="uploadExcel" title="Register By excel" theme="purple"
+                        icon="fa fa-plus" size='lg' >
+
+                        <form action="{{route('import-dosen')}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Choose a file..."
+    fgroup-class="col-md-6" disable-feedback required accept=".xls,.xlsx,.csv"/>
+                            <x-adminlte-button type="submit" label="Preview" theme="primary" />
+                        
+                    </x-adminlte-modal>
+
                   
 
 
@@ -223,6 +251,28 @@
 
 @section('js')
 <script>
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        const allowedExtensions = ['xls', 'xlsx', 'csv'];
+        const file = this.files[0];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert("File harus berformat .xls, .xlsx, atau .csv!");
+            this.value = ''; // Reset input file
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.querySelector('input[type="file"]');
+        const label = fileInput.closest('.input-group').querySelector('.custom-file-label');
+
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                label.textContent = this.files[0].name;
+            } else {
+                label.textContent = "Choose a file...";
+            }
+        });
+    });
     $(document).ready(function () {
         $("#dosenTable").DataTable();
     });
@@ -258,7 +308,7 @@
              var id_dosen = $(this).data("id_dosen");
              var kode_dosen = $(this).data("kode_dosen");
              var status_dosen = $(this).data("status_dosen");
-
+             var id_kbk = $(this).data("id_kbk");
 
              document.getElementById("nip-update").value = nip;
              document.getElementById("nama-update").value = nama;
@@ -267,6 +317,7 @@
              document.getElementById("id_dosen-update").value = id_dosen;
              document.getElementById("kode_dosen-update").value = kode_dosen;
              document.getElementById("status_dosen-update").value = status_dosen;
+             document.getElementById("kbk-update").value = id_kbk;
 
  
          });

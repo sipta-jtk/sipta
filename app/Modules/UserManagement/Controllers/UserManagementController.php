@@ -32,7 +32,7 @@ class UserManagementController extends Controller
         $mahasiswa = DB::table('mahasiswa')
         ->join('user', 'mahasiswa.nim', '=', 'user.username')
         ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
-        ->select('mahasiswa.*', 'user.nama', 'user.email', 'user.no_whatsapp')
+        ->select('mahasiswa.*', 'user.nama', 'prodi.nama_prodi' ,'user.email', 'user.no_whatsapp')
         ->get();
 
         $listprodi = Prodi::all();

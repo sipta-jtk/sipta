@@ -464,7 +464,7 @@ return [
                 ],
                 [
                     'text' => 'Form Pisah KoTA',
-                    'url' => 'form-pisah-kota',
+                    'url' => 'form-pisah-kota', 
                     'icon' => 'fas fa-sign-out-alt',
                     'can' => 'mahasiswa_ta',
                     // 'can' => function() {
@@ -473,11 +473,11 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => $prefix . '/manage_dosen',
+                    'url' => $prefix . '/manajemen-akun-dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => $prefix . '/#',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
 
                 ],
             ],
