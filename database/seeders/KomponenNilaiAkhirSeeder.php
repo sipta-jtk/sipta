@@ -25,7 +25,7 @@ class KomponenNilaiAkhirSeeder extends Seeder
         $data = [
             [
                 'nama_komponen' => 'uts',
-                'bobot_komponen' => 30,
+                'bobot_komponen' => 40,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -37,7 +37,7 @@ class KomponenNilaiAkhirSeeder extends Seeder
             ],
             [
                 'nama_komponen' => 'lain_lain',
-                'bobot_komponen' => 30,
+                'bobot_komponen' => 20,
                 'created_at' => now(),
                 'updated_at' => now()
             ],

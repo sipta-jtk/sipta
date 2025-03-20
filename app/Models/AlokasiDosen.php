@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AlokasiPembimbing extends Model
+class AlokasiDosen extends Model
 {
-    protected $table = 'alokasi_pembimbing';
-    protected $primaryKey = 'id_alokasi_pembimbing';
+    protected $table = 'alokasi_dosen';
+    protected $primaryKey = 'id_alokasi';
 
     public $timestamps = false;
 
@@ -16,7 +16,8 @@ class AlokasiPembimbing extends Model
         'nip',
         'urutan_prioritas_terpilih',
         'status_alokasi',
-        'catatan'
+        'catatan',
+        'tipe_alokasi'
     ];
 
     public function pengajuanPembimbing()
