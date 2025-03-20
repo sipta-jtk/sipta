@@ -7,14 +7,21 @@ use App\Modules\UserManagement\Controllers\DosenController;
 use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
-use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
-use App\Modules\UserManagement\Controllers\ProfileController;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('login');
+
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
 })->name('login');
+
+// Route untuk logout
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware(['auth', 'redirect.after.logout']);
 
 // Route untuk register
 Route::get('/register', function () {
