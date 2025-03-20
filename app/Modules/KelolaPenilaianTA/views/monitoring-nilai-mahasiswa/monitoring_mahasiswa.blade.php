@@ -74,44 +74,55 @@
         </table>
     </div>
     
-
-    <div class="card-Progress-Penilaian">
-        <h4>Progress Penilaian oleh Dosen</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr class="bg-dark text-white text-center">
-                    <th>Nama Kategori</th>
-                    <th>Rubrik</th>
-                    <th>Feedback</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($ftaList as $fta)
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Daftar Evaluasi</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td style="vertical-align: middle; white-space: nowrap;">{{ $fta->nama_fta }}</td>
-                        <td class="text-center">
-                            <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $fta->id_fta, 'idProdi' => $idProdi]) }}'" 
-                                class="btn btn-primary btn-sm px-3">
-                                Lihat Rubrik
-                            </button>                                                         
-                        </td>
-                        <td class="text-center">
-                            <div class="tooltip-wrapper position-relative">
-                                <button id="feedbackBtn"
-                                    class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled' }}"
-                                    data-url="{{ route('monitoring.feedback', $fta->id_fta) }}">
-                                    Lihat Feedback
-                                </button>
-                                <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
-                                    <strong>Feedback belum tersedia!</strong>
-                                </div>
-                            </div>
-                        </td>                                               
+                        <th>Nama FTA</th>
+                        <th class="text-center">Rubrik Penilaian</th>
+                        <th class="text-center">Feedback Dosen</th>
                     </tr>
-                @endforeach
-            </tbody>            
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($ftaList as $ftaNama)
+                        @php
+                            $ftaPenilaian = $ftaPenilaianList[$ftaNama] ?? null;
+                            $ftaFeedback = $ftaFeedbackList[$ftaNama] ?? null;
+                        @endphp
+                        <tr>
+                            <td style="vertical-align: middle; white-space: nowrap;">{{ $ftaNama }}</td>
+                            <td class="text-center">
+                                @if ($ftaPenilaian)
+                                    <button onclick="window.location.href='{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}'" 
+                                        class="btn btn-primary btn-sm px-3">
+                                        Lihat Rubrik
+                                    </button>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if ($ftaFeedback)
+                                    <div class="tooltip-wrapper position-relative">
+                                        <button id="feedbackBtn"
+                                            class="btn btn-primary btn-sm px-3"
+                                            data-url="{{ route('monitoring.feedback', $ftaFeedback->id_fta) }}">
+                                            Lihat Feedback
+                                        </button>
+                                        <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left d-none">
+                                            <strong>Feedback belum tersedia!</strong>
+                                        </div>
+                                    </div>
+                                @endif
+                            </td>                                               
+                        </tr>
+                    @endforeach
+                </tbody>  
+            </table>
+        </div>
+    </div>   
       
 @stop
 

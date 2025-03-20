@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\RekapitulasiNilaiExport;
@@ -21,12 +22,9 @@ class MonitoringNilaiMahasiswaController extends Controller{
      */
     public function monitoringMahasiswa(): View
     {
-
         // Ambil mahasiswa berdasarkan nim = username
-        $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)
-        ->first();
+        $mahasiswa = DB::table('mahasiswa')->where('nim', auth()->user()->username)->first();
 
-        
         $idKota = $mahasiswa->id_kota;
         $idProdi = $mahasiswa->id_prodi;
 
@@ -49,31 +47,48 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->select('dosen.nip', 'user.nama as nama_dosen')
             ->get();
 
-        /// 1. Ambil semua kode_fta yang ada dalam kategori_penilaian berdasarkan id_prodi mahasiswa
+        // 1. Ambil semua kode_fta berdasarkan id_prodi mahasiswa
         $kodeFtaList = DB::table('form_penilaian')
-        ->where('id_prodi', $idProdi)
-        ->pluck('id_fta');
+            ->where('id_prodi', $idProdi)
+            ->pluck('id_fta');
 
-        // 2. Dari hasil kode_fta yang diambil, cari yang memiliki jenis_form = 'penilaian' pada tabel form_penilaian
-        $kodeFtaFiltered = DB::table('form_penilaian')
-        ->whereIn('id_fta', $kodeFtaList)
-        ->where('jenis_form', 'feedback')
-        ->pluck('id_fta');
+        // 2. Ambil semua id_fta dengan nama_fta unik (id_fta paling kecil untuk nama_fta yang sama)
+        $namaFta = DB::table('form_penilaian')
+            ->whereIn('id_fta', $kodeFtaList)
+            ->selectRaw('MIN(id_fta) as id_fta, nama_fta')
+            ->groupBy('nama_fta')
+            ->orderBy('id_fta', 'asc')
+            ->get();
 
-        // 3. Ambil semua fta yang memiliki kode_fta sesuai hasil filter sebelumnya
-        $ftaList = DB::table('form_penilaian')
-        ->whereIn('id_fta', $kodeFtaFiltered)
-        ->select('id_fta', 'nama_fta')
-        ->orderBy('id_fta', 'asc')
-        ->get();
+        // 3. Ambil semua id_fta yang memiliki jenis_form = 'penilaian'
+        $ftaPenilaianList = DB::table('form_penilaian')
+            ->whereIn('id_fta', $kodeFtaList)
+            ->where('jenis_form', 'penilaian')
+            ->select('id_fta', 'nama_fta')
+            ->get()
+            ->keyBy('nama_fta');
+
+        // 4. Ambil semua id_fta yang memiliki jenis_form = 'feedback'
+        $ftaFeedbackList = DB::table('form_penilaian')
+            ->whereIn('id_fta', $kodeFtaList)
+            ->where('jenis_form', 'feedback')
+            ->select('id_fta', 'nama_fta')
+            ->get()
+            ->keyBy('nama_fta');
+
+        // 5. Ambil daftar nama FTA yang unik & urutkan berdasarkan kode_fta
+        $ftaList = $namaFta->sortBy('id_fta')->pluck('nama_fta');
 
         $isFeedbackAvailable = true;
 
+        Log::info($dosenPembimbing);
+        Log::info($idKota);
         // Kirimkan data ke tampilan Blade
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_mahasiswa', compact(
-            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'ftaList', 'idProdi', 'isFeedbackAvailable'
+            'mahasiswaList', 'kotaInfo', 'dosenPembimbing', 'kodeFtaList', 'idProdi', 'ftaPenilaianList', 'ftaFeedbackList', 'ftaList', 'isFeedbackAvailable'
         ));
     }
+
 
     /**
      * Menampilkan halaman monitoring feedback
@@ -114,8 +129,8 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         // Ambil data FTA yang sesuai dengan kodeFta yang dipilih
         $ftaPenilaian = DB::table('form_penilaian')
-            ->where('kode_fta', $kodeFta)
-            ->select('kode_fta', 'nama_fta', 'id_prodi')
+            ->where('id_fta', $kodeFta)
+            ->select('id_fta', 'nama_fta', 'id_prodi')
             ->first();
 
         if (!$ftaPenilaian) {
@@ -127,18 +142,18 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->where('nama_fta', $ftaPenilaian->nama_fta)
             ->where('id_prodi', $ftaPenilaian->id_prodi)
             ->where('jenis_form', 'feedback')
-            ->select('kode_fta')
+            ->select('id_fta')
             ->first();
 
         if (!$ftaFeedback) {
             abort(404, "FTA untuk feedback tidak ditemukan.");
         }
 
-        $kodeFtaFeedback = $ftaFeedback->kode_fta; // Gunakan kodeFta yang baru ditemukan
+        $kodeFtaFeedback = $ftaFeedback->id_fta; // Gunakan kodeFta yang baru ditemukan
 
         // Ambil aspek feedback berdasarkan kodeFta baru
         $aspekFeedback = DB::table('aspek_feedback')
-            ->where('kode_fta', $kodeFtaFeedback)
+            ->where('id_fta', $kodeFtaFeedback)
             ->select('id_feedback', 'nama_aspek_feedback')
             ->get();
 
@@ -146,7 +161,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
         $detailFeedback = DB::table('detail_feedback')
             ->where('id_kota', $idKota)
             ->whereIn('id_feedback', $aspekFeedback->pluck('id_feedback'))
-            ->where('status_penilaian', 'dipublikasikan')
+            ->where('status_penilaian_dosen', 'dipublikasikan')
             ->select('id_feedback', 'nip', 'isi_feedback')
             ->get();
 
@@ -177,6 +192,8 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         $hariTanggal = $penjadwalan ? $penjadwalan->tanggal : "Tanggal belum tersedia";
 
+        Log::info($detailFeedback);
+
         // Kirim data ke tampilan
         return view('KelolaPenilaianTA.views.monitoring-nilai-mahasiswa.monitoring_feedback', compact(
             'mahasiswa', 'kotaInfo', 'mahasiswaList', 'dosenPembimbing', 'ftaPenilaian', 'hariTanggal', 'dosenPenguji',
@@ -192,7 +209,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
     {
         // Ambil nama_kategori dari kategori_penilaian berdasarkan kode_fta
         $kategori = DB::table('form_penilaian')
-            ->where('kode_fta', $kodeFta)
+            ->where('id_fta', $kodeFta)
             ->select('nama_fta')
             ->first();
 
