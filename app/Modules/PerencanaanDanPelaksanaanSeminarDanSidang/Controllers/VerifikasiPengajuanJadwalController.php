@@ -11,47 +11,50 @@ class VerifikasiPengajuanJadwalController extends Controller
 {
     public function getList(Request $request, String $tipe): View
     {
-        $role = auth()->check() ? auth()->user()->role : 'unauthorized';
-        // dd($tipe);
-        // 1. Get profile dosen dari session yang sedang
-        if ($tipe === 'seminar-3' && $role === 'dosen') {
-            $dataPengajuan = PengajuanJadwalKota::where('tipe', 'seminar-3')->get();
-        } else {
-            $dataPengajuan = PengajuanJadwalKota::where('tipe', 'sidang-akhir')->get();
-        }
+        // pindah ke versi 4
+        // tipe_alokasi 1,2,3,4 di match ke dosbing1 dosbing2 penguji1 penguji2
 
-        // if ($tipe === 'seminar-3' && $role === 'dosen') {
-        //     $dataPengajuan = [
-        //         (object) [
-        //             'ID' => 1,
-        //             'kelompok' => '010',
-        //             'tanggal_pengajuan' => '2023-01-01',
-        //             'judul_ta' => 'Sistem AI untuk Diagnosis Penyakit',
-        //             'tanggal_kegiatan' => '2023-01-02',
-        //             'sesi' => 1,
-        //             'ruangan' => 'D221',
-        //         ],
-        //     ];
-        // } else {
-        //     $dataPengajuan = [
-        //         (object) [
-        //             'ID' => 2,
-        //             'kelompok' => '011',
-        //             'tanggal_pengajuan' => '2023-01-01',
-        //             'judul_ta' => 'Sistem AI untuk Diagnosis Penyakit',
-        //             'tanggal_kegiatan' => '2023-01-02',
-        //             'sesi' => 3,
-        //             'ruangan' => 'D221',
-        //             'status_mahasiswa' => '',
-        //             'status_pembimbing1' => '',
-        //             'status_pembimbing2' => '',
-        //             'status_penguji1' => '',
-        //             'status_penguji2' => '',
-        //             'status_koordinatorTA' => '',
-        //             'nip' => '1234567890',
-        //         ],
-        //     ];
-        // }
+
+
+
+        // Mendapatkan role dan nip dari user yang sedang login
+        $nip = auth()->user()->username;
+        $user = DB::table('users')->where('username', auth()->user()->username)->value('role');
+        // Ganti tabel menjadi alokasi_penguji di versi 4
+        $role = DB::table('alokasi_pembimbing')->where('nip', auth()->user()->username)->value('urutan_prioritas_terpilih');
+
+        // Menentukan agenda berdasarkan tipe agar bisa dijadikan page berbeda
+        $agenda = ($tipe == 'seminar-3') ? 'seminar_3' : 'sidang';
+
+        // Menentukan kolom status yang akan dicek berdasarkan role
+        // Kolom status yang akan diubah sesuai dengan role
+        if ($role === 'dosen') {
+            $statusColumns = ['pengajuan_jadwal_kota.status_dosen_pembimbing_1', 'pengajuan_jadwal_kota.status_dosen_pembimbing_2'];
+        }
+        
+        $dataPengajuan = DB::table('alokasi_pembimbing')
+            ->rightJoin('pengajuan_pembimbing', 'alokasi_pembimbing.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+            ->rightJoin('pengajuan_jadwal_kota', 'pengajuan_pembimbing.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
+            ->rightJoin('penjadwalan', 'pengajuan_jadwal_kota.id_kota', '=', 'penjadwalan.id_kota')
+            ->where('alokasi_pembimbing.nip', $nip)
+            ->where('alokasi_pembimbing.status_alokasi', 'fix')
+            ->where(function ($query) use ($statusColumns) {
+                foreach ($statusColumns as $column) {
+                    $query->orWhereNull($column);
+                }
+            })
+            ->where('penjadwalan.agenda', $agenda)
+            ->select([
+                'alokasi_pembimbing.nip',
+                'pengajuan_jadwal_kota.id_kota',
+                'penjadwalan.agenda',
+                'penjadwalan.id_ruangan',
+                'penjadwalan.sesi',
+                'penjadwalan.tanggal',
+                'pengajuan_jadwal_kota.status_dosen_pembimbing_1',
+                'pengajuan_jadwal_kota.status_dosen_pembimbing_2'
+            ])
+            ->get();
 
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwal', compact('dataPengajuan', 'tipe'));
     }
@@ -85,9 +88,32 @@ class VerifikasiPengajuanJadwalController extends Controller
     public function json(){
 
     //    Cari data pengajuan dengan detail kota
-        $dataPengajuan = DB::table('pengajuan_jadwal_kota')->join('kota', 'pengajuan_jadwal_kota.id_kota', '=', 'kota.id_kota')->get();
+        // $dataPengajuan = DB::table('pengajuan_jadwal_kota')->join('kota', 'pengajuan_jadwal_kota.id_kota', '=', 'kota.id_kota')->get();
         
-
+        $dataPengajuan = DB::table('alokasi_pembimbing')
+        ->rightJoin('pengajuan_pembimbing', 'alokasi_pembimbing.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->rightJoin('pengajuan_jadwal_kota', 'pengajuan_pembimbing.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
+        ->rightJoin('penjadwalan', 'pengajuan_jadwal_kota.id_kota', '=', 'penjadwalan.id_kota')
+        ->where('alokasi_pembimbing.nip', '197201061999031002')
+        ->where('alokasi_pembimbing.status_alokasi', 'fix')
+        ->where(function ($query) {
+            $query->whereNull('pengajuan_jadwal_kota.status_dosen_pembimbing_1')
+                  ->orWhereNull('pengajuan_jadwal_kota.status_dosen_pembimbing_2');
+        })
+        ->whereIn('penjadwalan.agenda', ['seminar_3', 'sidang'])
+        ->select([
+            'alokasi_pembimbing.nip',
+            'pengajuan_jadwal_kota.id_kota',
+            'penjadwalan.agenda',
+            'penjadwalan.id_ruangan',
+            'penjadwalan.sesi',
+            'penjadwalan.tanggal',
+            'pengajuan_jadwal_kota.status_dosen_pembimbing_1',
+            'pengajuan_jadwal_kota.status_dosen_pembimbing_2'
+        ])
+        ->get();
+    
+    
 
 
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.json', compact('dataPengajuan'));

@@ -14,11 +14,11 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Tanggal Pengajuan</th>
                     <th>Kelompok TA</th>
-                    <th>Tanggal</th>
-                    <th>Sesi</th>
+                    <th>Agenda</th>
+                    <th>Tanggal Kegiatan</th>
                     <th>Ruangan</th>
+                    <th>Sesi</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -94,17 +94,28 @@
                         },
                         orderable: false
                     },
-                    { data: "tanggal_pengajuan", className: 'text-center',},
                     { 
-                        data: "kelompok",
+                        data: "id_kota",
                         className: 'text-center',
                         render: function(data, type, row) {
                             return `koTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka
                         }
                     },
-                    { data: "tanggal_kegiatan", className: 'text-center',},
+                    { 
+                        data: "agenda",
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                            if (data === "seminar_3") {
+                                return "Seminar 3";
+                            } else if (data === "sidang") {
+                                return "Sidang Akhir";
+                            }
+                            return data; // Jika tidak sesuai dengan kondisi di atas, tampilkan apa adanya
+                        }
+                    },
+                    { data: "tanggal", className: 'text-center',},
+                    { data: "id_ruangan", className: 'text-center',},
                     { data: "sesi", className: 'text-center',},
-                    { data: "ruangan", className: 'text-center',},
                     { 
                         data: null,
                         className: 'text-center',
