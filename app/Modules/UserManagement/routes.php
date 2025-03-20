@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Mahasiswa;
 use App\Models\User;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;
@@ -63,9 +64,12 @@ Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_do
 Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
 Route::post('/update-dosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
 
-Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manage_dosen'])
-    // ->middleware('auth')
-    ->name('manage.dosen');
+Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manage_mhs'])
+        ->middleware('auth', 'can:admin')
+        ->name('manage.mhs');
+
+Route::post('/addNewMhs', [MahasiswaController::class, 'addNewMhs'])->name('mahasiswa.addNewMhs');
+
 
 Route::post('/update_role', [DosenController::class, 'update_role'])->name('dosen.update_role');
 Route::post('/add_new_dosen', [DosenController::class, 'add_new_dosen'])->name('dosen.add_new_dosen');
