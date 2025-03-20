@@ -480,7 +480,11 @@ return [
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url'  => $detailKotaUrl ?? 'detail-kota',
+                    'url'  => $detailKotaUrl ?? '#',
+                ],
+                [
+                    'text' => 'Management KoTA',
+                    'url' => 'management-kota',
                     'icon' => 'fas fa-info',
                 ],
                 [
