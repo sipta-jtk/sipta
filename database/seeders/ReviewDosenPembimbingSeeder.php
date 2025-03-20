@@ -24,18 +24,26 @@ class ReviewDosenPembimbingSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         ReviewDosenPembimbing::create([
-            'review' => 'Baik',
+            'review' => 'Untuk penjelasan lebih baik dikutip saja, untuk mengurangi plagiarismenya',
             'id_dokumen' => 1,
-            'nip' => '197312271999031003',
+            'nip' => '196101141992021001',
             'created_at' => '2024-09-01 00:00:00',
             'updated_at' => '2024-09-01 00:00:00'
 
         ]);
 
         ReviewDosenPembimbing::create([
-            'review' => 'Cukup',
+            'review' => 'Gunakan variasi kalimat dan sumber referensi yang lebih luas agar tulisan memiliki keunikan yang lebih tinggi.',
             'id_dokumen' => 2,
-            'nip' => '198502102015042001',
+            'nip' => '198009162009122001',
+            'created_at' => '2024-09-01 00:00:00',
+            'updated_at' => '2024-09-01 00:00:00'
+        ]);
+
+        ReviewDosenPembimbing::create([
+            'review' => 'Cobalah untuk merestrukturisasi kalimat dan mengganti sinonim agar tidak terlalu mirip dengan sumber aslinya.',
+            'id_dokumen' => 4,
+            'nip' => '198604122014041001',
             'created_at' => '2024-09-01 00:00:00',
             'updated_at' => '2024-09-01 00:00:00'
         ]);

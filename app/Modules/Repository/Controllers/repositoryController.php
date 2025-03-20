@@ -11,25 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class RepositoryController extends Controller
 {
 
-    public function dashboard()
-    {
-        // Daftar kategori yang akan ditampilkan
-        $kategoriList = [
-            'hasil_revisi_sidang',
-            'seminar3',
-            'seminar2',
-            'seminar1',
-            'cover_abstrak',
-            'artikel_ilmiah',
-            'poster',
-            'fta',
-            'source_code',
-            'link_source_code',
-            'artefak',
-        ];
-
-        return view('Repository.views.dashboard', compact('kategoriList'));
-    }
+    // Akmal Gonniyu Hartono
     /**
      * Menampilkan daftar dokumen Seminar 1.
      */
@@ -42,6 +24,7 @@ class RepositoryController extends Controller
         }
 
         return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris'));
+
     }
 
     /**
@@ -195,5 +178,65 @@ class RepositoryController extends Controller
         $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
 
         return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+    }
+
+    // Farrel Keiza Muhammad Yamin Putra
+    public function dashboard()
+    {
+        $data = collect([
+            'Laporan Tugas Akhir' => [
+                ['key' => 'revisi_sidang', 'label' => 'Laporan Tugas Akhir versi hasil revisi sidang', 'url' => '#'],
+                ['key' => 'seminar_3', 'label' => 'Laporan Tugas Akhir versi hasil seminar 3', 'url' => '#'],
+                ['key' => 'seminar_2', 'label' => 'Laporan Tugas Akhir versi hasil seminar 2', 'url' => '#'],
+                ['key' => 'seminar_1', 'label' => 'Laporan Tugas Akhir versi hasil seminar 1', 'url' => '#'],
+            ],
+            'Dokumen Pendukung' => [
+                ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => '#'],
+                ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => '#'],
+                ['key' => 'poster', 'label' => 'Poster', 'url' => '#'],
+                ['key' => 'fta', 'label' => 'FTA', 'url' => '#'],
+            ],
+            'Kode Sumber' => [
+                ['key' => 'source_code', 'label' => 'Source Code', 'url' => '#'],
+                ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => '#'],
+            ],
+            'Artefak' => [
+                ['key' => 'artefak', 'label' => 'Artefak', 'url' => '#']
+            ]
+        ]);
+
+        return view('RepositoryTA.views.dashboard', compact('data'));
+    }
+    public function list_kelompok_ta()
+    {
+        return view('RepositoryTA.views.list_kelompok_ta');
+
+    }
+
+
+    // Saabiq Muhyiyuddin Aulawi
+
+    // Muhammad Fahrizal Alzaelani
+    
+    // Muhammad Alvyn Adhianto
+    public function v0()
+    {
+        return view('Repository.views.aksesD0');
+
+    }
+    public function v1()
+    {
+        return view('Repository.views.aksesD1');
+
+    }
+    public function v2()
+    {
+        return view('Repository.views.aksesD2');
+
+    }
+    public function p1()
+    {
+        return view('Repository.views.aksesP0');
+
     }
 }

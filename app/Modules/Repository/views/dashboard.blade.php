@@ -1,61 +1,50 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard Repository')
+@section('title', 'RepositoryTA')
 
 @section('content_header')
-    <h1 class="text-center">Daftar Kategori Repository</h1>
+<h1>RepositoryTA</h1>
 @stop
 
 @section('content')
-    <div class="container">
-        <table class="table table-bordered text-center">
-            <thead class="table-light">
-                <tr>
-                    <th>No</th>
-                    <th>Kategori</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($kategoriList as $index => $kategori)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $kategori)) }}</td>
-                        <td>
-                            <a href="{{ route('Repository.index', $kategori) }}" class="btn btn-primary">
-                                Lihat Dokumen
-                            </a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+<table class="table table-hover">
+    <tbody>
+        @foreach($data as $kategori => $subkategori)
+            <tr data-widget="expandable-table" aria-expanded="false">
+                <td>
+                    <strong><i class="expandable-table-caret fas fa-caret-right fa-fw"></i> {{ $kategori }}</strong>
+                </td>
+            </tr>
+            <tr class="expandable-body">
+                <td>
+                    <div class="p-0">
+                        <table class="table table-hover">
+                            <tbody>
+                                @foreach($subkategori as $item)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ $item['url'] }}" style="text-decoration: none; color: black;">
+                                                {{ $item['label'] }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 @stop
 
 @section('css')
-    <style>
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-    </style>
+{{-- Add here extra stylesheets --}}
+{{--
+<link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')
-    <script>
-        console.log("Dashboard Repository page loaded.");
-    </script>
+<script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop

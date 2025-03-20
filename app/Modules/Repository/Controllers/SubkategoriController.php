@@ -9,6 +9,8 @@ use App\Modules\Controller;
 class SubkategoriController extends Controller
 {
     // In SubkategoriController.php
+
+    // Akmal Goniyyu Hartono
     public function store(Request $request)
     {
         try {
