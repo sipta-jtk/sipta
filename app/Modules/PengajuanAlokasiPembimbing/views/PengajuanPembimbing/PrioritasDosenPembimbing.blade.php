@@ -23,11 +23,14 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">List Dosen Pembimbing</label>
+
+                        <input type="text" id="searchDosen" class="form-control mb-2" placeholder="Cari nama dosen...">
+
                         <div class="border p-2" style="max-height: 70vh; overflow-y: auto;">
                             <ul id="dosenList" class="list-group">
                                 @foreach ($listDosen as $d)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span>{{ $d->nama }}</span>
+                                        <span class="dosen-name">{{ $d->nama }}</span>
                                         <div>
                                             <button class="btn btn-sm btn-secondary viewHistory" data-name="{{ $d->nama }}" data-nip="{{ $d->nip }}">
                                                 <i class="fas fa-file-alt"></i>
@@ -99,6 +102,8 @@
 @section ('js')
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+@include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+
 <script>
     $(document).ready(function () {
         // Menambahkan dosen ke daftar prioritas
@@ -133,6 +138,24 @@
             });
         });
 
+        function ValidateDosen(){
+            let prioritasDosen = [];
+            $("#prioritasList .priority-name").each(function () {
+                let name = $(this).text();
+                if (name !== "-") {
+                    let priority = $(this).siblings(".priority-number").text();
+                    prioritasDosen.push({ name: name, priority: priority });
+                }
+            });
+
+            if (prioritasDosen.length < 1) {
+                toast("error", "Prioritas dosen pembimbing tidak boleh kosong!");
+                return false;
+            }
+
+            return true;
+        }
+
         // Menyimpan Draft
         $(".btn-primary[type='submit']").click(function () {
             let prioritasDosen = [];
@@ -146,8 +169,10 @@
             });
 
             // Simpan data prioritas dosen ke localStorage
+            if (ValidateDosen()){
             localStorage.setItem("prioritasDosen", JSON.stringify(prioritasDosen));
-            alert("Draft berhasil disimpan!");
+            toast("success", "Draft berhasil disimpan!");
+        }
         });
 
         // Menampilkan prioritas dosen yang sudah disimpan di localStorage
@@ -221,6 +246,24 @@
             });
 
             $("#historyModal").modal("show");
+        });
+    });
+
+    // Mencari dosen berdasarkan nama
+    $(document).ready(function () {
+        $("#searchDosen").on("input", function () {
+            let searchText = $(this).val().toLowerCase().trim();
+
+            $("#dosenList .list-group-item").each(function () {
+                let dosenName = $(this).find(".dosen-name").text().trim().toLowerCase();
+                if (dosenName.includes(searchText)) {
+                    $(this).removeClass('d-none');
+                    $(this).addClass('d-flex');
+                } else {
+                    $(this).removeClass('d-flex');
+                    $(this).addClass('d-none');
+                }
+            });
         });
     });
 </script>

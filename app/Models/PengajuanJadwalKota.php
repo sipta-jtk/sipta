@@ -18,8 +18,7 @@ class PengajuanJadwalKota extends Model
         'status_dosen_penguji_2',
         'status_koordinator_ta',
         'id_penjadwalan',
-        'id_kota',
-        'nip'
+        'id_kota'
     ];
 
     public function penjadwalan()
@@ -30,10 +29,5 @@ class PengajuanJadwalKota extends Model
     public function kota()
     {
         return $this->belongsTo(Kota::class, 'id_kota', 'id_kota');
-    }
-
-    public function dosen()
-    {
-        return $this->belongsTo(Dosen::class, 'nip', 'nip');
     }
 }

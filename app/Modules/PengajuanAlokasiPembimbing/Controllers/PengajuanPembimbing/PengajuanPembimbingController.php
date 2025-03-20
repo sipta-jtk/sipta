@@ -136,6 +136,18 @@ class PengajuanPembimbingController extends Controller
         //     ->where('nim', $sessionUser['id_kota']) // Mengambil NIM dari session user
         //     ->value('id_kota');
 
+        // Mendapatkan ID bidang berdasarkan nama bidang
+        $bidangIds = [];
+        foreach ($bidang as $namaBidang) {
+            // Mencari ID berdasarkan nama bidang
+            $bidangId = DB::table('bidang')->where('bidang', $namaBidang)->value('id_bidang');
+            
+            // Menambahkan ID bidang ke dalam array
+            if ($bidangId) {
+                $bidangIds[] = $bidangId;
+            }
+        }
+
         // Insert data ke tabel pengajuan_pembimbing
         $pengajuanPembimbingId = DB::table('pengajuan_pembimbing')->insertGetId([
             'id_kota' => $sessionUser['id_kota'],
@@ -147,11 +159,11 @@ class PengajuanPembimbingController extends Controller
         // Insert data ke tabel kota (judul_ta) dan bidang (id_bidang)
         DB::table('kota')->where('id_kota', $sessionUser['id_kota'])->update([
             'judul_ta' => $topik,
-            'id_bidang' => $bidang[0]// Menyimpan bidang pertama yang dipilih
+            'id_bidang' => $bidangIds[0]// Menyimpan bidang pertama yang dipilih
         ]);
 
         // Insert bidang tugas akhir yang dipilih (menyimpan id_bidang)
-        foreach ($bidang as $bidangId) {
+        foreach ($bidangIds as $bidangId) {
             DB::table('kota')
                 ->where('id_kota', $sessionUser['id_kota'])
                 ->update([
