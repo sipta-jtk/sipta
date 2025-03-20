@@ -58,31 +58,31 @@
                                 <tbody>
                                     <tr>
                                         <th>Penulis</th>
-                                        <td>Mumun Sumumun</td>
+                                        <td>{{ $dokumen->penulis }}</td> <!-- Data penulis dari database -->
                                     </tr>
                                     <tr>
                                         <th>Judul Dokumen</th>
-                                        <td>Implementasi Algoritma Naive</td>
+                                        <td>{{ $dokumen->judul }}</td> <!-- Data judul dari database -->
                                     </tr>
                                     <tr>
                                         <th>Nama Dokumen</th>
-                                        <td>CONTOH FIX.PDF</td>
+                                        <td>{{ $dokumen->nama_dokumen ?? 'Dokumen Tidak Ditemukan' }}</td> <!-- Data nama dokumen -->
                                     </tr>
                                     <tr>
                                         <th>Tanggal Unggah</th>
-                                        <td>28-02-2025</td>
+                                        <td>{{ \Carbon\Carbon::parse($dokumen->created_at)->format('d-m-Y') }}</td> <!-- Format tanggal -->
                                     </tr>
                                     <tr>
                                         <th>Jumlah Halaman</th>
-                                        <td>30</td>
+                                        <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
                                     </tr>
                                     <tr>
                                         <th>Ukuran Dokumen</th>
-                                        <td>2MB</td>
+                                        <td>{{ $dokumen->ukuran_file }} MB</td> <!-- Ukuran file -->
                                     </tr>
                                     <tr>
                                         <th>Ambang Batas</th>
-                                        <td>50%</td>
+                                        <td>{{ $dokumen->ambangBatas->persentase ?? 'Tidak Diketahui' }}%</td> <!-- Data ambang batas -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -90,7 +90,7 @@
                     </div>
                 </div>
 
-                <!-- Daftar Sumber -->
+                <!-- Sumber Plagiarisme -->
                 <div class="tab-pane fade" id="sumber" role="tabpanel">
                     <div class="card shadow-lg">
                         <div class="card-header bg-danger text-white">
@@ -99,23 +99,13 @@
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr>
-                                        <td>arxiv.org</td>
-                                        <td>4%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>jurnal.itscience.org</td>
-                                        <td>12%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>ejurnal.umri.ac.id</td>
-                                        <td>2%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Fei Li et al.</td>
-                                        <td>
-                                            <1%</td>
-                                    </tr>
+                                    @foreach($sumberPlagiarisme as $item)
+                                        <tr>
+                                            <!-- Menggunakan relasi yang benar, yaitu listJurnalPlagiarisme -->
+                                            <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
+                                            <td>{{ $item->persentase_kemunculan ?? '0%' }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

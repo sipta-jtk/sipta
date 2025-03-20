@@ -7,72 +7,28 @@ use Illuminate\View\View;
 use App\Models\Dokumen;
 use App\Models\Dosen;
 use App\Models\ReviewDosenPembimbing;
-
+use App\Models\ListJurnalPlagiarisme;
+use App\Models\ListKalimatPlagiarisme;
 
 class CekPlagiarismeDetailController extends Controller
 {
-    public function index(): View
+    public function show($id)
     {
-        // Data dummy untuk daftar dokumen
-        $cekPlagiarisme = [
-            (object) [
-                'id' => 1,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 21:00:11',
-                'penulis' => 'Maman Sumaman',
-                'presentase' => null, // Masih dalam proses
-                'komentar' => null,
-            ],
-            (object) [
-                'id' => 2,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 19:28:24',
-                'penulis' => 'Maman Samaman',
-                'presentase' => 15,
-                'komentar' => null,
-            ],
-            (object) [
-                'id' => 3,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 14:20:14',
-                'penulis' => 'Mumun Sumumun',
-                'presentase' => 50,
-                'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
-            ],
-            (object) [
-                'id' => 4,
-                'judul' => 'Implementasi Algoritma Naive',
-                'waktu' => '28-02-2025 09:30:45',
-                'penulis' => 'Mimin Simimin',
-                'presentase' => 80,
-                'komentar' => 'Di Parafrase yaa!!',
-            ],
-        ];
-
-        return view('CekPlagiarisme.views.DaftarDokumen', compact('cekPlagiarisme'));
+        // Mengambil dokumen berdasarkan ID
+        $dokumen = Dokumen::find($id);
+        
+        // Mengambil semua review (catatan) yang terkait dengan dokumen
+        $catatan = ReviewDosenPembimbing::with('dosen')->where('id_dokumen', $id)->get();
+        
+        // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
+        $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
+            ->where('id_dokumen', $id)
+            ->get();
+    
+        // Mengirimkan data ke view
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'sumberPlagiarisme')); // Tambahkan 'sumberPlagiarisme'
     }
-
-    public function show($id): View
-    {
-        // Data dummy untuk detail dokumen
-        $dokumen = (object) [
-            'id' => $id,
-            'judul' => 'Implementasi Algoritma Naive',
-            'waktu' => '28-02-2025 14:20:14',
-            'penulis' => 'Mumun Sumumun',
-            'file' => null, // Jika ingin menampilkan file, gunakan 'contoh.pdf'
-            'isi' => 'Ini adalah contoh isi dokumen.',
-            'presentase' => 50,
-            'komentar' => 'Gunakan sumber referensi yang sahih, minimal Sinta 3',
-        ];
-
-        // Mengambil review (komentar) terkait dokumen
-        $catatan = ReviewDosenPembimbing::where('id_dokumen', $id)
-            ->with('dosen')
-            ->get(); // Mendapatkan semua review yang ada
-
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan'));
-    }
+    
 
     public function PenentuanAmbangBatas(): View
     {
