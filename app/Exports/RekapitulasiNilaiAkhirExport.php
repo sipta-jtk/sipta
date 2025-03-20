@@ -24,10 +24,10 @@ class RekapitulasiNilaiAkhirExport implements FromCollection, WithHeadings, With
                 'prodi' => $item['prodi'] ?? '',
                 'kelas' => $item['kelas'] ?? '',
                 'kelompok' => $item['kelompok'] ?? '',
-                'nilaiUts' => ($item['nilaiUts'] ?? 0) == 0 ? 'T' : $item['nilaiUts'],
-                'nilaiUas' => ($item['nilaiUas'] ?? 0) == 0 ? 'T' : $item['nilaiUas'],
-                'nilaiLainLain' => ($item['nilaiLainLain'] ?? 0) == 0 ? 'T' : $item['nilaiLainLain'],
-                'nilaiAkhir' => $item['nilaiAkhir'] ?? '',
+                'nilaiUts' => ($item['nilaiUts'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUts'], 2),
+                'nilaiUas' => ($item['nilaiUas'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUas'], 2),
+                'nilaiLainLain' => ($item['nilaiLainLain'] ?? 0) == 0 ? 'T' : number_format($item['nilaiLainLain'], 2),
+                'nilaiAkhir' => isset($item['nilaiAkhir']) ? number_format($item['nilaiAkhir'], 2) : '',
                 'predikat' => $item['predikat'] ?? '',
             ];
         });

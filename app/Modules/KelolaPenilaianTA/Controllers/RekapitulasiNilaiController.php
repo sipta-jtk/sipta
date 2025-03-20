@@ -109,7 +109,13 @@ class RekapitulasiNilaiController extends Controller{
             $nilaiKategori['rataSeminar3'] = $this->hitungRataRata([$nilaiKategori['seminar3Penguji1'], $nilaiKategori['seminar3Penguji2'], $nilaiKategori['seminar3Penguji3']]);
             $nilaiKategori['rataSidang'] = $this->hitungRataRata([$nilaiKategori['sidangPenguji1'], $nilaiKategori['sidangPenguji2'], $nilaiKategori['sidangPenguji3']]);
             $nilaiKategori['rataPembimbing'] = $this->hitungRataRata([$nilaiKategori['pembimbing1'], $nilaiKategori['pembimbing2']]);
-    
+            
+            foreach ($nilaiKategori as $key => $value) {
+                if (!is_null($value)) {
+                    $nilaiKategori[$key] = number_format($value, 2);
+                }
+            }
+
             // Masukkan ke array data
             $data[] = array_merge([
                 'nim' => $mahasiswa->nim,
@@ -127,17 +133,18 @@ class RekapitulasiNilaiController extends Controller{
      * Fungsi untuk menghitung rata-rata dengan mengabaikan nilai null
      */
     private function hitungRataRata($nilai)
-{
-    $nilaiTersaring = array_filter($nilai, function ($item) {
-        return !is_null($item);
-    });
+    {
+        $nilaiTersaring = array_filter($nilai, function ($item) {
+            return !is_null($item);
+        });
 
-    if (count($nilaiTersaring) > 0) {
-        return array_sum($nilaiTersaring) / count($nilaiTersaring);
+        if (count($nilaiTersaring) > 0) {
+            return number_format(array_sum($nilaiTersaring) / count($nilaiTersaring), 2);
+        }
+
+        return null; // Jika tidak ada nilai, kembalikan null
     }
 
-    return null; // Jika tidak ada nilai, kembalikan null
-}
 
         
     /**
@@ -668,6 +675,12 @@ class RekapitulasiNilaiController extends Controller{
             $nilaiKategori['rataSidang'] = $this->hitungRataRata([$nilaiKategori['sidangPenguji1'], $nilaiKategori['sidangPenguji2'], $nilaiKategori['sidangPenguji3']]);
             $nilaiKategori['rataPembimbing'] = $this->hitungRataRata([$nilaiKategori['pembimbing1'], $nilaiKategori['pembimbing2']]);
             
+            foreach ($nilaiKategori as $key => $value) {
+                if (!is_null($value)) {
+                    $nilaiKategori[$key] = number_format($value, 2);
+                }
+            }
+
             // Dapatkan sumber nilai dan bobot uts, uas, dan lain-lain dari kategori penilaian apa
             $komponen_nilai_akhir = KomponenNilaiAkhir::select(
                 'komponen_nilai_akhir.id_komponen',
