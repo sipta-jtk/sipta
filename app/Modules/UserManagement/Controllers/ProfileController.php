@@ -29,7 +29,7 @@ class ProfileController extends Controller
         $user->no_whatsapp = $request->no_whatsapp;
 
         if ($request->hasFile('photo')) {
-            if ($user->photo) {
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
                 Storage::disk('public')->delete($user->photo);
             }
             $photoPath = $request->file('photo')->store('photos', 'public');

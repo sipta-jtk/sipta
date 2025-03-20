@@ -136,10 +136,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
-    'usermenu_desc' => false,
+    'usermenu_desc' => true,
     'usermenu_profile_url' => true,
 
     /*
@@ -493,12 +493,12 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => $prefix . '/manage_dosen',
+                    'url' => $prefix . '/manajemen-akun-dosen',
                     'icon' => 'fas fa-user-tie',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => $prefix . '/#',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
                     'icon' => 'fas fa-user-graduate'
                 ],
             ],
