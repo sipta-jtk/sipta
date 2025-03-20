@@ -74,7 +74,7 @@ class User extends Authenticatable
         }
 
         // Jika tidak ada foto profil, kembalikan gambar default
-        return asset('storage/photos/default-profile.png');
+        return asset('storage/photos/default-profile1.jpg');
     }
 
     public function adminlte_desc()
