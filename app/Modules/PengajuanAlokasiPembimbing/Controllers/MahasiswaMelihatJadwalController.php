@@ -15,7 +15,7 @@ class MahasiswaMelihatJadwalController extends Controller
 {
     public function view_MahasiswaMelihatJadwal(): View
     {
-        $nim = 221524036;
+        $nim = auth()->user()->username;
 
         $query = "
         SELECT      
@@ -38,9 +38,6 @@ class MahasiswaMelihatJadwalController extends Controller
         
         $data = DB::select($query);
 
-     
-
-        // **Group Data by nama_dosen**
         $groupedData = [];
         foreach ($data as $item) {
             $namaDosen = $item->nama_dosen;
@@ -58,14 +55,7 @@ class MahasiswaMelihatJadwalController extends Controller
                 'jam_selesai' => date('H:i', strtotime($item->jam_selesai))
             ];
         }
-
-        // Convert associative array to indexed array
         $groupedData = array_values($groupedData);
-
-  
-
-        
-
         return view('PengajuanAlokasiPembimbing.views.MahasiswaMelihatJadwal.MahasiswaMelihatJadwal', ['groupedData' => $groupedData]);
     }
 }
