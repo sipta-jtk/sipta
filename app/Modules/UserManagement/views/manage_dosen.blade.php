@@ -19,6 +19,24 @@
 <a href="{{ route('download.template-dosen') }}" class="btn btn-secondary mb-3">
     <i class="fa fa-download"></i> Download Template Excel
 </a>
+@if(session('successrole'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+<div id="role_section" style="display: none;">
+    <div class="mb-3">
+        <label for="new_role">Pilih Role Baru:</label>
+        <select id="new_role" class="form-control">
+            <option value="">-- Pilih Role --</option>
+            <option value="dosen">Dosen</option>
+            <option value="koordinator_ta">Koordinator TA</option>
+        </select>
+    </div>
+    <button id="updateRoleButton" class="btn btn-primary">Update Role</button>
+</div>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-left">
     </div>
@@ -26,6 +44,8 @@
         <table id="datatable" class="table table-borderd">
             <thead class="bg-primary text-white">
                 <tr>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>No</th>
                     <th>NIP</th>
                     <th>Nama</th>
                     <th>Email</th>
@@ -36,8 +56,18 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                 $no = 1   
+                @endphp
                 @foreach ($dosen as $d)
                 <tr>
+                    <td>
+                    @if ($d->role_dosen != 'kajur')
+                        <input type="checkbox" class="user_checkbox" value="{{ $d->nip }}">
+                    @endif
+                    
+                    </td>
+                    <td>{{$no}}</td>
                     <td>{{ $d->nip }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->email }}</td>
@@ -52,6 +82,9 @@
                             Dosen
                         @endif
                     </td>
+                    @php
+                     $no++;   
+                    @endphp
 
                     <td>    
 
@@ -250,7 +283,71 @@
 @stop
 
 @section('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    $(document).ready(function () {
+    function toggleRoleSection() {
+        var selectedCount = $('.user_checkbox:checked').length;
+        if (selectedCount >= 1) {
+            $('#role_section').show();
+        } else {
+            $('#role_section').hide();
+        }
+    }
+
+    // Saat checkbox user diubah
+    $('.user_checkbox').on('change', function () {
+        toggleRoleSection();
+    });
+
+    // Checkbox utama (select all)
+    $('#select_all').on('change', function () {
+        $('.user_checkbox').prop('checked', this.checked);
+        toggleRoleSection();
+    });
+
+    // Event klik tombol update
+    $('#updateRoleButton').on('click', function () {
+        var selectedUsers = $('.user_checkbox:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        var newRole = $('#new_role').val();
+
+        if (selectedUsers.length === 0 || newRole === "") {
+            alert("Pilih satu / lebih user dan role baru!");
+            return;
+        }
+
+        // Kirim data ke server dengan AJAX
+        $.ajax({
+            url: "{{ route('updateBulkRole') }}",
+            type: "POST",
+            data: {
+                nip: selectedUsers,
+                role_dosen: newRole,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function () {
+            Swal.fire({
+                title: "Berhasil!",
+                text: "Role dosen berhasil diperbarui!",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                location.reload();
+            });
+},
+            error: function () {
+                alert("Terjadi kesalahan, coba lagi.");
+            }
+        });
+    });
+});
+
+
     document.querySelector('input[type="file"]').addEventListener('change', function () {
         const allowedExtensions = ['xls', 'xlsx', 'csv'];
         const file = this.files[0];
