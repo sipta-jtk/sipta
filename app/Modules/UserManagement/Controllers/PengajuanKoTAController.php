@@ -7,6 +7,7 @@ use App\Modules\Controller;
 use App\Models\User;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
+use App\Models\Prodi;
 use Carbon\Carbon;
 
 class PengajuanKoTAController extends Controller
@@ -15,12 +16,22 @@ class PengajuanKoTAController extends Controller
     {
         $mahasiswaAnggota1 = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
-            ->where('mahasiswa.nim', '=', '221524059')
+            ->where('mahasiswa.nim', '=', auth()->user()->username)
             ->select('mahasiswa.*', 'user.nama')
             ->first();
 
+        // Mendapatkan maksimal anggota dari prodi mahasiswa
+        $maksimalAnggota = 3; // Default jika tidak ada data prodi
+
         if ($mahasiswaAnggota1) 
         {
+            // Ambil nilai maksimal anggota dari prodi mahasiswa
+            $prodi = Prodi::find($mahasiswaAnggota1->id_prodi);
+            if ($prodi) 
+            {
+                $maksimalAnggota = $prodi->maksimal_anggota_kota;
+            }
+
             $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
                 ->where('mahasiswa.status_ta', 'mahasiswa_ta')
                 ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
@@ -36,7 +47,7 @@ class PengajuanKoTAController extends Controller
         //     ->where('nim', '!=', auth()->user()->username)
         //     ->get();
 
-        return view('UserManagement.views.pengajuan-kota', compact('mahasiswa', 'mahasiswaAnggota1'));
+        return view('UserManagement.views.pengajuan-kota', compact('mahasiswa', 'mahasiswaAnggota1', 'maksimalAnggota'));
     }
 
     public function submit(Request $request)
@@ -66,7 +77,7 @@ class PengajuanKoTAController extends Controller
 
         // Generate nama KoTA
         $newKoTANumber = $lastKoTA ? intval(substr($lastKoTA->nama_kota, 4)) + 1 : 101;
-        $namaKoTA = 'KoTA' . $newKoTANumber;
+        $namaKoTA = 'KoTA ' . $newKoTANumber;
 
         // Buat Kelompok TA baru
         $koTA = Kota::create([

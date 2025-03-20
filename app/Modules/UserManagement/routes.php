@@ -16,6 +16,7 @@ use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
+use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
@@ -112,10 +113,6 @@ Route::get('/kelola-kbk', [KBKController::class, 'index'])->name('kelola-kbk');
 Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
 Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
 Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
-//
-
-// Route::get('program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
-//
 
 Route::get('program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
 Route::get('program-studi/create', [ProgramStudiController::class, 'create'])->name('program-studi.create');
@@ -123,3 +120,5 @@ Route::post('program-studi', [ProgramStudiController::class, 'store'])->name('pr
 Route::get('program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
 Route::put('program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
 Route::delete('program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
