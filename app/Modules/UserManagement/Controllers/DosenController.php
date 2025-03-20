@@ -55,7 +55,8 @@ class DosenController extends Controller
             'id_kbk' => 'required',
         ]);
 
-
+        DB::beginTransaction();
+        try{
         $randomCode = Str::random(7);
         $user = User::create([
             'username' => $request->nip,
@@ -64,7 +65,7 @@ class DosenController extends Controller
             'no_whatsapp' => $request->no_wa,
             'photo' => 'default.jpg',
             'role_user' => 'dosen',
-            'password' => $randomCode 
+            'password' => Hash::make($randomCode) 
         ]);
 
         $email = $request->email;
@@ -87,8 +88,16 @@ class DosenController extends Controller
             'role_dosen' => 'dosen'
         ]);
 
+        DB::commit();
         // Commit transaksi jika semua berhasil
         return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
+
+    } catch (\Exception $e) {
+        // Rollback jika terjadi kesalahan
+        DB::rollBack();
+
+        return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
+    }
 
         
 

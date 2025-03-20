@@ -82,6 +82,7 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
 Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('auth', 'can:admin')
     ->name('manage.dosen');
+    
 Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
 Route::post('/update-dosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
 
@@ -131,10 +132,6 @@ Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
 Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
 Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
-
-Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('can:admin')
-    ->name('manage.dosen');
 
 
 

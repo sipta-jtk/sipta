@@ -495,10 +495,12 @@ return [
                 [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => $prefix . '/manajemen-akun-dosen',
+                    'can' => 'admin',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => $prefix . '/manajemen-akun-mahasiswa',
+                    'can' => 'admin',
 
                 ],
             ],
