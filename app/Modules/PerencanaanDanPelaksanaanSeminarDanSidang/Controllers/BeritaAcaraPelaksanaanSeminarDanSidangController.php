@@ -132,7 +132,8 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             'waktu' => '2025-08-22 12:00:00', // Waktu sidang
             'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),
             'dokumentasi' => session('dok_sa_221524033', ''), // Ambil data dokumentasi dari session
-            'batas_revisi' => session('batas_revisi_sa_221524033', '') 
+            'batas_revisi' => session('batas_revisi_sa_221524033', ''),
+            'status_kelulusan' => session('status_kelulusan_sa_221524035', '') 
         ],
         [
             'id_kehadiran' => 'sa_221524034',
@@ -208,7 +209,6 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
         return redirect()->back()->with('success', 'Dokumentasi berhasil diupload.');
     }
-<<<<<<< HEAD:app/Modules/PerencanaanDanPelaksanaanSeminarDanSidang/Controllers/BeritaAcaraPelaksanaanSeminarDanSidangController.php
 
     public function simpanBatasRevisi(Request $request)
     {
@@ -229,8 +229,8 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     {
         // Validasi request
         $request->validate([
-            'id_kehadiran' => 'required|string',
-            'status_kelulusan' => 'required|string|in:Lulus Tanpa Perbaikan,Lulus Dengan Perbaikan,Mengulang Sidang,Tidak Lulus',
+            'id_kehadiran'      => 'required|string',
+            'status_kelulusan'  => 'required|string|in:Lulus Tanpa Perbaikan,Lulus Dengan Perbaikan,Mengulang Sidang,Tidak Lulus',
         ]);
 
         // Simpan status kelulusan di session
@@ -239,8 +239,4 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Redirect kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
     }
-
 }
-=======
-}
->>>>>>> ccb2c1c70a56531448274efb5000b7781e575414:app/Modules/PerencanaanDanPelaksanaanSeminarDanSidang/Controllers/PerencanaanDanPelaksanaanSeminarDanSidangController.php

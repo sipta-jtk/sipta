@@ -27,7 +27,6 @@
                             <th class="w-10">Sesi</th>
                             <th class="w-10">Status Kehadiran</th>
                             <th class="w-15">Dokumentasi</th>
-                            <th class="w-15">Batas Revisi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,7 +34,6 @@
                         @php
                             $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
                             $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
-                            $batasRevisi = session("batas_revisi_{$item['id_kehadiran']}", $item['batas_revisi'] ?? '');
                         @endphp
 
                             <tr>
@@ -66,13 +64,6 @@
                                         <div class="alert alert-warning p-1" style="font-size: 0.7rem;">
                                             Dokumentasi belum diupload.
                                         </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($batasRevisi)
-                                        {{ $batasRevisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
-                                    @else
-                                        <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif
                                 </td>
                             </tr>

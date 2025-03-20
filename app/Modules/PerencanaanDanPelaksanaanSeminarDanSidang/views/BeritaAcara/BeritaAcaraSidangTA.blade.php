@@ -96,45 +96,47 @@
                                         </form>
                                     @endif
                                 </td>
+                                <td>
+                                    @if($statusKelulusan)
+                                        {{ $statusKelulusan }}
+                                    @else
+                                        <!-- Tombol untuk membuka modal -->
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item['id_kehadiran'] }}">
+                                            Isi Status
+                                        </button>
+                                    @endif
+                                </td>
                             </tr>
+                            <!-- Modal untuk mengisi status kelulusan -->
+                            <div class="modal fade" id="modalStatusKelulusan{{ $item['id_kehadiran'] }}" tabindex="-1" role="dialog" aria-labelledby="modalStatusKelulusanLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalStatusKelulusanLabel">Isi Status Kelulusan</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('simpan.status.kelulusan') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
+                                                <div class="form-group">
+                                                    <label for="status_kelulusan">Pilih Status Kelulusan:</label>
+                                                    <select name="status_kelulusan" class="form-control" required>
+                                                        <option value="Lulus Tanpa Perbaikan">Lulus Tanpa Perbaikan</option>
+                                                        <option value="Lulus Dengan Perbaikan">Lulus Dengan Perbaikan</option>
+                                                        <option value="Mengulang Sidang">Mengulang Sidang</option>
+                                                        <option value="Tidak Lulus">Tidak Lulus</option>
+                                                    </select>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <h3>Status Kelulusan Sidang TA</h3>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>No</th>
-                            <th>Status Kelulusan</th>
-                            <th>Ceklis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Lulus tanpa perbaikan laporan</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Lulus dengan perbaikan laporan</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Mengulang Sidang Tugas Akhir</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Tidak Lulus</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

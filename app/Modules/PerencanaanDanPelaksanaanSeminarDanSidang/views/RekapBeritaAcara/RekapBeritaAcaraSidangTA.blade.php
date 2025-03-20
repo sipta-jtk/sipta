@@ -28,6 +28,7 @@
                             <th class="w-10">Status Kehadiran</th>
                             <th class="w-20">Dokumentasi</th>
                             <th class="w-15">Batas Revisi</th>
+                            <th class="w-15">Status Kelulusan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +37,7 @@
                                 $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
                                 $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
                                 $batasRevisi = session("batas_revisi_{$item['id_kehadiran']}", $item['batas_revisi'] ?? '');
+                                $statusKelulusan = session("status_kelulusan_{$item['id_kehadiran']}", $item['status_kelulusan'] ?? '');
                             @endphp
 
                             <tr>
@@ -57,20 +59,24 @@
                                 <td style="width: 50px;">
                                     @if($dokumentasi)
                                         <div class="mb-2">
-                                            <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
                                                 {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 15) }}
                                             </a>
                                         </div>
                                     @else
-                                        <div class="alert alert-warning p-1" style="font-size: 0.7rem;">
-                                            Dokumentasi belum diupload.
-                                        </div>
+                                        <span style="font-size: 1 rem;"> Belum diupload</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($batasRevisi)
                                         {{ $batasRevisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
+                                    @else
+                                        <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($statusKelulusan)
+                                        {{ $statusKelulusan }} <!-- Tampilkan status kelulusan jika sudah diisi -->
                                     @else
                                         <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif

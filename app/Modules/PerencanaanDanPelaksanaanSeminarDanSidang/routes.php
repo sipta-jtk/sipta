@@ -26,4 +26,7 @@ Route::get('/rekap-berita-acara-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSid
 Route::post('/simpan-batas-revisi', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanBatasRevisi'])
     ->name('simpan.batas.revisi');
 
+Route::post('/simpan-status-kelulusan', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanStatusKelulusan'])
+    ->name('simpan.status.kelulusan');
+
 ?>
