@@ -461,11 +461,13 @@ return [
                     'text' => 'Program Studi',
                     'url'  => $prefix . '/program-studi',
                     'icon' => 'fas fa-school',
+                    'can' => 'admin',
                 ],
                 [
                     'text' => 'Kelola KBK',
                     'url'  => $prefix . '/kelola-kbk',
                     'icon' => 'fas fa-sitemap',
+                    'can' => 'admin',
                 ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
