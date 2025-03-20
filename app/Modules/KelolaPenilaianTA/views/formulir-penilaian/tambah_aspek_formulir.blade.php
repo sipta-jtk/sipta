@@ -131,6 +131,14 @@
                         <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" required>
                     </div>
                 </div>
+
+                <!-- Waktu Tenggat -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="waktuTenggat">Waktu Tenggat</label>
+                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" required>
+                    </div>
+                </div>
             </div>
 
             <!-- Tombol Submit -->

@@ -60,7 +60,7 @@
                                         Lihat Detail
                                     </a>
                                 @endif
-                                <a href="{{ route('aspek-penilaian.edit', $row->kode_fta) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('aspek-penilaian.edit', $row->id_fta) }}" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                             </td>

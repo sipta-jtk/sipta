@@ -125,7 +125,7 @@
                     <table class="table text-center" id="tableFeedback">
                         <thead class="sticky-header">
                             <tr class="bg-dark text-white">
-                                <th style="min-width: 300px;">Pertanyaan Feedback</th>
+                                <th style="min-width: 300px;">Kriteria Feedback</th>
                                 <th style="min-width: 100px;">Aksi</th>
                             </tr>
                         </thead>
@@ -172,7 +172,13 @@
                     </div>
                 </div>
 
-
+                <!-- Waktu Tenggat -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="waktuTenggat">Tanggal Tenggat Pengisian</label>
+                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" value="{{ $aspek->waktuTenggat }}" required>
+                    </div>
+                </div>
             </div>
 
             <!-- Tombol Submit -->
