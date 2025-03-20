@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        
         /**********************************************************
         ! Restricted    
             * Role Access v.1
@@ -78,11 +80,6 @@ class AuthServiceProvider extends ServiceProvider
          * [Topik 7] - Fitur Kelola Jurusan
         ***********************************/
 
-        // Mahasiswa KoTA sesuai
-        Gate::define('mahasiswa_kota', function ($user, $kotaId) {
-            return $user->mahasiswa->id_kota === $kotaId;
-        });
-
         //Contoh Akses Multirole
         Gate::define('akses-form-pisah-kota', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('koordinator_ta');
@@ -92,7 +89,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
         });
-
-
     }
 }

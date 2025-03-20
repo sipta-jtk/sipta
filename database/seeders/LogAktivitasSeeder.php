@@ -18,32 +18,76 @@ class LogAktivitasSeeder extends Seeder
         DB::table('log_aktivitas')->truncate(); // Kosongkan tabel
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Data dummy untuk seed
-        LogAktivitas::create([
-            'id_kota' => 1,
-            'username' => '221524039',
-            'id_dokumen' => 1,
-            'action' => 'upload',
-            'waktu_aktivitas' => now()
-        ]);
+        // Data sesuai dengan tabel yang diberikan
+        $logAktivitas = [
+            [
+                'id_log_aktivitas' => 1,
+                'id_kota' => 3,
+                'username' => '221524040',
+                'id_dokumen' => 1,
+                'action' => 'upload',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 2,
+                'id_kota' => 3,
+                'username' => '221524040',
+                'id_dokumen' => 3,
+                'action' => 'delete',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 3,
+                'id_kota' => 3,
+                'username' => '221524040',
+                'id_dokumen' => 2,
+                'action' => 'download',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 4,
+                'id_kota' => 6,
+                'username' => '221524046',
+                'id_dokumen' => 4,
+                'action' => 'review',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 5,
+                'id_kota' => 6,
+                'username' => '221524046',
+                'id_dokumen' => 5,
+                'action' => 'edit',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 6,
+                'id_kota' => 6,
+                'username' => '221524046',
+                'id_dokumen' => 6,
+                'action' => 'edit',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 7,
+                'id_kota' => 6,
+                'username' => '221524046',
+                'id_dokumen' => 7,
+                'action' => 'upload',
+                'waktu_aktivitas' => now()
+            ],
+            [
+                'id_log_aktivitas' => 8,
+                'id_kota' => 6,
+                'username' => '221524046',
+                'id_dokumen' => 8,
+                'action' => 'upload',
+                'waktu_aktivitas' => now()
+            ],
+        ];
 
-        LogAktivitas::create([
-            'id_kota' => 2,
-            'username' => '221524049',
-            'id_dokumen' => 2,
-            'action' => 'edit',
-            'waktu_aktivitas' => now()
-        ]);
-
-        LogAktivitas::create([
-            'id_kota' => 3,
-            'username' => '221524059',
-            'id_dokumen' => 3,
-            'action' => 'delete',
-            'waktu_aktivitas' => now()
-        ]);
-
-        
+        foreach ($logAktivitas as $log) {
+            LogAktivitas::create($log);
+        }
     }
 }
-
