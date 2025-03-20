@@ -12,8 +12,9 @@ class KategoriPenilaian extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'kode_fta',
+        'id_fta',
         'nama_kategori',
+        'kunci_penilaian'
     ];
 
     public function sumberNilai()
