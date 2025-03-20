@@ -29,11 +29,14 @@ jobs:
         run: |
           if git diff --name-only HEAD^ HEAD | grep -qE '^database/(migrations|seeders)/'; then
             echo "run_migrations=true" >> $GITHUB_ENV
-            echo "::set-output name=run_migrations::true"
           else
             echo "run_migrations=false" >> $GITHUB_ENV
-            echo "::set-output name=run_migrations::false"
           fi
+        shell: bash
+
+      - name: Export Migration Status
+        id: export
+        run: echo "run_migrations=${{ env.run_migrations }}" >> $GITHUB_OUTPUT
 
   update-env:
     runs-on: ubuntu-latest
@@ -44,11 +47,12 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
+          RUN_MIGRATIONS: ${{ needs.check-db-changes.outputs.run_migrations }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -i private_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 2323 << EOF
-            sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${{ needs.check-db-changes.outputs.run_migrations }}/' ~/sipta/development/.env
-            echo "Updated RUN_MIGRATIONS=${{ needs.check-db-changes.outputs.run_migrations }} in .env"
+            sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${RUN_MIGRATIONS}/' ~/sipta/development/.env
+            echo "Updated RUN_MIGRATIONS=${RUN_MIGRATIONS} in .env"
           EOF
           rm -f private_key
 
