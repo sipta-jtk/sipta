@@ -21,7 +21,7 @@ class FormulirPenilaianController extends Controller {
     public function getFormPenilaian()
     {
         $data = DB::table('form_penilaian')
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian')
+            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian', 'id_fta', )
             ->get();
 
         $data = FormPenilaian::all();
@@ -382,5 +382,67 @@ class FormulirPenilaianController extends Controller {
             ->with('success', 'Aspek penilaian berhasil diperbarui.');
     }
 
+    public function viewDetailPenilaian($idFta, $idProdi): View
+    {
+        // Ambil data berdasarkan id_fta
+        $kategori = DB::table('form_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
+            ->first();
+
+        // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
+        $rentangNilai = DB::table('rentang_nilai')
+            ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+            ->select('id_nilai', 'batas_atas', 'batas_bawah')
+            ->orderBy('batas_atas', 'desc')
+            ->get();
+
+        // Ambil data kriteria beserta rubriknya
+        $namaKriteria = DB::table('kriteria_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('id_kriteria', 'nama_kriteria', 'bobot_kriteria')
+            ->get()
+            ->map(function ($kriteria) use ($rentangNilai) {
+                // Ambil rubrik berdasarkan id_kriteria
+                $kriteria->rubrik = DB::table('rubrik')
+                    ->where('id_kriteria', $kriteria->id_kriteria)
+                    ->select('id_rubrik', 'nama_rubrik')
+                    ->get()
+                    ->map(function ($rubrik) use ($rentangNilai) {
+                        // Ambil detail rubrik berdasarkan id_rubrik dan id_nilai
+                        $rubrik->detail = collect();
+                        foreach ($rentangNilai as $nilai) {
+                            $deskripsi = DB::table('detail_rubrik')
+                                ->where('id_rubrik', $rubrik->id_rubrik)
+                                ->where('id_nilai', $nilai->id_nilai)
+                                ->select('detail_rubrik_penilaian')
+                                ->first();
+                            $rubrik->detail[$nilai->id_nilai] = $deskripsi->detail_rubrik_penilaian ?? '-';
+                        }
+                        return $rubrik;
+                    });
+
+                return $kriteria;
+            });
+
+        return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_penilaian', compact('kategori', 'rentangNilai', 'namaKriteria'));
+    }
+
+
+    public function viewDetailFeedback($idFta, $idProdi): View
+    {
+        // Ambil data berdasarkan id_fta
+        $kategori = DB::table('form_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
+            ->first();
+
+        $aspekFeedback = DB::table('aspek_feedback')
+            ->where('id_fta', $idFta)
+            ->select('nama_aspek_feedback')
+            ->get();
+        
+        return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_feedback', compact('kategori', 'aspekFeedback'));
+    }
 
 }

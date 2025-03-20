@@ -22,8 +22,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         // Route::post('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'simpanAspekFormulir'])->name('formulir-penilaian.simpan');
         Route::post('/formulir-penilaian/simpan', [FormulirPenilaianController::class, 'store'])->name('formulir-penilaian.simpan');
 
-        Route::get('/detail', function () {
-            return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');})->name('formulir-penilaian.detail');
+        // Route::get('/detail', function () {
+        //     return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');})->name('formulir-penilaian.detail');
         
         Route::get('/ubah-formulir/{id}', [FormulirPenilaianController::class, 'edit'])->name('formulir-penilaian.edit');
         Route::put('/update-formulir/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
@@ -31,6 +31,11 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
         Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
         Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
+
+        Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])
+        ->name('detail.penilaian');
+        Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])
+        ->name('detail.feedback');
     });
 
 
