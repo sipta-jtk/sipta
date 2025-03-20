@@ -13,6 +13,8 @@ until php -r "try { new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB
     echo "Menunggu database..."
 done || { echo "Gagal terhubung ke database."; exit 1; }
 
+
+php artisan migrate:fresh --seed
 # Cek apakah migrasi diaktifkan di .env
 if [ "${MIGRATE_ON_START}" = "true" ]; then
     echo "Menjalankan migrasi..."
