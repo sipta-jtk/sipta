@@ -474,18 +474,21 @@ return [
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Pengajuan KoTA',
-                    'url' => $prefix . '/pengajuan-kota',
+                    'text' => 'Rekrut Anggota KoTA',
+                    'url' => $prefix . '/perekrutan-anggota-kota',
                     'icon' => 'fas fa-users',
+                    'can' => 'akses-form-perekrutan-anggota-kota',
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url'  => $detailKotaUrl ?? '#',
+                    'url'  => $prefix . '/kota-saya',
+                    'icon' => 'fas fa-info',
+                    'can' => 'mahasiswa_kota',
                 ],
                 [
-                    'text' => 'Management KoTA',
-                    'url' => 'management-kota',
-                    'icon' => 'fas fa-info',
+                    'text' => 'Manajemen KoTA',
+                    'url' => $prefix . '/management-kota',
+                    'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',

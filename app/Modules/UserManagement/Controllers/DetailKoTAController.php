@@ -9,13 +9,37 @@ use App\Models\Kota;
 use App\Models\Mahasiswa;
 use App\Models\Bidang;
 use App\Models\PengajuanPembimbing;
-use App\Models\AlokasiPembimbing;
+// use App\Models\AlokasiPembimbing;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DetailKoTAController extends Controller
 {
-    public function index($id)
+    public function index($id = null)
     {
+        // Jika ID tidak diberikan, ambil ID KoTA dari user yang login
+        if ($id === null)
+        {
+            $user = Auth::user();
+
+            // Pastikan user adalah mahasiswa
+            if (!$user || $user->role_user !== 'mahasiswa') {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+            }
+
+            // Ambil data mahasiswa berdasarkan user yang login
+            $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
+
+            // Jika mahasiswa tidak memiliki KoTA
+            if (!$mahasiswa || !$mahasiswa->id_kota) {
+                return redirect()->back()->with('error', 'Anda belum tergabung dalam Kelompok TA.');
+            }
+
+            // Set ID menjadi ID KoTA mahasiswa
+            $id = $mahasiswa->id_kota;
+        }
+
         // Ambil data KoTA berdasarkan ID
         $kota = Kota::find($id);
 
@@ -44,21 +68,53 @@ class DetailKoTAController extends Controller
         $bidangTA = $bidang->bidang ?? 'Belum ditentukan';
 
         // Ambil data dosen pembimbing
-        $pembimbing = DB::table('pengajuan_pembimbing')
-            ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
-            ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
-            ->join('user', 'dosen.nip', '=', 'user.username')
-            ->where('pengajuan_pembimbing.id_kota', $id)
-            ->orderBy('alokasi_pembimbing.urutan_prioritas_terpilih', 'asc')
-            ->select('alokasi_pembimbing.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
-            ->get();
+        // $pembimbing = DB::table('pengajuan_pembimbing')
+        //     ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
+        //     ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
+        //     ->join('user', 'dosen.nip', '=', 'user.username')
+        //     ->where('pengajuan_pembimbing.id_kota', $id)
+        //     ->orderBy('alokasi_pembimbing.urutan_prioritas_terpilih', 'asc')
+        //     ->select('alokasi_pembimbing.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
+        //     ->get();
 
         // Jika tidak ada pembimbing yang ditemukan
-        if ($pembimbing->isEmpty()) {
-            $pembimbing = [
-                (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Belum ditentukan', 'nip' => '-'],
-                (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Belum ditentukan', 'nip' => '-']
-            ];
+        // if ($pembimbing->isEmpty()) {
+        //     $pembimbing = [
+        //         (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Belum ditentukan', 'nip' => '-'],
+        //         (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Belum ditentukan', 'nip' => '-']
+        //     ];
+        // }
+
+        // Default pembimbing jika tidak ditemukan
+        $pembimbing = [
+            (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Belum ditentukan', 'nip' => '-'],
+            (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Belum ditentukan', 'nip' => '-']
+        ];
+
+        // Coba ambil data dosen pembimbing dengan tabel alokasi_dosen (nama baru dari alokasi_pembimbing)
+        try 
+        {
+            if (Schema::hasTable('alokasi_dosen')) 
+            {
+                $dosenPembimbing = DB::table('pengajuan_pembimbing')
+                    ->join('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+                    ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
+                    ->join('user', 'dosen.nip', '=', 'user.username')
+                    ->where('pengajuan_pembimbing.id_kota', $id)
+                    ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+                    ->where('alokasi_dosen.status_alokasi', 'fix')
+                    ->orderBy('alokasi_dosen.urutan_prioritas_terpilih', 'asc')
+                    ->select('alokasi_dosen.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
+                    ->get();
+
+                if ($dosenPembimbing->isNotEmpty()) 
+                {
+                    $pembimbing = $dosenPembimbing;
+                }
+            }
+        } catch (\Exception $e) 
+        {
+            // Abaikan error dan gunakan default pembimbing
         }
 
         return view('UserManagement.views.detail-kota', compact('kota', 'anggota', 'judulTA', 'bidangTA', 'pembimbing'));
