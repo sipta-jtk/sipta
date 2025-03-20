@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 $modulesPath = base_path('app/Modules');
+$prefix = env('PREFIX_URL', 'sipta');
 
 if (is_dir($modulesPath)) {
     foreach (scandir($modulesPath) as $module) {
@@ -23,7 +24,8 @@ if (is_dir($modulesPath)) {
         $routesFile = "{$modulesPath}/{$module}/routes.php";
 
         if (is_file($routesFile)) {
-            require $routesFile; 
+            Route::prefix($prefix)->group($routesFile);
+            require $routesFile;
         }
     }
 }
@@ -32,10 +34,10 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
 
-Route::post('/logout', function () {
-    auth()->logout();
-    return redirect('/login');
-})->name('logout');
+// Route::post('/logout', function () {
+//     auth()->logout();
+//     return redirect('/login');
+// })->name('logout');
 
 Route::get('/penentuan-ambang-batas', function () {
     return view('CekPlagiarisme.views.PenentuanAmbangBatas');

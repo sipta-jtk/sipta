@@ -9,6 +9,8 @@ use Illuminate\Routing\Controller;
 class SubkategoriController extends Controller
 {
     // In SubkategoriController.php
+
+    // Akmal Goniyyu Hartono
     public function store(Request $request)
     {
         $request->validate([
