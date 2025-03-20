@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Mahasiswa;
 use App\Models\User;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;

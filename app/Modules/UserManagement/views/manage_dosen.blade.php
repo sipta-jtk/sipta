@@ -65,14 +65,6 @@
                             
                                 <i class="fa fa-lg fa-fw fa-pen"></i>
                             </button>
-                        {{-- Delete Button --}}
-                        {{-- @if($d->role_dosen != 'kajur')
-                            <button class="btn btn-xs btn-default text-danger mx-1 shadow btn-delete-dosen" title="Delete"data-toggle="modal" data-target="#deleteDosen" class="bg-purple"
-                            data-nip="{{ $d->nip }}"
-                            data-nama="{{ $d->nama}}">
-                                <i class="fa fa-lg fa-fw fa-trash"></i>
-                            </button>
-                        @endif --}}
                         {{-- Management Role Button --}}
                             <button class="btn btn-xs btn-default text-teal mx-1 shadow btn-change-role" title="Keys" data-toggle="modal" data-target="#changeRole" class="bg-purple"
                             data-nip="{{ $d->nip }}"
@@ -211,16 +203,7 @@
                                     <option value="nonaktif">Non Aktif</option>
 
                             </x-adminlte-select2>
-                        </div>
-
-                                {{-- <hr>
-                                <h4>Bimbingan</h4>
-                                <div class="row">
-                                    <x-adminlte-input name="max_d4" label="Jumlah Bimbingan Maksimal (D4)" placeholder="..."
-                                            fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5"/>
-                                    <x-adminlte-input name="max_d3" label="Jumlah Bimbingan Maksimal (D3)" placeholder="..."
-                                            fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5" required  />
-                            </div> --}}
+                            </div>
                             <x-adminlte-button type="submit" label="Submit" theme="primary" />
 
                             <x-slot name="footerSlot">
@@ -229,6 +212,8 @@
                             </x-slot>
                             </form>
                         </x-adminlte-modal>
+
+                  
 
 
                
@@ -272,19 +257,21 @@
              var no_whatsapp = $(this).data("no_whatsapp");
              var id_dosen = $(this).data("id_dosen");
              var kode_dosen = $(this).data("kode_dosen");
-             var maks_bimbingan_d4 = $(this).data("maks_bimbingan_d4");
-             var maks_bimbingan_d3 = $(this).data("maks_bimbingan_d3");
- 
+             var status_dosen = $(this).data("status_dosen");
+
+
              document.getElementById("nip-update").value = nip;
              document.getElementById("nama-update").value = nama;
              document.getElementById("email-update").value = email;
              document.getElementById("no_whatsapp-update").value = no_whatsapp;
              document.getElementById("id_dosen-update").value = id_dosen;
              document.getElementById("kode_dosen-update").value = kode_dosen;
-             document.getElementById("maks_bimbingan_d4-update").value = maks_bimbingan_d4;
-             document.getElementById("maks_bimbingan_d3-update").value = maks_bimbingan_d3;
+             document.getElementById("status_dosen-update").value = status_dosen;
+
  
          });
      });
+
+ 
 </script>
 @stop

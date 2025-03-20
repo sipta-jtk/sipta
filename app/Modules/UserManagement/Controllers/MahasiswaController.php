@@ -11,41 +11,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class DosenController extends Controller
+class MahasiswaController extends Controller
 {
 
 
-    public function update_role(Request $request)
-    {
+ 
 
-        
+    public function addNewMhs(Request $request){
         $request->validate([
-            'nip' => 'required',
-            'role' => 'required|in:dosen,koordinator_ta,kajur'
-        ]);
-        $nip = $request->nip;
-        $old_role = Dosen::where('nip', $nip)->value('role_dosen');
-        if($request->role == "kajur" || $old_role == "kajur"){
-            exit;
-        }
-
-        Dosen::where('nip', $nip)->update([
-            'role_dosen' => $request->role
-        ]);
-
-        return redirect()->route('manage.dosen');
-    }
-
-    public function add_new_dosen(Request $request){
-        $request->validate([
-            'nip' => 'required|unique:dosen,nip',
+            'nim' => 'required|unique:dosen,nip',
             'email' => 'required|email|unique:user,email',
             'nama' => 'required|string|',
-            'id' => 'required|string',
-            'kode' => 'required|string',
-            'no_wa' => 'required',
-            'status_dosen' => 'required',
-            'id_kbk' => 'required',
         ]);
 
 
@@ -56,18 +32,17 @@ class DosenController extends Controller
             'nama' => $request->nama,
             'no_whatsapp' => $request->no_wa,
             'photo' => 'default.jpg',
-            'role_user' => 'dosen',
+            'role_user' => 'mahasiswa',
             'password' => $randomCode // Default password, bisa diubah nanti
         ]);
 
         // 2. Simpan data ke tabel `dosen`
         Dosen::create([
-            'nip' => $request->nip,
-            'id_dosen' => $request->id,
-            'kode_dosen' => $request->kode,
-            'id_kbk' => $request->id_kbk,
-            'status_dosen' => $request->status_dosen,
-            'role_dosen' => 'dosen'
+            'nim' => $request->nim,
+            'tahun_masuk' => $request->tahun_masuk,
+            'kelas' => $request->kelas,
+            'id_prodi' => $request->id_prodi,
+            'status_ta' => 'mahasiswa_non_ta',
         ]);
 
         // Commit transaksi jika semua berhasil

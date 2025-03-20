@@ -2,6 +2,9 @@
 
 namespace App\Modules\UserManagement\Controllers;
 use App\Models\Kbk;
+use App\Models\Prodi;
+use App\Models\Mahasiswa;
+use App\Models\User;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 
@@ -16,6 +19,7 @@ class UserManagementController extends Controller
     {   
         $dosen = DB::table('dosen')
         ->join('user', 'dosen.nip', '=', 'user.username')
+        ->join('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
         ->select('dosen.*', 'user.nama', 'user.email', 'user.no_whatsapp')
         ->get();
 
@@ -25,11 +29,14 @@ class UserManagementController extends Controller
 
     public function manage_mhs()
     {
-        $dosen = DB::table('dosen')
-        ->join('user', 'mahasiswa.nip', '=', 'user.username')
-        ->select('dosen.*', 'user.nama', 'user.email', 'user.no_whatsapp')
+        $mahasiswa = DB::table('mahasiswa')
+        ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
+        ->select('mahasiswa.*', 'user.nama', 'user.email', 'user.no_whatsapp')
         ->get();
-        return view('UserManagement.views.manage_dosen', compact('dosen'));
+
+        $listprodi = Prodi::all();
+        return view('UserManagement.views.manage_mhs', compact('mahasiswa', 'listprodi'));
     }
 
 
