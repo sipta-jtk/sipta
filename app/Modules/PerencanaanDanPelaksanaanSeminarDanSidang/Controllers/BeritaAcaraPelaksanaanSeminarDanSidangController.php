@@ -18,6 +18,9 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
     public function indexBeritaAcaraSeminar3(): View
     {
+        // Ambil nim dari user yang sedang login
+        $nim = auth()->user()->username; // Asumsi username adalah nim 
+
         // Simulasikan waktu sekarang
         // $sekarang = Carbon::parse('2025-03-17 00:00:00'); // Untuk simulasi
         // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
@@ -28,6 +31,9 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         ->whereHas('penjadwalan', function ($query) {
             $query->where('agenda', 'seminar_3'); // Ambil hanya data Seminar 3
         })
+        ->whereHas('user', function ($query) use ($nim) {
+            $query->where('username', $nim); // Filter berdasarkan nim mahasiswa yang sedang login
+        })
         ->get();
 
         // Teruskan $sekarang dan $beritaAcaraSeminar3 ke view
@@ -37,15 +43,21 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
     public function indexBeritaAcaraSidangTA(): View
     {
+        // Ambil nim dari user yang sedang login
+        $nim = auth()->user()->username;
+        
         // Simulasikan waktu sekarang
-        $sekarang = Carbon::parse('2025-03-17 00:00:00'); // Untuk simulasi
+        // $sekarang = Carbon::parse('2025-03-17 00:00:00'); // Untuk simulasi
         // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
-        // $sekarang = Carbon::now('Asia/Jakarta');
+        $sekarang = Carbon::now('Asia/Jakarta');
 
         // Ambil data kehadiran dari database
         $beritaAcaraSidangTA = Kehadiran::with(['penjadwalan', 'user'])
             ->whereHas('penjadwalan', function ($query) {
                 $query->where('agenda', 'sidang'); // Ambil hanya data sidang TA
+            })
+            ->whereHas('user', function ($query) use ($nim) {
+                $query->where('username', $nim); // Filter berdasarkan nim mahasiswa yang sedang login
             })
             ->get();
 

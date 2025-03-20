@@ -88,5 +88,15 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
         });
+
+        /**********************************
+         * [Topik 2] - Fitur Pengajuan Seminar 3 & Sidang
+        ***********************************/
+        //All Mahasiswa 
+        Gate::define('all_mahasiswa', function ($user) {
+            return $user->role_user === 'mahasiswa' && 
+                   ($user->mahasiswa->status_ta === 'mahasiswa_ta' || 
+                    $user->mahasiswa->status_ta === 'mahasiswa_non_ta');
+        });
     }
 }
