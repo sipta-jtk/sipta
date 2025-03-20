@@ -372,18 +372,22 @@ return [
                 [
                     'text' => 'Pembatalan Jadwal Seminar 3',
                     'url' => $prefix . '/batal-jadwal-seminar',
+                    'can' => 'dosen'
                 ],
                 [
                     'text' => 'Pembatalan Jadwal Sidang',
                     'url' => $prefix . '/batal-jadwal-sidang',
+                    'can' => 'dosen'
                 ],
                 [
-                    'text' => '(Koor)Pembatalan Seminar 3',
+                    'text' => 'Persetujuan Pembatalan Seminar 3',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
+                    'can' => 'koordinator_ta'
                 ],
                 [
-                    'text' => '(Koor)Pembatalan Sidang',
+                    'text' => 'Persetujuan Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
+                    'can' => 'koordinator_ta'
                 ],
             ]
         ],

@@ -3,7 +3,7 @@
 @section('title', 'Pembatalan Jadwal Seminar')
 
 @section('content_header')
-<h1>Pembatalan Jadwal Seminar</h1>
+<h1>Persetujuan Pembatalan Jadwal Seminar</h1>
 @stop
 
 @section('content')
