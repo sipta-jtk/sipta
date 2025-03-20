@@ -25,35 +25,95 @@ class KriteriaPenilaianSeeder extends Seeder
 
         $data = [
             [
-                'kode_fta' => 1,
-                'nama_kriteria' => 'Relevansi Topik',
-                'bobot_kriteria' => 20,
+                'id_kriteria' => 1,
+                'id_fta' => 2,
+                'nama_kriteria' => 'Kejelasan Isi Dokumen',
+                'bobot_kriteria' => 40
             ],
             [
-                'kode_fta' => 1,
-                'nama_kriteria' => 'Kelengkapan Data',
-                'bobot_kriteria' => 25,
+                'id_kriteria' => 2,
+                'id_fta' => 2,
+                'nama_kriteria' => 'Presentasi',
+                'bobot_kriteria' => 20
             ],
             [
-                'kode_fta' => 2,
-                'nama_kriteria' => 'Kualitas Analisis',
-                'bobot_kriteria' => 30,
+                'id_kriteria' => 3,
+                'id_fta' => 2,
+                'nama_kriteria' => 'Tanya Jawab',
+                'bobot_kriteria' => 40
             ],
             [
-                'kode_fta' => 2,
-                'nama_kriteria' => 'Kesesuaian Metodologi',
-                'bobot_kriteria' => 25,
+                'id_kriteria' => 4,
+                'id_fta' => 4,
+                'nama_kriteria' => 'Dokumen',
+                'bobot_kriteria' => 35
             ],
             [
-                'kode_fta' => 3,
-                'nama_kriteria' => 'Kemampuan Presentasi',
-                'bobot_kriteria' => 15,
+                'id_kriteria' => 5,
+                'id_fta' => 4,
+                'nama_kriteria' => 'Presentasi',
+                'bobot_kriteria' => 15
             ],
             [
-                'kode_fta' => 3,
-                'nama_kriteria' => 'Kejelasan Materi',
-                'bobot_kriteria' => 20,
+                'id_kriteria' => 6,
+                'id_fta' => 4,
+                'nama_kriteria' => 'Tanya Jawab',
+                'bobot_kriteria' => 35
             ],
+            [
+                'id_kriteria' => 7,
+                'id_fta' => 4,
+                'nama_kriteria' => 'Prototype yg dihasilkan',
+                'bobot_kriteria' => 15
+            ],
+            [
+                'id_kriteria' => 8,
+                'id_fta' => 6,
+                'nama_kriteria' => 'Kejelasan Isi Dokumen',
+                'bobot_kriteria' => 35
+            ],
+            [
+                'id_kriteria' => 9,
+                'id_fta' => 6,
+                'nama_kriteria' => 'Presentasi',
+                'bobot_kriteria' => 10
+            ],
+            [
+                'id_kriteria' => 10,
+                'id_fta' => 6,
+                'nama_kriteria' => 'Tanya Jawab',
+                'bobot_kriteria' => 30
+            ],
+            [
+                'id_kriteria' => 11,
+                'id_fta' => 6,
+                'nama_kriteria' => 'Produk Perangkat Lunak',
+                'bobot_kriteria' => 25
+            ],
+            [
+                'id_kriteria' => 12,
+                'id_fta' => 8,
+                'nama_kriteria' => 'Dokumen',
+                'bobot_kriteria' => 30
+            ],
+            [
+                'id_kriteria' => 13,
+                'id_fta' => 8,
+                'nama_kriteria' => 'Produk Perangkat Lunak/Hasil Penelitian',
+                'bobot_kriteria' => 30
+            ],
+            [
+                'id_kriteria' => 14,
+                'id_fta' => 8,
+                'nama_kriteria' => 'Softskill',
+                'bobot_kriteria' => 20
+            ],
+            [
+                'id_kriteria' => 15,
+                'id_fta' => 8,
+                'nama_kriteria' => 'Hardskill',
+                'bobot_kriteria' => 20
+            ]
         ];
 
         foreach ($data as $item) {
