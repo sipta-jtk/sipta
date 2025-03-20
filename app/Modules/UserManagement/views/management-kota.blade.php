@@ -23,7 +23,7 @@
             </thead>
             <tbody>
                 @foreach($kelompokList as $index => $kelompok)
-                <tr class="clickable-row" data-href="{{ route('detail-kota', ['id' => $kelompok->id_kota]) }}">
+                <tr class="clickable-row" data-href="{{ route('detail.kota', ['id' => $kelompok->id_kota]) }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $kelompok->nama_kota }}</td>
                     <td>{{ $kelompok->tahun_kota }}</td>

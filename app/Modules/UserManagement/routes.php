@@ -12,12 +12,12 @@ use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
 
 
-use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
+use App\Modules\UserManagement\Controllers\PerekrutanAnggotaKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -78,11 +78,11 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
         ->middleware('can:koordinator_ta');
 
 
-Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
-Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
+Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
+Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
 Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
-Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
+Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
 
 Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('can:admin')

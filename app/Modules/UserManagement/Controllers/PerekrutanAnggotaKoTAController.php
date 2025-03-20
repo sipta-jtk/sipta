@@ -10,7 +10,7 @@ use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use Carbon\Carbon;
 
-class PengajuanKoTAController extends Controller
+class PerekrutanAnggotaKoTAController extends Controller
 {
     public function index()
     {
@@ -41,13 +41,8 @@ class PengajuanKoTAController extends Controller
         } else {
             $mahasiswa = [];
         }
-        
-        // UNTUK KEBUTUHAN KETIKA SUDAH ADA AUTENTIKASI
-        // $mahasiswa = Mahasiswa::where('status_ta', 'mahasiswa_ta')
-        //     ->where('nim', '!=', auth()->user()->username)
-        //     ->get();
 
-        return view('UserManagement.views.pengajuan-kota', compact('mahasiswa', 'mahasiswaAnggota1', 'maksimalAnggota'));
+        return view('UserManagement.views.perekrutan-anggota-kota', compact('mahasiswa', 'mahasiswaAnggota1', 'maksimalAnggota'));
     }
 
     public function submit(Request $request)

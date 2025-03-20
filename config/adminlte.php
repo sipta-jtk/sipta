@@ -459,33 +459,36 @@ return [
            
                 [
                     'text' => 'Program Studi',
-                    'url'  => 'program-studi',
+                    'url'  => $prefix . '/program-studi',
                     'icon' => 'fas fa-school',
                 ],
                 [
                     'text' => 'Kelola KBK',
-                    'url'  => 'kelola-kbk',
+                    'url'  => $prefix . '/kelola-kbk',
                     'icon' => 'fas fa-sitemap',
                 ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
-                    'url' => 'pengajuan-pisah-kota',
+                    'url' => $prefix . '/pengajuan-pisah-kota',
                     'icon' => 'fas fa-sign-out-alt',
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Pengajuan KoTA',
-                    'url' => 'pengajuan-kota',
+                    'text' => 'Rekrut Anggota KoTA',
+                    'url' => $prefix . '/perekrutan-anggota-kota',
                     'icon' => 'fas fa-users',
+                    'can' => 'akses-form-perekrutan-anggota-kota',
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url'  => $detailKotaUrl ?? '#',
+                    'url'  => $prefix . '/kota-saya',
+                    'icon' => 'fas fa-info',
+                    'can' => 'mahasiswa_kota',
                 ],
                 [
-                    'text' => 'Management KoTA',
-                    'url' => 'management-kota',
-                    'icon' => 'fas fa-info',
+                    'text' => 'Manajemen KoTA',
+                    'url' => $prefix . '/management-kota',
+                    'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',

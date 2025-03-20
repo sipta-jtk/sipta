@@ -1,15 +1,15 @@
 @extends('adminlte::page')
 
-@section('title', 'Pengajuan KoTA')
+@section('title', 'Rekrut Anggota KoTA')
 
 @section('content_header')
-    <h1>Pengajuan KoTA</h1>
+    <h1>Rekrut Anggota Kelompok TA</h1>
 @stop
 <!-- up -->
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Form Pengajuan Kelompok KoTA</h3>
+        <h3 class="card-title">Form Rekrut Anggota</h3>
     </div>
     <div class="card-body">
         @if(session('error'))
@@ -18,7 +18,7 @@
             </div>
         @endif
 
-        <form action="{{ route('pengajuan-kota.submit') }}" method="POST" id="pengajuan-form">
+        <form action="{{ route('perekrutan-anggota-kota.submit') }}" method="POST" id="form-perekrutan">
             @csrf
             <div class="row">
                 <x-adminlte-input name="anggota1" label="Anggota 1 (Akun Anda)" 
@@ -197,7 +197,7 @@
         }
 
         //  Event submit form
-        document.getElementById('pengajuan-form').addEventListener('submit', function (event) 
+        document.getElementById('form-perekrutan').addEventListener('submit', function (event) 
         {
             event.preventDefault();
 
@@ -284,7 +284,7 @@
 
             // Konfirmasi sebelum menyimpan
             Swal.fire({
-                title: "Konfirmasi Pengajuan",
+                title: "Konfirmasi Perekrutan",
                 text: "Apakah Anda yakin ingin mengajukan kelompok TA ini?",
                 icon: "warning",
                 showCancelButton: true,
