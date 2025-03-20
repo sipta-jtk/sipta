@@ -7,261 +7,294 @@
 @stop
 
 @section('content')
+    @if ($savedInformation['StatusBersediaMembimbing'] == 'belum_konfirmasi')
+        @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.V_KonfirmasiBersedia')
+    @else
+        <p><a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}">Peminatan Bidang</a> >
+            <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}">Kuota
+                Bimbingan</a> >
+            Jadwal Kesediaan
+        </p>
 
-    <p><a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}">Peminatan Bidang</a> >
-        <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}">Kuota Bimbingan</a> >
-        Jadwal Kesediaan
-    </p>
+        @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_CardBar')
 
-    @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_CardBar')
+        <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="3"
+            activeColor="primary" inactiveColor="secondary" :hrefs="[
+                route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
+                route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index'),
+                route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index'),
+            ]" />
 
-    <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="3"
-        activeColor="primary" inactiveColor="secondary" :hrefs="[
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index'),
-            route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index'),
-        ]" />
+        <div class="container-fluid m-0 p-0">
+            @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_ErrorPeriode')
 
-    <div class="container-fluid m-0 p-0">
 
-        {{-- ================== --}}
-        <div class="border rounded">
-            <table class="table table-responsive-sm text-center table-borderless" id="jadwalTable">
-                <thead>
-                    <tr>
-                        @for ($day = 1; $day <= 7; $day++)
-                            @php
-                                $dayname = \Carbon\Carbon::now()
-                                    ->locale('id')
-                                    ->startOfWeek()
-                                    ->addDays($day - 1)
-                                    ->translatedFormat('l');
-                            @endphp
-                            <th scope="col">
-                                <button class="btn bg-transparent" onclick="CallTimeModal('Tambah', '{{ $dayname }}')">
-                                    {{ $dayname }}
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </th>
-                        @endfor
-                    </tr>
-                </thead>
-                <tbody>
-                    @for ($time = 0; $time <= 23; $time++)
+            {{-- ================== --}}
+            <div class="border rounded">
+                <table class="table table-responsive-sm text-center table-borderless" id="jadwalTable">
+                    <thead>
                         <tr>
                             @for ($day = 1; $day <= 7; $day++)
-                                <td class="p-2 {{ $day != 7 ? 'border-right' : '' }}"
-                                    id="{{ $time }}-{{ \Carbon\Carbon::create()->startOfWeek()->addDays($day - 1)->locale('id')->translatedFormat('l') }}">
-                                </td>
+                                @php
+                                    $dayname = \Carbon\Carbon::now()
+                                        ->locale('id')
+                                        ->startOfWeek()
+                                        ->addDays($day - 1)
+                                        ->translatedFormat('l');
+                                @endphp
+                                <th scope="col">
+                                    <button class="btn bg-transparent"
+                                        {{ $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' ? 'disabled' : '' }}
+                                        onclick="CallTimeModal('Tambah', '{{ $dayname }}')">
+                                        {{ $dayname }}
+                                        <i class="fas fa-plus"></i>
+
+                                    </button>
+                                </th>
                             @endfor
                         </tr>
-                    @endfor
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @for ($time = 0; $time <= 23; $time++)
+                            <tr>
+                                @for ($day = 1; $day <= 7; $day++)
+                                    <td class="p-2 {{ $day != 7 ? 'border-right' : '' }}"
+                                        id="{{ $time }}-{{ \Carbon\Carbon::create()->startOfWeek()->addDays($day - 1)->locale('id')->translatedFormat('l') }}">
+                                    </td>
+                                @endfor
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
+            </div>
+            {{-- ================== --}}
+            <div class="container-fluid d-flex justify-content-end p-3 p-md-0 mt-2">
+                <button type="button" onclick="previousPage()" class="btn btn-info">Sebelumnya <i
+                        class="fas fa-chevron-left pl-1"></i></button>
+                <button type="button" onclick="saveJadwal()" class="btn btn-primary ml-3">Simpan <i
+                        class="fas fa-save pl-1"></i></button>
+            </div>
         </div>
-        {{-- ================== --}}
-        <div class="container-fluid d-flex justify-content-end p-3 p-md-0 mt-2">
-            <button type="button" onclick="previousPage()" class="btn btn-info">Sebelumnya <i
-                    class="fas fa-chevron-left pl-1"></i></button>
-            <button type="button" onclick="saveJadwal()" class="btn btn-primary ml-3">Simpan <i
-                    class="fas fa-save pl-1"></i></button>
-        </div>
-    </div>
 
-    <div class="modal fade" id="TimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit jadwal hari Senin</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+        <div class="modal fade" id="TimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit jadwal hari Senin</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
 
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm">
-                                <input type="hidden" name="day" id="day">
-                                <div class="form-group row justify-content-md-end">
-                                    <label for="time" class="col-5 col-form-label font-weight-normal"><small>Waktu
-                                            mulai</small></label>
-                                    <div class="col-auto">
-                                        <input type="time" class="form-control" id="timestart">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="hidden" name="day" id="day">
+                                    <div class="form-group row justify-content-md-end">
+                                        <label for="time" class="col-5 col-form-label font-weight-normal"><small>Waktu
+                                                mulai</small></label>
+                                        <div class="col-auto">
+                                            <input type="time" class="form-control" id="timestart">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-group row justify-content-start">
-                                    <label for="time" class="col-5 col-form-label font-weight-normal"><small>Waktu
-                                            selesai</small></label>
-                                    <div class="col-auto">
-                                        <input type="time" class="form-control" id="timeend">
+                                <div class="col-sm">
+                                    <div class="form-group row justify-content-start">
+                                        <label for="time" class="col-5 col-form-label font-weight-normal"><small>Waktu
+                                                selesai</small></label>
+                                        <div class="col-auto">
+                                            <input type="time" class="form-control" id="timeend">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-sm btn-primary" id="saveFormJadwalBtn">Simpan <i
-                            class="fas fa-save"></i></button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-sm btn-primary" id="saveFormJadwalBtn">Simpan <i
+                                class="fas fa-save"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.store') }}" id="jadwalForm"
-        method="POST">
-        @csrf <input type="hidden" name="jadwals">
-    </form>
+        <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.store') }}" id="jadwalForm"
+            method="POST">
+            @csrf <input type="hidden" name="jadwals">
+        </form>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        var dataJadwal = [
-            @foreach ($jadwal as $jadwalitem)
-                {
-                    id: '{{ $jadwalitem->id_jadwal_dosbim }}',
-                    day: '{{ ucfirst(strtolower($jadwalitem->hari)) }}',
-                    time: ['{{ $jadwalitem->jam_mulai }}', '{{ $jadwalitem->jam_selesai }}']
-                },
-            @endforeach
-        ];
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            var dataJadwal = [
+                @foreach ($jadwal as $jadwalitem)
+                    {
+                        id: '{{ $jadwalitem->id_jadwal_dosbim }}',
+                        day: '{{ ucfirst(strtolower($jadwalitem->hari)) }}',
+                        time: ['{{ $jadwalitem->jam_mulai }}', '{{ $jadwalitem->jam_selesai }}']
+                    },
+                @endforeach
+            ];
 
 
-        function is_valid(day, timeA, timeB, excludeId = []) {
-            day = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
-            var timeAHour = parseInt(timeA.split(':')[0]);
-            var timeBHour = parseInt(timeB.split(':')[0]);
+            function is_valid(day, timeA, timeB, excludeId = []) {
+                day = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
+                var timeAHour = parseInt(timeA.split(':')[0]);
+                var timeBHour = parseInt(timeB.split(':')[0]);
 
-            var valid = true;
-            dataJadwal.forEach((jadwal) => {
-                if (excludeId.includes(jadwal.id)) {
-                    return;
+                var dateA = new Date();
+                var dateB = new Date();
+                dateA.setHours(timeAHour);
+                dateB.setHours(timeBHour);
+                dateA.setMinutes(parseInt(timeA.split(':')[1]));
+                dateB.setMinutes(parseInt(timeB.split(':')[1]));
+
+                if (dateB <= dateA) {
+                    return false;
                 }
 
-                if (jadwal.day == day) {
-                    var jadwalAHour = parseInt(jadwal.time[0].split(':')[0]);
-                    var jadwalBHour = parseInt(jadwal.time[1].split(':')[0]);
-
-                    if ((timeAHour >= jadwalAHour && timeAHour <= jadwalBHour) ||
-                        (timeBHour >= jadwalAHour && timeBHour <= jadwalBHour) ||
-                        (timeAHour <= jadwalAHour && timeBHour >= jadwalBHour)) {
-                        valid = false;
+                var valid = true;
+                dataJadwal.forEach((jadwal) => {
+                    if (excludeId.includes(jadwal.id)) {
+                        return;
                     }
-                }
-            });
 
-            return valid;
-        }
+                    if (jadwal.day == day) {
+                        var jadwalAHour = parseInt(jadwal.time[0].split(':')[0]);
+                        var jadwalBHour = parseInt(jadwal.time[1].split(':')[0]);
 
-        function saveJadwal() {
-            $('#jadwalForm input[name="jadwals"]').val(JSON.stringify(dataJadwal));
-            $('#jadwalForm').submit();
-        }
-
-        function addJadwal(day, timeA, timeB, itemId = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 15) +
-            Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 15)) {
-            if (is_valid(day, timeA, timeB)) {
-                dataJadwal.push({
-                    id: itemId,
-                    day: day,
-                    time: [timeA, timeB]
+                        if ((timeAHour >= jadwalAHour && timeAHour <= jadwalBHour) ||
+                            (timeBHour >= jadwalAHour && timeBHour <= jadwalBHour) ||
+                            (timeAHour <= jadwalAHour && timeBHour >= jadwalBHour)) {
+                            valid = false;
+                        }
+                    }
                 });
-                renderScedule();
 
-                $('#TimeModal').modal('hide');
-            } else {
-                SweetAlert('error', 'Gagal Menambah Jadwal',
-                    'Jadwal yang anda masukkan bentrok dengan jadwal yang sudah ada', 'OK', '', '#d33', '', false, true);
+                return valid;
             }
-        }
 
-        function editJadwal(id, day, timeA, timeB) {
-            removeJadwal(id);
-            addJadwal(day, timeA, timeB, id);
-        }
+            function saveJadwal() {
+                $('#jadwalForm input[name="jadwals"]').val(JSON.stringify(dataJadwal));
+                $('#jadwalForm').submit();
+            }
 
-        function removeJadwal(id) {
-            console.log(id);
+            function addJadwal(day, timeA, timeB, itemId = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 15) +
+                Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 15)) {
+                if (is_valid(day, timeA, timeB)) {
+                    dataJadwal.push({
+                        id: itemId,
+                        day: day,
+                        time: [timeA, timeB]
+                    });
+                    renderScedule();
 
-            dataJadwal = dataJadwal.filter((jadwal) => jadwal.id != id);
-            renderScedule();
-        }
-
-        function clearTable() {
-            $('#jadwalTable td').each(function() {
-                $(this).removeClass('bg-secondary');
-                $(this).removeClass('rounded-top');
-                $(this).removeClass('rounded-bottom');
-                $(this).empty();
-            });
-        }
-
-        function convertTo12H(time) {
-            var hours = parseInt(time.split(':')[0]);
-            var minutes = parseInt(time.split(':')[1]);
-            var ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            var strTime = hours + ':' + minutes + ' ' + ampm;
-            return strTime;
-        }
-
-        function renderScedule() {
-            clearTable();
-            dataJadwal.forEach((jadwal) => {
-                let timeA = parseInt(jadwal.time[0].split(':')[0]);
-                let timeB = parseInt(jadwal.time[1].split(':')[0]);
-
-                for (let i = timeA; i <= timeB; i++) {
-                    let cell = $(`#${i}-${jadwal.day}`);
-                    cell.addClass('bg-secondary');
-
-                    if (i == timeA) {
-                        cell.addClass('rounded-top').removeClass('rounded-bottom');
-                        let container = $('<div>').addClass('container-fluid d-flex justify-content-end p-0');
-
-                        let editButton = $('<button>')
-                            .addClass('btn btn-sm btn-success rounded text-white pt-0 pb-0 mr-1')
-                            .html('<small><i class="fas fa-edit"></i></small>')
-                            .on('click', () => CallTimeModal('Edit', jadwal.day, jadwal.time[0], jadwal.time[1],
-                                jadwal.id));
-
-                        let deleteButton = $('<button>')
-                            .addClass('btn btn-sm btn-danger rounded text-white pt-0 pb-0')
-                            .html('<small><i class="fas fa-times"></i></small>')
-                            .on('click', () => {
-                                SweetAlert('warning', 'Hapus Jadwal',
-                                    'Apakah anda yakin ingin menghapus jadwal ini?', 'Ya', 'Tidak', '#d33',
-                                    '#3085d6', true, true, (confirmed) => {
-                                        if (confirmed) {
-                                            removeJadwal(jadwal.id);
-                                            toast('success', 'Berhasil', 'Jadwal berhasil dihapus', 5000);
-                                        }
-                                    });
-                            });
-
-                        container.append(editButton, deleteButton);
-                        cell.append(container);
-                    }
-
-                    if (i == timeA + 1 || timeA == timeB) {
-                        cell.append(
-                            `<small class="m-0">${convertTo12H(jadwal.time[0])} - ${convertTo12H(jadwal.time[1])}</small>`
-                        );
-                    }
-
-                    if (i == timeB && !cell.hasClass('rounded-top')) {
-                        cell.addClass('rounded-bottom');
-                    }
+                    $('#TimeModal').modal('hide');
+                } else {
+                    FireSweetAlert('error', 'Gagal Menambah Jadwal',
+                        'Jadwal yang anda masukkan invalid atau bentrok dengan jadwal yang sudah ada', 'OK', '', '#d33', '',
+                        false, true);
                 }
-            });
-        }
-        renderScedule();
-    </script>
+            }
+
+            function editJadwal(id, day, timeA, timeB) {
+                removeJadwal(id);
+                addJadwal(day, timeA, timeB, id);
+            }
+
+            function removeJadwal(id) {
+                console.log(id);
+
+                dataJadwal = dataJadwal.filter((jadwal) => jadwal.id != id);
+                renderScedule();
+            }
+
+            function clearTable() {
+                $('#jadwalTable td').each(function() {
+                    $(this).removeClass('bg-secondary');
+                    $(this).removeClass('rounded-top');
+                    $(this).removeClass('rounded-bottom');
+                    $(this).removeClass('border-top');
+                    $(this).removeClass('border-bottom');
+                    $(this).empty();
+                });
+            }
+
+            function convertTo12H(time) {
+                var hours = parseInt(time.split(':')[0]);
+                var minutes = parseInt(time.split(':')[1]);
+                var ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                var strTime = hours + ':' + minutes + ' ' + ampm;
+                return strTime;
+            }
+
+            function renderScedule() {
+                clearTable();
+                dataJadwal.forEach((jadwal) => {
+                    let timeA = parseInt(jadwal.time[0].split(':')[0]);
+                    let timeB = parseInt(jadwal.time[1].split(':')[0]);
+
+                    for (let i = timeA; i <= timeB; i++) {
+                        let cell = $(`#${i}-${jadwal.day}`);
+                        cell.addClass('bg-secondary');
+
+                        if (i == timeA) {
+                            cell.addClass('rounded-top').addClass('border-top').removeClass('rounded-bottom')
+                                .removeClass('border-bottom');
+                            let container = $('<div>').addClass('container-fluid d-flex justify-content-end p-0');
+
+                            let editButton = $('<button>')
+                                .addClass('btn btn-sm btn-success rounded text-white pt-0 pb-0 mr-1')
+                                .html('<small><i class="fas fa-edit"></i></small>')
+                                .on('click', () => CallTimeModal('Edit', jadwal.day, jadwal.time[0], jadwal.time[1],
+                                    jadwal.id));
+                            let deleteButton = $('<button>')
+                                .addClass('btn btn-sm btn-danger rounded text-white pt-0 pb-0')
+                                .html('<small><i class="fas fa-times"></i></small>')
+                                .on('click', () => {
+                                    FireSweetAlert('warning', 'Hapus Jadwal',
+                                        'Apakah anda yakin ingin menghapus jadwal hari ' + jadwal.day +
+                                        ' pukul ' +
+                                        convertTo12H(jadwal.time[0]) + ' - ' + convertTo12H(jadwal.time[1]) +
+                                        ' ?',
+                                        'Ya', 'Tidak', '#d33',
+                                        '#3085d6', true, true, (confirmed) => {
+                                            if (confirmed) {
+                                                removeJadwal(jadwal.id);
+                                                toast('success', 'Berhasil', 'Jadwal berhasil dihapus', 5000);
+                                            }
+                                        });
+                                });
+
+                            @if ($savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia')
+                                editButton.attr('disabled', true);
+                                deleteButton.attr('disabled', true);
+                            @endif
+
+                            container.append(editButton, deleteButton);
+                            cell.append(container);
+                        }
+
+                        if (i == timeA + 1 || timeA == timeB) {
+                            cell.append(
+                                `<small class="m-0">${convertTo12H(jadwal.time[0])} - ${convertTo12H(jadwal.time[1])}</small>`
+                            );
+                        }
+
+                        if (i == timeB && !cell.hasClass('rounded-top')) {
+                            cell.addClass('rounded-bottom').addClass('border-bottom').removeClass('rounded-top')
+                                .removeClass('border-top');
+                        }
+                    }
+                });
+            }
+            renderScedule();
+        </script>
+    @endif
 
 @stop
 
@@ -273,9 +306,9 @@
 @stop
 
 @section('js')
-    @include('pengajuanalokasipembimbing.Helper.JS.SweetAlert')
-    @include('pengajuanalokasipembimbing.Helper.JS.AutoFlashReader')
-    @include('pengajuanalokasipembimbing.Helper.JS.AutoErrorShower')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.AutoFlashReader')
+    @include('PengajuanAlokasiPembimbing.Helper.JS.AutoErrorShower')
 
     <script>
         function CallTimeModal(type, day, defaultstartvalue = new Date(new Date().setMinutes(0)).toTimeString().slice(0, 5),
