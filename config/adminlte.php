@@ -456,9 +456,20 @@ return [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
             'submenu' => [
+           
+                [
+                    'text' => 'Program Studi',
+                    'url'  => $prefix . '/program-studi',
+                    'icon' => 'fas fa-school',
+                ],
+                [
+                    'text' => 'Kelola KBK',
+                    'url'  => $prefix . '/kelola-kbk',
+                    'icon' => 'fas fa-sitemap',
+                ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
-                    'url' => 'pengajuan-pisah-kota',
+                    'url' => $prefix . '/pengajuan-pisah-kota',
                     'icon' => 'fas fa-sign-out-alt',
                     'can' => 'koordinator_ta',
                 ],
@@ -470,6 +481,16 @@ return [
                     // 'can' => function() {
                     //         return auth()->user()->hasAnyRole(['mahasiswa', 'koordinator_ta']);
                     //         },
+                ],
+                [
+                    'text' => 'Pengajuan KoTA',
+                    'url' => $prefix . '/pengajuan-kota',
+                    'icon' => 'fas fa-users',
+                ],
+                [
+                    'text' => 'Detail KoTA',
+                    'url'  => $detailKotaUrl ?? 'detail-kota',
+                    'icon' => 'fas fa-info',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',

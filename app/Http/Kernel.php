@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
+        'role_no_auth' => \App\Http\Middleware\RoleWithoutAuthMiddleware::class,
         'redirect.after.logout' => \App\Http\Middleware\RedirectAfterLogout::class,
     ];
     
