@@ -396,37 +396,36 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-mahasiswa',
-                        ],
-                        [
-                            'text' => 'Monitoring Feedback',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-feedback',
-                        ],
-                        [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-rubrik',
-                        ],
+                            'url' => $prefix . '/kelola-penilaian-ta/monitoring-mahasiswa',
+                        ]
                     ],
                 ],
                 [
-                    'text' => 'Formulir Penilaian',
-                    'url' => $prefix . '/KelolaPenilaianTA/fomulir-penilaian',
-                ],
-                [
-                    'text' => 'Pengelolaan Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/pengelolaan-nilai',
-                ],
-                [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/rekapitulasi-nilai',
+                    'submenu' => [
+                        [
+                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                        [
+                            'text' => 'Rekapitulasi Nilai Akhir',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                        [
+                            'text' => 'Pengaturan Nilai Akhir',
+                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                    ],
                 ],
             ]
         ],
         [
-            'text' => 'Timeline',
-            'url' => $prefix . '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-
+            'text' => 'Repository Tugas Akhir',
+            'icon' => 'fas fa-book',
+            'url' => $prefix . '/timeline'
             // 'label' => 4,
             // 'label_color' => 'success',
         ],

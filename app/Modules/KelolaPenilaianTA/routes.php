@@ -1,36 +1,66 @@
 <?php
 
+use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
+use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
+use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
+use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
+use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
 
-Route::group(['prefix' => 'KelolaPenilaianTA'], function () {
-    Route::get('/', [KelolaPenilaianTAController::class, 'index']);
-    Route::get('/fomulir-penilaian', [KelolaPenilaianTAController::class, 'index_form']);
-    Route::get('/formulir-penilaian/create', [KelolaPenilaianTAController::class, 'create'])->name('formulir-penilaian.create');
-    Route::get('/formulir-penilaian/detail', function () {
-        return view('KelolaPenilaianTA.views.DetailFTA011');
-    })->name('formulir-penilaian.detail');
-    Route::get('/formulir-penilaian/edit', function () {
-        return view('KelolaPenilaianTA.views.UbahFormulirTA');
-    })->name('formulir-penilaian.edit');
-    Route::put('/formulir-penilaian/update', [KelolaPenilaianTAController::class, 'update'])->name('formulir-penilaian.update');
+Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
+
+    // ================= FORMULIR PENILAIAN =================
+    Route::prefix('formulir-penilaian')->group(function () {
+        Route::get('/', [FormulirPenilaianController::class, 'formulirPenilaian']);
+        Route::get('/tambah-formulir', [FormulirPenilaianController::class, 'tambahFormulir'])->name('formulir-penilaian.tambah-formulir');
+        Route::get('/detail', function () {
+            return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_011');})->name('formulir-penilaian.detail');
+        Route::get('/ubah-formulir', function () {
+            return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_formulir_ta');})->name('formulir-penilaian.edit');
+        Route::put('/update', [FormulirPenilaianController::class, 'updateFormulir'])->name('formulir-penilaian.update');
+    });
+
+
+    // Route yang dikomentari
     // Route::get('KelolaPenilaianTA/formulir-penilaian/edit', [FormulirPenilaianController::class, 'edit'])->name('formulir-penilaian.edit');
     // Route::put('formulir-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
-    Route::get('/monitoring-mahasiswa', [KelolaPenilaianTAController::class, 'indexMonitoringMahasiswa']);
-    Route::get('/monitoring-feedback', [KelolaPenilaianTAController::class, 'indexMonitoringFeedback']);
-    Route::get('/monitoring-rubrik', [KelolaPenilaianTAController::class, 'indexMonitoringRubrik']);
-    Route::get('/pengelolaan-nilai', [KelolaPenilaianTAController::class, 'kelola_nilai']);
-    Route::get('/detail/{kategori}', [KelolaPenilaianTAController::class, 'detail_nilai_mahasiswa']);
-    Route::get('/rekapitulasi-nilai', [KelolaPenilaianTAController::class, 'getRekapNilai']);
-    Route::post('/rekapitulasi-nilai/export', [KelolaPenilaianTAController::class, 'exportExcel'])->name('rekapitulasi-nilai.export');
-    Route::get('/rekapitulasi/export', [KelolaPenilaianTAController::class, 'exportExcel'])->name('rekapitulasi.export');
-    Route::get('/masukan-seminar-1', [KelolaPenilaianTAController::class, 'pengisianMasukanSeminar1']);
-    Route::get('/nilai-seminar-II', [KelolaPenilaianTAController::class, 'pengisianNilaiSeminarII']);
-    Route::get('/nilai-seminar-II/masukan-seminar-II', [KelolaPenilaianTAController::class, 'pengisianMasukanSeminarII']);
-    Route::get('/nilai-seminar-III', [KelolaPenilaianTAController::class, 'pengisianNilaiSeminarIII']);
-    Route::get('/nilai-seminar-III/masukan-seminar-III', [KelolaPenilaianTAController::class, 'pengisianMasukanSeminarIII']);
-    Route::get('/nilai-sidang-akhir', [KelolaPenilaianTAController::class, 'pengisianNilaiSidangAkhir']);
-    Route::get('/nilai-sidang-akhir/masukan-sidang-akhir', [KelolaPenilaianTAController::class, 'pengisianMasukanSidangAkhir']);
-    Route::get('/nilai-tugas-akhir', [KelolaPenilaianTAController::class, 'pengisianNilaiTA']);
-    // Route::post('/KelolaPenilaianTA/masukan-seminar-II', 'FeedbackController@store')->name('feedback.store');
+
+    // ================= MONITORING NILAI MAHASISWA =================
+    Route::prefix('monitoring')->group(function () {
+        Route::get('/mahasiswa', [MonitoringNilaiMahasiswaController::class, 'monitoringMahasiswa'])->name('monitoring.mahasiswa');
+        Route::get('/feedback', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])->name('monitoring.feedback');
+        Route::get('/rubrik', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])->name('monitoring.rubrik');
+    });
+
+    // ================= PENGELOLAAN NILAI =================
+    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai']);
+    Route::get('/detail/{kategori}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
+
+    Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
+        // ================= REKAPITULASI NILAI =================
+        Route::get('/rekapitulasi-nilai-sidang', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
+        Route::get('/rekapitulasi-nilai-akhir', [RekapitulasiNilaiController::class, 'getRekapNilaiAkhir']);
+        Route::post('/rekapitulasi-nilai/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi-nilai.export');
+        Route::get('/rekapitulasi/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiSidang'])->name('rekapitulasi.export');
+        Route::post('/rekapitulasi-nilai-akhir/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiAkhir'])->name('rekapitulasi-nilai-akhir.export');
+        Route::get('/rekapitulasi-akhir/export', [RekapitulasiNilaiController::class, 'exportExcelNilaiAkhir'])->name('rekapitulasi-akhir.export');
+        Route::get('/pengaturan-nilai-akhir', [RekapitulasiNilaiController::class, 'getPengaturanNilaiAkhir']);
+        Route::put('/pengaturan-nilai/update', [RekapitulasiNilaiController::class, 'updatePengaturanNilaiAkhir'])->name('pengaturan-bobot.update');
+    });
+
+
+    // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+    Route::prefix('nilai-seminar')->group(function () {
+        Route::get('/1/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar1']);
+        Route::get('/2', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminarII']);
+        Route::get('/2/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminarII']);
+        Route::get('/3', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminarIII']);
+        Route::get('/3/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminarIII']);
+    });
+    Route::prefix('nilai-sidang')->group(function () {
+        Route::get('/akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);
+        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir']);
+    });
+    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA']);
+    
 });

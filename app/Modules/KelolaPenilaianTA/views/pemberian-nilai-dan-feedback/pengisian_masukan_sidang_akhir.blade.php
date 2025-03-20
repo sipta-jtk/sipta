@@ -1,23 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR 1')
+@section('title', 'PENILAIAN SIDANG D3')
 
 @section('content_header')
     <div class="container-fluid p-3">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-        <ol class="breadcrumb bg-transparent p-0 mb-3">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/KelolaPenilaianTA') }}">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Penilaian Seminar 1
-                </li>
-            </ol>
-        </nav>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta/nilai-sidang/akhir'), 'label' => 'Penilaian Sidang D3'],
+                ['url' => '', 'label' => 'Catatan Perbaikan Laporan']
+            ]
+        ])
+        @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">SEMINAR 1</h1>
+        <h1 class="mb-0">CATATAN PERBAIKAN LAPORAN</h1>
     </div>
 @stop
 
@@ -30,9 +27,9 @@
                 <span>{{ $mahasiswa['kode_fta'] }}</span>
             </div>
 
-            <!-- Tanggal, Waktu, ID KoTA -->
+            <!-- Tanggal, Waktu, ID Kota -->
             <div class="col-md-2 mt-3">
-                <strong>Pada hari/tanggal</strong> <br>
+                <strong>Pada Hari/Tanggal</strong> <br>
                 <span>{{ $mahasiswa['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -71,39 +68,34 @@
             </div>
         </div>
 
-        <!-- Usulan Topik Tugas Akhir -->
+        <!-- Input Tanggal dan Waktu Sebelum Catatan Perbaikan Laporan -->
         <div class="row mt-4">
+            <div class="col-md-3">
+                <label for="tanggal_catatan"><strong>Tanggal dan Waktu Perbaikan</strong></label>
+                <input type="date" id="tanggal_catatan" name="tanggal_catatan" class="form-control date">
+            </div>
+        </div>
+        <div class="row mt-3">
             <div class="col-md-12">
-                <strong>Usulan Topik Tugas Akhir</strong> <br>
-                <span>{{ $mahasiswa['topik_ta'] }}</span>
+                <p>
+                    Diharuskan untuk mengadakan perbaikan laporan sidang tugas akhir dengan batas akhir perbaikan laporan pada  
+                    hari <u id="hari_perbaikan">________</u> tanggal <u id="tanggal_perbaikan">________</u>.  
+                    Apabila kelompok tersebut tidak dapat menyelesaikan sesuai dengan waktu yang telah ditentukan tersebut di atas,  
+                    maka kelompok tersebut dinyatakan <strong>tidak lulus</strong>, dan nilai hasil sidang dinyatakan <strong>batal</strong>.
+                </p>
             </div>
         </div>
 
-        <h3 class="heading-spacing text-center">EVALUASI</h3>
+        <h3 class="heading-spacing text-center">CATATAN PERBAIKAN LAPORAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/KelolaPenilaianTA') }}"> <!-- route('feedback.store') method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta') }}">
             @csrf
 
-            <!-- Deskripsi Topik -->
+            <!-- Dokumen -->
             <div class="form-group">
-                <label for="deskripsi_topik">Deskripsi Topik</label>
-                <input id="deskripsi_topik" type="hidden" name="deskripsi_topik">
-                <trix-editor input="deskripsi_topik"></trix-editor>
-            </div>
-
-            <!-- Problem Definition -->
-            <div class="form-group">
-                <label for="problem_definition">Problem Definition</label>
-                <input id="problem_definition" type="hidden" name="problem_definition">
-                <trix-editor input="problem_definition"></trix-editor>
-            </div>
-
-            <!-- Metodologi Penyelesaian TA -->
-            <div class="form-group">
-                <label for="metodologi">Metodologi Penyelesaian TA</label>
-                <input id="metodologi" type="hidden" name="metodologi">
-                <trix-editor input="metodologi"></trix-editor>
+                <input id="dokumen" type="hidden" name="dokumen">
+                <trix-editor input="dokumen"></trix-editor>
             </div>
 
             <!-- Tombol Simpan -->
@@ -119,29 +111,12 @@
 @section('css')
     <!-- Trix Editor Styling -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
-    <style>
-        /* Styling untuk Trix Editor */
-        trix-editor {
-            min-height: 150px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 12px;
-            font-size: 14px;
-        }
-        .trix-button-group {
-            background: white;
-        }
-
-        .heading-spacing {
-            margin-top: 50px;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 @stop
 
 @section('js')
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
 @stop
