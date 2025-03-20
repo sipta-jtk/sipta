@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_prodi');
             $table->enum('status_ta', ['mahasiswa_ta', 'mahasiswa_non_ta']);
             $table->float('nilai_akhir_ta');
-            $table->unsignedBigInteger('id_kota');
+            $table->unsignedBigInteger('id_kota')->nullable();
             
             $table->foreign('id_prodi')->references('id_prodi')->on('prodi');
             $table->foreign('id_kota')->references('id_kota')->on('kota');

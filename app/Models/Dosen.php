@@ -23,11 +23,6 @@ class Dosen extends Model
         'bersedia_membimbing'
     ];
 
-    public function penjadwalan()
-    {
-        return $this->hasMany(Penjadwalan::class, 'nip', 'nip');
-    }
-
     public function kbk()
     {
         return $this->belongsTo(Kbk::class, 'id_kbk', 'id_kbk');
@@ -58,9 +53,9 @@ class Dosen extends Model
         return $this->hasMany(PrioritasPembimbing::class, 'nip', 'nip');
     }
 
-    public function alokasiPembimbing()
+    public function alokasiDosen()
     {
-        return $this->hasMany(AlokasiPembimbing::class, 'nip', 'nip');
+        return $this->hasMany(AlokasiDosen::class, 'nip', 'nip');
     }
 
     public function kuotaMembimbing()
@@ -93,23 +88,23 @@ class Dosen extends Model
         return $this->hasMany(VerifikasiBerkasPengajuan::class, 'nip', 'nip');
     }
 
-    public function pengajuanJadwalKota()
-    {
-        return $this->hasMany(PengajuanJadwalKota::class, 'nip', 'nip');
-    }
-
     public function ambangBatas()
     {
         return $this->hasMany(AmbangBatas::class, 'nip', 'nip');
     }
 
-    public function mahasiswaDosenDokumen()
-    {
-        return $this->hasMany(MahasiswaDosenDokumen::class, 'nip', 'nip');
-    }
-
     public function reviewDosenPembimbing()
     {
         return $this->hasMany(ReviewDosenPembimbing::class, 'nip', 'nip');
+    }
+
+    public function pembatalan()
+    {
+        return $this->hasMany(Pembatalan::class, 'nip', 'nip');
+    }
+
+    public function nilaiRubrik()
+    {
+        return $this->hasMany(NilaiRubrik::class, 'nip', 'nip');
     }
 }
