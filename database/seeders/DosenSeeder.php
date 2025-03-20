@@ -381,7 +381,7 @@ class DosenSeeder extends Seeder
                 'kode_dosen' => 'KO070N',
                 'status_dosen' => 'aktif',
                 'role_dosen' => 'dosen',
-                'bersedia_membimbing' => 'belum_konfirmasi'
+                'bersedia_membimbing' => 'bersedia'
             ],
             [
                 'nip' => '199209092019031015',
