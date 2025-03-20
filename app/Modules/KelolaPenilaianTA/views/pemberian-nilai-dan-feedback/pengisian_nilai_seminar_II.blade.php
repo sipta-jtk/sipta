@@ -143,7 +143,7 @@
                                     <td>{{ $item->bobot_kriteria }} %</td>
                                     <td>0 - 100</td>
                                     @foreach($mahasiswa as $key => $mhs)
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
+                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $mhs->nilaiKriteria[$index]->nilai_kriteria }}"></td>
                                     @endforeach
                                 </tr>
                             @endforeach

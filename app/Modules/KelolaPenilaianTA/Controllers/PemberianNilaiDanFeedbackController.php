@@ -34,7 +34,6 @@ class PemberianNilaiDanFeedbackController extends Controller
         } 
     }
 
-    
     /**
      * Menampilkan halaman pemberian nilai seminar 2
      * 
@@ -56,8 +55,10 @@ class PemberianNilaiDanFeedbackController extends Controller
 
         // Mengambil mahasiswa berdasarkan kota yang sesuai dengan seminar
         $mahasiswa = Mahasiswa::where('id_kota', $kota)
-                    ->with('user', 'kota.penjadwalan')
+                    ->with('user', 'kota.penjadwalan', 'nilaiKriteria')
                     ->get();       
+
+        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
 
         // Melakukan mapping data mahasiswa
         $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa);
