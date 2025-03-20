@@ -488,16 +488,18 @@ return [
                 [
                     'text' => 'Manajemen KoTA',
                     'url' => $prefix . '/management-kota',
+                    'icon' => 'fas fa-users',
                     'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => $prefix . '/manage_dosen',
+                    'icon' => 'fas fa-user-tie',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => $prefix . '/#',
-
+                    'icon' => 'fas fa-user-graduate'
                 ],
             ],
         ],
