@@ -1,21 +1,19 @@
 $(document).ready(function () {
-    const bobotMapping = {
-        'Dokumen': 35,
-        'Presentasi': 15,
-        'Tanya Jawab': 35,
-        'Prototipe': 15
-    };
+    $('#kode_fta').change(function () {
+        const selectedKodeFTA = $(this).val();
+        const selectedFormPenilaian = formPenilaianList.find(form => form.kode_fta == selectedKodeFTA);
+        $('#nama_fta').val(selectedFormPenilaian ? selectedFormPenilaian.nama_fta : '');
 
-    // Pastikan variabel `formPenilaianList` dan `kriteriaList` sudah didefinisikan di Blade
-    if (typeof formPenilaianList !== 'undefined' && typeof kriteriaList !== 'undefined') {
-        $('#kode_fta').change(function () {
-            const selectedKodeFTA = $(this).val();
-            const selectedFormPenilaian = formPenilaianList.find(form => form.kode_fta == selectedKodeFTA);
-            $('#nama_fta').val(selectedFormPenilaian ? selectedFormPenilaian.nama_fta : '');
+        // Fetch kriteria based on selected kode FTA
+        $.ajax({
+            url: `/kelola-penilaian-ta/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
+            method: 'GET',
+            success: function (data) {
+                const kriteriaOptions = data.map(kriteria => `<option value="${kriteria.nama_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('');
+                $('.kriteria').html(`<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`);
+            }
         });
-    } else {
-        console.error("Data formPenilaianList atau kriteriaList tidak ditemukan.");
-    }
+    });
 
     $('#addRow').on('click', function () {
         var newRow = `
@@ -23,10 +21,9 @@ $(document).ready(function () {
             <td>
                 <select class="form-control kriteria" name="kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
-                    ${kriteriaList.map(kriteria => `<option value="${kriteria.nama_kriteria}">${kriteria.nama_kriteria}</option>`).join('')}
                 </select>
             </td>
-            <td><p class="form-control-plaintext bobot">35</p></td>
+            <td><p class="form-control-plaintext bobot"></p></td>
             <td><input type="text" class="form-control" name="detail[]" required></td>
             <td><input type="text" class="form-control" name="lebih80[]" required></td>
             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" required></td>
@@ -39,11 +36,23 @@ $(document).ready(function () {
             </button></td>
         </tr>`;
         $('#rubrikPenilaianTable').append(newRow);
+
+        // Re-fetch kriteria options for the new row
+        const selectedKodeFTA = $('#kode_fta').val();
+        if (selectedKodeFTA) {
+            $.ajax({
+                url: `/kelola-penilaian-ta/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
+                method: 'GET',
+                success: function (data) {
+                    const kriteriaOptions = data.map(kriteria => `<option value="${kriteria.nama_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('');
+                    $('#rubrikPenilaianTable tr:last .kriteria').html(`<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`);
+                }
+            });
+        }
     });
 
     $(document).on('change', '.kriteria', function () {
-        var kriteria = $(this).val();
-        var bobot = bobotMapping[kriteria] || 0;
+        var bobot = $(this).find(':selected').data('bobot');
         $(this).closest('tr').find('.bobot').text(bobot);
     });
 

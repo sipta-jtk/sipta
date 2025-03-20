@@ -75,12 +75,10 @@
                             <td>
                                 <select class="form-control kriteria" name="kriteria[]" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
-                                    @foreach ($kriteriaList as $kriteria)
-                                        <option value="{{ $kriteria->nama_kriteria }}">{{ $kriteria->nama_kriteria }}</option>
-                                    @endforeach
                                 </select>
                             </td>
-                            <td><p class="form-control-plaintext bobot">35</p></td>
+                            <td><p class="form-control-plaintext bobot"></p></td>
+                            <td><input type="text" class="form-control" name="detail[]" required></td>
                             <td><input type="text" class="form-control" name="detail[]" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" required></td>
@@ -111,6 +109,8 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
-    <script> const formPenilaianList = @json($formPenilaianList);</script>
-    <script> const kriteriaList = @json($kriteriaList);</script>
+    <script>
+        const formPenilaianList = @json($formPenilaianList);
+        const kriteriaList = @json($kriteriaList);
+    </script>
 @stop

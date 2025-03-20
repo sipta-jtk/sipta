@@ -31,6 +31,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
         Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
         Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
+
+        Route::get('/kelola-penilaian-ta/formulir-penilaian/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
     });
 
 

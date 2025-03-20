@@ -163,11 +163,6 @@
                 </div>
             @endif
 
-            <!-- Alert -->
-            <!-- <div id="alertBobot" class="alert alert-danger" role="alert" style="display: none;">
-                Total bobot harus 100 persen.
-            </div> -->
-
             <div class="row">
                 <!-- Tanggal Tenggat -->
                 <div class="col-md-6">
