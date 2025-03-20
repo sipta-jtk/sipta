@@ -416,6 +416,11 @@ return [
                         ],
                     ],
                 ],
+                [
+                    'text' => 'Kelola Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/kelola-nilai',
+                    'can' => 'akses-penilaian-koordinator-ta',
+                ]
             ]
         ],
         [

@@ -46,8 +46,9 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         ->name('monitoring.rubrik');
     });
 
-    // ================= PENGELOLAAN NILAI =================
-    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai']);
+   // ================= PENGELOLAAN NILAI =================
+    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta']);
+
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         // ================= REKAPITULASI NILAI =================
@@ -63,7 +64,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
 
     // ================= PEMBERIAN NILAI DAN FEEDBACK =================
-    Route::prefix('nilai-seminar')->group(function () {
+    Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
         Route::get('/{id}/masukan/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
         Route::get('/{id}/nilai/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
