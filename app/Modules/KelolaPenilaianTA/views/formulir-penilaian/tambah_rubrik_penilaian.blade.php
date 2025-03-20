@@ -30,10 +30,9 @@
                         <label for="kode_fta">Kode FTA</label>
                         <select class="form-control" id="kode_fta" name="kode_fta" required>
                             <option value="" disabled selected>Pilih Kode FTA</option>
-                            <option value="FTA001">FTA001</option>
-                            <option value="FTA002">FTA002</option>
-                            <option value="FTA003">FTA003</option>
-                            <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
+                            @foreach ($formPenilaianList as $formPenilaian)
+                                <option value="{{ $formPenilaian->kode_fta }}">{{ $formPenilaian->kode_fta }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -42,7 +41,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
-                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" value="PENILAIAN SEMINAR III" readonly>
+                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" readonly>
                     </div>
                 </div>
             </div>
@@ -76,10 +75,9 @@
                             <td>
                                 <select class="form-control kriteria" name="kriteria[]" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
-                                    <option value="Dokumen">Dokumen</option>
-                                    <option value="Presentasi">Presentasi</option>
-                                    <option value="Tanya Jawab">Tanya Jawab</option>
-                                    <option value="Prototipe">Prototipe</option>
+                                    @foreach ($kriteriaList as $kriteria)
+                                        <option value="{{ $kriteria->nama_kriteria }}">{{ $kriteria->nama_kriteria }}</option>
+                                    @endforeach
                                 </select>
                             </td>
                             <td><p class="form-control-plaintext bobot">35</p></td>
@@ -113,4 +111,6 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
+    <script> const formPenilaianList = @json($formPenilaianList);</script>
+    <script> const kriteriaList = @json($kriteriaList);</script>
 @stop

@@ -14,23 +14,30 @@ $(document).ready(function () {
     jenisForm.change(toggleTables);
 
     // Event listener untuk menambah baris
-    $('#addRow').on('click', function () {
-        let jenis = jenisForm.val();
-        let newRow = '';
-
-        if (jenis === 'Penilaian') {
-            newRow = `<tr>
-                <td><input type="text" class="form-control" name="kriteria[]" required></td>
-                <td><input type="number" class="form-control" name="bobot[]" required></td>
-                <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
-            </tr>`;
-            $('#aspekPenilaianTable').append(newRow);
-        } else if (jenis === 'Feedback') {
-            newRow = `<tr>
-                <td><input type="text" class="form-control" name="kriteria[]" required></td>
-                <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
-            </tr>`;
-            $('#aspekFeedbackTable').append(newRow);
+    $("#addRow").click(function() {
+        if ($("#jenisForm").val() === "Feedback") {
+            $("#aspekFeedbackTable").append(`
+                <tr>
+                    <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </td>
+                </tr>
+            `);
+        } else {
+            $("#aspekPenilaianTable").append(`
+                <tr>
+                    <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
+                    <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </td>
+                </tr>
+            `);
         }
     });
 
