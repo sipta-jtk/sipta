@@ -212,7 +212,6 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-    /* Kontainer tabel agar tetap responsif */
     .table-container {
         max-height: 500px;
         overflow: auto;
@@ -221,23 +220,19 @@
         width: 100%;
     }
 
-    /* Penyesuaian tabel agar tidak berantakan saat scrolling */
     table {
         width: 100%;
         min-width: 1400px;
         border-collapse: collapse;
     }
 
-    /* Styling untuk header dan sel */
-    th,
-    td {
+    th, td {
         border: 1px solid #ccc !important;
         padding: 10px;
         text-align: center;
         white-space: nowrap;
     }
 
-    /* Sticky header untuk tabel */
     thead {
         position: sticky;
         top: 0;
@@ -257,7 +252,6 @@
         border-bottom: 2px solid #fff;
     }
 
-    /* Sticky untuk kolom tertentu */
     th.sticky-column {
         background: rgba(0, 0, 0, 0.9) !important;
         color: white !important;
@@ -280,7 +274,6 @@
         text-align: center;
     }
 
-    /* Alternating row colors */
     tbody tr:nth-child(even) {
         background-color: #f8f9fa;
     }
@@ -289,7 +282,6 @@
         background-color: #e2e6ea;
     }
 
-    /* Hilangkan ikon sorting pada kolom tertentu */
     table.dataTable thead th.no-sort.sorting::before,
     table.dataTable thead th.no-sort.sorting::after,
     table.dataTable thead th.no-sort.sorting_asc::before,
@@ -320,7 +312,6 @@
         transition: background-color 0.3s ease-in-out;
     }
 
-    /* Dropdown Status */
     .status-dropdown {
         width: 100%;
         text-align: center;
@@ -330,7 +321,6 @@
         border-radius: 5px;
     }
 
-    /* Auto-expand textarea */
     .auto-expand {
         width: 100%;
         min-height: 35px;
@@ -343,13 +333,11 @@
         transition: height 0.2s ease-in-out;
     }
 
-    /* Efek Hover untuk Tombol */
     button:hover {
         opacity: 0.8;
         transition: 0.2s;
     }
 
-    /* Gaya Tombol Submit dan Simpan */
     .btn-primary {
         background-color: #007bff;
         border-color: #007bff;
@@ -373,7 +361,6 @@
     td:nth-child(17) {
         min-width: 70px !important;
     }
-
 </style>
 @stop
 
@@ -402,11 +389,11 @@
         function submitForm() {
             if (DataToSend.length === 0) {
                 Swal.fire({
-                    icon: 'warning'
-                    , title: 'Tidak ada perubahan!'
-                    , text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.'
-                    , timer: 2000
-                    , showConfirmButton: false
+                    icon: 'warning',
+                    title: 'Tidak ada perubahan!',
+                    text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.',
+                    timer: 2000,
+                    showConfirmButton: false
                 });
                 return;
             }
@@ -415,28 +402,27 @@
             console.log("Final Data to Send:", ParseddataToSend);
             $('#dataToSend').val(ParseddataToSend);
 
-            // Konfirmasi sebelum finalisasi
             Swal.fire({
-                icon: 'warning'
-                , title: 'Konfirmasi Finalisasi'
-                , text: 'Apakah Anda yakin ingin mengajukan alokasi pembimbing?'
-                , showCancelButton: true
-                , confirmButtonText: 'Ya, Finalisasi'
-                , cancelButtonText: 'Batal'
-                , showLoaderOnConfirm: true
-                , preConfirm: () => {
+                icon: 'warning',
+                title: 'Konfirmasi Finalisasi',
+                text: 'Apakah Anda yakin ingin mengajukan alokasi pembimbing?',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Finalisasi',
+                cancelButtonText: 'Batal',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
                     return new Promise((resolve, reject) => {
                         $.ajax({
-                            url: $("#alokasiForm").attr('action')
-                            , type: "POST"
-                            , data: {
-                                _token: "{{ csrf_token() }}"
-                                , dataToSend: ParseddataToSend
-                            }
-                            , success: function(response) {
+                            url: $("#alokasiForm").attr('action'),
+                            type: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                dataToSend: ParseddataToSend
+                            },
+                            success: function(response) {
                                 resolve(response);
-                            }
-                            , error: function() {
+                            },
+                            error: function() {
                                 reject("Terjadi kesalahan saat mengirim data!");
                             }
                         });
@@ -445,34 +431,32 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        icon: 'success'
-                        , title: 'Sukses'
-                        , text: 'Alokasi pembimbing berhasil diajukan!'
-                        , timer: 2000
-                        , showConfirmButton: false
+                        icon: 'success',
+                        title: 'Sukses',
+                        text: 'Alokasi pembimbing berhasil diajukan!',
+                        timer: 2000,
+                        showConfirmButton: false
                     }).then(() => {
-                        location.reload(); // Reload halaman setelah sukses
+                        location.reload();
                     });
                 }
             }).catch((error) => {
                 Swal.fire({
-                    icon: 'error'
-                    , title: 'Gagal'
-                    , text: error
-                    , timer: 2000
-                    , showConfirmButton: false
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: error,
+                    timer: 2000,
+                    showConfirmButton: false
                 });
             });
         }
 
-        // Event listener untuk setiap textarea catatan
         $(".catatan-input").on("input", function() {
             var id_pengajuan_pembimbing = $(this).data("id");
             var catatan = $(this).val();
             saveData(id_pengajuan_pembimbing, "catatan", catatan);
         });
 
-        // Event listener untuk penguji
         $(".penguji").on("input", function() {
             var id_pengajuan_pembimbing = $(this).closest("tr").find("td:first").text().trim();
             var role = $(this).attr("name").split(id_pengajuan_pembimbing)[0];
@@ -480,22 +464,20 @@
             saveData(id_pengajuan_pembimbing, role, value);
         });
 
-        // DataTable initialization
         let table = $('#alokasiTable').DataTable({
-            responsive: true
-            , paging: true
-            , lengthMenu: [10, 25, 50, 100]
-            , pageLength: 10
-            , searching: true
-            , ordering: true
-            , info: true
-            , autoWidth: false
-            , drawCallback: function() {
+            responsive: true,
+            paging: true,
+            lengthMenu: [10, 25, 50, 100],
+            pageLength: 10,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            drawCallback: function() {
                 initializeScripts();
             }
         });
 
-        // Auto-expand textarea
         function autoExpandTextarea() {
             $(".auto-expand").each(function() {
                 this.style.height = "auto";
@@ -503,7 +485,6 @@
             });
         }
 
-        // Inisialisasi event listener setelah pagination
         function initializeScripts() {
             $(".status-dropdown").off("change").on("change", function() {
                 let cell = $(this).closest('.status-cell');
@@ -518,18 +499,16 @@
             });
         }
 
-        // Event listener untuk tombol Simpan Draft
         $('#saveDraftBtn').click(function() {
             Swal.fire({
-                icon: 'success'
-                , title: 'Draft Disimpan'
-                , text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.'
-                , timer: 2000
-                , showConfirmButton: false
+                icon: 'success',
+                title: 'Draft Disimpan',
+                text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.',
+                timer: 2000,
+                showConfirmButton: false
             });
         });
 
-        // Pastikan fungsi berjalan pertama kali
         autoExpandTextarea();
         initializeScripts();
     });
@@ -552,11 +531,11 @@
     function submitForm() {
         if (DataToSend.length === 0) {
             Swal.fire({
-                icon: 'warning'
-                , title: 'Tidak ada perubahan!'
-                , text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.'
-                , timer: 2000
-                , showConfirmButton: false
+                icon: 'warning',
+                title: 'Tidak ada perubahan!',
+                text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.',
+                timer: 2000,
+                showConfirmButton: false
             });
             return;
         }
@@ -573,10 +552,10 @@
             console.log(`Fetching data for NIP: ${nip}`);
 
             $.ajax({
-                url: `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
-                , type: "GET"
-                , dataType: "json"
-                , success: function(data) {
+                url: `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
                     console.log("Response Data:", data);
 
                     if (data.error) {
@@ -591,15 +570,15 @@
                                     P2: ${data.pembimbing2_Mhs} |
                                     Total: ${data.jumlahMahasiswa}</div>
                                 <div><strong>Kuota:</strong> ${data.kuota}</div>
-                                <div><strong>Kelebihan:</strong> 
+                                <div><strong>Kelebihan:</strong>
                                     <span style="color: ${data.kelebihan.includes('Overload') ? 'red' : 'green'};">
                                         ${data.kelebihan}
                                     </span>
                                 </div>
                             `);
                     }
-                }
-                , error: function(xhr) {
+                },
+                error: function(xhr) {
                     console.log("AJAX Error:", xhr.responseText);
                     detailContainer.html(`<div style="color: red;">Gagal mengambil data dosen.</div>`);
                 }
@@ -615,28 +594,54 @@
         }
     }
 
-    // Event listener untuk dropdown pembimbing
     $(document).on("change", ".pembimbing", function() {
         var nip = $(this).val();
         var detailContainer = $(this).closest("td").next().find(".detail-content");
         fetchDosenDetail(nip, detailContainer);
     });
 
-    // Event listener untuk dropdown pembimbing
     $(".pembimbing").on("change", function() {
         var nip = $(this).val();
         var detailContainer = $(this).closest("td").next().find(".detail-content");
         fetchDosenDetail(nip, detailContainer);
     });
 
-
     $(document).ready(function() {
-        // Tambahkan event listener ke setiap textarea catatan
         $(".catatan-input").on("input", function() {
             var id_pengajuan_pembimbing = $(this).data("id");
             var catatan = $(this).val();
             saveData(id_pengajuan_pembimbing, "catatan", catatan);
         });
+    });
+
+    function updateDosenList() {
+        let allocatedDosen = new Set();
+
+        $(".pembimbing, .penguji").each(function() {
+            let selectedDosen = $(this).val();
+            if (selectedDosen) {
+                allocatedDosen.add(selectedDosen);
+            }
+        });
+
+        $("#dosenTable tbody tr").each(function() {
+            let dosenId = $(this).find("td:nth-child(2)").text().trim();
+            if (allocatedDosen.has(dosenId)) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+    }
+
+    updateDosenList();
+
+    $(document).on("change", ".pembimbing, .penguji", function() {
+        updateDosenList();
+    });
+
+    $(document).on("input", ".pembimbing, .penguji", function() {
+        updateDosenList();
     });
 
 </script>
