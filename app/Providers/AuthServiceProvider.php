@@ -92,8 +92,8 @@ class AuthServiceProvider extends ServiceProvider
         /**********************************
          * [Topik 2] - Fitur Kelola Jurusan
         ***********************************/
-        Gate::define('akses-kelola-pengajuan-jadwal', function ($user) {
-            return Gate::allows('dosen') || Gate::allows('koordinator_ta');
+        Gate::define('akses-dosen-kelola-pengajuan-jadwal', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('kooordinator_ta');
         });
     }
 }

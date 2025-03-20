@@ -3,11 +3,31 @@
 @section('title', 'Daftar Pengajuan Mahasiswa')
 
 @section('content_header')
-<h1 class="text-center mb-5">Daftar Pengajuan Jadwal</h1>
+<h1 class="text-center mb-5">Daftar Pengajuan {{$tipe}}</h1>
 @stop
 
 @section('content')
 <div class="container-fluid text-center">
+    <div class="d-flex mb-3">
+        <ul class="nav nav-tabs">
+            @php
+                $tipe = request()->route('tipe'); // Ambil tipe dari parameter route (seminar atau sidang)
+            @endphp
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kelola-pembimbing.jadwal.list') ? 'active' : '' }}" 
+                href="{{ route('kelola-pembimbing.jadwal.list', ['tipe' => $tipe]) }}">
+                    Pembimbing
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kelola-penguji.jadwal.list') ? 'active' : '' }}" 
+                href="{{ route('kelola-penguji.jadwal.list', ['tipe' => $tipe]) }}">
+                    Penguji
+                </a>
+            </li>
+        </ul>
+    </div>
+
     <!-- Tabel daftar pengajuan -->
     <div class="container-fluid ">
         <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
@@ -55,6 +75,8 @@
     </div>
   </div>
 </div>
+
+
 
 @stop
 
@@ -173,7 +195,7 @@
             $('#inputId').val(id);
 
             // Set action form
-            $('#formVerifikasi').attr('action', `/koordinator-kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
+            $('#formVerifikasi').attr('action', `/kelola-pengajuan-jadwal-penguji/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');
