@@ -11,7 +11,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="search-box">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
             </div>
             <div class="ml-auto d-flex align-items-center">
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
@@ -20,7 +20,6 @@
                 </button>
             </div>
         </div>
-
         <div class="card-body">
             <div id="jsGrid1"></div>
         </div>
