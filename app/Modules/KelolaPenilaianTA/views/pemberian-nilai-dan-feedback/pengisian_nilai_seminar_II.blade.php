@@ -107,9 +107,14 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah') }}" method="POST">
+        @php
+            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+        @endphp
+        <form action="{{ $actionUrl }}" method="POST">
             @csrf
-            {{ Log::info(json_encode($data, JSON_PRETTY_PRINT)) }}
+            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+                @method('PATCH')
+            @endif
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -143,7 +148,10 @@
                                     <td>{{ $item->bobot_kriteria }} %</td>
                                     <td>0 - 100</td>
                                     @foreach($mahasiswa as $key => $mhs)
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
+                                        @php
+                                            $nilai = isset($nilaiKriteria[$index][$key]) ? $nilaiKriteria[$index][$key] : '';
+                                        @endphp
+                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
                                     @endforeach
                                 </tr>
                             @endforeach

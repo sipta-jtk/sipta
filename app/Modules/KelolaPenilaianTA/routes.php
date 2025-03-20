@@ -51,6 +51,9 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/{id}/masukan/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
         Route::get('/{id}/nilai/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
         Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanNilaiSeminar']);
+        Route::get('/{id}/nilai/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanNilaiSeminar']);
+        Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiDanFeedbackController::class, 'editNilaiSeminar']);
+        Route::get('/{id}/nilai/{kota}/edit', [PemberianNilaiDanFeedbackController::class, 'editNilaiSeminar']);
     });
 
     Route::prefix('nilai-sidang')->group(function () {
