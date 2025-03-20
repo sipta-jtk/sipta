@@ -396,29 +396,22 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            'url' => $prefix . '/kelola-penilaian-ta/monitoring-mahasiswa',
                         ],
-                        [
-                            'text' => 'Monitoring Feedback',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-feedback',
-                        ],
-                        [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-rubrik',
-                        ],
+
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => $prefix . '/KelolaPenilaianTA/fomulir-penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/fomulir-penilaian',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/pengelolaan-nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/rekapitulasi-nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                 ],
             ]
         ],

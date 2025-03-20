@@ -18,66 +18,41 @@ use Illuminate\Support\Facades\Log;
 
 class PemberianNilaiDanFeedbackController extends Controller
 {
-    /**
-     * Akses halaman pemberian nilai
-     */
-    public function pengisianNilaiSeminar($seminar, $kota): View
+    
+    public function pengisianNilaiSeminar($id_fta, $id_kota) 
     {
-        if($seminar == 1) {
-            
-        } else if($seminar == 2) {
-            return $this->pengisianNilaiSeminarII($seminar, $kota);
-        } else if($seminar == 3) {
-            return $this->pengisianNilaiSeminarIII();
-        } else {
-            return $this->pengisianNilaiSidangAkhir();
-        } 
+        return $this->pengisianNilaiSeminarII($id_fta, $id_kota);
     }
 
     /**
      * Menampilkan halaman pemberian nilai seminar 2
      * 
      */
-    private function pengisianNilaiSeminarII($seminar, $kota): View
+    private function pengisianNilaiSeminarII($idFta, $id_kota): View
     {
-        $kodeFta = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)->first()->kode_fta;
+        $mahasiswa = Mahasiswa::where('id_kota', $id_kota)->with('user', 'kota', 'nilaiKriteria')->get();
+        
+        $kategoriPenilaian = KategoriPenilaian::where('id_fta', $idFta)->with('formulirPenilaian')->first();
 
-        // Mengambil semua kriteria beserta rubriknya
-        $kriteria = KriteriaPenilaian::with('nilaiKriteria')
-                ->where('kode_fta', $kodeFta)
-                ->get();
+        $kriteria = KriteriaPenilaian::with('nilaiKriteria')->where('id_fta', $idFta)->get();
 
-        // Mencari seminar berdasarkan kategori yang memiliki kode_fta = $seminar
-        $kategoriPenilaian = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $seminar)
-                    ->where('kode_fta', $seminar) 
-                    ->with('formulirPenilaian')
-                    ->first();
-
-        // Mengambil mahasiswa berdasarkan kota yang sesuai dengan seminar
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)
-                    ->with('user', 'kota.penjadwalan', 'nilaiKriteria')
-                    ->get();       
-
-        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
-
-        // Melakukan mapping data mahasiswa
         $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa);
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_II', 
-                    compact('data', 'mahasiswa', 'seminar', 'kriteria'));
+                    compact('data', 'mahasiswa', 'idFta', 'kriteria'));
     }
 
     /**
      * Helper mapping untuk data mahasiswa di form pengisian nilai seminar 2
      */
-    private function mappingDataMahasiswa($seminar, $mahasiswaList)
+    private function mappingDataMahasiswa($kategoriPenilaian, $mahasiswa)
     {
         $data = [
-            'nama_fta' => $seminar->formulirPenilaian->nama_fta,
-            'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
-            'judul_ta' => $mahasiswaList->first()->kota->judul_ta,
-            'start' => date('H:i', strtotime($mahasiswaList->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswaList->first()->id_kota
+            'nama_fta' => $kategoriPenilaian->formulirPenilaian->nama_fta,
+            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
+            'judul_ta' => $mahasiswa->first()->kota->judul_ta,
+            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
+            'kota' => $mahasiswa->first()->kota->nama_kota
         ];
     
         return $data;

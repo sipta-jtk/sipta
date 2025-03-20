@@ -29,13 +29,13 @@
             <tbody>
                 @foreach ($kategori as $index => $data)
                     <tr>
-                        <td>{{ $data['nama_kategori'] }}</td>
+                        <td>{{ $data['nama_fta'] }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
-                                @if (!in_array(strtolower($data['nama_kategori']), ['seminar 1', 'seminar 2']))
+                                @if (!in_array(strtolower($data['nama_fta']), ['seminar i', 'seminar ii']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . ($index + 1)) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
+                                <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $data->id_fta) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
                             </div>
                         </td>
                     </tr>

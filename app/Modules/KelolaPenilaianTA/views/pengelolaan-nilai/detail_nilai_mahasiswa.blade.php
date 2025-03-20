@@ -33,7 +33,7 @@
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         <th rowspan="2" class="align-middle">Rata-rata</th>
-                        @if (strtolower($namaKategori) == 'seminar 1' || strtolower($namaKategori) == 'seminar 2')
+                        @if (strtolower($namaKategori) == 'seminar i' || strtolower($namaKategori) == 'seminar ii')
                             <th rowspan="2" class="align-middle">Aksi</th>
                         @endif
                     </tr>
@@ -56,14 +56,14 @@
                                 <td> {{ $nilai }} </td>
                             @endforeach
                             <td> {{ $data['rata-rata'] }} </td>
-                            @if (strtolower($namaKategori) == 'seminar 1' || strtolower($namaKategori) == 'seminar 2')
+                            @if (strtolower($namaKategori) == 'seminar i' || strtolower($namaKategori) == 'seminar ii')
                                 @if (count(array_filter($data['nilai'], fn($value) => $value !== null && $value !== 0)) == 3)
                                     <td> <a class="btn btn-danger">Nilai</a> </td> 
                                     <td> <a class="btn btn-danger">Feedback</a> </td>
                                 @else
                                     <td> 
-                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
-                                        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
+                                        <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a> 
+                                        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
                                             @csrf
                                             <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
                                         </form>
