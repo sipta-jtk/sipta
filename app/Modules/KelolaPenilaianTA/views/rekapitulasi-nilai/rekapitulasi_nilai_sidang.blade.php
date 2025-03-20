@@ -46,7 +46,7 @@
                     <tr class="bg-dark text-white">
                         <th rowspan="2" class="align-middle" style="width: 1%;">No</th>
                         <th rowspan="2" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
+                        <th rowspan="2" class="align-middle" style="width: 15%;">Nama</th>
                         <th rowspan="2" class="align-middle" style="width: 5%;">Prodi</th>
                         <th rowspan="2" class="align-middle" style="width: 2%;">Kelas</th>
                         <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
@@ -78,7 +78,7 @@
                         <tr class="bg-light">
                             <td class="align-middle">{{ $index + 1 }}</td>
                             <td class="align-middle">{{ $row['nim'] }}</td>
-                            <td class="align-middle">{{ $row['nama'] }}</td>
+                            <td class="align-middle" style="text-align: left;">{{ $row['nama'] }}</td>
                             <td class="align-middle">{{ $row['prodi'] }}</td>
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>

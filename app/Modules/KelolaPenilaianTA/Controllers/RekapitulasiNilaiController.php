@@ -149,7 +149,7 @@ class RekapitulasiNilaiController extends Controller{
         $data = KomponenNilaiAkhir::select(
             'komponen_nilai_akhir.nama_komponen',
             'komponen_nilai_akhir.bobot_komponen as bobot',
-            'kategori_penilaian.nama_kategori'
+            'kategori_penilaian.id_kategori'
         )
         ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
         ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
@@ -158,7 +158,7 @@ class RekapitulasiNilaiController extends Controller{
             return [
                 'komponen' => $item->nama_komponen,
                 'bobot' => $item->bobot,
-                'sumber_nilai' => $item->nama_kategori
+                'sumber_nilai' => $item->id_kategori
             ];
         });
 
@@ -194,14 +194,16 @@ class RekapitulasiNilaiController extends Controller{
 
             // Update sumber nilai
             foreach ($validatedData['sumber_nilai'] as $key => $sumber_nilai) {
-                // Dapatkan id kategori penilaian dari nama kategori
-                $kategori = KategoriPenilaian::where('nama_kategori', $sumber_nilai)->first();
+                // Dapatkan id kategori penilaian dari id_kategori
+                $kategori = KategoriPenilaian::where('id_kategori', $sumber_nilai)->first();
                 // Dapatkan id komponen dari nama komponen
                 $komponen = KomponenNilaiAkhir::where('nama_komponen', $key)->first();
 
                 // Update kolom id_komponen dengan komponen->id_komponen dan sumber dengan kategori->id_kategori di tabel sumber nilai
                 $sumberNilai = SumberNilai::where('id_komponen', $komponen->id_komponen)->first();
                 $sumberNilai->sumber = $kategori->id_kategori;
+
+                Log::info("Update sumber nilai: " . json_encode($sumberNilai));
                 $sumberNilai->save();
             }
 

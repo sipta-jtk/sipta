@@ -43,7 +43,8 @@ RUN chmod -R 755 /var/www/public
 RUN chown -R www-data:www-data /var/www/public
 
 # Install dependencies with composer
-RUN composer install --ignore-platform-reqs
+RUN composer clear-cache
+RUN composer install
 
 # Expose port 8000
 EXPOSE 8000

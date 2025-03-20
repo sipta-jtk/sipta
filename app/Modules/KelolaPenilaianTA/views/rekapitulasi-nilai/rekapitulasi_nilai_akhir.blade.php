@@ -46,7 +46,7 @@
                     <tr class="bg-dark text-white">
                         <th rowspan="1" class="align-middle" style="width: 1%;">No</th>
                         <th rowspan="1" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="1" class="align-middle" style="width: 20%;">Nama</th>
+                        <th rowspan="1" class="align-middle" style="width: 15%;">Nama</th>
                         <th rowspan="1" class="align-middle" style="width: 5%;">Prodi</th>
                         <th rowspan="1" class="align-middle" style="width: 2%;">Kelas</th>
                         <th rowspan="1" class="align-middle" style="width: 4%;">Kelompok</th>
@@ -65,43 +65,58 @@
                             <tr class="bg-light">
                                 <td class="align-middle">{{ $index + 1 }}</td>
                                 <td class="align-middle">{{ $row['nim'] }}</td>
-                                <td class="align-middle">{{ $row['nama'] }}</td>
+                                <td class="align-middle" style="text-align: left;">{{ $row['nama'] }}</td>
                                 <td class="align-middle">{{ $row['prodi'] }}</td>
                                 <td class="align-middle">{{ $row['kelas'] }}</td>
                                 <td class="align-middle">{{ $row['kelompok'] }}</td>
                                 <td class="align-middle nilai-cell">
-                                @if ($row['nilaiUts'] == 0)
-                                    <span class="text-danger nilai-tooltip">-1
-                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
-                                    </span>
-                                @else
-                                    {{ $row['nilaiUts'] }}
-                                @endif
-                            </td>
-
-                            <td class="align-middle nilai-cell">
-                                @if ($row['nilaiUas'] == 0)
-                                    <span class="text-danger nilai-tooltip">-1
-                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
-                                    </span>
-                                @else
-                                    {{ $row['nilaiUas'] }}
-                                @endif
-                            </td>
-
-                            <td class="align-middle nilai-cell">
-                                @if ($row['nilaiLainLain'] == 0)
-                                    <span class="text-danger nilai-tooltip">-1
-                                        <div class="tooltip-box">Dosen belum melakukan penilaian</div>
-                                    </span>
-                                @else
-                                    {{ $row['nilaiLainLain'] }}
-                                @endif
-                            </td>
-
+                                    @if ($row['nilaiUts'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiUts'] }}
+                                    @endif
                                 </td>
-                                <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
-                                <td class="align-middle">{{ $row['predikat'] }}</td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiUas'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiUas'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiLainLain'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiLainLain'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiAkhir'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Nilai akhir belum tersedia</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiAkhir'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiAkhir'] == 0)
+                                        <span>T</span>
+                                    @else
+                                        {{ $row['predikat'] }}
+                                    @endif
+                                </td>
+
                             </tr>
                         @endforeach
                     @endif

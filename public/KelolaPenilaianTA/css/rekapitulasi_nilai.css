@@ -1,12 +1,12 @@
 .table-container {
-    max-height: 500px;
+    max-height: 800px;
     overflow-y: auto;
     border: 1px solid #ddd;
     position: relative;
 }
 
 table {
-    width: 100%;
+    width: 600px;
     border-collapse: collapse;
 }
 
