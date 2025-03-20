@@ -7,82 +7,83 @@
 @stop
 
 @section('content')
-    <div class="container">
-    <h2>Penilaian & Feedback</h2>
-    <table id="seminarTable" class="table table-bordered" width="100%">
-        <thead>
-            <th>No</th>
-            <th>Seminar/Sidang</th>
-            <th>KoTA</th>
-            <th>Judul</th>
-            <th>Tanggal</th>
-            <th>Sesi</th>
-            <th>Penilaian & Feedback</th>
-        </thead>
-        <tbody>
-            @foreach($seminars as $index => $seminar)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>@if($seminar->agenda == 'seminar_3')
-                    Seminar 3
-                    @elseif($seminar->agenda == 'sidang')
-                    Sidang
-                    @endif
-                </td>
-                <td>{{ $seminar->id_kota }}</td>
-                <td>{{ $seminar->kota_judul}}</td>
-                <td>{{ $seminar->tanggal }}</td>
-                <td>{{ $seminar->sesi }}</td>
-            </tr>
-            @endforeach
-            <!-- <tr>
-                <td>1</td>
-                <td>Seminar 3</td>
-                <td>KoTA-001</td>
-                <td>Penelitian Singkong Keju</td>
-                <td>22 Februari 2025</td>
-                <td>1</td>
-                <td><button class="btn btn-danger">Beri Penilaian</button></td>
-                <td><button class="btn btn-danger">Beri Feedback</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Seminar 3</td>
-                <td>KoTA-002</td>
-                <td>Penelitian Pisang Keju</td>
-                <td>23 Februari 2025</td>
-                <td>2</td>
-                <td><button class="btn btn-success">Lihat Penilaian</button></td>
-                <td><button class="btn btn-success">Lihat Feedback</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Seminar 3</td>
-                <td>KoTA-003</td>
-                <td>Penelitian Martabak Keju</td>
-                <td>24 Februari 2025</td>
-                <td>3</td>
-                <td><button class="btn btn-warning">Lanjut Penilaian</button></td>
-                <td><button class="btn btn-warning">Lanjut Feedback</button></td>
-            </tr> -->
-        </tbody>
-    </table>
-</div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Daftar Penjadwalan</h3>
+        </div>
+        <div class="card-body">
+            <table id="penjadwalanTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Sesi</th>
+                        <th>Agenda</th>
+                        <th>Tanggal</th>
+                        <th>Judul</th>
+                        <th>Kota</th>
+                        <th>Penilaian</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($penjadwalan as $index => $item)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $item['sesi'] }}</td>
+                            <td>{{ $item['agenda'] }}</td>
+                            <td>{{ $item['tanggal'] }}</td>
+                            <td>{{ $item['judul'] }}</td>
+                            <td>{{ $item['kota'] }}</td>
+                            <td>
+                                @if ($item['status'] === 'Sudah dinilai')
+                                    @if ($item['status_penilaian'] === 'dipublikasikan')
+                                    <a class="btn btn-success btn-sm">
+                                        Lihat Nilai
+                                    </a>
+                                    @elseif ($item['status_penilaian'] === 'draf')
+                                    <a class="btn btn-warning btn-sm">
+                                        Edit Nilai
+                                    </a>
+                                    <a class="btn btn-primary btn-sm">
+                                        Publikasikan
+                                    </a>
+                                    @endif
+                                @else
+                                <a class="btn btn-primary btn-sm">
+                                    Isi Nilai
+                                </a>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js">
+    <!-- CDN untuk DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <!-- CDN untuk jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- CDN untuk DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Inisialisasi DataTables -->
     <script>
         $(document).ready(function() {
-            $('#seminarTable').DataTable();
+            $('#penjadwalanTable').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
         });
     </script>
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop

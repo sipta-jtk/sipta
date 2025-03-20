@@ -19,34 +19,74 @@
                     <h3 class="card-title">Status Pengajuan</h3>
                 </div>
                 <div class="card-body">
-                    <p><strong>Status:</strong> {{ ucfirst($pengajuan->status_konfirmasi) }}</p>
+                    @if($pengajuan->status_konfirmasi === 'disetujui')
+                        <strong>Status:</strong><span class="badge bg-success">Disetujui</span>
+                    @elseif($pengajuan->status_konfirmasi === 'tidak_disetujui')
+                        <strong>Status:</strong><span class="badge bg-danger">Ditolak</span>
+                    @else
+                        <strong>Status:</strong><span class="badge bg-warning">Pending</span>
+                    @endif
                     @if($pengajuan->catatan)
                         <p><strong>Catatan dari Dosen:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> {{ ucfirst($pengajuan->jenis_pangajuan) }}</p>
+                    <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
                 </div>
             </div>
         @endif
 
         <div class="card">
-            <div class="card-header bg-success text-white">
-                <h3 class="card-title">Form Pengajuan</h3>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('verifikasi.store') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="jenis_pengajuan">Jenis Pengajuan</label>
-                        <select name="jenis_pengajuan" id="jenis_pengajuan" class="form-control" required>
-                            <option value="seminar3">Seminar 3</option>
-                            <option value="sidang">Sidang</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Ajukan</button>
-                </form>
-            </div>
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Daftar Artefak</h3>
         </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nama Artefak</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $item['nama_artefak'] }}</td>
+                            <td>
+                                @if ($item['status'] === 'Sudah di-upload')
+                                    <span class="badge bg-success">{{ $item['status'] }}</span>
+                                @else
+                                    <span class="badge bg-danger">{{ $item['status'] }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2" class="text-center">Tidak ada data artefak.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <form action="{{ route('verifikasi.store') }}" method="POST" class="text-center mt-4">
+                @csrf
+                <button type="submit" class="btn btn-primary" 
+                    @if ($tidakBisaAjukan) disabled @endif>
+                    Ajukan Verifikasi Berkas
+                </button>
+            </form>
+
+            @if ($pengajuan && in_array($pengajuan->status_konfirmasi, ['disetujui', 'pending']))
+                <div class="alert alert-warning mt-3">
+                    Pengajuan tidak dapat dilakukan karena status konfirmasi adalah <strong>{{ $pengajuan->status_konfirmasi }}</strong>.
+                </div>
+            @endif
+
+            @if ($adaBelumUpload)
+                <div class="alert alert-danger mt-3">
+                    Pengajuan tidak dapat dilakukan karena ada artefak yang belum di-upload.
+                </div>
+            @endif
+        </div>
+    </div>
     </div>
 </div>
 @stop

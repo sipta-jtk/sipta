@@ -38,5 +38,7 @@ Route::get('/persetujuan-pembatalan-jadwal-seminar', [PembatalanJadwalSeminarSid
 Route::get('/persetujuan-pembatalan-jadwal-sidang', [PembatalanJadwalSeminarSidangController::class, 'indexPersetujuanPembatalanJadwalSidang']);
 
 //verifikasi berkas pengajuan mahasiswa
-Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->name('verifikasi.create');
-Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->name('verifikasi.store');
+Route::middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
+    Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->middleware(['auth'])->name('verifikasi.create');
+    Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->middleware(['auth'])->name('verifikasi.store');
+});

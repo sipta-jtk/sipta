@@ -385,6 +385,16 @@ return [
                     'text' => 'Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                 ],
+                [
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa',
+                    'url' => $prefix . '/verifikasi-berkas',
+                    'can' => 'mahasiswa_ta',
+                ],
+                [
+                    'text' => 'Penilaian',
+                    'url' => $prefix . '/DosenTabelPenilaian',
+                    'can' => 'dosen',
+                ]
             ]
         ],
         [
