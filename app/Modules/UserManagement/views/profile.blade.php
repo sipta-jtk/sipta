@@ -14,7 +14,7 @@
 
                 <!-- Foto Profil -->
                 <div class="text-center mb-3">
-                    <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('default-profile.png') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
+                <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('storage/photos/default-profile1.jpg') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
                     <input type="file" name="photo" class="form-control mt-2">
                     <small>Ukuran maksimum 2MB, dengan format PNG atau JPG</small>
                 </div>
@@ -49,7 +49,7 @@
 
                     <div class="form-group">
                         <label>Program Studi</label>
-                        <input type="text" class="form-control" value="{{ Auth::user()->mahasiswa->id_prodi }}" readonly>
+                        <input type="text" class="form-control" value="{{ Auth::user()->mahasiswa->prodi->nama_prodi }}" readonly>
                     </div>
 
                     <div class="form-group">
