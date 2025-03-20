@@ -251,42 +251,136 @@ class FormulirPenilaianController extends Controller {
     //     }
     // }
 
+    // public function ubahAspek($id)
+    // {
+    //     // Get the form data
+    //     $formPenilaian = FormPenilaian::where('kode_fta', $id)->firstOrFail();
+    //     $prodiList = Prodi::all();
+        
+    //     // Create the aspek object structure expected by the view
+    //     $aspek = (object)[
+    //         'id' => $formPenilaian->kode_fta,
+    //         'kodeFTA' => $formPenilaian->kode_fta,
+    //         'namaFTA' => $formPenilaian->nama_fta,
+    //         'jenisForm' => $formPenilaian->jenis_form,
+    //         'namaProdi' => $formPenilaian->prodi->nama_prodi,
+    //         'tanggalTenggat' => $formPenilaian->tanggal_tenggat_pengisian,
+    //         'waktuTenggat' => $formPenilaian->waktu_tenggat_pengisian ?? '23:59',
+    //     ];
+        
+    //     // Get related criteria based on form type
+    //     if ($formPenilaian->jenis_form === 'Penilaian') {
+    //         $aspek->penilaian = KriteriaPenilaian::where('kode_fta', $id)->get();
+    //         $aspek->feedback = []; // Empty array to avoid null errors
+    //     } else {
+    //         $aspek->feedback = AspekFeedback::where('kode_fta', $id)->get();
+    //         $aspek->penilaian = []; // Empty array to avoid null errors
+    //     }
+        
+    //     return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_aspek_penilaian', 
+    //         compact('aspek', 'prodiList'));
+    // }
+
     public function ubahAspek($id)
     {
-        // Get the form data
-        $formPenilaian = FormPenilaian::where('kode_fta', $id)->firstOrFail();
+        // Get the form data with related penilaian
+        $formPenilaian = FormPenilaian::with(['kriteriaPenilaian', 'aspekFeedback'])
+            ->where('kode_fta', $id)
+            ->firstOrFail();
+        
         $prodiList = Prodi::all();
         
         // Create the aspek object structure expected by the view
         $aspek = (object)[
-            'id' => $formPenilaian->kode_fta, // Using kode_fta as the ID
+            'id' => $formPenilaian->kode_fta,
             'kodeFTA' => $formPenilaian->kode_fta,
             'namaFTA' => $formPenilaian->nama_fta,
             'jenisForm' => $formPenilaian->jenis_form,
             'namaProdi' => $formPenilaian->prodi->nama_prodi,
             'tanggalTenggat' => $formPenilaian->tanggal_tenggat_pengisian,
-            'waktuTenggat' => '23:59', // Default value or you can extract from your date if time is stored
+            // 'waktuTenggat' => $formPenilaian->waktu_tenggat_pengisian ?? '23:59',
+            'penilaian' => $formPenilaian->kriteriaPenilaian,
+            'feedback' => $formPenilaian->aspekFeedback
         ];
         
-        // Get related criteria based on form type
-        if ($formPenilaian->jenis_form === 'Penilaian') {
-            $aspek->penilaian = KriteriaPenilaian::where('kode_fta', $id)->get();
-            $aspek->feedback = []; // Empty array to avoid null errors
-        } else {
-            $aspek->feedback = AspekFeedback::where('kode_fta', $id)->get();
-            $aspek->penilaian = []; // Empty array to avoid null errors
-        }
-
-        Log::info("Aspek: " . json_encode($aspek));
-        Log::info("Prodi: " . json_encode($prodiList));
+        // Debug - memastikan data ditemukan
+        Log::info("Aspek Data: ", ['aspek' => $aspek, 'kriteria' => $formPenilaian->kriteriaPenilaian]);
         
         return view('KelolaPenilaianTA.views.formulir-penilaian.ubah_aspek_penilaian', 
             compact('aspek', 'prodiList'));
     }
 
-    public function updateFormulir(Request $request)
+    public function updateAspek(Request $request, $id)
     {
-        return redirect()->route('formulir-penilaian.index')->with('success', 'Formulir penilaian berhasil diperbarui.');
+        // Validate the request
+        $request->validate([
+            'tanggalTenggat' => 'required|date',
+            'bobot_kriteria.*' => 'required|integer|min:0|max:100',
+        ]);
+
+        // Find the form
+        $formPenilaian = FormPenilaian::where('kode_fta', $id)->firstOrFail();
+
+        // Update the form's deadline
+        $formPenilaian->tanggal_tenggat_pengisian = $request->tanggalTenggat;
+        $formPenilaian->save();
+
+        // Check form type and update accordingly
+        if ($formPenilaian->jenis_form == 'penilaian') {
+            // Calculate total weight
+            $totalBobot = array_sum($request->bobot_kriteria);
+
+            // Check if total weight is 100
+            if ($totalBobot != 100) {
+                return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
+            }
+
+            // Delete existing criteria
+            KriteriaPenilaian::where('kode_fta', $id)->delete();
+
+            // Add new criteria
+            $namaKriteria = $request->nama_kriteria;
+            $bobotKriteria = $request->bobot_kriteria;
+
+            if ($namaKriteria) {
+                foreach ($namaKriteria as $index => $nama) {
+                    // Skip empty rows
+                    if (empty($nama)) {
+                        continue;
+                    }
+
+                    KriteriaPenilaian::create([
+                        'kode_fta' => $id,
+                        'nama_kriteria' => $nama,
+                        'bobot_kriteria' => $bobotKriteria[$index] ?? 0,
+                    ]);
+                }
+            }
+        } else {
+            // Delete existing feedback aspects
+            AspekFeedback::where('kode_fta', $id)->delete();
+
+            // Add new feedback aspects
+            $namaAspekFeedback = $request->nama_aspek_feedback;
+
+            if ($namaAspekFeedback) {
+                foreach ($namaAspekFeedback as $nama) {
+                    // Skip empty rows
+                    if (empty($nama)) {
+                        continue;
+                    }
+
+                    AspekFeedback::create([
+                        'kode_fta' => $id,
+                        'nama_aspek_feedback' => $nama,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('formulir-penilaian.index')
+            ->with('success', 'Aspek penilaian berhasil diperbarui.');
     }
+
 
 }

@@ -20,7 +20,7 @@
 
 @section('content')
     <div class="p-4">
-        <form action="{{ route('aspek-penilaian.update', $aspek->id) }}" method="POST">
+        <form action="{{ route('aspek-penilaian.update', $aspek->id) }}" method="POST" id="aspekForm">
             @csrf
             @method('PUT')
 
@@ -59,59 +59,114 @@
                 </div>
             </div>
 
-            <!-- Aspek Penilaian -->
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <h6><strong>Aspek Penilaian</strong></h6>
-                <button type="button" class="btn btn-dark btn-sm" id="addRow">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
+            <!-- Form Penilaian Section -->
+            @if($aspek->jenisForm == 'penilaian')
+                <!-- Aspek Penilaian -->
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6><strong>Aspek Penilaian</strong></h6>
+                    <button type="button" class="btn btn-dark btn-sm" id="addRow">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
 
-            <div class="table-container mb-3">
-                <table class="table text-center" id="tablePenilaian" style="{{ $aspek->jenisForm == 'Penilaian' ? '' : 'display: none;' }}">
-                    <thead class="sticky-header">
-                        <tr class="bg-dark text-white">
-                            <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
-                            <th style="min-width: 100px;">Bobot (%)</th>
-                            <th style="min-width: 100px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="aspekPenilaianTable">
-                        @foreach($aspek->penilaian as $penilaian)
-                        <tr>
-                            <td><input type="text" class="form-control" name="nama_kriteria[]" value="{{ $penilaian->nama_kriteria }}" required></td>
-                            <td><input type="number" class="form-control" name="bobot_kriteria[]" value="{{ $penilaian->bobot_kriteria }}" required></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-container mb-3">
+                    <table class="table text-center" id="tablePenilaian">
+                        <thead class="sticky-header">
+                            <tr class="bg-dark text-white">
+                                <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
+                                <th style="min-width: 100px;">Bobot (%)</th>
+                                <th style="min-width: 100px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aspekPenilaianTable">
+                            @forelse($aspek->penilaian as $penilaian)
+                                <tr>
+                                    <td><input type="text" class="form-control" name="nama_kriteria[]" value="{{ $penilaian->nama_kriteria }}" required></td>
+                                    <td><input type="number" class="form-control" name="bobot_kriteria[]" value="{{ $penilaian->bobot_kriteria }}" required></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-row">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada data kriteria penilaian.</td>
+                                </tr>
+                            @endforelse
+                            
+                            <!-- Tambahkan baris kosong jika diperlukan -->
+                            @if(count($aspek->penilaian) == 0)
+                                @for ($i = 0; $i < 4; $i++)
+                                    <tr>
+                                        <td><input type="text" class="form-control" name="nama_kriteria[]" value=""></td>
+                                        <td><input type="number" class="form-control" name="bobot_kriteria[]" value=""></td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endfor
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <!-- Aspek Feedback -->
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6><strong>Aspek Feedback</strong></h6>
+                    <button type="button" class="btn btn-dark btn-sm" id="addFeedbackRow">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
 
-                <table class="table text-center" id="tableFeedback" style="{{ $aspek->jenisForm == 'Feedback' ? '' : 'display: none;' }}">
-                    <thead class="sticky-header">
-                        <tr class="bg-dark text-white">
-                            <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
-                            <th style="min-width: 100px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="aspekFeedbackTable">
-                        @foreach($aspek->feedback as $feedback)
-                        <tr>
-                            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value="{{ $feedback->nama_aspek_feedback }}" required></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-container mb-3">
+                    <table class="table text-center" id="tableFeedback">
+                        <thead class="sticky-header">
+                            <tr class="bg-dark text-white">
+                                <th style="min-width: 300px;">Pertanyaan Feedback</th>
+                                <th style="min-width: 100px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aspekFeedbackTable">
+                            @forelse($aspek->feedback as $feedback)
+                                <tr>
+                                    <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value="{{ $feedback->nama_aspek_feedback }}" required></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="text-center">Tidak ada data pertanyaan feedback.</td>
+                                </tr>
+                            @endforelse
+                            
+                            <!-- Tambahkan baris kosong jika diperlukan -->
+                            @if(count($aspek->feedback) == 0)
+                                @for ($i = 0; $i < 4; $i++)
+                                    <tr>
+                                        <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value=""></td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endfor
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+            <!-- Alert -->
+            <!-- <div id="alertBobot" class="alert alert-danger" role="alert" style="display: none;">
+                Total bobot harus 100 persen.
+            </div> -->
 
             <div class="row">
                 <!-- Tanggal Tenggat -->
@@ -122,13 +177,7 @@
                     </div>
                 </div>
 
-                <!-- Waktu Tenggat -->
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="waktuTenggat">Waktu Tenggat</label>
-                        <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" value="{{ $aspek->waktuTenggat }}" required>
-                    </div>
-                </div>
+
             </div>
 
             <!-- Tombol Submit -->
