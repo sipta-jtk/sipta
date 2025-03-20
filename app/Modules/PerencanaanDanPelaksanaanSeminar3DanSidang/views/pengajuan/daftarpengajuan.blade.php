@@ -13,6 +13,16 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
+
+@if (is_null($verifikasi->kota ?? null))
+    <div class="p-4 bg-light text-center">
+        <h3 class="flex-grow-1 p-5">Anda belum memiliki KoTA.</h3>
+    </div>
+@elseif (is_null($verifikasi->dosen ?? null))
+    <div class="p-4 bg-light text-center">
+        <h3 class="flex-grow-1 p-5">Anda belum memiliki pembimbing atau penguji.</h3>
+    </div>
+@else
 <div class="row p-4 bg-light text-center">
     <!-- Card Pengajuan Seminar 3 -->
     <div class="col-md-6">
@@ -26,7 +36,7 @@
                 <p class="flex-grow-1">Seminar 3 dapat diajukan setelah pengajuan berkas persyaratan Seminar 3 telah mendapat persetujuan.</p>
                 <div class="mt-auto">
                     @if ($seminar3Approved)
-                        <a href="{{ route('pengajuan-seminar3') }}" class="btn btn-primary">Buat Pengajuan</a>
+                        <a href="{{ route('pengajuan-seminar3', ['id_kota']) }}" class="btn btn-primary">Buat Pengajuan</a>
                     @else
                         <button class="btn btn-secondary" disabled>Belum Memenuhi Syarat</button>
                     @endif
@@ -56,6 +66,7 @@
         </x-adminlte-card>
     </div>
 </div>
+@endif
 @stop
 
 @section('js')

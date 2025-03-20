@@ -5,23 +5,27 @@ use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\Pembatala
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
 
 // PENGAJUAN JADWAL
-//daftar pengajuan 
-Route::get('pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'index'])
-    ->name('pengajuan');
-Route::get('pengajuan/{id_kota}', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
-    ->name('pengajuan-id');
+Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
+    //daftar pengajuan 
+    Route::get('pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
+        ->middleware(['auth'])
+        ->name('pengajuan');
 
-//pengajuan jadwal seminar 3
-Route::get('pengajuan-seminar3', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuanSeminar3'])
-    ->name('pengajuan-seminar3');
+    //pengajuan jadwal seminar 3
+    Route::get('pengajuan-seminar3', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuanSeminar3'])
+        ->middleware(['auth'])
+        ->name('pengajuan-seminar3');
 
-//pengajuan jadwal sidang
-Route::get('pengajuan-sidang', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuanSidang'])
-    ->name('pengajuan-sidang');
+    //pengajuan jadwal sidang
+    Route::get('pengajuan-sidang', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuanSidang'])
+        ->middleware(['auth'])
+        ->name('pengajuan-sidang');
 
-//tambah pengajuan baru
-Route::post('pengajuan-tambah/{id_kota}', [PengajuanJadwalKotaSeminar3DanSidang::class, 'tambahPengajuanPenjadwalan'])
-    ->name('pengajuan-tambah');
+    //tambah pengajuan baru
+    Route::post('pengajuan-tambah/{id_kota}', [PengajuanJadwalKotaSeminar3DanSidang::class, 'tambahPengajuanPenjadwalan'])
+        ->middleware(['auth'])
+        ->name('pengajuan-tambah');
+});
 
 // PEMBATALAN JADWAL
 //jadwal seminar
