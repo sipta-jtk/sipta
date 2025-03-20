@@ -6,14 +6,7 @@
 <h1 class="text-center">LAPORAN TA - {{ strtoupper($kategori) }}</h1>
 @stop
 
-<!-- Add these in your blade template's head section or before the closing body tag -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-<script>
-    // Set the path to the PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-</script>
 
-<meta name="csrf-token" content="{{ csrf_token() }}">
 
 @section('content')
 <div class="container">
@@ -516,6 +509,7 @@
         });
 
         // Handle tambah subkategori
+        // Handle tambah subkategori
         document.getElementById('tambahSubkategoriForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -528,17 +522,10 @@
                     body: formData,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json',
+                        // Remove the 'Content-Type' header to let the browser set it with the correct boundary for FormData
                     },
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         // Add new subcategory to dropdown
@@ -562,7 +549,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan: ' + error.message);
+                    alert('Terjadi kesalahan saat menambahkan subkategori');
                 });
         });
 
