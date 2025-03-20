@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Modules\UserManagement\Controllers;
-
+use App\Models\Kbk;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +18,9 @@ class UserManagementController extends Controller
         ->join('user', 'dosen.nip', '=', 'user.username')
         ->select('dosen.*', 'user.nama', 'user.email', 'user.no_whatsapp')
         ->get();
-        return view('UserManagement.views.manage_dosen', compact('dosen'));
+
+        $listkbk = Kbk::all();
+        return view('UserManagement.views.manage_dosen', compact('dosen', 'listkbk'));
     }
 
     public function manage_mhs()
