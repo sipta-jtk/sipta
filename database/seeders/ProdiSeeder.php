@@ -19,15 +19,15 @@ class ProdiSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         Prodi::create([
-            'nama_prodi' => 'Teknik Informatika',
+            'nama_prodi' => 'D3-Teknik Informatika',
             'maksimal_anggota_kota' => 3,
-            'maksimal_mahasiswa_bimbingan' => 5
+            'maksimal_mahasiswa_bimbingan' => 10
         ]);
 
         Prodi::create([
-            'nama_prodi' => 'Teknik Elektro',
-            'maksimal_anggota_kota' => 3,
-            'maksimal_mahasiswa_bimbingan' => 6
+            'nama_prodi' => 'D4-Tekinik Informatika',
+            'maksimal_anggota_kota' => 2,
+            'maksimal_mahasiswa_bimbingan' => 8
         ]);
     }
 }

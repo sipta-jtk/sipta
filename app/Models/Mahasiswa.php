@@ -52,8 +52,8 @@ class Mahasiswa extends Model
         return $this->hasMany(NilaiKriteria::class, 'nim', 'nim');
     }
 
-    public function mahasiswaDosenDokumen()
+    public function nilaiRubrik()
     {
-        return $this->hasMany(MahasiswaDosenDokumen::class, 'nim', 'nim');
+        return $this->hasMany(NilaiRubrik::class, 'nim', 'nim');
     }
 }

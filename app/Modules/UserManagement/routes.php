@@ -16,11 +16,21 @@ use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // Route untuk login
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('login');
+
 Route::get('/login', function () {
     return view('UserManagement.views.auth.login');
 })->name('login');
+
+// Route untuk logout
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware(['auth', 'redirect.after.logout']);
 
 // Route untuk register
 Route::get('/register', function () {
