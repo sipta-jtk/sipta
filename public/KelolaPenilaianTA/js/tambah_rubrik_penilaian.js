@@ -25,12 +25,9 @@ $(document).ready(function () {
             </td>
             <td><p class="form-control-plaintext bobot"></p></td>
             <td><input type="text" class="form-control" name="detail[]" required></td>
-            <td><input type="text" class="form-control" name="lebih80[]" required></td>
-            <td><input type="text" class="form-control" name="tujuhPuluhLima[]" required></td>
-            <td><input type="text" class="form-control" name="tujuhPuluh[]" required></td>
-            <td><input type="text" class="form-control" name="enamPuluhLima[]" required></td>
-            <td><input type="text" class="form-control" name="enamPuluh[]" required></td>
-            <td><input type="text" class="form-control" name="kurang60[]" required></td>
+            @foreach ($rentangNilai as $nilai)
+                <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
+            @endforeach
             <td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>
             </button></td>

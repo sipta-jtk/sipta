@@ -15,11 +15,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     Route::prefix('formulir-penilaian')->group(function () {
         // Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian']);
         Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');
-        // Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
         Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
         Route::get('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek-formulir');
-        // Route::post('/kelola-penilaian-ta/formulir-penilaian/tambah-aspek-formulir', [FormulirPenilaianController::class, 'simpanAspekFormulir'])->name('formulir-penilaian.simpan');
-        // Route::post('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'simpanAspekFormulir'])->name('formulir-penilaian.simpan');
         Route::post('/formulir-penilaian/simpan', [FormulirPenilaianController::class, 'store'])->name('formulir-penilaian.simpan');
 
         Route::get('/detail', function () {
@@ -32,7 +29,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
         Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
 
-        Route::get('/kelola-penilaian-ta/formulir-penilaian/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
+        Route::get('/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
     });
 
 

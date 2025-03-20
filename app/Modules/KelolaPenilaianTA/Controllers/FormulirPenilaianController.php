@@ -92,16 +92,32 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_aspek_formulir', compact('prodiList'));
     }
 
+    public function rentangPenilaian()
+    {
+        $rentangNilai = DB::table('rentang_nilai')
+            ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+            ->select('id_nilai', 'batas_atas', 'batas_bawah')
+            ->orderBy('batas_atas', 'desc')
+            ->get();
+
+        return $rentangNilai;
+    }
+
     public function tambahRubrikPenilaian(): View
     {
         $formPenilaianList = FormPenilaian::all(); // Ambil semua data Form Penilaian dari database
         $kriteriaList = KriteriaPenilaian::all(); // Ambil semua data Kriteria Penilaian dari database
-        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian', compact('formPenilaianList', 'kriteriaList'));
+        $rentangNilai = $this->rentangPenilaian(); // Ambil rentang nilai
+
+        return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian', compact('formPenilaianList', 'kriteriaList', 'rentangNilai'));
     }
 
     public function getKriteriaByKodeFTA($kodeFTA)
     {
-        $kriteria = KriteriaPenilaian::where('kode_fta', $kodeFTA)->get();
+        $kriteria = KriteriaPenilaian::where('kode_fta', $kodeFTA)
+            ->select('id', 'nama_kriteria', 'bobot_kriteria')
+            ->get();
+        
         return response()->json($kriteria);
     }
 
