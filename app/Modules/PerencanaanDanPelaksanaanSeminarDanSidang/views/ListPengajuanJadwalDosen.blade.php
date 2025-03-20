@@ -45,6 +45,7 @@
       <div class="modal-footer">
         <form id="formVerifikasi" method="POST">
           @csrf
+          @method('PUT')
           <input type="hidden" name="id" id="inputId">
           <input type="hidden" name="status_verifikasi" id="inputStatus">
           <button type="submit" class="btn btn-danger btn-tolak">Tolak</button>
@@ -82,6 +83,7 @@
     <script>
         $(document).ready(function() {
             let data = @json($dataPengajuan);
+            console.log(data);
 
             let table = $('#pengajuanTable').DataTable({
                 data: data,
@@ -120,13 +122,14 @@
                         data: null,
                         className: 'text-center',
                         render: function(data, type, row) {
-                            return `<button class="btn btn-primary btn-proses" 
-                                        data-id="${row.ID}" 
-                                        data-kelompok="KoTA ${row.kelompok}" 
+                            return `<button class="btn btn-primary btn-proses" '
+                                        data-idpenjadwalan="${row.id_penjadwalan}"
+                                        data-kelompok="${row.id_kota}" 
                                         data-judul="${row.judul_ta}" 
-                                        data-tanggal="${row.tanggal_kegiatan}" 
-                                        data-ruangan="${row.ruangan}" 
-                                        data-status="${row.status_verifikasi}">
+                                        data-tanggal="${row.tanggal}" 
+                                        data-ruangan="${row.id_ruangan}" 
+                                        data-sesi="${row.sesi}"
+                                        data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
                         },
@@ -148,29 +151,40 @@
         });
 
         $(document).on('click', '.btn-proses', function() {
-            let id = $(this).data('id');
-            let kelompok = $(this).data('kelompok');
+            let tipe = @json($tipe);
+            console.log(tipe);
+            let id_penjadwalan = $(this).data('idpenjadwalan');
+            let id = $(this).data('kelompok');
             let judul = $(this).data('judul');
             let tanggal = $(this).data('tanggal');
             let ruangan = $(this).data('ruangan');
-            let status = $(this).data('status_pembimbing1');
+            let sesi = $(this).data('sesi');
+            let status = $(this).data('status');
 
             // Isi data ke dalam modal
-            $('#modalKelompok').text(kelompok);
+            $('#modalKelompok').text(id);
             $('#modalJudul').text(judul);
             $('#modalTanggal').text(tanggal);
             $('#modalRuangan').text(ruangan);
+            $('#modalSesi').text(sesi);
             $('#modalStatus').text(status);
 
             // Set ID untuk form
             $('#inputId').val(id);
 
             // Set action form
-            $('#formVerifikasi').attr('action', `/verifikasi/${id}`);
+            $('#formVerifikasi').attr('action', `/kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');
         });
 
+        $(document).on('click', '.btn-setuju', function() {
+            $('#inputStatus').val('Disetujui'); // Set status menjadi Disetujui
+        });
+
+        $(document).on('click', '.btn-tolak', function() {
+            $('#inputStatus').val('Ditolak'); // Set status menjadi Ditolak
+        });
     </script>
 @stop

@@ -429,12 +429,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => '/kelola-pengajuan-jadwal/seminar-3',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/seminar-3',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => '/kelola-pengajuan-jadwal/sidang-akhir',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]

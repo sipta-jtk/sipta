@@ -6,118 +6,134 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
-    public function getList(Request $request, String $tipe): View
+    public function getListAsKoordinatorTA(Request $request, String $tipe): View
     {
-        // pindah ke versi 4
-        // tipe_alokasi 1,2,3,4 di match ke dosbing1 dosbing2 penguji1 penguji2
-
-
-
-
-        // Mendapatkan role dan nip dari user yang sedang login
         $nip = auth()->user()->username;
-        $user = DB::table('users')->where('username', auth()->user()->username)->value('role');
-        // Ganti tabel menjadi alokasi_penguji di versi 4
-        $role = DB::table('alokasi_pembimbing')->where('nip', auth()->user()->username)->value('urutan_prioritas_terpilih');
+        
+        $role = DB::table('dosen')->where('nip', $nip)->value('role_dosen');
 
-        // Menentukan agenda berdasarkan tipe agar bisa dijadikan page berbeda
         $agenda = ($tipe == 'seminar-3') ? 'seminar_3' : 'sidang';
-
-        // Menentukan kolom status yang akan dicek berdasarkan role
-        // Kolom status yang akan diubah sesuai dengan role
-        if ($role === 'dosen') {
-            $statusColumns = ['pengajuan_jadwal_kota.status_dosen_pembimbing_1', 'pengajuan_jadwal_kota.status_dosen_pembimbing_2'];
-        }
         
-        $dataPengajuan = DB::table('alokasi_pembimbing')
-            ->rightJoin('pengajuan_pembimbing', 'alokasi_pembimbing.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
-            ->rightJoin('pengajuan_jadwal_kota', 'pengajuan_pembimbing.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
-            ->rightJoin('penjadwalan', 'pengajuan_jadwal_kota.id_kota', '=', 'penjadwalan.id_kota')
-            ->where('alokasi_pembimbing.nip', $nip)
-            ->where('alokasi_pembimbing.status_alokasi', 'fix')
-            ->where(function ($query) use ($statusColumns) {
-                foreach ($statusColumns as $column) {
-                    $query->orWhereNull($column);
-                }
-            })
-            ->where('penjadwalan.agenda', $agenda)
-            ->select([
-                'alokasi_pembimbing.nip',
-                'pengajuan_jadwal_kota.id_kota',
-                'penjadwalan.agenda',
-                'penjadwalan.id_ruangan',
-                'penjadwalan.sesi',
-                'penjadwalan.tanggal',
-                'pengajuan_jadwal_kota.status_dosen_pembimbing_1',
-                'pengajuan_jadwal_kota.status_dosen_pembimbing_2'
-            ])
-            ->get();
-
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwal', compact('dataPengajuan', 'tipe'));
-    }
-
-    public function verifikasi(Request $request, int $id, string $tipe)
-    {
-        $keputusan = $request->input('keputusan');
-        $catatan = $request->input('catatan', '');
-
-        // Menentukan status verifikasi berdasarkan keputusan
-        $status = ($keputusan === 'Ditolak') ? false : true;
-        session()->put("status_verifikasi_$id", $status);
-
-        // Cek apakah ada data sebelumnya di session
-        $pengajuanSebelumnya = session()->get("pengajuan_$id", (object) []);
-
-        // Simpan data ke session
-        session()->put("pengajuan_$id", (object) [
-            'kelompok' => $pengajuanSebelumnya->kelompok ?? 'KoTA 002',
-            'judul_ta' => $pengajuanSebelumnya->judul_ta ?? 'Judul Tidak Diketahui',
-            'status' => $status, // Simpan status sebagai boolean
-            'catatan' => $catatan,
-            'tanggal_pengajuan' => $pengajuanSebelumnya->tanggal_pengajuan ?? now(),
-        ]);
-
-        // Redirect ke halaman yang sesuai
-        return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
-                        ->with('success', "Pengajuan telah " . ($status ? 'Disetujui' : 'Ditolak') . ".");
-    }
-
-    public function json(){
-
-    //    Cari data pengajuan dengan detail kota
-        // $dataPengajuan = DB::table('pengajuan_jadwal_kota')->join('kota', 'pengajuan_jadwal_kota.id_kota', '=', 'kota.id_kota')->get();
-        
-        $dataPengajuan = DB::table('alokasi_pembimbing')
-        ->rightJoin('pengajuan_pembimbing', 'alokasi_pembimbing.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
-        ->rightJoin('pengajuan_jadwal_kota', 'pengajuan_pembimbing.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
-        ->rightJoin('penjadwalan', 'pengajuan_jadwal_kota.id_kota', '=', 'penjadwalan.id_kota')
-        ->where('alokasi_pembimbing.nip', '197201061999031002')
-        ->where('alokasi_pembimbing.status_alokasi', 'fix')
-        ->where(function ($query) {
-            $query->whereNull('pengajuan_jadwal_kota.status_dosen_pembimbing_1')
-                  ->orWhereNull('pengajuan_jadwal_kota.status_dosen_pembimbing_2');
-        })
-        ->whereIn('penjadwalan.agenda', ['seminar_3', 'sidang'])
-        ->select([
-            'alokasi_pembimbing.nip',
-            'pengajuan_jadwal_kota.id_kota',
+        $dataPengajuan = DB::table('pengajuan_jadwal_kota')
+        ->join('penjadwalan', 'pengajuan_jadwal_kota.id_penjadwalan', '=', 'penjadwalan.id_penjadwalan')
+        ->join('kota', 'pengajuan_jadwal_kota.id_kota', '=', 'kota.id_kota')
+        ->select(
+            'pengajuan_jadwal_kota.id_penjadwalan',
+            'kota.id_kota',
+            'kota.judul_ta',
             'penjadwalan.agenda',
+            'penjadwalan.tanggal',
             'penjadwalan.id_ruangan',
             'penjadwalan.sesi',
+            'pengajuan_jadwal_kota.status_koordinator_ta'
+        )
+        ->where('penjadwalan.agenda', $agenda)
+        ->where('pengajuan_jadwal_kota.status_dosen_penguji_1', 1)
+        ->where('pengajuan_jadwal_kota.status_dosen_penguji_2', 1)
+        ->get();
+        
+
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalKoordinator', compact('dataPengajuan', 'tipe'));
+    }
+
+    public function getListAsDosenPembimbing(Request $request, String $tipe): View
+    {
+        $nip = auth()->user()->username;
+        
+        $role = DB::table('alokasi_dosen')->where('nip', $nip)->value('tipe_alokasi');
+
+        $agenda = ($tipe == 'seminar-3') ? 'seminar_3' : 'sidang';
+
+        $dataPengajuan = DB::table('penjadwalan')
+        ->join('pengajuan_jadwal_kota', 'pengajuan_jadwal_kota.id_penjadwalan', '=', 'penjadwalan.id_penjadwalan')
+        ->leftJoin('kota', 'kota.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
+        ->leftJoin('pengajuan_pembimbing', 'pengajuan_pembimbing.id_kota', '=', 'kota.id_kota')
+        ->leftJoin('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+        ->where('penjadwalan.agenda', $agenda)
+        ->whereRaw("
+            (alokasi_dosen.urutan_prioritas = 1 AND pengajuan_jadwal_kota.status_dosen_pembimbing_1 IS NULL) 
+            OR 
+            (alokasi_dosen.urutan_prioritas = 2 AND pengajuan_jadwal_kota.status_dosen_pembimbing_2 IS NULL)
+        ")
+        ->select(
+            'pengajuan_jadwal_kota.id_penjadwalan',
+            'kota.id_kota',
+            'kota.judul_ta',
+            'penjadwalan.agenda',
             'penjadwalan.tanggal',
+            'penjadwalan.id_ruangan',
+            'penjadwalan.sesi',
             'pengajuan_jadwal_kota.status_dosen_pembimbing_1',
-            'pengajuan_jadwal_kota.status_dosen_pembimbing_2'
-        ])
+            'pengajuan_jadwal_kota.status_dosen_pembimbing_2',
+            'alokasi_dosen.urutan_prioritas_terpilih'
+        )
         ->get();
     
-    
-
-
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.json', compact('dataPengajuan'));
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalDosen', compact('dataPengajuan', 'tipe'));
     }
+    
+    public function getListAsDosenPenguji(Request $request, String $tipe): View
+    {
+        $nip = auth()->user()->username;
+        
+        $role = DB::table('alokasi_dosen')->where('nip', $nip)->value('tipe_alokasi');
+
+        $agenda = ($tipe == 'seminar-3') ? 'seminar_3' : 'sidang';
+
+        $dataPengajuan = DB::table('penjadwalan')
+        ->join('pengajuan_jadwal_kota', 'pengajuan_jadwal_kota.id_penjadwalan', '=', 'penjadwalan.id_penjadwalan')
+        ->leftJoin('kota', 'kota.id_kota', '=', 'pengajuan_jadwal_kota.id_kota')
+        ->leftJoin('pengajuan_pembimbing', 'pengajuan_pembimbing.id_kota', '=', 'kota.id_kota')
+        ->leftJoin('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+        ->where('penjadwalan.agenda', $agenda)
+        ->whereRaw("
+            (alokasi_dosen.urutan_prioritas = 1 AND pengajuan_jadwal_kota.status_dosen_penguji_1 IS NULL) 
+            OR 
+            (alokasi_dosen.urutan_prioritas = 2 AND pengajuan_jadwal_kota.status_dosen_penguji_2 IS NULL)
+        ")
+        ->select(
+            'pengajuan_jadwal_kota.id_penjadwalan',
+            'kota.id_kota',
+            'kota.judul_ta',
+            'penjadwalan.agenda',
+            'penjadwalan.tanggal',
+            'penjadwalan.id_ruangan',
+            'penjadwalan.sesi',
+            'pengajuan_jadwal_kota.status_dosen_penguji_1',
+            'pengajuan_jadwal_kota.status_dosen_penguji_2',
+            'alokasi_dosen.urutan_prioritas_terpilih'
+        )
+        ->get();
+    
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalDosen', compact('dataPengajuan', 'tipe'));
+    }
+
+
+    public function verifikasiAsKoordinatorTA(Request $request, string $tipe, int $idPenjadwalan)
+    {
+        // Ambil status verifikasi dari request
+        $status = $request->input('status_verifikasi') === 'Ditolak' ? false : true;
+
+        // fungsi to api farhan
+
+
+        DB::table('pengajuan_jadwal_kota')
+        ->where('id_penjadwalan', $idPenjadwalan)
+        ->update(['status_koordinator_ta' => $status]);
+
+        // Redirect kembali ke halaman dengan pesan
+        return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
+                        ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
+    }
+
 
 }
 

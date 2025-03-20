@@ -88,5 +88,12 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
         });
+
+        /**********************************
+         * [Topik 2] - Fitur Kelola Jurusan
+        ***********************************/
+        Gate::define('akses-kelola-pengajuan-jadwal', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('koordinator_ta');
+        });
     }
 }
