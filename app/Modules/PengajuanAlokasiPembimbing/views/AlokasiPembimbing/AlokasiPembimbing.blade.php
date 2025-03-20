@@ -161,8 +161,12 @@
                             <input type="text" class="form-control text-center penguji" data-index="{{ $index }}" name="penguji3{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji3', this.value)">
                         </td>
                         <td class="align-middle" style="min-width: 150px;">
-                            <textarea class="form-control text-left auto-expand catatan-input" data-id="{{ $row['id_pengajuan_pembimbing'] }}" name="catatan_{{ $index }}" rows="1" style="overflow: hidden; resize: none;" oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">
-                                </textarea>
+                            <textarea class="form-control text-left auto-expand catatan-input"
+                                data-id="{{ $row['id_pengajuan_pembimbing'] }}"
+                                name="catatan_{{ $index }}"
+                                rows="1"
+                                style="overflow: hidden; resize: none;"
+                                oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">{{ trim($row['catatan'] ?? '') }}</textarea>
                         </td>
                 </tr>
                 @endforeach
