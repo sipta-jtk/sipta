@@ -29,8 +29,9 @@
         </div>
 
         <!-- Form Verifikasi -->
-        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->id_pengajuan]) }}" method="PUT">
+        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->id_pengajuan]) }}" method="POST">
             @csrf
+            @method('PUT')
             <input type="hidden" name="keputusan" id="keputusan" value="">
             <input type="hidden" name="catatan" id="catatan_input" value="">
 
@@ -83,7 +84,7 @@
 
             // Event ketika tombol "Tolak" diklik
             $('#btnTolak').on('click', function() {
-                keputusan = 'Ditolak';
+                keputusan = 'tidak_disetujui';
                 $('#keputusan').val(keputusan);
                 $('#containerCatatan').slideDown(); // Menampilkan container catatan
                 $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
@@ -93,7 +94,7 @@
 
             // Event ketika tombol "Setuju" diklik
             $('#btnSetuju').on('click', function() {
-                keputusan = 'Disetujui';
+                keputusan = 'disetujui';
                 $('#keputusan').val(keputusan);
                 $('#containerCatatan').slideUp(); // Menyembunyikan container catatan
                 $('#btnTolak').removeClass('active-btn').addClass('disabled-btn');
@@ -103,7 +104,7 @@
 
             // Saat Submit, masukkan catatan ke input hidden
             $('form').on('submit', function() {
-                if (keputusan === 'Ditolak') {
+                if (keputusan === 'tidak_disetujui') {
                     $('#catatan_input').val($('#catatan').val());
                 }
             });

@@ -72,8 +72,7 @@ class VerifikasiBerkasController extends Controller
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
 
-        dd($keputusan, $catatan, $tipe, $id);
-        if ($keputusan === 'Ditolak') {
+        if ($keputusan === 'tidak_disetujui') {
             // Ambil data berkas berdasarkan ID
             $dataKota = DB::table('kota')->where('id_kota', $id)->first();
 
@@ -84,23 +83,22 @@ class VerifikasiBerkasController extends Controller
                 }
             }
 
-            $status = 'tidak_disetujui';
         } else {
-            $status = 'disetujui';
+            // Update status_konfirmasi
+            DB::table('verifikasi_berkas_pengajuan')
+            ->where('id_pengajuan', $id)
+            ->update([
+                'status_konfirmasi' => $keputusan,
+                'catatan' => $catatan,
+                'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
         }
     
-        // Update status_konfirmasi
-        DB::table('verifikasi_berkas_pengajuan')
-        ->where('id_pengajuan', $id)
-        ->update([
-            'status_konfirmasi' => $status,
-            'catatan' => $catatan,
-            'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
-        ]);
+        
 
 
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
-            ->with('success', "Pengajuan telah $status.");
+            ->with('success', "Pengajuan telah $keputusan.");
     }
 
 }
