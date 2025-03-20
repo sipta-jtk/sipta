@@ -497,11 +497,13 @@ return [
                     'text' => 'Manajemen Akun Dosen',
                     'url' => $prefix . '/manajemen-akun-dosen',
                     'icon' => 'fas fa-user-tie',
+                    'can' => 'admin'
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
                     'url' => $prefix . '/manajemen-akun-mahasiswa',
-                    'icon' => 'fas fa-user-graduate'
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'admin'
                 ],
             ],
         ],
