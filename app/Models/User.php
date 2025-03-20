@@ -79,7 +79,7 @@ class User extends Authenticatable
 
     public function adminlte_desc()
     {
-        return $this->nama . ' - ' . ucfirst($this->role_user);;
+        return $this->nama . ' - ' . ucfirst($this->role_user);
     }
 
     public function adminlte_profile_url()
