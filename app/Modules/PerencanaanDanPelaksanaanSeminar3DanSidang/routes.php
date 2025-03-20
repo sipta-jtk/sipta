@@ -5,7 +5,7 @@ use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\Pembatala
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
 
 // PENGAJUAN JADWAL
-Route::middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
+Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
     //daftar pengajuan 
     Route::get('pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
         ->middleware(['auth'])
