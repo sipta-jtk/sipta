@@ -24,11 +24,42 @@ class SubKategoriSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
-            ['nama_subkategori' => 'Teknologi'],
-            ['nama_subkategori' => 'Pendidikan'],
-            ['nama_subkategori' => 'Kesehatan'],
-            ['nama_subkategori' => 'Bisnis'],
-            ['nama_subkategori' => 'Hiburan'],
+            [
+                'id_subkategori' => 1, 
+                'nama_subkategori' => 'Pendidikan'
+            ],
+            [
+                'id_subkategori' => 2, 
+                'nama_subkategori' => 'Kesehatan'
+            ],
+            [
+                'id_subkategori' => 3, 
+                'nama_subkategori' => 'Teknologi'
+            ],
+            [
+                'id_subkategori' => 4, 
+                'nama_subkategori' => 'Hiburan'
+            ],
+            [
+                'id_subkategori' => 5, 
+                'nama_subkategori' => 'Bisnis'
+            ],
+            [
+                'id_subkategori' => 6, 
+                'nama_subkategori' => 'Layanan'
+            ],
+            [
+                'id_subkategori' => 7, 
+                'nama_subkategori' => 'Ekonomi'
+            ],
+            [
+                'id_subkategori' => 8, 
+                'nama_subkategori' => 'Keamanan'
+            ],
+            [
+                'id_subkategori' => 9, 
+                'nama_subkategori' => 'Data'
+            ]
         ];
 
         foreach ($data as $item) {

@@ -1,5 +1,7 @@
 <?php
 
+$prefix = env('PREFIX_URL', 'sipta');
+
 return [
 
     /*
@@ -257,12 +259,12 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => '/',
-    'logout_url' => 'logout',
-    'login_url' => 'login',
-    'register_url' => 'register',
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
+    'dashboard_url' => env('PREFIX_URL', 'sipta') . '/',
+    'logout_url' => env('PREFIX_URL', 'sipta') . '/logout',
+    'login_url' => env('PREFIX_URL', 'sipta') . '/login',
+    'register_url' => env('PREFIX_URL', 'sipta') . '/register',
+    'password_reset_url' => env('PREFIX_URL', 'sipta') . '/password/reset',
+    'password_email_url' => env('PREFIX_URL', 'sipta') . '/password/email',
     'profile_url' => false,
     'disable_darkmode_routes' => false,
 
@@ -317,129 +319,106 @@ return [
         ],
         [
             'text' => 'blog',
-            'url' => 'admin/blog',
+            'url' => $prefix . '/admin/blog',
             'can' => 'manage-blog',
         ],
         ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-home',
             'submenu' => [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
-                    'url' => '/#',
+                    'url' => $prefix . '/#',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
-                            // 'icon' => 'fas fa-fw fa-file',
-                            'url' => '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
-                    'url' => '/#',
+                    'url' => $prefix . '/#',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Pembimbing',
-                            // 'icon' => 'fas fa-fw fa-file',
-                            'url' => '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                         ],
                         [
                             'text' => 'Formulir Kesediaan Membimbing',
-                            'url' => '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Pengelolaan Periode',
-                    'url' => '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
-                    'url' => '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
                     'text' => 'Jadwal Seminar 3',
-                    'url' => 'jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/jadwal-seminar',
                 ],
                 [
                     'text' => 'Jadwal Sidang',
-                    'url' => 'jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/jadwal-sidang',
                 ],
                 [
                     'text' => 'Pembatalan Seminar 3',
-                    'url' => 'persetujuan-pembatalan-jadwal-seminar',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
                 ],
                 [
                     'text' => 'Pembatalan Sidang',
-                    'url' => 'persetujuan-pembatalan-jadwal-sidang',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                 ],
             ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Kelola Penilaian Tugas Akhir',
-            // 'url' => '/KelolaPenilaianTA',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
                     'text' => 'Kelola Penilaian Tugas Akhir',
-                    // 'url' => '/KelolaPenilaianTA',
-                    // 'icon' => 'fas fa-fw fa-file',
                     'submenu' => [
                         [
                             'text' => 'Monitoring Mahasiswa',
-                            'url' => '/KelolaPenilaianTA/monitoring-mahasiswa',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-mahasiswa',
                         ],
                         [
                             'text' => 'Monitoring Feedback',
-                            'url' => '/KelolaPenilaianTA/monitoring-feedback',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-feedback',
                         ],
                         [
                             'text' => 'Monitoring Rubrik',
-                            'url' => '/KelolaPenilaianTA/monitoring-rubrik',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-rubrik',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => '/KelolaPenilaianTA/fomulir-penilaian',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/fomulir-penilaian',
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => '/KelolaPenilaianTA/pengelolaan-nilai',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => '/KelolaPenilaianTA/rekapitulasi-nilai',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/KelolaPenilaianTA/rekapitulasi-nilai',
                 ],
             ]
         ],
@@ -464,31 +443,31 @@ return [
         ],
         [
             'text' => 'Timeline',
-            'url' => '/timeline',
+            'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
+
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
         [
             'text' => 'Artefak',
-            'url' => '/#',
+            'url' => $prefix . '/#',
             'icon' => 'fas fa-fw fa-folder',
             'submenu' => [
                 [
                     'text' => 'Kelola Dokumen dan FTA',
-                    'url' => '/artefak',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'url' => $prefix . '/artefak',
                 ],
             ]
         ],
         [
             'text' => 'Cek Plagiarisme',
-            'url' => '/cek-plagiarisme',
+            'url' => $prefix . '/cek-plagiarisme',
             'icon' => 'fas fa-fw fa-file',
         ],
         [
             'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => '/penentuan-ambang-batas',
+            'url' => $prefix . '/penentuan-ambang-batas',
             'icon' => 'fas fa-scroll',
         ],
         ['header' => 'Pengaturan Pengguna'],
@@ -498,11 +477,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => '/manage_dosen',
+                    'url' => $prefix . '/manage_dosen',
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/#',
+                    'url' => $prefix . '/#',
+
                 ],
             ],
         ],

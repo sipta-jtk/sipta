@@ -26,8 +26,8 @@ class PengajuanPembimbing extends Model
         return $this->belongsTo(Kota::class, 'id_kota', 'id_kota');
     }
 
-    public function alokasiPembimbing()
+    public function alokasiDosen()
     {
-        return $this->hasMany(AlokasiPembimbing::class, 'id_pengajuan_pembimbing', 'id_pengajuan_pembimbing');
+        return $this->hasMany(AlokasiDosen::class, 'id_pengajuan_pembimbing', 'id_pengajuan_pembimbing');
     }
 }
