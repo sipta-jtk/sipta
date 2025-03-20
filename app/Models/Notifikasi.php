@@ -14,8 +14,7 @@ class Notifikasi extends Model
     protected $fillable = [
         'tipe_notifikasi',
         'judul',
-        'isi_notifikasi',
-        'sumber_notifikasi'
+        'isi_notifikasi'
     ];
 
     public function notifikasiKirim()
