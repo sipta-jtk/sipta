@@ -34,10 +34,9 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    Route::group(['prefix' => 'daftar-kesediaan-membimbing'], function () {
+    Route::group(['prefix' => 'daftar-kesediaan-membimbing', 'middleware' => ['auth', 'can:koordinator_ta'] ], function () {
         Route::get('/', [DaftarKesediaanMembimbingController::class, 'view_daftarKesediaanMembimbing']);
     });
-
     Route::group(['prefix' => 'jadwal-dosen-membimbing'], function () {
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
