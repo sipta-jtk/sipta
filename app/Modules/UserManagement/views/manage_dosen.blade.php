@@ -197,13 +197,13 @@
                                         fgroup-class="col-md-6" disable-feedback required/>
                                 
 
-                                    <x-adminlte-input name="id" label="ID" placeholder="ID"
+                                    <x-adminlte-input name="id" label="ID Dosen" placeholder="Misal: AE (sebagai Ardhian Ekawijana)"
                                         fgroup-class="col-md-6" disable-feedback  required  />
                                 </div>
                                 <div class="row">
                                     <x-adminlte-input name="no_wa" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
                                             fgroup-class="col-md-6" disable-feedback  required  />
-                                    <x-adminlte-input name="kode" label="Kode" placeholder="Kode"
+                                    <x-adminlte-input name="kode" label="Kode Dosen" placeholder="Misal: KO001N"
                                             fgroup-class="col-md-6" disable-feedback  required  />
                                 </div>
                                 <div class="row">

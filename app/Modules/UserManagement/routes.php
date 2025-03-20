@@ -68,14 +68,15 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
     ->name('pengajuan.pisah.kota.show');
-
-
-
 });
 
 
-Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
+Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])
+        ->name('form.pisah.kota')
+        ->middleware('can:mahasiswa_ta');
+
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
+Route::post('/form-pisah-kota/prakota', [FormPisahKoTAController::class, 'prakota'])->name('form.pisah.kota.prakota');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
         ->name('pengajuan.pisah.kota.terima')

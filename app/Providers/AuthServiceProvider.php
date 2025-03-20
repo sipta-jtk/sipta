@@ -55,7 +55,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Dosen
         Gate::define('dosen', function ($user) {
-            return $user->role_user === 'dosen';
+            return $user->role_user === 'dosen' && $user->dosen->status_dosen === 'aktif';
         });
 
         //Kaprodi
