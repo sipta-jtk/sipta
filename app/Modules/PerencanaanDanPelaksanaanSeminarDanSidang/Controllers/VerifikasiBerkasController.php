@@ -7,6 +7,8 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class VerifikasiBerkasController extends Controller
 {
@@ -53,36 +55,14 @@ class VerifikasiBerkasController extends Controller
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
 
-    public function show(String $tipe, $id){
-        if ($tipe === 'berkas-seminar-3'){
-            $dataKota = 
-            (object) [
-                'kelompok' => '2',
-                'judul_ta' => 'Sistem Informasi Akademik Berbasis Web',
-                'id_bidang' => 1,
-                'jenis_pengajuan' => 'Seminar 3',
-                'tanggal_pengajuan' => '2025-03-05',
-                'berkas' => [
-                    (object) ['nama' => 'Proposal TA', 'file' => 'proposal_ta.pdf'],
-                    (object) ['nama' => 'Laporan TA', 'file' => 'laporan_ta.pdf'],
-                    (object) ['nama' => 'Presentasi TA', 'file' => 'presentasi_ta.pptx']
-                ],
-            ];
-        } else {
-            $dataKota = 
-            (object) [
-                'kelompok' => '001',
-                'judul_ta' => 'Sistem Informasi Informasi Akademik Berbasis Web',
-                'id_bidang' => 1,
-                'jenis_pengajuan' => 'Sidang Akhir',
-                'tanggal_pengajuan' => '2025-03-05',
-                'berkas' => [
-                    (object) ['nama' => 'Proposal TA', 'file' => 'proposal_ta.pdf'],
-                    (object) ['nama' => 'Laporan TA', 'file' => 'laporan_ta.pdf'],
-                    (object) ['nama' => 'Presentasi TA', 'file' => 'presentasi_ta.pptx']
-                ],
-            ];
-        }
+    public function show(String $tipe, $idPengajuan): View
+    {
+        
+        $dataKota = DB::table('verifikasi_berkas_pengajuan')
+        ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
+        ->where('id_pengajuan', $idPengajuan)->first();
+
+        Log::info(json_encode($dataKota, JSON_PRETTY_PRINT));
 
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DetailPengajuan', compact('dataKota', 'tipe'));
     }
