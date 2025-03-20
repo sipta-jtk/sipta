@@ -67,7 +67,13 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        return 'https://picsum.photos/300/300';
+        // Cek apakah user memiliki foto profil
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);  // Path gambar profil
+        }
+
+        // Jika tidak ada foto profil, kembalikan gambar default
+        return asset('storage/photos/default-profile.png');
     }
 
     public function adminlte_desc()
