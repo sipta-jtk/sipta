@@ -459,23 +459,23 @@ return [
            
                 [
                     'text' => 'Program Studi',
-                    'url'  => 'program-studi',
+                    'url'  => $prefix . '/program-studi',
                     'icon' => 'fas fa-school',
                 ],
                 [
                     'text' => 'Kelola KBK',
-                    'url'  => 'kelola-kbk',
+                    'url'  => $prefix . '/kelola-kbk',
                     'icon' => 'fas fa-sitemap',
                 ],
                 [
                     'text' => 'Pengajuan Pisah KoTA',
-                    'url' => 'pengajuan-pisah-kota',
+                    'url' => $prefix . '/pengajuan-pisah-kota',
                     'icon' => 'fas fa-sign-out-alt',
                     'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Pengajuan KoTA',
-                    'url' => 'pengajuan-kota',
+                    'url' => $prefix . '/pengajuan-kota',
                     'icon' => 'fas fa-users',
                 ],
                 [
