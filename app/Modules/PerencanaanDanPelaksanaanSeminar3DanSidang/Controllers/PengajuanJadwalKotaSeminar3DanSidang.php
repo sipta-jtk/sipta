@@ -351,11 +351,11 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'id_penjadwalan' => $penjadwalan->id_penjadwalan,
             'nip' => '197312271999031003',  
             'status_mahasiswa' => true,
-            'status_dosen_pembimbing_1' => false,
-            'status_dosen_pembimbing_2' => false,
-            'status_dosen_penguji_1' => false,
-            'status_dosen_penguji_2' => false,
-            'status_koordinator_ta' => false,
+            'status_dosen_pembimbing_1' => null,
+            'status_dosen_pembimbing_2' => null,
+            'status_dosen_penguji_1' => null,
+            'status_dosen_penguji_2' => null,
+            'status_koordinator_ta' => null,
         ]);
 
         return redirect()->route('pengajuan')->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
