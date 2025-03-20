@@ -392,37 +392,36 @@ return [
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Kelola Penilaian Tugas Akhir',
-                    'submenu' => [
-                        [
-                            'text' => 'Monitoring Mahasiswa',
-                            'url' => $prefix . '/kelola-penilaian-ta/monitoring-mahasiswa',
-                        ],
-
-                    ],
-                ],
-                [
-                    'text' => 'Formulir Penilaian',
-                    'url' => $prefix . '/kelola-penilaian-ta/fomulir-penilaian',
-                ],
-                [
-                    'text' => 'Pengelolaan Nilai',
-                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                    'text' => 'Monitoring Mahasiswa',
+                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+                    'can' => 'akses-penilaian-mahasiswa',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
-                    'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
+                    'submenu' => [
+                        [
+                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                        [
+                            'text' => 'Rekapitulasi Nilai Akhir',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                        [
+                            'text' => 'Pengaturan Nilai Akhir',
+                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
+                        ],
+                    ],
                 ],
             ]
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => '#',
             'icon' => 'fas fa-book',
-            'text' => 'Timeline',
-            'url' => $prefix . '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-
+            'url' => $prefix . '/timeline'
             // 'label' => 4,
             // 'label_color' => 'success',
         ],

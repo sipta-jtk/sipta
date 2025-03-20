@@ -44,17 +44,17 @@
             <table id="nilaiAkhirTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="1" class="align-middle" style="width: 1%;">No</th>
-                        <th rowspan="1" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="1" class="align-middle" style="width: 20%;">Nama</th>
-                        <th rowspan="1" class="align-middle" style="width: 5%;">Prodi</th>
-                        <th rowspan="1" class="align-middle" style="width: 2%;">Kelas</th>
-                        <th rowspan="1" class="align-middle" style="width: 4%;">Kelompok</th>
-                        <th colspan="1" style="width: 5%;">UTS</th>
-                        <th colspan="1" style="width: 5%;">UAS</th>
-                        <th colspan="1" style="width: 5%;">Lain-Lain</th>
-                        <th colspan="1" style="width: 5%;">Nilai Akhir</th>
-                        <th colspan="1" style="width: 5%;">Predikat</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 1%;">No</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 3%;">NIM</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 15%;">Nama</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 5%;">Prodi</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 2%;">Kelas</th>
+                        <th rowspan="1" class="bg-dark align-middle" style="width: 4%;">Kelompok</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">UTS</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">UAS</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Lain-Lain</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Nilai Akhir</th>
+                        <th colspan="1" class="bg-dark" style="width: 5%;">Predikat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,15 +65,58 @@
                             <tr class="bg-light">
                                 <td class="align-middle">{{ $index + 1 }}</td>
                                 <td class="align-middle">{{ $row['nim'] }}</td>
-                                <td class="align-middle">{{ $row['nama'] }}</td>
+                                <td class="align-middle" style="text-align: left;">{{ $row['nama'] }}</td>
                                 <td class="align-middle">{{ $row['prodi'] }}</td>
                                 <td class="align-middle">{{ $row['kelas'] }}</td>
                                 <td class="align-middle">{{ $row['kelompok'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiUts'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiUas'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiLainLain'] }}</td>
-                                <td class="align-middle">{{ $row['nilaiAkhir'] }}</td>
-                                <td class="align-middle">{{ $row['predikat'] }}</td>
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiUts'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiUts'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiUas'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiUas'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiLainLain'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiLainLain'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiAkhir'] == 0)
+                                        <span class="text-danger nilai-tooltip">-1
+                                            <div class="tooltip-box">Nilai akhir belum tersedia</div>
+                                        </span>
+                                    @else
+                                        {{ $row['nilaiAkhir'] }}
+                                    @endif
+                                </td>
+
+                                <td class="align-middle nilai-cell">
+                                    @if ($row['nilaiAkhir'] == 0)
+                                        <span>T</span>
+                                    @else
+                                        {{ $row['predikat'] }}
+                                    @endif
+                                </td>
+
                             </tr>
                         @endforeach
                     @endif
@@ -81,14 +124,14 @@
             </table>
         </div>
 
-        <form id="exportForm" action="{{ route('rekapitulasi-nilai.export') }}" method="POST" style="display: none;">
+        <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
             @csrf
             <input type="hidden" name="data" id="exportData">
         </form>
 
         <div class="d-flex justify-content-end mt-3">
         <button id="exportExcel" type="button" class="btn btn-success"
-            data-url="{{ route('rekapitulasi.export') }}">
+            data-url="{{ route('rekapitulasi-akhir.export') }}">
             <i class="fas fa-file-excel"></i> Export to Excel
         </button>
         </div>
@@ -103,29 +146,6 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var table = $('#nilaiAkhirTable').DataTable({
-                "paging": true,
-                "lengthMenu": [10, 25, 50, 100],
-                "pageLength": 10,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false
-            });
-
-            $('#filterProdi').on('change', function () {
-                table.column(3).search(this.value).draw();
-            });
-
-            $('#filterKelas').on('change', function () {
-                table.column(4).search(this.value).draw();
-            });
-
-            $('#dataTableControls').html($('.dataTables_length'));
-            $('#searchBox').html($('.dataTables_filter'));
-        });
-    </script>
+    <script src="{{ asset('KelolaPenilaianTA/js/rekapitulasi_nilai_akhir.js') }}"></script>
 @stop
 

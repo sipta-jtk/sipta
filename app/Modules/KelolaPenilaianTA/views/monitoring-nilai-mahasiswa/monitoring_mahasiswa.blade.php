@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
         ])
@@ -39,8 +39,8 @@
         <table class="table table-bordered w-50">
             <thead>
                 <tr class="bg-dark text-white" style="text-align: center;">
-                    <th class="align-middle text-center w-25">NIM</th>
-                    <th class="align-middle text-center w-75">Nama</th>
+                    <th class="bg-dark align-middle text-center w-25">NIM</th>
+                    <th class="bg-dark align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,8 +59,8 @@
         <table class="table table-bordered w-50">
             <thead>
                 <tr class="bg-dark text-white" style="text-align: center;">
-                    <th class="align-middle text-center w-25">NIP</th>
-                    <th class="align-middle text-center w-75">Nama</th>
+                    <th class="bg-dark align-middle text-center w-25">NIP</th>
+                    <th class="bg-dark align-middle text-center w-75">Nama</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,48 +74,62 @@
         </table>
     </div>
     
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h3 class="card-title">Daftar Evaluasi</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="bg-dark">Nama FTA</th>
+                        <th class="bg-dark text-center">Rubrik Penilaian</th>
+                        <th class="bg-dark text-center">Feedback Dosen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ftaList as $ftaNama)
+                        @php
+                            $ftaPenilaian = $ftaPenilaianList[$ftaNama] ?? null;
+                            $ftaFeedback = $ftaFeedbackList[$ftaNama] ?? null;
+                            $isFeedbackAvailable = $ftaFeedback && in_array($ftaFeedback->id_fta, $ftaWithFeedback);
+                        @endphp
+                        <tr>
+                            <td style="vertical-align: middle; white-space: nowrap;">{{ $ftaNama }}</td>
+                            <td class="text-center">
+                                @if ($ftaPenilaian)
+                                    <a href="{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
+                                        class="btn btn-primary btn-sm px-3">
+                                        Lihat Rubrik
+                                    </a>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if ($ftaFeedback)
+                                    <div class="tooltip-wrapper position-relative">
+                                        <a href="{{ $isFeedbackAvailable ? route('monitoring.feedback', ['id_fta' => $ftaFeedback->id_fta, 'id_kota' => $kotaInfo->id_kota]) : '#' }}"
+                                            class="btn btn-primary btn-sm px-3 {{ $isFeedbackAvailable ? '' : 'disabled-link' }}">
+                                            Lihat Feedback
+                                        </a>
+                                        @if (!$isFeedbackAvailable)
+                                            <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left">
+                                                <strong>Feedback belum tersedia!</strong>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            </td>                                                                           
+                        </tr>
+                    @endforeach
+                </tbody>                
+            </table>
+        </div>
+    </div>      
+@stop
 
-    <div class="card-Progress-Penilaian">
-        <h4>Progress Penilaian oleh Dosen</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr class="bg-dark text-white text-center">
-                    <th>Nama Kategori</th>
-                    <th>Rubrik</th>
-                    <th>Feedback</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 1</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 2</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Detail</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle; white-space: nowrap;">Seminar 3</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3">Lihat Rubrik</button>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm px-3 disabled">Lihat Detail</button>
-                    </td>
-                </tr>                
-            </tbody>            
-        </table>
-    </div>    
+@section('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/monitoring_nilai_mahasiswa.css') }}">
 @stop
 
 @section('js')

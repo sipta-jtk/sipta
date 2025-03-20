@@ -44,33 +44,33 @@
             <table id="nilaiTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="2" class="align-middle" style="width: 1%;">No</th>
-                        <th rowspan="2" class="align-middle" style="width: 3%;">NIM</th>
-                        <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
-                        <th rowspan="2" class="align-middle" style="width: 5%;">Prodi</th>
-                        <th rowspan="2" class="align-middle" style="width: 2%;">Kelas</th>
-                        <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
-                        <th colspan="4" style="width: 10%;">Seminar 2</th>
-                        <th colspan="4" style="width: 10%;">Seminar 3</th>
-                        <th colspan="4" style="width: 10%;">Sidang Akhir</th>
-                        <th colspan="3" style="width: 10%;">Dosen Pembimbing</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 1%;">No</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 3%;">NIM</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 15%;">Nama</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 5%;">Prodi</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 2%;">Kelas</th>
+                        <th rowspan="2" class="bg-dark align-middle" style="width: 4%;">Kelompok</th>
+                        <th colspan="4" class="bg-dark" style="width: 10%;">Seminar 2</th>
+                        <th colspan="4" class="bg-dark" style="width: 10%;">Seminar 3</th>
+                        <th colspan="4" class="bg-dark" style="width: 10%;">Sidang Akhir</th>
+                        <th colspan="3" class="bg-dark" style="width: 10%;">Dosen Pembimbing</th>
                     </tr>
                     <tr class="bg-secondary text-white">
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">Rata-rata</th>
-                        <th style="width: 2%;">PM1</th>
-                        <th style="width: 2%;">PM2</th>
-                        <th style="width: 2%;">Rata-rata</th>
+                        <th class="bg-dark" style="width: 2%;">P1</th>
+                        <th class="bg-dark" style="width: 2%;">P2</th>
+                        <th class="bg-dark" style="width: 2%;">P3</th>
+                        <th class="bg-dark" style="width: 2%;">Rata-rata</th>
+                        <th class="bg-dark" style="width: 2%;">P1</th>
+                        <th class="bg-dark" style="width: 2%;">P2</th>
+                        <th class="bg-dark" style="width: 2%;">P3</th>
+                        <th class="bg-dark" style="width: 2%;">Rata-rata</th>
+                        <th class="bg-dark" style="width: 2%;">P1</th>
+                        <th class="bg-dark" style="width: 2%;">P2</th>
+                        <th class="bg-dark" style="width: 2%;">P3</th>
+                        <th class="bg-dark" style="width: 2%;">Rata-rata</th>
+                        <th class="bg-dark" style="width: 2%;">PM1</th>
+                        <th class="bg-dark" style="width: 2%;">PM2</th>
+                        <th class="bg-dark" style="width: 2%;">Rata-rata</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,7 +78,7 @@
                         <tr class="bg-light">
                             <td class="align-middle">{{ $index + 1 }}</td>
                             <td class="align-middle">{{ $row['nim'] }}</td>
-                            <td class="align-middle">{{ $row['nama'] }}</td>
+                            <td class="align-middle" style="text-align: left;">{{ $row['nama'] }}</td>
                             <td class="align-middle">{{ $row['prodi'] }}</td>
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>

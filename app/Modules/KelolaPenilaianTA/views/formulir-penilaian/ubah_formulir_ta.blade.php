@@ -27,13 +27,13 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="kodeFTA">Kode FTA</label>
-                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" value="FTA.011" required>
+                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" value="FTA.011" readonly>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="namaFTA">Nama FTA</label>
-                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" value="PENILAIAN SEMINAR III" required>
+                        <input type="text" class="form-control" id="namaFTA" name="namaFTA" value="PENILAIAN SEMINAR III" readonly>
                     </div>
                 </div>
             </div>
@@ -63,11 +63,16 @@
                     </thead>
                     <tbody id="aspekPenilaianTable">
                         <tr>
-                            <td colspan="9" class="bg-light text-left"><strong>1. Dokumen</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Dokumen</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="35" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen" selected>Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Kejelasan kaitan antar bab/sub bab/kaitan (hubungan sebab akibat/ reasoning, rasionalitas)" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Dokumen yang dibuat memiliki konten yang sangat lengkap dan keterkaitan antar bab/ sub kajian sangat erat, serta dapat dipertanggung jawabkan." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Dokumen yang dibuat memiliki konten yang  lengkap dan keterkaitan antar bab/ sub kajian kurang erat, serta dapat dipertanggung jawabkan." required></td>
@@ -78,8 +83,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td>Dokumen</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="35" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" selected>Pilih Kriteria</option>
+                                    <option value="Dokumen" selected>Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Kesesuaian dan ketepatan penggunaan metodologi dan modelling tools." required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Mahasiswa menguasai serta memahami penerapan cara-cara/ metoda pengembangan aplikasi dan modelling tools pada pengembangan aplikasi." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Mahasiswa menguasai penerapan cara-cara/ metoda pengembangan aplikasi tetapi tidak menguasai modelling tools pada pengembangan aplikasi." required></td>
@@ -90,8 +103,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td>Dokumen</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="35" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen" selected>Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Kesesuaian studi pustaka dan daftar pustaka yang digunakan." required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Pustaka yang digunakan sangat sesuai dengan penelitian dan kualitas pustaka yang sangat baik." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Pustaka yang digunakan sesuai dengan penelitian dan kualitas pustaka yang baik." required></td>
@@ -102,8 +123,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td>Dokumen</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="35" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen" selected>Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Tata tulis laporan a) Dokumen dapat dibaca dengan baik. b) Sistematika Penulisan sesuai dengan penulisan TA. c) Kedalaman konten yang disajikan dapat terlihat" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Dokumen yang dibuat memenuhi kriteria a, b, dan c dengan sangat baik/jelas." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Dokumen yang dibuat memenuhi kriteria a, b, dan c dengan baik/jelas." required></td>
@@ -114,11 +143,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td colspan="9" class="bg-light text-left"><strong>2. Presentasi</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Presentasi</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="15" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi" selected>Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">15</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Materi presentasi a) Penguasaan domain TA. b) Penguasaan pelaksanaan cara-cara/metoda pengembangan aplikasi. c) Penguasaan pelaksanaan cara-cara /metoda penggunaan tools pengembangan aplikasi." required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Mahasiswa menguasai serta memahami domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria a, b, c)." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Mahasiswa menguasai domain TA yang dikerjakan dan penerapan cara-cara/metoda pengembangan aplikasi (kriteria a, b) tetapi tidak menguasai atau memahami cara/metoda penggunaan tools pengembangan aplikasi (kriteria c)." required></td>
@@ -129,8 +163,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td>Presentasi</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="15" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi" selected>Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">15</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Kejelasan presentasi dan kemampuan membangkitkan minat pemirsa." required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Mahasiswa menjelaskan dengan sangat baik dan menyeluruh serta membangkitkan antusiasme pemirsa untuk menyimak dari awal hingga akhir presentasi." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Mahasiswa menjelaskan dengan  baik dan menyeluruh serta membangkitkan antusiasme pemirsa untuk menyimak presentasi." required></td>
@@ -141,8 +183,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td>Presentasi</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="15" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi" selected>Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">15</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Kebebasan dari catatan" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Mahasiswa menjelaskan berdasarkan poin - poin penting pada bahan presentasi." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Mahasiswa menjelaskan berdasarkan poin - poin penting dengan uraiannya  pada bahan presentasi." required></td>
@@ -153,11 +203,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td colspan="9" class="bg-light text-left"><strong>3. Tanya Jawab</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Tanya Jawab</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="35" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab" selected>Tanya Jawab</option>
+                                    <option value="Prototipe">Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">35</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Tanya Jawab (Penguasaan materi terkait tugas yang dikerjakan)." required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Mahasiswa dapat menjawab dengan sangat baik beserta reasoning dan rasionalitas yang tinggi." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Mahasiswa dapat menjawab dengan baik beserta reasoning dan rasionalitas yang cukup." required></td>
@@ -168,11 +223,16 @@
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                         <tr>
-                            <td colspan="9" class="bg-light text-left"><strong>4. Prototipe yang dihasilkan</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Prototipe yang dihasilkan</td>
-                            <td><input type="number" class="form-control" name="bobot[]" value="15" required></td>
+                            <td>
+                                <select class="form-control kriteria" name="kriteria[]" required>
+                                    <option value="" disabled>Pilih Kriteria</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                    <option value="Tanya Jawab">Tanya Jawab</option>
+                                    <option value="Prototipe" selected>Prototipe</option>
+                                </select>
+                            </td>
+                            <td><p class="form-control-plaintext bobot">15</p></td>
                             <td><input type="text" class="form-control" name="detail[]" value="Prototipe yang dihasilkan" required></td>
                             <td><input type="text" class="form-control" name="lebih80[]" value="Produk yang dihasilkan sesuai dengan target Seminar III, memenuhi spesifikasi, dan rancangan yang sesuai spesifikasi (sufficient)." required></td>
                             <td><input type="text" class="form-control" name="tujuhPuluhLima[]" value="Produk yang dihasilkan sesuai dengan target Seminar III, memenuhi spesifikasi, dan rancangan yang kurang sesuai spesifikasi (less sufficient)." required></td>
@@ -202,7 +262,6 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary mr-2" onclick="window.location='{{ url('kelola-penilaian-ta/formulir-penilaian') }}'">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
