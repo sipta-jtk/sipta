@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Kehadiran;
 
 class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 {
@@ -18,27 +19,18 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     public function indexBeritaAcaraSeminar3(): View
     {
         // Simulasikan waktu sekarang
-        $sekarang = Carbon::parse('2025-06-22 11:30:00'); // Untuk simulasi
+        // $sekarang = Carbon::parse('2025-03-17 00:00:00'); // Untuk simulasi
         // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
-        //$sekarang = Carbon::now('Asia/Jakarta');
+        $sekarang = Carbon::now('Asia/Jakarta');
 
         // Data presensi sementara
-        $beritaAcaraSeminar3 = [
-            [
-                'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
-                'nim' => '221524033',
-                'mahasiswa' => 'Mees Victor Joseph Hilgers',
-                'id_kota' => 'KoTA 001',
-                'tanggal' => '22-06-2025',
-                'ruangan' => '22jtk44',
-                'sesi' => '2',
-                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
-                'status_hadir' => session('status_hadir_sm3_221524033', 'belum_absensi'),//default status hadir
-                'dokumentasi' => session('dok_sm3_221524033', '') // Ambil data dokumentasi dari session
-            ],
-        ];
+        $beritaAcaraSeminar3 = Kehadiran::with(['penjadwalan', 'user'])
+        ->whereHas('penjadwalan', function ($query) {
+            $query->where('agenda', 'seminar_3'); // Ambil hanya data Seminar 3
+        })
+        ->get();
 
-        // Teruskan $sekarang dan $presensi ke view
+        // Teruskan $sekarang dan $beritaAcaraSeminar3 ke view
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSeminar3', compact('beritaAcaraSeminar3', 'sekarang'));
     }
 
@@ -46,136 +38,60 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     public function indexBeritaAcaraSidangTA(): View
     {
         // Simulasikan waktu sekarang
-        $sekarang = Carbon::parse('2025-08-22 11:30:00'); // Untuk simulasi
+        $sekarang = Carbon::parse('2025-03-17 00:00:00'); // Untuk simulasi
         // $sekarang->setTimezone('Asia/Jakarta'); // Set timezone ke WIB
-        //$sekarang = Carbon::now('Asia/Jakarta');
+        // $sekarang = Carbon::now('Asia/Jakarta');
 
-        // Data presensi sementara
-        $beritaAcaraSidangTA = [
-            [
-                'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
-                'nim' => '221524033',
-                'mahasiswa' => 'Mees Victor Joseph Hilgers',
-                'id_kota' => 'KoTA 001',
-                'tanggal' => '22-08-2025',
-                'ruangan' => '22jtk44',
-                'sesi' => '2',
-                'waktu' => '2025-08-22 12:00:00', // Waktu sidang
-                'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),//default status hadir
-                'dokumentasi' => session('dok_sa_221524033', '') // Ambil data dokumentasi dari session
+        // Ambil data kehadiran dari database
+        $beritaAcaraSidangTA = Kehadiran::with(['penjadwalan', 'user'])
+            ->whereHas('penjadwalan', function ($query) {
+                $query->where('agenda', 'sidang'); // Ambil hanya data sidang TA
+            })
+            ->get();
 
-            ],
-        ];
-
-        // Teruskan $sekarang dan $presensi ke view
+        // Teruskan $sekarang dan $beritaAcaraSidangTA ke view
         return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSidangTA', compact('beritaAcaraSidangTA', 'sekarang'));
     }
 
     public function rekapBeritaAcaraSeminar3(): View
     {
-        // Data presensi sementara
-        $beritaAcaraSeminar3 = [
-            [
-                'id_kehadiran' => 'sm3_221524033', // ID unik untuk Seminar 3
-                'nim' => '221524033',
-                'mahasiswa' => 'Mees Victor Joseph Hilgers',
-                'id_kota' => 'KoTA 001',
-                'tanggal' => '22-06-2025',
-                'ruangan' => '22jtk44',
-                'sesi' => '2',
-                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
-                'status_hadir' => session('status_hadir_sm3_221524033', 'belum_absensi'),
-                'dokumentasi' => session('dok_sm3_221524033', '') // Ambil data dokumentasi dari session
-            ],
-            [
-                'id_kehadiran' => 'sm3_221524034',
-                'nim' => '221524034',
-                'mahasiswa' => 'Bang Jono',
-                'id_kota' => 'KoTA 001',
-                'tanggal' => '22-06-2025',
-                'ruangan' => '22jtk44',
-                'sesi' => '2',
-                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
-                'status_hadir' => session('status_hadir_sm3_221524034', 'belum_absensi'),
-                'dokumentasi' => session('dok_sm3_221524034', ''), // Ambil data dokumentasi dari session
-            ],
-            [
-                'id_kehadiran' => 'sm3_221524035', 
-                'nim' => '221524035',
-                'mahasiswa' => 'Bang Jarwo',
-                'id_kota' => 'KoTA 002',
-                'tanggal' => '22-06-2025',
-                'ruangan' => '22jtk44',
-                'sesi' => '3',
-                'waktu' => '2025-06-22 12:00:00', // Waktu sidang
-                'status_hadir' => session('status_hadir_sm3_221524035', 'belum_absensi'),
-                'dokumentasi' => session('dok_sm3_221524035', '') // Ambil data dokumentasi dari session
-            ]
-        ];
+    // Ambil data kehadiran dari database untuk Seminar 3
+    $beritaAcaraSeminar3 = Kehadiran::with(['penjadwalan', 'user'])
+        ->whereHas('penjadwalan', function ($query) {
+            $query->where('agenda', 'seminar_3'); // Ambil hanya data Seminar 3
+        })
+        ->get();
 
-        // Teruskan $presensi ke view rekap
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSeminar3', compact('beritaAcaraSeminar3'));
+    // Teruskan $beritaAcaraSeminar3 ke view rekap
+    return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSeminar3', compact('beritaAcaraSeminar3'));
     }
     
     public function rekapBeritaAcaraSidangTA(): View
-{
-    // Data Berita Acara Sidang TA Semua MHS Sementara
-    $beritaAcaraSidangTA = [
-        [
-            'id_kehadiran' => 'sa_221524033', // ID unik untuk Sidang TA
-            'nim' => '221524033',
-            'mahasiswa' => 'Mees Victor Joseph Hilgers',
-            'id_kota' => 'KoTA 001',
-            'tanggal' => '22-08-2025',
-            'ruangan' => '22jtk44',
-            'sesi' => '2',
-            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
-            'status_hadir' => session('status_hadir_sa_221524033', 'belum_absensi'),
-            'dokumentasi' => session('dok_sa_221524033', ''), // Ambil data dokumentasi dari session
-            'batas_revisi' => session('batas_revisi_sa_221524033', ''),
-            'status_kelulusan' => session('status_kelulusan_sa_221524035', '') 
-        ],
-        [
-            'id_kehadiran' => 'sa_221524034',
-            'nim' => '221524034',
-            'mahasiswa' => 'Bang Jono',
-            'id_kota' => 'KoTA 001',
-            'tanggal' => '22-08-2025',
-            'ruangan' => '22jtk44',
-            'sesi' => '2',
-            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
-            'status_hadir' => session('status_hadir_sa_221524034', 'belum_absensi'),
-            'dokumentasi' => session('dok_sa_221524034', ''), // Ambil data dokumentasi dari session
-            'batas_revisi' => session('batas_revisi_sa_221524034', '')
-        ],
-        [
-            'id_kehadiran' => 'sa_221524035', // ID unik untuk Sidang TA
-            'nim' => '221524035',
-            'mahasiswa' => 'Bang Jarwo',
-            'id_kota' => 'KoTA 002',
-            'tanggal' => '22-08-2025',
-            'ruangan' => '22jtk44',
-            'sesi' => '3',
-            'waktu' => '2025-08-22 12:00:00', // Waktu sidang
-            'status_hadir' => session('status_hadir_sa_221524035', 'belum_absensi'),
-            'dokumentasi' => session('dok_sa_221524035', '') // Ambil data dokumentasi dari session
-        ]
-    ];
+    {
+        // Data Berita Acara Sidang TA Semua MHS Sementara
+        $beritaAcaraSidangTA = Kehadiran::with(['penjadwalan', 'user'])
+        ->whereHas('penjadwalan', function ($query) {
+            $query->where('agenda', 'sidang'); // Ambil hanya data sidang TA
+        })
+        ->get();
 
-    // Teruskan $ ke view rekap
-    return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));
-}
+        // Teruskan $beritaAcaraSidangTA ke view rekap
+        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));
+    }
 
 
     public function simpanKehadiran(Request $request)
     {
         // Validasi request
         $request->validate([
-            'id_kehadiran' => 'required|string', // Gunakan id_kehadiran sebagai identifier
+            'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
+            'status_hadir' => 'required|in:hadir,belum_absen,tidak_hadir',
         ]);
 
-        // Simpan status kehadiran di session
-        session(["status_hadir_{$request->input('id_kehadiran')}" => 'hadir']);
+        // Update status kehadiran di database
+        $kehadiran = Kehadiran::find($request->input('id_kehadiran'));
+        $kehadiran->status_hadir = $request->input('status_hadir');
+        $kehadiran->save();
 
         return redirect()->back()->with('success', 'Status kehadiran berhasil disimpan.');
     }
@@ -184,7 +100,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     {
         // Validasi request
         $request->validate([
-            'id_kehadiran' => 'required|string',
+            'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
             'dokumentasi' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // Max 5 MB
         ], [
             'dokumentasi.max' => 'Ukuran file tidak boleh lebih dari 5 MB.', // Pesan custom
@@ -193,19 +109,13 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Ambil id_kehadiran dari request
         $idKehadiran = $request->input('id_kehadiran');
 
-        // Cek apakah ada file lama di session
-        $fileLama = session("dok_{$idKehadiran}");
-
-        // Jika ada file lama, hapus dari storage
-        if ($fileLama && Storage::disk('public')->exists($fileLama)) {
-            Storage::disk('public')->delete($fileLama);
-        }
-
         // Simpan file baru ke storage
         $dokumentasiPath = $request->file('dokumentasi')->store('dokumentasi', 'public');
 
-        // Simpan path file baru ke session
-        session(["dok_{$idKehadiran}" => $dokumentasiPath]);
+        // Update path file di database
+        $kehadiran = Kehadiran::find($idKehadiran);
+        $kehadiran->foto_sidang = $dokumentasiPath;
+        $kehadiran->save();
 
         return redirect()->back()->with('success', 'Dokumentasi berhasil diupload.');
     }
@@ -214,14 +124,15 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     {
         // Validasi request
         $request->validate([
-            'id_kehadiran' => 'required|string',
+            'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
             'batas_revisi' => 'required|date',
         ]);
 
-        // Simpan batas revisi di session
-        session(["batas_revisi_{$request->input('id_kehadiran')}" => $request->input('batas_revisi')]);
+        // Update batas revisi di database
+        $kehadiran = Kehadiran::find($request->input('id_kehadiran'));
+        $kehadiran->batas_revisi = $request->input('batas_revisi');
+        $kehadiran->save();
 
-        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'Batas revisi berhasil disimpan.');
     }
 
@@ -229,14 +140,15 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     {
         // Validasi request
         $request->validate([
-            'id_kehadiran'      => 'required|string',
-            'status_kelulusan'  => 'required|string|in:Lulus Tanpa Perbaikan,Lulus Dengan Perbaikan,Mengulang Sidang,Tidak Lulus',
+            'id_kehadiran'      => 'required|exists:kehadiran,id_kehadiran',
+            'status_kelulusan'  => 'required|in:lulus_tanpa_perbaikan_laporan,lulus_dengan_perbaikan_laporan,mengulang_sidang_tugas_akhir,tidak_lulus,pending',
         ]);
 
-        // Simpan status kelulusan di session
-        session(["status_kelulusan_{$request->input('id_kehadiran')}" => $request->input('status_kelulusan')]);
+        // Update status kelulusan di database
+        $kehadiran = Kehadiran::find($request->input('id_kehadiran'));
+        $kehadiran->status_kelulusan = $request->input('status_kelulusan');
+        $kehadiran->save();
 
-        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
     }
 }

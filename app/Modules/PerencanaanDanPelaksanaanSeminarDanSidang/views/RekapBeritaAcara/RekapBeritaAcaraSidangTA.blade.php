@@ -33,34 +33,27 @@
                     </thead>
                     <tbody>
                         @foreach($beritaAcaraSidangTA as $index => $item)
-                            @php
-                                $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
-                                $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
-                                $batasRevisi = session("batas_revisi_{$item['id_kehadiran']}", $item['batas_revisi'] ?? '');
-                                $statusKelulusan = session("status_kelulusan_{$item['id_kehadiran']}", $item['status_kelulusan'] ?? '');
-                            @endphp
-
                             <tr>
-                                <td>{{ $item['id_kota'] }}</td>
-                                <td>{{ $item['nim'] }}</td>
-                                <td>{{ $item['mahasiswa'] }}</td>
-                                <td>{{ $item['tanggal'] }}</td>
-                                <td>{{ $item['ruangan'] }}</td>
-                                <td>{{ $item['sesi'] }}</td>
+                                <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
+                                <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
+                                <td>{{ $item->user->nama ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
-                                    @if($statusKehadiran == 'hadir')
+                                    @if($item->status_hadir == 'hadir')
                                         <button class="btn btn-success btn-sm" disabled>Hadir</button>
-                                    @elseif($statusKehadiran == 'absen')
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                    @elseif($item->status_hadir == 'tidak_hadir')
+                                        <button class="btn btn-danger btn-sm" disabled>Tidak Hadir</button>
                                     @else
                                         <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">
-                                    @if($dokumentasi)
+                                    @if($item->foto_sidang)
                                         <div class="mb-2">
-                                            <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 15) }}
+                                            <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 15) }}
                                             </a>
                                         </div>
                                     @else
@@ -68,15 +61,15 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($batasRevisi)
-                                        {{ $batasRevisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
+                                    @if($item->batas_revisi)
+                                        {{ $item->batas_revisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
                                     @else
                                         <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif
                                 </td>
                                 <td>
-                                    @if($statusKelulusan)
-                                        {{ $statusKelulusan }} <!-- Tampilkan status kelulusan jika sudah diisi -->
+                                    @if($item->status_kelulusan)
+                                        {{ $item->status_kelulusan }} <!-- Tampilkan status kelulusan jika sudah diisi -->
                                     @else
                                         <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif

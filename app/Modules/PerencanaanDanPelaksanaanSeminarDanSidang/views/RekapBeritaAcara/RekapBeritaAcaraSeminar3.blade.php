@@ -31,33 +31,28 @@
                     </thead>
                     <tbody>
                         @foreach($beritaAcaraSeminar3 as $index => $item)
-                        @php
-                            $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
-                            $dokumentasi = session("dok_{$item['id_kehadiran']}", $item['dokumentasi']);
-                        @endphp
-
                             <tr>
-                                <td>{{ $item['id_kota'] }}</td>
-                                <td>{{ $item['nim'] }}</td>
-                                <td>{{ $item['mahasiswa'] }}</td>
-                                <td>{{ $item['tanggal'] }}</td>
-                                <td>{{ $item['ruangan'] }}</td>
-                                <td>{{ $item['sesi'] }}</td>
+                                <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
+                                <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
+                                <td>{{ $item->user->nama ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
-                                    @if($statusKehadiran == 'hadir')
+                                    @if($item->status_hadir == 'hadir')
                                         <button class="btn btn-success btn-sm" disabled>Hadir</button>
-                                    @elseif($statusKehadiran == 'absen')
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                    @elseif($item->status_hadir == 'tidak_hadir')
+                                        <button class="btn btn-danger btn-sm" disabled>Tidak Hadir</button>
                                     @else
                                         <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">
-                                    @if($dokumentasi)
+                                    @if($item->foto_sidang)
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
-                                            <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi), 15) }}
+                                            <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 15) }}
                                             </a>
                                         </div>
                                     @else

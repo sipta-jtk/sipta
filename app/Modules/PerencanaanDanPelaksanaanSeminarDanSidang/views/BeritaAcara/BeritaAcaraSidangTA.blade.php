@@ -26,57 +26,43 @@
                     </thead>
                     <tbody>
                         @foreach($beritaAcaraSidangTA as $index => $item)
-                            @php
-                                $waktuSidang = new DateTime($item['waktu']);
-                                $setengahJamSebelumSidang = (clone $waktuSidang)->modify('-30 minutes');
-                                $empatJamSetelahSidang = (clone $waktuSidang)->modify('+4 hours');
-                                $statusKehadiran = session("status_hadir_{$item['id_kehadiran']}", $item['status_hadir']);
-                                $dokumentasi = session("dokumentasi_{$item['id_kehadiran']}", $item['dokumentasi']);
-                                $batasRevisi = session("batas_revisi_{$item['id_kehadiran']}", $item['batas_revisi'] ?? '');
-                                $statusKelulusan = session("status_kelulusan_{$item['id_kehadiran']}", $item['status_kelulusan'] ?? '');
-                            @endphp
-
                             <tr>
-                                <td>{{ $item['id_kota'] }}</td>
-                                <td>{{ $item['nim'] }}</td>
-                                <td>{{ $item['mahasiswa'] }}</td>
-                                <td>{{ $item['tanggal'] }}</td>
-                                <td>{{ $item['ruangan'] }}</td>
-                                <td>{{ $item['sesi'] }}</td>
+                                <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
+                                <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
+                                <td>{{ $item->user->nama ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
-                                    @if($statusKehadiran == 'hadir')
+                                    @if($item->status_hadir == 'hadir')
                                         <button class="btn btn-success btn-sm" disabled>Hadir</button>
-                                    @elseif($statusKehadiran == 'absen')
+                                    @elseif($item->status_hadir == 'tidak_hadir')
                                         <button class="btn btn-danger btn-sm" disabled>Absen</button>
-                                    @elseif($sekarang < $setengahJamSebelumSidang)
-                                        <button class="btn btn-warning btn-sm" disabled>Absensi</button>
-                                    @elseif($sekarang >= $setengahJamSebelumSidang && $sekarang <= $empatJamSetelahSidang)
+                                    @elseif($item->status_hadir == 'belum_absen' && $sekarang->isSameDay($item->penjadwalan->tanggal))
                                         <form action="{{ route('presensi.hadir') }}" method="POST" style="display:inline;">
                                             @csrf
-                                            <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
+                                            <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                            <input type="hidden" name="status_hadir" value="hadir">
                                             <button type="submit" class="btn btn-info btn-sm">Absensi</button>
                                         </form>
-                                    @else
+                                    @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
                                         <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                    @else
+                                        <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
-                                    @if($dokumentasi)
+                                    @if($item->foto_sidang)
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
-                                            <a href="{{ asset('storage/' . $dokumentasi) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($dokumentasi),20) }}
+                                            <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),15) }}
                                             </a>
                                         </div>
                                     @endif
-                                    @if($errors->has('dokumentasi'))
-                                        <div class="alert alert-danger">
-                                        {{ $errors->first('dokumentasi') }}
-                                         </div>
-                                    @endif
                                     <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
+                                        <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                         <div class="form-group">
                                             <input type="file" name="dokumentasi" class="form-control-file form-control-sm" accept=".jpg,.jpeg,.png,.pdf">
                                             <small class="text-muted">Maksimal 5 MB (JPG, JPEG, PNG, PDF)</small>
@@ -85,30 +71,30 @@
                                     </form>
                                 </td>
                                 <td>
-                                    @if($batasRevisi)
-                                        {{ $batasRevisi }}
+                                    @if($item->batas_revisi)
+                                        {{ $item->batas_revisi }}
                                     @else
                                         <form action="{{ route('simpan.batas.revisi') }}" method="POST">
                                             @csrf
-                                            <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
-                                            <input type="date" name="batas_revisi" class="form-control form-control-sm" value="{{ $batasRevisi }}">
+                                            <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                            <input type="date" name="batas_revisi" class="form-control form-control-sm" value="{{ $item->batas_revisi }}">
                                             <button type="submit" class="btn btn-primary btn-sm mt-2">Simpan</button>
                                         </form>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($statusKelulusan)
-                                        {{ $statusKelulusan }}
-                                    @else
+                                    @if($item->status_kelulusan == 'lulus_tanpa_perbaikan_laporan')
                                         <!-- Tombol untuk membuka modal -->
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item['id_kehadiran'] }}">
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
                                             Isi Status
                                         </button>
+                                    @else
+                                        {{ $item->status_kelulusan }}  
                                     @endif
                                 </td>
                             </tr>
                             <!-- Modal untuk mengisi status kelulusan -->
-                            <div class="modal fade" id="modalStatusKelulusan{{ $item['id_kehadiran'] }}" tabindex="-1" role="dialog" aria-labelledby="modalStatusKelulusanLabel" aria-hidden="true">
+                            <div class="modal fade" id="modalStatusKelulusan{{ $item->id_kehadiran }}" tabindex="-1" role="dialog" aria-labelledby="modalStatusKelulusanLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -120,14 +106,14 @@
                                         <div class="modal-body">
                                             <form action="{{ route('simpan.status.kelulusan') }}" method="POST">
                                                 @csrf
-                                                <input type="hidden" name="id_kehadiran" value="{{ $item['id_kehadiran'] }}">
+                                                <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                                 <div class="form-group">
                                                     <label for="status_kelulusan">Pilih Status Kelulusan:</label>
                                                     <select name="status_kelulusan" class="form-control" required>
-                                                        <option value="Lulus Tanpa Perbaikan">Lulus Tanpa Perbaikan</option>
-                                                        <option value="Lulus Dengan Perbaikan">Lulus Dengan Perbaikan</option>
-                                                        <option value="Mengulang Sidang">Mengulang Sidang</option>
-                                                        <option value="Tidak Lulus">Tidak Lulus</option>
+                                                        <option value="lulus_tanpa_perbaikan_laporan">Lulus Tanpa Perbaikan</option>
+                                                        <option value="lulus_dengan_perbaikan_laporan">Lulus Dengan Perbaikan</option>
+                                                        <option value="mengulang_sidang_tugas_akhir">Mengulang Sidang</option>
+                                                        <option value="tidak_lulus">Tidak Lulus</option>
                                                     </select>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary">Simpan</button>
