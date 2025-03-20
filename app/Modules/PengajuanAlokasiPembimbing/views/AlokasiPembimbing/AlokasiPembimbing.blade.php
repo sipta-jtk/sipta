@@ -390,71 +390,6 @@
             console.log("Updated DataToSend:", DataToSend);
         }
 
-        function submitForm() {
-            if (DataToSend.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Tidak ada perubahan!',
-                    text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                return;
-            }
-
-            var ParseddataToSend = JSON.stringify(DataToSend);
-            console.log("Final Data to Send:", ParseddataToSend);
-            $('#dataToSend').val(ParseddataToSend);
-
-            Swal.fire({
-                icon: 'warning',
-                title: 'Konfirmasi Finalisasi',
-                text: 'Apakah Anda yakin ingin mengajukan alokasi pembimbing?',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Finalisasi',
-                cancelButtonText: 'Batal',
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: $("#alokasiForm").attr('action'),
-                            type: "POST",
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                dataToSend: ParseddataToSend
-                            },
-                            success: function(response) {
-                                resolve(response);
-                            },
-                            error: function() {
-                                reject("Terjadi kesalahan saat mengirim data!");
-                            }
-                        });
-                    });
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sukses',
-                        text: 'Alokasi pembimbing berhasil diajukan!',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            }).catch((error) => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: error,
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            });
-        }
-
         $(".catatan-input").on("input", function() {
             var id_pengajuan_pembimbing = $(this).data("id");
             var catatan = $(this).val();
@@ -533,6 +468,50 @@
     }
 
     function submitForm() {
+        let pembimbingCount = 0;
+        let pengujiCount = 0;
+        let hasPendingStatus = false;
+
+        $(".pembimbing").each(function () {
+            if ($(this).val().trim() !== "") {
+                pembimbingCount++;
+            }
+        });
+
+        $(".penguji").each(function () {
+            if ($(this).val().trim() !== "") {
+                pengujiCount++;
+            }
+        });
+
+        $(".status-dropdown").each(function () {
+            if ($(this).val() !== "fix") {
+                hasPendingStatus = true;
+            }
+        });
+
+        if (pembimbingCount < 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: 'Minimal 1 pembimbing harus diisi sebelum melakukan finalisasi.',
+                timer: 3000,
+                showConfirmButton: true
+            });
+            return;
+        }
+
+        if (pengujiCount < 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: 'Minimal 1 penguji harus diisi sebelum melakukan finalisasi.',
+                timer: 3000,
+                showConfirmButton: true
+            });
+            return;
+        }
+
         if (DataToSend.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -546,9 +525,58 @@
 
         var ParseddataToSend = JSON.stringify(DataToSend);
         console.log("Final Data to Send:", ParseddataToSend);
-
         $('#dataToSend').val(ParseddataToSend);
-        $('#alokasiForm').submit();
+
+        if (hasPendingStatus) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Status Dosen Belum Fix',
+                text: 'Ada dosen yang statusnya belum fix. Apakah Anda yakin ingin melanjutkan finalisasi?',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: $("#alokasiForm").attr('action'),
+                            type: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                dataToSend: ParseddataToSend
+                            },
+                            success: function(response) {
+                                resolve(response);
+                            },
+                            error: function() {
+                                reject("Terjadi kesalahan saat mengirim data!");
+                            }
+                        });
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses',
+                        text: 'Alokasi pembimbing berhasil diajukan!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            }).catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: error,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        } else {
+            $('#alokasiForm').submit();
+        }
     }
 
     function fetchDosenDetail(nip, detailContainer) {

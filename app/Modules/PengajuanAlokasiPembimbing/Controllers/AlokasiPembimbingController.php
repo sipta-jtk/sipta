@@ -118,6 +118,37 @@ class AlokasiPembimbingController extends Controller
         $data = json_decode($request->input('dataToSend'));
 
         foreach ($data as $value) {
+            // Hitung jumlah pembimbing yang diisi
+            $pembimbingCount = 0;
+            if (!empty($value->pembimbing1)) {
+                $pembimbingCount++;
+            }
+            if (!empty($value->pembimbing2)) {
+                $pembimbingCount++;
+            }
+
+            // Hitung jumlah penguji yang diisi
+            $pengujiCount = 0;
+            if (!empty($value->penguji1)) {
+                $pengujiCount++;
+            }
+            if (!empty($value->penguji2)) {
+                $pengujiCount++;
+            }
+            if (!empty($value->penguji3)) {
+                $pengujiCount++;
+            }
+
+            // Validasi: Minimal 1 pembimbing harus diisi
+            if ($pembimbingCount < 1) {
+                return back()->with('error', 'Minimal 1 pembimbing harus diisi sebelum finalisasi.');
+            }
+
+            // Validasi: Minimal 1 penguji harus diisi
+            if ($pengujiCount < 1) {
+                return back()->with('error', 'Minimal 1 penguji harus diisi sebelum finalisasi.');
+            }
+
             $nip_dosen_1 = Dosen::where('id_dosen', $value->pembimbing1 ?? null)->select('nip')->first();
             $nip_dosen_2 = Dosen::where('id_dosen', $value->pembimbing2 ?? null)->select('nip')->first();
 
