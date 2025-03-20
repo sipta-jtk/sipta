@@ -111,7 +111,7 @@
                     { 
                         data: null,
                         render: function(data, type, row) {
-                            let detailLink = detailUrl.replace('__ID__', row.id_kota);
+                            let detailLink = detailUrl.replace('__ID__', row.id_pengajuan);
                             return `<a href="${detailLink}" class="btn btn-primary btn-sm text-center">Proses</a>`;
                         },
                         orderable: false

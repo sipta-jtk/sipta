@@ -19,7 +19,8 @@ Route::post('/presensi/dokumentasi', [PerencanaanDanPelaksanaanSeminarDanSidangC
 
 // Route untuk rekap presensi Sidang TA
 Route::get('/rekap-presensi-sidang-ta', [PerencanaanDanPelaksanaanSeminarDanSidangController::class, 'rekapPresensiSidangTA'])->name('rekap.presensi.sidang.ta');
-Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.'], function () {
+
+Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
     Route::group(['prefix' => '{tipe}', 'as' => 'berkas.'], function () {
         Route::get('/', [VerifikasiBerkasController::class, 'listPengajuan'])->name('list');
         Route::get('/ditolak', [VerifikasiBerkasController::class, 'pengajuanDitolak'])->name('ditolak');
@@ -28,6 +29,4 @@ Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.'], functio
         Route::put('/verifikasi/{id}', [VerifikasiBerkasController::class, 'verifikasi'])->name('verifikasi');
     });
 });
-
-Route::get('/json', [VerifikasiBerkasController::class, 'json'])->name('json');
 

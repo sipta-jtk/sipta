@@ -37,7 +37,7 @@
         </div>
 
         <!-- Form Verifikasi -->
-        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->kelompok]) }}" method="POST">
+        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->kelompok]) }}" method="PUT">
             @csrf
             <input type="hidden" name="keputusan" id="keputusan" value="">
             <input type="hidden" name="catatan" id="catatan_input" value="">

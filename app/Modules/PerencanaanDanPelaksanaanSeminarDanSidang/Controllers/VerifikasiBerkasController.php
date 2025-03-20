@@ -57,7 +57,7 @@ class VerifikasiBerkasController extends Controller
         if ($tipe === 'berkas-seminar-3'){
             $dataKota = 
             (object) [
-                'kelompok' => '001',
+                'kelompok' => '2',
                 'judul_ta' => 'Sistem Informasi Akademik Berbasis Web',
                 'id_bidang' => 1,
                 'jenis_pengajuan' => 'Seminar 3',
@@ -92,6 +92,7 @@ class VerifikasiBerkasController extends Controller
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
 
+        dd($keputusan, $catatan, $tipe, $id);
         if ($keputusan === 'Ditolak') {
             // Ambil data berkas berdasarkan ID
             $dataKota = DB::table('kota')->where('id_kota', $id)->first();
