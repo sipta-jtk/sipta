@@ -38,7 +38,7 @@ class DaftarKesediaanMembimbingController extends Controller
             CASE 
                 WHEN d.bersedia_membimbing = 'bersedia' THEN 'Sudah' 
                 WHEN d.bersedia_membimbing = 'tidak_bersedia' THEN 'Sudah'
-                ELSE COALESCE(d.bersedia_membimbing, 'Belum Mengumpulkan') 
+                WHEN d.bersedia_membimbing = 'belum_konfirmasi' THEN 'Belum'
             END AS Status_Pengumpulan,
             COALESCE(GROUP_CONCAT(DISTINCT b.bidang SEPARATOR ', '), '-') AS bidang, 
             $caseStatements,

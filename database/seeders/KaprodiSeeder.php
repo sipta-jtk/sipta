@@ -24,11 +24,11 @@ class KaprodiSeeder extends Seeder
 
         $data = [
             [
-                'nip' => '197312271999031003',
+                'nip' => '199301062019031017',
                 'id_prodi' => 1
             ],
             [
-                'nip' => '198502102015042001',
+                'nip' => '197109031999032001',
                 'id_prodi' => 2
             ],
         ];
@@ -36,15 +36,5 @@ class KaprodiSeeder extends Seeder
         foreach ($data as $item) {
             Kaprodi::create($item);
         }
-
-        Kaprodi::create([
-            'nip' => '197312271999031003',
-            'id_prodi' => 1
-        ]);
-
-        Kaprodi::create([
-            'nip' => '198502102015042001',
-            'id_prodi' => 2
-        ]);
     }
 }
