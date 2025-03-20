@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
+
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -87,6 +88,21 @@ class AuthServiceProvider extends ServiceProvider
         //Contoh Pengecualian Akses
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
+        });
+
+        /********************************************
+         * [Topik 7] - Fitur Perekrutan Anggota KoTA
+        *********************************************/
+
+        // Akses Form Perekrutan Anggota KoTA
+        Gate::define('akses-form-perekrutan-anggota-kota', function ($user) {
+            return Gate::allows('mahasiswa_ta') && $user->mahasiswa->id_kota === null;
+        });
+
+        // Akses Halaman Detail KoTA pada sidebar Akun Pengguna
+        Gate::define('mahasiswa_kota', function ($user) {
+            $mahasiswa = \App\Models\Mahasiswa::where('nim', $user->username)->first();
+            return $user->role_user === 'mahasiswa' && $mahasiswa->status_ta === 'mahasiswa_ta' && $mahasiswa->id_kota !== null;
         });
     }
 }
