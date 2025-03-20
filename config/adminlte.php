@@ -419,6 +419,26 @@ return [
                             'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
+            'text' => 'Pengelolaan Penilaian',
+            'url' => '#',
+            'icon' => 'fas fa-scroll',
+            'submenu' => [
+                [
+                    'text' => 'Monitoring Mahasiswa',
+                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+                    'can' => 'akses-penialain-mahasiswa'
+                ],
+                [
+                    'text' => 'Formulir Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                ],
+                [
+                    'text' => 'Pengelolaan Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                 ],
             ]
         ],

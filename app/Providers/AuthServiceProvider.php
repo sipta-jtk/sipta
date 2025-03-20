@@ -96,5 +96,15 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('koordinator_ta');
         });
 
+
+        
+        /**********************************
+         * [Topik 4] - Kelola Penilaian TA
+        ***********************************/
+
+        //Contoh Akses Multirole
+        Gate::define('akses-penialain-mahasiswa', function ($user) {
+            return Gate::allows('mahasiswa_ta');
+        });
     }
 }
