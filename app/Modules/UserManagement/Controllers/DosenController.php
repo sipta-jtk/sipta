@@ -64,10 +64,20 @@ class DosenController extends Controller
             'no_whatsapp' => $request->no_wa,
             'photo' => 'default.jpg',
             'role_user' => 'dosen',
-            'password' => $randomCode // Default password, bisa diubah nanti
+            'password' => $randomCode 
         ]);
 
-        // 2. Simpan data ke tabel `dosen`
+        $email = $request->email;
+        $nama = $request->nama;
+        Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
+            $message->to($email)
+                    ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
+                    ->subject('Info Akun Sipta');
+        });
+
+
+
+
         Dosen::create([
             'nip' => $request->nip,
             'id_dosen' => $request->id,
@@ -262,6 +272,18 @@ public function inputBulk(Request $request){
 
 }
 
+public function updateBulkRole(Request $request)
+{
+    $request->validate([
+        'nip' => 'required|array',
+        'role_dosen' => 'required|string',
+    ]);
+
+    Dosen::whereIn('nip', $request->nip)->update(['role_dosen' => $request->role_dosen]);
+
+    return redirect()->route('manage.dosen')->with('success', 'Role dosen berhasil diperbarui!');
+
+}
 
 }
 

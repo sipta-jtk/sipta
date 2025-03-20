@@ -122,6 +122,7 @@ Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
+Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
 
 
 
