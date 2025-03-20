@@ -77,7 +77,7 @@
 
     <script>
         $(document).ready(function() {
-            let data = @json($dataPengajuan); // Ambil data pengajuan dari controller
+            let data = @json($dataKota); // Ambil data pengajuan dari controller
             let detailUrl = "{{ route('kelola.berkas.detail', ['id' => '__ID__', 'tipe' => $tipe]) }}";
             // Inisialisasi DataTables
             let table = $('#pengajuanTable').DataTable({
@@ -93,7 +93,7 @@
                     },
                     { data: "tanggal_pengajuan", className: 'text-center', },
                     { 
-                        data: "kelompok",
+                        data: "id_kota",
                         className: 'text-center',
                         render: function(data, type, row) {
                             return `KoTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka

@@ -95,7 +95,7 @@
                     },
                     { data: "tanggal_pengajuan", className: 'text-center', },
                     { 
-                        data: "kelompok",
+                        data: "id_kota",
                         className: 'text-center',
                         render: function(data, type, row) {
                             return `KoTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka

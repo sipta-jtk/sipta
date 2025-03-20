@@ -349,12 +349,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengajuan Berkas Seminar 3',
-                    'url' => 'kelola-pengajuan/berkas-seminar-3',
+                    'url' => 'kelola-pengajuan-berkas/seminar-3',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Berkas Sidang Akhir',
-                    'url' => 'kelola-pengajuan/berkas-sidang-akhir',
+                    'url' => 'kelola-pengajuan-berkas/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]

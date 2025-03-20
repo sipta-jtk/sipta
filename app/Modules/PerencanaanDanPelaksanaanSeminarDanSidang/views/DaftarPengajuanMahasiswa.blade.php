@@ -95,7 +95,7 @@
                     },
                     { data: "tanggal_pengajuan", className: 'text-center', },
                     { 
-                        data: "kelompok",
+                        data: "id_kota",
                         className: 'text-center',
                         render: function(data, type, row) {
                             return `KoTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka
@@ -111,7 +111,7 @@
                     { 
                         data: null,
                         render: function(data, type, row) {
-                            let detailLink = detailUrl.replace('__ID__', row.id);
+                            let detailLink = detailUrl.replace('__ID__', row.id_kota);
                             return `<a href="${detailLink}" class="btn btn-primary btn-sm text-center">Proses</a>`;
                         },
                         orderable: false
