@@ -90,11 +90,19 @@
                         @endfor
 
                         <td class="align-middle status-cell" data-status="belum_fix">
-                            <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing1{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
+                            <input type="text"
+                                class="form-control text-center pembimbing mb-2"
+                                data-index="{{ $index }}"
+                                name="pembimbing1{{ $row['nama_kota'] }}"
+                                list="dosenList"
+                                value="{{ $row['preferensi_dosen'][0]['id_dosen'] ?? '' }}"
+                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
                             <label>Status:</label>
-                            <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing1" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
-                                <option value="belum_fix" selected>Belum Fix</option>
-                                <option value="fix">Fix</option>
+                            <select class="form-control status-dropdown w-100"
+                                data-detail-container="#detailPembimbing1"
+                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
+                                <option value="belum_fix" {{ isset($row['preferensi_dosen'][0]) ? '' : 'selected' }}>Belum Fix</option>
+                                <option value="fix" {{ isset($row['preferensi_dosen'][0]) ? 'selected' : '' }}>Fix</option>
                             </select>
                         </td>
                         <td class="align-middle text-left">
@@ -119,13 +127,20 @@
                             </div>
                         </td>
                         <td class="align-middle status-cell" data-status="belum_fix">
-                            <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing2{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
+                            <input type="text"
+                                class="form-control text-center pembimbing mb-2"
+                                data-index="{{ $index }}"
+                                name="pembimbing2{{ $row['nama_kota'] }}"
+                                list="dosenList"
+                                value="{{ $row['preferensi_dosen'][1]['id_dosen'] ?? '' }}"
+                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
                             <label>Status:</label>
-                            <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing2" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
-                                <option value="belum_fix" selected>Belum Fix</option>
-                                <option value="fix">Fix</option>
+                            <select class="form-control status-dropdown w-100"
+                                data-detail-container="#detailPembimbing2"
+                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
+                                <option value="belum_fix" {{ isset($row['preferensi_dosen'][1]) ? '' : 'selected' }}>Belum Fix</option>
+                                <option value="fix" {{ isset($row['preferensi_dosen'][1]) ? 'selected' : '' }}>Fix</option>
                             </select>
-                        </td>
                         </td>
                         <td class="align-middle text-left">
                             <div class="detail-content" id="detailPembimbing2">
@@ -504,9 +519,32 @@
             clearDraft();
         });
 
+        // Saat halaman pertama kali dimuat, langsung ambil detail dosen jika pembimbing sudah terisi
+        $(".pembimbing").each(function() {
+            var nip = $(this).val();
+            var detailContainer = $(this).closest("td").next().find(".detail-content");
+
+            if (nip) {
+                fetchDosenDetail(nip, detailContainer);
+            }
+        });
+
+        // Saat halaman pertama kali dimuat, langsung ubah warna dropdown status
+        $(".status-dropdown").each(function() {
+            let selectedStatus = $(this).val();
+            let cell = $(this).closest('.status-cell');
+
+            if (selectedStatus === "fix") {
+                cell.attr("data-status", "fix").css("background-color", "green").css("color", "white");
+            } else {
+                cell.attr("data-status", "belum_fix").css("background-color", "yellow").css("color", "black");
+            }
+        });
+
         // Muat data draft saat halaman pertama kali dibuka
         loadDraft();
     });
+
     var DataToSend = [];
 
     function saveData(id_pengajuan_pembimbing, key, value) {
@@ -545,7 +583,7 @@
                 hasPendingStatus = true;
             }
         });
-        
+
         let isValidRow = true;
 
         $("#alokasiTable tbody tr").each(function () {
