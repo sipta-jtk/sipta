@@ -26,11 +26,15 @@ Route::get('/api/notifications', [LogModalNotifController::class, 'getNotificati
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
 Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
 
-Route::get('/seeallnotif', function() {
-    return view('NotificationAndReminder::LogUser.logUser'); 
+Route::get('/admin/log-admin', function() {
+    return view('NotificationAndReminder::LogAdmin.logAdmin'); 
 });
 
+Route::get('/seeallnotif', function() {
+    return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
+});
 
+Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/preferensi-notifikasi/get', [PreferensiNotifikasiController::class, 'getPreferences'])->name('preferensi.notifikasi.get');

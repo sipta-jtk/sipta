@@ -17,11 +17,17 @@ class VerifikasiBerkasPengajuan extends Model
         'catatan',
         'tanggal_pengajuan',
         'tanggal_verifikasi',
-        'jenis_pangajuan'
+        'jenis_pangajuan',
+        'id_kota'
     ];
 
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'nip', 'nip');
+    }
+
+    public function kota()
+    {
+        return $this->belongsTo(Kota::class, 'id_kota', 'id_kota');
     }
 }

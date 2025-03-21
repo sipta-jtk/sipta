@@ -60,8 +60,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Memuat data notifikasi milik pengguna dari API
-            $.get('/api/snotifications', function(data) {
+            // Memuat data notifikasi dari API
+            $.get('/api/mahasiswa/notifications', function(data) {
                 const $tbody = $('#notifications-table-body');
                 $tbody.empty();
 
