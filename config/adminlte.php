@@ -418,7 +418,7 @@ return [
                 ],
                 [
                     'text' => 'Kelola Penilaian',
-                    'url' => $prefix . '/kelola-penilaian-ta/kelola-nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                     'can' => 'akses-penilaian-koordinator-ta',
                 ]
             ]
