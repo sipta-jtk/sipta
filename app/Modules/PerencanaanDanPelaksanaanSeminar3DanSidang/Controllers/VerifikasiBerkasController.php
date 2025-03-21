@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers;
+namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class VerifikasiBerkasController extends Controller
 {
@@ -24,7 +22,7 @@ class VerifikasiBerkasController extends Controller
         ->get();
 
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
 
 
@@ -39,7 +37,7 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'tidak_disetujui')
         ->get();
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanDitolak', compact('dataKota', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDitolak', compact('dataKota', 'tipe'));
     }
 
     public function pengajuanDiterima(Request $request, string $tipe): View
@@ -52,7 +50,7 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'disetujui')
         ->get();
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
 
     public function show(String $tipe, $idPengajuan): View
@@ -62,9 +60,7 @@ class VerifikasiBerkasController extends Controller
         ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
         ->where('id_pengajuan', $idPengajuan)->first();
 
-        Log::info(json_encode($dataKota, JSON_PRETTY_PRINT));
-
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.DetailPengajuan', compact('dataKota', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'tipe'));
     }
 
     public function verifikasi(Request $request, String $tipe, int $id)
