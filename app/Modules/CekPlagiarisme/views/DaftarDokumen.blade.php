@@ -13,7 +13,7 @@
             <div class="search-box">
                 <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
             </div>
-            <div class="form-group ml-3">
+            <div class="form-group ml-auto align-items-right">
                 <select id="kelompokSelect" class="form-control">
                     <option value="">Semua Kelompok</option>
                     <!-- Option kelompok akan dimasukkan di sini dengan JavaScript -->
