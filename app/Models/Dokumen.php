@@ -10,21 +10,22 @@ class Dokumen extends Model
     protected $primaryKey = 'id_dokumen';
 
     protected $fillable = [
-        'judul',
+        'judul', // 1
         'persentase_plagiarisme',
         'highlight_dokumen',
         'status_plagiarisme',
         'id_ambang_batas',
-        'review',
-        'kategori',
-        'deskripsi',
-        'versi',
-        'ukuran_file',
-        'notes',
+        'kategori', // 2
+        'deskripsi', // 3
+        'versi', // 4
+        'ukuran_file', // 5
+        'notes', // 6
         'id_kota',
         'id_subkategori',
         'username',
         'status_berkas',
+        'file_path',
+        'kode_fta',
         'created_at',
         'updated_at'
     ];
@@ -53,12 +54,7 @@ class Dokumen extends Model
     {
         return $this->hasMany(ListKalimatPlagiarisme::class, 'id_dokumen', 'id_dokumen');
     }
-
-    public function mahasiswaDosenDokumen()
-    {
-        return $this->hasMany(MahasiswaDosenDokumen::class, 'id_dokumen', 'id_dokumen');
-    }
-
+    
     public function reviewDosenPembimbing()
     {
         return $this->hasMany(ReviewDosenPembimbing::class, 'id_dokumen', 'id_dokumen');

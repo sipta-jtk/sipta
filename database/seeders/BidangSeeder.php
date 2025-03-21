@@ -2,21 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Seeder;
 use App\Models\Bidang;
 
 class BidangSeeder extends Seeder
 {
-    /**
+    /**s
      * Run the database seeds.
      */
 
-
      var $bidang = [
-        "Penerapan dan pengkajian teknik dan best practice dalam pengembangan perangkat lunak (improvement pada seluruh / sebagian tahap SDLC) apapun platform nya",
+        "Penerapan dan pengkajian teknik dan best practice dalam pengembangan perangkat lunak (improvement pada seluruh / sebagian tahap SDLC) apapun platformnya",
         "Machine Learning (Information Retrieval, Data Mining, Text Mining, AI, dll)",
         "Pengembangan perangkat lunak / sistem berbasis IOT",
         "Data and Information Management (cakupan ; operasional, transaksional, menengah (tactical), strategic)",
@@ -26,12 +23,16 @@ class BidangSeeder extends Seeder
         "Sistem Rekomendasi",
         "Image Processsing",
         "Computer Graphic",
-        "Computer Vision"
+        "Computer Vision",
+        "Game and Simulator",
+        "Robotics",
+        "Sound Processing",
+        "Math Modelling"
     ];
 
     public function run(): void
     {
-        if (!Schema::hasTable('ambang_batas')) 
+        if (!Schema::hasTable('bidang')) 
         {
             return;
         }

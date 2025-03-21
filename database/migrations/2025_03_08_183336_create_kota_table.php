@@ -15,8 +15,8 @@ return new class extends Migration
 
         Schema::create('kota', function (Blueprint $table) {
             $table->id('id_kota');
-            $table->text('judul_ta');
-            $table->unsignedBigInteger('id_bidang');
+            $table->text('judul_ta')->nullable();
+            $table->unsignedBigInteger('id_bidang')->nullable();
             $table->string('nama_kota', 255);
             $table->year('tahun_kota');
             $table->enum('status_kota', ['pra_kota', 'aktif', 'lulus', 'bubar']);
