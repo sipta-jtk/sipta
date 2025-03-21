@@ -44,7 +44,6 @@ RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /var/log/supervisor
 
 # Install dependency
-RUN composer clear-cache
 RUN composer install
 
 # Expose port 9000

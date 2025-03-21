@@ -70,15 +70,18 @@ class PengelolaanNilaiController extends Controller{
             $kodeDosenArray[$index] = $nilaiKategori->dosen->id_dosen;
         }
 
+        $nilaiArray = array_map(fn($nilai) => round($nilai, 2), $nilaiArray);
+
         $filtered = array_filter($nilaiArray, fn($nilai) => $nilai > 0);
+        $rataRata = count($filtered) > 0 ? round(array_sum($filtered) / count($filtered), 2) : 0.00;
         $filteredData[] = [
             'index' => $index + 1,
-            'kota' => $mahasiswa->kota->id_kota,
-            'nama' => $mahasiswa->user->nama,
-            'kelompok' => $mahasiswa->kota->nama_kota,
+            'kota' => $mahasiswa->kota->id_kota ?? '-',
+            'nama' => $mahasiswa->user->nama ?? '-',
+            'kelompok' => $mahasiswa->kota->nama_kota ?? '-',
             'nilai' => $nilaiArray,
             'kode_dosen' => $kodeDosenArray,
-            'rata-rata' => count($filtered) > 0 ? array_sum($filtered) / count($filtered) : 0,
+            'rata-rata' => $rataRata,
         ];
     }
 

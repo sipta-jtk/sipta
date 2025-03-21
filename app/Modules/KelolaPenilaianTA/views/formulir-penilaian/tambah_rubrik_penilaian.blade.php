@@ -19,7 +19,7 @@
 @stop
 
 @section('content')
-    <div class="p-4">
+<div class="p-4">
         <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST">
             @csrf
 
@@ -27,13 +27,9 @@
                 <!-- Kode FTA -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="kode_fta">Kode FTA</label>
-                        <select class="form-control" id="kode_fta" name="kode_fta" required>
-                            <option value="" disabled selected>Pilih Kode FTA</option>
-                            @foreach ($formPenilaianList as $formPenilaian)
-                                <option value="{{ $formPenilaian->kode_fta }}">{{ $formPenilaian->kode_fta }}</option>
-                            @endforeach
-                        </select>
+                        <label for="nama_fta">Kode FTA</label>
+                        <input type="text" class="form-control" id="kode_fta" name="kode_fta"
+                        value="{{ $data->kode_fta ?? '' }}" readonly>
                     </div>
                 </div>
 
@@ -41,7 +37,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
-                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" readonly>
+                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" 
+                        value="{{ $data->nama_fta ?? '' }}"readonly>
                     </div>
                 </div>
             </div>
@@ -70,11 +67,19 @@
                     <tbody id="rubrikPenilaianTable">
                         <tr>
                             <td>
-                                <select class="form-control kriteria" name="nama_kriteria[]" required>
+                                <select class="form-control id_kriteria" name="nama_kriteria" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
+                                    @foreach ($kriteriaList as $kriteriaPenilaian)
+                                        <option value="{{ $kriteriaPenilaian->id_kriteria }}" 
+                                            data-bobot="{{ $kriteriaPenilaian->bobot_kriteria }}">
+                                            {{ $kriteriaPenilaian->nama_kriteria }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </td>
-                            <td><p class="form-control-plaintext bobot"></p></td>
+                            <td>
+                                <p class="form-control-plaintext bobot">-</p> 
+                            </td>                            
                             <td><input type="text" class="form-control" name="detail[]" required></td>
                             @foreach ($rentangNilai as $nilai)
                                 <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
@@ -102,8 +107,4 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
-    <script>
-        const formPenilaianList = @json($formPenilaianList);
-        const kriteriaList = @json($kriteriaList);
-    </script>
 @stop

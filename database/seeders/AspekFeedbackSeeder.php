@@ -24,52 +24,52 @@ class AspekFeedbackSeeder extends Seeder
         $data = [
             [
                 'id_feedback' => 1,
-                'id_fta' => 4,
+                'id_fta' => 1,
                 'nama_aspek_feedback' => 'Deskripsi Topik'
             ],
             [
                 'id_feedback' => 2,
-                'id_fta' => 4,
+                'id_fta' => 1,
                 'nama_aspek_feedback' => 'Problem Definition'
             ],
             [
                 'id_feedback' => 3,
-                'id_fta' => 4,
+                'id_fta' => 1,
                 'nama_aspek_feedback' => 'Metodologi Penyelesaian TA'
             ],
             [
                 'id_feedback' => 4,
-                'id_fta' => 7,
+                'id_fta' => 3,
                 'nama_aspek_feedback' => 'Dokumen'
             ],
             [
                 'id_feedback' => 5,
-                'id_fta' => 7,
+                'id_fta' => 3,
                 'nama_aspek_feedback' => 'Presentasi'
             ],
             [
                 'id_feedback' => 6,
-                'id_fta' => 7,
+                'id_fta' => 3,
                 'nama_aspek_feedback' => 'Penguasaan Materi'
             ],
             [
                 'id_feedback' => 7,
-                'id_fta' => 11,
+                'id_fta' => 5,
                 'nama_aspek_feedback' => 'Dokumen'
             ],
             [
                 'id_feedback' => 8,
-                'id_fta' => 11,
+                'id_fta' => 5,
                 'nama_aspek_feedback' => 'Presentasi'
             ],
             [
                 'id_feedback' => 9,
-                'id_fta' => 11,
+                'id_fta' => 5,
                 'nama_aspek_feedback' => 'Penguasaan Materi'
             ],
             [
                 'id_feedback' => 10,
-                'id_fta' => 15,
+                'id_fta' => 7,
                 'nama_aspek_feedback' => 'Catatan Perbaikan Laporan'
             ]
         ];

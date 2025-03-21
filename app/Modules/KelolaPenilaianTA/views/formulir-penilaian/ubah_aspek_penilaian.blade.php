@@ -90,9 +90,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">Tidak ada data kriteria penilaian.</td>
-                                </tr>
+
                             @endforelse
                             
                             <!-- Tambahkan baris kosong jika diperlukan -->
@@ -111,6 +109,10 @@
                             @endif
                         </tbody>
                     </table>
+
+                    @if(count($aspek->penilaian) == 0)
+                        <div class="text-center">Tidak ada data kriteria penilaian.</div>
+                    @endif
                 </div>
             @else
                 <!-- Aspek Feedback -->

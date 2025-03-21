@@ -135,12 +135,12 @@ return [
     |
     */
 
-    'usermenu_enabled' => false,
+    'usermenu_enabled' => true,
     'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_image' => true,
+    'usermenu_desc' => true,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -437,16 +437,33 @@ return [
                     'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                 ],
                 [
-                    'text' => 'Kelola Penilaian',
-                    'url' => $prefix . '/kelola-penilaian-ta/kelola-nilai',
+                    'text' => 'Formulir Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                    'can' => 'akses-penilaian-koordinator-ta',
+                    'submenu' => [
+                    [
+                        'text' => 'Pengelolaan Formulir',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                        'can' => 'akses-penilaian-koordinator-ta'
+                    ],
+                    [
+                        'text' => 'Pengelolaan Rubrik',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
+                        'can' => 'akses-penilaian-koordinator-ta'
+                    ],
+                    ]
+                ],
+                [
+                    'text' => 'Pengelolaan Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                     'can' => 'akses-penilaian-koordinator-ta',
                 ]
             ]
         ],
         [
-            'text' => 'Repository Tugas Akhir',
-            'icon' => 'fas fa-book',
-            'url' => $prefix . '/timeline'
+            'text' => 'Timeline',
+            'url' => $prefix . '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -476,14 +493,54 @@ return [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
             'submenu' => [
+           
+                [
+                    'text' => 'Program Studi',
+                    'url'  => $prefix . '/program-studi',
+                    'icon' => 'fas fa-school',
+                    'can' => 'admin',
+                ],
+                [
+                    'text' => 'Kelola KBK',
+                    'url'  => $prefix . '/kelola-kbk',
+                    'icon' => 'fas fa-sitemap',
+                    'can' => 'admin',
+                ],
+                [
+                    'text' => 'Pengajuan Pisah KoTA',
+                    'url' => $prefix . '/pengajuan-pisah-kota',
+                    'icon' => 'fas fa-sign-out-alt',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Rekrut Anggota KoTA',
+                    'url' => $prefix . '/perekrutan-anggota-kota',
+                    'icon' => 'fas fa-users',
+                    'can' => 'mahasiswa_non_ta',
+                ],
+                [
+                    'text' => 'Detail KoTA',
+                    'url'  => $prefix . '/kota-saya',
+                    'icon' => 'fas fa-info',
+                    'can' => 'mahasiswa_kota',
+                ],
+                [
+                    'text' => 'Manajemen KoTA',
+                    'url' => $prefix . '/management-kota',
+                    'icon' => 'fas fa-users',
+                    'can' => 'koordinator_ta',
+                ],
                 [
                     'text' => 'Manajemen Akun Dosen',
-                    'url' => $prefix . '/manage_dosen',
+                    'url' => $prefix . '/manajemen-akun-dosen',
+                    'icon' => 'fas fa-user-tie',
+                    'can' => 'admin'
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => $prefix . '/#',
-
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'admin'
                 ],
             ],
         ],
