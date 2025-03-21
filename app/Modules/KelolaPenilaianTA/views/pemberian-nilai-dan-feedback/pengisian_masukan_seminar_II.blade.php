@@ -24,7 +24,7 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $data['nama_fta'] }}</span>
+                <span>{{ $data['kode_fta'] }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID Kota -->
@@ -46,6 +46,7 @@
 
         <!-- Form -->
         <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['kota'] . '/tambah') }}" method="POST">
+        <!-- <form action="{{ url('/kelola-penilaian-ta/pengelolaan-nilai/t') }}" method="POST"> -->
             @csrf
 
             @foreach ($aspekFeedback as $feedback)
@@ -55,10 +56,10 @@
                     </label>
                     <input type="hidden" name="feedback[{{ $feedback->id }}][id_fta]" value="{{ $id }}">
                     <input type="hidden" name="feedback[{{ $feedback->id }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
-                    
+
                     <!-- Trix Editor -->
                     <trix-editor input="feedback-{{ $feedback->id }}"></trix-editor>
-                    <input id="feedback-{{ $feedback->id }}" type="hidden" name="feedback[{{ $feedback->id }}][masukan]">
+                    <input id="feedback-{{ $feedback->id }}" type="hidden" name="feedback[{{ $feedback->id }}][masukan]" value="">
                 </div>
             @endforeach
 
@@ -79,10 +80,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script> 
+        // document.addEventListener("trix-change", function(event) {
+        //     let editor = event.target;
+        //     let hiddenInput = document.getElementById(editor.getAttribute("input"));
+        //     hiddenInput.value = editor.value;
+        // });
         document.addEventListener("trix-change", function(event) {
             let editor = event.target;
-            let hiddenInput = document.getElementById(editor.getAttribute("input"));
-            hiddenInput.value = editor.value;
+            let inputId = editor.getAttribute("input");
+            document.getElementById(inputId).value = event.target.editor.getDocument().toString();
         });
     </script>
 @stop

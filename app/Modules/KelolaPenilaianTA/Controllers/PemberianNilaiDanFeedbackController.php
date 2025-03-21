@@ -364,19 +364,19 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Akses halaman pemberian masukan
      */
-    public function simpanMasukanSeminar($id, $kota): View
-    {
-        switch ($id) {
-            case 1:
-                return $this->pengisianMasukanSeminar1($id, $kota);
-            case 3:
-                return $this->pengisianMasukanSeminarII($id, $kota);
-            case 5:
-                return $this->pengisianMasukanSeminarIII();
-            default:
-                return $this->pengisianMasukanSidangAkhir();
-        }
-    }
+    // public function simpanMasukanSeminar($id, $kota): View
+    // {
+    //     switch ($id) {
+    //         case 1:
+    //             return $this->pengisianMasukanSeminar1($id, $kota);
+    //         case 3:
+    //             return $this->pengisianMasukanSeminarII($id, $kota);
+    //         case 5:
+    //             return $this->pengisianMasukanSeminarIII();
+    //         default:
+    //             return $this->pengisianMasukanSidangAkhir();
+    //     }
+    // }
 
     /**
      * Menampilkan halaman pemberian masukan seminar 1
@@ -408,7 +408,7 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Menampilkan halaman pemberian masukan seminar 2
      */
-    private function pengisianMasukanSeminarII($id, $kota): View
+    public function pengisianMasukanSeminar($id, $kota): View
     {
         Log::info("Halo");
         // Ambil informasi seminar
@@ -423,10 +423,11 @@ class PemberianNilaiDanFeedbackController extends Controller
 
         // Ambil aspek feedback yang sesuai dengan seminar ini
         $aspekFeedback = AspekFeedback::where('id_fta', $id)->get();
+        Log::info("Aspek feedback".$aspekFeedback);
 
-        // Mapping data mahasiswa
-        // $data = $
-        // this->mappingDataMahasiswaMasukan($seminar, $mahasiswa);
+        // Mapping data mahasiswa untuk form pengisian masukan
+        $data = $this->mappingDataMahasiswaMasukan($seminar, $mahasiswa);
+        Log::info($data);
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', 
                     compact('seminar', 'mahasiswa', 'id', 'aspekFeedback', 'kota', 'data'));
@@ -435,15 +436,20 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Helper mapping untuk data mahasiswa di form pengisian masukan seminar 2
      */
-    // private function mappingDataMahasiswaMasukan($kategoriPenilaian, $mahasiswa)
-    // {
-    //     $data = [
-    //         'nama_fta' => $kategoriPenilaian->formulirPenilaian->nama_fta,
-    //         'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
-    //         // 'judul_ta' => $mahasiswa->first()->kota->judul_ta,
-    //         'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-    //         'kota' => $mahasiswa->first()->kota->nama_kota
-    //     ];
+    public function mappingDataMahasiswaMasukan($kategoriPenilaian, $mahasiswa)
+    {
+        // Log::info($mahasiswa);
+        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
+        $data = [
+            'kode_fta' => $kategoriPenilaian->formulirPenilaian->kode_fta,
+            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
+            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
+            'kota' => $mahasiswa->first()->kota->nama_kota
+        ];
+
+
+        return $data;
+    }
     
     //     return $data;
     // }
@@ -554,7 +560,7 @@ class PemberianNilaiDanFeedbackController extends Controller
     /**
      * Simpan feedback untuk Seminar 2
      */
-    private function simpanFeedbackSeminarII(Request $request, $id, $kota)
+    public function simpanMasukanSeminar(Request $request, $id, $kota)
     {
         $nip = auth()->user()->username; // Ambil NIP dosen yang login
 
@@ -570,16 +576,20 @@ class PemberianNilaiDanFeedbackController extends Controller
         // Simpan setiap masukan ke dalam database
         Log::info($feedbacks);
         foreach ($feedbacks as $feedback) {
-            FeedbackMasukan::create([
-                'id_fta' => $id,
-                'nama_aspek_feedback' => $feedback['nama_aspek_feedback'],
-                'masukan' => $feedback['masukan'],
-                'id_kota' => $kota,
+            DetailFeedback::create([
+                'id_feedback' => $id, // ID feedback dari URL
+                'id_kota' => $kota, // Kota tujuan dari URL
+                'nip' => $nip,
+                'status_penilaian_dosen' => 'draf', // Status default
+                'isi_feedback' => $request->input('feedback'), // Data feedback dari form
             ]);
         }
 
         // Redirect dengan notifikasi sukses
-        return redirect()->back()->with('success', 'Masukan berhasil disimpan.');
+        // return redirect()->back()->with('success', 'Masukan berhasil disimpan.');
+        // $pengelolaanNilai = new PengelolaanNilaiController();
+        // return $pengelolaanNilai->detailNilaiMahasiswa($id);
+        return redirect('sipta/kelola-penilaian-ta/nilai-seminar/'.$id);
     }
 
 }
