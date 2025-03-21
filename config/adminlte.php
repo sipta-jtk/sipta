@@ -400,6 +400,16 @@ return [
                 [
                     'text' => 'Formulir Penilaian',
                     'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                    'submenu' => [
+                    [
+                        'text' => 'Pengelolaan Formulir',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                    ],
+                    [
+                        'text' => 'Pengelolaan Rubrik',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
+                    ],
+                    ]
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
