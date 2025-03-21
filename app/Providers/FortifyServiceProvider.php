@@ -67,7 +67,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         // Mengatur redirect setelah login
-        config(['fortify.redirects.login' => '/']);
+        config(['fortify.redirects.login' => env('PREFIX_URL', 'sipta') . '/']);
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
