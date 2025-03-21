@@ -325,6 +325,63 @@ return [
         ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Alokasi Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Kelola Pengajuan Berkas',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Berkas Seminar 3',
+                    'url' => 'kelola-pengajuan-berkas/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Berkas Sidang Akhir',
+                    'url' => 'kelola-pengajuan-berkas/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Pengelolaan dan Penjadwalan Ruangan',
             'icon' => 'fas fa-home',
             'submenu' => [
                 [
@@ -443,15 +500,48 @@ return [
             ]
         ],
         [
-            'text' => 'Timeline',
-            'url' => $prefix . '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
+            'text' => 'Koordinator Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ],
+            'can' => 'koordinator_ta',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Dosen Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ],
+            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
         [
             'text' => 'Timeline',
-            'url' => '/timeline',
+            'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
             // 'label' => 4,
             // 'label_color' => 'success',

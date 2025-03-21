@@ -96,7 +96,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('all_mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('mahasiswa_non_ta');
         });
-
+        
+        Gate::define('akses-dosen-kelola-pengajuan-jadwal', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('kooordinator_ta');
+        });
+        
         /********************************************
          * [Topik 7] - Fitur Perekrutan Anggota KoTA
         *********************************************/
