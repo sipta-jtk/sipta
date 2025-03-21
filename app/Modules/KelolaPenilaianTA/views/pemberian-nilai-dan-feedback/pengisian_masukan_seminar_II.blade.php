@@ -45,7 +45,7 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['kota'] . '/tambah') }}" method="POST">
+        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['id_kota'] . '/tambah') }}" method="POST">
         <!-- <form action="{{ url('/kelola-penilaian-ta/pengelolaan-nilai/t') }}" method="POST"> -->
             @csrf
 
