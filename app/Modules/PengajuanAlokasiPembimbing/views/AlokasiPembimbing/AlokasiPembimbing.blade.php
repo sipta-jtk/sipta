@@ -450,6 +450,62 @@
 
         autoExpandTextarea();
         initializeScripts();
+        const localStorageKey = "alokasiPembimbingDraft";
+
+        // Fungsi untuk menyimpan data ke Local Storage
+        function saveDraft() {
+            let draftData = {};
+
+            // Simpan nilai setiap input dalam form
+            $("input, select, textarea").each(function() {
+                draftData[$(this).attr("name")] = $(this).val();
+            });
+
+            // Simpan ke Local Storage
+            localStorage.setItem(localStorageKey, JSON.stringify(draftData));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Draft Disimpan',
+                text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Fungsi untuk memuat data dari Local Storage saat halaman dimuat
+        function loadDraft() {
+            let savedData = localStorage.getItem(localStorageKey);
+
+            if (savedData) {
+                savedData = JSON.parse(savedData);
+
+                // Isi kembali form dengan data yang disimpan
+                $("input, select, textarea").each(function() {
+                    if (savedData[$(this).attr("name")]) {
+                        $(this).val(savedData[$(this).attr("name")]);
+                    }
+                });
+            }
+        }
+
+        // Fungsi untuk menghapus draft saat "Finalisasi" ditekan
+        function clearDraft() {
+            localStorage.removeItem(localStorageKey);
+        }
+
+        // Event listener untuk tombol "Simpan" -> Simpan ke Local Storage
+        $("#saveDraftBtn").click(function() {
+            saveDraft();
+        });
+
+        // Event listener untuk tombol "Finalisasi" -> Hapus draft dari Local Storage
+        $("#openConfirmModal").click(function() {
+            clearDraft();
+        });
+
+        // Muat data draft saat halaman pertama kali dibuka
+        loadDraft();
     });
     var DataToSend = [];
 
