@@ -30,7 +30,7 @@ Route::get('/admin/log-admin', function() {
     return view('NotificationAndReminder::LogAdmin.logAdmin'); 
 });
 
-Route::get('/seeallnotif', function() {
+Route::get('/user/log-user', function() {
     return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
 });
 
