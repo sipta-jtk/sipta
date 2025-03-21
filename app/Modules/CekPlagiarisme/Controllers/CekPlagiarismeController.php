@@ -20,16 +20,16 @@ class CekPlagiarismeController extends Controller
         } else {
             $idKota = auth()->user()
                 ->dosen
-                ->alokasiDosen
-                ->map(function ($alokasi) {
-                    return $alokasi->pengajuanPembimbing->kota->id_kota;
+                ->preferensiKota
+                ->map(function ($preferensiKota) {
+                    return $preferensiKota->id_kota;
                 });
         }
 
         // Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
         $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
             ->where('kategori', 'laporan')
-            ->where('id_kota', $idKota)
+            ->whereIn('id_kota', $idKota)
             ->get();
 
         // Format data agar sesuai dengan struktur jsGrid
@@ -82,5 +82,18 @@ class CekPlagiarismeController extends Controller
             'results' => $result['results'],
             'percentage' => $result['percentage']
         ]);
+    }
+
+    public function getKota()
+    {
+        $idKota = auth()->user()
+            ->dosen
+            ->preferensiKota
+            ->map(function ($preferensiKota) {
+                return $preferensiKota->kota->nama_kota;
+            });
+
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($idKota);
     }
 }

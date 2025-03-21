@@ -1,27 +1,26 @@
-<!-- ============================================================= -->
-<!-- Bagian: Menampilkan Daftar Komentar (Comments List)          -->
-<!-- ============================================================= -->
-<div id="comments-list">
-    @foreach($catatan as $index => $item)
-        <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}">
-            <div class="d-flex justify-content-between align-items-center">
-                <strong>
-                    <!-- Menampilkan Id Dosen atau pesan fallback jika tidak tersedia -->
-                    {{ optional($item->dosen->user)->nama ?? 'Nama Dosen Tidak Tersedia' }}
-                    
-                    <!-- Menampilkan role dosen jika tersedia -->
-                    <span class="text-muted small">
-                        @if($item->dosen && $item->dosen->role_dosen)
-                            ({{ $item->dosen->role_dosen }})
-                        @else
-                            (Role Tidak Tersedia)
-                        @endif
-                    </span>
-                </strong>
+@foreach($catatan as $index => $item)
+    <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}">
+        <div class="d-flex justify-content-between align-items-center">
+            <strong>
+                {{ $item->dosen->user->nama ?? 'Nama Dosen Tidak Tersedia' }}
+
+                @php
+                    $alokasi = $alokasiDosen->where('nip', $item->dosen->nip)->first();
+                @endphp
+                <span class="text-muted small">
+                    @if($alokasi)
+                        (Dosen Pembimbing {{ $alokasi->urutan_prioritas_terpilih }})
+                    @else
+                        (Dosen Pembimbing)
+                    @endif
+                </span>
+            </strong>
 
                 <!-- ========================================================= -->
                 <!-- Bagian: Dropdown Menu Aksi (Edit, Salin, Hapus)         -->
                 <!-- ========================================================= -->
+            <!-- Menampilkan tombol titik tiga hanya jika dosen yang login adalah penulis komentar -->
+            @if(auth()->user()->dosen->nip === $item->dosen->nip)
                 <div class="dropdown">
                     <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
@@ -46,7 +45,8 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            @endif
+        </div>
 
             <!-- Menampilkan teks komentar -->
             <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
@@ -160,17 +160,15 @@
             }
         });
 
-        // =========================================================
-        // Event Listener untuk tombol Salin (Copy)
-        // =========================================================
-        document.querySelectorAll(".copy-btn").forEach((btn) => {
-            btn.addEventListener("click", function () {
-                let commentText = this.closest(".comment-item").querySelector(".comment-text").innerText;
-                navigator.clipboard.writeText(commentText).then(() => {
-                    alert("Komentar disalin!");
-                });
-            });
+        document.querySelectorAll(".comment-item").forEach(item => {
+            let dosenNip = item.dataset.dosenNip; // Ambil data nip dari elemen
+            let loggedInDosenNip = '{{ auth()->user()->dosen->nip }}'; // Dosen yang login
+
+            if (dosenNip === loggedInDosenNip) {
+                item.querySelector(".dropdown").style.display = 'block'; // Tampilkan dropdown
+            }
         });
+
 
         // =========================================================
         // Event Listener untuk tombol Edit
