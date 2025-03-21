@@ -64,7 +64,7 @@ class MahasiswaController extends Controller
         });
 
         // Commit transaksi jika semua berhasil
-        return redirect()->route('manage.mhs')->with('success', 'Dosen berhasil ditambahkan!');
+        return redirect()->route('manage.mhs')->with('success', 'Mahasiswa berhasil ditambahkan!');
 
         
 
@@ -90,8 +90,8 @@ public function updateMhs(Request $request)
         'nama' => $request->nama,
         'no_whatsapp' => $request->no_wa,
     ]);
-    $dosen =  Mahasiswa::where('nim', $request->nim)->first();
-    $dosen->update([
+    $mahasiswa =  Mahasiswa::where('nim', $request->nim)->first();
+    $mahasiswa->update([
         'kelas' => $request->kelas,
         'tahun_masuk' => $request->tahun_masuk,
         'id_prodi' => $request->id_prodi,

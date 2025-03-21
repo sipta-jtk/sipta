@@ -56,21 +56,34 @@
                     <!-- Kalau pengajuan udah ada -->
                     <form action="{{ route('form.pisah.kota.batal') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <a href="{{ route('timeline') }}" class="btn btn-secondary mx-2 my-3">
+                        <a href="{{ url()->previous() }}" class="btn btn-secondary mx-2 my-3">
                                 <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                         <button type="submit" class="btn btn-warning" onclick="return confirm('Yakin batalkan pengajuan?')">
                             <i class="fas fa-times-circle"></i> Batalkan Pengajuan
                         </button>
                     </form>
-                @else
+                @elseif($kota->status_kota === 'pra_kota')
+                    <!-- Pra KoTA pisah -->
+                    <form action="{{ route('form.pisah.kota.prakota') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="gap-2">
+                            <a href="{{ route ('perekrutan-anggota-kota') }}" class="btn btn-secondary mx-2 my-3">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ajukan pisah?')">
+                                <i class="fas fa-paper-plane"></i> Pisah KoTA
+                            </button>
+                        </div>
+                    </form>
+                @elseif($kota->status_kota === 'aktif')
                     <!-- Kalau belum ada pengajuan -->
                     <form action="{{ route('form.pisah.kota.ajukan') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="gap-2">
                             <label class="form-label">Unggah FTA 20 (PDF)</label>
                             <input type="file" class="form-control" name="fta_20" accept=".pdf" required>
-                            <a href="{{ route('timeline') }}" class="btn btn-secondary mx-2 my-3">
+                            <a href="{{ url()->previous() }}" class="btn btn-secondary mx-2 my-3">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ajukan pisah?')">
@@ -84,7 +97,7 @@
                 <form action="{{ route('pengajuan.pisah.kota.terima', $pengajuan->id_pengajuan ?? 0) }}" method="POST" style="display: inline-block;">
                     @csrf
                     @method('PATCH')
-                    <a href="{{ route('timeline') }}" class="btn btn-secondary mx-2 my-3">
+                    <a href="{{ ~url()->previous() }}" class="btn btn-secondary mx-2 my-3">
                                 <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                     <button type="submit" class="btn btn-success" onclick="return confirm('Yakin terima pisah?')">

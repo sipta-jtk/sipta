@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -55,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Dosen
         Gate::define('dosen', function ($user) {
-            return $user->role_user === 'dosen';
+            return $user->role_user === 'dosen' && $user->dosen->status_dosen === 'aktif';
         });
 
         //Kaprodi

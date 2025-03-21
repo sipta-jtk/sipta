@@ -7,6 +7,7 @@ use App\Modules\Controller;
 use App\Models\User;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanPisahKota;
+use App\Models\KoTA;
 
 class FormPisahKoTAController extends Controller
 {
@@ -18,9 +19,9 @@ class FormPisahKoTAController extends Controller
         $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
     
         // Ambil data KoTA dari mahasiswa (tanpa bikin pengajuan)
-        $kota = $mahasiswa->kota ?? null;
-
-        //
+        if($mahasiswa->status_ta == "mahasiswa_ta"){
+            $kota = $mahasiswa->kota ?? null;
+        }
         $pengajuan = PengajuanPisahKota::where('nim', $mahasiswa->nim)->first();
     
         return view('UserManagement.views.form-pisah-kota', compact('mahasiswa', 'kota', 'pengajuan'));
@@ -37,8 +38,11 @@ class FormPisahKoTAController extends Controller
         ]);
 
         $existingPengajuan = PengajuanPisahKota::where('nim', $mahasiswa->nim)->first();
+        $kotaAktif = Kota::where('id_kota', $mahasiswa->id_kota)
+                        ->where('status_kota', 'aktif')
+                        ->first();
 
-        if (!$existingPengajuan) {
+        if (!$existingPengajuan && $kotaAktif) {
             // Simpan file PDF ke folder storage/app/public/fta
             $filePath = $request->file('fta_20')->store('fta', 'public');
 
@@ -51,6 +55,27 @@ class FormPisahKoTAController extends Controller
             return redirect()->back()->with('success', 'Pengajuan pisah berhasil!');
         }
         return redirect()->back()->with('info', 'Pengajuan sudah ada!');
+    }
+
+    public function prakota(Request $request)
+    {
+
+        $user = auth()->user();
+        $mahasiswa = $user->mahasiswa;
+
+        $prakota = Kota::where('id_kota', $mahasiswa->id_kota)
+        ->where('status_kota', 'pra_kota')
+        ->first();
+
+        if ($prakota) {
+            $mahasiswa->update(['id_kota' => null]);
+            $mahasiswa->update(['status_ta' => 'mahasiswa_non_ta']);
+        
+            return redirect()->route('perekrutan-anggota-kota')->with('success', 'Berhasil berpisah');
+        }
+        
+
+        return redirect()->back()->with('info', 'Gagal berpisah');
     }
 
     public function batal()
