@@ -10,12 +10,7 @@ done || { echo "Gagal terhubung ke database."; exit 1; }
 echo "Database siap."
 
 if [ "$RUN_MIGRATIONS" = "true" ]; then
-  if php artisan migrate:status | grep -q 'Pending'; then
-    php artisan migrate --force
-    php artisan db:seed --force
-  else
-    echo "Tidak ada migrasi yang perlu dijalankan."
-  fi
+  php artisan migrate:fresh --seed --force
 fi
 
 # Start supervisord
