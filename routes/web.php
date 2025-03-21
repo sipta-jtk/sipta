@@ -28,6 +28,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('/login', function () {
     return view('auth.login');
 });
@@ -85,10 +86,10 @@ Route::put('/update-data/{id}', function ($id, \Illuminate\Http\Request $request
 });
 
 
-Route::post('/logout', function () {
-    auth()->logout();
-    return redirect('/login');
-})->name('logout');
+// Route::post('/logout', function () {
+//     auth()->logout();
+//     return redirect('/login');
+// })->name('logout');
 
 Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
 
