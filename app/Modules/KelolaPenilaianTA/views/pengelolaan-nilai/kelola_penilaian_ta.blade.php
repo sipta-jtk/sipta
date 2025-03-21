@@ -35,7 +35,6 @@
                                 @if (!in_array(strtolower($data['nama_fta']), ['seminar i', 'seminar ii']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                {{-- {{ Log::info($data) }} --}}
                                 <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $data->id_fta) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
                             </div>
                         </td>
