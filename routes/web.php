@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\EmailController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,3 +37,5 @@ Route::post('/logout', function () {
     auth()->logout();
     return redirect('/login');
 })->name('logout');
+
+Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
