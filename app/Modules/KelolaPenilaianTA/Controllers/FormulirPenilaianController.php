@@ -478,4 +478,257 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta_rubrik', compact('data'));
     }    
 
+    public function storeRubrik(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Get form data
+            $kodeFta = $request->input('kode_fta');
+            
+            // Ambil data kriteria dari request
+            $kriterias = is_array($request->input('nama_kriteria')) 
+                ? $request->input('nama_kriteria') 
+                : [$request->input('nama_kriteria')];
+                
+            $details = $request->input('detail');
+            
+            // Loop through each row
+            foreach ($kriterias as $index => $idKriteria) {
+                $detail = $details[$index] ?? '';
+                
+                // Insert ke tabel rubrik menggunakan DB Query Builder
+                $idRubrik = DB::table('rubrik')->insertGetId([
+                    'id_kriteria' => $idKriteria,
+                    'nama_rubrik' => $detail
+                ]);
+                
+                // Save details for each rentang nilai
+                $rentangNilai = DB::table('rentang_nilai')
+                    ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+                    ->select('id_nilai')
+                    ->orderBy('batas_atas', 'desc')
+                    ->get();
+                    
+                foreach ($rentangNilai as $nilai) {
+                    $nilaiKey = 'nilai_' . $nilai->id_nilai;
+                    $detailArray = $request->input($nilaiKey);
+                    $detailNilai = $detailArray[$index] ?? '';
+                    
+                    // Insert ke tabel detail_rubrik
+                    DB::table('detail_rubrik')->insert([
+                        'id_rubrik' => $idRubrik,
+                        'id_nilai' => $nilai->id_nilai,
+                        'detail_rubrik_penilaian' => $detailNilai
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            // Ganti dengan route yang benar
+            return redirect()->route('tabelRubrik')
+                ->with('success', 'Rubrik penilaian berhasil ditambahkan.');
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    public function updateRubrik(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Get form data
+            $kodeFta = $request->input('kode_fta');
+            
+            // Ambil data kriteria dari request
+            $kriterias = $request->input('nama_kriteria');
+            $details = $request->input('detail');
+            
+            // Ambil id_fta dari kode_fta
+            $idFta = DB::table('form_penilaian')
+                ->where('kode_fta', $kodeFta)
+                ->value('id_fta');
+                
+            // Dapatkan semua id_kriteria yang ada untuk form ini
+            $existingKriteriaIds = DB::table('kriteria_penilaian')
+                ->where('id_fta', $idFta)
+                ->pluck('id_kriteria')
+                ->toArray();
+            
+            // Sebelum memproses data baru, hapus semua rubrik dan detail yang terkait dengan kriteria di form ini
+            // Langkah 1: Dapatkan semua id_rubrik yang terkait dengan kriteria
+            $existingRubrikIds = DB::table('rubrik')
+                ->whereIn('id_kriteria', $existingKriteriaIds)
+                ->pluck('id_rubrik')
+                ->toArray();
+                
+            // Langkah 2: Hapus semua detail_rubrik terlebih dahulu (constraint foreign key)
+            if (!empty($existingRubrikIds)) {
+                DB::table('detail_rubrik')
+                    ->whereIn('id_rubrik', $existingRubrikIds)
+                    ->delete();
+                    
+                // Langkah 3: Hapus semua rubrik
+                DB::table('rubrik')
+                    ->whereIn('id_rubrik', $existingRubrikIds)
+                    ->delete();
+            }
+            
+            // Loop through each row from the form input
+            foreach ($kriterias as $index => $idKriteria) {
+                $detail = $details[$index] ?? '';
+                
+                // Insert new rubrik
+                $idRubrik = DB::table('rubrik')->insertGetId([
+                    'id_kriteria' => $idKriteria,
+                    'nama_rubrik' => $detail
+                ]);
+                
+                // Save details for each rentang nilai
+                $rentangNilai = DB::table('rentang_nilai')
+                    ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+                    ->select('id_nilai')
+                    ->orderBy('batas_atas', 'desc')
+                    ->get();
+                    
+                foreach ($rentangNilai as $nilai) {
+                    $nilaiKey = 'nilai_' . $nilai->id_nilai;
+                    $detailArray = $request->input($nilaiKey);
+                    $detailNilai = $detailArray[$index] ?? '';
+                    
+                    // Insert ke tabel detail_rubrik
+                    DB::table('detail_rubrik')->insert([
+                        'id_rubrik' => $idRubrik,
+                        'id_nilai' => $nilai->id_nilai,
+                        'detail_rubrik_penilaian' => $detailNilai
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            return redirect()->route('tabelRubrik')
+                ->with('success', 'Rubrik penilaian berhasil diperbarui.');
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    // public function updateRubrik(Request $request)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // Get form data
+    //         $kodeFta = $request->input('kode_fta');
+            
+    //         // Ambil data kriteria dari request
+    //         $kriterias = $request->input('nama_kriteria');
+    //         $details = $request->input('detail');
+            
+    //         // Hapus rubrik lama yang terkait dengan id_fta ini
+    //         $idFta = DB::table('form_penilaian')
+    //             ->where('kode_fta', $kodeFta)
+    //             ->value('id_fta');
+                
+    //         // Get existing rubrik IDs to update instead of recreate
+    //         $kriteriaIds = DB::table('kriteria_penilaian')
+    //             ->where('id_fta', $idFta)
+    //             ->pluck('id_kriteria')
+    //             ->toArray();
+                
+    //         $existingRubriks = DB::table('rubrik')
+    //             ->whereIn('id_kriteria', $kriteriaIds)
+    //             ->get()
+    //             ->keyBy('id_kriteria');
+            
+    //         // Loop through each row
+    //         foreach ($kriterias as $index => $idKriteria) {
+    //             $detail = $details[$index] ?? '';
+                
+    //             // Check if rubrik exists for this criteria
+    //             if (isset($existingRubriks[$idKriteria])) {
+    //                 $existingRubrik = $existingRubriks[$idKriteria];
+    //                 $idRubrik = $existingRubrik->id_rubrik;
+                    
+    //                 // Update existing rubrik
+    //                 DB::table('rubrik')
+    //                     ->where('id_rubrik', $idRubrik)
+    //                     ->update([
+    //                         'nama_rubrik' => $detail
+    //                     ]);
+                        
+    //                 // Delete existing detail_rubrik for this rubrik
+    //                 DB::table('detail_rubrik')
+    //                     ->where('id_rubrik', $idRubrik)
+    //                     ->delete();
+    //             } else {
+    //                 // Insert new rubrik if not exists
+    //                 $idRubrik = DB::table('rubrik')->insertGetId([
+    //                     'id_kriteria' => $idKriteria,
+    //                     'nama_rubrik' => $detail
+    //                 ]);
+    //             }
+                
+    //             // Save details for each rentang nilai
+    //             $rentangNilai = DB::table('rentang_nilai')
+    //                 ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+    //                 ->select('id_nilai')
+    //                 ->orderBy('batas_atas', 'desc')
+    //                 ->get();
+                    
+    //             foreach ($rentangNilai as $nilai) {
+    //                 $nilaiKey = 'nilai_' . $nilai->id_nilai;
+    //                 $detailArray = $request->input($nilaiKey);
+    //                 $detailNilai = $detailArray[$index] ?? '';
+                    
+    //                 // Insert ke tabel detail_rubrik
+    //                 DB::table('detail_rubrik')->insert([
+    //                     'id_rubrik' => $idRubrik,
+    //                     'id_nilai' => $nilai->id_nilai,
+    //                     'detail_rubrik_penilaian' => $detailNilai
+    //                 ]);
+    //             }
+    //         }
+            
+    //         // Remove any rubrik that is no longer in the form
+    //         $newKriteriaIds = $kriterias;
+    //         $rubriksToDelete = DB::table('rubrik')
+    //             ->whereIn('id_kriteria', $kriteriaIds)
+    //             ->whereNotIn('id_kriteria', $newKriteriaIds)
+    //             ->pluck('id_rubrik')
+    //             ->toArray();
+                
+    //         if (count($rubriksToDelete) > 0) {
+    //             // Delete related detail_rubrik first
+    //             DB::table('detail_rubrik')
+    //                 ->whereIn('id_rubrik', $rubriksToDelete)
+    //                 ->delete();
+                    
+    //             // Then delete the rubrik
+    //             DB::table('rubrik')
+    //                 ->whereIn('id_rubrik', $rubriksToDelete)
+    //                 ->delete();
+    //         }
+            
+    //         DB::commit();
+    //         return redirect()->route('tabelRubrik')
+    //             ->with('success', 'Rubrik penilaian berhasil diperbarui.');
+                
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return redirect()->back()
+    //             ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+    //             ->withInput();
+    //     }
+    // }
+
 }
