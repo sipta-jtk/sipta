@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PembatalanJadwalSeminarSidangController;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiPengajuanJadwalController;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiBerkasController;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
 
@@ -58,5 +59,28 @@ Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.', 'middlew
         Route::get('/diterima', [VerifikasiBerkasController::class, 'pengajuanDiterima'])->name('diterima');
         Route::get('/detail/{id}', [VerifikasiBerkasController::class, 'show'])->name('detail');
         Route::put('/verifikasi/{id}', [VerifikasiBerkasController::class, 'verifikasi'])->name('verifikasi');
+    });
+});
+// Route untuk koordinator menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'koordinator-kelola-pengajuan-jadwal', 'as' => 'kelola.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsKoordinatorTA'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsKoordinatorTA'])->name('verifikasi');
+    });
+});
+
+// Route untuk dosen pembimbing menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'kelola-pengajuan-jadwal-pembimbing', 'as' => 'kelola-pembimbing.', 'middleware' => ['auth', 'can:akses-dosen-kelola-pengajuan-jadwal']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsDosenPembimbing'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsPembimbing'])->name('verifikasi');
+    });
+});
+
+// Route untuk dosen penguji menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'kelola-pengajuan-jadwal-penguji', 'as' => 'kelola-penguji.', 'middleware' => ['auth', 'can:akses-dosen-kelola-pengajuan-jadwal']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsDosenPenguji'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsPenguji'])->name('verifikasi');
     });
 });

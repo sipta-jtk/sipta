@@ -490,6 +490,46 @@ return [
             ]
         ],
         [
+            'text' => 'Koordinator Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ],
+            'can' => 'koordinator_ta',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Dosen Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ],
+            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
