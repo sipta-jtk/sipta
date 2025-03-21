@@ -545,6 +545,38 @@
                 hasPendingStatus = true;
             }
         });
+        
+        let isValidRow = true;
+
+        $("#alokasiTable tbody tr").each(function () {
+            let pembimbing1 = $(this).find(".pembimbing").eq(0).val().trim();
+            let pembimbing2 = $(this).find(".pembimbing").eq(1).val().trim();
+            let penguji1 = $(this).find(".penguji").eq(0).val().trim();
+            let penguji2 = $(this).find(".penguji").eq(1).val().trim();
+            let penguji3 = $(this).find(".penguji").eq(2).val().trim();
+
+            if (
+                pembimbing1 === "" &&
+                pembimbing2 === "" &&
+                penguji1 === "" &&
+                penguji2 === "" &&
+                penguji3 === ""
+            ) {
+                isValidRow = false;
+                return false; // break .each()
+            }
+        });
+
+        if (!isValidRow) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: 'Setiap kelompok minimal harus memiliki satu pembimbing atau satu penguji.',
+                timer: 3000,
+                showConfirmButton: true
+            });
+            return;
+        }
 
         if (pembimbingCount < 1) {
             Swal.fire({
@@ -593,6 +625,18 @@
                 cancelButtonText: 'Batal',
                 preConfirm: () => {
                     return new Promise((resolve, reject) => {
+                        $(".status-dropdown").each(function () {
+                            $(this).val("fix").trigger("change");
+
+                            let id_pengajuan_pembimbing = $(this).closest("tr").find(".pembimbing").first().data("index");
+                            let rowId = @json($list_pengajuan)[id_pengajuan_pembimbing]['id_pengajuan_pembimbing'];
+                            let statusKey = $(this).closest("td").find(".pembimbing").length > 0 ? "status_pembimbing1" : "status_pembimbing2";
+                            saveData(rowId, statusKey, "fix");
+                        });
+
+                        ParseddataToSend = JSON.stringify(DataToSend);
+                        $('#dataToSend').val(ParseddataToSend);
+
                         $.ajax({
                             url: $("#alokasiForm").attr('action'),
                             type: "POST",
