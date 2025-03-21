@@ -17,14 +17,46 @@ class RepositoryController extends Controller
      */
     public function index($kategori)
     {
-        $dokumen = Dokumen::where('kategori', $kategori)->get();
-        $subkategoris = [];
-        if ($kategori === 'artefak') {
-            $subkategoris = Subkategori::all(); // Ambil semua data subkategori
+        // Ambil parameter filter dari request
+        $search = request('search');
+        $versi = request('versi');
+        $tanggal_dibuat = request('tanggal_dibuat');
+
+        // Mulai query untuk mengambil dokumen
+        $dokumen = Dokumen::where('kategori', $kategori);
+
+        // Terapkan filter jika ada
+        if ($search) {
+            $dokumen->where('judul', 'like', '%' . $search . '%');
         }
 
-        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris'));
+        if ($versi) {
+            // Menangani versi (contoh: V1, V2, ...)
+            $dokumen->where('versi', $versi);
+        }
+
+        if ($tanggal_dibuat) {
+            // Filter berdasarkan tanggal dibuat
+            $dokumen->whereDate('created_at', $tanggal_dibuat);
+        }
+
+        // Ambil data dokumen sesuai dengan filter
+        $dokumen = $dokumen->get();
+
+        // Ambil subkategori jika kategori adalah 'artefak'
+        $subkategoris = [];
+        if ($kategori === 'artefak') {
+            $subkategoris = Subkategori::all();
+        }
+
+        // Ambil versi tertinggi yang ada di kategori ini
+        $maxVersion = Dokumen::where('kategori', $kategori)
+            ->max('versi'); // Mengambil versi terbesar yang ada
+
+        // Kirimkan maxVersion dan dokumen ke view
+        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion'));
     }
+
 
     /**
      * Menyimpan dokumen baru ke database.

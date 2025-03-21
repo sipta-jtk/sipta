@@ -9,11 +9,14 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="search-box">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
-        </div>
-        <div>
+    <div class="d-flex justify-content-between mb-3">
+        <!-- Tombol Filter -->
+        <button id="toggleFilter" class="btn btn-outline-secondary">
+            <i class="fas fa-filter"></i>
+        </button>
+
+        <!-- Tombol Add berada di bagian kanan -->
+        <div class="ms-auto">
             @if ($kategori === 'artefak')
             <a href="{{ url('/repository/'.$kategori.'/subkategori') }}" class="btn btn-success mr-2">
                 + Subkategori
@@ -23,6 +26,37 @@
                 + Add
             </button>
         </div>
+    </div>
+
+
+
+    <!-- Form Filter (Hidden by Default) -->
+    <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
+        <form action="{{ route('Repository.index', $kategori) }}" method="GET">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <select name="versi" class="form-control">
+                        <option value="">-- Pilih Versi --</option>
+                        @for ($i = 1; $i <= $maxVersion; $i++)
+                            <option value="{{ $i }}" {{ request('versi') == $i ? 'selected' : '' }}>V{{ $i }}</option>
+                            @endfor
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="date" name="tanggal_dibuat" class="form-control" value="{{ request('tanggal_dibuat') }}">
+                </div>
+
+                <div class="col-md-3 d-flex">
+                    <button type="submit" class="btn btn-dark w-50 me-2">Filter</button>
+                    <a href="{{ route('Repository.index', $kategori) }}" class="btn btn-secondary w-50 me-2">Reset</a>
+                </div>
+            </div>
+        </form>
     </div>
 
     @if(session('success'))
@@ -108,6 +142,14 @@
             @endif
         </tbody>
     </table>
+
+
+    <!-- Pagination -->
+    @if(method_exists($dokumen, 'links'))
+    <div class="d-flex justify-content-center">
+        {{ $dokumen->links() }}
+    </div>
+    @endif
 </div>
 
 <!-- Modal Tambah Dokumen -->
@@ -123,6 +165,7 @@
             <div class="modal-body">
                 <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" id="editId" name="id">
                     <div class="mb-3">
                         <label for="judul" class="form-label">Judul:</label>
                         <input class="form-control" id="judul" name="judul" required>
@@ -393,6 +436,22 @@
     #downloadConfirmationModal .btn-success:hover {
         background-color: #218838;
     }
+
+    /* Filter styling */
+    #filterOptions {
+        border-radius: 8px;
+    }
+
+    #toggleFilter {
+        height: 38px;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-3 {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
 </style>
 @stop
 
@@ -400,15 +459,33 @@
 <script>
     console.log("Laporan TA page loaded.");
 
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        let filter = this.value.toLowerCase();
+    // Toggle filter button functionality
+    document.getElementById("toggleFilter").addEventListener("click", function() {
+        var filterDiv = document.getElementById("filterOptions");
+        var searchInput = document.getElementById("searchInput");
+        if (filterDiv.style.display === "none") {
+            filterDiv.style.display = "block";
+            searchInput.style.display = "block";
+        } else {
+            filterDiv.style.display = "none";
+            searchInput.style.display = "none";
+        }
+    }); 
+
+    // Search input functionality
+    // document.getElementById('searchInput').addEventListener('keyup', function() {
+    //     filterTable();
+    // });
+
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
         let rows = document.querySelectorAll("tbody tr");
 
         rows.forEach(row => {
             let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? "" : "none";
+            row.style.display = text.includes(input) ? "" : "none";
         });
-    });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         // Populate edit modal when edit button is clicked
