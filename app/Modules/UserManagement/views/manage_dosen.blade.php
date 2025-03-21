@@ -7,21 +7,45 @@
 @stop
 
 @section('content')
+<!-- Button Tambah Dosen -->
+<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addNewDosen">
+    <i class="fa fa-plus"></i> Tambah Dosen
+</button>
+
+<button class="btn btn-success mb-3" data-toggle="modal" data-target="#uploadExcel">
+    <i class="fa fa-upload"></i> Upload Excel
+</button>
+
+<a href="{{ route('download.template-dosen') }}" class="btn btn-secondary mb-3">
+    <i class="fa fa-download"></i> Download Template Excel
+</a>
+@if(session('successrole'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+<div id="role_section" style="display: none;">
+    <div class="mb-3">
+        <label for="new_role">Pilih Role Baru:</label>
+        <select id="new_role" class="form-control">
+            <option value="">-- Pilih Role --</option>
+            <option value="dosen">Dosen</option>
+            <option value="koordinator_ta">Koordinator TA</option>
+        </select>
+    </div>
+    <button id="updateRoleButton" class="btn btn-primary">Update Role</button>
+</div>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-left">
-        <div>
-            <!-- Button Tambah Dosen -->
-            <button class="btn btn-success" data-toggle="modal" data-target="#addNewDosen">
-                <i class="fa fa-plus"></i> Tambah Dosen
-            </button>
-            <!-- Search Input -->
-            <input type="text" id="searchInput" class="form-control d-inline-block" placeholder="Cari..." style="width: 200px;">
-        </div>
     </div>
     <div class="card-body">
-        <table id="dosenTable" class="table table-bordered table-striped">
-            <thead>
+        <table id="datatable" class="table table-borderd">
+            <thead class="bg-primary text-white">
                 <tr>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>No</th>
                     <th>NIP</th>
                     <th>Nama</th>
                     <th>Email</th>
@@ -32,8 +56,18 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                 $no = 1   
+                @endphp
                 @foreach ($dosen as $d)
                 <tr>
+                    <td>
+                    @if ($d->role_dosen != 'kajur')
+                        <input type="checkbox" class="user_checkbox" value="{{ $d->nip }}">
+                    @endif
+                    
+                    </td>
+                    <td>{{$no}}</td>
                     <td>{{ $d->nip }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->email }}</td>
@@ -48,107 +82,294 @@
                             Dosen
                         @endif
                     </td>
+                    @php
+                     $no++;   
+                    @endphp
 
                     <td>    
 
                         {{-- Edit Button --}}
-                            <button class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+                            <button class="btn btn-xs btn-default text-primary mx-1 shadow btn-update-dosen" title="Edit" data-toggle="modal" data-target="#updateDosen" class="bg-purple"
+                            data-nip="{{ $d->nip }}"
+                            data-nama="{{ $d->nama }}"
+                            data-role="{{ $d->role_dosen }}"
+                            data-id_dosen="{{ $d->id_dosen }}"
+                            data-email="{{ $d->email }}"
+                            data-no_whatsapp="{{ $d->no_whatsapp }}"
+                            data-kode_dosen="{{ $d->kode_dosen }}"
+                            data-status_dosen="{{ $d->status_dosen }}"
+                            data-id_kbk="{{ $d->id_kbk }}">
+
+                            {{-- data-maks_bimbingan_d4="{{ $d->maks_bimbingan_d4 }}"
+                            data-maks_bimbingan_d3="{{ $d->maks_bimbingan_d3 }}"> --}}
+                            
                                 <i class="fa fa-lg fa-fw fa-pen"></i>
                             </button>
-                        {{-- Delete Button --}}
-                            <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete">
-                                <i class="fa fa-lg fa-fw fa-trash"></i>
-                            </button>
                         {{-- Management Role Button --}}
+                        @if($d->role_dosen != 'kajur')
                             <button class="btn btn-xs btn-default text-teal mx-1 shadow btn-change-role" title="Keys" data-toggle="modal" data-target="#changeRole" class="bg-purple"
                             data-nip="{{ $d->nip }}"
                             data-nama="{{ $d->nama }}"
                             data-role="{{ $d->role_dosen }}">
                                 <i class="fa fa-lg fa-fw fa-key"></i>
                             </button>
+                        @endif
+                        
+        
                 
                     </td>
                 </tr>
                 @endforeach
-                 <x-adminlte-modal id="changeRole" title="Manajemen Role Dosen" theme="purple"
-                    icon="fas fa-key" size='lg' disable-animations>
-                    <form action="{{route('dosen.update_role')}}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="nip" class="form-label">NIP</label>
-                            <input type="text" name="nip" class="form-control" id="nip-input" placeholder="NIP" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" name="nama" class="form-control" id="nama-input" placeholder="Nama" readonly>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Role Saat Ini</label>
-                            <select class="form-control" id="role-input" name="role">
-                                <option value="dosen">Dosen</option>
-                                <option value="koordinator_ta">Koordinator TA</option>
-                                <option value="kajur">Ketua Jurusan</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" type="submit" >Update</button>
-
-                    </form>
-                </x-adminlte-modal>
-
-                <x-adminlte-modal id="addNewDosen" title="Menambah Dosen Baru" theme="purple"
-                    icon="fa fa-plus" size='lg' disable-animations>
-                    <form action="{{route('dosen.add_new_dosen')}}" method="POST">
-                        @csrf
-                        <div class="row">
-                                <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
-                                    fgroup-class="col-md-6" disable-feedback  required  />
-                            
-
-                            <x-adminlte-input name="email" label="Email" placeholder="Email"
-                                    fgroup-class="col-md-6" disable-feedback  required  />
-                        </div>
-
-                        <div class="row">
-                            <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
-                                fgroup-class="col-md-6" disable-feedback required/>
-                        
-
-                            <x-adminlte-input name="id" label="ID" placeholder="ID"
-                                fgroup-class="col-md-6" disable-feedback  required  />
-                         </div>
-                        <div class="row">
-                            <x-adminlte-input name="no_wa" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
-                                       fgroup-class="col-md-6" disable-feedback  required  />
-                             <x-adminlte-input name="kode" label="Kode" placeholder="Kode"
-                                       fgroup-class="col-md-6" disable-feedback  required  />
-                        </div>
-
-                        <hr>
-                        <h4>Bimbingan</h4>
-                        <div class="row">
-                            <x-adminlte-input name="max_d4" label="Jumlah Bimbingan Maksimal (D4)" placeholder="..."
-                                      fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5"/>
-                            <x-adminlte-input name="max_d3" label="Jumlah Bimbingan Maksimal (D3)" placeholder="..."
-                                      fgroup-class="col-md-6" disable-feedback  type="number"  min="0" max="5" required  />
-                       </div>
-                       <x-adminlte-button type="submit" label="Submit" theme="primary" />
-
-                       <x-slot name="footerSlot">
-                        <x-adminlte-button theme="danger" label="Cancel" data-dismiss="modal"/>
-                        {{-- <x-adminlte-button type="submit" label="Submit" theme="primary" /> --}}
-                    </x-slot>
-                    </form>
-                </x-adminlte-modal>
+                
 
             </tbody>
         </table>
+                        {{-- <x-adminlte-modal id="deleteDosen" title="Menghapus Dosen" theme="purple" icon="fa fa-trash" size='lg' disable-animations>
+                            <form action="{{route('dosen.deleteDosen')}}" method="POST">
+                                @csrf
+                                <input type="hidden" name="nip" class="form-control" id="nip-hapus">
+                                <h5>Yakin ingin menghapus dosen atas nama <b> '<span id="nama-dosen"></span>'</b></h5>
+                                <button class="btn btn-danger" type="submit" >Delete</button>
+                            </form>
+                        </x-adminlte-modal> --}}
+        
+                        <x-adminlte-modal id="updateDosen" title="Mengupdate Data Dosen" theme="purple"
+                            icon="fa fa-plus" size='lg' disable-animations>
+                            <form action="{{route('dosen.updateDosen')}}" method="POST">
+                                @csrf
+                                <div class="row">
+                                        <x-adminlte-input name="nip" id="nip-update" label="NIP" placeholder="NIP"
+                                            fgroup-class="col-md-6" disable-feedback  readonly   />
+                                    
+                                    <x-adminlte-input name="email" id="email-update" label="Email" placeholder="Email"
+                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                </div>
+        
+                                <div class="row">
+                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                        fgroup-class="col-md-6" disable-feedback required/>
+                                
+        
+                                    <x-adminlte-input name="id" id="id_dosen-update" label="ID" placeholder="ID"
+                                        fgroup-class="col-md-6" disable-feedback  required  />
+                                 </div>
+                                <div class="row">
+                                    <x-adminlte-input name="no_wa" id="no_whatsapp-update" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
+                                               fgroup-class="col-md-6" disable-feedback  required  />
+                                     <x-adminlte-input name="kode" label="Kode" id="kode_dosen-update" placeholder="Kode"
+                                               fgroup-class="col-md-6" disable-feedback  required  />
+                                </div>
+                                <div class="row">
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" id="kbk-update" fgroup-class="col-md-6" required>
+                                        <option selected disabled>Pilih KBK ....</option>
+                                        @foreach($listkbk as $kbk)
+                                        <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
+                                    @endforeach
+                                </x-adminlte-select2>
+
+                                <x-adminlte-select2 name="status_dosen" label="Status" id="status_dosen-update" fgroup-class="col-md-6" required>
+                                    <option selected disabled>Pilih Status ....</option>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non Aktif</option>
+
+                            </x-adminlte-select2>
+                                </div>
+        
+
+                               <x-adminlte-button type="submit" label="Update" theme="primary" />
+        
+                               <x-slot name="footerSlot">
+                                <x-adminlte-button theme="danger" label="Cancel" data-dismiss="modal"/>
+                                {{-- <x-adminlte-button type="submit" label="Submit" theme="primary" /> --}}
+                            </x-slot>
+                            </form>
+                        </x-adminlte-modal>
+
+                        <x-adminlte-modal id="changeRole" title="Manajemen Role Dosen" theme="purple" icon="fas fa-key" size='lg' disable-animations>
+                            
+                            <form action="{{route('dosen.update_role')}}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="nip" class="form-label">NIP</label>
+                                    <input type="text" name="nip" class="form-control" id="nip-input" placeholder="NIP" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama</label>
+                                    <input type="text" name="nama" class="form-control" id="nama-input" placeholder="Nama" readonly>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="role" class="form-label">Role Saat Ini</label>
+                                    <select class="form-control" id="role-input" name="role">
+                                        <option value="dosen">Dosen</option>
+                                        <option value="koordinator_ta">Koordinator TA</option>
+                                        <option value="kajur">Ketua Jurusan</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" type="submit" >Update</button>
+
+                            </form>
+                         </x-adminlte-modal>
+
+                        <x-adminlte-modal id="addNewDosen" title="Menambah Dosen Baru" theme="purple"
+                            icon="fa fa-plus" size='lg' disable-animations>
+                            <form action="{{route('dosen.add_new_dosen')}}" method="POST">
+                                @csrf
+                                <div class="row">
+                                        <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
+                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                    
+
+                                    <x-adminlte-input name="email" label="Email" placeholder="Email"
+                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                </div>
+
+                                <div class="row">
+                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
+                                        fgroup-class="col-md-6" disable-feedback required/>
+                                
+
+                                    <x-adminlte-input name="id" label="ID Dosen" placeholder="Misal: AE (sebagai Ardhian Ekawijana)"
+                                        fgroup-class="col-md-6" disable-feedback  required  />
+                                </div>
+                                <div class="row">
+                                    <x-adminlte-input name="no_wa" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
+                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                    <x-adminlte-input name="kode" label="Kode Dosen" placeholder="Misal: KO001N"
+                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                </div>
+                                <div class="row">
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" fgroup-class="col-md-6" required>
+                                        <option selected disabled>Pilih KBK ....</option>
+                                        @foreach($listkbk as $kbk)
+                                        <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
+                                    @endforeach
+                                </x-adminlte-select2>
+
+                                <x-adminlte-select2 name="status_dosen" label="Status" fgroup-class="col-md-6" required>
+                                    <option selected disabled>Pilih Status ....</option>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non Aktif</option>
+
+                            </x-adminlte-select2>
+                            </div>
+                            <x-adminlte-button type="submit" label="Submit" theme="primary" />
+
+                            <x-slot name="footerSlot">
+                                <x-adminlte-button theme="danger" label="Cancel" data-dismiss="modal"/>
+                                {{-- <x-adminlte-button type="submit" label="Submit" theme="primary" /> --}}
+                            </x-slot>
+                            </form>
+                        </x-adminlte-modal>
+
+                        <x-adminlte-modal id="uploadExcel" title="Register By excel" theme="purple"
+                        icon="fa fa-plus" size='lg' >
+
+                        <form action="{{route('import-dosen')}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Choose a file..."
+    fgroup-class="col-md-6" disable-feedback required accept=".xls,.xlsx,.csv"/>
+                            <x-adminlte-button type="submit" label="Preview" theme="primary" />
+                        
+                    </x-adminlte-modal>
+
+                  
+
+
+               
     </div>
 </div>
 @stop
 
 @section('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    $(document).ready(function () {
+    function toggleRoleSection() {
+        var selectedCount = $('.user_checkbox:checked').length;
+        if (selectedCount >= 1) {
+            $('#role_section').show();
+        } else {
+            $('#role_section').hide();
+        }
+    }
+
+    // Saat checkbox user diubah
+    $('.user_checkbox').on('change', function () {
+        toggleRoleSection();
+    });
+
+    // Checkbox utama (select all)
+    $('#select_all').on('change', function () {
+        $('.user_checkbox').prop('checked', this.checked);
+        toggleRoleSection();
+    });
+
+    // Event klik tombol update
+    $('#updateRoleButton').on('click', function () {
+        var selectedUsers = $('.user_checkbox:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        var newRole = $('#new_role').val();
+
+        if (selectedUsers.length === 0 || newRole === "") {
+            alert("Pilih satu / lebih user dan role baru!");
+            return;
+        }
+
+        // Kirim data ke server dengan AJAX
+        $.ajax({
+            url: "{{ route('updateBulkRole') }}",
+            type: "POST",
+            data: {
+                nip: selectedUsers,
+                role_dosen: newRole,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function () {
+            Swal.fire({
+                title: "Berhasil!",
+                text: "Role dosen berhasil diperbarui!",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                location.reload();
+            });
+},
+            error: function () {
+                alert("Terjadi kesalahan, coba lagi.");
+            }
+        });
+    });
+});
+
+
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        const allowedExtensions = ['xls', 'xlsx', 'csv'];
+        const file = this.files[0];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert("File harus berformat .xls, .xlsx, atau .csv!");
+            this.value = ''; // Reset input file
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.querySelector('input[type="file"]');
+        const label = fileInput.closest('.input-group').querySelector('.custom-file-label');
+
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                label.textContent = this.files[0].name;
+            } else {
+                label.textContent = "Choose a file...";
+            }
+        });
+    });
     $(document).ready(function () {
         $("#dosenTable").DataTable();
     });
@@ -164,5 +385,41 @@
             document.getElementById("role-input").value = role;
         });
     });
+    $(document).ready(function () {
+         $(".btn-delete-dosen").click(function () {
+             var nip = $(this).data("nip");
+             var nama = $(this).data("nama");
+ 
+             document.getElementById("nip-hapus").value = nip;
+             $("#nama-dosen").text(nama);
+         });
+     });
+ 
+     $(document).ready(function () {
+         $(".btn-update-dosen").click(function () {
+ 
+             var nip = $(this).data("nip");
+             var nama = $(this).data("nama");
+             var email = $(this).data("email");
+             var no_whatsapp = $(this).data("no_whatsapp");
+             var id_dosen = $(this).data("id_dosen");
+             var kode_dosen = $(this).data("kode_dosen");
+             var status_dosen = $(this).data("status_dosen");
+             var id_kbk = $(this).data("id_kbk");
+
+             document.getElementById("nip-update").value = nip;
+             document.getElementById("nama-update").value = nama;
+             document.getElementById("email-update").value = email;
+             document.getElementById("no_whatsapp-update").value = no_whatsapp;
+             document.getElementById("id_dosen-update").value = id_dosen;
+             document.getElementById("kode_dosen-update").value = kode_dosen;
+             document.getElementById("status_dosen-update").value = status_dosen;
+             document.getElementById("kbk-update").value = id_kbk;
+
+ 
+         });
+     });
+
+ 
 </script>
 @stop
