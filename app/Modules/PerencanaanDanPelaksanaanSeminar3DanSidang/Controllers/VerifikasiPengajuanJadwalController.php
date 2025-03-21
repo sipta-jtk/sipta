@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers;
+namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
@@ -38,7 +37,7 @@ class VerifikasiPengajuanJadwalController extends Controller
         ->get();
         
 
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalKoordinator', compact('dataPengajuan', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalKoordinator', compact('dataPengajuan', 'tipe'));
     }
 
     public function getListAsDosenPembimbing(Request $request, String $tipe): View
@@ -79,7 +78,7 @@ class VerifikasiPengajuanJadwalController extends Controller
         )
         ->get();
     
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalPembimbing', compact('dataPengajuan', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalPembimbing', compact('dataPengajuan', 'tipe'));
     }
     
     public function getListAsDosenPenguji(Request $request, String $tipe): View
@@ -122,7 +121,7 @@ class VerifikasiPengajuanJadwalController extends Controller
         ->where('penjadwalan.agenda', $agenda)
         ->get();
     
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.ListPengajuanJadwalPenguji', compact('dataPengajuan', 'tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalPenguji', compact('dataPengajuan', 'tipe'));
     }
 
 
