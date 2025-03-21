@@ -437,7 +437,8 @@ return [
                     'url' => '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
-            ]
+            ],
+            'can' => 'koordinator_ta',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -456,7 +457,8 @@ return [
                     'url' => '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
-            ]
+            ],
+            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
