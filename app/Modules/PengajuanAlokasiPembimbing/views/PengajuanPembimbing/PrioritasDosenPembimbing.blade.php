@@ -14,8 +14,12 @@
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="3"
                 activeColor="primary" inactiveColor="secondary" 
-                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
-        </div>
+                :hrefs="[
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index')]"/>
+        </div> 
 
         <div class="col">
             <div class="card p-4 bg-light">
@@ -223,29 +227,6 @@
             }
         });
 
-        // Fungsi untuk menampilkan riwayat topik dosen pembimbing
-        // $(".viewHistory").click(function (event) {
-        //     event.preventDefault();
-            
-        //     let nip = $(this).data("nip"); // Ambil NIP dari atribut data
-        //     let name = $(this).data("name");
-        //     $("#dosenName").text(name);
-            
-        //     let historyContent = $("#historyContent");
-        //     historyContent.html("<tr><td colspan='2' class='text-center'>Loading...</td></tr>");
-
-        //     let form = $('<form>', {
-        //         action: `/prioritas-dosen-pembimbing/dosen/history/${nip}`,
-        //         method: 'GET',
-        //         target: '_blank'
-        //     });
-
-        //     $('body').append(form);
-        //     form.submit();
-        //     form.remove();
-
-        //     $("#historyModal").modal("show");
-        // });
     });
 
     // Mencari dosen berdasarkan nama
