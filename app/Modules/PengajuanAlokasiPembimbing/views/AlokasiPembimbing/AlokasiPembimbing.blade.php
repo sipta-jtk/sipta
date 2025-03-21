@@ -90,17 +90,9 @@
                         @endfor
 
                         <td class="align-middle status-cell" data-status="belum_fix">
-                            <input type="text"
-                                class="form-control text-center pembimbing mb-2"
-                                data-index="{{ $index }}"
-                                name="pembimbing1{{ $row['nama_kota'] }}"
-                                list="dosenList"
-                                value="{{ $row['preferensi_dosen'][0]['id_dosen'] ?? '' }}"
-                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
+                            <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing1{{ $row['nama_kota'] }}" list="dosenList" value="{{ $row['preferensi_dosen'][0]['id_dosen'] ?? '' }}" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
                             <label>Status:</label>
-                            <select class="form-control status-dropdown w-100"
-                                data-detail-container="#detailPembimbing1"
-                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
+                            <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing1" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
                                 <option value="belum_fix" {{ isset($row['preferensi_dosen'][0]) ? '' : 'selected' }}>Belum Fix</option>
                                 <option value="fix" {{ isset($row['preferensi_dosen'][0]) ? 'selected' : '' }}>Fix</option>
                             </select>
@@ -127,17 +119,9 @@
                             </div>
                         </td>
                         <td class="align-middle status-cell" data-status="belum_fix">
-                            <input type="text"
-                                class="form-control text-center pembimbing mb-2"
-                                data-index="{{ $index }}"
-                                name="pembimbing2{{ $row['nama_kota'] }}"
-                                list="dosenList"
-                                value="{{ $row['preferensi_dosen'][1]['id_dosen'] ?? '' }}"
-                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
+                            <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing2{{ $row['nama_kota'] }}" list="dosenList" value="{{ $row['preferensi_dosen'][1]['id_dosen'] ?? '' }}" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
                             <label>Status:</label>
-                            <select class="form-control status-dropdown w-100"
-                                data-detail-container="#detailPembimbing2"
-                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
+                            <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing2" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
                                 <option value="belum_fix" {{ isset($row['preferensi_dosen'][1]) ? '' : 'selected' }}>Belum Fix</option>
                                 <option value="fix" {{ isset($row['preferensi_dosen'][1]) ? 'selected' : '' }}>Fix</option>
                             </select>
@@ -176,12 +160,7 @@
                             <input type="text" class="form-control text-center penguji" data-index="{{ $index }}" name="penguji3{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji3', this.value)">
                         </td>
                         <td class="align-middle" style="min-width: 150px;">
-                            <textarea class="form-control text-left auto-expand catatan-input"
-                                data-id="{{ $row['id_pengajuan_pembimbing'] }}"
-                                name="catatan_{{ $index }}"
-                                rows="1"
-                                style="overflow: hidden; resize: none;"
-                                oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">{{ trim($row['catatan'] ?? '') }}</textarea>
+                            <textarea class="form-control text-left auto-expand catatan-input" data-id="{{ $row['id_pengajuan_pembimbing'] }}" name="catatan_{{ $index }}" rows="1" style="overflow: hidden; resize: none;" oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">{{ trim($row['catatan'] ?? '') }}</textarea>
                         </td>
                 </tr>
                 @endforeach
@@ -245,7 +224,8 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ccc !important;
         padding: 10px;
         text-align: center;
@@ -380,6 +360,7 @@
     td:nth-child(17) {
         min-width: 70px !important;
     }
+
 </style>
 @stop
 
@@ -419,15 +400,15 @@
         });
 
         let table = $('#alokasiTable').DataTable({
-            responsive: true,
-            paging: true,
-            lengthMenu: [10, 25, 50, 100],
-            pageLength: 10,
-            searching: true,
-            ordering: true,
-            info: true,
-            autoWidth: false,
-            drawCallback: function() {
+            responsive: true
+            , paging: true
+            , lengthMenu: [10, 25, 50, 100]
+            , pageLength: 10
+            , searching: true
+            , ordering: true
+            , info: true
+            , autoWidth: false
+            , drawCallback: function() {
                 initializeScripts();
             }
         });
@@ -455,11 +436,11 @@
 
         $('#saveDraftBtn').click(function() {
             Swal.fire({
-                icon: 'success',
-                title: 'Draft Disimpan',
-                text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.',
-                timer: 2000,
-                showConfirmButton: false
+                icon: 'success'
+                , title: 'Draft Disimpan'
+                , text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.'
+                , timer: 2000
+                , showConfirmButton: false
             });
         });
 
@@ -480,11 +461,11 @@
             localStorage.setItem(localStorageKey, JSON.stringify(draftData));
 
             Swal.fire({
-                icon: 'success',
-                title: 'Draft Disimpan',
-                text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.',
-                timer: 2000,
-                showConfirmButton: false
+                icon: 'success'
+                , title: 'Draft Disimpan'
+                , text: 'Data alokasi pembimbing berhasil disimpan sebagai draft.'
+                , timer: 2000
+                , showConfirmButton: false
             });
         }
 
@@ -566,19 +547,19 @@
         let pengujiCount = 0;
         let hasPendingStatus = false;
 
-        $(".pembimbing").each(function () {
+        $(".pembimbing").each(function() {
             if ($(this).val().trim() !== "") {
                 pembimbingCount++;
             }
         });
 
-        $(".penguji").each(function () {
+        $(".penguji").each(function() {
             if ($(this).val().trim() !== "") {
                 pengujiCount++;
             }
         });
 
-        $(".status-dropdown").each(function () {
+        $(".status-dropdown").each(function() {
             if ($(this).val() !== "fix") {
                 hasPendingStatus = true;
             }
@@ -586,7 +567,7 @@
 
         let isValidRow = true;
 
-        $("#alokasiTable tbody tr").each(function () {
+        $("#alokasiTable tbody tr").each(function() {
             let pembimbing1 = $(this).find(".pembimbing").eq(0).val().trim();
             let pembimbing2 = $(this).find(".pembimbing").eq(1).val().trim();
             let penguji1 = $(this).find(".penguji").eq(0).val().trim();
@@ -607,44 +588,44 @@
 
         if (!isValidRow) {
             Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: 'Setiap kelompok minimal harus memiliki satu pembimbing atau satu penguji.',
-                timer: 3000,
-                showConfirmButton: true
+                icon: 'error'
+                , title: 'Validasi Gagal!'
+                , text: 'Setiap kelompok minimal harus memiliki satu pembimbing atau satu penguji.'
+                , timer: 3000
+                , showConfirmButton: true
             });
             return;
         }
 
         if (pembimbingCount < 1) {
             Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: 'Minimal 1 pembimbing harus diisi sebelum melakukan finalisasi.',
-                timer: 3000,
-                showConfirmButton: true
+                icon: 'error'
+                , title: 'Validasi Gagal!'
+                , text: 'Minimal 1 pembimbing harus diisi sebelum melakukan finalisasi.'
+                , timer: 3000
+                , showConfirmButton: true
             });
             return;
         }
 
         if (pengujiCount < 1) {
             Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: 'Minimal 1 penguji harus diisi sebelum melakukan finalisasi.',
-                timer: 3000,
-                showConfirmButton: true
+                icon: 'error'
+                , title: 'Validasi Gagal!'
+                , text: 'Minimal 1 penguji harus diisi sebelum melakukan finalisasi.'
+                , timer: 3000
+                , showConfirmButton: true
             });
             return;
         }
 
         if (DataToSend.length === 0) {
             Swal.fire({
-                icon: 'warning',
-                title: 'Tidak ada perubahan!',
-                text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.',
-                timer: 2000,
-                showConfirmButton: false
+                icon: 'warning'
+                , title: 'Tidak ada perubahan!'
+                , text: 'Silakan isi atau ubah alokasi pembimbing sebelum menyimpan.'
+                , timer: 2000
+                , showConfirmButton: false
             });
             return;
         }
@@ -655,15 +636,15 @@
 
         if (hasPendingStatus) {
             Swal.fire({
-                icon: 'warning',
-                title: 'Status Dosen Belum Fix',
-                text: 'Ada dosen yang statusnya belum fix. Apakah Anda yakin ingin melanjutkan finalisasi?',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Lanjutkan',
-                cancelButtonText: 'Batal',
-                preConfirm: () => {
+                icon: 'warning'
+                , title: 'Status Dosen Belum Fix'
+                , text: 'Ada dosen yang statusnya belum fix. Apakah Anda yakin ingin melanjutkan finalisasi?'
+                , showCancelButton: true
+                , confirmButtonText: 'Ya, Lanjutkan'
+                , cancelButtonText: 'Batal'
+                , preConfirm: () => {
                     return new Promise((resolve, reject) => {
-                        $(".status-dropdown").each(function () {
+                        $(".status-dropdown").each(function() {
                             $(this).val("fix").trigger("change");
 
                             let id_pengajuan_pembimbing = $(this).closest("tr").find(".pembimbing").first().data("index");
@@ -676,16 +657,16 @@
                         $('#dataToSend').val(ParseddataToSend);
 
                         $.ajax({
-                            url: $("#alokasiForm").attr('action'),
-                            type: "POST",
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                dataToSend: ParseddataToSend
-                            },
-                            success: function(response) {
+                            url: $("#alokasiForm").attr('action')
+                            , type: "POST"
+                            , data: {
+                                _token: "{{ csrf_token() }}"
+                                , dataToSend: ParseddataToSend
+                            }
+                            , success: function(response) {
                                 resolve(response);
-                            },
-                            error: function() {
+                            }
+                            , error: function() {
                                 reject("Terjadi kesalahan saat mengirim data!");
                             }
                         });
@@ -694,22 +675,22 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Sukses',
-                        text: 'Alokasi pembimbing berhasil diajukan!',
-                        timer: 2000,
-                        showConfirmButton: false
+                        icon: 'success'
+                        , title: 'Sukses'
+                        , text: 'Alokasi pembimbing berhasil diajukan!'
+                        , timer: 2000
+                        , showConfirmButton: false
                     }).then(() => {
                         location.reload();
                     });
                 }
             }).catch((error) => {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: error,
-                    timer: 2000,
-                    showConfirmButton: false
+                    icon: 'error'
+                    , title: 'Gagal'
+                    , text: error
+                    , timer: 2000
+                    , showConfirmButton: false
                 });
             });
         } else {
@@ -717,60 +698,82 @@
         }
     }
 
+    const dosenCache = {};
+
     function fetchDosenDetail(nip, detailContainer) {
-        if (nip) {
-            console.log(`Fetching data for NIP: ${nip}`);
-
-            $.ajax({
-                url: `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`,
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    console.log("Response Data:", data);
-
-                    if (data.error) {
-                        detailContainer.html(`<div style="color: red;">${data.error}</div>`);
-                    } else {
-                        detailContainer.html(`
-                                <div><strong>Nama:</strong> ${data.nama}</div>
-                                <div><strong>KoTA:</strong> P1: ${data.pembimbing1_KoTA} |
-                                    P2: ${data.pembimbing2_KoTA} |
-                                    Total: ${data.jumlah_KoTA}</div>
-                                <div><strong>Mhs:</strong> P1: ${data.pembimbing1_Mhs} |
-                                    P2: ${data.pembimbing2_Mhs} |
-                                    Total: ${data.jumlahMahasiswa}</div>
-                                <div><strong>Kuota:</strong> ${data.kuota}</div>
-                                <div><strong>Kelebihan:</strong>
-                                    <span style="color: ${data.kelebihan.includes('Overload') ? 'red' : 'green'};">
-                                        ${data.kelebihan}
-                                    </span>
-                                </div>
-                            `);
-                    }
-                },
-                error: function(xhr) {
-                    console.log("AJAX Error:", xhr.responseText);
-                    detailContainer.html(`<div style="color: red;">Gagal mengambil data dosen.</div>`);
-                }
-            });
-        } else {
+        if (!nip) {
             detailContainer.html(`
-                    <div><strong>Nama:</strong> -</div>
-                    <div><strong>KoTA:</strong> P1: 0 | P2: 0 | Total: 0</div>
-                    <div><strong>Mhs:</strong> P1: 0 | P2: 0 | Total: 0</div>
-                    <div><strong>Kuota:</strong> 0</div>
-                    <div><strong>Kelebihan:</strong> Aman</div>
-                `);
+            <div><strong>Nama:</strong> -</div>
+            <div><strong>KoTA:</strong> P1: 0 | P2: 0 | Total: 0</div>
+            <div><strong>Mhs:</strong> P1: 0 | P2: 0 | Total: 0</div>
+            <div><strong>Kuota:</strong> 0</div>
+            <div><strong>Kelebihan:</strong> Aman</div>
+        `);
+            return;
         }
+
+        console.log(`Fetching data for NIP: ${nip}`);
+
+        $.ajax({
+            url: `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
+            , type: "GET"
+            , dataType: "json"
+            , success: function(response) {
+                console.log("Response Data:", response);
+
+                if (response.error) {
+                    detailContainer.html(`<div style="color: red;">${response.error}</div>`);
+                    return;
+                }
+
+                const data = response;
+
+                if (dosenCache[nip]) {
+                    dosenCache[nip].pembimbing1_KoTA += data.pembimbing1_KoTA;
+                    dosenCache[nip].pembimbing2_KoTA += data.pembimbing2_KoTA;
+                    dosenCache[nip].jumlah_KoTA += data.jumlah_KoTA;
+                    dosenCache[nip].pembimbing1_Mhs += data.pembimbing1_Mhs;
+                    dosenCache[nip].pembimbing2_Mhs += data.pembimbing2_Mhs;
+                    dosenCache[nip].jumlahMahasiswa += data.jumlahMahasiswa;
+                    dosenCache[nip].kuota += data.kuota;
+
+                    // **Mengolah kelebihan (Overload)**
+                    const prevKelebihan = parseInt(dosenCache[nip].kelebihan.match(/\d+/)[0]) || 0;
+                    const newKelebihan = parseInt(data.kelebihan.match(/\d+/)[0]) || 0;
+                    dosenCache[nip].kelebihan = `${prevKelebihan + newKelebihan} (Overload)`;
+                } else {
+                    // Simpan data baru jika belum ada
+                    dosenCache[nip] = {
+                        ...data
+                    };
+                }
+
+                const dosen = dosenCache[nip];
+
+                detailContainer.html(`
+                <div><strong>Nama:</strong> ${dosen.nama}</div>
+                <div><strong>KoTA:</strong> P1: ${dosen.pembimbing1_KoTA} |
+                    P2: ${dosen.pembimbing2_KoTA} |
+                    Total: ${dosen.jumlah_KoTA}</div>
+                <div><strong>Mhs:</strong> P1: ${dosen.pembimbing1_Mhs} |
+                    P2: ${dosen.pembimbing2_Mhs} |
+                    Total: ${dosen.jumlahMahasiswa}</div>
+                <div><strong>Kuota:</strong> ${dosen.kuota}</div>
+                <div><strong>Kelebihan:</strong>
+                    <span style="color: ${dosen.kelebihan.includes('Overload') ? 'red' : 'green'};">
+                        ${dosen.kelebihan}
+                    </span>
+                </div>
+            `);
+            }
+            , error: function(xhr) {
+                console.log("AJAX Error:", xhr.responseText);
+                detailContainer.html(`<div style="color: red;">Gagal mengambil data dosen.</div>`);
+            }
+        });
     }
 
     $(document).on("change", ".pembimbing", function() {
-        var nip = $(this).val();
-        var detailContainer = $(this).closest("td").next().find(".detail-content");
-        fetchDosenDetail(nip, detailContainer);
-    });
-
-    $(".pembimbing").on("change", function() {
         var nip = $(this).val();
         var detailContainer = $(this).closest("td").next().find(".detail-content");
         fetchDosenDetail(nip, detailContainer);
@@ -813,45 +816,46 @@
     $(document).on("input", ".pembimbing, .penguji", function() {
         updateDosenList();
     });
-    $(document).ready(function () {
-    function validateSelection() {
-        $(".pembimbing, .penguji").each(function () {
-            let row = $(this).closest("tr");
-            let pembimbing1 = row.find(".pembimbing").eq(0).val();
-            let pembimbing2 = row.find(".pembimbing").eq(1).val();
-            let penguji1 = row.find(".penguji").eq(0).val();
-            let penguji2 = row.find(".penguji").eq(1).val();
-            let penguji3 = row.find(".penguji").eq(2).val();
+    $(document).ready(function() {
+        function validateSelection() {
+            $(".pembimbing, .penguji").each(function() {
+                let row = $(this).closest("tr");
+                let pembimbing1 = row.find(".pembimbing").eq(0).val();
+                let pembimbing2 = row.find(".pembimbing").eq(1).val();
+                let penguji1 = row.find(".penguji").eq(0).val();
+                let penguji2 = row.find(".penguji").eq(1).val();
+                let penguji3 = row.find(".penguji").eq(2).val();
 
-            // **Validasi Pembimbing Tidak Boleh Sama dalam Satu KoTA**
-            if (pembimbing1 && pembimbing2 && pembimbing1 === pembimbing2) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan!',
-                    text: 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu kelompok.',
-                    confirmButtonText: 'OK'
-                });
-                row.find(".pembimbing").eq(1).val("");  // Kosongkan Pembimbing 2
-                return;
-            }
+                // **Validasi Pembimbing Tidak Boleh Sama dalam Satu KoTA**
+                if (pembimbing1 && pembimbing2 && pembimbing1 === pembimbing2) {
+                    Swal.fire({
+                        icon: 'error'
+                        , title: 'Kesalahan!'
+                        , text: 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu kelompok.'
+                        , confirmButtonText: 'OK'
+                    });
+                    row.find(".pembimbing").eq(1).val(""); // Kosongkan Pembimbing 2
+                    return;
+                }
 
-            // **Validasi Penguji Tidak Boleh Sama dalam Satu KoTA**
-            let pengujiSet = new Set([penguji1, penguji2, penguji3].filter(Boolean)); // Buang yang kosong/null
-            if (pengujiSet.size < ([penguji1, penguji2, penguji3].filter(Boolean).length)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan!',
-                    text: 'Penguji dalam satu kelompok tidak boleh sama.',
-                    confirmButtonText: 'OK'
-                });
+                // **Validasi Penguji Tidak Boleh Sama dalam Satu KoTA**
+                let pengujiSet = new Set([penguji1, penguji2, penguji3].filter(Boolean)); // Buang yang kosong/null
+                if (pengujiSet.size < ([penguji1, penguji2, penguji3].filter(Boolean).length)) {
+                    Swal.fire({
+                        icon: 'error'
+                        , title: 'Kesalahan!'
+                        , text: 'Penguji dalam satu kelompok tidak boleh sama.'
+                        , confirmButtonText: 'OK'
+                    });
 
-                $(this).val("");  // Kosongkan input yang diubah terakhir
-                return;
-            }
-        });
-    }
+                    $(this).val(""); // Kosongkan input yang diubah terakhir
+                    return;
+                }
+            });
+        }
 
-    $(".pembimbing, .penguji").on("change", validateSelection);
-});
+        $(".pembimbing, .penguji").on("change", validateSelection);
+    });
+
 </script>
 @stop
