@@ -12,7 +12,9 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        '/api/ambang-batas' 
+        '/api/ambang-batas',
+        '/kirim-email',
+        '/daftar-user'
         //
     ];
 }
