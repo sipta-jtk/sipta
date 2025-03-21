@@ -21,20 +21,29 @@ class NotifikasiKirimSeeder extends Seeder
 
         NotifikasiKirim::create([
             'id_notifikasi' => 1,
-            'username' => '221524049',
+            'username' => '198009162009122001',
             'kanal' => 'email',
             'status' => 'terkirim',
             'waktu_kirim' => Carbon::now(),
-            'respon_log' => 'Pesan berhasil dikirim.'
+            'respon_log' => 'gagal terkirim karena terjadi pembatasan pengiriman pesan'
         ]);
 
         NotifikasiKirim::create([
             'id_notifikasi' => 2,
-            'username' => '221524059',
-            'kanal' => 'sms',
-            'status' => 'gagal',
+            'username' => '198604122014041001',
+            'kanal' => 'whatsapp',
+            'status' => 'gagal terkirim',
             'waktu_kirim' => Carbon::now(),
-            'respon_log' => 'Nomor tidak valid.'
+            'respon_log' => 'gagal terkirim karena terjadi pembatasan pengiriman pesan'
+        ]);
+
+        NotifikasiKirim::create([
+            'id_notifikasi' => 3,
+            'username' => '198502102015042001',
+            'kanal' => 'email',
+            'status' => 'gagal terkirim',
+            'waktu_kirim' => Carbon::now(),
+            'respon_log' => 'gagal terkirim karena terjadi pembatasan pengiriman pesan'
         ]);
     }
 }

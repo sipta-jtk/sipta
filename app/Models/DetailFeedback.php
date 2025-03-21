@@ -15,7 +15,7 @@ class DetailFeedback extends Model
         'id_feedback',
         'id_kota',
         'nip',
-        'status_penilaian',
+        'status_penilaian_dosen',
         'isi_feedback'
     ];
 
