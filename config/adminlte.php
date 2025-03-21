@@ -350,10 +350,12 @@ return [
                         [
                             'text' => 'Formulir Pengajuan Dosen Pembimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                            'can' => 'mahasiswa_ta',
                         ],
                         [
                             'text' => 'Formulir Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                            'can' => 'dosen',
                         ],
                     ],
                 ],
