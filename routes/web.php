@@ -30,31 +30,10 @@ foreach (scandir($modulesPath) as $module) {
 // Default route for the homepage
 Route::get('/', function () {
     return view('welcome');
-})->middleware('auth'); // Only authenticated users can access this page
+})->middleware('auth'); // Hanya user login yang bisa akses
 
-// Logout route
 Route::post('/logout', function () {
     auth()->logout();
     return redirect('/login');
 })->name('logout');
 
-// Additional routes
-Route::get('/penentuan-ambang-batas', function () {
-    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
-});
-
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});
-
-Route::get('/seeallnotif', function () {
-    return view('NotificationAndReminder::LogUser.logUser'); // Adjust the view name as needed
-});
-
-Route::get('/log-admin', function () {
-    return view('NotificationAndReminder::LogAdmin.logAdmin'); // Adjust the view name as needed
-});
-
-Route::get('/edit-notif', function () {
-    return view('NotificationAndReminder::SettingNotification.SettingAwalNotif'); // Adjust the view name as needed
-});

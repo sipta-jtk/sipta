@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\NotificationAndReminder\Controllers\SettingNotification\SettingAwalNotif as SettingAwalNotifController;
 use App\Modules\NotificationAndReminder\Controllers\LogModal\LogModalNotifController;
 use App\Modules\NotificationAndReminder\Controllers\LogAdmin\LogAdminController;
+use App\Modules\NotificationAndReminder\Controllers\Preferensi\PreferensiNotifikasiController;
 
 Route::get('/notification/admin/settingawal', [SettingAwalNotifController::class, 'index'])->name('notification_reminder.admin.notifikasi');
 Route::post('/notification/admin/settingawal/store', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
@@ -23,6 +24,17 @@ Route::get('/notification_reminder/user/notifikasi', function () {
 // Route untuk mengambil notifikasi
 Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
 
-Route::get('/api/admin/log-admin', [LogAdminController::class, 'getLogNotifications']);
+Route::get('/admin/log-admin', function() {
+    return view('NotificationAndReminder::LogAdmin.logAdmin'); 
+});
+
+Route::get('/seeallnotif', function() {
+    return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
+});
 
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/preferensi-notifikasi/get', [PreferensiNotifikasiController::class, 'getPreferences'])->name('preferensi.notifikasi.get');
+    Route::post('/preferensi-notifikasi', [PreferensiNotifikasiController::class, 'store'])->name('preferensi.notifikasi.store');
+});
