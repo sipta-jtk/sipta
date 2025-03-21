@@ -46,7 +46,7 @@
                                 <div class="row d-flex flex-wrap pl-4 py-3">
                                     @foreach ($namaBidang as $bidang)
                                         <div class="col-md-6 d-flex align-items-center mb-2">
-                                            <input type="checkbox" id="bidang-{{$loop->index}}" class="form-check-input" style="accent-color: #17a2b8;">
+                                            <input type="radio" id="bidang-{{$loop->index}}" name="bidang" class="form-check-input" style="accent-color: #17a2b8;">
                                             <label for="bidang-{{$loop->index}}" class="m-0 flex-grow-1" style="word-break: break-word; white-space: normal; font-weight: normal;">
                                                 {{$bidang->bidang}}
                                             </label>
@@ -79,6 +79,8 @@
 @stop
 
 @section ('js')
+@include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+
 <script>
     $(document).ready(function () {
         // Load data dari localStorage jika ada
@@ -87,11 +89,11 @@
         // Fungsi untuk menyimpan draft saat tombol "Simpan Draft" diklik
         $("#saveDraft").click(function () {
             saveDraftData();
-            alert("Draft berhasil disimpan!");
+            toast("success", "Draft berhasil disimpan!");
         });
 
         // Simpan data secara otomatis saat input berubah
-        $("textarea, input[type='checkbox']").on("input change", function () {
+        $("textarea, input[type='radio']").on("input change", function () {
             saveDraftData();
         });
 
@@ -99,12 +101,13 @@
         function saveDraftData() {
             let draftData = {
                 topik: $("textarea[name='topik']").val(),
-                bidang: []
+                bidang: ""
             };
 
             // Simpan checkbox yang dicentang
-            $("input[type='checkbox']:checked").each(function () {
-                draftData.bidang.push($(this).next("label").text().trim());
+            $("input[type='radio']:checked").each(function () {
+                // draftData.bidang.push($(this).next("label").text().trim());
+                draftData.bidang = $(this).next("label").text().trim();
             });
 
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
@@ -117,7 +120,7 @@
             if (savedData) {
                 $("textarea[name='topik']").val(savedData.topik);
 
-                $("input[type='checkbox']").each(function () {
+                $("input[type='radio']").each(function () {
                     let label = $(this).next("label").text().trim();
                     if (savedData.bidang.includes(label)) {
                         $(this).prop("checked", true);

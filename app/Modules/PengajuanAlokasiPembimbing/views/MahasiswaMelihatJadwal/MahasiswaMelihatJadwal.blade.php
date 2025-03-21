@@ -22,39 +22,42 @@
     <p>Beranda > <a href="#">Jadwal Dosen Membimbing</a></p>
 
     <div class="table-responsive">
-        <table id="" class="table table-bordered bg-white">
-            <thead>
-                <tr class="bg-dark text-white">
-                    <th class="text-center" style="min-width: 0.5vw;">No</th>
-                    <th class="text-center">Nama Dosen</th>
-                    <th class="text-center">Hari</th>
-                    <th class="text-center">Jam Awal</th>
-                    <th class="text-center">Jam Akhir</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $counter = 1; @endphp 
-                
-                @foreach ($groupedData as $dosen)
-                    @php $rowspan = count($dosen['jadwal']); @endphp
+        @if (count($groupedData) > 0)
+            <table id="" class="table table-bordered bg-white">
+                <thead>
+                    <tr class="bg-dark text-white">
+                        <th class="text-center" style="min-width: 0.5vw;">No</th>
+                        <th class="text-center">Nama Dosen</th>
+                        <th class="text-center">Hari</th>
+                        <th class="text-center">Jam Awal</th>
+                        <th class="text-center">Jam Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $counter = 1; @endphp 
+                    
+                    @foreach ($groupedData as $dosen)
+                        @php $rowspan = count($dosen['jadwal']); @endphp
 
-                    @foreach ($dosen['jadwal'] as $index => $jadwal)
-                        <tr>
-                        
-                            @if ($index == 0)
-                                <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $counter }}</td>
-                                <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $dosen['nama_dosen'] }}</td>
-                                @php $counter++; @endphp 
-                            @endif
+                        @foreach ($dosen['jadwal'] as $index => $jadwal)
+                            <tr>
+                                @if ($index == 0)
+                                    <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $counter }}</td>
+                                    <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $dosen['nama_dosen'] }}</td>
+                                    @php $counter++; @endphp 
+                                @endif
 
-                            <td class="text-center align-middle">{{ ucfirst($jadwal['hari']) }}</td>
-                            <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_mulai'])) }}</td>
-                            <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_selesai'])) }}</td>
-                        </tr>
+                                <td class="text-center align-middle">{{ ucfirst($jadwal['hari']) }}</td>
+                                <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_mulai'])) }}</td>
+                                <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_selesai'])) }}</td>
+                            </tr>
+                        @endforeach
                     @endforeach
-                @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        @else
+            <p class="text-center">Tidak ada data jadwal dosen membimbing yang tersedia.</p>
+        @endif
     </div>
 @stop
 
