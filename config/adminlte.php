@@ -326,19 +326,45 @@ return [
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
             // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
+            'icon' => 'fas fa-home',
             'submenu' => [
                 [
-                    'text' => 'Pengajuan Pembimbing',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
+                    'text' => 'Daftar Kesediaan dan Pengajuan',
+                    'url' => $prefix . '/#',
+                    'submenu' => [
+                        [
+                            'text' => 'Daftar Kesediaan Membimbing',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                        ],
+                        [
+                            'text' => 'Daftar Pengajuan Dosen Pembimbing',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                        ],
+                    ],
                 ],
-                [
-                    'text' => 'Alokasi Pembimbing',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
+            ],
+            [
+                'text' => 'Formulir Pengajuan dan Kesediaan',
+                'url' => $prefix . '/#',
+                'submenu' => [
+                    [
+                        'text' => 'Formulir Pengajuan Pembimbing',
+                        'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                    ],
+                    [
+                        'text' => 'Formulir Kesediaan Membimbing',
+                        'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                    ],
                 ],
-            ]
+            ],
+            [
+                'text' => 'Pengelolaan Periode',
+                'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
+            ],
+            [
+                'text' => 'Alokasi Dosen Pembimbing',
+                'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
+            ],
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -379,48 +405,6 @@ return [
             ]
             // 'label' => 4,
             // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Pengelolaan dan Penjadwalan Ruangan',
-            'icon' => 'fas fa-home',
-            'submenu' => [
-                [
-                    'text' => 'Daftar Kesediaan dan Pengajuan',
-                    'url' => $prefix . '/#',
-                    'submenu' => [
-                        [
-                            'text' => 'Daftar Kesediaan Membimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
-                        ],
-                        [
-                            'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'Formulir Pengajuan dan Kesediaan',
-                    'url' => $prefix . '/#',
-                    'submenu' => [
-                        [
-                            'text' => 'Formulir Pengajuan Pembimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
-                        ],
-                        [
-                            'text' => 'Formulir Kesediaan Membimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'Pengelolaan Periode',
-                    'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
-                ],
-                [
-                    'text' => 'Alokasi Dosen Pembimbing',
-                    'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
-                ],
-            ]
         ],
         [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
@@ -563,13 +547,6 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Repository Tugas Akhir',
-            'url' => $prefix . '/repository',
-            'icon' => 'fas fa-book',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
