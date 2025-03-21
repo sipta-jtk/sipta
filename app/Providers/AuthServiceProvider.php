@@ -115,5 +115,15 @@ class AuthServiceProvider extends ServiceProvider
             $mahasiswa = \App\Models\Mahasiswa::where('nim', $user->username)->first();
             return $user->role_user === 'mahasiswa' && $mahasiswa->status_ta === 'mahasiswa_ta' && $mahasiswa->id_kota !== null;
         });
+        /**********************************
+         * [Topik 2] - Fitur Pengajuan Seminar 3 & Sidang
+        ***********************************/
+        //All Mahasiswa 
+        Gate::define('all_mahasiswa', function ($user) {
+            return $user->role_user === 'mahasiswa' && 
+                   ($user->mahasiswa->status_ta === 'mahasiswa_ta' || 
+                    $user->mahasiswa->status_ta === 'mahasiswa_non_ta');
+        });
     }
 }
+

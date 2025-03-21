@@ -15,6 +15,8 @@ done || { echo "Gagal terhubung ke database."; exit 1; }
 
 php artisan migrate:fresh --seed
 
+
+# php artisan migrate:fresh --seed
 # Cek apakah migrasi diaktifkan di .env
 if [ "${MIGRATE_ON_START}" = "true" ]; then
     echo "Menjalankan migrasi..."
@@ -37,7 +39,7 @@ if [ "${MIGRATE_ON_START}" = "true" ]; then
                 echo "Gagal menjalankan migrasi setelah wipe."
                 exit 1
             fi
-        elsep
+        else
             echo "Migrasi gagal, tapi wipe database tidak diaktifkan (WIPE_DATABASE=false)."
             exit 1
         fi
