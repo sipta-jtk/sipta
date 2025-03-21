@@ -334,10 +334,12 @@ return [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                            'can' => 'koordinator_ta',
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'can' => 'dosen_pembimbing',
                         ],
                     ],
                 ],
@@ -366,6 +368,7 @@ return [
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
+                    'can' => 'mahasiswa_ta',
                 ],
             ]
         ],
