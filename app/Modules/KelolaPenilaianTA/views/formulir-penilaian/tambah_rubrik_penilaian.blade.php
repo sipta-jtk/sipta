@@ -107,15 +107,4 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
-
-    <script>
-        $(document).ready(function () {
-            $(document).on('change', '.id_kriteria', function () {
-                var selectedOption = $(this).find(':selected'); // Ambil opsi yang dipilih
-                var bobot = selectedOption.data('bobot'); // Ambil nilai dari atribut data-bobot
-                $(this).closest('tr').find('.bobot').text(bobot ? bobot + "%" : "-"); // Tampilkan bobot di kolom
-                console.log("Data Bobot:", bobot); // ✅ Console log di sini
-            });
-        });
-    </script>
 @stop
