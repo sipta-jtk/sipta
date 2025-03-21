@@ -31,7 +31,7 @@
                                 @foreach ($listDosen as $d)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span class="dosen-name">{{ $d->nama }}</span>
-                                        <div>
+                                        <div class="button-container d-flex justify-content-end">
                                             <button class="btn btn-sm btn-secondary viewHistory" type="button" data-toggle="modal" data-target="#historyModal{{$d->nip}}">
                                                 <i class="fas fa-file-alt"></i>
                                             </button>
@@ -56,16 +56,20 @@
                                                     <table class="table table-bordered">
                                                         <thead>
                                                             <tr>
-                                                                <th>Bidang</th>
+                                                                <th>List Ketertarikan Bidang</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="historyContent">
-                                                            @foreach ($d->history as $bidang)
+                                                            @forelse ($d->history as $bidang)
+                                                            <tr>
+                                                                <td>{{ $bidang->bidang }}</td>
+                                                            </tr>
+                                                            @empty
                                                                 <tr>
-                                                                    <td>{{ $bidang->bidang }}</td>
+                                                                    <td colspan="1" class="text-center">Tidak ada data</td>
                                                                 </tr>
-                                                            @endforeach
-                                                        </tbody>
+                                                            @endforelse
+                                                            </tbody>
                                                     </table>
                                                 </div>
                                             </div>
@@ -98,38 +102,20 @@
                 </div>
             </div>
     </div>
-
-    <!-- Modal untuk Riwayat Topik -->
-    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="dosenName"></p>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Tahun</th>
-                                <th>Bidang</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyContent">
-                            {{-- Data akan diisi lewat JS --}}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 @stop
 
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href=" https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
+
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 5px; /* Space between the buttons */
+        }
+    </style>
 @stop
 
 @section ('js')

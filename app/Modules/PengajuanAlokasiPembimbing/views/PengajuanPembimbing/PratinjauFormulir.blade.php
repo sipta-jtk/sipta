@@ -26,11 +26,11 @@
                             <tr>
                                 <th class="p-0" style="font-weight: bold;">Nama</th>
                                 <td class="p-0" >:</td>
-                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser['nama'] }}</td>
+                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser->nama }}</td>
                             </tr>
                                 <th  class="p-0" style="font-weight: bold;">NIM</th>
                                 <td class="p-0" >:</td>
-                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser['nim'] }}</td>
+                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser->nim }}</td>
                             </tr>
                         </table>                        
                     </div>

@@ -18,34 +18,28 @@ class PengajuanPembimbingController extends Controller
 {
     public function view_dataKelompok(): View
     {
-        // // data mahasiswa yang login
-        // $id_kota_user = DB::table('mahasiswa')
-        //     ->where('nim', auth()->user()->username) 
-        //     ->value('id_kota'); 
+        
+        // Ambil data mahasiswa yang sedang login
+        $sessionUser = DB::table('mahasiswa')
+        ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
+        ->where('mahasiswa.nim', auth()->user()->username)
+        ->first(); 
 
-        // // data mahasiswa dalam kota yang sama dengan yang login
-        // $listMahasiswa = DB::table('mahasiswa')
-        //     ->join('user', 'mahasiswa.nim', '=', 'user.username')
-        //     ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas')
-        //     ->where('mahasiswa.id_kota', $id_kota_user)
-        //     ->orderBy('user.nama', 'asc')
-        //     ->get();
+        if ($sessionUser) {
+            $id_kota_user = $sessionUser->id_kota;
+            $nim_user = $sessionUser->nim;
 
-        $sessionUser = [
-            'nama' => 'Welsya',
-            'nim' => '221524032',
-            'kelas' => 'D4A',
-            'id_kota' => 2
-        ];
-
-        $dataAnggota = DB::table('mahasiswa')
-            ->join('user', 'mahasiswa.nim', '=', 'user.username')
-            ->join('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
-            ->select('user.nama', 'mahasiswa.nim')
-            ->where('mahasiswa.id_kota', $sessionUser['id_kota'])
-            ->where('mahasiswa.nim', '!=', $sessionUser['nim'])
-            ->orderBy('user.nama', 'asc')
-            ->get();
+            // Ambil data mahasiswa lain dalam kota yang sama (kecuali mahasiswa yang login)
+            $dataAnggota = DB::table('mahasiswa as m')
+                ->join('user as u', 'm.nim', '=', 'u.username')
+                ->join('kota as k', 'm.id_kota', '=', 'k.id_kota')
+                ->select('u.nama', 'm.nim', 'm.kelas')
+                ->where('m.id_kota', $id_kota_user)
+                ->where('m.nim', '!=', $nim_user)
+                ->orderBy('u.nama', 'asc')
+                ->get();
+        }
 
         return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.DataKelompok', compact('sessionUser','dataAnggota'));
     }
@@ -89,32 +83,32 @@ class PengajuanPembimbingController extends Controller
             ->orderBy('bidang.bidang', 'asc')
             ->get();
         
-            
-            // return response()->json([
-            //     'bidangList' => $history
-            // ]);
         return $history;
     }
 
     public function view_pratinjauFormulir(): View
     {
         // Ambil data mahasiswa yang sedang login
-        $sessionUser = [
-            'nama' => 'Welsya',
-            'nim' => '221524032',
-            'kelas' => 'D4A',
-            'id_kota' => 2
-        ];
+        $sessionUser = DB::table('mahasiswa')
+        ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
+        ->where('mahasiswa.nim', auth()->user()->username)
+        ->first(); 
 
-        // Ambil data anggota kelompok berdasarkan kota yang sama
-        $dataAnggota = DB::table('mahasiswa')
-            ->join('user', 'mahasiswa.nim', '=', 'user.username')
-            ->join('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
-            ->select('user.nama', 'mahasiswa.nim')
-            ->where('mahasiswa.id_kota', $sessionUser['id_kota'])
-            ->where('mahasiswa.nim', '!=', $sessionUser['nim'])
-            ->orderBy('user.nama', 'asc')
-            ->get();
+        if ($sessionUser) {
+            $id_kota_user = $sessionUser->id_kota;
+            $nim_user = $sessionUser->nim;
+
+            // Ambil data mahasiswa lain dalam kota yang sama (kecuali mahasiswa yang login)
+            $dataAnggota = DB::table('mahasiswa as m')
+                ->join('user as u', 'm.nim', '=', 'u.username')
+                ->join('kota as k', 'm.id_kota', '=', 'k.id_kota')
+                ->select('u.nama', 'm.nim', 'm.kelas')
+                ->where('m.id_kota', $id_kota_user)
+                ->where('m.nim', '!=', $nim_user)
+                ->orderBy('u.nama', 'asc')
+                ->get();
+        }
         
         return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.PratinjauFormulir', compact('sessionUser', 'dataAnggota'));
     }
@@ -126,13 +120,13 @@ class PengajuanPembimbingController extends Controller
             'topik' => 'required|string|max:255',
             'bidang' => 'required|min:1',
             'bidang.*' => 'string',
-            'prioritas_dosen' => 'required|array|min:1|max:5',
-            'prioritas_dosen.*' => 'string', // Validasi NIP dosen
+            // 'prioritas_dosen' => 'required|min:1|max:5',
+            // 'prioritas_dosen.*' => 'string', // Validasi NIP dosen
         ],
         [
             'topik.required' => 'Topik tugas akhir harus diisi',
             'bidang.required' => 'Bidang tugas akhir harus dipilih',
-            'prioritas_dosen.required' => 'Prioritas dosen pembimbing harus diisi minimal 1 dan maksimal 5',
+            // 'prioritas_dosen.required' => 'Prioritas dosen pembimbing harus diisi minimal 1 dan maksimal 5',
         ]);
 
         if ($validator->fails()) {
@@ -146,33 +140,38 @@ class PengajuanPembimbingController extends Controller
         $prioritas = json_decode($request->input('prioritas'), true);
         
         
-        $sessionUser = [
-            'nama' => 'Welsya',
-            'nim' => '221524032',
-            'kelas' => 'D4A',
-            'id_kota' => 2
-        ];
+        // Ambil data mahasiswa yang sedang login
+        $sessionUser = DB::table('mahasiswa')
+        ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
+        ->where('mahasiswa.nim', auth()->user()->username)
+        ->first(); 
+
+        if ($sessionUser) {
+            $id_kota_user = $sessionUser->id_kota;
+            $nim_user = $sessionUser->nim;
+        }
 
         // Mencari ID berdasarkan nama bidang
         $bidangId = DB::table('bidang')->where('bidang', $bidang)->value('id_bidang');
 
         // Insert data ke tabel pengajuan_pembimbing
         $pengajuanPembimbingId = DB::table('pengajuan_pembimbing')->insertGetId([
-            'id_kota' => $sessionUser['id_kota'],
-            'status_pengajuan' => 'pending',  // Set statusnya menjadi pending
+            'id_kota' => $id_kota_user,
+            'status_pengajuan' => 'diproses', 
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // Insert data ke tabel kota (judul_ta) dan bidang (id_bidang)
-        DB::table('kota')->where('id_kota', $sessionUser['id_kota'])->update([
+        DB::table('kota')->where('id_kota', $id_kota_user)->update([
             'judul_ta' => $topik,
             'id_bidang' => $bidangId
         ]);
 
         // Insert bidang tugas akhir yang dipilih (menyimpan id_bidang)
         DB::table('kota')
-            ->where('id_kota', $sessionUser['id_kota'])
+            ->where('id_kota', $id_kota_user)
             ->update([
                 'id_bidang' => $bidangId,
             ]);

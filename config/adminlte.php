@@ -346,7 +346,7 @@ return [
                     'url' => $prefix . '/#',
                     'submenu' => [
                         [
-                            'text' => 'Formulir Pengajuan Pembimbing',
+                            'text' => 'Formulir Pengajuan Dosen Pembimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                         ],
                         [

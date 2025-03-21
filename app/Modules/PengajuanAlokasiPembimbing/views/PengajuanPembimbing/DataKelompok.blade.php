@@ -25,17 +25,17 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" value="{{ $sessionUser['nama'] }}" readonly>
+                        <input type="text" class="form-control" value="{{ $sessionUser->nama }}" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Kelas</label>
-                        <input type="text" class="form-control" value="{{ $sessionUser['kelas'] }}" readonly>
+                        <input type="text" class="form-control" value="{{ $sessionUser->kelas }}" readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">NIM</label>
-                        <input type="text" class="form-control" value="{{ $sessionUser['nim'] }}" readonly>
+                        <input type="text" class="form-control" value="{{ $sessionUser->nim }}" readonly>
                     </div>
                 </div>
 
@@ -92,20 +92,21 @@
             Swal.fire({
                 icon: 'info',
                 title: 'Periksa kembali data anggota kelompok',
-                text: 'Jika ingin melakukan perubahan, harap lakukan pada pengaturan pengguna sebelum mengajukan dosen pembimbing',
+                text: 'Jika diperlukan perubahan, harap lakukan penyesuaian pada pengaturan data KoTA sebelum mengajukan dosen pembimbing.',
                 cancelButtonText: 'Ubah Data',
                 confirmButtonText: 'OK',
                 showCancelButton: true,
                 cancelButtonColor: '#3085d6',
                 confirmButtonColor: '#3085d6',
+                reverseButtons: true
 
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Handle OK Button Click (optional)
                     console.log('User clicked OK');
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    // Redirect user when clicking "Ubah Data"
-                    window.location.href = 'topik-tugas-akhir'; // Ganti dengan URL yang sesuai
+                // Redirect user to the route 'kota.saya' when clicking "Ubah Data"
+                window.location.href = '{{ route('kota.saya') }}'; // This uses the Laravel route helper
                 }
             });
         });
