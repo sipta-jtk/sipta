@@ -102,3 +102,57 @@
     }
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchPreferences(); 
+
+        // Kirim data ketika klik simpan
+        document.querySelector(".btn-primary").addEventListener("click", function (e) {
+            e.preventDefault();
+            savePreferences();
+        });
+    });
+
+    // Ambil preferensi notifikasi
+    function fetchPreferences() {
+        fetch("{{ route('preferensi.notifikasi.get') }}", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                document.getElementById("emailSwitch").checked = data.email;
+                document.getElementById("reminderSwitch").checked = data.in_app;                
+            }
+        });
+    }
+
+    // Simpan preferensi notifikasi
+    function savePreferences() {
+        let email = document.getElementById("emailSwitch").checked ? 1 : 0;
+        let reminder = document.getElementById("reminderSwitch").checked ? 1 : 0;
+
+        fetch("{{ route('preferensi.notifikasi.store') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                email: email,
+                in_app: reminder
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            $("#myModals").modal("hide");  // Tutup modal setelah berhasil
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>

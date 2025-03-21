@@ -10,10 +10,18 @@ class LogAdminController extends Controller
 {
     public function getLogNotifications()
     {
-        $logNotifikasi = NotifikasiKirim::join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
-            ->select('notifikasi_kirim.waktu_kirim', 'notifikasi.judul', 'notifikasi.isi_notifikasi', 'notifikasi_kirim.respon_log', 'notifikasi_kirim.username')
+        // Mengambil data log notifikasi dan eager load relasi ke User
+        $logNotifikasi = NotifikasiKirim::with('user') // Eager load relasi 'user'
+            ->join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
+            ->select(
+                'notifikasi_kirim.waktu_kirim', 
+                'notifikasi.judul', 
+                'notifikasi.isi_notifikasi', 
+                'notifikasi_kirim.respon_log', 
+                'notifikasi_kirim.username'
+            )
             ->get();
 
-        return response()->json($logNotifikasi);
+        return view('NotificationAndReminder::LogAdmin.logAdmin', compact('logNotifikasi'));
     }
 }

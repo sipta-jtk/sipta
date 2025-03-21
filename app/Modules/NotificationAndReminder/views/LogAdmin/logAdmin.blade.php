@@ -4,8 +4,6 @@
 
 @section('content_header')
     <h1>Log Notifikasi Admin</h1>
-    @include('NotificationAndReminder::modals.log-modal')
-    @include('NotificationAndReminder::modals.preferences-modal')
 @stop
 
 @section('content')
@@ -25,34 +23,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Data Log Notifikasi akan diisi dengan jQuery --}}
+                    {{-- Iterasi data dan tambahkan ke tabel --}}
+                    @foreach($logNotifikasi as $index => $notif)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $notif->waktu_kirim }}</td>
+                            <td>{{ $notif->judul }}</td>
+                            <td>{{ $notif->isi_notifikasi }}</td>
+                            <td>{{ $notif->user ? $notif->user->nama : 'undefined' }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-@stop
-
-@section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $.get('/api/notifications', function(data) {
-                $('tbody').empty();
-
-                // Iterasi data dan tambahkan ke tabel
-                data.forEach(function(notif, index) {
-                    let row = `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${notif.created_at}</td>
-                            <td>${notif.judul}</td>
-                            <td>${notif.isi_notifikasi}</td>
-                            <td>${notif.username}</td> 
-                        </tr>
-                    `;
-                    $('tbody').append(row);
-                });
-            });
-        });
-    </script>
 @stop

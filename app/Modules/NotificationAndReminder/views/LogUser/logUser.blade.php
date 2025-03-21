@@ -1,11 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Log Notifikasi Mahasiswa')
+@section('title', 'Log Notifikasi Pengguna')
 
 @section('content_header')
-    <h1>Log Notifikasi Mahasiswa</h1>
-    @include('NotificationAndReminder::modals.log-modal')
-    @include('NotificationAndReminder::modals.preferences-modal')
+    <h1>Log Notifikasi Pengguna</h1>
 @stop
 
 @section('content')
@@ -13,10 +11,10 @@
     {{-- Daftar Log Notifikasi --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Daftar Log Notifikasi Mahasiswa</h3>
+            <h3 class="card-title">Daftar Log Notifikasi Pengguna</h3>
         </div>
         <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover" id="notifications-table">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -26,7 +24,7 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="notifications-table-body">
                     {{-- Data Log Notifikasi akan dimuat dengan jQuery --}}
                 </tbody>
             </table>
@@ -62,46 +60,53 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Memuat data notifikasi dari API
-            $.get('/api/mahasiswa/notifications', function(data) {
-                $('tbody').empty();
+            // Memuat data notifikasi milik pengguna dari API
+            $.get('/api/snotifications', function(data) {
+                const $tbody = $('#notifications-table-body');
+                $tbody.empty();
+
+                // Jika data kosong, tampilkan pesan
+                if (!Array.isArray(data) || data.length === 0) {
+                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
+                    return;
+                }
 
                 // Iterasi data dan menambahkan ke tabel
                 data.forEach(function(notif, index) {
                     let row = `
                         <tr>
                             <td>${index + 1}</td>
-                            <td>${notif.created_at}</td>
+                            <td>${notif.waktu_kirim}</td>
                             <td>${notif.judul}</td>
-                            <td>${notif.sumber_notifikasi}</td>
+                            <td>${notif.username}</td>
                             <td>
-                                <button class="btn btn-info btn-sm btn-detail" 
-                                    data-title="${notif.judul}"
-                                    data-content="${notif.isi_notifikasi}"
-                                    data-date="${notif.created_at}"
-                                    data-source="${notif.sumber_notifikasi}">
+                                <button class="btn btn-info btn-sm btn-detail"
+                                    data-title="${encodeURIComponent(notif.judul)}"
+                                    data-content="${encodeURIComponent(notif.isi_notifikasi)}"
+                                    data-date="${notif.waktu_kirim}"
+                                    data-source="${notif.username}">
                                     Detail
                                 </button>
                             </td>
                         </tr>
                     `;
-                    $('tbody').append(row);
+                    $tbody.append(row);
                 });
+            });
 
-                // Menangani klik tombol "Detail"
-                $('.btn-detail').on('click', function() {
-                    let title = $(this).data('title');
-                    let content = $(this).data('content');
-                    let date = $(this).data('date');
-                    let source = $(this).data('source');
+            // Delegasi event untuk tombol "Detail"
+            $(document).on('click', '.btn-detail', function() {
+                let title = decodeURIComponent($(this).data('title'));
+                let content = decodeURIComponent($(this).data('content'));
+                let date = $(this).data('date');
+                let source = $(this).data('source');
 
-                    $('#detailModalLabel').text(title);
-                    $('#modalDate').text(date);
-                    $('#modalSource').text(source);
-                    $('#modalContent').text(content);
+                $('#detailModalLabel').text(title);
+                $('#modalDate').text(date);
+                $('#modalSource').text(source);
+                $('#modalContent').text(content);
 
-                    $('#detailModal').modal('show');
-                });
+                $('#detailModal').modal('show');
             });
         });
     </script>

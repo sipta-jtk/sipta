@@ -11,7 +11,7 @@ class LogModalNotifController extends Controller
 {
     public function getNotifications()
     {
-        $notifikasi = Notifikasi::orderBy('created_at', 'desc')->take(2)->get();
+        $notifikasi = Notifikasi::orderBy('created_at', 'desc')->take(5)->get();
         return response()->json($notifikasi);
     }
 

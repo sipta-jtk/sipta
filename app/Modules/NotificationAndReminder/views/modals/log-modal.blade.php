@@ -76,6 +76,10 @@
         color: #ff9800; 
         margin-right: 10px;
     }
+    .notification-item p {
+        margin: 0;
+        padding: 0;
+    }
     .close-notification {
         background: none;
         border: none;
@@ -96,7 +100,7 @@
 <script>
     $(document).ready(function() {
         $('#myModal').on('show.bs.modal', function() {
-            $.get('/api/notifications', function(data) {
+            $.get('/api/notifications', function(data) { 
                 $('#notification-list').empty();
                 data.forEach(function(notification) {
                     let notificationHtml = `

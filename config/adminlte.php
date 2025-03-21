@@ -304,8 +304,8 @@ return [
             'text' => '',  // Hapus teks "Notifications"
             'url' => '#',
             'icon' => 'fas fa-bell',  // Ikon lonceng
-            'topnav_right' => true,  // Menampilkan di navbar kanan
-            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
+            'topnav_right' => true,  
+            'label' => 1,  
             'label_color' => 'danger',
             'id' => 'notificationBell',
         ],
@@ -517,7 +517,7 @@ return [
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
-                    'url' => 'log-admin',
+                    'url' => '/api/logAdmin',
                 ],
             ]
             // 'label' => 4,
