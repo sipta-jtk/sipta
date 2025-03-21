@@ -49,17 +49,18 @@
         <!-- <form action="{{ url('/kelola-penilaian-ta/pengelolaan-nilai/t') }}" method="POST"> -->
             @csrf
 
-            @foreach ($aspekFeedback as $feedback)
+            @foreach ($aspekFeedback as $index=> $feedback)
                 <div class="form-group">
                     <label for="{{ Str::slug($feedback->nama_aspek_feedback) }}">
                         Masukan untuk {{ $feedback->nama_aspek_feedback }}
                     </label>
-                    <input type="hidden" name="feedback[{{ $feedback->id }}][id_fta]" value="{{ $id }}">
-                    <input type="hidden" name="feedback[{{ $feedback->id }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
+                    <input type="hidden" name="feedback[{{ $index }}][id_fta]" value="{{ $id }}">
+                    <input type="hidden" name="feedback[{{ $index }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
 
+                    <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="">
+                    
                     <!-- Trix Editor -->
-                    <trix-editor input="feedback-{{ $feedback->id }}"></trix-editor>
-                    <input id="feedback-{{ $feedback->id }}" type="hidden" name="feedback[{{ $feedback->id }}][masukan]" value="">
+                    <trix-editor input="feedback-{{ $index }}"></trix-editor>
                 </div>
             @endforeach
 

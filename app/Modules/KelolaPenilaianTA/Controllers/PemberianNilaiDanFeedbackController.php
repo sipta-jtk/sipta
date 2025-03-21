@@ -7,6 +7,8 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
 use App\Models\KategoriPenilaian;
+use App\Models\AspekFeedback;
+use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -730,6 +732,8 @@ private function updateNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip
             'feedback.*.masukan' => 'required|string',
         ]);
 
+        $idKota = Kota::where('nama_kota', $kota)->first()->id_kota;
+
         // Ambil semua masukan dari form
         $feedbacks = $request->input('feedback');
 
@@ -738,10 +742,10 @@ private function updateNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip
         foreach ($feedbacks as $feedback) {
             DetailFeedback::create([
                 'id_feedback' => $id, // ID feedback dari URL
-                'id_kota' => $kota, // Kota tujuan dari URL
+                'id_kota' => $idKota, // Kota tujuan dari URL
                 'nip' => $nip,
                 'status_penilaian_dosen' => 'draf', // Status default
-                'isi_feedback' => $request->input('feedback'), // Data feedback dari form
+                'isi_feedback' => $feedback['masukan'], // Data feedback dari form
             ]);
         }
 
@@ -749,7 +753,7 @@ private function updateNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip
         // return redirect()->back()->with('success', 'Masukan berhasil disimpan.');
         // $pengelolaanNilai = new PengelolaanNilaiController();
         // return $pengelolaanNilai->detailNilaiMahasiswa($id);
-        return redirect('sipta/kelola-penilaian-ta/nilai-seminar/'.$id);
+        return redirect('kelola-penilaian-ta/pengelolaan-nilai');
     }
 
 }
