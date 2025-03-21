@@ -14,7 +14,7 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ ucwords(strtolower($data['nama_fta'])) }}</h1>
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($data['nama_fta']) }}</h1>
     </div>
 @stop
 
@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $data['start'] }}</span>
+                <span>{{ $data['waktu'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>

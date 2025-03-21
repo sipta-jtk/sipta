@@ -24,21 +24,21 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $mahasiswa['kode_fta'] }}</span>
+                <span>{{ $data['nama_fta'] }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
-                <span>{{ $mahasiswa['tanggal'] }}</span>
+                <span>{{ $data['tanggal'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $mahasiswa['waktu'] }}</span>
+                <span>{{ $data['waktu'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
-                <strong>ID KoTA</strong> <br>
-                <span>{{ $kotaInfo->nama_kota }}</span>
+                <strong>KoTA</strong> <br>
+                <span>{{ $data['nama_kota'] }}</span>
             </div>
         </div>
 
@@ -55,7 +55,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswaList as $key => $mhs)
+                            @foreach($mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -72,14 +72,14 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $kotaInfo->judul_ta }}</span>
+                <span>{{ $data['judul_ta'] }}</span>
             </div>
         </div>
 
         <!-- Tombol Preview -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar III</strong> <br>
+                <strong>Preview File Dokumen Seminar II</strong> <br>
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Laporan
                 </button>
@@ -110,9 +110,14 @@
         </div>
 
         <!-- Form Penilaian -->
-        <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/3/masukan') }}" method="POST">
+        @php
+            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+        @endphp
+        <form action="{{ $actionUrl }}" method="POST">
             @csrf
-
+            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+                @method('PATCH')
+            @endif
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -121,158 +126,41 @@
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
                                 <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th>
-                                <th style="min-width: 100px;" colspan="{{ count($mahasiswaList) }}">Nilai Perorangan</th>
+                                <th style="min-width: 100px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
-                                <th style="min-width: 200px;">≥ 80 (A)</th>
-                                <th style="min-width: 200px;">75 - 79.99 (AB)</th>
-                                <th style="min-width: 200px;">70 - 74.99 (B)</th>
-                                <th style="min-width: 200px;">65 - 69.99 (BC)</th>
-                                <th style="min-width: 200px;">60 - 64.99 (C)</th>
-                                <th style="min-width: 200px;">< 60 (CD)</th>
-                                @foreach($mahasiswaList as $key => $mhs)
+                                @foreach($nilaiBatas[0] as $nilai)
+                                    <th style="min-width: 200px;">
+                                        @if($nilai['id_nilai'] == 'CD')
+                                            {{ $nilai['batas_atas'] }} ({{ $nilai['id_nilai'] }}
+                                        @else
+                                            {{ $nilai['batas_bawah'] }} - {{ $nilai['batas_atas'] }} ({{ $nilai['id_nilai'] }})
+                                        @endif
+                                    </th>
+                                @endforeach
+                                @foreach($mahasiswa as $key => $mhs)
                                     <th>{{ $key + 1 }}</th>  
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                            <td colspan="{{ 8 + count($mahasiswaList) }}" class="bg-light text-left"><strong>1. Dokumen</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Kejelasan kaitan antar bab/ sub kajian (hubungan sebab akibat/ reasoning, rasionalitas)</td>
-                                <td>Dokumen yang dibuat memiliki konten yang sangat lengkap dan keterkaitan antar bab/ sub kajian sangat erat, serta dapat dipertanggung jawabkan.</td>
-                                <td>Dokumen yang dibuat memiliki konten yang lengkap dan keterkaitan antar bab/ sub kajian kurang erat, serta dapat dipertanggung jawabkan.</td>
-                                <td>Dokumen yang dibuat memiliki konten yang lengkap dan keterkaitan antar bab/ sub kajian tidak erat, serta dapat dipertanggung jawabkan.</td>
-                                <td>Dokumen yang dibuat memiliki konten yang tidak lengkap dan keterkaitan antar bab/ sub kajian erat, serta dapat dipertanggung jawabkan.</td>
-                                <td>Dokumen yang dibuat memiliki konten yang tidak lengkap dan keterkaitan antar bab/ sub kajian tidak erat, serta kurang dapat dipertanggung jawabkan.</td>
-                                <td>Dokumen yang dibuat memiliki konten yang tidak lengkap dan keterkaitan antar bab/ sub kajian tidak erat, serta tidak dapat dipertanggung jawabkan.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
+                            @foreach ($kriteriaPenilaian as $index => $kriteria)
+                                <tr>
+                                    <td colspan="{{ 8 + count($mahasiswa) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
+                                </tr>
+                                @foreach ($kriteria->rubrik as $key => $rubrik)
+                                    <tr>
+                                        <td>{{ $rubrik->nama_rubrik }}</td>
+                                        @foreach ($rubrik->detailRubrik as $detail)
+                                            <td> {{ $detail->detail_rubrik_penilaian }} </td>
+                                        @endforeach
+                                        <td>0-100</td>
+                                        @foreach($mahasiswa as $key => $mhs)
+                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
+                                        @endforeach
+                                    </tr>
                                 @endforeach
-                            </tr>
-                            <tr>
-                                <td>Kesesuaian dan ketepatan penggunaan metodologi dan modelling tools.</td>
-                                <td>Mahasiswa menguasai serta memahami penerapan cara-cara/ metoda pengembangan aplikasi dan modelling tools pada pengembangan aplikasi.</td>
-                                <td>Mahasiswa menguasai penerapan cara-cara/ metoda pengembangan aplikasi tetapi tidak menguasai modelling tools pada pengembangan aplikasi.</td>
-                                <td>Mahasiswa tidak menguasai penerapan metoda pengembangan aplikasi. tetapi menguasai penggunaan modelling tools pada pengembangan aplikasi.</td>
-                                <td>Mahasiswa menguasai penerapan cara-cara/metoda pengembangan aplikasi tetapi tidak menguasai modelling tools pada pengembangan aplikasi.</td>
-                                <td>Mahasiswa tidak menguasai atau penerapan cara-cara/metoda pengembangan aplikasi dan modelling tools pada pengembangan aplikasi.</td>
-                                <td>Tidak ada metodologi dan modelling tools yang digunakan pada pengembangan aplikasi.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>Kesesuaian studi pustaka dan daftar pustaka yang digunakan.</td>
-                                <td>Pustaka yang digunakan sangat sesuai dengan penelitian dan kualitas pustaka yang sangat baik.</td>
-                                <td>Pustaka yang digunakan sesuai dengan penelitian dan kualitas pustaka yang baik.</td>
-                                <td>Pustaka yang digunakan sesuai dengan penelitian tetapi kualitas pustaka hanya cukup baik.</td>
-                                <td>Pustaka yang digunakan cukup sesuai dengan penelitian dan kualitas yang cukup baik.</td>
-                                <td>Pustaka yang digunakan cukup sesuai dengan penelitian tetapi kualitas pustaka hanya kurang baik.</td>
-                                <td>Pustaka yang digunakan tidak sesuai dengan penelitian dan kualitas pustaka hanya kurang baik.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>Tata tulis laporan
-                                    a) Dokumen dapat dibaca dengan baik.
-                                    b) Sistematika Penulisan sesuai dengan penulisan TA.
-                                    c) Kedalaman konten yang disajikan dapat terlihat
-                                </td>
-                                <td>Dokumen yang dibuat memenuhi kriteria a, b, dan c dengan sangat baik/jelas.</td>
-                                <td>Dokumen yang dibuat memenuhi kriteria a, b, dan c dengan baik/jelas.</td>
-                                <td>Dokumen yang dibuat memenuhi kriteria a dan c dengan baik/jelas.</td>
-                                <td>Dokumen yang dibuat memenuhi kriteria a dan c dengan cukup baik/jelas.</td>
-                                <td>Dokumen yang dibuat memenuhi kriteria a dan b dengan baik/jelas.</td>
-                                <td>Dokumen yang dibuat memenuhi kriteria b saja dengan baik/jelas</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td colspan="11" class="bg-light text-left"><strong>2. Presentasi</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Materi presentasi
-                                    a) Penguasaan domain TA.
-                                    b) Penguasaan pelaksanaan cara-cara/metoda pengembangan aplikasi.
-                                    c) Penguasaan pelaksanaan cara-cara /metoda penggunaan tools pengembangan aplikasi.
-                                </td>
-                                <td>Mahasiswa menguasai serta memahami domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria a, b, c).</td>
-                                <td>Mahasiswa menguasai domain TA yang dikerjakan dan penerapan cara-cara/metoda pengembangan aplikasi (kriteria a, b) tetapi tidak menguasai atau memahami cara/metoda penggunaan tools pengembangan aplikasi (kriteria c).</td>
-                                <td>Mahasiswa menguasai domain TA yang dikerjakan dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria a, c) tetapi tidak menguasai atau memahami penerapan cara-cara/metoda pengembangan aplikasi (kriteria b).</td>
-                                <td>Mahasiswa menguasai penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria b, c) tetapi tidak menguasai atau memahami domain TA yang dikerjakan (kriteria a).</td>
-                                <td>Mahasiswa menguasai atau memahami salah satu dari: domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (Salah satu dari kriteria a, b, c).</td>
-                                <td>Mahasiswa Tidak Menguasai atau memahami seluruh kriteria berikut: domain TA yang dikerjakan, penerapan cara-cara/metoda pengembangan aplikasi dan cara/metoda penggunaan tools pengembangan aplikasi (kriteria a, b, c).</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>Kejelasan presentasi dan kemampuan membangkitkan minat pemirsa.</td>
-                                <td>Mahasiswa menjelaskan dengan sangat baik dan menyeluruh serta membangkitkan antusiasme pemirsa untuk menyimak dari awal hingga akhir presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan baik dan menyeluruh serta membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan kurang baik dan menyeluruh serta kurang membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan kurang baik dan kurang menyeluruh serta kurang membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan kurang baik dan kurang menyeluruh serta tidak membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan tidak baik dan tidak menyeluruh serta tidak membangkitkan antusiasme pemirsa untuk menyimak presentasi.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td>Kebebasan dari catatan</td>
-                                <td>Mahasiswa menjelaskan berdasarkan poin - poin penting pada bahan presentasi.</td>
-                                <td>Mahasiswa menjelaskan berdasarkan poin - poin penting dengan uraiannya pada bahan presentasi.</td>
-                                <td>Mahasiswa menjelaskan dengan membaca poin - poin penting dengan uraiannya pada bahan presentasi.</td>
-                                <td>Mahasiswa hanya membaca poin - poin penting dengan uraiannya pada bahan presentasi.</td>
-                                <td>Mahasiswa tidak menjelaskan poin - poin penting dan uraiannya pada bahan presentasi.</td>
-                                <td>Tidak ada poin penting pada uraian pembahasan pada bahan presentasi.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td colspan="11" class="bg-light text-left"><strong>3. Tanya Jawab</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Tanya Jawab (Penguasaan materi terkait tugas yang dikerjakan).</td>
-                                <td>Mahasiswa dapat menjawab dengan sangat baik beserta reasoning dan rasionalitas yang tinggi.</td>
-                                <td>Mahasiswa dapat menjawab dengan baik beserta reasoning dan rasionalitas yang cukup.</td>
-                                <td>Mahasiswa dapat menjawab dengan baik beserta reasoning dan rasionalitas yang kurang.</td>
-                                <td>Mahasiswa dapat menjawab dengan kurang baik beserta reasoning dan rasionalitas yang kurang.</td>
-                                <td>Mahasiswa dapat menjawab dengan kurang baik beserta tidak ada reasoning dan rasionalitas.</td>
-                                <td>Mahasiswa tidak dapat menjawab.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                <td colspan="11" class="bg-light text-left"><strong>4. Prototipe yang dihasilkan</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Prototipe yang dihasilkan</td>
-                                <td>Produk yang dihasilkan sesuai dengan target Seminar III, memenuhi spesifikasi, dan rancangan yang sesuai spesifikasi (sufficient).</td>
-                                <td>Produk yang dihasilkan sesuai dengan target Seminar III, memenuhi spesifikasi, dan rancangan yang kurang sesuai spesifikasi (less sufficient).</td>
-                                <td>Produk yang dihasilkan kurang dari target Seminar III, tidak memenuhi spesifikasi, dan rancangan yang tidak sesuai spesifikasi (not sufficient).</td>
-                                <td>Produk yang dihasilkan kurang dari target Seminar III, tidak memenuhi spesifikasi, dan rancangan yang tidak sesuai spesifikasi (not sufficient).</td>
-                                <td>Produk yang dihasilkan kurang dari target Seminar III, tidak memenuhi spesifikasi, dan tidak ada rancangan.</td>
-                                <td>Produk yang dihasilkan tidak memenuhi target Seminar III dan tidak memenuhi spesifikasi.</td>
-                                <td>0-100</td>
-                                @foreach($mahasiswaList as $key => $mhs)
-                                    <td><input type="number" class="form-control" name="nilai[1][{{ $mhs->nim }}]" min="0" max="100"></td>
-                                @endforeach
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -293,6 +181,18 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
+    <style>
+        /* Hide the increment and decrement buttons */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 @stop
 
 @section('js')

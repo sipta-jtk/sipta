@@ -80,11 +80,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script> 
-        // document.addEventListener("trix-change", function(event) {
-        //     let editor = event.target;
-        //     let hiddenInput = document.getElementById(editor.getAttribute("input"));
-        //     hiddenInput.value = editor.value;
-        // });
+        document.addEventListener("trix-change", function(event) {
+            let editor = event.target;
+            let hiddenInput = document.getElementById(editor.getAttribute("input"));
+            hiddenInput.value = editor.value;
+        });
         document.addEventListener("trix-change", function(event) {
             let editor = event.target;
             let inputId = editor.getAttribute("input");
