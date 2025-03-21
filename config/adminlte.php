@@ -385,6 +385,26 @@ return [
                     'text' => 'Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                 ],
+                [
+                    'text' => 'Rekap Berita Acara Seminar 3',
+                    'url' => $prefix . '/rekap-berita-acara-seminar-3',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Rekap Berita Acara Sidang TA',
+                    'url' => $prefix . '/rekap-berita-acara-sidang-ta',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Berita Acara Seminar 3',
+                    'url' => $prefix . '/berita-acara-pelaksanaan-seminar3',
+                    'can' => 'all_mahasiswa',
+                ],
+                [
+                    'text' => 'Berita Acara Sidang TA',
+                    'url' => $prefix . '/berita-acara-pelaksanaan-sidang-ta',
+                    'can' => 'all_mahasiswa',
+                ]
             ]
         ],
         [
