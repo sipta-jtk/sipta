@@ -4,33 +4,34 @@ namespace App\Modules\Repository\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Subkategori;
-use App\Modules\Controller;
+use Illuminate\Routing\Controller;
 
 class SubkategoriController extends Controller
 {
-    // In SubkategoriController.php
-
-    // Akmal Goniyyu Hartono
-    public function store(Request $request)
+    public function index($kategori)
     {
-        try {
-            $validated = $request->validate([
-                'nama_subkategori' => 'required|string|max:255',
-            ]);
+        // Fetch all subcategories
+        $subkategoris = Subkategori::all();
+        
+        // Return view with data
+        return view('Repository.views.subkategori', [
+            'subkategoris' => $subkategoris,
+            'kategori' => $kategori
+        ]);
+    }
 
-            $subkategori = Subkategori::create([
-                'nama_subkategori' => $request->nama_subkategori,
-            ]);
+    public function store(Request $request, $kategori)
+    {
+        $request->validate([
+            'nama_subkategori' => 'required|string|max:255',
+        ]);
 
-            return response()->json([
-                'success' => true,
-                'subkategori' => $subkategori,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-            ], 500);
-        }
+        $data = [
+            'nama_subkategori' => $request->nama_subkategori,
+        ];
+
+        Subkategori::create($data);
+
+        return redirect()->route('Subkategori.index', $kategori)->with('success', 'Subkategori berhasil ditambahkan');
     }
 }
