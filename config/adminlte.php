@@ -325,6 +325,63 @@ return [
         ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Alokasi Pembimbing',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Kelola Pengajuan Berkas',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Berkas Seminar 3',
+                    'url' => 'kelola-pengajuan-berkas/seminar-3',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Berkas Sidang Akhir',
+                    'url' => 'kelola-pengajuan-berkas/sidang-akhir',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Kelola Pengajuan Jadwal',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Pengajuan Jadwal Seminar 3',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Pengajuan Jadwal Sidang Akhir',
+                    'url' => 'admin/pages',
+                    // 'icon' => 'far fa-fw fa-file',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Pengelolaan dan Penjadwalan Ruangan',
             'icon' => 'fas fa-home',
             'submenu' => [
                 [
