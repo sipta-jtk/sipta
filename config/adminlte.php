@@ -526,12 +526,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                    'url' => $prefix .'/koordinator-kelola-pengajuan-jadwal/seminar-3',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                    'url' => $prefix .'/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
@@ -546,12 +546,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                    'url' => $prefix .'/kelola-pengajuan-jadwal-pembimbing/seminar-3',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                    'url' => $prefix .'/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
