@@ -29,14 +29,12 @@ jobs:
         run: |
           if git diff --name-only HEAD^ HEAD | grep -qE '^database/(migrations|seeders)/'; then
             echo "run_migrations=true" >> $GITHUB_ENV
+            echo "run_migrations=true" >> $GITHUB_OUTPUT
           else
             echo "run_migrations=false" >> $GITHUB_ENV
+            echo "run_migrations=false" >> $GITHUB_OUTPUT
           fi
         shell: bash
-
-      - name: Export Migration Status
-        id: export
-        run: echo "run_migrations=${{ env.run_migrations }}" >> $GITHUB_OUTPUT
 
   update-env:
     runs-on: ubuntu-latest

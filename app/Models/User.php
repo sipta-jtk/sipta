@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {     
     use Notifiable, HasRoles;
+
+    use HasApiTokens;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -68,12 +71,18 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        return 'https://picsum.photos/300/300';
+        // Cek apakah user memiliki foto profil
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);  // Path gambar profil
+        }
+
+        // Jika tidak ada foto profil, kembalikan gambar default
+        return asset('storage/photos/default-profile1.jpg');
     }
 
     public function adminlte_desc()
     {
-        return 'I\'m a nice guy';
+        return $this->nama . ' - ' . ucfirst($this->role_user);
     }
 
     public function adminlte_profile_url()
