@@ -5,7 +5,7 @@ namespace App\Modules\Repository\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Dokumen;
 use App\Models\Subkategori;
-use App\Modules\Controller;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class RepositoryController extends Controller
@@ -24,7 +24,6 @@ class RepositoryController extends Controller
         }
 
         return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris'));
-
     }
 
     /**
@@ -54,15 +53,15 @@ class RepositoryController extends Controller
         }
 
         // Get the latest version for documents with same kategori "laporan"
-        if($kategori == 'fta'){
+        if ($kategori == 'fta') {
             $latestVersion = Dokumen::where('kategori', $kategori)
-            ->where('kode_fta', $request->kode_fta)
-            ->orderBy('versi', 'desc')
-            ->value('versi');
-        }else{
+                ->where('kode_fta', $request->kode_fta)
+                ->orderBy('versi', 'desc')
+                ->value('versi');
+        } else {
             $latestVersion = Dokumen::where('kategori', $kategori)
-            ->orderBy('versi', 'desc')
-            ->value('versi');
+                ->orderBy('versi', 'desc')
+                ->value('versi');
         }
         // $latestVersion = Dokumen::where('kategori', $kategori)
         //     ->orderBy('versi', 'desc')
@@ -185,58 +184,55 @@ class RepositoryController extends Controller
     {
         $data = collect([
             'Laporan Tugas Akhir' => [
-                ['key' => 'revisi_sidang', 'label' => 'Laporan Tugas Akhir versi hasil revisi sidang', 'url' => '#'],
-                ['key' => 'seminar_3', 'label' => 'Laporan Tugas Akhir versi hasil seminar 3', 'url' => '#'],
-                ['key' => 'seminar_2', 'label' => 'Laporan Tugas Akhir versi hasil seminar 2', 'url' => '#'],
-                ['key' => 'seminar_1', 'label' => 'Laporan Tugas Akhir versi hasil seminar 1', 'url' => '#'],
+                ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Tugas Akhir versi hasil revisi sidang', 'url' => route('Repository.index', ['kategori' => 'hasil_revisi_sidang'])],
+                ['key' => 'laporan_seminar_3', 'label' => 'Laporan Tugas Akhir versi hasil seminar 3', 'url' => route('Repository.index', ['kategori' => 'seminar1'])],
+                ['key' => 'laporan_seminar_2', 'label' => 'Laporan Tugas Akhir versi hasil seminar 2', 'url' => route('Repository.index', ['kategori' => 'seminar2'])],
+                ['key' => 'laporan_seminar_1', 'label' => 'Laporan Tugas Akhir versi hasil seminar 1', 'url' => route('Repository.index', ['kategori' => 'seminar3'])],
             ],
             'Dokumen Pendukung' => [
-                ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => '#'],
-                ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => '#'],
-                ['key' => 'poster', 'label' => 'Poster', 'url' => '#'],
-                ['key' => 'fta', 'label' => 'FTA', 'url' => '#'],
+                ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index', ['kategori' => 'cover_abstrak'])],
+                ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => route('Repository.index', ['kategori' => 'artikel_ilmiah'])],
+                ['key' => 'poster', 'label' => 'Poster', 'url' => route('Repository.index', ['kategori' => 'poster'])],
+                ['key' => 'fta', 'label' => 'FTA', 'url' => route('Repository.index', ['kategori' => 'fta'])],
             ],
             'Kode Sumber' => [
-                ['key' => 'source_code', 'label' => 'Source Code', 'url' => '#'],
-                ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => '#'],
+                ['key' => 'source_code', 'label' => 'Source Code', 'url' => route('Repository.index', ['kategori' => 'source_code'])],
+                ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => route('Repository.index', ['kategori' => 'link_source_code'])],
             ],
             'Artefak' => [
-                ['key' => 'artefak', 'label' => 'Artefak', 'url' => '#']
+                ['key' => 'artefak', 'label' => 'Artefak', 'url' => route('Repository.index', ['kategori' => 'artefak'])],
             ]
         ]);
 
-        return view('RepositoryTA.views.dashboard', compact('data'));
+        return view('Repository.views.dashboard', compact('data'));
     }
+
+
     public function list_kelompok_ta()
     {
-        return view('RepositoryTA.views.list_kelompok_ta');
-
+        return view('Repository.views.list_kelompok_ta');
     }
 
 
     // Saabiq Muhyiyuddin Aulawi
 
     // Muhammad Fahrizal Alzaelani
-    
+
     // Muhammad Alvyn Adhianto
     public function v0()
     {
         return view('Repository.views.aksesD0');
-
     }
     public function v1()
     {
         return view('Repository.views.aksesD1');
-
     }
     public function v2()
     {
         return view('Repository.views.aksesD2');
-
     }
     public function p1()
     {
         return view('Repository.views.aksesP0');
-
     }
 }

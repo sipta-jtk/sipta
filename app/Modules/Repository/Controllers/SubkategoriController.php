@@ -8,22 +8,30 @@ use Illuminate\Routing\Controller;
 
 class SubkategoriController extends Controller
 {
-    // In SubkategoriController.php
+    public function index($kategori)
+    {
+        // Fetch all subcategories
+        $subkategoris = Subkategori::all();
+        
+        // Return view with data
+        return view('Repository.views.subkategori', [
+            'subkategoris' => $subkategoris,
+            'kategori' => $kategori
+        ]);
+    }
 
-    // Akmal Goniyyu Hartono
-    public function store(Request $request)
+    public function store(Request $request, $kategori)
     {
         $request->validate([
             'nama_subkategori' => 'required|string|max:255',
         ]);
 
-        $subkategori = Subkategori::create([
+        $data = [
             'nama_subkategori' => $request->nama_subkategori,
-        ]);
+        ];
 
-        return response()->json([
-            'success' => true,
-            'subkategori' => $subkategori,
-        ]);
+        Subkategori::create($data);
+
+        return redirect()->route('Subkategori.index', $kategori)->with('success', 'Subkategori berhasil ditambahkan');
     }
 }
