@@ -13,13 +13,13 @@ class AspekFeedback extends Model
     
     protected $fillable = [
         'id_feedback',
-        'kode_fta',
+        'id_fta',
         'nama_aspek_feedback',
     ];
 
     public function formPenilaian()
     {
-        return $this->belongsTo(FormPenilaian::class, 'kode_fta', 'kode_fta');
+        return $this->belongsTo(FormPenilaian::class, 'id_fta', 'id_fta');
     }
 
     public function detailFeedback()

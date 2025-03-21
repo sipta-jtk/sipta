@@ -10,10 +10,9 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('repository')->group(function () {
-    // Route utama untuk halaman daftar dokumen berdasarkan kategori
-    Route::get('/', [RepositoryController::class, 'dashboard'])->name('Repository.dashboard');
+Route::prefix('/repository')->group(function () {
     
+    // Akmal Goniyyu Hartono
     Route::get('/{kategori}', [RepositoryController::class, 'index'])->name('Repository.index');
     
     // Route untuk menyimpan dokumen baru berdasarkan kategori
@@ -31,6 +30,27 @@ Route::prefix('repository')->group(function () {
     // Route untuk mendownload dokumen berdasarkan kategori dan ID
     Route::get('/{kategori}/{id}/download', [RepositoryController::class, 'download'])->name('Repository.download');
     
-    Route::post('/subkategori', [SubkategoriController::class, 'store'])->name('subkategori.store');
+    Route::get('/{kategori}/subkategori', [SubkategoriController::class, 'index'])->name('Subkategori.index');
+
+    Route::post('/{kategori}/subkategori', [SubkategoriController::class, 'store'])->name('Subkategori.store');
+
+    // Saabiq Muhyiyuddin Aulawi
+    // Route untuk menampilkan halaman log aktivitas
+    Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
+
+    // Route untuk menampilkan halaman monitoring penyimpanan
+    Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
+
+    // Farrel Keiza Muhammad Yamin Putra
+    // Route utama untuk halaman daftar dokumen berdasarkan kategori
+    Route::get('/', [RepositoryController::class, 'dashboard'])->name('Repository.dashboard');
+    Route::get('/repository/list_kelompok_ta', [RepositoryController::class, 'Repository.list_kelompok_ta']);
+        
+    // Muhammad Fahrizal Alzaelani
+
+    // Muhammad Alvyn Adhianto
+    Route::get('/v0', action: [RepositoryController::class, 'v0']);
+    Route::get('/kategori', action: [RepositoryController::class, 'v1']);
+    Route::get('/dokumen', action: [RepositoryController::class, 'v2']);
+    Route::get('/uji', action: [RepositoryController::class, 'p1']);
 });
- 
