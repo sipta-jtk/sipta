@@ -425,8 +425,8 @@ return [
         ],
         [
             'text' => 'Timeline',
-            'icon' => 'fas fa-book',
-            'url' => $prefix . '/timeline'
+            'url' => $prefix . '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
