@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\PerencanaanDanPelaksanaanSeminarDanSidang\Controllers;
+namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         ->get();
 
         // Teruskan $sekarang dan $beritaAcaraSeminar3 ke view
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSeminar3', compact('beritaAcaraSeminar3', 'sekarang'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.BeritaAcara.BeritaAcaraSeminar3', compact('beritaAcaraSeminar3', 'sekarang'));
     }
 
 
@@ -62,7 +62,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             ->get();
 
         // Teruskan $sekarang dan $beritaAcaraSidangTA ke view
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.BeritaAcara.BeritaAcaraSidangTA', compact('beritaAcaraSidangTA', 'sekarang'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.BeritaAcara.BeritaAcaraSidangTA', compact('beritaAcaraSidangTA', 'sekarang'));
     }
 
     public function rekapBeritaAcaraSeminar3(): View
@@ -75,7 +75,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         ->get();
 
     // Teruskan $beritaAcaraSeminar3 ke view rekap
-    return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSeminar3', compact('beritaAcaraSeminar3'));
+    return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSeminar3', compact('beritaAcaraSeminar3'));
     }
     
     public function rekapBeritaAcaraSidangTA(): View
@@ -88,7 +88,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         ->get();
 
         // Teruskan $beritaAcaraSidangTA ke view rekap
-        return view('PerencanaanDanPelaksanaanSeminarDanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));
     }
 
 
