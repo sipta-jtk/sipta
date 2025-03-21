@@ -106,6 +106,7 @@
                     $("#jsGrid1").jsGrid({
                         width: "100%",
                         height: "450px",
+                        noDataContent: "Ambang Batas tidak ditemukan",
                         data: originalData, // Set data awal
                         autoload: true, // Pastikan data dimuat otomatis
                         fields: [{

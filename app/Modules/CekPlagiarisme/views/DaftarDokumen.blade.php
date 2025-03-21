@@ -42,6 +42,7 @@
             success: function(response) {
                 console.log("Data dari API:", response);
 
+                // Sorting berdasarkan waktu secara descending
                 response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
 
                 response = response.map((item, index) => ({
@@ -57,19 +58,21 @@
 
                 $("#jsGridPlagiarism").jsGrid({
                     width: "100%",
-                    height: "450px",
+                    height: "600px",
                     sorting: true,
                     paging: true,
+                    noDataContent: "Dokumen tidak ditemukan",
                     rowClick: function(args) {
-                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen;
+                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
                     },
                     data: response,
                     fields: [{
                             name: "nomor",
                             type: "number",
-                            title: "No",
+                            title: "Nomor",
                             width: 50,
-                            align: "center"
+                            align: "center",
+                            sorting: false
                         },
                         {
                             name: "judul",
@@ -121,6 +124,11 @@
                     var filteredData = response.filter(item =>
                         Object.values(item).some(value => String(value).toLowerCase().includes(searchValue))
                     );
+                    // Menambahkan nomor urut setelah filter
+                    filteredData = filteredData.map((item, index) => ({
+                        ...item,
+                        nomor: index + 1 // Reset nomor urut
+                    }));
                     $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
                 });
             },
@@ -130,6 +138,9 @@
         });
     });
 
+    /**
+     * Fungsi untuk mendapatkan status Plagiarisme
+     */
     function getStatusBadge(persentase, ambangBatas) {
         if (persentase === null) {
             return '<span class="badge badge-warning">Processing</span>';
@@ -140,6 +151,9 @@
         }
     }
 
+    /**
+     * Fungsi untuk mendapatkan status komentar
+     */
     function getKomentar(komentar, id) {
         if (komentar) {
             return '<span class="text-dark">Komentar diberikan</span>';

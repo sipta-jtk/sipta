@@ -14,8 +14,25 @@ class CekPlagiarismeController extends Controller
 {
     public function getData()
     {
-        // Ambil semua data dokumen beserta relasi ke ambang batas
-        $dokumen = Dokumen::with('AmbangBatas', 'User')->get();
+        // Ambil id kota dari user yang sedang login
+        if (auth()->user()->role_user === 'mahasiswa') {
+            $idKota = auth()->user()->mahasiswa->id_kota;
+        } else {
+            $idKota = auth()->user()  
+                ->dosen                 
+                ->alokasiDosen        
+                ->first()
+                ->pengajuanPembimbing   
+                ->kota                  
+                ->id_kota;              
+
+        }
+
+        // Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
+        $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
+            ->where('kategori', 'laporan')
+            ->where('id_kota', $idKota)
+            ->get();
 
         // Format data agar sesuai dengan struktur jsGrid
         $data = $dokumen->map(function ($item) {
@@ -27,7 +44,7 @@ class CekPlagiarismeController extends Controller
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
                 'status' => $this->getStatus($item->persentase_plagiarisme, $item->ambangBatas ? $item->ambangBatas->ambang_batas : 20), // Default 20 jika tidak ada
-                'review' => $item->review
+                'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null
             ];
         });
 
@@ -59,7 +76,7 @@ class CekPlagiarismeController extends Controller
 
         $filePath = $request->file('file')->store('uploads');
         $checker = new PlagiarismChecker();
-        
+
         // Ekstrak teks dari file
         $result = $checker->checkPlagiarism(storage_path('app/' . $filePath));
 
