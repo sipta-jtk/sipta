@@ -424,7 +424,7 @@ return [
             ]
         ],
         [
-            'text' => 'Repository Tugas Akhir',
+            'text' => 'Timeline',
             'icon' => 'fas fa-book',
             'url' => $prefix . '/timeline'
             // 'label' => 4,
