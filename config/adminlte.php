@@ -415,8 +415,6 @@ return [
                             'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
-            'submenu' => [
-                [
                     'text' => 'Kelola Penilaian Tugas Akhir',
                     'submenu' => [
                         [
@@ -433,12 +431,16 @@ return [
                 [
                     'text' => 'Pengelolaan Nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
-                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
                 ],
+                [
+                    'text' => 'Kelola Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/kelola-nilai',
+                    'can' => 'akses-penilaian-koordinator-ta',
+                ]
             ]
         ],
         [
