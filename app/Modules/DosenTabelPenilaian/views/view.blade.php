@@ -36,19 +36,30 @@
                             <td>
                                 @if ($item['status'] === 'Sudah dinilai')
                                     @if ($item['status_penilaian'] === 'dipublikasikan')
-                                    <a class="btn btn-success btn-sm">
+                                    <a href="{{ route('nilai.form', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                        class="btn btn-success btn-sm"> 
                                         Lihat Nilai
                                     </a>
                                     @elseif ($item['status_penilaian'] === 'draf')
-                                    <a class="btn btn-warning btn-sm">
+                                    <a href="{{ route('nilai.form', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                        class="btn btn-warning btn-sm">
                                         Edit Nilai
                                     </a>
-                                    <a class="btn btn-primary btn-sm">
+                                    <a href="#" 
+                                    class="btn btn-primary btn-sm"
+                                    onclick="event.preventDefault(); document.getElementById('publikasikan-form-{{ $item['id_penjadwalan'] }}').submit();">
                                         Publikasikan
                                     </a>
+
+                                    <form id="publikasikan-form-{{ $item['id_penjadwalan'] }}" 
+                                        action="{{ route('nilai.publikasikan', ['id_penjadwalan' => $item['id_penjadwalan']]) }}" 
+                                        method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
                                     @endif
                                 @else
-                                <a class="btn btn-primary btn-sm">
+                                <a href="{{ route('nilai.form', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                    class="btn btn-primary btn-sm"> 
                                     Isi Nilai
                                 </a>
                                 @endif
