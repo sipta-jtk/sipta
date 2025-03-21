@@ -1,13 +1,21 @@
 .table-container {
-    max-height: 800px;
+    max-height: 500px;
     overflow-y: auto;
+    overflow-x: auto;
     border: 1px solid #ddd;
     position: relative;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
 }
 .table-container::-webkit-scrollbar {
-    display: none;
+    height: 12px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 table {
     width: 100%;

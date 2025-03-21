@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Penambahan Rubrik Penilaian')
+@section('title', 'Pengubahan Rubrik Penilaian')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -14,13 +14,14 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
+        <h1 class="mb-0">Pengubahan Rubrik Penilaian</h1>
     </div>
 @stop
 
 @section('content')
 <div class="p-4">
-        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST">
+        <!-- <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST"> -->
+        <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
             <div class="row">
@@ -65,28 +66,40 @@
                         </tr>
                     </thead>
                     <tbody id="rubrikPenilaianTable">
-                        <tr>
-                            <td>
-                                <select class="form-control id_kriteria" name="nama_kriteria" required>
-                                    <option value="" disabled selected>Pilih Kriteria</option>
-                                    @foreach ($kriteriaList as $kriteriaPenilaian)
-                                        <option value="{{ $kriteriaPenilaian->id_kriteria }}" 
-                                            data-bobot="{{ $kriteriaPenilaian->bobot_kriteria }}">
-                                            {{ $kriteriaPenilaian->nama_kriteria }}
-                                        </option>
+                        @foreach ($rubrikList as $kriteria)
+                            @foreach ($kriteria->rubrik as $rubrik)
+                                <tr>
+                                    <td>
+                                        <select class="form-control id_kriteria" name="nama_kriteria[]" required>
+                                            <option value="{{ $kriteria->id_kriteria }}" selected>
+                                                {{ $kriteria->nama_kriteria }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <p class="form-control-plaintext bobot">{{ $kriteria->bobot_kriteria }}%</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="detail[]" value="{{ $rubrik->nama_rubrik }}" required>
+                                    </td>
+                                    @foreach ($rentangNilai as $nilai)
+                                        @php
+                                            $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
+                                        @endphp
+                                        <td>
+                                            <input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" 
+                                                value="{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}" required>
+                                        </td>
                                     @endforeach
-                                </select>
-                            </td>
-                            <td>
-                                <p class="form-control-plaintext bobot">-</p> 
-                            </td>                            
-                            <td><input type="text" class="form-control" name="detail[]" required></td>
-                            @foreach ($rentangNilai as $nilai)
-                                <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-row">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
                             @endforeach
-                            <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
-                        </tr>
-                    </tbody>
+                        @endforeach
+                    </tbody>                    
                 </table>
             </div>
 

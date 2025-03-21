@@ -397,27 +397,21 @@ return [
                     'can' => 'akses-penilaian-mahasiswa',
                 ],
                 [
-                    'text' => 'Rekapitulasi Nilai',
+                    'text' => 'Formulir Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
                     'submenu' => [
-                        [
-                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
-                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
-                            'can' => 'akses-penilaian-koordinator-ta',
-                        ],
-                        [
-                            'text' => 'Rekapitulasi Nilai Akhir',
-                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-akhir',
-                            'can' => 'akses-penilaian-koordinator-ta',
-                        ],
-                        [
-                            'text' => 'Pengaturan Nilai Akhir',
-                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
-                            'can' => 'akses-penilaian-koordinator-ta',
-                        ],
+                    [
+                        'text' => 'Pengelolaan Formulir',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
                     ],
+                    [
+                        'text' => 'Pengelolaan Rubrik',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
+                    ],
+                    ]
                 ],
                 [
-                    'text' => 'Kelola Penilaian',
+                    'text' => 'Pengelolaan Nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                     'can' => 'akses-penilaian-koordinator-ta',
                 ]

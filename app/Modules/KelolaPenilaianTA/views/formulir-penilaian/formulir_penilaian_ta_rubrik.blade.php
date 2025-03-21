@@ -20,10 +20,7 @@
 @section('content')
     <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Daftar Formulir Penilaian TA</h3>
-            <a href="{{ route('formulir-penilaian.tambah-aspek-formulir') }}" class="btn btn-dark">
-                <i class="fa-solid fa-plus"></i> Tambah
-            </a>
+            <h3>Daftar Rubrik Penilaian TA</h3>
         </div>
 
         <div class="table-container">
@@ -49,21 +46,16 @@
                             <td class="align-middle">{{ $row->jenis_form }}</td>
                             <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
                             <td class="align-middle">
-                                @if ($row->jenis_form == 'penilaian')
-                                    <a href="{{ route('detail.penilaian', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
-                                       class="btn btn-info btn-sm">
-                                        Lihat Detail
+                                @if ($row->hasRubrik)
+                                    <a href="{{ route('formulir-penilaian.rubrik.edit', $row->id_fta) }}" class="btn btn-primary btn-sm">
+                                        <i class="fa-solid fa-pen"></i>
                                     </a>
-                                @elseif ($row->jenis_form == 'feedback')
-                                    <a href="{{ route('detail.feedback', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
-                                       class="btn btn-info btn-sm">
-                                        Lihat Detail
+                                @else
+                                    <a href="{{ route('formulir-penilaian.rubrik.tambah', $row->id_fta) }}" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-plus"></i>
                                     </a>
                                 @endif
-                                <a href="{{ route('aspek-penilaian.edit', $row->id_fta) }}" class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                            </td>
+                            </td>                            
                         </tr>
                     @endforeach
                 </tbody>                
