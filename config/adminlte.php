@@ -440,13 +440,6 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Timeline',
-            'url' => '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Artefak',
             'url' => $prefix . '/#',
             'icon' => 'fas fa-fw fa-folder',
