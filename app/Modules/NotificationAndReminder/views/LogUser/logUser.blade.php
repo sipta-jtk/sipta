@@ -21,7 +21,6 @@
                         <th>Tanggal & Waktu</th>
                         <th>Judul Notifikasi</th>
                         <th>Sumber</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="notifications-table-body">
@@ -59,25 +58,30 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Memuat data notifikasi dari API
-            $.get('/api/mahasiswa/notifications', function(data) {
+            $.get('/api/notifications', function (data) {
                 const $tbody = $('#notifications-table-body');
                 $tbody.empty();
 
                 // Jika data kosong, tampilkan pesan
                 if (!Array.isArray(data) || data.length === 0) {
-                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
+                    $tbody.append('<tr><td colspan="4" class="text-center">Tidak ada notifikasi.</td></tr>');
                     return;
                 }
 
                 // Iterasi data dan menambahkan ke tabel
-                data.forEach(function(notif, index) {
+                data.forEach(function (notif, index) {
                     let row = `
-                        <tr>
+                        <tr class="clickable-row"
+                            data-title="${encodeURIComponent(notif.judul)}"
+                            data-content="${encodeURIComponent(notif.isi_notifikasi)}"
+                            data-date="${notif.created_at}"
+                            data-source="${notif.sumber_notifikasi}">
                             <td>${index + 1}</td>
                             <td>${notif.waktu_kirim}</td>
                             <td>${notif.judul}</td>
+<<<<<<< HEAD
                             <td>${notif.username}</td>
                             <td>
                                 <button class="btn btn-info btn-sm btn-detail"
@@ -88,14 +92,17 @@
                                     Detail
                                 </button>
                             </td>
+=======
+                            <td>${notif.sumber_notifikasi}</td>
+>>>>>>> b1c66c503a55a4a6ac5b652267d9500d059884af
                         </tr>
                     `;
                     $tbody.append(row);
                 });
             });
 
-            // Delegasi event untuk tombol "Detail"
-            $(document).on('click', '.btn-detail', function() {
+            // Delegasi event untuk baris tabel yang dapat diklik
+            $(document).on('click', '.clickable-row', function () {
                 let title = decodeURIComponent($(this).data('title'));
                 let content = decodeURIComponent($(this).data('content'));
                 let date = $(this).data('date');
