@@ -24,6 +24,9 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
+use App\Modules\UserManagement\Controllers\TestServiceCallController;
+use App\Modules\UserManagement\Controllers\TokenVerify;
+
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest'])
@@ -175,5 +178,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 });
 
+// define the route for TokenVerify verifyToken
+Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 
-Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
