@@ -4,6 +4,8 @@ namespace App\Modules\Repository\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Dokumen;
+use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Subkategori;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +19,15 @@ class RepositoryController extends Controller
      */
     public function index($kategori)
     {
+        // Ambil data mahasiswa yang sedang login
+        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+
+        // Ambil status_ta dari mahasiswa yang sedang login
+        $status_ta = $mahasiswa ? $mahasiswa->status_ta : null;
+
+        // Ambil id_kota mahasiswa yang sedang login
+        $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
+
         // Ambil parameter filter dari request
         $search = request('search');
         $versi = request('versi');
@@ -53,9 +64,10 @@ class RepositoryController extends Controller
         $maxVersion = Dokumen::where('kategori', $kategori)
             ->max('versi'); // Mengambil versi terbesar yang ada
 
-        // Kirimkan maxVersion dan dokumen ke view
-        return view('Repository.views.cruddDokumen', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion'));
+        // Kirimkan maxVersion, dokumen, status_ta dan data lainnya ke view
+        return view('Repository.views.cruddDokumen', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion', 'status_ta'));
     }
+
 
 
     /**

@@ -10,12 +10,13 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
+        @if ($status_ta === 'mahasiswa_ta')
         <!-- Tombol Filter -->
         <button id="toggleFilter" class="btn btn-outline-secondary">
             <i class="fas fa-filter"></i>
         </button>
 
-        <!-- Tombol Add berada di bagian kanan -->
+        <!-- Tombol Add -->
         <div class="ms-auto">
             @if ($kategori === 'artefak')
             <a href="{{ url('/repository/'.$kategori.'/subkategori') }}" class="btn btn-success mr-2">
@@ -26,7 +27,9 @@
                 + Add
             </button>
         </div>
+        @endif
     </div>
+
 
 
 
@@ -106,10 +109,22 @@
                 <td>{{ $doc->kode_fta }}</td>
                 @endif
                 <td>{{ $doc->versi }}</td>
-                <td>{{ $doc->judul }}</td>
+                <td>
+                    <a href="#" class="document-title"
+                        data-id="{{ $doc->id_dokumen }}"
+                        data-judul="{{ $doc->judul }}"
+                        data-file="{{ $doc->file_path }}"
+                        data-deskripsi="{{ $doc->deskripsi }}"
+                        data-toggle="modal"
+                        data-target="#detailDocumentModal">
+                        {{ $doc->judul }}
+                    </a>
+                </td>
+
                 <td>{{ $doc->created_at }}</td>
                 <td>{{ $doc->updated_at }}</td>
                 <td>
+                    @if ($status_ta === 'mahasiswa_ta')
                     <!-- Edit button -->
                     <button class="btn btn-sm btn-outline-primary edit-btn"
                         data-id="{{ $doc->id_dokumen }}"
@@ -136,6 +151,7 @@
                         data-target="#downloadConfirmationModal">
                         <i class="fas fa-download"></i>
                     </a>
+                    @endif
                 </td>
             </tr>
             @endforeach
@@ -150,6 +166,13 @@
         {{ $dokumen->links() }}
     </div>
     @endif
+
+    <!-- Tombol Kembali -->
+    <div class="d-flex justify-content-start mb-3">
+        <a href="{{ url('/repository') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 </div>
 
 <!-- Modal Tambah Dokumen -->
@@ -201,6 +224,46 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Detail Dokumen -->
+<div class="modal fade" id="detailDocumentModal" tabindex="-1" aria-labelledby="detailDocumentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailDocumentModalLabel">Detail Dokumen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Judul -->
+                <div class="mb-3">
+                    <label for="detailJudul" class="form-label">Judul:</label>
+                    <input type="text" class="form-control" id="detailJudul" readonly>
+                </div>
+
+                <!-- File Terunggah -->
+                <div class="mb-3">
+                    <label for="detailFile" class="form-label">File Terunggah:</label>
+                    <div id="detailFileLink">
+                        <a href="#" target="_blank" class="btn btn-primary" id="detailFileLinkBtn">Lihat File</a>
+                    </div>
+                    <p id="noFileMessage" style="display: none;">Tidak ada file terunggah</p>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="mb-3">
+                    <label for="detailDeskripsi" class="form-label">Deskripsi:</label>
+                    <textarea class="form-control" id="detailDeskripsi" rows="3" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal Edit Dokumen -->
 <div class="modal fade" id="editDocumentModal" tabindex="-1" aria-labelledby="editDocumentModalLabel" aria-hidden="true">
@@ -460,21 +523,27 @@
     console.log("Laporan TA page loaded.");
 
     // Toggle filter button functionality
-    document.getElementById("toggleFilter").addEventListener("click", function() {
-        var filterDiv = document.getElementById("filterOptions");
-        var searchInput = document.getElementById("searchInput");
-        if (filterDiv.style.display === "none") {
-            filterDiv.style.display = "block";
-            searchInput.style.display = "block";
-        } else {
-            filterDiv.style.display = "none";
-            searchInput.style.display = "none";
-        }
-    }); 
+    const statusTa = "{{ $status_ta }}";
+
+    // Cek kondisi
+    if (statusTa === 'mahasiswa_ta') {
+        document.getElementById("toggleFilter").addEventListener("click", function() {
+            var filterDiv = document.getElementById("filterOptions");
+            var searchInput = document.getElementById("searchInput");
+            if (filterDiv.style.display === "none") {
+                filterDiv.style.display = "block";
+                searchInput.style.display = "block";
+            } else {
+                filterDiv.style.display = "none";
+                searchInput.style.display = "none";
+            }
+        });
+    }
+
 
     // Search input functionality
     // document.getElementById('searchInput').addEventListener('keyup', function() {
-    //     filterTable();
+    // filterTable();
     // });
 
     function filterTable() {
@@ -508,6 +577,33 @@
 
                 if (filePath && filePath.trim() !== '') {
                     fileLink.href = `/storage/${filePath}`;
+                    fileLink.style.display = 'inline';
+                    noFileMessage.style.display = 'none';
+                } else {
+                    fileLink.style.display = 'none';
+                    noFileMessage.style.display = 'block';
+                }
+            });
+        });
+
+        document.querySelectorAll('.document-title').forEach(link => {
+            link.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const judul = this.getAttribute('data-judul');
+                const filePath = this.getAttribute('data-file');
+                const deskripsi = this.getAttribute('data-deskripsi');
+
+                // Set modal content
+                document.getElementById('detailJudul').value = judul;
+                document.getElementById('detailDeskripsi').value = deskripsi;
+
+                // Handle file display
+                const fileLink = document.getElementById('detailFileLink');
+                const fileLinkBtn = document.getElementById('detailFileLinkBtn');
+                const noFileMessage = document.getElementById('noFileMessage');
+
+                if (filePath && filePath.trim() !== '') {
+                    fileLinkBtn.href = `/storage/${filePath}`;
                     fileLink.style.display = 'inline';
                     noFileMessage.style.display = 'none';
                 } else {
