@@ -399,14 +399,17 @@ return [
                 [
                     'text' => 'Formulir Penilaian',
                     'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                    'can' => 'akses-penilaian-koordinator-ta',
                     'submenu' => [
                     [
                         'text' => 'Pengelolaan Formulir',
                         'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                        'can' => 'akses-penilaian-koordinator-ta'
                     ],
                     [
                         'text' => 'Pengelolaan Rubrik',
                         'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
+                        'can' => 'akses-penilaian-koordinator-ta'
                     ],
                     ]
                 ],
