@@ -14,6 +14,8 @@ class CekPlagiarismeDetailController extends Controller
 {
     public function show($id)
     {
+        $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
+
         // Mengambil dokumen berdasarkan ID
         $dokumen = Dokumen::find($id);
         

@@ -55,7 +55,7 @@
                     sorting: true,
                     paging: true,
                     rowClick: function(args) {
-                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen;
+                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
                     },
                     data: response,
                     fields: [{

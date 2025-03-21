@@ -3,8 +3,20 @@
 @section('title', 'Detail Plagiarism Check')
 
 @section('content_header')
-<h1 class="text-center">Detail Plagiarism Check</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Judul Halaman -->
+    <h1 class="mb-0">Detail Plagiarism Check</h1>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="me-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('/cek-plagiarisme') }}">Plagiarism Checking</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
+        </ol>
+    </nav>
+</div>
 @stop
+
 
 @section('content')
 <div class="container-fluid">
@@ -58,7 +70,7 @@
                                 <tbody>
                                     <tr>
                                         <th>Penulis</th>
-                                        <td>{{ $dokumen->penulis }}</td> <!-- Data penulis dari database -->
+                                        <td>{{ $dokumen->user->nama ?? 'Nama Tidak Tersedia' }}</td> <!-- Data penulis dari database -->
                                     </tr>
                                     <tr>
                                         <th>Judul Dokumen</th>
@@ -82,7 +94,7 @@
                                     </tr>
                                     <tr>
                                         <th>Ambang Batas</th>
-                                        <td>{{ $dokumen->ambangBatas->persentase ?? 'Tidak Diketahui' }}%</td> <!-- Data ambang batas -->
+                                        <td>{{ $dokumen->ambangBatas->ambang_batas ?? 'Tidak Diketahui' }}%</td> <!-- Data ambang batas -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -94,16 +106,28 @@
                 <div class="tab-pane fade" id="sumber" role="tabpanel">
                     <div class="card shadow-lg">
                         <div class="card-header bg-danger text-white">
-                            <h5>Daftar Sumber - 15% Index Kesamaan</h5>
+                        <h5>Daftar Sumber - 
+                            @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
+                                {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
+                            @else
+                                {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
+                            @endif
+                            Index Kesamaan
+                        </h5>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
                                     @foreach($sumberPlagiarisme as $item)
                                         <tr>
-                                            <!-- Menggunakan relasi yang benar, yaitu listJurnalPlagiarisme -->
                                             <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
-                                            <td>{{ $item->persentase_kemunculan ?? '0%' }}</td>
+                                            <td>
+                                                @if(fmod($item->listJurnalPlagiarisme->persentase_kemunculan, 1) == 0)
+                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 0) }}%
+                                                @else
+                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 1) }}%
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
