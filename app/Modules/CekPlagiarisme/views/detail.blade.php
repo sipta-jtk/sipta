@@ -3,8 +3,20 @@
 @section('title', 'Detail Plagiarism Check')
 
 @section('content_header')
-<h1 class="text-center">Detail Plagiarism Check</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Judul Halaman -->
+    <h1 class="mb-0">Detail Plagiarism Check</h1>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="me-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('/cek-plagiarisme') }}">Plagiarism Checking</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
+        </ol>
+    </nav>
+</div>
 @stop
+
 
 @section('content')
 <div class="container-fluid">
@@ -58,31 +70,35 @@
                                 <tbody>
                                     <tr>
                                         <th>Penulis</th>
-                                        <td>Mumun Sumumun</td>
+                                        <td>{{ $dokumen->user->nama ?? 'Nama Tidak Tersedia' }}</td> <!-- Data penulis dari database -->
                                     </tr>
                                     <tr>
                                         <th>Judul Dokumen</th>
-                                        <td>Implementasi Algoritma Naive</td>
+                                        <td>{{ $dokumen->judul }}</td> <!-- Data judul dari database -->
                                     </tr>
                                     <tr>
                                         <th>Nama Dokumen</th>
-                                        <td>CONTOH FIX.PDF</td>
+                                        <td>{{ $dokumen->nama_dokumen ?? 'Dokumen Tidak Ditemukan' }}</td> <!-- Data nama dokumen -->
                                     </tr>
                                     <tr>
                                         <th>Tanggal Unggah</th>
-                                        <td>28-02-2025</td>
+                                        <td>{{ \Carbon\Carbon::parse($dokumen->created_at)->format('d-m-Y') }}</td> <!-- Format tanggal -->
                                     </tr>
                                     <tr>
                                         <th>Jumlah Halaman</th>
-                                        <td>30</td>
+                                        <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
+                                    </tr>
+                                    <tr>
+                                        <th>Jumlah Kata</th>
+                                        <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
                                     </tr>
                                     <tr>
                                         <th>Ukuran Dokumen</th>
-                                        <td>2MB</td>
+                                        <td>{{ number_format($dokumen->ukuran_file / 1024, 2) }} MB</td> <!-- Mengonversi ukuran ke MB dan menampilkan dua angka desimal -->
                                     </tr>
                                     <tr>
                                         <th>Ambang Batas</th>
-                                        <td>50%</td>
+                                        <td>{{ $dokumen->ambangBatas->ambang_batas ?? 'Tidak Diketahui' }}%</td> <!-- Data ambang batas -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -90,32 +106,34 @@
                     </div>
                 </div>
 
-                <!-- Daftar Sumber -->
+                <!-- Sumber Plagiarisme -->
                 <div class="tab-pane fade" id="sumber" role="tabpanel">
                     <div class="card shadow-lg">
                         <div class="card-header bg-danger text-white">
-                            <h5>Daftar Sumber - 15% Index Kesamaan</h5>
+                        <h5>Daftar Sumber - 
+                            @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
+                                {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
+                            @else
+                                {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
+                            @endif
+                            Index Kesamaan
+                        </h5>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr>
-                                        <td>arxiv.org</td>
-                                        <td>4%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>jurnal.itscience.org</td>
-                                        <td>12%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>ejurnal.umri.ac.id</td>
-                                        <td>2%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Fei Li et al.</td>
-                                        <td>
-                                            <1%</td>
-                                    </tr>
+                                    @foreach($sumberPlagiarisme as $item)
+                                        <tr>
+                                            <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
+                                            <td>
+                                                @if(fmod($item->listJurnalPlagiarisme->persentase_kemunculan, 1) == 0)
+                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 0) }}%
+                                                @else
+                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 1) }}%
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
