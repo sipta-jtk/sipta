@@ -54,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Dosen
         Gate::define('dosen', function ($user) {
-            return $user->role_user === 'dosen';
+            return $user->role_user === 'dosen' && $user->dosen->status_dosen === 'aktif';
         });
 
         //Kaprodi
@@ -95,6 +95,21 @@ class AuthServiceProvider extends ServiceProvider
         //All Mahasiswa 
         Gate::define('all_mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('mahasiswa_non_ta');
+        });
+
+        /********************************************
+         * [Topik 7] - Fitur Perekrutan Anggota KoTA
+        *********************************************/
+
+        // Akses Form Perekrutan Anggota KoTA
+        Gate::define('akses-form-perekrutan-anggota-kota', function ($user) {
+            return Gate::allows('mahasiswa_ta') && $user->mahasiswa->id_kota === null;
+        });
+
+        // Akses Halaman Detail KoTA pada sidebar Akun Pengguna
+        Gate::define('mahasiswa_kota', function ($user) {
+            $mahasiswa = \App\Models\Mahasiswa::where('nim', $user->username)->first();
+            return $user->role_user === 'mahasiswa' && $mahasiswa->status_ta === 'mahasiswa_ta' && $mahasiswa->id_kota !== null;
         });
     }
 }

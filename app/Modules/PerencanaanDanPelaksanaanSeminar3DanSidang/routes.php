@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PembatalanJadwalSeminarSidangController;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiBerkasPengajuanMahasiswaController;
 
 // PENGAJUAN JADWAL
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
@@ -48,4 +49,10 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     //pembatalan jadwal sidang
     Route::get('/persetujuan-pembatalan-jadwal-sidang', [PembatalanJadwalSeminarSidangController::class, 'indexPersetujuanPembatalanJadwalSidang'])->name('view.persetujuan.pembatalan.sidang');
     Route::post('/persetujuan-pembatalan-jadwal-sidang/{pembatalan_id}/{status}', [PembatalanJadwalSeminarSidangController::class, 'persetujuanPembatalanSidang'])->name('persetujuan.pembatalan.sidang');
+});
+
+//verifikasi berkas pengajuan mahasiswa
+Route::middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
+    Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->middleware(['auth'])->name('verifikasi.create');
+    Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->middleware(['auth'])->name('verifikasi.store');
 });
