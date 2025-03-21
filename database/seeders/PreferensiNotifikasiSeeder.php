@@ -19,20 +19,26 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => '221524049',
-            'tipe_notifikasi' => 'pengajuan_pembimbing',
+            'username' => '197312271999031003',
             'whatsapp' => 1,
-            'in_app' => 1,
+            'reminder_h5' => 1,
             'email' => 1
         ]);
 
         PreferensiNotifikasi::create
         ([
-            'username' => '221524059',
-            'tipe_notifikasi' => 'pengajuan_pembimbing',
+            'username' => '196810141993032002',
             'whatsapp' => 1,
-            'in_app' => 0,
+            'reminder_h5' => 1,
             'email' => 0
+        ]);
+
+        PreferensiNotifikasi::create
+        ([
+            'username' => '197201061999031002',
+            'whatsapp' => 0,
+            'reminder_h5' => 1,
+            'email' => 1
         ]);
     }
 }
