@@ -22,15 +22,33 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label" style="font-weight: normal;">Anggota 1</label>
-                        <p style="font-weight: bold;">Nama : {{ $sessionUser['nama'] }}</p>
-                        <p style="font-weight: bold;">NIM : {{ $sessionUser['nim'] }}</p>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th class="p-0" style="font-weight: bold;">Nama</th>
+                                <td class="p-0" >:</td>
+                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser->nama }}</td>
+                            </tr>
+                                <th  class="p-0" style="font-weight: bold;">NIM</th>
+                                <td class="p-0" >:</td>
+                                <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $sessionUser->nim }}</td>
+                            </tr>
+                        </table>                        
                     </div>
 
                     @foreach ($dataAnggota as $index => $anggota)
                         <div class="col-md-4">
                             <label class="form-label" style="font-weight: normal;">Anggota {{ $index + 2 }}</label>
-                            <p style="font-weight: bold;">Nama : {{ $anggota->nama }}</p>
-                            <p style="font-weight: bold;">NIM : {{ $anggota->nim }}</p>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="p-0" style="font-weight: bold;">Nama</th>
+                                    <td class="p-0" >:</td>
+                                    <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $anggota->nama }}</td>
+                                </tr>
+                                    <th  class="p-0" style="font-weight: bold;">NIM</th>
+                                    <td class="p-0" >:</td>
+                                    <td class="pl-2 pt-0 pr-0 pb-0" style="font-weight: bold;">{{ $anggota->nim }}</td>
+                                </tr>
+                            </table>
                         </div>
                     @endforeach
                 </div>
@@ -87,13 +105,13 @@
             if (savedData) {
                 document.getElementById("preview-topik").textContent = savedData.topik || "Tidak ada data";
 
-                let bidangList = document.getElementById("preview-bidang");
-                bidangList.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
+                let namaBidang = document.getElementById("preview-bidang");
+                namaBidang.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
 
                 if (savedData.bidang.length > 0) {
-                    bidangList.innerHTML = savedData.bidang; 
+                    namaBidang.innerHTML = savedData.bidang; 
                 } else {
-                    bidangList.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
+                    namaBidang.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
                 }
             }
 
@@ -134,121 +152,58 @@
                     let dataToSend = {
                         topik: savedData.topik,
                         bidang: savedData.bidang,
-                        prioritas: prioritasDosen
+                        prioritas: JSON.stringify(prioritasDosen)
                     };
+                    console.log(dataToSend);
 
                     FireSweetAlert('question', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
                     if (confirmed) { 
 
-                    
-
                     // Kirim data ke backend dengan fetch
-                    fetch('{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.finalisasi') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            },
-                            body: JSON.stringify(dataToSend)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === 'Data berhasil disimpan') {
-                                alert("Data berhasil disimpan!");
-                                // Redirect atau lakukan sesuatu setelah berhasil
-                            } else {
-                                alert("Terjadi kesalahan saat menyimpan data.");
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Terjadi kesalahan saat menyimpan data.");
-                        });
+                    // Buat form secara dinamis
+                    let form = document.createElement('form');
+                    form.action = '{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.finalisasi') }}';
+                    form.method = 'POST';
+
+                    // Tambahkan CSRF token ke dalam form
+                    let csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    form.appendChild(csrfToken);
+
+                    // Tambahkan data topik ke dalam form
+                    let topikInput = document.createElement('input');
+                    topikInput.type = 'hidden';
+                    topikInput.name = 'topik';
+                    topikInput.value = savedData.topik;
+                    form.appendChild(topikInput);
+
+                    // Tambahkan data bidang ke dalam form
+                    let bidangInput = document.createElement('input');
+                    bidangInput.type = 'hidden';
+                    bidangInput.name = 'bidang';
+                    bidangInput.value = savedData.bidang;
+                    form.appendChild(bidangInput);
+
+                    // Tambahkan data prioritas ke dalam form
+                    let prioritasInput = document.createElement('input');
+                    prioritasInput.type = 'hidden';
+                    prioritasInput.name = 'prioritas';
+                    prioritasInput.value = JSON.stringify(prioritasDosen);
+                    form.appendChild(prioritasInput);
+
+                    // Tambahkan form ke dalam body dan submit
+                    document.body.appendChild(form);
+                    form.submit();
                     }
                 });
                 } else {
-                    alert("Data tidak lengkap.");
+                    toast("error", "Data tidak lengkap.");
                 }
             });
         });
 
-
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     // Load data from localStorage if available
-        //     let savedData = JSON.parse(localStorage.getItem("pengajuanTopikDraft"));
-
-        //     if (savedData) {
-        //         // Populate preview for topik
-        //         document.getElementById("preview-topik").textContent = savedData.topik || "Tidak ada data";
-
-        //         // Populate bidang preview
-        //         let bidangList = document.getElementById("preview-bidang");
-        //         bidangList.innerHTML = ""; // Clear the list before adding data
-
-        //         if (savedData.bidang.length > 0) {
-        //             savedData.bidang.forEach(function (bidang) {
-        //                 let li = document.createElement("li");
-        //                 li.textContent = bidang;
-        //                 bidangList.appendChild(li);
-        //             });
-        //         } else {
-        //             bidangList.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
-        //         }
-
-        //         // Populate hidden bidang input with the selected bidang data
-        //         document.getElementById("bidang").value = JSON.stringify(savedData.bidang);
-        //     }
-
-        //     // Load prioritasDosen from localStorage
-        //     let prioritasDosen = JSON.parse(localStorage.getItem("prioritasDosen"));
-        //     if (prioritasDosen) {
-        //         // Populate prioritas dosen preview
-        //         let prioritasList = document.getElementById("preview-prioritas");
-        //         prioritasList.innerHTML = ""; // Clear the list before adding data
-
-        //         prioritasDosen.forEach(function (dosen, index) {
-        //             if (index < 5) { // Only show a maximum of 5 dosen
-        //                 let listItem = `
-    //                     <li>
-    //                         ${dosen.priority}. ${dosen.name}
-    //                     </li>
-    //                 `;
-        //                 prioritasList.innerHTML += listItem;
-        //             }
-        //         });
-
-        //         // Populate hidden prioritas_dosen input with the selected dosen data
-        //         document.getElementById("prioritas_dosen").value = JSON.stringify(prioritasDosen);
-        //     } else {
-        //         document.getElementById("preview-prioritas").innerHTML = "<li>Tidak ada prioritas dosen yang dipilih.</li>";
-        //     }
-
-        //     // Handle form submission (finalization)
-        //     const submitButton = document.querySelector('button[type="submit"]');
-        //     submitButton.addEventListener('click', function(event) {
-        //         event.preventDefault();
-
-        //         // Ensure that all hidden inputs are updated before form submission
-        //         let topik = document.getElementById("topik");
-        //         let bidang = document.getElementById("bidang");
-        //         let prioritas_dosen = document.getElementById("prioritas_dosen");
-
-        //         // Ensure values are taken from localStorage before form submission
-        //         let savedData = JSON.parse(localStorage.getItem("pengajuanTopikDraft"));
-        //         let prioritasDosen = JSON.parse(localStorage.getItem("prioritasDosen"));
-
-        //         topik.value = savedData ? savedData.topik : '';
-        //         bidang.value = savedData ? JSON.stringify(savedData.bidang) : '';
-        //         prioritas_dosen.value = prioritasDosen ? JSON.stringify(prioritasDosen) : '';
-
-        //         FireSweetAlert('question', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true).then((result) => {
-        //             if (result.isConfirmed) {
-        //                 event.target.closest('form').submit(); // Submit the form after confirmation
-        //             }
-        //         });
-        //     });
-        // });
     </script>
 
 @stop

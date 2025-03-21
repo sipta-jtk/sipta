@@ -24,6 +24,9 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
+use App\Modules\UserManagement\Controllers\TestServiceCallController;
+use App\Modules\UserManagement\Controllers\TokenVerify;
+
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest'])
@@ -68,14 +71,15 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
     ->name('pengajuan.pisah.kota.show');
-
-
-
 });
 
 
-Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
+Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])
+        ->name('form.pisah.kota')
+        ->middleware('can:mahasiswa_ta');
+
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
+Route::post('/form-pisah-kota/prakota', [FormPisahKoTAController::class, 'prakota'])->name('form.pisah.kota.prakota');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
         ->name('pengajuan.pisah.kota.terima')
@@ -85,6 +89,7 @@ Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController:
 Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
     ->middleware('auth', 'can:admin')
     ->name('manage.dosen');
+    
 Route::post('/delete-dosen', [DosenController::class, 'deleteDosen'])->name('dosen.deleteDosen');
 Route::post('/update-dosen', [DosenController::class, 'updateDosen'])->name('dosen.updateDosen');
 
@@ -125,6 +130,7 @@ Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
+Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
 
 
 
@@ -133,10 +139,6 @@ Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class,
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
 Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
 Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
-
-Route::get('/manage_dosen', [UserManagementController::class, 'manage_dosen'])
-    ->middleware('can:admin')
-    ->name('manage.dosen');
 
 
 
@@ -176,5 +178,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 });
 
+// define the route for TokenVerify verifyToken
+Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 
-Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');

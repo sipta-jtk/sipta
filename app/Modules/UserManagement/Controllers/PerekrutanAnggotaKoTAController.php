@@ -15,7 +15,6 @@ class PerekrutanAnggotaKoTAController extends Controller
     public function index()
     {
         $mahasiswaAnggota1 = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
-            ->where('mahasiswa.status_ta', 'mahasiswa_ta')
             ->where('mahasiswa.nim', '=', auth()->user()->username)
             ->select('mahasiswa.*', 'user.nama')
             ->first();
@@ -33,7 +32,6 @@ class PerekrutanAnggotaKoTAController extends Controller
             }
 
             $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
-                ->where('mahasiswa.status_ta', 'mahasiswa_ta')
                 ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
                 ->whereNull('mahasiswa.id_kota')
                 ->select('mahasiswa.*', 'user.nama')
@@ -87,18 +85,21 @@ class PerekrutanAnggotaKoTAController extends Controller
         // Anggota 1
         $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
         $anggota1->id_kota = $koTA->id_kota;
+        $anggota1->status_ta = 'mahasiswa_ta';
         $anggota1->save();
 
         // Anggota 2
         if ($request->input('anggota2')) {
             $anggota2 = Mahasiswa::where('nim', $request->input('anggota2'))->first();
             $anggota2->id_kota = $koTA->id_kota;
+            $anggota2->status_ta = 'mahasiswa_ta';
             $anggota2->save();
         }
 
         if ($request->input('anggota3')) {
             $anggota3 = Mahasiswa::where('nim', $request->input('anggota3'))->first();
             $anggota3->id_kota = $koTA->id_kota;
+            $anggota3->status_ta = 'mahasiswa_ta';
             $anggota3->save();
         }
 

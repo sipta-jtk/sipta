@@ -348,7 +348,7 @@ return [
                     'url' => $prefix . '/#',
                     'submenu' => [
                         [
-                            'text' => 'Formulir Pengajuan Pembimbing',
+                            'text' => 'Formulir Pengajuan Dosen Pembimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                         ],
                         [
@@ -488,7 +488,7 @@ return [
                     'text' => 'Rekrut Anggota KoTA',
                     'url' => $prefix . '/perekrutan-anggota-kota',
                     'icon' => 'fas fa-users',
-                    'can' => 'akses-form-perekrutan-anggota-kota',
+                    'can' => 'mahasiswa_non_ta',
                 ],
                 [
                     'text' => 'Detail KoTA',
