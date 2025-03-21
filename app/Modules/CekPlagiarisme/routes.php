@@ -6,7 +6,7 @@ use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
 Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeController::class, 'show'])->name('plagiarism.detail');
+Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
 Route::get('/cek-plagiarisme-catatan', [CekPlagiarismeDetailController::class, 'povMahasiswa'])->name('povMahasiswa');
 Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
 
