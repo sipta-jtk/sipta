@@ -54,7 +54,7 @@ class RepositoryController extends Controller
             ->max('versi'); // Mengambil versi terbesar yang ada
 
         // Kirimkan maxVersion dan dokumen ke view
-        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion'));
+        return view('Repository.views.cruddDokumen', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion'));
     }
 
 
