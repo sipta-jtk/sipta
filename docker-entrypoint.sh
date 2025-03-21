@@ -18,13 +18,12 @@ php artisan migrate:fresh --seed
 # Cek apakah migrasi diaktifkan di .env
 if [ "${MIGRATE_ON_START}" = "true" ]; then
     echo "Menjalankan migrasi..."
-
+    # php artisan migrate:fresh --seed    
     # Coba menjalankan migrasi, jika gagal lakukan wipe dan coba lagi
     if php artisan migrate --force; then
         echo "Migrasi berhasil."
     else
         echo "Gagal menjalankan migrasi. Melakukan wipe..."
-
         # Jika WIPE_DATABASE diaktifkan, lakukan wipe database
         if [ "${WIPE_DATABASE}" = "true" ]; then
             echo "Menghapus database..."

@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Support\ViewErrorBag;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -47,9 +49,22 @@ class Handler extends ExceptionHandler
         });
     }
 
-    // public function render($request, Throwable $e){
-    //     if($e instanceof UnauthorizedException){
-    //         return response()->view('')
-    //     }
-    // }
+
+public function render($request, Throwable $exception)
+{
+    $errors = session()->get('errors', app(ViewErrorBag::class));
+
+    if ($exception instanceof \Illuminate\Auth\Access\AuthorizationException) {
+        return response()->view('UserManagement.views.error403', ['errors' => $errors], 403);
+    }
+
+    if ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+        return response()->view('UserManagement.views.error404', ['errors' => $errors], 404);
+    }
+
+    return parent::render($request, $exception);
+}
+
+    
+
 }
