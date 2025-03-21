@@ -15,12 +15,9 @@ class CekPlagiarismeDetailController extends Controller
     public function show($id)
     {
         $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
-
-        // Mengambil dokumen berdasarkan ID
-        $dokumen = Dokumen::find($id);
         
         // Mengambil semua review (catatan) yang terkait dengan dokumen
-        $catatan = ReviewDosenPembimbing::with('dosen')->where('id_dokumen', $id)->get();
+        $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
         
         // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
         $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
