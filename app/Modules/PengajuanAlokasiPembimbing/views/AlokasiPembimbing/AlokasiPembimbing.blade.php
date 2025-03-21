@@ -57,7 +57,7 @@
             </thead>
             <tbody>
                 @foreach ($list_pengajuan as $index => $row)
-                <tr class="bg-light">
+                <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
                     <td class="align-middle sticky-column" style="position: sticky; left: 0; background: white;">
                         {{ $index + 1 }}</td>
                     <td class="align-middle sticky-column" style="position: sticky; left: 5%; background: white;">
@@ -187,7 +187,7 @@
             </thead>
             <tbody>
                 @foreach ($dosenList as $index => $dosen)
-                <tr class="bg-light">
+                <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
                     <td class="align-middle">{{ $index + 1 }}</td>
                     <td class="align-middle">{{ $dosen['id_dosen'] }}</td>
                     <td class="align-middle">{{ $dosen['nama'] }}</td>
@@ -369,8 +369,27 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script>
+    var DataToSend = [];
     $(document).ready(function() {
-        var DataToSend = [];
+        $(".pembimbing, .penguji, .catatan-input").each(function () {
+            var row = $(this).closest("tr");
+            var id_pengajuan_pembimbing = row.data("id");
+
+            if (!id_pengajuan_pembimbing) {
+                console.warn("Skipping row: Missing or invalid id_pengajuan_pembimbing", row);
+                return;
+            }
+
+            var fieldName = $(this).attr("name")
+                .replace(/\d+$/, "") // Hapus angka di akhir
+                .replace(/Kota.*/, ""); // Hapus "Kota" dan teks setelahnya
+
+            var value = $(this).val().trim();
+
+            if (value) {
+                saveData(id_pengajuan_pembimbing, fieldName, value);
+            }
+        });
 
         function saveData(id_pengajuan_pembimbing, key, value) {
             let found = DataToSend.find(item => item.id_pengajuan_pembimbing == id_pengajuan_pembimbing);
@@ -525,8 +544,6 @@
         // Muat data draft saat halaman pertama kali dibuka
         loadDraft();
     });
-
-    var DataToSend = [];
 
     function saveData(id_pengajuan_pembimbing, key, value) {
         let found = DataToSend.find(item => item.id_pengajuan_pembimbing == id_pengajuan_pembimbing);
