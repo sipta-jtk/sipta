@@ -4,45 +4,71 @@ namespace App\Modules\Repository\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Dokumen;
+use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Subkategori;
-use App\Modules\Controller;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class RepositoryController extends Controller
 {
 
-    public function dashboard()
-    {
-        // Daftar kategori yang akan ditampilkan
-        $kategoriList = [
-            'hasil_revisi_sidang',
-            'seminar3',
-            'seminar2',
-            'seminar1',
-            'cover_abstrak',
-            'artikel_ilmiah',
-            'poster',
-            'fta',
-            'source_code',
-            'link_source_code',
-            'artefak',
-        ];
-
-        return view('Repository.views.dashboard', compact('kategoriList'));
-    }
+    // Akmal Gonniyu Hartono
     /**
      * Menampilkan daftar dokumen Seminar 1.
      */
     public function index($kategori)
     {
-        $dokumen = Dokumen::where('kategori', $kategori)->get();
-        $subkategoris = [];
-        if ($kategori === 'artefak') {
-            $subkategoris = Subkategori::all(); // Ambil semua data subkategori
+        // Ambil data mahasiswa yang sedang login
+        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+
+        // Ambil status_ta dari mahasiswa yang sedang login
+        $status_ta = $mahasiswa ? $mahasiswa->status_ta : null;
+
+        // Ambil id_kota mahasiswa yang sedang login
+        $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
+
+        // Ambil parameter filter dari request
+        $search = request('search');
+        $versi = request('versi');
+        $tanggal_dibuat = request('tanggal_dibuat');
+
+        // Mulai query untuk mengambil dokumen
+        $dokumen = Dokumen::where('kategori', $kategori);
+
+        // Terapkan filter jika ada
+        if ($search) {
+            $dokumen->where('judul', 'like', '%' . $search . '%');
         }
 
-        return view('Repository.views.cruddSeminar1', compact('dokumen', 'kategori', 'subkategoris'));
+        if ($versi) {
+            // Menangani versi (contoh: V1, V2, ...)
+            $dokumen->where('versi', $versi);
+        }
+
+        if ($tanggal_dibuat) {
+            // Filter berdasarkan tanggal dibuat
+            $dokumen->whereDate('created_at', $tanggal_dibuat);
+        }
+
+        // Ambil data dokumen sesuai dengan filter
+        $dokumen = $dokumen->get();
+
+        // Ambil subkategori jika kategori adalah 'artefak'
+        $subkategoris = [];
+        if ($kategori === 'artefak') {
+            $subkategoris = Subkategori::all();
+        }
+
+        // Ambil versi tertinggi yang ada di kategori ini
+        $maxVersion = Dokumen::where('kategori', $kategori)
+            ->max('versi'); // Mengambil versi terbesar yang ada
+
+        // Kirimkan maxVersion, dokumen, status_ta dan data lainnya ke view
+        return view('Repository.views.cruddDokumen', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion', 'status_ta'));
     }
+
+
 
     /**
      * Menyimpan dokumen baru ke database.
@@ -71,15 +97,15 @@ class RepositoryController extends Controller
         }
 
         // Get the latest version for documents with same kategori "laporan"
-        if($kategori == 'fta'){
+        if ($kategori == 'fta') {
             $latestVersion = Dokumen::where('kategori', $kategori)
-            ->where('kode_fta', $request->kode_fta)
-            ->orderBy('versi', 'desc')
-            ->value('versi');
-        }else{
+                ->where('kode_fta', $request->kode_fta)
+                ->orderBy('versi', 'desc')
+                ->value('versi');
+        } else {
             $latestVersion = Dokumen::where('kategori', $kategori)
-            ->orderBy('versi', 'desc')
-            ->value('versi');
+                ->orderBy('versi', 'desc')
+                ->value('versi');
         }
         // $latestVersion = Dokumen::where('kategori', $kategori)
         //     ->orderBy('versi', 'desc')
@@ -195,5 +221,62 @@ class RepositoryController extends Controller
         $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
 
         return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+    }
+
+    // Farrel Keiza Muhammad Yamin Putra
+    public function dashboard()
+    {
+        $data = collect([
+            'Laporan Tugas Akhir' => [
+                ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Tugas Akhir versi hasil revisi sidang', 'url' => route('Repository.index', ['kategori' => 'hasil_revisi_sidang'])],
+                ['key' => 'laporan_seminar_3', 'label' => 'Laporan Tugas Akhir versi hasil seminar 3', 'url' => route('Repository.index', ['kategori' => 'seminar1'])],
+                ['key' => 'laporan_seminar_2', 'label' => 'Laporan Tugas Akhir versi hasil seminar 2', 'url' => route('Repository.index', ['kategori' => 'seminar2'])],
+                ['key' => 'laporan_seminar_1', 'label' => 'Laporan Tugas Akhir versi hasil seminar 1', 'url' => route('Repository.index', ['kategori' => 'seminar3'])],
+            ],
+            'Dokumen Pendukung' => [
+                ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index', ['kategori' => 'cover_abstrak'])],
+                ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => route('Repository.index', ['kategori' => 'artikel_ilmiah'])],
+                ['key' => 'poster', 'label' => 'Poster', 'url' => route('Repository.index', ['kategori' => 'poster'])],
+                ['key' => 'fta', 'label' => 'FTA', 'url' => route('Repository.index', ['kategori' => 'fta'])],
+            ],
+            'Kode Sumber' => [
+                ['key' => 'source_code', 'label' => 'Source Code', 'url' => route('Repository.index', ['kategori' => 'source_code'])],
+                ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => route('Repository.index', ['kategori' => 'link_source_code'])],
+            ],
+            'Artefak' => [
+                ['key' => 'artefak', 'label' => 'Artefak', 'url' => route('Repository.index', ['kategori' => 'artefak'])],
+            ]
+        ]);
+
+        return view('Repository.views.dashboard', compact('data'));
+    }
+
+
+    public function list_kelompok_ta()
+    {
+        return view('Repository.views.list_kelompok_ta');
+    }
+
+
+    // Saabiq Muhyiyuddin Aulawi
+
+    // Muhammad Fahrizal Alzaelani
+
+    // Muhammad Alvyn Adhianto
+    public function v0()
+    {
+        return view('Repository.views.aksesD0');
+    }
+    public function v1()
+    {
+        return view('Repository.views.aksesD1');
+    }
+    public function v2()
+    {
+        return view('Repository.views.aksesD2');
+    }
+    public function p1()
+    {
+        return view('Repository.views.aksesP0');
     }
 }

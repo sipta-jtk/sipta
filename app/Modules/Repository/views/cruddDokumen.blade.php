@@ -6,24 +6,60 @@
 <h1 class="text-center">LAPORAN TA - {{ strtoupper($kategori) }}</h1>
 @stop
 
-<!-- Add these in your blade template's head section or before the closing body tag -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-<script>
-    // Set the path to the PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-</script>
-
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="search-box">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
-        </div>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">
-            + Add
+    <div class="d-flex justify-content-between mb-3">
+        @if ($status_ta === 'mahasiswa_ta')
+        <!-- Tombol Filter -->
+        <button id="toggleFilter" class="btn btn-outline-secondary">
+            <i class="fas fa-filter"></i>
         </button>
+
+        <!-- Tombol Add -->
+        <div class="ms-auto">
+            @if ($kategori === 'artefak')
+            <a href="{{ url('/repository/'.$kategori.'/subkategori') }}" class="btn btn-success mr-2">
+                + Subkategori
+            </a>
+            @endif
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">
+                + Add
+            </button>
+        </div>
+        @endif
+    </div>
+
+
+
+
+    <!-- Form Filter (Hidden by Default) -->
+    <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
+        <form action="{{ route('Repository.index', $kategori) }}" method="GET">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <select name="versi" class="form-control">
+                        <option value="">-- Pilih Versi --</option>
+                        @for ($i = 1; $i <= $maxVersion; $i++)
+                            <option value="{{ $i }}" {{ request('versi') == $i ? 'selected' : '' }}>V{{ $i }}</option>
+                            @endfor
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="date" name="tanggal_dibuat" class="form-control" value="{{ request('tanggal_dibuat') }}">
+                </div>
+
+                <div class="col-md-3 d-flex">
+                    <button type="submit" class="btn btn-dark w-50 me-2">Filter</button>
+                    <a href="{{ route('Repository.index', $kategori) }}" class="btn btn-secondary w-50 me-2">Reset</a>
+                </div>
+            </div>
+        </form>
     </div>
 
     @if(session('success'))
@@ -73,10 +109,22 @@
                 <td>{{ $doc->kode_fta }}</td>
                 @endif
                 <td>{{ $doc->versi }}</td>
-                <td>{{ $doc->judul }}</td>
+                <td>
+                    <a href="#" class="document-title"
+                        data-id="{{ $doc->id_dokumen }}"
+                        data-judul="{{ $doc->judul }}"
+                        data-file="{{ $doc->file_path }}"
+                        data-deskripsi="{{ $doc->deskripsi }}"
+                        data-toggle="modal"
+                        data-target="#detailDocumentModal">
+                        {{ $doc->judul }}
+                    </a>
+                </td>
+
                 <td>{{ $doc->created_at }}</td>
                 <td>{{ $doc->updated_at }}</td>
                 <td>
+                    @if ($status_ta === 'mahasiswa_ta')
                     <!-- Edit button -->
                     <button class="btn btn-sm btn-outline-primary edit-btn"
                         data-id="{{ $doc->id_dokumen }}"
@@ -103,12 +151,28 @@
                         data-target="#downloadConfirmationModal">
                         <i class="fas fa-download"></i>
                     </a>
+                    @endif
                 </td>
             </tr>
             @endforeach
             @endif
         </tbody>
     </table>
+
+
+    <!-- Pagination -->
+    @if(method_exists($dokumen, 'links'))
+    <div class="d-flex justify-content-center">
+        {{ $dokumen->links() }}
+    </div>
+    @endif
+
+    <!-- Tombol Kembali -->
+    <div class="d-flex justify-content-start mb-3">
+        <a href="{{ url('/repository') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 </div>
 
 <!-- Modal Tambah Dokumen -->
@@ -124,6 +188,7 @@
             <div class="modal-body">
                 <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" id="editId" name="id">
                     <div class="mb-3">
                         <label for="judul" class="form-label">Judul:</label>
                         <input class="form-control" id="judul" name="judul" required>
@@ -133,19 +198,12 @@
                     @if ($kategori === 'artefak')
                     <div class="mb-3">
                         <label for="subkategori" class="form-label">Subkategori:</label>
-                        <div class="input-group">
-                            <select class="form-control" id="subkategori" name="id_subkategori" required>
-                                <option value="">Pilih Subkategori</option>
-                                @foreach ($subkategoris as $subkategori)
-                                <option value="{{ $subkategori->id_subkategori }}">{{ $subkategori->nama_subkategori }}</option>
-                                @endforeach
-                            </select>
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#tambahSubkategoriModal">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <select class="form-control" id="subkategori" name="id_subkategori" required>
+                            <option value="">Pilih Subkategori</option>
+                            @foreach ($subkategoris as $subkategori)
+                            <option value="{{ $subkategori->id_subkategori }}">{{ $subkategori->nama_subkategori }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     @endif
 
@@ -167,32 +225,45 @@
     </div>
 </div>
 
-<!-- Modal Tambah Subkategori -->
-<div class="modal fade" id="tambahSubkategoriModal" tabindex="-1" aria-labelledby="tambahSubkategoriModalLabel" aria-hidden="true">
+<!-- Modal Detail Dokumen -->
+<div class="modal fade" id="detailDocumentModal" tabindex="-1" aria-labelledby="detailDocumentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahSubkategoriModalLabel">Tambah Subkategori</h5>
+                <h5 class="modal-title" id="detailDocumentModalLabel">Detail Dokumen</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="tambahSubkategoriForm">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="nama_subkategori" class="form-label">Nama Subkategori:</label>
-                        <input type="text" class="form-control" id="nama_subkategori" name="nama_subkategori" required>
+                <!-- Judul -->
+                <div class="mb-3">
+                    <label for="detailJudul" class="form-label">Judul:</label>
+                    <input type="text" class="form-control" id="detailJudul" readonly>
+                </div>
+
+                <!-- File Terunggah -->
+                <div class="mb-3">
+                    <label for="detailFile" class="form-label">File Terunggah:</label>
+                    <div id="detailFileLink">
+                        <a href="#" target="_blank" class="btn btn-primary" id="detailFileLinkBtn">Lihat File</a>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
+                    <p id="noFileMessage" style="display: none;">Tidak ada file terunggah</p>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="mb-3">
+                    <label for="detailDeskripsi" class="form-label">Deskripsi:</label>
+                    <textarea class="form-control" id="detailDeskripsi" rows="3" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Modal Edit Dokumen -->
 <div class="modal fade" id="editDocumentModal" tabindex="-1" aria-labelledby="editDocumentModalLabel" aria-hidden="true">
@@ -428,6 +499,22 @@
     #downloadConfirmationModal .btn-success:hover {
         background-color: #218838;
     }
+
+    /* Filter styling */
+    #filterOptions {
+        border-radius: 8px;
+    }
+
+    #toggleFilter {
+        height: 38px;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-3 {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
 </style>
 @stop
 
@@ -435,15 +522,39 @@
 <script>
     console.log("Laporan TA page loaded.");
 
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        let filter = this.value.toLowerCase();
+    // Toggle filter button functionality
+    const statusTa = "{{ $status_ta }}";
+
+    // Cek kondisi
+    if (statusTa === 'mahasiswa_ta') {
+        document.getElementById("toggleFilter").addEventListener("click", function() {
+            var filterDiv = document.getElementById("filterOptions");
+            var searchInput = document.getElementById("searchInput");
+            if (filterDiv.style.display === "none") {
+                filterDiv.style.display = "block";
+                searchInput.style.display = "block";
+            } else {
+                filterDiv.style.display = "none";
+                searchInput.style.display = "none";
+            }
+        });
+    }
+
+
+    // Search input functionality
+    // document.getElementById('searchInput').addEventListener('keyup', function() {
+    // filterTable();
+    // });
+
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
         let rows = document.querySelectorAll("tbody tr");
 
         rows.forEach(row => {
             let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? "" : "none";
+            row.style.display = text.includes(input) ? "" : "none";
         });
-    });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         // Populate edit modal when edit button is clicked
@@ -466,6 +577,33 @@
 
                 if (filePath && filePath.trim() !== '') {
                     fileLink.href = `/storage/${filePath}`;
+                    fileLink.style.display = 'inline';
+                    noFileMessage.style.display = 'none';
+                } else {
+                    fileLink.style.display = 'none';
+                    noFileMessage.style.display = 'block';
+                }
+            });
+        });
+
+        document.querySelectorAll('.document-title').forEach(link => {
+            link.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const judul = this.getAttribute('data-judul');
+                const filePath = this.getAttribute('data-file');
+                const deskripsi = this.getAttribute('data-deskripsi');
+
+                // Set modal content
+                document.getElementById('detailJudul').value = judul;
+                document.getElementById('detailDeskripsi').value = deskripsi;
+
+                // Handle file display
+                const fileLink = document.getElementById('detailFileLink');
+                const fileLinkBtn = document.getElementById('detailFileLinkBtn');
+                const noFileMessage = document.getElementById('noFileMessage');
+
+                if (filePath && filePath.trim() !== '') {
+                    fileLinkBtn.href = `/storage/${filePath}`;
                     fileLink.style.display = 'inline';
                     noFileMessage.style.display = 'none';
                 } else {
@@ -513,57 +651,6 @@
                 // Set the download link on the confirm button
                 document.getElementById('confirmDownloadBtn').href = "{{ route('Repository.download', [$kategori, 'ID_PLACEHOLDER']) }}".replace('ID_PLACEHOLDER', id);
             });
-        });
-
-        // Handle tambah subkategori
-        document.getElementById('tambahSubkategoriForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Create FormData from the form
-            const formData = new FormData(this);
-
-            // Send request to server
-            fetch("{{ route('subkategori.store') }}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json',
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Add new subcategory to dropdown
-                        const select = document.getElementById('subkategori');
-                        const option = document.createElement('option');
-                        option.value = data.subkategori.id_subkategori;
-                        option.text = data.subkategori.nama_subkategori;
-                        select.appendChild(option);
-
-                        // Select new subcategory
-                        select.value = data.subkategori.id_subkategori;
-
-                        // Close modal
-                        $('#tambahSubkategoriModal').modal('hide');
-
-                        // Reset form
-                        document.getElementById('tambahSubkategoriForm').reset();
-                    } else {
-                        alert('Gagal menambahkan subkategori');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan: ' + error.message);
-                });
         });
 
         // Auto-close alert messages
