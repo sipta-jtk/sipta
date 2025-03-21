@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'home' => '/' . env('PREFIX_URL', 'sipta'),
+    'home' => '/',
 
     /*
     |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ return [
     |
     */
 
-    'prefix' => env('PREFIX_URL', 'sipta'),
+    'prefix' => '',
 
     'domain' => null,
 
