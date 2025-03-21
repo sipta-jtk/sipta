@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= FORMULIR PENILAIAN =================
-    Route::prefix('formulir-penilaian')->group(function () {
+    Route::prefix('formulir-penilaian')->middleware('auth', 'can:akses-penilaian-koordinator-ta')->group(function () {
         // Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian']);
         Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');
         Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
