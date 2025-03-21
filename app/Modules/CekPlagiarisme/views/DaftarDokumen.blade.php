@@ -16,10 +16,6 @@
             @if(auth()->user()->role_user === 'dosen')
             <div class="form-group ml-auto align-items-right mt-3">
                 <select id="kelompokSelect" class="form-control">
-                    <option value="">Semua Kelompok</option>
-                    @foreach($idKota)
-                    <option value="{{ $idKota }}">{{ $idKota }}</option>
-                    @endforeach
                 </select>
             </div>
             @endif
@@ -36,8 +32,48 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="role_user" content="{{ auth()->user()->role_user }}">
 
 <script>
+    $(document).ready(function() {
+        // Ambil role_user dari meta tag yang ada di halaman
+        var roleUser = $("meta[name='role_user']").attr("content");
+
+        if (roleUser === 'dosen') {
+            // Mengambil data kota dari API
+            $.ajax({
+                type: "GET",
+                url: "/api/kotas", // API untuk mengambil data kota
+                dataType: "json",
+                success: function(response) {
+                    console.log("Data Kota:", response); // Periksa data yang diterima
+
+                    var kelompokOptions;
+
+                    if (response.length === 0) {
+                        kelompokOptions = '<option value="">Tidak ada kelompok</option>';
+                    } else {
+                        kelompokOptions = '<option value="">Semua Kelompok</option>'; // Opsi default
+                        // Menambahkan opsi ke dropdown
+                        kelompokOptions += response.map(function(item) {
+                            return `<option value="${item.id_kota}">${item.nama_kota}</option>`;
+                        }).join('');
+                    }
+
+                    // Menambahkan opsi ke dropdown kelompokSelect
+                    $("#kelompokSelect").append(kelompokOptions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Gagal mengambil data kota:", status, error);
+                }
+            });
+        } else {
+            // Jika yang login bukan dosen, bisa tampilkan pesan atau tidak menjalankan AJAX sama sekali
+            console.log("Akses dibatasi hanya untuk dosen");
+            $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
+        }
+    });
+
     $(document).ready(function() {
         $.ajax({
             type: "GET",
@@ -57,7 +93,8 @@
                     penulis: item.penulis,
                     presentase: item.persentase_plagiarisme + "%",
                     status: item.status,
-                    komentar: getKomentar(item.review, item.id_dokumen)
+                    komentar: getKomentar(item.review, item.id_dokumen),
+                    id_kota: item.id_kota
                 }));
 
                 $("#jsGridPlagiarism").jsGrid({
@@ -121,6 +158,27 @@
                             align: "center"
                         }
                     ]
+                });
+                // Filter berdasarkan kelompok (id_kota) yang dipilih
+                $("#kelompokSelect").on("change", function() {
+                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
+                    console.log("Kota yang dipilih:", selectedKota); // Cek nilai yang dipilih
+
+                    var filteredData = response.filter(item => {
+                        if (selectedKota) {
+                            return item.id_kota == selectedKota; // Filter berdasarkan id_kota
+                        }
+                        return true; // Tampilkan semua data jika tidak ada pilihan
+                    });
+
+                    // Update nomor urut setelah filter
+                    filteredData = filteredData.map((item, index) => ({
+                        ...item,
+                        nomor: index + 1
+                    }));
+
+                    // Update data di jsGrid
+                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
                 });
 
                 $("#searchInput").on("keyup", function() {
