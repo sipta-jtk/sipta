@@ -431,7 +431,7 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => 'repository',
+            'url' => $prefix . '/repository',
             'icon' => 'fas fa-book',
             // 'label' => 4,
             // 'label_color' => 'success',

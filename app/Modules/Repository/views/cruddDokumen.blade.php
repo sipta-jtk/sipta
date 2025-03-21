@@ -167,9 +167,13 @@
     </div>
     @endif
 
+    @php
+        $prefix = env('PREFIX_URL', 'sipta');
+    @endphp
+
     <!-- Tombol Kembali -->
     <div class="d-flex justify-content-start mb-3">
-        <a href="{{ url('/repository') }}" class="btn btn-secondary">
+        <a href="{{ url($prefix . '/repository') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
     </div>

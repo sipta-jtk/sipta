@@ -15,7 +15,6 @@ class Dokumen extends Model
         'highlight_dokumen',
         'status_plagiarisme',
         'id_ambang_batas',
-        'review',
         'kategori', // 2
         'deskripsi', // 3
         'versi', // 4
