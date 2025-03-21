@@ -18,14 +18,12 @@ class CekPlagiarismeController extends Controller
         if (auth()->user()->role_user === 'mahasiswa') {
             $idKota = auth()->user()->mahasiswa->id_kota;
         } else {
-            $idKota = auth()->user()  
-                ->dosen                 
-                ->alokasiDosen        
-                ->first()
-                ->pengajuanPembimbing   
-                ->kota                  
-                ->id_kota;              
-
+            $idKota = auth()->user()
+                ->dosen
+                ->alokasiDosen
+                ->map(function ($alokasi) {
+                    return $alokasi->pengajuanPembimbing->kota->id_kota;
+                });
         }
 
         // Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
