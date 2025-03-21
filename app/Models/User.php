@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {     
-    use Notifiable;
+    use Notifiable, HasRoles;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -63,5 +64,26 @@ class User extends Authenticatable
     public function logAktivitas()
     {
         return $this->hasMany(LogAktivitas::class, 'username', 'username');
+    }
+
+    public function adminlte_image()
+    {
+        // Cek apakah user memiliki foto profil
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);  // Path gambar profil
+        }
+
+        // Jika tidak ada foto profil, kembalikan gambar default
+        return asset('storage/photos/default-profile1.jpg');
+    }
+
+    public function adminlte_desc()
+    {
+        return $this->nama . ' - ' . ucfirst($this->role_user);
+    }
+
+    public function adminlte_profile_url()
+    {
+        return 'profile';
     }
 }

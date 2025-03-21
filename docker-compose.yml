@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Docker/dockerfile/app.Dockerfile.dev
+      dockerfile: Docker/Dockerfile/app.Dockerfile.dev
     container_name: sipta-app-dev
     restart: unless-stopped
     env_file:
@@ -15,7 +15,7 @@ services:
       - cache
       - database
     ports:
-      - "8000:8000"
+      - "8001:8000"
     networks:
       - sipta-dev
 
