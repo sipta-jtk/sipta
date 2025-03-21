@@ -16,7 +16,11 @@
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="2"
                 activeColor="primary" inactiveColor="secondary" 
-                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
+                :hrefs="[
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index')]"/>
         </div>
             <!-- Form Pengajuan -->
         <div class="col">
