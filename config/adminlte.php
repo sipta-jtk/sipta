@@ -338,8 +338,8 @@ return [
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
-                            'can' => 'dosen_pembimbing',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
+                            'can' => 'dosen',
                         ],
                     ],
                 ],
