@@ -76,6 +76,39 @@
             </div>
         </div>
 
+        <!-- Tombol Preview -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <strong>Preview File Dokumen Seminar III</strong> <br>
+                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
+                    Laporan
+                </button>
+                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
+                    Power Point
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Form Penilaian -->
         <form action="{{ url('/kelola-penilaian-ta/nilai-seminar/3/masukan') }}" method="POST">
             @csrf
@@ -266,4 +299,37 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Menginisialisasi popover untuk elemen yang sudah ada
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover',
+                placement: 'top',
+                html: true
+            });
+
+            // Event delegation untuk elemen dinamis
+            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
+                $(this).popover('show');
+            }).on('mouseleave', '[data-toggle="popover"]', function () {
+                $(this).popover('hide');
+            });
+        });
+
+        function loadPreview(url) {
+            let fileId = extractDriveFileId(url);
+            if (fileId) {
+                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                document.getElementById('previewFrame').src = embedUrl;
+            } else {
+                alert("Format link tidak valid!");
+            }
+        }
+
+        function extractDriveFileId(url) {
+            let match = url.match(/[-\w]{25,}/);
+            return match ? match[0] : null;
+        }
+    </script>
 @stop

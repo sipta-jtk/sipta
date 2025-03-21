@@ -415,12 +415,30 @@ return [
                             'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
+            'submenu' => [
+                [
+                    'text' => 'Kelola Penilaian Tugas Akhir',
+                    'submenu' => [
+                        [
+                            'text' => 'Monitoring Mahasiswa',
+                            'url' => $prefix . '/kelola-penilaian-ta/monitoring-mahasiswa',
+                        ],
+
+                    ],
                 ],
                 [
-                    'text' => 'Kelola Penilaian',
-                    'url' => $prefix . '/kelola-penilaian-ta/kelola-nilai',
-                    'can' => 'akses-penilaian-koordinator-ta',
-                ]
+                    'text' => 'Formulir Penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/fomulir-penilaian',
+                ],
+                [
+                    'text' => 'Pengelolaan Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai',
+                    'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai',
+                ],
             ]
         ],
         [

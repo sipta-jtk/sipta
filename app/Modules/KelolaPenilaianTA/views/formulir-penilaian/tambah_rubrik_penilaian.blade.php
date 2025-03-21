@@ -30,10 +30,9 @@
                         <label for="kode_fta">Kode FTA</label>
                         <select class="form-control" id="kode_fta" name="kode_fta" required>
                             <option value="" disabled selected>Pilih Kode FTA</option>
-                            <option value="FTA001">FTA001</option>
-                            <option value="FTA002">FTA002</option>
-                            <option value="FTA003">FTA003</option>
-                            <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
+                            @foreach ($formPenilaianList as $formPenilaian)
+                                <option value="{{ $formPenilaian->kode_fta }}">{{ $formPenilaian->kode_fta }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -42,7 +41,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
-                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" value="PENILAIAN SEMINAR III" readonly>
+                        <input type="text" class="form-control" id="nama_fta" name="nama_fta" readonly>
                     </div>
                 </div>
             </div>
@@ -62,34 +61,24 @@
                             <th style="min-width: 200px;">Kriteria Penilaian Penguji</th>
                             <th style="min-width: 100px;">Bobot (%)</th>
                             <th style="min-width: 200px;">Detail Kriteria</th>
-                            <th style="min-width: 200px;">≥ 80 (A)</th>
-                            <th style="min-width: 200px;">75 - 79.99 (AB)</th>
-                            <th style="min-width: 200px;">70 - 74.99 (B)</th>
-                            <th style="min-width: 200px;">65 - 69.99 (BC)</th>
-                            <th style="min-width: 200px;">60 - 64.99 (C)</th>
-                            <th style="min-width: 200px;">< 60 (CD)</th>
+                            @foreach ($rentangNilai as $nilai)
+                                <th style="min-width: 200px;">≥ {{ $nilai->batas_bawah }} - {{ $nilai->batas_atas }} ({{ $nilai->id_nilai }})</th>
+                            @endforeach
                             <th style="min-width: 100px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="rubrikPenilaianTable">
                         <tr>
                             <td>
-                                <select class="form-control kriteria" name="kriteria[]" required>
+                                <select class="form-control kriteria" name="nama_kriteria[]" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
-                                    <option value="Dokumen">Dokumen</option>
-                                    <option value="Presentasi">Presentasi</option>
-                                    <option value="Tanya Jawab">Tanya Jawab</option>
-                                    <option value="Prototipe">Prototipe</option>
                                 </select>
                             </td>
-                            <td><p class="form-control-plaintext bobot">35</p></td>
+                            <td><p class="form-control-plaintext bobot"></p></td>
                             <td><input type="text" class="form-control" name="detail[]" required></td>
-                            <td><input type="text" class="form-control" name="lebih80[]" required></td>
-                            <td><input type="text" class="form-control" name="tujuhPuluhLima[]" required></td>
-                            <td><input type="text" class="form-control" name="tujuhPuluh[]" required></td>
-                            <td><input type="text" class="form-control" name="enamPuluhLima[]" required></td>
-                            <td><input type="text" class="form-control" name="enamPuluh[]" required></td>
-                            <td><input type="text" class="form-control" name="kurang60[]" required></td>
+                            @foreach ($rentangNilai as $nilai)
+                                <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
+                            @endforeach
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                     </tbody>
@@ -113,4 +102,8 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
+    <script>
+        const formPenilaianList = @json($formPenilaianList);
+        const kriteriaList = @json($kriteriaList);
+    </script>
 @stop
