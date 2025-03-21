@@ -89,8 +89,12 @@
                                         <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
                                     </tr>
                                     <tr>
+                                        <th>Jumlah Kata</th>
+                                        <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
+                                    </tr>
+                                    <tr>
                                         <th>Ukuran Dokumen</th>
-                                        <td>{{ $dokumen->ukuran_file }} MB</td> <!-- Ukuran file -->
+                                        <td>{{ number_format($dokumen->ukuran_file / 1024, 2) }} MB</td> <!-- Mengonversi ukuran ke MB dan menampilkan dua angka desimal -->
                                     </tr>
                                     <tr>
                                         <th>Ambang Batas</th>
