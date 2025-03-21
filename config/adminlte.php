@@ -360,10 +360,12 @@ return [
                 [
                     'text' => 'Pengelolaan Periode',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
+                    'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
+                    'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',

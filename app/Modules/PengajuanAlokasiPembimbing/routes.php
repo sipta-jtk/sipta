@@ -43,11 +43,12 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
 
-
-    Route::get('/alokasi-pembimbing', [AlokasiPembimbingController::class, 'index'])->name('alokasi-pembimbing.index');
-    Route::post('/alokasi-pembimbing/submit', [AlokasiPembimbingController::class, 'submit'])->name('alokasi-pembimbing.submit');
-    Route::post('/alokasi-pembimbing/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('alokasi-pembimbing.simpan');
-    Route::get('/alokasi-pembimbing/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+    Route::group(['prefix' => 'alokasi-pembimbing', 'as' => 'alokasi-pembimbing.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+        Route::get('/', [AlokasiPembimbingController::class, 'index'])->name('index');
+        Route::post('/submit', [AlokasiPembimbingController::class, 'submit'])->name('submit');
+        Route::post('/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('simpan');
+        Route::get('/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+    });
 
 
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.'], function () {
