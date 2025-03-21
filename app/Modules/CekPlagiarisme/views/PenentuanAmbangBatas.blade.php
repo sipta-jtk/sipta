@@ -11,7 +11,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="search-box">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
             </div>
             <div class="ml-auto d-flex align-items-center">
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
@@ -20,7 +20,6 @@
                 </button>
             </div>
         </div>
-
         <div class="card-body">
             <div id="jsGrid1"></div>
         </div>
@@ -73,6 +72,11 @@
     $(document).ready(function() {
         console.log("DOM siap, inisialisasi jsGrid..."); // Debugging
 
+        var originalData = []; // Variabel untuk menyimpan data asli
+
+        /**
+         * Fungsi ini digunakan untuk mengambil data ambang batas dari API
+         */
         function loadData() {
             $.ajax({
                 type: "GET",
@@ -89,16 +93,20 @@
                     // Menambahkan nomor urut secara dinamis berdasarkan index setelah sorting
                     response = response.map((item, index) => ({
                         nomor: index + 1, // Nomor urut
-                        ambang_batas: item.ambang_batas,
+                        ambang_batas: item.ambang_batas + "%",
                         tanggal: item.tanggal,
                         koordinator: item.koordinator,
                         status: item.status
                     }));
 
+                    // Simpan data asli ke dalam variabel global
+                    originalData = response;
+
+                    // Inisialisasi jsGrid
                     $("#jsGrid1").jsGrid({
                         width: "100%",
                         height: "450px",
-                        data: response,
+                        data: originalData, // Set data awal
                         autoload: true, // Pastikan data dimuat otomatis
                         fields: [{
                                 name: "nomor",
@@ -110,7 +118,7 @@
                             {
                                 name: "ambang_batas",
                                 type: "text",
-                                title: "Ambang Batas (%)",
+                                title: "Ambang Batas",
                                 width: 100,
                                 align: "center"
                             },
@@ -146,18 +154,36 @@
         // Panggil fungsi untuk pertama kali
         loadData();
 
-        // Fungsi pencarian
+        /**
+         * Fungsi untuk melakukan pencarian data ambang batas
+         */
         $("#searchInput").on("keyup", function() {
             var searchValue = $(this).val().toLowerCase();
-            var filteredData = $("#jsGrid1").jsGrid("option", "data").filter(function(item) {
-                return Object.values(item).some(value =>
-                    String(value).toLowerCase().includes(searchValue)
-                );
-            });
-            $("#jsGrid1").jsGrid("option", "data", filteredData);
+
+            // Jika searchValue kosong, kembalikan data asli
+            if (searchValue === "") {
+                $("#jsGrid1").jsGrid("option", "data", originalData); // Gunakan data asli
+            } else {
+                // Jika ada teks dalam search, lakukan filter
+                var filteredData = originalData.filter(function(item) {
+                    return Object.values(item).some(value =>
+                        String(value).toLowerCase().includes(searchValue)
+                    );
+                });
+
+                // Menambahkan nomor urut setelah filter
+                filteredData = filteredData.map((item, index) => ({
+                    ...item,
+                    nomor: index + 1 // Mengatur nomor urut ulang
+                }));
+
+                $("#jsGrid1").jsGrid("option", "data", filteredData); // Perbarui data grid dengan hasil filter
+            }
         });
 
-        // Fungsi untuk menambahkan ambang batas baru
+        /**
+         * Fungsi untuk menambah ambang batas baru
+         */
         $("#ambangBatasForm").submit(function(e) {
             e.preventDefault();
 

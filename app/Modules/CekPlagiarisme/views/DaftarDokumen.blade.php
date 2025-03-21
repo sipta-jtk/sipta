@@ -10,8 +10,14 @@
 <section class="content">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="search-box d-flex align-items-center">
-                <input type="text" class="form-control" id="searchInput" placeholder="Cari...">
+            <div class="search-box">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
+            </div>
+            <div class="form-group ml-3">
+                <select id="kelompokSelect" class="form-control">
+                    <option value="">Semua Kelompok</option>
+                    <!-- Option kelompok akan dimasukkan di sini dengan JavaScript -->
+                </select>
             </div>
         </div>
         <div class="card-body">
