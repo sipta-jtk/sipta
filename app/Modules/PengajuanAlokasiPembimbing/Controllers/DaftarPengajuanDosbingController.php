@@ -38,29 +38,22 @@ class DaftarPengajuanDosbingController extends Controller
         $kelompokData = [];
         $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
 
-        foreach ($kotaList as $index => $namaKota) {
-            $anggota = $mahasiswaGrouped[$namaKota] ?? collect();
-            $anggotaFormatted = [];
-            
-            foreach ($anggota->take(3) as $mhs) {
-                $anggotaFormatted[] = [
+        foreach ($mahasiswaGrouped as $namaKota => $anggota) {
+            $anggotaFormatted = $anggota->map(function ($mhs) {
+                return [
                     'nama' => $mhs->nama,
                     'nim' => $mhs->nim,
                 ];
-            }
-            
-            while (count($anggotaFormatted) < 3) {
-                $anggotaFormatted[] = [
-                    'nama' => 'Mahasiswa Default',
-                    'nim' => 'NIM0000',
-                ];
-            }
+            })->values()->toArray();
+    
+            $index = array_search($namaKota, $kotaList);
+            if ($index === false) continue;
 
             $kelompokData[] = [
                 'id' => $index + 1,
                 'kode' => $namaKota,
-                'bidang' => $bidangList[$index % max(1, count($bidangList))] ?? 'Default Bidang',
-                'judul' => $judulList[$index % max(1, count($judulList))] ?? 'Judul Default',
+                'bidang' => $bidangList[$index] ?? '-',
+                'judul' => $judulList[$index] ?? '-',
                 'tanggal' => $tanggalPengajuanList[$index % max(1, count($tanggalPengajuanList))] ?? date('Y-m-d'),
                 'anggota' => $anggotaFormatted,
             ];

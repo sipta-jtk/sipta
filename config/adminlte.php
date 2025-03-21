@@ -338,7 +338,7 @@ return [
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',
                         ],
                     ],
@@ -435,7 +435,13 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Repository Tugas Akhir',
+            'url' => $prefix . '/repository',
+            'icon' => 'fas fa-book',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
