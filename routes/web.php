@@ -38,13 +38,3 @@ Route::get('/', function () {
 //     auth()->logout();
 //     return redirect('/login');
 // })->name('logout');
-
-Route::get('/penentuan-ambang-batas', function () {
-    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
-});
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});
-
-
-
