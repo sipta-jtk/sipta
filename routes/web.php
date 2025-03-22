@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 $modulesPath = base_path('app/Modules');
+$prefix = env('PREFIX_URL', 'sipta');
 
 if (is_dir($modulesPath)) {
     foreach (scandir($modulesPath) as $module) {
@@ -23,7 +24,8 @@ if (is_dir($modulesPath)) {
         $routesFile = "{$modulesPath}/{$module}/routes.php";
 
         if (is_file($routesFile)) {
-            require $routesFile; 
+            Route::prefix($prefix)->group($routesFile);
+            require $routesFile;
         }
     }
 }

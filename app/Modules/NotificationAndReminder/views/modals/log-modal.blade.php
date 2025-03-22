@@ -9,7 +9,7 @@
                 </a>
             </div>
             <div id="notification-list"></div>
-            <a href="/seeallnotif" class="btn btn-secondary w-100">Lihat semua notifikasi</a>
+            <a href="/user/log-user" class="btn btn-secondary w-100">Lihat semua notifikasi</a>
         </div>
     </div>
 </div>
