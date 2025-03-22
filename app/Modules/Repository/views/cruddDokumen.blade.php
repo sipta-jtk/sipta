@@ -19,7 +19,7 @@
         <!-- Tombol Add -->
         <div class="ms-auto">
             @if ($kategori === 'artefak')
-            <a href="{{ url('/repository/'.$kategori.'/subkategori') }}" class="btn btn-success mr-2">
+            <a href="{{ route('Subkategori.index', ['kategori' => $kategori]) }}" class="btn btn-success mr-2">
                 + Subkategori
             </a>
             @endif
@@ -35,7 +35,7 @@
 
     <!-- Form Filter (Hidden by Default) -->
     <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
-        <form action="{{ route('Repository.index', $kategori) }}" method="GET">
+        <form action="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" method="GET">
             <div class="row g-2">
                 <div class="col-md-3">
                     <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
@@ -56,7 +56,7 @@
 
                 <div class="col-md-3 d-flex">
                     <button type="submit" class="btn btn-dark w-50 me-2">Filter</button>
-                    <a href="{{ route('Repository.index', $kategori) }}" class="btn btn-secondary w-50 me-2">Reset</a>
+                    <a href="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" class="btn btn-secondary w-50 me-2">Reset</a>
                 </div>
             </div>
         </form>
@@ -173,7 +173,7 @@
 
     <!-- Tombol Kembali -->
     <div class="d-flex justify-content-start mb-3">
-        <a href="{{ url($prefix . '/repository') }}" class="btn btn-secondary">
+        <a href="{{ route('Repository.dashboard.kota.mahasiswa', ['id_kota' => $kota->id_kota]) }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -621,11 +621,19 @@
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
+                
                 const id = this.getAttribute('data-id');
                 const title = this.getAttribute('data-judul');
+                const kategori = "{{ $kategori }}";
+                const idKota = "{{ auth()->user()->mahasiswa->id_kota ?? auth()->user()->dosen->id_kota ?? 1 }}";
 
+                // Set judul dokumen ke dalam modal
                 document.getElementById('deleteDocumentTitle').textContent = title;
-                document.getElementById('deleteForm').action = `/repository/{{ $kategori }}/${id}`;
+
+                // Set form action ke route yang sesuai
+                document.getElementById('deleteForm').action = `/repository/mahasiswa/{{ $kategori }}/${id}`;
+
+                // Tampilkan modal konfirmasi
                 $('#deleteConfirmationModal').modal('show');
             });
         });
