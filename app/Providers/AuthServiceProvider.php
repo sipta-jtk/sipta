@@ -109,7 +109,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->role_user === 'mahasiswa' && 
                    ($user->mahasiswa->status_ta === 'mahasiswa_ta' || 
                     $user->mahasiswa->status_ta === 'mahasiswa_non_ta');
-        
+        });
         /********************************************
          * [Topik 7] - Fitur Perekrutan Anggota KoTA
         *********************************************/
