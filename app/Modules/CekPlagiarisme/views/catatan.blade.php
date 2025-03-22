@@ -1,5 +1,5 @@
-@foreach($catatan as $index => $item)
-    <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}">
+@forelse($catatan as $index => $item)
+    <div class="comment-item mb-3 p-3 border rounded bg-light" data-index="{{ $index }}" data-dosen-nip="{{ $item->dosen->nip ?? '' }}">
         <div class="d-flex justify-content-between align-items-center">
             <strong>
                 {{ $item->dosen->user->nama ?? 'Nama Dosen Tidak Tersedia' }}
@@ -16,11 +16,8 @@
                 </span>
             </strong>
 
-                <!-- ========================================================= -->
-                <!-- Bagian: Dropdown Menu Aksi (Edit, Salin, Hapus)         -->
-                <!-- ========================================================= -->
-            <!-- Menampilkan tombol titik tiga hanya jika dosen yang login adalah penulis komentar -->
-            @if(auth()->user()->dosen->nip === $item->dosen->nip)
+            <!-- Dropdown Menu Aksi hanya untuk Dosen yang Login dan Penulis Komentar -->
+            @if(auth()->user()->role === 'dosen' && $item->dosen && auth()->user()->dosen->nip === $item->dosen->nip)
                 <div class="dropdown">
                     <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
@@ -28,7 +25,7 @@
 
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <button class="dropdown-item edit-btn">
+                            <button class="dropdown-item edit-btn" data-id="{{ $item->id }}" data-review="{{ $item->review }}">
                                 <i class="fas fa-edit me-2"></i> Edit
                             </button>
                         </li>
@@ -47,16 +44,19 @@
                 </div>
             @endif
         </div>
+        <!-- Menampilkan teks komentar -->
+        <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
+        <!-- Menampilkan tanggal komentar dengan format tertentu -->
+        <small class="text-muted comment-date">
+            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y, H:i:s') }}
+        </small>
+    </div>
+@empty
+    <div class="d-flex justify-content-center align-items-center" style="height: 80px;">
+        <p class="text-muted italic-text">Belum ada catatan</p> <!-- Pesan jika tidak ada komentar -->
+    </div>
+@endforelse
 
-            <!-- Menampilkan teks komentar -->
-            <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
-            <!-- Menampilkan tanggal komentar dengan format tertentu -->
-            <small class="text-muted comment-date">
-                {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y, H:i:s') }}
-            </small>
-        </div>
-    @endforeach
-</div>
 
 <!-- ============================================================= -->
 <!-- Bagian: Form Input Komentar Baru                            -->
@@ -126,6 +126,9 @@
 
     // Inisialisasi komponen Bootstrap dropdown dan event listener setelah DOM siap
     document.addEventListener("DOMContentLoaded", function () {
+        let userRole = '{{ auth()->user()->role }}'; // Peran pengguna yang login
+        let loggedInDosenNip = '{{ auth()->user()->dosen ? auth()->user()->dosen->nip : '' }}'; // NIP dosen yang login
+
         // Inisialisasi Dropdown
         let dropdownElements = document.querySelectorAll('.dropdown-toggle');
         dropdownElements.forEach(function (dropdown) {
@@ -161,14 +164,14 @@
         });
 
         document.querySelectorAll(".comment-item").forEach(item => {
-            let dosenNip = item.dataset.dosenNip; // Ambil data nip dari elemen
-            let loggedInDosenNip = '{{ auth()->user()->dosen->nip }}'; // Dosen yang login
+            let dosenNip = item.dataset.dosenNip; 
 
-            if (dosenNip === loggedInDosenNip) {
-                item.querySelector(".dropdown").style.display = 'block'; // Tampilkan dropdown
+            if (userRole === 'mahasiswa') {
+                item.querySelector(".dropdown")?.style.display = 'none'; 
+            } else if (dosenNip === loggedInDosenNip) {
+                item.querySelector(".dropdown").style.display = 'block';
             }
         });
-
 
         // =========================================================
         // Event Listener untuk tombol Edit
