@@ -1,13 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'CheckFieldChanges')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+    <h1>CheckFieldChanges</h1>
 @stop
 
 @section('content')
-    <p>Welcome to sipta.</p>
+    <p>Welcome to CheckFieldChanges Page.</p>
 @stop
 
 @section('css')
