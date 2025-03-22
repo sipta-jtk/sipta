@@ -42,7 +42,6 @@ class NotifikasiSeeder extends Seeder
             'tipe_notifikasi' => 'peringatan',
             'judul' => 'Reminder Pengumpulan Tugas Akhir',
             'isi_notifikasi' => 'Jangan lupa untuk mengumpulkan tugas akhir anda ya tersisa 3 hari lagi',
-            'sumber_notifikasi' => 'Mahasiswa',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
@@ -51,7 +50,6 @@ class NotifikasiSeeder extends Seeder
             'tipe_notifikasi' => 'peringatan',
             'judul' => 'Reminder Pengumpulan Tugas Akhir',
             'isi_notifikasi' => 'Jangan lupa untuk mengumpulkan tugas akhir anda ya tersisa 3 hari lagi',
-            'sumber_notifikasi' => 'Mahasiswa',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);

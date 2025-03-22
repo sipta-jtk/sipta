@@ -8,32 +8,31 @@
                 </button>
             </div>
             <div class="modal-body">
-            <p>Pilih metode notifikasi yang ingin Anda terima:</p>
-                    @csrf
-                    <!-- Email -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-envelope" style="font-size: 24px;"></i> <!-- Email Icon -->
-                        <span class="switch-label" style="font-size: 18px;">Email</span> <!-- Teks "Email" -->
-                        <label class="switch">
-                            <input type="checkbox" id="emailSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+                <p>Pilih metode notifikasi yang ingin Anda terima:</p>
+                @csrf
+                <!-- Email -->
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-envelope" style="font-size: 24px;"></i> <!-- Email Icon -->
+                    <span class="switch-label" style="font-size: 18px;">Email</span> <!-- Teks "Email" -->
+                    <label class="switch">
+                        <input type="checkbox" id="emailSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
 
-                    <!-- Reminder H-5 -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-bell" style="font-size: 24px;"></i> <!-- Reminder Icon -->
-                        <span class="switch-label" style="font-size: 18px;">Reminder H-5</span> <!-- Teks "Reminder H-5" -->
-                        <label class="switch">
-                            <input type="checkbox" id="reminderSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+                <!-- Reminder H-5 -->
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-bell" style="font-size: 24px;"></i> <!-- Reminder Icon -->
+                    <span class="switch-label" style="font-size: 18px;">Reminder H-5</span> <!-- Teks "Reminder H-5" -->
+                    <label class="switch">
+                        <input type="checkbox" id="reminderSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <div class="modal-footer" style="border-top: none;">
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
-            </form>
         </div>
     </div>
 </div>
@@ -88,15 +87,12 @@
     input:checked + .slider:before {
         transform: translateX(26px);
     }
-
     .switch-label {
         font-size: 18px;
         display: inline-block;
         margin-left: 10px;  
         flex: 1;
     }
-
-
     .btn:hover {
         background-color: #ddd;
     }
@@ -105,7 +101,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        fetchPreferences(); 
+        fetchPreferences();
 
         // Kirim data ketika klik simpan
         document.querySelector(".btn-primary").addEventListener("click", function (e) {
@@ -126,7 +122,7 @@
         .then(data => {
             if (data) {
                 document.getElementById("emailSwitch").checked = data.email;
-                document.getElementById("reminderSwitch").checked = data.in_app;                
+                document.getElementById("reminderSwitch").checked = data.in_app;
             }
         });
     }
@@ -150,7 +146,7 @@
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            $("#myModals").modal("hide");  // Tutup modal setelah berhasil
+            $("#myModals").modal("hide"); // Tutup modal setelah berhasil
         })
         .catch(error => console.error("Error:", error));
     }
