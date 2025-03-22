@@ -88,7 +88,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blokir-pisah-kota', function ($user) {
             return Gate::denies('mahasiswa_ta');
         });
-
         /********************************************
          * [Topik 7] - Fitur Perekrutan Anggota KoTA
         *********************************************/
@@ -102,6 +101,18 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('mahasiswa_kota', function ($user) {
             $mahasiswa = \App\Models\Mahasiswa::where('nim', $user->username)->first();
             return $user->role_user === 'mahasiswa' && $mahasiswa->status_ta === 'mahasiswa_ta' && $mahasiswa->id_kota !== null;
+        });
+      
+        /**********************************
+         * [Topik 4] - Fitur Kelola Penilaian
+        ***********************************/
+        Gate::define('akses-penilaian-koordinator-ta', function ($user) {
+            return Gate::allows('koordinator_ta');
+        });
+
+        //Contoh Akses Multirole
+        Gate::define('akses-penilaian-mahasiswa', function ($user) {
+            return Gate::allows('mahasiswa_ta');
         });
     }
 }
