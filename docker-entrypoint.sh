@@ -35,7 +35,7 @@ if [ "${MIGRATE_ON_START}" = "true" ]; then
                 echo "Gagal menjalankan migrasi setelah wipe."
                 exit 1
             fi
-        elsep
+        else
             echo "Migrasi gagal, tapi wipe database tidak diaktifkan (WIPE_DATABASE=false)."
             exit 1
         fi

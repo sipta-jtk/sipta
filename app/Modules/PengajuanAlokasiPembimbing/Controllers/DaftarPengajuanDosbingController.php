@@ -28,38 +28,34 @@ class DaftarPengajuanDosbingController extends Controller
         
 
         $mahasiswaList = User::where('role_user', 'mahasiswa')
-            ->select('username as nim', 'nama')
+            ->join('mahasiswa', 'mahasiswa.nim', '=', 'user.username')
+            ->join('kota', 'kota.id_kota', '=', 'mahasiswa.id_kota')
+            ->select('user.username as nim', 'user.nama', 'kota.nama_kota')
+            ->orderBy('kota.nama_kota')
             ->get();
 
+
         $kelompokData = [];
-        $totalMahasiswa = count($mahasiswaList);
-        $mahasiswaIndex = 0;
+        $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
 
-        for ($i = 0; $i < 9; $i++) {
-            $anggota = [];
-
-            for ($j = 0; $j < 3; $j++) {
-                if ($mahasiswaIndex < $totalMahasiswa) {
-                    $anggota[] = [
-                        'nama' => $mahasiswaList[$mahasiswaIndex]->nama,
-                        'nim' => $mahasiswaList[$mahasiswaIndex]->nim,
-                    ];
-                    $mahasiswaIndex++;
-                } else {
-                    $anggota[] = [
-                        'nama' => 'Mahasiswa Default',
-                        'nim' => 'NIM0000',
-                    ];
-                }
-            }
+        foreach ($mahasiswaGrouped as $namaKota => $anggota) {
+            $anggotaFormatted = $anggota->map(function ($mhs) {
+                return [
+                    'nama' => $mhs->nama,
+                    'nim' => $mhs->nim,
+                ];
+            })->values()->toArray();
+    
+            $index = array_search($namaKota, $kotaList);
+            if ($index === false) continue;
 
             $kelompokData[] = [
-                'id' => $i + 1,
-                'kode' => $kotaList[$i % max(1, count($kotaList))] ?? 'Default Kota',
-                'bidang' => $bidangList[$i % max(1, count($bidangList))] ?? 'Default Bidang',
-                'judul' => $judulList[$i % max(1, count($judulList))] ?? 'Judul Default',
-                'tanggal' => $tanggalPengajuanList[$i % max(1, count($tanggalPengajuanList))] ?? date('Y-m-d'),
-                'anggota' => $anggota,
+                'id' => $index + 1,
+                'kode' => $namaKota,
+                'bidang' => $bidangList[$index] ?? '-',
+                'judul' => $judulList[$index] ?? '-',
+                'tanggal' => $tanggalPengajuanList[$index % max(1, count($tanggalPengajuanList))] ?? date('Y-m-d'),
+                'anggota' => $anggotaFormatted,
             ];
         }
 

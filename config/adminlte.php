@@ -343,10 +343,12 @@ return [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
+                            'can' => 'koordinator_ta',
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'url' => $prefix . '/PengajuanAlokasiPembimbing/DaftarPengajuanDosbing/',
+                            'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
+                            'can' => 'dosen',
                         ],
                     ],
                 ],
@@ -355,22 +357,31 @@ return [
                     'url' => $prefix . '/#',
                     'submenu' => [
                         [
-                            'text' => 'Formulir Pengajuan Pembimbing',
+                            'text' => 'Formulir Pengajuan Dosen Pembimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
+                            'can' => 'mahasiswa_ta',
                         ],
                         [
                             'text' => 'Formulir Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
+                            'can' => 'dosen',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Pengelolaan Periode',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
+                    'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Jadwal Bimbingan Dosen Pembimbing',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
+                    'can' => 'mahasiswa_ta',
                 ],
             ]
         ],
@@ -435,7 +446,13 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
+            'text' => 'Repository Tugas Akhir',
+            'url' => $prefix . '/repository',
+            'icon' => 'fas fa-book',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -459,6 +476,7 @@ return [
             'text' => 'Penentuan Ambang Batas Plagiarisme',
             'url' => $prefix . '/penentuan-ambang-batas',
             'icon' => 'fas fa-scroll',
+            'can' => 'koordinator_ta'
         ],
         ['header' => 'Pengaturan Pengguna'],
         [
