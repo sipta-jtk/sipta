@@ -33,17 +33,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="role_user" content="{{ auth()->user()->role_user }}">
+<meta name="prefix-url"content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
+    var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
+
+        // Ambil prefix URL dari meta tag yang ada di halaman
+        var urlKota = `${prefixUrl}/api/kotas`;
 
         if (roleUser === 'dosen') {
             // Mengambil data kota dari API
             $.ajax({
                 type: "GET",
-                url: "/api/kotas", // API untuk mengambil data kota
+                url: urlKota, 
                 dataType: "json",
                 success: function(response) {
                     console.log("Data Kota:", response); // Periksa data yang diterima
@@ -75,9 +80,12 @@
     });
 
     $(document).ready(function() {
+        // Ambil prefix URL dari meta tag yang ada di halaman
+        var urlDokumen = `${prefixUrl}/api/cek-plagiarisme`;
+
         $.ajax({
             type: "GET",
-            url: "/api/cek-plagiarisme",
+            url: urlDokumen,
             dataType: "json",
             success: function(response) {
                 console.log("Data dari API:", response);
@@ -104,7 +112,7 @@
                     paging: true,
                     noDataContent: "Dokumen tidak ditemukan",
                     rowClick: function(args) {
-                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
+                        window.location.href = prefixUrl + "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
                     },
                     data: response,
                     fields: [{
