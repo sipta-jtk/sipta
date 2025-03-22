@@ -72,6 +72,14 @@ class VerifikasiBerkasController extends Controller
             // Ambil data berkas berdasarkan ID
             $dataKota = DB::table('kota')->where('id_kota', $id)->first();
 
+            DB::table('verifikasi_berkas_pengajuan')
+            ->where('id_pengajuan', $id)
+            ->update([
+                'status_konfirmasi' => $keputusan,
+                'catatan' => $catatan,
+                'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
             // Hapus berkas (jika ada)
             if ($dataKota && isset($dataKota->berkas)) {
                 foreach (json_decode($dataKota->berkas) as $berkas) {
