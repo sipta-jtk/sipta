@@ -386,25 +386,6 @@ return [
             ]
         ],
         [
-            'text' => 'Kelola Pengajuan Berkas',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Berkas Seminar 3',
-                    'url' => $prefix . '/kelola-pengajuan-berkas/seminar-3',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Berkas Sidang Akhir',
-                    'url' => $prefix . '/kelola-pengajuan-berkas/sidang-akhir',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
