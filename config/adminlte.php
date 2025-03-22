@@ -365,6 +365,11 @@ return [
                 'text' => 'Alokasi Dosen Pembimbing',
                 'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
             ],
+            [
+                'text' => 'Jadwal Bimbingan Dosen Pembimbing',
+                'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
+                'can' => 'mahasiswa_ta',
+            ],
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
