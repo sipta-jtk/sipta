@@ -42,9 +42,6 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
-        // dd($penguji);
-
-        // dd($id_kota);
         if (is_null($id_kota)) {
             $verifikasi = (object) ['kota' => $id_kota];
         } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
@@ -54,8 +51,6 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             $verifikasi = VerifikasiBerkasPengajuan::with('kota')
                             ->where('id_kota', $id_kota)
                             ->get();
-
-            // dd($verifikasi);
 
             if (!$verifikasi) {
                 $verifikasi = (object) ['kota' => $id_kota, 'dosen' => $id_kota, 'pengajuan' => null];
