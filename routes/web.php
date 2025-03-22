@@ -15,18 +15,25 @@ use App\Http\Controllers\EmailController;
 */
 
 $modulesPath = base_path('app/Modules');
+$prefix = env('PREFIX_URL', 'sipta');
 
-foreach (scandir($modulesPath) as $module) {
-    $routesFile = "{$modulesPath}/{$module}/routes.php";
+if (is_dir($modulesPath)) {
+    foreach (scandir($modulesPath) as $module) {
+        if ($module === '.' || $module === '..') {
+            continue;
+        }
+        $routesFile = "{$modulesPath}/{$module}/routes.php";
 
-    if (is_file($routesFile)) {
-        require $routesFile;
+        if (is_file($routesFile)) {
+            Route::prefix($prefix)->group($routesFile);
+            require $routesFile;
+        }
     }
 }
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth'); // Hanya user login yang bisa akses
 
 
 Route::get('/login', function () {
