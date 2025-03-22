@@ -4,19 +4,20 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use App\Models\Dokumen;
-use App\Models\Dosen;
 use App\Models\ReviewDosenPembimbing;
 use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
+
 
 class CekPlagiarismeDetailController extends Controller
 {
     public function show($id)
     {
         $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
-        
+
         // Mengambil semua review (catatan) yang terkait dengan dokumen
         $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
 
@@ -36,5 +37,42 @@ class CekPlagiarismeDetailController extends Controller
     public function PenentuanAmbangBatas(): View
     {
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+    }
+
+    // Fungsi untuk menyimpan catatan baru
+    public function storeCatatan(Request $request, $id_dokumen)
+    {
+        // Validasi input
+        $request->validate([
+            'comment' => 'required|string|max:500',
+        ]);
+
+        // Ambil NIP dosen yang sedang login
+        $nip = auth()->user()->username;
+
+        // Cek apakah dokumen dengan ID yang diberikan ada
+        $dokumen = Dokumen::find($id_dokumen);
+        if (!$dokumen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen tidak ditemukan!'
+            ]);
+        }
+
+        // Simpan catatan baru
+        $catatan = ReviewDosenPembimbing::create([
+            'id_dokumen' => $id_dokumen,
+            'nip' => $nip,
+            'review' => $request->comment,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Mengembalikan respons JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Catatan berhasil ditambahkan!',
+            'catatan' => $catatan,
+        ]);
     }
 }
