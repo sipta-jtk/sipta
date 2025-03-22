@@ -451,6 +451,7 @@ return [
             'text' => 'Kelola Ruangan',
             'url' => $prefix . '/external-service/ruangan',
             'icon' => 'fas fa-fw fa-building',
+            'can' => 'admin',
         ],
         [
             'text' => 'Cek Plagiarisme',
