@@ -15,6 +15,13 @@ class PeriodePengajuanSeeder extends Seeder
      */
     public function run(): void
     {
+        if (!Schema::hasTable('periode_pengajuan')) {
+            return;
+        }
+        // Matikan pengecekan foreign key sebelum truncate
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('periode_pengajuan')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     DB::table('periode_pengajuan')->insert([
         [
             'id_periode_pengajuan' => 1,

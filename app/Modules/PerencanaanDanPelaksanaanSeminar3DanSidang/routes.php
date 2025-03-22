@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PembatalanJadwalSeminarSidangController;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiPengajuanJadwalController;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiBerkasController;
 use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\PengajuanJadwalKotaSeminar3DanSidang;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\VerifikasiBerkasPengajuanMahasiswaController;
+use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\BeritaAcaraPelaksanaanSeminarDanSidangController;
 
 // PENGAJUAN JADWAL
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
@@ -48,4 +52,74 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     //pembatalan jadwal sidang
     Route::get('/persetujuan-pembatalan-jadwal-sidang', [PembatalanJadwalSeminarSidangController::class, 'indexPersetujuanPembatalanJadwalSidang'])->name('view.persetujuan.pembatalan.sidang');
     Route::post('/persetujuan-pembatalan-jadwal-sidang/{pembatalan_id}/{status}', [PembatalanJadwalSeminarSidangController::class, 'persetujuanPembatalanSidang'])->name('persetujuan.pembatalan.sidang');
+});
+
+//verifikasi berkas pengajuan mahasiswa
+Route::middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
+    Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->middleware(['auth'])->name('verifikasi.create');
+    Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->middleware(['auth'])->name('verifikasi.store');
+});
+// Kelola Verifikasi Berkas Pengajuan
+Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'berkas.'], function () {
+        Route::get('/', [VerifikasiBerkasController::class, 'listPengajuan'])->name('list');
+        Route::get('/ditolak', [VerifikasiBerkasController::class, 'pengajuanDitolak'])->name('ditolak');
+        Route::get('/diterima', [VerifikasiBerkasController::class, 'pengajuanDiterima'])->name('diterima');
+        Route::get('/detail/{id}', [VerifikasiBerkasController::class, 'show'])->name('detail');
+        Route::put('/verifikasi/{id}', [VerifikasiBerkasController::class, 'verifikasi'])->name('verifikasi');
+    });
+});
+// Route untuk koordinator menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'koordinator-kelola-pengajuan-jadwal', 'as' => 'kelola.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsKoordinatorTA'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsKoordinatorTA'])->name('verifikasi');
+    });
+});
+
+// Route untuk dosen pembimbing menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'kelola-pengajuan-jadwal-pembimbing', 'as' => 'kelola-pembimbing.', 'middleware' => ['auth', 'can:akses-dosen-kelola-pengajuan-jadwal']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsDosenPembimbing'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsPembimbing'])->name('verifikasi');
+    });
+});
+
+// Route untuk dosen penguji menampilkan list pengajuan jadwal
+Route::group(['prefix' => 'kelola-pengajuan-jadwal-penguji', 'as' => 'kelola-penguji.', 'middleware' => ['auth', 'can:akses-dosen-kelola-pengajuan-jadwal']], function () {
+    Route::group(['prefix' => '{tipe}', 'as' => 'jadwal.'], function () {
+        Route::get('/', [VerifikasiPengajuanJadwalController::class, 'getListAsDosenPenguji'])->name('list');
+        Route::put('/verifikasi/{id}', [VerifikasiPengajuanJadwalController::class, 'verifikasiAsPenguji'])->name('verifikasi');
+    });
+});
+
+// Rekap berita acara seminar 3 dan sidang TA Koordinator TA
+Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
+    // Route untuk halaman rekap berita acara seminar 3
+    Route::get('/rekap-berita-acara-seminar-3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSeminar3'])
+        ->name('rekap.presensi.seminar3');
+
+    // Route untuk halaman rekap berita acara Sidang TA
+    Route::get('/rekap-berita-acara-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSidangTa'])
+        ->name('rekap.presensi.sidang.ta');
+});
+
+Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
+    Route::get('/berita-acara-pelaksanaan-seminar3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'indexBeritaAcaraSeminar3'])
+        ->name('presensi.seminar3');
+
+    Route::get('/berita-acara-pelaksanaan-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'indexBeritaAcaraSidangTA'])
+        ->name('presensi.sidangta');
+
+    Route::post('/presensi/hadir', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanKehadiran'])
+        ->name('presensi.hadir');
+
+    Route::post('/presensi/dokumentasi', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanDokumentasi'])
+        ->name('presensi.dokumentasi');
+
+    Route::post('/simpan-batas-revisi', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanBatasRevisi'])
+        ->name('simpan.batas.revisi');
+
+    Route::post('/simpan-status-kelulusan', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'simpanStatusKelulusan'])
+        ->name('simpan.status.kelulusan');
 });

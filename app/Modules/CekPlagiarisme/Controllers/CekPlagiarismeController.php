@@ -14,8 +14,25 @@ class CekPlagiarismeController extends Controller
 {
     public function getData()
     {
-        // Ambil semua data dokumen beserta relasi ke ambang batas
-        $dokumen = Dokumen::with('AmbangBatas', 'User')->get();
+        // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
+        if (auth()->user()->role_user === 'mahasiswa') {
+            $idKota = auth()->user()->mahasiswa->id_kota;
+            $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
+                ->where('kategori', 'laporan')
+                ->where('id_kota', $idKota)
+                ->get();
+        } else {
+            $idKota = auth()->user()
+                ->dosen
+                ->preferensiKota
+                ->map(function ($preferensiKota) {
+                    return $preferensiKota->id_kota;
+                });
+            $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
+                ->where('kategori', 'laporan')
+                ->whereIn('id_kota', $idKota)
+                ->get();
+        }
 
         // Format data agar sesuai dengan struktur jsGrid
         $data = $dokumen->map(function ($item) {
@@ -27,7 +44,8 @@ class CekPlagiarismeController extends Controller
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
                 'status' => $this->getStatus($item->persentase_plagiarisme, $item->ambangBatas ? $item->ambangBatas->ambang_batas : 20), // Default 20 jika tidak ada
-                'review' => $item->review
+                'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null,
+                'id_kota' => $item->id_kota
             ];
         });
 
@@ -59,7 +77,7 @@ class CekPlagiarismeController extends Controller
 
         $filePath = $request->file('file')->store('uploads');
         $checker = new PlagiarismChecker();
-        
+
         // Ekstrak teks dari file
         $result = $checker->checkPlagiarism(storage_path('app/' . $filePath));
 
@@ -67,5 +85,23 @@ class CekPlagiarismeController extends Controller
             'results' => $result['results'],
             'percentage' => $result['percentage']
         ]);
+    }
+
+    public function getKota()
+    {
+        // Mengambil id_kota dan nama_kota dari relasi preferensiKota -> kota
+        $kotas = auth()->user()
+            ->dosen
+            ->preferensiKota
+            ->map(function ($preferensiKota) {
+                // Mengembalikan id_kota dan nama_kota
+                return [
+                    'id_kota' => $preferensiKota->id_kota,
+                    'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                ];
+            });
+
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($kotas);
     }
 }
