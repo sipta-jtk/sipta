@@ -48,10 +48,11 @@ jobs:
           RUN_MIGRATIONS: ${{ needs.check-db-changes.outputs.run_migrations }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -i private_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 2323 << EOF
-            sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${RUN_MIGRATIONS}/' ~/sipta/development/.env
-            echo "Updated RUN_MIGRATIONS=${RUN_MIGRATIONS} in .env"
-          EOF
+          ssh -i private_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 2323 \
+            "sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${RUN_MIGRATIONS}/' ~/sipta/development/.env && \
+            echo 'Updated RUN_MIGRATIONS=${RUN_MIGRATIONS} in .env' && \
+            sudo docker compose -f ~/sipta/development/docker-compose.yml down && \
+            sudo docker compose -f ~/sipta/development/docker-compose.yml up -d"
           rm -f private_key
 
   build-push-app:
