@@ -579,6 +579,13 @@ return [
             // 'label_color' => 'success',
         ],
         [
+            'text' => 'Repository Tugas Akhir',
+            'url' => $prefix . '/repository',
+            'icon' => 'fas fa-book',
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        [
             'text' => 'Artefak',
             'url' => $prefix . '/#',
             'icon' => 'fas fa-fw fa-folder',
