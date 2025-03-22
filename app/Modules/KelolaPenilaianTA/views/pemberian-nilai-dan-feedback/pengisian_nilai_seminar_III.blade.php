@@ -125,8 +125,8 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th>
-                                <th style="min-width: 100px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                                {{-- <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th> --}}
+                                <th style="min-width: 200px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($nilaiBatas[0] as $nilai)
@@ -144,17 +144,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteriaPenilaian as $index => $kriteria)
+                            @foreach ($kriteriaPenilaian as $kriteria)
                                 <tr>
                                     <td colspan="{{ 8 + count($mahasiswa) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
-                                @foreach ($kriteria->rubrik as $key => $rubrik)
+                                @foreach ($kriteria->rubrik as $rubrik)
                                     <tr>
                                         <td>{{ $rubrik->nama_rubrik }}</td>
                                         @foreach ($rubrik->detailRubrik as $detail)
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
-                                        <td>0-100</td>
+                                        {{-- <td>0-100</td> --}}
                                         @foreach($mahasiswa as $key => $mhs)
                                             <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
                                         @endforeach
@@ -231,5 +231,15 @@
             let match = url.match(/[-\w]{25,}/);
             return match ? match[0] : null;
         }
+
+
+        $(document).ready(function() {
+            // Menginisialisasi DataTable dengan FixedColumns
+            var table = $('#myTable').DataTable({
+                scrollX: true,
+                fixedColumns: {
+                    rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
+                }
+            });
     </script>
 @stop

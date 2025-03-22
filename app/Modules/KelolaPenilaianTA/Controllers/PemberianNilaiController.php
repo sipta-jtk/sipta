@@ -56,39 +56,6 @@ class PemberianNilaiController extends Controller
     }
 
     /**
-     * Menampilkan halaman pemberian nilai seminar 3
-     */
-    public function pengisianNilaiSeminarIII($idFta, $idKota): View
-    {
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)
-            ->with('user', 'kota', 'nilaiKriteria')
-            ->get();
-
-        // Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
-
-        $kategoriPenilaian = KategoriPenilaian::where('id_fta', $idFta)
-            ->with('formulirPenilaian')
-            ->first();
-
-        // Log::info(json_encode($kategoriPenilaian, JSON_PRETTY_PRINT));
-
-        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)
-            ->with(['rubrik.detailRubrik.nilai' , 'nilaiKriteria' => function ($query) use ($idKota) {
-                $query->whereHas('mahasiswa', function ($query) use ($idKota) {
-                    $query->where('id_kota', $idKota);
-                });
-            }])
-            ->get();
-
-        Log::info('kriteria penilaian: ' . json_encode($kriteriaPenilaian, JSON_PRETTY_PRINT));
-        $nilaiBatas = $this->getNilaiBatas($kriteriaPenilaian);
-        Log::info('nilai batas: ' . json_encode($nilaiBatas, JSON_PRETTY_PRINT));
-        $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa, $idKota);
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('data', 'mahasiswa', 'idFta', 'kriteriaPenilaian', 'nilaiBatas'));
-    }
-
-    /**
      * Helper function untuk mendapatkan nilai kriteria
      */
     private function getNilaiKriteria($kriteriaPenilaian)
@@ -102,6 +69,48 @@ class PemberianNilaiController extends Controller
         }
 
         return $nilaiKriteria;
+    }
+
+        /**
+     * Helper mapping untuk data mahasiswa di form pengisian nilai seminar 2
+     */
+    private function mappingDataMahasiswa($kategoriPenilaian, $mahasiswa, $idKota)
+    {
+        return [
+            'nama_fta' => $kategoriPenilaian->formulirPenilaian->nama_fta,
+            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
+            'judul_ta' => $mahasiswa->first()->kota->judul_ta,
+            'waktu' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
+            'nama_kota' => $mahasiswa->first()->kota->nama_kota,
+            'id_fta' => $idKota,
+        ];
+    }
+
+    /**
+     * Menampilkan halaman pemberian nilai seminar 3
+     */
+    public function pengisianNilaiSeminarIII($idFta, $idKota): View
+    {
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)
+            ->with('user', 'kota', 'nilaiKriteria')
+            ->get();
+
+        $kategoriPenilaian = KategoriPenilaian::where('id_fta', $idFta)
+            ->with('formulirPenilaian')
+            ->first();
+
+        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)
+            ->with(['rubrik.detailRubrik.nilai' , 'nilaiKriteria' => function ($query) use ($idKota) {
+                $query->whereHas('mahasiswa', function ($query) use ($idKota) {
+                    $query->where('id_kota', $idKota);
+                });
+            }])
+            ->get();
+
+        $nilaiBatas = $this->getNilaiBatas($kriteriaPenilaian);
+        $data = $this->mappingDataMahasiswa($kategoriPenilaian, $mahasiswa, $idKota);
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_nilai_seminar_III', compact('data', 'mahasiswa', 'idFta', 'kriteriaPenilaian', 'nilaiBatas'));
     }
 
     /**
@@ -123,21 +132,6 @@ class PemberianNilaiController extends Controller
     }
 
     /**
-     * Helper mapping untuk data mahasiswa di form pengisian nilai seminar 2
-     */
-    private function mappingDataMahasiswa($kategoriPenilaian, $mahasiswa, $idKota)
-    {
-        return [
-            'nama_fta' => $kategoriPenilaian->formulirPenilaian->nama_fta,
-            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
-            'judul_ta' => $mahasiswa->first()->kota->judul_ta,
-            'waktu' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-            'nama_kota' => $mahasiswa->first()->kota->nama_kota,
-            'id_fta' => $idKota,
-        ];
-    }
-
-    /**
      * Menyimpan nilai seminar
      */
     public function simpanNilaiSeminar(Request $request, $idFta, $idKota): View
@@ -156,8 +150,8 @@ class PemberianNilaiController extends Controller
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
 
-        $this->inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idFta);
-        $this->inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idFta);
+        $this->inputNilaiKeDatabaseNilaiKriteriaSeminarII($mahasiswa, $nilai, $nip, $idFta);
+        $this->inputNilaiKeDatabaseKategoriPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta);
 
         $pengelolaanNilai = new PengelolaanNilaiController();
         return $pengelolaanNilai->detailNilaiMahasiswa($idFta);
@@ -170,8 +164,9 @@ class PemberianNilaiController extends Controller
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
 
-        $this->inputNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta);
-        $this->inputNilaiKeDatabaseNilaiKriteria($mahasiswa, $nilai, $nip, $idFta);
+        // $this->inputNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta);
+        $this->inputNilaiKeDatabaseNilaiKriteriaSeminarIII($mahasiswa, $nilai, $nip, $idFta);
+        // $this->inputNilaiKeDatabaseKategoriPenilaianSeminarIII($mahasiswa, $nilai, $nip, $idFta);
 
         $pengelolaanNilai = new PengelolaanNilaiController();
         return $pengelolaanNilai->detailNilaiMahasiswa($idFta);
@@ -180,7 +175,7 @@ class PemberianNilaiController extends Controller
     /**
      * Helper function untuk input nilai kategori penilaian ke database
      */
-    private function inputNilaiKeDatabaseKategoriPenilaian($mahasiswa, $nilai, $nip, $idFta): void
+    private function inputNilaiKeDatabaseKategoriPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta): void
     {
         $nilai_rata_rata = [];
         $bobot = FormPenilaian::where('id_fta', $idFta)->with('kriteriaPenilaian')->first();
@@ -206,7 +201,7 @@ class PemberianNilaiController extends Controller
     /**
      * Helper function untuk input nilai kriteria penilaian ke database
      */
-    private function inputNilaiKeDatabaseKriteriaPenilaian($mahasiswa, $nilai, $nip, $idFta): void
+    private function inputNilaiKeDatabaseNilaiKriteriaSeminarII($mahasiswa, $nilai, $nip, $idFta): void
     {
         $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->get();
 
@@ -227,7 +222,44 @@ class PemberianNilaiController extends Controller
 
     private function inputNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta): void
     {
-        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->get();
+        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik')->get();
+        $rubrikDiKriteriaPenilaian = $this->ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian);
+    
+        foreach ($mahasiswa as $index => $mhs) {
+            foreach ($rubrikDiKriteriaPenilaian as $rubrikIndex => $rubrik) {
+                $nilaiRubrik = (double) $nilai['nilai' . $index][$rubrikIndex];
+    
+                // Simpan nilai rubrik ke database
+                $mhs->nilaiRubrik()->create([
+                    'nim' => $mhs->nim,
+                    'nip' => $nip,
+                    'id_rubrik' => $rubrik['id_rubrik'],
+                    'nilai_rubrik' => $nilaiRubrik,
+                    'status_penilaian_dosen' => 'sudah_dinilai' //TBD INI MUNGKIN DIHAPUS
+                ]);
+            }
+        }
+    }
+
+    private function inputNilaiKeDatabaseNilaiKriteriaSeminarIII($mahasiswa, $nilai, $nip, $idFta): void
+    {
+        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik.nilaiRubrik')->get();
+        $rataRataNilaiRubrikPerMahasiswa = $this->hitungRataRataNilaiRubrikPerMahasiswa($kriteriaPenilaian);
+    
+        foreach ($mahasiswa as $index => $mhs) {
+            foreach ($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
+                $nilaiKriteria = (double) $nilai['nilai' . $index][$kriteriaIndex];
+                $nilaiKriteria = round($nilaiKriteria, 2);
+    
+                $mhs->nilaiKriteria()->create([
+                    'nim' => $mhs->nim,
+                    'nip' => $nip,
+                    'id_kriteria' => $kriteria->id_kriteria,
+                    'nilai_kriteria' => $nilaiKriteria,
+                    'status_penilaian_dosen' => 'draf'
+                ]);
+            }
+        }
     }
 
     /**
@@ -244,6 +276,52 @@ class PemberianNilaiController extends Controller
         }
 
         return $totalBobot > 0 ? $totalNilai / $totalBobot : 0;
+    }
+
+    /**
+     * Helper function untuk menghitung rata-rata nilai rubrik per mahasiswa
+     */
+    private function hitungRataRataNilaiRubrikPerMahasiswa($kriteriaPenilaian)
+    {
+        $nilaiPerMahasiswa = [];
+    
+        foreach ($kriteriaPenilaian as $kriteria) {
+            $bobotKriteria = $kriteria->bobot_kriteria;
+            foreach ($kriteria->rubrik as $rubrik) {
+                foreach ($rubrik->nilaiRubrik as $nilaiRubrik) {
+                    $nim = $nilaiRubrik['nim'];
+                    if (!isset($nilaiPerMahasiswa[$nim])) {
+                        $nilaiPerMahasiswa[$nim] = [
+                            'total_nilai' => 0,
+                            'jumlah_rubrik' => 0
+                        ];
+                    }
+                    $nilaiPerMahasiswa[$nim]['total_nilai'] += $nilaiRubrik['nilai_rubrik'];
+                    $nilaiPerMahasiswa[$nim]['jumlah_rubrik']++;
+                }
+            }
+        }
+    
+        $rataRataPerMahasiswa = [];
+        foreach ($nilaiPerMahasiswa as $nim => $data) {
+            $rataRata = $data['total_nilai'] / $data['jumlah_rubrik'];
+            $rataRataPerMahasiswa[$nim] = $rataRata * $bobotKriteria / 100; // Mengalikan dengan bobot kriteria
+        }
+    
+        return $rataRataPerMahasiswa;
+    }
+
+    public function ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian)
+    {
+        $rubrikArray = [];
+
+        foreach ($kriteriaPenilaian as $kriteria) {
+            foreach ($kriteria->rubrik as $rubrik) {
+                $rubrikArray[] = $rubrik;
+            }
+        }
+
+        return $rubrikArray;
     }
 
     /**
