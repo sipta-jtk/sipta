@@ -79,13 +79,21 @@ class RepositoryController extends Controller
         $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
 
         // Ambil id_kota mahasiswa yang sedang login
-        $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
+        // $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
         // Validasi dasar 
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
-            'deskripsi' => 'required|string',
-        ]);
+        if ($kategori == 'link_source_code') {
+            $request->validate([
+                'judul' => 'required|string|max:255',
+                'repository_url' => 'required|url|max:255',
+                'deskripsi' => 'required|string',
+            ]);
+        } else {
+            $request->validate([
+                'judul' => 'required|string|max:255',
+                'file' => 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                'deskripsi' => 'required|string',
+            ]);
+        }
 
         // Jika kategori adalah "fta", tambahkan validasi untuk kode_fta
         if ($kategori === 'fta') {
@@ -121,11 +129,7 @@ class RepositoryController extends Controller
             $newVersion = $latestVersion + 1;
         }
 
-        // Handle file upload
-        $file = $request->file('file');
-        $fileName = 'dokumen/' . $file->hashName(); // Simpan hanya path relatif
-        $file->storeAs('public/dokumen', $file->hashName());
-        $fileSize = $file->getSize() / 1024; // Ukuran file dalam KB
+        
 
         // Data yang akan disimpan ke database
         $data = [
@@ -135,13 +139,25 @@ class RepositoryController extends Controller
             'deskripsi' => $request->deskripsi,
             'id_kota' => $mahasiswa->id_kota, // Sesuaikan dengan kebutuhan
             'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null, // Sesuaikan dengan kebutuhan
-            'file_path' => $fileName,
-            'ukuran_file' => $fileSize,
             'status_berkas' => 'valid',
             'username' => '221524059', // Sesuaikan dengan kebutuhan
             'created_at' => now()->timezone('Asia/Jakarta'),
             'updated_at' => now()->timezone('Asia/Jakarta'),
         ];
+
+        // Handle file upload
+        if ($kategori === 'link_source_code') {
+            $data['file_path'] = $request->repository_url;
+            $data['ukuran_file'] = 0; // URL doesn't have a file size
+        } else {
+            $file = $request->file('file');
+            $fileName = 'dokumen/' . $file->hashName(); // Simpan hanya path relatif
+            $file->storeAs('public/dokumen', $file->hashName());
+            $fileSize = $file->getSize() / 1024; // Ukuran file dalam KB
+
+            $data['file_path'] = $fileName;
+            $data['ukuran_file'] = $fileSize;
+        }
 
         // Jika kategori adalah "fta", tambahkan kode_fta ke data
         if ($kategori === 'fta') {
