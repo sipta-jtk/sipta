@@ -98,6 +98,8 @@
 <script>
     $(document).ready(function() {
 
+        var prefixUrl = "{{ env('TEST_URL') }}";
+
         function handleAction(kelompokId, actionType) {
             Swal.fire({
                 title: "Konfirmasi"
@@ -111,7 +113,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/" + kelompokId + "/" + actionType
+                        url: prefixUrl + "/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/" + kelompokId + "/" + actionType
                         , method: "POST"
                         , headers: {
                             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
