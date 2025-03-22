@@ -306,8 +306,8 @@ return [
             'text' => '',  // Hapus teks "Notifications"
             'url' => '#',
             'icon' => 'fas fa-bell',  // Ikon lonceng
-            'topnav_right' => true,  
-            'label' => 1,  
+            'topnav_right' => true,  // Menampilkan di navbar kanan
+            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
             'label_color' => 'danger',
             'id' => 'notificationBell',
         ],
@@ -435,13 +435,7 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Repository Tugas Akhir',
-            'url' => $prefix . '/repository',
-            'icon' => 'fas fa-book',
+
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -554,7 +548,6 @@ return [
         ],
         [
             'text' => 'Notifikasi dan Reminder',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
@@ -564,6 +557,7 @@ return [
                 [
                     'text' => 'Log Notifikasi Admin',
                     'url' => '/api/logAdmin',
+                    // 'can' => 'admin',
                 ],
             ]
             // 'label' => 4,

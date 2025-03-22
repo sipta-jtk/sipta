@@ -108,7 +108,6 @@
                             <i class="fas fa-exclamation-circle"></i>
                             <div>
                                 <p><strong>${notification.judul}</strong></p>
-                                <p>${notification.isi_notifikasi}</p>
                             </div>
                             <button type="button" class="close-notification" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>

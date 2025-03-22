@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('tipe_notifikasi', 255);
             $table->string('judul', 255);
             $table->text('isi_notifikasi');
-            $table->string('sumber_notifikasi', 255);
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
         

@@ -15,10 +15,6 @@ Route::post('/notification/admin/settingawal/update/{id}', [SettingAwalNotifCont
 Route::delete('/notification/admin/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])->name('notifikasi.delete');
 
 
-Route::get('/notification_reminder/admin/notifikasi', function () {
-    return view('NotificationAndReminder::LogAdmin.logAdmin');
-}); 
-
 Route::get('/notification_reminder/user/notifikasi', function () {
     return view('NotificationAndReminder::LogUser.logUser');
 });
@@ -27,13 +23,11 @@ Route::get('/notification_reminder/user/notifikasi', function () {
 Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
 Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
-
-Route::get('/admin/log-admin', function() {
-    return view('NotificationAndReminder::LogAdmin.logAdmin'); 
-});
+//hrs login dl dan sebagai admin
+// Route::middleware(['auth', 'can:admin'])->get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications'])->name('logAdmin');
 
 Route::get('/user/log-user', function() {
-    return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
+    return view('NotificationAndReminder::LogUser.logUser'); 
 });
 
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);

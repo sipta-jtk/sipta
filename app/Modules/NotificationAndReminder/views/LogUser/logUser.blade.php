@@ -1,9 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Log Notifikasi Pengguna')
+@section('title', 'Log Notifikasi Mahasiswa')
 
 @section('content_header')
-    <h1>Log Notifikasi Pengguna</h1>
+    <h1>Log Notifikasi Mahasiswa</h1>
+    @include('NotificationAndReminder::modals.log-modal')
+    @include('NotificationAndReminder::modals.preferences-modal')
 @stop
 
 @section('content')
@@ -11,16 +13,17 @@
     {{-- Daftar Log Notifikasi --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Daftar Log Notifikasi Pengguna</h3>
+            <h3 class="card-title">Daftar Log Notifikasi Mahasiswa</h3>
         </div>
         <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-bordered table-hover" id="notifications-table">
+            <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Tanggal & Waktu</th>
                         <th>Judul Notifikasi</th>
                         <th>Sumber</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="notifications-table-body">
@@ -58,62 +61,60 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Memuat data notifikasi dari API
-            $.get('/api/notifications', function (data) {
+            $.get('/api/notifications', function(data) {
                 const $tbody = $('#notifications-table-body');
                 $tbody.empty();
 
                 // Jika data kosong, tampilkan pesan
                 if (!Array.isArray(data) || data.length === 0) {
-                    $tbody.append('<tr><td colspan="4" class="text-center">Tidak ada notifikasi.</td></tr>');
+                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
                     return;
                 }
 
                 // Iterasi data dan menambahkan ke tabel
-                data.forEach(function (notif, index) {
+                data.forEach(function(notif, index) {
                     let row = `
-                        <tr class="clickable-row"
-                            data-title="${encodeURIComponent(notif.judul)}"
-                            data-content="${encodeURIComponent(notif.isi_notifikasi)}"
-                            data-date="${notif.created_at}"
-                            data-source="${notif.sumber_notifikasi}">
+                        <tr>
                             <td>${index + 1}</td>
-                            <td>${notif.waktu_kirim}</td>
+                            <td>${notif.created_at}</td>
                             <td>${notif.judul}</td>
-<<<<<<< HEAD
-                            <td>${notif.username}</td>
+                            <td>${notif.sumber_notifikasi}</td>
                             <td>
                                 <button class="btn btn-info btn-sm btn-detail"
                                     data-title="${encodeURIComponent(notif.judul)}"
                                     data-content="${encodeURIComponent(notif.isi_notifikasi)}"
-                                    data-date="${notif.waktu_kirim}"
-                                    data-source="${notif.username}">
+                                    data-date="${notif.created_at}"
+                                    data-source="${notif.sumber_notifikasi}">
                                     Detail
                                 </button>
                             </td>
-=======
-                            <td>${notif.sumber_notifikasi}</td>
->>>>>>> b1c66c503a55a4a6ac5b652267d9500d059884af
                         </tr>
                     `;
                     $tbody.append(row);
                 });
             });
 
-            // Delegasi event untuk baris tabel yang dapat diklik
-            $(document).on('click', '.clickable-row', function () {
+            // Menangani klik pada ikon lonceng
+            $('#notificationBell').on('click', function() {
+                // Menampilkan modal myModal saat ikon lonceng diklik
+                $('#myModal').modal('show');
+            });
+
+            // Delegasi event untuk tombol "Detail"
+            $(document).on('click', '.btn-detail', function() {
                 let title = decodeURIComponent($(this).data('title'));
                 let content = decodeURIComponent($(this).data('content'));
                 let date = $(this).data('date');
                 let source = $(this).data('source');
 
-                $('#detailModalLabel').text(title);
+                $('#myModalLabel').text(title);
                 $('#modalDate').text(date);
                 $('#modalSource').text(source);
                 $('#modalContent').text(content);
 
-                $('#detailModal').modal('show');
+                $('#myModal').modal('show');
             });
         });
     </script>
