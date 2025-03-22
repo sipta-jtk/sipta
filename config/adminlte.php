@@ -582,13 +582,7 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Repository Tugas Akhir',
-            'url' => $prefix . '/repository',
-            'icon' => 'fas fa-book',
+
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -708,7 +702,6 @@ return [
         ],
         [
             'text' => 'Notifikasi dan Reminder',
-            // 'url' => 'admin/pages',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
@@ -717,7 +710,8 @@ return [
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
-                    'url' => '/admin/log-admin',
+                    'url' => '/api/logAdmin',
+                    // 'can' => 'admin',
                 ],
             ]
             // 'label' => 4,

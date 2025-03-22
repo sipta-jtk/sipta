@@ -8,16 +8,29 @@ use App\Modules\NotificationAndReminder\Controllers\Preferensi\PreferensiNotifik
 use App\Modules\NotificationAndReminder\Controllers\EmailController;
 use App\Modules\NotificationAndReminder\Controllers\PendaftaranController;
 
-Route::get('/notification/admin/settingawal', [SettingAwalNotifController::class, 'index'])->name('notification_reminder.admin.notifikasi');
-Route::post('/notification/admin/settingawal/store', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
-Route::get('/notification/admin/settingawal/edit/{id}', [SettingAwalNotifController::class, 'edit'])->name('notifikasi.edit');
-Route::post('/notification/admin/settingawal/update/{id}', [SettingAwalNotifController::class, 'update'])->name('notifikasi.update');
-Route::delete('/notification/admin/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])->name('notifikasi.delete');
 
+Route::prefix('/notification/admin')->middleware('auth', 'can:admin')->group(function () {
 
-Route::get('/notification_reminder/admin/notifikasi', function () {
-    return view('NotificationAndReminder::LogAdmin.logAdmin');
-}); 
+    // Rute untuk menampilkan halaman pengaturan notifikasi
+    Route::get('/settingawal', [SettingAwalNotifController::class, 'index'])
+        ->name('notification_reminder.admin.notifikasi');
+
+    // Rute untuk menyimpan notifikasi
+    Route::post('/settingawal/store', [SettingAwalNotifController::class, 'store'])
+        ->name('notifikasi.store');
+
+    // Rute untuk menampilkan halaman edit notifikasi berdasarkan ID
+    Route::get('/settingawal/edit/{id}', [SettingAwalNotifController::class, 'edit'])
+        ->name('notifikasi.edit');
+
+    // Rute untuk memperbarui notifikasi berdasarkan ID
+    Route::post('/settingawal/update/{id}', [SettingAwalNotifController::class, 'update'])
+        ->name('notifikasi.update');
+
+    // Rute untuk menghapus notifikasi berdasarkan ID
+    Route::delete('/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])
+        ->name('notifikasi.delete');
+});
 
 Route::get('/notification_reminder/user/notifikasi', function () {
     return view('NotificationAndReminder::LogUser.logUser');
@@ -25,13 +38,13 @@ Route::get('/notification_reminder/user/notifikasi', function () {
 
 // Route untuk mengambil notifikasi
 Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
-
-Route::get('/admin/log-admin', function() {
-    return view('NotificationAndReminder::LogAdmin.logAdmin'); 
-});
+Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
+Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
+//hrs login dl dan sebagai admin
+// Route::middleware(['auth', 'can:admin'])->get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications'])->name('logAdmin');
 
 Route::get('/user/log-user', function() {
-    return view('NotificationAndReminder::LogUser.logUser'); // Sesuaikan dengan nama view yang kamu buat
+    return view('NotificationAndReminder::LogUser.logUser'); 
 });
 
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);

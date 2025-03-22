@@ -37,7 +37,6 @@ class NotifikasiSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
-
         Notifikasi::create([
             'tipe_notifikasi' => 'peringatan',
             'judul' => 'Reminder Pengumpulan Tugas Akhir',

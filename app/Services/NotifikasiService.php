@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 use App\Models\TemplateNotifikasi;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -11,32 +10,34 @@ class NotifikasiService
 {
     public function kirimEmail($templateId, $userId, $data)
     {
-        // Ambil user berdasarkan ID
+        // Retrieve the user by ID
         $user = User::find($userId);
 
         if (!$user) {
             throw new \Exception('User tidak ditemukan');
         }
 
-        // Ambil template berdasarkan ID
+        // Retrieve the email template by ID
         $template = TemplateNotifikasi::find($templateId);
 
         if (!$template) {
             throw new \Exception("Template email tidak ditemukan");
         }
 
-        // Tambahkan nama user ke data jika belum ada
+        // Add the user's name to the data if not already present
         if (!isset($data['name'])) {
             $data['name'] = $user->name;
         }
 
-        // Ganti placeholder dengan data
-        $subject = $this->replacePlaceholders($template->subject, $data);
-        $body = $this->replacePlaceholders($template->body, $data);
+        // Replace placeholders in the subject and body with data
+        $subject = $this->replacePlaceholders($template->judul_notifikasi, $data);
+        $body = $this->replacePlaceholders($template->isi_in_email, $data);
 
-        // Kirim email
-        Mail::raw($body, function ($message) use ($user, $subject) {
-            $message->to($user->email)->subject($subject);
+        // Send the email using the generated subject and body
+        Mail::send([], [], function ($message) use ($user, $subject, $body) {
+            $message->to($user->email)
+                    ->subject($subject)
+                    ->html($body); // Use 'html()' for HTML content
         });
 
         return "Email berhasil dikirim ke {$user->email}";
