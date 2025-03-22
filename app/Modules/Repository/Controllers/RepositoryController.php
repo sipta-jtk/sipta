@@ -83,7 +83,7 @@ class RepositoryController extends Controller
         // Validasi dasar 
         $request->validate([
             'judul' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'file' => 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
             'deskripsi' => 'required|string',
         ]);
 
