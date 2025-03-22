@@ -35,15 +35,6 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
 
-
-Route::get('/login', function () {
-    return view('auth.login');
-});
-
-Route::get('/register', function () {
-    return view('auth.register');
-});
-
 // routes/web.php
 // Route::get('/settings', function() {
 //     return view('settings'); // Sesuaikan dengan nama view yang kamu buat
