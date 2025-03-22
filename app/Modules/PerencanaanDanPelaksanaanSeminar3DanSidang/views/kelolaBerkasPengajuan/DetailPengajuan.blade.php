@@ -14,10 +14,10 @@
                 <h3 class="card-title">Informasi Pengajuan</h3>
             </div>
             <div class="card-body">
-                <p><strong>Kelompok:</strong> {{ $dataKota->kelompok }}</p>
+                <p><strong>Kelompok:</strong> {{ $dataKota->id_kota }}</p>
                 <p><strong>Judul:</strong> {{ $dataKota->judul_ta }}</p>
-                <p><strong>Status:</strong> {{ $dataKota->jenis_pengajuan }}</p>
-                <p><strong>Tanggal:</strong> {{ $dataKota->tanggal }}</p>
+                <p><strong>Ageda:</strong> {{ $dataKota->jenis_pengajuan }}</p>
+                <p><strong>Tanggal Pengajuan:</strong> {{ $dataKota->tanggal_pengajuan }}</p>
             </div>
         </div>
 
@@ -26,19 +26,12 @@
             <div class="card-header">
                 <h3 class="card-title">Berkas Pengajuan</h3>
             </div>
-            <div class="card-body container-scroll">
-                @foreach($dataKota->berkas as $berkas)
-                    <div class="file-preview">
-                        <h5>{{ $berkas->nama }}</h5>
-                        <iframe src="{{ asset('storage/berkas/' . $berkas->file) }}" width="100%" height="400px"></iframe>
-                    </div>
-                @endforeach
-            </div>
         </div>
 
         <!-- Form Verifikasi -->
-        <form action="{{ route('perencanaan.kelola-pengajuan.verifikasi', ['id' => $dataKota->kelompok]) }}" method="POST">
+        <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->id_pengajuan]) }}" method="POST">
             @csrf
+            @method('PUT')
             <input type="hidden" name="keputusan" id="keputusan" value="">
             <input type="hidden" name="catatan" id="catatan_input" value="">
 
@@ -91,7 +84,7 @@
 
             // Event ketika tombol "Tolak" diklik
             $('#btnTolak').on('click', function() {
-                keputusan = 'Ditolak';
+                keputusan = 'tidak_disetujui';
                 $('#keputusan').val(keputusan);
                 $('#containerCatatan').slideDown(); // Menampilkan container catatan
                 $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
@@ -101,7 +94,7 @@
 
             // Event ketika tombol "Setuju" diklik
             $('#btnSetuju').on('click', function() {
-                keputusan = 'Disetujui';
+                keputusan = 'disetujui';
                 $('#keputusan').val(keputusan);
                 $('#containerCatatan').slideUp(); // Menyembunyikan container catatan
                 $('#btnTolak').removeClass('active-btn').addClass('disabled-btn');
@@ -111,7 +104,7 @@
 
             // Saat Submit, masukkan catatan ke input hidden
             $('form').on('submit', function() {
-                if (keputusan === 'Ditolak') {
+                if (keputusan === 'tidak_disetujui') {
                     $('#catatan_input').val($('#catatan').val());
                 }
             });
