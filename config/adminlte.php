@@ -405,25 +405,6 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Kelola Pengajuan Jadwal',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
@@ -546,15 +527,16 @@ return [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
                     'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
                     'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
-            'can' => 'koordinator_ta',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -566,15 +548,16 @@ return [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
                     'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
                     'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
-            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
