@@ -398,25 +398,6 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Kelola Pengajuan Jadwal',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
