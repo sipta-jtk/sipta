@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 $modulesPath = base_path('app/Modules');
+$prefix = env('PREFIX_URL', 'sipta');
 
 if (is_dir($modulesPath)) {
     foreach (scandir($modulesPath) as $module) {
