@@ -244,7 +244,7 @@ class PemberianNilaiController extends Controller
     private function inputNilaiKeDatabaseNilaiKriteriaSeminarIII($mahasiswa, $nilai, $nip, $idFta): void
     {
         $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik.nilaiRubrik')->get();
-        $rataRataNilaiRubrikPerMahasiswa = $this->hitungRataRataNilaiRubrikPerMahasiswa($kriteriaPenilaian);
+        $nilaiRubrikPerMahasiswa = $this->hitungNilaiRubrikPerMahasiswa($kriteriaPenilaian);
     
         foreach ($mahasiswa as $index => $mhs) {
             foreach ($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
@@ -260,6 +260,16 @@ class PemberianNilaiController extends Controller
                 ]);
             }
         }
+    }
+
+    private function inputNilaiKeDatabaseKategoriPenilaianSeminarIII($mahasiswa, $nilai, $nip, $idFta): void
+    {
+        $nilai_rata_rata = [];
+        $bobot = FormPenilaian::where('id_fta', $idFta)->with('kriteriaPenilaian.nilaiKriteria')->first();
+        $bobotKriteria = $bobot->kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
+        $idKategori = KategoriPenilaian::where('id_fta', $idFta)->first()->id_kategori;
+
+
     }
 
     /**
@@ -279,36 +289,25 @@ class PemberianNilaiController extends Controller
     }
 
     /**
-     * Helper function untuk menghitung rata-rata nilai rubrik per mahasiswa
+     * Helper function untuk menghitung nilai rubrik per mahasiswa tanpa bobot kriteria
      */
-    private function hitungRataRataNilaiRubrikPerMahasiswa($kriteriaPenilaian)
+    private function hitungNilaiRubrikPerMahasiswa($kriteriaPenilaian)
     {
         $nilaiPerMahasiswa = [];
     
         foreach ($kriteriaPenilaian as $kriteria) {
-            $bobotKriteria = $kriteria->bobot_kriteria;
             foreach ($kriteria->rubrik as $rubrik) {
                 foreach ($rubrik->nilaiRubrik as $nilaiRubrik) {
                     $nim = $nilaiRubrik['nim'];
                     if (!isset($nilaiPerMahasiswa[$nim])) {
-                        $nilaiPerMahasiswa[$nim] = [
-                            'total_nilai' => 0,
-                            'jumlah_rubrik' => 0
-                        ];
+                        $nilaiPerMahasiswa[$nim] = 0;
                     }
-                    $nilaiPerMahasiswa[$nim]['total_nilai'] += $nilaiRubrik['nilai_rubrik'];
-                    $nilaiPerMahasiswa[$nim]['jumlah_rubrik']++;
+                    $nilaiPerMahasiswa[$nim] += $nilaiRubrik['nilai_rubrik'];
                 }
             }
         }
     
-        $rataRataPerMahasiswa = [];
-        foreach ($nilaiPerMahasiswa as $nim => $data) {
-            $rataRata = $data['total_nilai'] / $data['jumlah_rubrik'];
-            $rataRataPerMahasiswa[$nim] = $rataRata * $bobotKriteria / 100; // Mengalikan dengan bobot kriteria
-        }
-    
-        return $rataRataPerMahasiswa;
+        return $nilaiPerMahasiswa;
     }
 
     public function ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian)
