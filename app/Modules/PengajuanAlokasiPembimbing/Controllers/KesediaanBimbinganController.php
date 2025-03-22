@@ -11,18 +11,27 @@ use App\Models\KuotaMembimbing;
 use App\Models\PeriodePengajuan;
 use App\Models\Prodi;
 use App\Modules\Controller;
+use Illuminate\Support\Facades\Auth;
 use DB;
 use Illuminate\View\View;
 use Validator;
 
 class KesediaanBimbinganController extends Controller
 {
+    private $USER_ID;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->USER_ID = Auth::user()->username;
+            return $next($request);
+        });
     }
 
-    private $USER_ID = '197312271999031003';
+    public function __call($method, $parameters)
+    {
+        return call_user_func_array([$this, $method], $parameters);
+    }
 
     public function get_info(): array
     {

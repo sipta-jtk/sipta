@@ -23,9 +23,9 @@ class PemberianFeedbackController extends Controller
 {
     public function pengisianMasukanSeminar($id, $kota): View
     {
-        Log::info("Mengakses halaman feedback untuk seminar $id di kota $kota");
+        // Log::info("Mengakses halaman feedback untuk seminar $id di kota $kota");
 
-        $seminar = KategoriPenilaian::where('nama_kategori', 'Seminar ' . $id)
+        $seminar = KategoriPenilaian::where('id_fta', $id)
             ->with('formulirPenilaian')
             ->first();
 
@@ -95,7 +95,7 @@ class PemberianFeedbackController extends Controller
             'feedback.*.masukan' => 'required|string',
         ]);
 
-        $idKota = Kota::where('nama_kota', $kota)->first()->id_kota;
+        $idKota = Kota::where('id_kota', $kota)->first()->id_kota;
 
         // Ambil semua masukan dari form
         $feedbacks = $request->input('feedback');

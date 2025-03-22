@@ -3,12 +3,6 @@
 # Load environment variables dari .env
 export $(grep -v '^#' .env | xargs)
 
-echo "DB Host: ${DB_HOST}"
-echo "DB Port: ${DB_PORT}"
-echo "DB Database: ${DB_DATABASE}"
-echo "DB Username: ${DB_USERNAME}"
-echo "DB Password: ${DB_PASSWORD}"
-
 # Generate APP_KEY
 php artisan key:generate
 
@@ -41,7 +35,7 @@ if [ "${MIGRATE_ON_START}" = "true" ]; then
                 echo "Gagal menjalankan migrasi setelah wipe."
                 exit 1
             fi
-        elsep
+        else
             echo "Migrasi gagal, tapi wipe database tidak diaktifkan (WIPE_DATABASE=false)."
             exit 1
         fi
