@@ -77,7 +77,7 @@
     $(document).ready(function() {
         $.ajax({
             type: "GET",
-            url: "/api/cek-plagiarisme",
+            url: "/" + prefixUrl + "/api/cek-plagiarisme",
             dataType: "json",
             success: function(response) {
                 console.log("Data dari API:", response);
