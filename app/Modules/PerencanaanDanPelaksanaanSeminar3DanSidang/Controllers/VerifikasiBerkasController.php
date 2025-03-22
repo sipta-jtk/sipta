@@ -67,6 +67,7 @@ class VerifikasiBerkasController extends Controller
     {
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
+        $nip = auth()->user()->username;
 
         if ($keputusan === 'tidak_disetujui') {
             // Ambil data berkas berdasarkan ID
@@ -75,6 +76,7 @@ class VerifikasiBerkasController extends Controller
             DB::table('verifikasi_berkas_pengajuan')
             ->where('id_pengajuan', $id)
             ->update([
+                'nip' => $nip, 
                 'status_konfirmasi' => $keputusan,
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
@@ -92,6 +94,7 @@ class VerifikasiBerkasController extends Controller
             DB::table('verifikasi_berkas_pengajuan')
             ->where('id_pengajuan', $id)
             ->update([
+                'nip' => $nip,
                 'status_konfirmasi' => $keputusan,
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
