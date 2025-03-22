@@ -8,12 +8,29 @@ use App\Modules\NotificationAndReminder\Controllers\Preferensi\PreferensiNotifik
 use App\Modules\NotificationAndReminder\Controllers\EmailController;
 use App\Modules\NotificationAndReminder\Controllers\PendaftaranController;
 
-Route::get('/notification/admin/settingawal', [SettingAwalNotifController::class, 'index'])->name('notification_reminder.admin.notifikasi');
-Route::post('/notification/admin/settingawal/store', [SettingAwalNotifController::class, 'store'])->name('notifikasi.store');
-Route::get('/notification/admin/settingawal/edit/{id}', [SettingAwalNotifController::class, 'edit'])->name('notifikasi.edit');
-Route::post('/notification/admin/settingawal/update/{id}', [SettingAwalNotifController::class, 'update'])->name('notifikasi.update');
-Route::delete('/notification/admin/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])->name('notifikasi.delete');
 
+Route::prefix('/notification/admin')->middleware('auth', 'can:admin')->group(function () {
+
+    // Rute untuk menampilkan halaman pengaturan notifikasi
+    Route::get('/settingawal', [SettingAwalNotifController::class, 'index'])
+        ->name('notification_reminder.admin.notifikasi');
+
+    // Rute untuk menyimpan notifikasi
+    Route::post('/settingawal/store', [SettingAwalNotifController::class, 'store'])
+        ->name('notifikasi.store');
+
+    // Rute untuk menampilkan halaman edit notifikasi berdasarkan ID
+    Route::get('/settingawal/edit/{id}', [SettingAwalNotifController::class, 'edit'])
+        ->name('notifikasi.edit');
+
+    // Rute untuk memperbarui notifikasi berdasarkan ID
+    Route::post('/settingawal/update/{id}', [SettingAwalNotifController::class, 'update'])
+        ->name('notifikasi.update');
+
+    // Rute untuk menghapus notifikasi berdasarkan ID
+    Route::delete('/settingawal/delete/{id}', [SettingAwalNotifController::class, 'destroy'])
+        ->name('notifikasi.delete');
+});
 
 Route::get('/notification_reminder/admin/notifikasi', function () {
     return view('NotificationAndReminder::LogAdmin.logAdmin');
