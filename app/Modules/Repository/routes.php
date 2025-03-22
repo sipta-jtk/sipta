@@ -17,20 +17,20 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 Route::get('/repository/mahasiswa', function () {
     $id_kota = auth()->user()->mahasiswa->id_kota ?? null;
     return redirect()->route('Repository.dashboard.kota.mahasiswa', $id_kota);
-})->middleware(['auth', 'can:akses-sidebar-repo-mahasiswa'])->name('Repository.redirect');
+})->middleware(['auth', 'can:akses-sidebar-repo'])->name('Repository.redirect');
 
 // Dashboard Repository TA (Mahasiswa)
 Route::get('/repository/mahasiswa/kota/{id_kota}', [RepositoryController::class, 'dashboard'])
-    ->middleware(['auth', 'can:akses-sidebar-repo-mahasiswa'])
+    ->middleware(['auth', 'can:akses-sidebar-repo'])
     ->name('Repository.dashboard.kota.mahasiswa');
 
 // Dokumen berdasarkan kategori (Mahasiswa)
 Route::get('/repository/mahasiswa/kota/{id_kota}/{kategori}', [RepositoryController::class, 'index'])
-    ->middleware(['auth', 'can:akses-sidebar-repo-mahasiswa'])
+    ->middleware(['auth', 'can:akses-sidebar-repo'])
     ->name('Repository.index.kota');
 
 // CRUD Dokumen (Mahasiswa)
-Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
+Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:akses-sidebar-repo'])->group(function () {
     Route::post('/{kategori}', [RepositoryController::class, 'store'])->name('Repository.store');
     Route::get('/{kategori}/{id}/edit', [RepositoryController::class, 'edit'])->name('Repository.edit');
     Route::put('/{kategori}/{id}', [RepositoryController::class, 'update'])->name('Repository.update');

@@ -18,71 +18,58 @@ class RepositoryController extends Controller
     /**
      * Menampilkan daftar dokumen Seminar 1.
      */
-    public function index($id_kota, $kategori)
-    {
-        $kota = Kota::findOrFail($id_kota);
-        // Ambil data mahasiswa yang sedang login
-        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+    public function index($id_kota, $kategori, Request $request)
+{
+    $user = auth()->user();
+    $kota = Kota::findOrFail($id_kota);
 
-        // Ambil status_ta dari mahasiswa yang sedang login
-        $status_ta = $mahasiswa ? $mahasiswa->status_ta : null;
+    // Ambil status_ta jika mahasiswa
+    $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
+    $status_ta = $mahasiswa?->status_ta;
 
-        // Ambil id_kota mahasiswa yang sedang login
-        $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
+    // Base query
+    $query = Dokumen::where('kategori', $kategori);
 
-        // Ambil parameter filter dari request
-        $search = request('search');
-        $versi = request('versi');
-        $tanggal_dibuat = request('tanggal_dibuat');
-
-        // Mulai query untuk mengambil dokumen
-        $dokumen = Dokumen::where('kategori', $kategori);
-
-        // Terapkan filter jika ada
-        if ($search) {
-            $dokumen->where('judul', 'like', '%' . $search . '%');
-        }
-
-        if ($versi) {
-            // Menangani versi (contoh: V1, V2, ...)
-            $dokumen->where('versi', $versi);
-        }
-
-        if ($tanggal_dibuat) {
-            // Filter berdasarkan tanggal dibuat
-            $dokumen->whereDate('created_at', $tanggal_dibuat);
-        }
-
-        // Ambil data dokumen sesuai dengan filter
-        $dokumen = $dokumen->get();
-
-        // Ambil subkategori jika kategori adalah 'artefak'
-        $subkategoris = [];
-        if ($kategori === 'artefak') {
-            $subkategoris = Subkategori::all();
-        }
-
-        // Ambil versi tertinggi yang ada di kategori ini
-        $maxVersion = Dokumen::where('kategori', $kategori)
-            ->max('versi'); // Mengambil versi terbesar yang ada
-
-        // Farrel Keiza
-        $nim = request('nim');
-        // Jika ada NIM, ambil dokumen berdasarkan mahasiswa tertentu
-        if ($nim) {
-            $dokumen = Dokumen::where('kategori', $kategori)
-                            ->where('username', $nim)  // Username adalah NIM mahasiswa
-                            ->get();
-        } else {
-            // Ambil dokumen dari mahasiswa yang sedang login
-            $dokumen = Dokumen::where('kategori', $kategori)
-                            ->where('username', Auth::user()->username)
-                            ->get();
-        }
-
-        // Kirimkan maxVersion, dokumen, status_ta dan data lainnya ke view
-        return view('Repository.views.cruddDokumen', compact('dokumen', 'kategori', 'subkategoris', 'maxVersion', 'status_ta', 'kota'));
+    // Jika mahasiswa, hanya tampilkan dokumen miliknya
+    if ($user->can('mahasiswa_ta')) {
+        $query->where('username', $user->username);
     }
+
+    // Jika dosen, tampilkan semua dokumen di kota tersebut
+    if ($user->can('akses-sidebar-repo-dosen')) {
+        $query->where('id_kota', $id_kota);
+    }
+
+    // Apply filters
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('judul', 'like', '%' . $request->search . '%')
+              ->orWhere('versi', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    if ($request->filled('versi')) {
+        $query->where('versi', $request->versi);
+    }
+
+    if ($request->filled('tanggal_dibuat')) {
+        $query->whereDate('created_at', $request->tanggal_dibuat);
+    }
+
+    // Get final data
+    $dokumen = $query->orderBy('versi', 'desc')->get();
+
+    // Ambil subkategori jika kategori artefak
+    $subkategoris = $kategori === 'artefak' ? Subkategori::all() : [];
+
+    // Ambil versi maksimum
+    $maxVersion = Dokumen::where('kategori', $kategori)->max('versi');
+
+    return view('Repository.views.cruddDokumen', compact(
+        'dokumen', 'kategori', 'subkategoris', 'maxVersion', 'status_ta', 'kota'
+    ));
+}
+
 
 
 
@@ -99,102 +86,84 @@ class RepositoryController extends Controller
             'seminar1', 'seminar2', 'seminar3'
         ];
 
-        // Cek kategori valid
         if (!in_array($kategori, $allowedKategori)) {
             return back()->with('error', 'Kategori tidak valid.');
         }
 
-        // dd($request->all());
-        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+        // Validasi umum
+        $isLink = $kategori === 'link_source_code';
 
-        // Ambil id_kota mahasiswa yang sedang login
-        // $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
-        // Validasi dasar 
-        if ($kategori == 'link_source_code') {
-            $request->validate([
-                'judul' => 'required|string|max:255',
-                'repository_url' => 'required|url|max:255',
-                'deskripsi' => 'required|string',
-            ]);
-        } else {
-            $request->validate([
-                'judul' => 'required|string|max:255',
-                'file' => 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
-                'deskripsi' => 'required|string',
-            ]);
-        }
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            $isLink ? 'repository_url' : 'file' => $isLink
+                ? 'required|url|max:255'
+                : 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360'
+        ]);
 
-        // Validasi tambahan khusus
+        // Validasi khusus
         if ($kategori === 'fta') {
-            $request->validate([
-                'kode_fta' => 'required|string|max:10',
-            ]);
+            $request->validate(['kode_fta' => 'required|string|max:10']);
         }
 
         if ($kategori === 'artefak') {
-            $request->validate([
-                'id_subkategori' => 'required|exists:subkategori,id_subkategori',
-            ]);
+            $request->validate(['id_subkategori' => 'required|exists:subkategori,id_subkategori']);
         }
 
-        // Ambil versi terbaru
+        // Ambil user login
+        $user = auth()->user();
+        $id_kota = $user->mahasiswa->id_kota ?? $user->dosen->id_kota ?? null;
+        $username = $user->username;
+
+        // Cari versi terakhir
         $latestVersion = Dokumen::where('kategori', $kategori)
-            ->when($kategori === 'fta', function ($query) use ($request) {
-                return $query->where('kode_fta', $request->kode_fta);
-            })
+            ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
             ->orderByDesc('versi')
             ->value('versi');
 
         $newVersion = $latestVersion ? $latestVersion + 1 : 1;
 
-        
-
-        // Ambil info user (asumsi login mahasiswa)
-        $user = auth()->user();
-        $id_kota = $user->mahasiswa->id_kota ?? 1;
-        $username = $user->username ?? 'guest';
-
-        // Siapkan data untuk insert
+        // Siapkan data dasar
         $data = [
             'judul' => $request->judul,
             'versi' => $newVersion,
             'kategori' => $kategori,
             'deskripsi' => $request->deskripsi,
-            'id_kota' => $mahasiswa->id_kota, // Sesuaikan dengan kebutuhan
-            'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null, // Sesuaikan dengan kebutuhan
+            'id_kota' => $id_kota,
+            'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null,
             'status_berkas' => 'valid',
             'username' => $username,
             'created_at' => now()->timezone('Asia/Jakarta'),
             'updated_at' => now()->timezone('Asia/Jakarta'),
         ];
 
-        // Handle file upload
+        // Handle upload file atau url
         if ($kategori === 'link_source_code') {
             $data['file_path'] = $request->repository_url;
-            $data['ukuran_file'] = 0; // URL doesn't have a file size
+            $data['ukuran_file'] = 0;
         } else {
             $file = $request->file('file');
-            $fileName = 'dokumen/' . $file->hashName(); // Simpan hanya path relatif
+            $fileName = 'dokumen/' . $file->hashName();
             $file->storeAs('public/dokumen', $file->hashName());
-            $fileSize = $file->getSize() / 1024; // Ukuran file dalam KB
 
             $data['file_path'] = $fileName;
-            $data['ukuran_file'] = $fileSize;
+            $data['ukuran_file'] = $file->getSize() / 1024;
         }
 
-        // Jika kategori adalah "fta", tambahkan kode_fta ke data
+        // Tambah kode_fta jika diperlukan
         if ($kategori === 'fta') {
             $data['kode_fta'] = $request->kode_fta;
         }
 
+        // Simpan ke database
         Dokumen::create($data);
 
         return redirect()->route('Repository.index.kota', [
-            'id_kota' => auth()->user()->mahasiswa->id_kota ?? 1,
+            'id_kota' => $id_kota,
             'kategori' => $kategori
         ])->with('success', 'Dokumen berhasil diunggah');
-        
     }
+
 
 
     public function edit($kategori, $id)

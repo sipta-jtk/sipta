@@ -134,6 +134,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('akses-sidebar-repo-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
         });
+        Gate::define('akses-sidebar-repo', function ($user) {
+            return Gate::allows('mahasiswa_ta') || Gate::allows('dosen') || Gate::allows('admin');
+        });  
       
         /**********************************
          * [Topik 4] - Fitur Kelola Penilaian
