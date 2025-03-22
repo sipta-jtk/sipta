@@ -303,6 +303,15 @@ return [
     'menu' => [
         // Navbar items:
         [
+            'text' => '',  // Hapus teks "Notifications"
+            'url' => '#',
+            'icon' => 'fas fa-bell',  // Ikon lonceng
+            'topnav_right' => true,  // Menampilkan di navbar kanan
+            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
+            'label_color' => 'danger',
+            'id' => 'notificationBell',
+        ],
+        [
             'type' => 'navbar-search',
             'text' => 'search',
             'topnav_right' => true,
@@ -661,12 +670,75 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => $prefix . '/manajemen-akun-mahasiswa',
-                    'icon' => 'fas fa-user-graduate',
-                    'can' => 'admin'
+                    'url' => '/#',
+                    // 'submenu' => [
+                    //     [
+                    //         'text' => 'Koordinator TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     [
+                    //         'text' => 'Pembimbing TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     [
+                    //         'text' => 'Penguji TA',
+                    //         'url' => '#',
+                    //     ],
+                    //     // [
+                    //     //     'text' => 'level_two',
+                    //     //     'url' => '#',
+                    //     //     'submenu' => [
+                    //     //         [
+                    //     //             'text' => 'level_three',
+                    //     //             'url' => '#',
+                    //     //         ],
+                    //     //         [
+                    //     //             'text' => 'level_three',
+                    //     //             'url' => '#',
+                    //     //         ],
+                    //     //     ],
+                    //     // ],
+                    // ],
                 ],
+                // [
+                //     'text' => 'level_one',
+                //     'url' => '#',
+                // ],
             ],
         ],
+        [
+            'text' => 'Notifikasi dan Reminder',
+            // 'url' => 'admin/pages',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Edit Template Notifikasi',
+                    'url' => '/notification/admin/settingawal',                    
+                ],
+                [
+                    'text' => 'Log Notifikasi Admin',
+                    'url' => '/admin/log-admin',
+                ],
+            ]
+            // 'label' => 4,
+            // 'label_color' => 'success',
+        ],
+        // ['header' => 'labels'],
+        // [
+        //     'text' => 'important',
+        //     'icon_color' => 'red',
+        //     'url' => '#',
+        // ],
+        // [
+        //     'text' => 'warning',
+        //     'icon_color' => 'yellow',
+        //     'url' => '#',
+        // ],
+        // [
+        //     'text' => 'information',
+        //     'icon_color' => 'cyan',
+        //     'url' => '#',
+        // ],
     ],
 
     /*

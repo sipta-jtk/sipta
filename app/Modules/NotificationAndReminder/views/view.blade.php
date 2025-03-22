@@ -1,13 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'NotificationAndReminder')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+    <h1>NotificationAndReminder</h1>
 @stop
 
 @section('content')
-    <p>Welcome to sipta.</p>
+    <p>Welcome to NotificationAndReminder Page.</p>
 @stop
 
 @section('css')
