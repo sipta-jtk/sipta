@@ -168,7 +168,7 @@
     @endif
 
     @php
-        $prefix = env('PREFIX_URL', 'sipta');
+    $prefix = env('PREFIX_URL', 'sipta');
     @endphp
 
     <!-- Tombol Kembali -->
@@ -198,6 +198,18 @@
                         <input class="form-control" id="judul" name="judul" required>
                     </div>
 
+                    <!-- Dropdown untuk FTA -->
+                    @if ($kategori === 'fta')
+                    <div class="mb-3">
+                        <label for="kode_fta" class="form-label">Kode FTA:</label>
+                        <select class="form-control" id="kode_fta" name="kode_fta" required>
+                            @for ($i = 1; $i <= 23; $i++)
+                                <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    @endif
+
                     <!-- Dropdown untuk Subkategori (hanya untuk kategori "artefak") -->
                     @if ($kategori === 'artefak')
                     <div class="mb-3">
@@ -211,10 +223,21 @@
                     </div>
                     @endif
 
+                    <!-- Conditional input based on kategori -->
+                    @if ($kategori === 'link_source_code')
+                    <div class="mb-3">
+                        <label for="repository_url" class="form-label">URL Repository:</label>
+                        <input type="url" class="form-control" id="repository_url" name="repository_url" 
+                               placeholder="https://github.com/username/repository" required>
+                        <small class="form-text text-muted">Masukkan URL repository Git (GitHub, GitLab, Bitbucket, dll)</small>
+                    </div>
+                    @else
                     <div class="mb-3">
                         <label for="file" class="form-label">File:</label>
                         <input type="file" class="form-control" id="file" name="file" required>
                     </div>
+                    @endif
+
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi:</label>
                         <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required></textarea>

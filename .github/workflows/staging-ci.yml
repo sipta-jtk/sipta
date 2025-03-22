@@ -51,6 +51,8 @@ jobs:
           ssh -i private_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 2323 << EOF
             sed -i 's/^RUN_MIGRATIONS=.*/RUN_MIGRATIONS=${RUN_MIGRATIONS}/' ~/sipta/development/.env
             echo "Updated RUN_MIGRATIONS=${RUN_MIGRATIONS} in .env"
+            docker compose -f ~/sipta/development/docker-compose.yml down
+            docker compose -f ~/sipta/development/docker-compose.yml up -d
           EOF
           rm -f private_key
 

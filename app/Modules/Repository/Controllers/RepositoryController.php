@@ -104,12 +104,25 @@ class RepositoryController extends Controller
             return back()->with('error', 'Kategori tidak valid.');
         }
 
-        // Validasi dasar
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'deskripsi' => 'required|string',
-        ]);
+        // dd($request->all());
+        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+
+        // Ambil id_kota mahasiswa yang sedang login
+        // $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
+        // Validasi dasar 
+        if ($kategori == 'link_source_code') {
+            $request->validate([
+                'judul' => 'required|string|max:255',
+                'repository_url' => 'required|url|max:255',
+                'deskripsi' => 'required|string',
+            ]);
+        } else {
+            $request->validate([
+                'judul' => 'required|string|max:255',
+                'file' => 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                'deskripsi' => 'required|string',
+            ]);
+        }
 
         // Validasi tambahan khusus
         if ($kategori === 'fta') {
@@ -134,11 +147,7 @@ class RepositoryController extends Controller
 
         $newVersion = $latestVersion ? $latestVersion + 1 : 1;
 
-        // Upload file
-        $file = $request->file('file');
-        $fileName = 'dokumen/' . $file->hashName();
-        $file->storeAs('public/dokumen', $file->hashName());
-        $fileSize = round($file->getSize() / 1024, 2); // dalam KB
+        
 
         // Ambil info user (asumsi login mahasiswa)
         $user = auth()->user();
@@ -151,17 +160,29 @@ class RepositoryController extends Controller
             'versi' => $newVersion,
             'kategori' => $kategori,
             'deskripsi' => $request->deskripsi,
-            'id_kota' => $id_kota,
-            'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null,
-            'file_path' => $fileName,
-            'ukuran_file' => $fileSize,
+            'id_kota' => $mahasiswa->id_kota, // Sesuaikan dengan kebutuhan
+            'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null, // Sesuaikan dengan kebutuhan
             'status_berkas' => 'valid',
             'username' => $username,
             'created_at' => now()->timezone('Asia/Jakarta'),
             'updated_at' => now()->timezone('Asia/Jakarta'),
         ];
 
-        // Tambahkan kode_fta jika kategori "fta"
+        // Handle file upload
+        if ($kategori === 'link_source_code') {
+            $data['file_path'] = $request->repository_url;
+            $data['ukuran_file'] = 0; // URL doesn't have a file size
+        } else {
+            $file = $request->file('file');
+            $fileName = 'dokumen/' . $file->hashName(); // Simpan hanya path relatif
+            $file->storeAs('public/dokumen', $file->hashName());
+            $fileSize = $file->getSize() / 1024; // Ukuran file dalam KB
+
+            $data['file_path'] = $fileName;
+            $data['ukuran_file'] = $fileSize;
+        }
+
+        // Jika kategori adalah "fta", tambahkan kode_fta ke data
         if ($kategori === 'fta') {
             $data['kode_fta'] = $request->kode_fta;
         }
