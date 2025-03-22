@@ -43,7 +43,7 @@ class PendaftaranController extends Controller
 
             // Prepare email content by dynamically replacing placeholders
             $isiInEmail = str_replace(
-                ['{nama}', '{Topik}', '{{deadline}}'],
+                ['{nama}', '{Topik}', '{deadline}'],
                 [$user->nama, $request->input('Topik'), $request->input('deadline')],
                 $template->isi_in_email
             );
@@ -55,7 +55,7 @@ class PendaftaranController extends Controller
                 'isi_notifikasi' => $isiInEmail, // Save the processed email content
             ]);
 
-            // Send the email using NotifikasiService
+            // Send the pre-processed email content using NotifikasiService
             $this->notifikasiService->kirimEmail(
                 $templateId,
                 $userId,
@@ -63,7 +63,7 @@ class PendaftaranController extends Controller
                     'nama' => $user->nama,
                     'Topik' => $request->input('Topik'),
                     'deadline' => $request->input('deadline'),
-                    'email_content' => $isiInEmail
+                    'email_content' => $isiInEmail // Pass the processed email content
                 ]
             );
 
