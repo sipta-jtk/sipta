@@ -24,22 +24,21 @@ class RekapitulasiNilaiExport implements FromCollection, WithHeadings, WithCusto
                 'prodi' => $item['prodi'] ?? '',
                 'kelas' => $item['kelas'] ?? '',
                 'kelompok' => $item['kelompok'] ?? '',
-                'seminar2_penguji1' => isset($item['seminar2_penguji1']) && $item['seminar2_penguji1'] != -1 ? $item['seminar2_penguji1'] : '',
-                'seminar2_penguji2' => isset($item['seminar2_penguji2']) && $item['seminar2_penguji2'] != -1 ? $item['seminar2_penguji2'] : '',
-                'seminar2_penguji3' => isset($item['seminar2_penguji3']) && $item['seminar2_penguji3'] != -1 ? $item['seminar2_penguji3'] : '',
-                'seminar3_penguji1' => isset($item['seminar3_penguji1']) && $item['seminar3_penguji1'] != -1 ? $item['seminar3_penguji1'] : '',
-                'seminar3_penguji2' => isset($item['seminar3_penguji2']) && $item['seminar3_penguji2'] != -1 ? $item['seminar3_penguji2'] : '',
-                'seminar3_penguji3' => isset($item['seminar3_penguji3']) && $item['seminar3_penguji3'] != -1 ? $item['seminar3_penguji3'] : '',
-                'sidang_penguji1' => isset($item['sidang_penguji1']) && $item['sidang_penguji1'] != -1 ? $item['sidang_penguji1'] : '',
-                'sidang_penguji2' => isset($item['sidang_penguji2']) && $item['sidang_penguji2'] != -1 ? $item['sidang_penguji2'] : '',
-                'sidang_penguji3' => isset($item['sidang_penguji3']) && $item['sidang_penguji3'] != -1 ? $item['sidang_penguji3'] : '',
-                'pembimbing1' => isset($item['pembimbing1']) && $item['pembimbing1'] != -1 ? $item['pembimbing1'] : '',
-                'pembimbing2' => isset($item['pembimbing2']) && $item['pembimbing2'] != -1 ? $item['pembimbing2'] : '',
-                'uts' => $item['uts'] ?? '',
-                'uas' => $item['uas'] ?? '',
-                'lain_lain' => $item['lain_lain'] ?? '',
-                'nilai_akhir' => $item['nilai_akhir'] ?? '',
-                'predikat' => $item['predikat'] ?? ''
+                'seminar2Penguji1' => isset($item['seminar2Penguji1']) ? number_format($item['seminar2Penguji1'], 2) : '',
+                'seminar2Penguji2' => isset($item['seminar2Penguji2']) ? number_format($item['seminar2Penguji2'], 2) : '',
+                'seminar2Penguji3' => isset($item['seminar2Penguji3']) ? number_format($item['seminar2Penguji3'], 2) : '',
+                'rataSeminar2' => isset($item['rataSeminar2']) ? number_format($item['rataSeminar2'], 2) : '',
+                'seminar3Penguji1' => isset($item['seminar3Penguji1']) ? number_format($item['seminar3Penguji1'], 2) : '',
+                'seminar3Penguji2' => isset($item['seminar3Penguji2']) ? number_format($item['seminar3Penguji2'], 2) : '',
+                'seminar3Penguji3' => isset($item['seminar3Penguji3']) ? number_format($item['seminar3Penguji3'], 2) : '',
+                'rataSeminar3' => isset($item['rataSeminar3']) ? number_format($item['rataSeminar3'], 2) : '',
+                'sidangPenguji1' => isset($item['sidangPenguji1']) ? number_format($item['sidangPenguji1'], 2) : '',
+                'sidangPenguji2' => isset($item['sidangPenguji2']) ? number_format($item['sidangPenguji2'], 2) : '',
+                'sidangPenguji3' => isset($item['sidangPenguji3']) ? number_format($item['sidangPenguji3'], 2) : '',
+                'rataSidang' => isset($item['rataSidang']) ? number_format($item['rataSidang'], 2) : '',
+                'pembimbing1' => isset($item['pembimbing1']) ? number_format($item['pembimbing1'], 2) : '',
+                'pembimbing2' => isset($item['pembimbing2']) ? number_format($item['pembimbing2'], 2) : '',
+                'rataPembimbing' => isset($item['rataPembimbing']) ? number_format($item['rataPembimbing'], 2) : '',
             ];
         });
     }
@@ -47,8 +46,8 @@ class RekapitulasiNilaiExport implements FromCollection, WithHeadings, WithCusto
     public function headings(): array
     {
         return [
-            [' ', ' ', ' ', ' ', ' ', 'Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', ' ', ' ', ' ', ' ', ' ', ' ', ' '], // Baris pertama header
-            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'P1', 'P2', 'P3', 'P1', 'P2', 'P3', 'P1', 'P2', 'P3', 'Pembimbing 1', 'Pembimbing 2', 'UTS', 'UAS', 'Lain-Lain', 'Nilai Akhir', 'Predikat'] // Baris kedua header
+            [' ', ' ', ' ', ' ', ' ', 'Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Dosen Pembimbing', 'Dosen Pembimbing', 'Dosen Pembimbing'], // Baris pertama header
+            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'Pembimbing 1', 'Pembimbing 2', 'Rata-rata'] // Baris kedua header
         ];
     }
 

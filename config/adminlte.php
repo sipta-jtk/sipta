@@ -412,34 +412,52 @@ return [
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Kelola Penilaian Tugas Akhir',
+                    'text' => 'Monitoring Mahasiswa',
+                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+                    'can' => 'akses-penilaian-mahasiswa',
+                ],
+                [
+                    'text' => 'Rekapitulasi Nilai',
                     'submenu' => [
                         [
-                            'text' => 'Monitoring Mahasiswa',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-mahasiswa',
+                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
+                            'can' => 'akses-penilaian-koordinator-ta',
                         ],
                         [
-                            'text' => 'Monitoring Feedback',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-feedback',
+                            'text' => 'Rekapitulasi Nilai Akhir',
+                            'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
                         ],
                         [
-                            'text' => 'Monitoring Rubrik',
-                            'url' => $prefix . '/KelolaPenilaianTA/monitoring-rubrik',
+                            'text' => 'Pengaturan Nilai Akhir',
+                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                            'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Formulir Penilaian',
-                    'url' => $prefix . '/KelolaPenilaianTA/fomulir-penilaian',
+                    'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                    'can' => 'akses-penilaian-koordinator-ta',
+                    'submenu' => [
+                    [
+                        'text' => 'Pengelolaan Formulir',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
+                        'can' => 'akses-penilaian-koordinator-ta'
+                    ],
+                    [
+                        'text' => 'Pengelolaan Rubrik',
+                        'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
+                        'can' => 'akses-penilaian-koordinator-ta'
+                    ],
+                    ]
                 ],
                 [
                     'text' => 'Pengelolaan Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/pengelolaan-nilai',
-                ],
-                [
-                    'text' => 'Rekapitulasi Nilai',
-                    'url' => $prefix . '/KelolaPenilaianTA/rekapitulasi-nilai',
-                ],
+                    'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
+                    'can' => 'akses-penilaian-koordinator-ta',
+                ]
             ]
         ],
         [
