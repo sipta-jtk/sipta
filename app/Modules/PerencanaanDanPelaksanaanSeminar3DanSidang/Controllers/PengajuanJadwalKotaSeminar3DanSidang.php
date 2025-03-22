@@ -42,7 +42,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
-        dd($penguji);
+        // dd($penguji);
 
         // dd($id_kota);
         if (is_null($id_kota)) {
