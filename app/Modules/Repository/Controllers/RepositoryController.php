@@ -76,6 +76,10 @@ class RepositoryController extends Controller
     public function store(Request $request, $kategori)
     {
         // dd($request->all());
+        $mahasiswa = Mahasiswa::where('nim', Auth::user()->username)->first();
+
+        // Ambil id_kota mahasiswa yang sedang login
+        $id_kota_user = $mahasiswa ? $mahasiswa->id_kota : null;
         // Validasi dasar 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -129,7 +133,7 @@ class RepositoryController extends Controller
             'versi' => $newVersion,
             'kategori' => $kategori,
             'deskripsi' => $request->deskripsi,
-            'id_kota' => 1, // Sesuaikan dengan kebutuhan
+            'id_kota' => $mahasiswa->id_kota, // Sesuaikan dengan kebutuhan
             'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null, // Sesuaikan dengan kebutuhan
             'file_path' => $fileName,
             'ukuran_file' => $fileSize,
