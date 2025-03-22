@@ -350,11 +350,13 @@ return [
                 [
                     'text' => 'Pengajuan Berkas Seminar 3',
                     'url' => 'kelola-pengajuan-berkas/seminar-3',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Berkas Sidang Akhir',
                     'url' => 'kelola-pengajuan-berkas/sidang-akhir',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
