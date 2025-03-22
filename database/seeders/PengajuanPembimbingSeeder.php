@@ -86,6 +86,13 @@ class PengajuanPembimbingSeeder extends Seeder
                 'status_pengajuan' => 'diproses',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
+            ],
+            [
+                'id_pengajuan_pembimbing' => 10,
+                'id_kota' => 2,
+                'status_pengajuan' => 'diproses',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ]
         ];
 

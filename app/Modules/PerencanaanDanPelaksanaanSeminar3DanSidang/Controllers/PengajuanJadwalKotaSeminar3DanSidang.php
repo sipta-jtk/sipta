@@ -44,8 +44,9 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
         // dd($pembimbing);
 
+        // dd($id_kota);
         if (is_null($id_kota)) {
-            $verifikasi = (object) ['kota' => null];
+            $verifikasi = (object) ['kota' => $id_kota];
         } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
             $verifikasi = (object) ['kota' => $id_kota, 'dosen' => null];
         } else {
@@ -53,6 +54,16 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             $verifikasi = VerifikasiBerkasPengajuan::with('kota')
                             ->where('id_kota', $id_kota)
                             ->get();
+
+            // dd($verifikasi);
+
+            if (!$verifikasi) {
+                $verifikasi = (object) ['kota' => $id_kota, 'dosen' => $id_kota, 'pengajuan' => null];
+            } else {
+                $verifikasi->kota = $id_kota;
+                $verifikasi->dosen = $id_kota;
+                $verifikasi->pengajuan = true; 
+            }
         }
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
