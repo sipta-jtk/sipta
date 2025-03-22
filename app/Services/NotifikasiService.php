@@ -24,7 +24,7 @@ class NotifikasiService
             throw new \Exception("Template email tidak ditemukan");
         }
 
-        // Add the user's name to the data if not already present
+        // Add user's name to the data if not already present
         if (!isset($data['name'])) {
             $data['name'] = $user->name;
         }
@@ -37,7 +37,7 @@ class NotifikasiService
         Mail::send([], [], function ($message) use ($user, $subject, $body) {
             $message->to($user->email)
                     ->subject($subject)
-                    ->html($body); // Use 'html()' for HTML content
+                    ->html($body); // Use 'html()' for HTML email content
         });
 
         return "Email berhasil dikirim ke {$user->email}";
