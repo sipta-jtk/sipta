@@ -168,7 +168,7 @@
     @endif
 
     @php
-        $prefix = env('PREFIX_URL', 'sipta');
+    $prefix = env('PREFIX_URL', 'sipta');
     @endphp
 
     <!-- Tombol Kembali -->
@@ -197,6 +197,18 @@
                         <label for="judul" class="form-label">Judul:</label>
                         <input class="form-control" id="judul" name="judul" required>
                     </div>
+
+                    <!-- Dropdown untuk FTA -->
+                    @if ($kategori === 'fta')
+                    <div class="mb-3">
+                        <label for="kode_fta" class="form-label">Kode FTA:</label>
+                        <select class="form-control" id="kode_fta" name="kode_fta" required>
+                            @for ($i = 1; $i <= 23; $i++)
+                                <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
+                                @endfor
+                        </select>
+                    </div>
+                    @endif
 
                     <!-- Dropdown untuk Subkategori (hanya untuk kategori "artefak") -->
                     @if ($kategori === 'artefak')
