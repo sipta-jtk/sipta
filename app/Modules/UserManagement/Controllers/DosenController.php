@@ -55,7 +55,8 @@ class DosenController extends Controller
             'id_kbk' => 'required',
         ]);
 
-
+        DB::beginTransaction();
+        try{
         $randomCode = Str::random(7);
         $user = User::create([
             'username' => $request->nip,
@@ -64,10 +65,20 @@ class DosenController extends Controller
             'no_whatsapp' => $request->no_wa,
             'photo' => 'default.jpg',
             'role_user' => 'dosen',
-            'password' => $randomCode // Default password, bisa diubah nanti
+            'password' => Hash::make($randomCode) 
         ]);
 
-        // 2. Simpan data ke tabel `dosen`
+        $email = $request->email;
+        $nama = $request->nama;
+        Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
+            $message->to($email)
+                    ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
+                    ->subject('Info Akun Sipta');
+        });
+
+
+
+
         Dosen::create([
             'nip' => $request->nip,
             'id_dosen' => $request->id,
@@ -77,8 +88,16 @@ class DosenController extends Controller
             'role_dosen' => 'dosen'
         ]);
 
+        DB::commit();
         // Commit transaksi jika semua berhasil
         return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
+
+    } catch (\Exception $e) {
+        // Rollback jika terjadi kesalahan
+        DB::rollBack();
+
+        return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
+    }
 
         
 
@@ -262,6 +281,18 @@ public function inputBulk(Request $request){
 
 }
 
+public function updateBulkRole(Request $request)
+{
+    $request->validate([
+        'nip' => 'required|array',
+        'role_dosen' => 'required|string',
+    ]);
+
+    Dosen::whereIn('nip', $request->nip)->update(['role_dosen' => $request->role_dosen]);
+
+    return redirect()->route('manage.dosen')->with('success', 'Role dosen berhasil diperbarui!');
+
+}
 
 }
 

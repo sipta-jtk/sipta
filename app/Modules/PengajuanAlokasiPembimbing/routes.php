@@ -34,21 +34,24 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    //add routes for daftar kesediaan membimbing
-    Route::group(['prefix' => 'daftar-kesediaan-membimbing'], function () {
+
+    Route::group(['prefix' => 'daftar-kesediaan-membimbing', 'middleware' => ['auth', 'can:koordinator_ta'] ], function () {
         Route::get('/', [DaftarKesediaanMembimbingController::class, 'view_daftarKesediaanMembimbing']);
     });
 
-    Route::group(['prefix' => 'jadwal-dosen-membimbing'], function () {
+    Route::group(['prefix' => 'jadwal-dosen-membimbing', 'middleware' => ['auth', 'can:mahasiswa_ta']], function () {
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
 
+    Route::group(['prefix' => 'alokasi-pembimbing', 'as' => 'alokasi-pembimbing.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+        Route::get('/', [AlokasiPembimbingController::class, 'index'])->name('index');
+        Route::post('/submit', [AlokasiPembimbingController::class, 'submit'])->name('submit');
+        Route::post('/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('simpan');
+        Route::get('/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+    });
 
-    Route::get('/alokasi-pembimbing', [AlokasiPembimbingController::class, 'index'])->name('alokasi-pembimbing.index');
-    Route::post('/alokasi-pembimbing/submit', [AlokasiPembimbingController::class, 'submit'])->name('alokasi-pembimbing.submit');
-    Route::post('/alokasi-pembimbing/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('alokasi-pembimbing.simpan');
 
-    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.'], function () {
+    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
         Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir'])->name('topik-tugas-akhir');
 
@@ -63,10 +66,11 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    Route::group(['prefix' => 'DaftarPengajuanDosbing'], function () {
-        Route::get('/', [DaftarPengajuanDosbingController::class, 'view_daftarPengajuanDosbing']);
-        Route::post('/pengajuan/{id}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan']);
+    Route::group(['prefix' => 'daftar-pengajuan-dosbing', 'as' => 'daftar-pengajuan-dosbing.', 'middleware' => ['auth', 'can:dosen']], function () {
+        Route::get('/', [DaftarPengajuanDosbingController::class, 'view_daftarPengajuanDosbing'])->name('index');
+        Route::post('/pengajuan/{id}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan'])->name('handlePengajuan');
     });
+    
 
 
     Route::group(['prefix' => 'pengelolaan-periode', 'as' => 'pengelolaan-periode.','middleware' => ['auth', 'can:koordinator_ta']], function () {
