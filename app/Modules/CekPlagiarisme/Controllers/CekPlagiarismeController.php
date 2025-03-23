@@ -70,22 +70,45 @@ class CekPlagiarismeController extends Controller
     }
 
     public function process(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:pdf,doc,docx|max:15360',
-        ]);
+{
+    // Validasi input
+    $request->validate([
+        'judul' => [
+            'required',
+            'string',
+            'max:255',
+            function ($attribute, $value, $fail) {
+                // Menambahkan validasi custom untuk memastikan jumlah kata tidak lebih dari 20
+                if (str_word_count($value) > 20) {
+                    $fail('Judul dokumen tidak boleh lebih dari 20 kata.');
+                }
+            }
+        ],
+        'dokumen' => 'required|file|mimes:pdf,docx|max:15360', // Validasi file: PDF, DOCX, max 15MB
+    ]);
 
-        $filePath = $request->file('file')->store('uploads');
-        $checker = new PlagiarismChecker();
+    // Proses file yang diunggah
+    $filePath = $request->file('dokumen')->store('uploads', 'public');
+    
+    // Lakukan pengecekan plagiarisme
+    $checker = new PlagiarismChecker();
+    $result = $checker->checkPlagiarism(storage_path('app/public/' . $filePath));
 
-        // Ekstrak teks dari file
-        $result = $checker->checkPlagiarism(storage_path('app/' . $filePath));
+    // Simpan dokumen dan hasil pengecekan ke database
+    Dokumen::create([
+        'judul' => $request->judul,
+        'file_path' => $filePath,
+        'user_id' => auth()->id(),
+        'persentase_plagiarisme' => $result['percentage'],
+        'status' => $result['status'],
+    ]);
 
-        return view('CekPlagiarisme.views.view', [
-            'results' => $result['results'],
-            'percentage' => $result['percentage']
-        ]);
-    }
+    // Kembalikan hasil pengecekan
+    return view('CekPlagiarisme.views.DaftarDokumen', [
+        'results' => $result['results'],
+        'percentage' => $result['percentage']
+    ]);
+}
 
     public function getKota()
     {
