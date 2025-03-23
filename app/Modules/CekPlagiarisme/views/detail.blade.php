@@ -10,7 +10,11 @@
     <nav aria-label="breadcrumb" class="me-4">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url('/cek-plagiarisme') }}">Plagiarism Checking</a></li>
+            <li class="breadcrumb-item">
+                <a href="{{ url(env('PREFIX_URL', '') . '/cek-plagiarisme') }}">
+                    Plagiarism Checking
+                </a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
         </ol>
     </nav>
