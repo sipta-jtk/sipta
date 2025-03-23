@@ -31,12 +31,15 @@ class AmbangBatasController extends Controller
 
     public function store(Request $request)
     {
+        // get nip dosen yang sedang login
+        $nip = auth()->user()->username;
+
         // Validasi input
         $request->validate([
             'ambang_batas' => 'required|numeric|min:1|max:100',
         ]);
 
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request, $nip) {
             // **1. Ubah semua status menjadi "tidak_digunakan"**
             AmbangBatas::query()->update(['status_ambang_batas' => 'tidak_digunakan']);
 
@@ -44,7 +47,7 @@ class AmbangBatasController extends Controller
             AmbangBatas::create([
                 'ambang_batas' => $request->ambang_batas,
                 'status_ambang_batas' => 'digunakan',
-                'nip' => 198502102015042001, // Default NULL
+                'nip' => $nip, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

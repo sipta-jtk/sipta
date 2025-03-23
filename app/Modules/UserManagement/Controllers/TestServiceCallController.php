@@ -15,7 +15,7 @@ class TestServiceCallController extends Controller
         $token = $user->createToken('external_service_token')->plainTextToken;
 
         // URL to redirect to
-        $externalUrl = 'http://localhost:8080/admin/ruangan';
+        $externalUrl = 'http://localhost:8005/admin/ruangan';
         
         // Add token as query parameter or in a way the external service expects
         $externalUrl .= "?token={$token}";

@@ -11,7 +11,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="search-box">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
             </div>
             <div class="ml-auto d-flex align-items-center">
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
@@ -20,7 +20,6 @@
                 </button>
             </div>
         </div>
-
         <div class="card-body">
             <div id="jsGrid1"></div>
         </div>
@@ -61,10 +60,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
-    #jsGrid1 .jsgrid-row, #jsGrid1 .jsgrid-alt-row {
-        pointer-events: none; 
-        cursor: default !important; 
-        user-select: none; 
+    #jsGrid1 .jsgrid-row,
+    #jsGrid1 .jsgrid-alt-row {
+        pointer-events: none;
+        cursor: default !important;
+        user-select: none;
     }
 </style>
 
@@ -72,88 +72,119 @@
     $(document).ready(function() {
         console.log("DOM siap, inisialisasi jsGrid..."); // Debugging
 
+        var originalData = []; // Variabel untuk menyimpan data asli
 
-        $.ajax({
-            type: "GET",
-            url: "/api/ambang-batas",
-            dataType: "json",
-            success: function(response) {
-                console.log("Data dari API:", response);
-                // Sorting berdasarkan tanggal terbaru (descending)
-                response.sort(function(a, b) {
-                    return new Date(b.tanggal) - new Date(a.tanggal);
+        /**
+         * Fungsi ini digunakan untuk mengambil data ambang batas dari API
+         */
+        function loadData() {
+            $.ajax({
+                type: "GET",
+                url: "/api/ambang-batas",
+                dataType: "json",
+                success: function(response) {
+                    console.log("Data dari API:", response);
+
+                    // Sorting berdasarkan tanggal terbaru (descending)
+                    response.sort(function(a, b) {
+                        return new Date(b.tanggal) - new Date(a.tanggal);
+                    });
+
+                    // Menambahkan nomor urut secara dinamis berdasarkan index setelah sorting
+                    response = response.map((item, index) => ({
+                        nomor: index + 1, // Nomor urut
+                        ambang_batas: item.ambang_batas + "%",
+                        tanggal: item.tanggal,
+                        koordinator: item.koordinator,
+                        status: item.status
+                    }));
+
+                    // Simpan data asli ke dalam variabel global
+                    originalData = response;
+
+                    // Inisialisasi jsGrid
+                    $("#jsGrid1").jsGrid({
+                        width: "100%",
+                        height: "450px",
+                        noDataContent: "Ambang Batas tidak ditemukan",
+                        data: originalData, // Set data awal
+                        autoload: true, // Pastikan data dimuat otomatis
+                        fields: [{
+                                name: "nomor",
+                                type: "number",
+                                title: "Nomor",
+                                width: 50,
+                                align: "center"
+                            },
+                            {
+                                name: "ambang_batas",
+                                type: "text",
+                                title: "Ambang Batas",
+                                width: 100,
+                                align: "center"
+                            },
+                            {
+                                name: "tanggal",
+                                type: "text",
+                                width: 150,
+                                align: "center"
+                            },
+                            {
+                                name: "koordinator",
+                                type: "text",
+                                title: "Nama Koordinator TA",
+                                width: 200,
+                                align: "center"
+                            },
+                            {
+                                name: "status",
+                                type: "text",
+                                title: "Status",
+                                width: 150,
+                                align: "center"
+                            }
+                        ]
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Gagal mengambil data dari API:", status, error);
+                }
+            });
+        }
+
+        // Panggil fungsi untuk pertama kali
+        loadData();
+
+        /**
+         * Fungsi untuk melakukan pencarian data ambang batas
+         */
+        $("#searchInput").on("keyup", function() {
+            var searchValue = $(this).val().toLowerCase();
+
+            // Jika searchValue kosong, kembalikan data asli
+            if (searchValue === "") {
+                $("#jsGrid1").jsGrid("option", "data", originalData); // Gunakan data asli
+            } else {
+                // Jika ada teks dalam search, lakukan filter
+                var filteredData = originalData.filter(function(item) {
+                    return Object.values(item).some(value =>
+                        String(value).toLowerCase().includes(searchValue)
+                    );
                 });
 
-                console.log("Data setelah sorting:", response);
-                // Menambahkan nomor urut secara dinamis berdasarkan index setelah sorting
-                response = response.map((item, index) => ({
-                    nomor: index + 1, // Menggunakan nomor urut mulai dari 1
-                    ambang_batas: item.ambang_batas,
-                    tanggal: item.tanggal,
-                    koordinator: item.koordinator,
-                    status: item.status
+                // Menambahkan nomor urut setelah filter
+                filteredData = filteredData.map((item, index) => ({
+                    ...item,
+                    nomor: index + 1 // Mengatur nomor urut ulang
                 }));
 
-                $("#jsGrid1").jsGrid({
-                    width: "100%",
-                    height: "450px",
-                    data: response,
-                    fields: [{
-                            name: "nomor",
-                            type: "number",
-                            title: "Nomor",
-                            width: 50,
-                            align: "center"
-                        },
-                        {
-                            name: "ambang_batas",
-                            type: "text",
-                            title: "Ambang Batas (%)",
-                            width: 100,
-                            align: "center"
-                        },
-                        {
-                            name: "tanggal",
-                            type: "text",
-                            width: 150,
-                            align: "center"
-                        },
-                        {
-                            name: "koordinator",
-                            type: "text",
-                            title: "Nama Koordinator TA",
-                            width: 200,
-                            align: "center"
-                        },
-                        {
-                            name: "status",
-                            type: "text",
-                            title: "Status",
-                            width: 150,
-                            align: "center",
-                        }
-                    ]
-                });
-
-                // Fungsi Pencarian
-                $("#searchInput").on("keyup", function() {
-                    var searchValue = $(this).val().toLowerCase();
-                    var filteredData = response.filter(function(item) {
-                        var statusText = item.Status ? "Sedang Digunakan" : "Tidak Digunakan";
-                        return Object.values(item).some(value =>
-                            String(value).toLowerCase().includes(searchValue) || statusText.toLowerCase().includes(searchValue)
-                        );
-                    });
-                    $("#jsGrid1").jsGrid("option", "data", filteredData);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Gagal mengambil data dari API:", status, error);
+                $("#jsGrid1").jsGrid("option", "data", filteredData); // Perbarui data grid dengan hasil filter
             }
         });
-    });
 
-    $(document).ready(function() {
+        /**
+         * Fungsi untuk menambah ambang batas baru
+         */
         $("#ambangBatasForm").submit(function(e) {
             e.preventDefault();
 
@@ -165,17 +196,23 @@
                 type: "POST",
                 url: "/api/ambang-batas",
                 data: formData,
-                dataType: "json",
-                success: function(response) {
-                    alert(response.message); // Tampilkan pesan sukses
+                dataType: "json"
+            }).done(function(response) {
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Ambang Batas berhasil ditambahkan!",
+                    icon: "success"
+                }).then(() => {
                     $("#addAmbangBatasModal").modal('hide'); // Tutup modal
                     $("#ambangBatasForm")[0].reset(); // Reset form
-                    $("#jsGrid1").jsGrid("loadData"); // Refresh tabel
-                },
-                error: function(xhr) {
-                    console.error("Error response:", xhr.responseText);
-                    alert("Terjadi kesalahan! Cek console untuk detail.");
-                }
+                    loadData(); // Refresh tabel otomatis
+                });
+            }).fail(function(xhr) {
+                Swal.fire({
+                    title: "Gagal Menambahkan!",
+                    text: "Ambang Batas gagal ditambahkan!",
+                    icon: "error"
+                });
             });
         });
     });
