@@ -392,31 +392,14 @@ return [
             'submenu' => [
                 [
                     'text' => 'Pengajuan Berkas Seminar 3',
-                    'url' => $prefix . '/kelola-pengajuan-berkas/seminar-3',
+                    'url' => 'kelola-pengajuan-berkas/seminar-3',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Berkas Sidang Akhir',
-                    'url' => $prefix . '/kelola-pengajuan-berkas/sidang-akhir',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Kelola Pengajuan Jadwal',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => 'admin/pages',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => 'admin/pages',
+                    'url' => 'kelola-pengajuan-berkas/sidang-akhir',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ]
@@ -454,8 +437,13 @@ return [
                     'icon' => 'fas fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa',
-                    'url' => $prefix . '/verifikasi-berkas',
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Seminar 3',
+                    'url' => $prefix . '/verifikasi-berkas-3',
+                    'can' => 'mahasiswa_ta',
+                ],
+                [
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang',
+                    'url' => $prefix . '/verifikasi-berkas-sidang',
                     'can' => 'mahasiswa_ta',
                 ],
                 [
@@ -546,15 +534,16 @@ return [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
                     'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
                     'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                    'can' => 'koordinator_ta',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
-            'can' => 'koordinator_ta',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -566,15 +555,16 @@ return [
                 [
                     'text' => 'Pengajuan Jadwal Seminar 3',
                     'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
                 [
                     'text' => 'Pengajuan Jadwal Sidang Akhir',
                     'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
                     // 'icon' => 'far fa-fw fa-file',
                 ],
             ],
-            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
