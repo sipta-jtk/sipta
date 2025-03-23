@@ -6,7 +6,7 @@
                     <h3 class="card-title">Konfirmasi Bersedia Membimbing</h3>
                 </div>
                 <div class="card-body">
-                    Apakah anda atas nama .... bersedia untuk menjadi pembimbing tugas akhir?
+                    Apakah anda atas nama <strong>{{$savedInformation['Name']}}</strong> bersedia untuk menjadi pembimbing tugas akhir?
                     <br>
                     <br>
                     <center>
