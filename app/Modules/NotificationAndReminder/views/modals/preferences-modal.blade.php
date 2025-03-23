@@ -103,18 +103,17 @@
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         fetchPreferences(); 
 
-        // Kirim data ketika klik simpan
         document.querySelector(".btn-primary").addEventListener("click", function (e) {
             e.preventDefault();
             savePreferences();
         });
     });
 
-    // Ambil preferensi notifikasi
     function fetchPreferences() {
         fetch("{{ route('preferensi.notifikasi.get') }}", {
             method: "GET",
@@ -126,12 +125,11 @@
         .then(data => {
             if (data) {
                 document.getElementById("emailSwitch").checked = data.email;
-                document.getElementById("reminderSwitch").checked = data.in_app;                
+                document.getElementById("reminderSwitch").checked = data.reminder_h5; 
             }
         });
     }
 
-    // Simpan preferensi notifikasi
     function savePreferences() {
         let email = document.getElementById("emailSwitch").checked ? 1 : 0;
         let reminder = document.getElementById("reminderSwitch").checked ? 1 : 0;
@@ -144,13 +142,13 @@
             },
             body: JSON.stringify({
                 email: email,
-                in_app: reminder
+                reminder_h5: reminder 
             })
         })
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            $("#myModals").modal("hide");  // Tutup modal setelah berhasil
+            $("#myModals").modal("hide"); 
         })
         .catch(error => console.error("Error:", error));
     }
