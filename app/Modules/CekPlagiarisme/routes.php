@@ -5,6 +5,10 @@ use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
+Route::middleware(['auth', 'can:dosen'])->get(
+    '/api/kotas',
+    [CekPlagiarismeController::class, 'getKota']
+);
 Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
 Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
 Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
