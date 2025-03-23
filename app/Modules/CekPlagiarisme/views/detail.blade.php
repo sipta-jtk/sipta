@@ -11,7 +11,7 @@
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
             <li class="breadcrumb-item">
-                <a href="{{ url(env('PREFIX_URL', '') . '/cek-plagiarisme') }}">
+                <a href="{{ url(config('app.prefix_url') . '/cek-plagiarisme') }}">
                     Plagiarism Checking
                 </a>
             </li>
