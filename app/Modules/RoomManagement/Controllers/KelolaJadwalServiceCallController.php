@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Modules\UserManagement\Controllers;
+namespace App\Modules\RoomManagement\Controllers;
 
 use App\Modules\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TestServiceCallController extends Controller
+class KelolaJadwalServiceCallController extends Controller
 {
-    public function redirectToExternalService(Request $request)
+    public function redirectToKelolaRuangan(Request $request)
     {
         // Generate token
         $user = Auth::user();
@@ -19,6 +19,14 @@ class TestServiceCallController extends Controller
         
         // Add token as query parameter or in a way the external service expects
         $externalUrl .= "?token={$token}";
+        
+        // Redirect to external service
+        return redirect()->away($externalUrl);
+    }
+
+    public function redirectToKalender(Request $request)
+    {
+        $externalUrl = 'http://localhost:8005/penjadwalan-ruangan';
         
         // Redirect to external service
         return redirect()->away($externalUrl);

@@ -605,9 +605,14 @@ return [
         ],
         [
             'text' => 'Kelola Ruangan',
-            'url' => $prefix . '/external-service/ruangan',
+            'url' => $prefix . '/ruangan-service/ruangan',
             'icon' => 'fas fa-fw fa-building',
             'can' => 'admin',
+        ],
+        [
+            'text' => 'Kalender Penjadwalan Ruangan',
+            'url' => $prefix . '/ruangan-service/kalender',
+            'icon' => 'fas fa-fw fa-calendar',
         ],
         [
             'text' => 'Cek Plagiarisme',
