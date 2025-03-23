@@ -28,4 +28,8 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
 /**********************************
  * Catatan oleh Dosen Pembimbing
  ***********************************/
-Route::middleware(['auth', 'can:dosen'])->post('catatan-store/{id_dokumen}', [CekPlagiarismeDetailController::class, 'storeCatatan'])->name('catatan.store');
+Route::group(['prefix' => 'cek-plagiarisme', 'as' => 'cek-plagiarisme.', 'middleware' => ['auth', 'can:dosen']], function () {
+    Route::post('catatan-store/{id_dokumen}', [CekPlagiarismeDetailController::class, 'storeCatatan'])->name('catatan.store');
+    Route::put('catatan-store/{id_dokumen}/{id}', [CekPlagiarismeDetailController::class, 'updateCatatan'])->name('catatan.put');
+    Route::delete('catatan-store/{id_dokumen}/{id}', [CekPlagiarismeDetailController::class, 'deleteCatatan'])->name('catatan.delete');
+});

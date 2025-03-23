@@ -11,7 +11,6 @@ use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
 
-
 class CekPlagiarismeDetailController extends Controller
 {
     public function show($id)
@@ -39,7 +38,6 @@ class CekPlagiarismeDetailController extends Controller
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
     }
 
-    // Fungsi untuk menyimpan catatan baru
     public function storeCatatan(Request $request, $id_dokumen)
     {
         // Validasi input
@@ -72,6 +70,61 @@ class CekPlagiarismeDetailController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil ditambahkan!',
+            'catatan' => $catatan,
+        ]);
+    }
+
+    public function deleteCatatan($id_dokumen, $id_catatan)
+    {
+
+        $caatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
+        if (!$caatan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Catatan tidak ditemukan!'
+            ]);
+        }
+        $caatan->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Catatan berhasil dihapus!'
+        ]);
+    }
+
+    public function updateCatatan($id_dokumen, $id_catatan, Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'comment' => 'required|string|max:500',
+        ]);
+
+        // Ambil NIP dosen yang sedang login
+        $nip = auth()->user()->username;
+
+        // Cek apakah dokumen dengan ID yang diberikan ada
+        $dokumen = Dokumen::find($id_dokumen);
+        if (!$dokumen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen tidak ditemukan!'
+            ]);
+        }
+        $catatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
+        if (!$catatan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Catatan tidak ditemukan!'
+            ]);
+        }
+        $catatan->update([
+            'review' => $request->comment,
+            'updated_at' => now(),
+            'nip' => $nip,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Catatan berhasil diperbarui!',
             'catatan' => $catatan,
         ]);
     }
