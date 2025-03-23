@@ -15,7 +15,7 @@ class KelolaJadwalServiceCallController extends Controller
         $token = $user->createToken('external_service_token')->plainTextToken;
 
         // URL to redirect to
-        $externalUrl = 'http://localhost:8005/admin/ruangan';
+        $externalUrl = 'https://polban-space.cloudias79.com/penjadwalan-ruangan/admin/ruangan';
         
         // Add token as query parameter or in a way the external service expects
         $externalUrl .= "?token={$token}";
@@ -26,7 +26,7 @@ class KelolaJadwalServiceCallController extends Controller
 
     public function redirectToKalender(Request $request)
     {
-        $externalUrl = 'http://localhost:8005/penjadwalan-ruangan';
+        $externalUrl = 'https://polban-space.cloudias79.com/penjadwalan-ruangan/';
         
         // Redirect to external service
         return redirect()->away($externalUrl);
