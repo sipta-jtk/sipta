@@ -111,11 +111,12 @@
 
         <!-- Form Penilaian -->
         @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+            $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
+            $actionUrl = $isEdit ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
-            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+            @if($isEdit)
                 @method('PATCH')
             @endif
             <div class="row mt-4">
@@ -125,7 +126,6 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                {{-- <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th> --}}
                                 <th style="min-width: 200px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
@@ -144,19 +144,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteriaPenilaian as $kriteria)
+                            @foreach ($kriteriaPenilaian as $indexKriteria => $kriteria)
                                 <tr>
                                     <td colspan="{{ 8 + count($mahasiswa) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
-                                @foreach ($kriteria->rubrik as $rubrik)
+                                @foreach ($kriteria->rubrik as $index => $rubrik)
                                     <tr>
                                         <td>{{ $rubrik->nama_rubrik }}</td>
                                         @foreach ($rubrik->detailRubrik as $detail)
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
-                                        {{-- <td>0-100</td> --}}
                                         @foreach($mahasiswa as $key => $mhs)
-                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
+                                            @php
+                                                $nilai = isset($kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik) ? $kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik : '';
+                                            @endphp
+                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
                                         @endforeach
                                     </tr>
                                 @endforeach
