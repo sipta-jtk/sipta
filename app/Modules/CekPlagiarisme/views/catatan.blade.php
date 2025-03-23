@@ -55,7 +55,7 @@
         <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
         <!-- Menampilkan tanggal komentar dengan format tertentu -->
         <small class="text-muted comment-date">
-            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y, H:i:s') }}
+            {{ \Carbon\Carbon::parse($item->update_at)->format('d/m/Y, H:i:s') }}
         </small>
     </div>
 @empty
@@ -247,15 +247,31 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Catatan berhasil ditambahkan!',
+                        icon: 'success'
+                    }).then(() => {
                         document.getElementById('comment-input').value = ''; // Reset form
-                        // addNewCommentToUI(data.catatan); // Tambahkan komentar ke UI
-                        window.location.reload(); //
-                    } else {
-                        alert('Gagal menambahkan komentar');
-                    }
-                })
-                .catch(error => alert('Error: ' + error.message));
-        });
+                        window.location.reload(); // Reload halaman
+                    });                    
+                } else {
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: 'Gagal menambahkan catatan',
+                        icon: 'error'
+                    });                    
+                }
+            })
+            .catch(error => {
+            // Tampilkan SweetAlert error jika terjadi masalah
+            Swal.fire({
+                title: 'Error!',
+                text: 'Terjadi kesalahan saat mengirim data',
+                icon: 'error'
+            });
+        });        
+    });
 
         // Fungsi untuk menambahkan komentar baru ke UI
         function addNewCommentToUI(catatan) {
@@ -387,18 +403,25 @@
                     "Content-Type": "application/json",
                 },
                 data: JSON.stringify({ comment: review }),
-                success: function (response) {
-                    alert(response.message);
-                    location.reload(); // Reload halaman setelah update berhasil
+                    success: function (response) {
+                            Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload(); // Reload halaman setelah update berhasil
+                    });
                 },
                 error: function (xhr) {
-                    alert("Gagal memperbarui catatan!");
-                    console.error(xhr.responseText);
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: 'Gagal memperbarui catatan!',
+                        icon: 'error'
+                    });
                 },
             });
         });
     });
-
 
 
     $(document).ready(function () {
@@ -434,12 +457,20 @@
                 type: "DELETE",
                 data: { id: deleteId }, // Kirim ID ke server
                 success: function (response) {
-                    alert(response.message);
-                    location.reload(); // Reload halaman setelah penghapusan berhasil
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload(); // Reload halaman setelah penghapusan berhasil
+                    });                
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                    alert("Gagal menghapus komentar!");
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: 'Catatan gagal dihapus.',
+                        icon: 'error'
+                    });               
                 },
             });
         }
