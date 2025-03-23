@@ -497,7 +497,7 @@ return [
                         ],
                         [
                             'text' => 'Pengaturan Nilai Akhir',
-                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                            'url' => $prefix . '/kelola-penilaian-ta/pengaturan-nilai-akhir',
                             'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
