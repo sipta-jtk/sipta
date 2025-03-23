@@ -437,8 +437,13 @@ return [
                     'icon' => 'fas fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa',
-                    'url' => $prefix . '/verifikasi-berkas',
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Seminar 3',
+                    'url' => $prefix . '/verifikasi-berkas-3',
+                    'can' => 'mahasiswa_ta',
+                ],
+                [
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang',
+                    'url' => $prefix . '/verifikasi-berkas-sidang',
                     'can' => 'mahasiswa_ta',
                 ],
                 [

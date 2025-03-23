@@ -66,7 +66,7 @@
                     @endforelse
                 </tbody>
             </table>
-            <form action="{{ route('verifikasi.store') }}" method="POST" class="text-center mt-4">
+            <form action="{{ route('verifikasi-sidang.store') }}" method="POST" class="text-center mt-4">
                 @csrf
                 <button type="submit" class="btn btn-primary" 
                     @if ($tidakBisaAjukan) disabled @endif>
