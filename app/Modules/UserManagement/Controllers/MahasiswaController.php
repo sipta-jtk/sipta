@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 
 
@@ -34,7 +33,7 @@ class MahasiswaController extends Controller
         
 
 
-        $randomCode = Str::random(7);
+        $randomCode = "password123";
         $user = User::create([
             'username' => $request->nim,
             'email' => $request->email,
@@ -57,11 +56,6 @@ class MahasiswaController extends Controller
         ]);
         $email = $request->email;
         $nama = $request->nama;
-        Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
-            $message->to($email)
-                    ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
-                    ->subject('Info Akun Sipta');
-        });
 
         // Commit transaksi jika semua berhasil
         return redirect()->route('manage.mhs')->with('success', 'Mahasiswa berhasil ditambahkan!');
@@ -175,7 +169,7 @@ public function import(Request $request)
         $mahasiswa = [];
     
         foreach ($validatedData['data'] as $userData) {
-            $randomCode = \Str::random(8); // Atau gunakan default password
+            $randomCode = "password123"; // Atau gunakan default password
     
             $users[] = [
                 'username' => $userData['username'],
@@ -197,12 +191,7 @@ public function import(Request $request)
 
         $email = $userData['email'];
         $nama = $userData['nama'];
-        Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
-            $message->to($email)
-                    ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
-                    ->subject('Info Akun Sipta');
-        });
-
+ 
 
         }
     
