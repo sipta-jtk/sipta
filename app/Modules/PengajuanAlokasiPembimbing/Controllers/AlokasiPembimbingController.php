@@ -18,9 +18,17 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
+use App\Services\NotifikasiService;
+use App\Models\TemplateNotifikasi;
+use App\Models\Notifikasi;
 
 class AlokasiPembimbingController extends Controller
-{
+{protected $notifikasiService;
+
+    public function __construct(NotifikasiService $notifikasiService)
+    {
+        $this->notifikasiService = $notifikasiService;
+    }
     public function index(): View
     {
         $data_pengajuan = PengajuanPembimbing::join('kota', 'pengajuan_pembimbing.id_kota', '=', 'kota.id_kota')
@@ -187,6 +195,9 @@ class AlokasiPembimbingController extends Controller
                 );
             }
 
+            // Panggil function kirim notifikasi
+            $this->kirimNotifikasiAlokasi($nip_dosen_1->nip, auth()->user()->username);
+
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
                     ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2->nip],
@@ -198,6 +209,9 @@ class AlokasiPembimbingController extends Controller
                     ]
                 );
             }
+
+            // Panggil function kirim notifikasi
+            $this->kirimNotifikasiAlokasi($nip_dosen_2->nip, auth()->user()->username);
 
             // **Alokasi Penguji**
             if ($nip_penguji_1) {
@@ -239,5 +253,167 @@ class AlokasiPembimbingController extends Controller
 
         return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');
     }
+
+    private function kirimNotifikasiAlokasi($dosenUsername, $mahasiswaUsername) 
+    {
+        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', 'Pemberitahuan: Mahasiswa Telah Mengajukan Bimbingan')->first();
+        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', 'Pengajuan Bimbingan Berhasil')->first();
+    
+        if (!$dosenUsername || !$mahasiswaUsername || !$templateDosen || !$templateMahasiswa) {
+            return response()->json(['error' => 'Semua field wajib diisi'], 400);
+        }
+    
+        // Cari user berdasarkan username
+        $dosen = User::where('username', $dosenUsername)->first();
+        $mahasiswa = User::where('username', $mahasiswaUsername)->first();
+    
+        if (!$dosen || !$mahasiswa) {
+            return response()->json(['error' => 'Dosen atau Mahasiswa tidak ditemukan'], 404);
+        }
+    
+        // Ambil template notifikasi
+        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', $templateDosen)->first();
+        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', $templateMahasiswa)->first();        
+    
+        if (!$templateDosen || !$templateMahasiswa) {
+            return response()->json(['error' => 'Template notifikasi tidak ditemukan'], 404);
+        }
+
+        // Prepare email content by dynamically replacing placeholders
+        $isiInEmailDosen = str_replace(
+            ['{nama_dosen}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
+            [$dosen->nama, $mahasiswa->nama, $mahasiswa->username],
+            $templateDosen->isi_in_email
+        );
+    
+        // Kirim email ke dosen
+        $this->notifikasiService->kirimEmail(
+            $templateDosen->judul_notifikasi,
+            $dosen->username,
+            [
+                'nama_dosen' => $dosen->nama,
+                'nama_mahasiswa' => $mahasiswa->nama,
+                'nim_mahasiswa' => $mahasiswa->nim,
+                'email_content' => $isiInEmailDosen
+            ]
+        );
+    
+        // Simpan notifikasi ke database
+        Notifikasi::create([
+            'tipe_notifikasi' => $templateDosen->jenis_notifikasi,
+            'judul' => $templateDosen->judul_notifikasi,
+            'isi_notifikasi' => $isiInEmailDosen,
+        ]);
+
+        // Prepare email content by dynamically replacing placeholders
+        $isiInEmailMahasiswa = str_replace(
+            ['{nama_mahasiswa}', '{nama_dosen}'],
+            [$mahasiswa->nama, $dosen->nama],
+            $templateMahasiswa->isi_in_email
+        );
+    
+        // Kirim email ke mahasiswa
+        $this->notifikasiService->kirimEmail(
+            $templateMahasiswa->judul_notifikasi,
+            $mahasiswa->username,
+            [
+                'nama_mahasiswa' => $mahasiswa->nama,
+                'nama_dosen' => $dosen->nama,
+                'email_content' => $isiInEmailMahasiswa
+            ]
+        );
+    
+        // Simpan notifikasi untuk mahasiswa (dengan user_id)
+        Notifikasi::create([
+            'tipe_notifikasi' => $templateMahasiswa->jenis_notifikasi,
+            'judul' => $templateMahasiswa->judul_notifikasi,
+            'isi_notifikasi' => $isiInEmailMahasiswa,
+        ]);
+    
+        return response()->json(['success' => 'Notifikasi berhasil dikirim'], 200);
+    }    
+
+    // public function kirimNotifikasiAlokasi(Request $request) 
+    // {
+    //     // Gunakan username, bukan ID
+    //     $dosenUsername = $request->input('dosen_username');
+    //     $mahasiswaUsername = $request->input('mahasiswa_username');
+    //     $templateDosen = $request->input('template_dosen_id');
+    //     $templateMahasiswa = $request->input('template_mahasiswa_id');
+    
+    //     if (!$dosenUsername || !$mahasiswaUsername || !$templateDosen || !$templateMahasiswa) {
+    //         return response()->json(['error' => 'Semua field wajib diisi'], 400);
+    //     }
+    
+    //     // Cari user berdasarkan username
+    //     $dosen = User::where('username', $dosenUsername)->first();
+    //     $mahasiswa = User::where('username', $mahasiswaUsername)->first();
+    
+    //     if (!$dosen || !$mahasiswa) {
+    //         return response()->json(['error' => 'Dosen atau Mahasiswa tidak ditemukan'], 404);
+    //     }
+    
+    //     // Ambil template notifikasi
+    //     $templateDosen = TemplateNotifikasi::where('judul_notifikasi', $templateDosen)->first();
+    //     $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', $templateMahasiswa)->first();        
+    
+    //     if (!$templateDosen || !$templateMahasiswa) {
+    //         return response()->json(['error' => 'Template notifikasi tidak ditemukan'], 404);
+    //     }
+
+    //     // Prepare email content by dynamically replacing placeholders
+    //     $isiInEmailDosen = str_replace(
+    //         ['{nama_dosen}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
+    //         [$dosen->nama, $mahasiswa->nama, $mahasiswa->username],
+    //         $templateDosen->isi_in_email
+    //     );
+    
+    //     // Kirim email ke dosen
+    //     $this->notifikasiService->kirimEmail(
+    //         $templateDosen->judul_notifikasi,
+    //         $dosen->username,
+    //         [
+    //             'nama_dosen' => $dosen->nama,
+    //             'nama_mahasiswa' => $mahasiswa->nama,
+    //             'nim_mahasiswa' => $mahasiswa->nim,
+    //             'email_content' => $isiInEmailDosen
+    //         ]
+    //     );
+    
+    //     // Simpan notifikasi ke database
+    //     Notifikasi::create([
+    //         'tipe_notifikasi' => $templateDosen->jenis_notifikasi,
+    //         'judul' => $templateDosen->judul_notifikasi,
+    //         'isi_notifikasi' => $isiInEmailDosen,
+    //     ]);
+
+    //     // Prepare email content by dynamically replacing placeholders
+    //     $isiInEmailMahasiswa = str_replace(
+    //         ['{nama_mahasiswa}', '{nama_dosen}'],
+    //         [$mahasiswa->nama, $dosen->nama],
+    //         $templateMahasiswa->isi_in_email
+    //     );
+    
+    //     // Kirim email ke mahasiswa
+    //     $this->notifikasiService->kirimEmail(
+    //         $templateMahasiswa->judul_notifikasi,
+    //         $mahasiswa->username,
+    //         [
+    //             'nama_mahasiswa' => $mahasiswa->nama,
+    //             'nama_dosen' => $dosen->nama,
+    //             'email_content' => $isiInEmailMahasiswa
+    //         ]
+    //     );
+    
+    //     // Simpan notifikasi untuk mahasiswa (dengan user_id)
+    //     Notifikasi::create([
+    //         'tipe_notifikasi' => $templateMahasiswa->jenis_notifikasi,
+    //         'judul' => $templateMahasiswa->judul_notifikasi,
+    //         'isi_notifikasi' => $isiInEmailMahasiswa,
+    //     ]);
+    
+    //     return response()->json(['success' => 'Notifikasi berhasil dikirim'], 200);
+    // }   
+    // Route::post('/api/kirim-notifikasi-alokasi', [AlokasiPembimbingController::class, 'kirimNotifikasiAlokasi']);
 
 }
