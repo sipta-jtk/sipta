@@ -22,8 +22,8 @@
         <table class="table table-striped table-bordered text-center">
             <thead class="bg-brown text-white">
                 <tr>
-                    <th>Kategori</th>
-                    <th class="w-40">Aksi</th>
+                    <th class="bg-dark">Kategori</th>
+                    <th class="bg-dark w-40">Aksi</th>
                 </tr>
             </thead>
             <tbody>
