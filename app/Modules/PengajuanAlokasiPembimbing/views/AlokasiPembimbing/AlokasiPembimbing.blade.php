@@ -371,7 +371,7 @@
 <script>
     var DataToSend = [];
     $(document).ready(function() {
-        $(".pembimbing, .penguji, .catatan-input").each(function () {
+        $(".pembimbing, .penguji, .catatan-input").each(function() {
             var row = $(this).closest("tr");
             var id_pengajuan_pembimbing = row.data("id");
 
@@ -717,6 +717,8 @@
 
     const dosenCache = {};
 
+    var prefixUrl = "{{ env('PREFIX_URL') }}";
+
     function fetchDosenDetail(nip, detailContainer) {
         if (!nip) {
             detailContainer.html(`
@@ -732,7 +734,7 @@
         console.log(`Fetching data for NIP: ${nip}`);
 
         $.ajax({
-            url: `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
+            url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
             , type: "GET"
             , dataType: "json"
             , success: function(response) {
