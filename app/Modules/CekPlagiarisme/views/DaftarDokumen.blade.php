@@ -18,9 +18,10 @@
                 <select id="kelompokSelect" class="form-control">
                 </select>
             </div>
-            @endif
+            @else(auth()->user()->role_user === 'mahasiswa')
             <!-- Button Unggah Dokumen -->
             <button class="btn btn-primary ml-3" id="uploadButton">Unggah Dokumen</button>
+            @endif
         </div>
         <div class="card-body">
             <div id="jsGridPlagiarism"></div>
