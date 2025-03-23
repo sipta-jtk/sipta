@@ -36,6 +36,9 @@ jobs:
     outputs:
       should_restart: ${{ steps.compare_env.outputs.should_restart }}
     steps:
+      - name: Initialize should_restart
+        run: echo "should_restart=false" >> $GITHUB_ENV
+
       - name: Update RUN_MIGRATIONS in Server
         id: update_env
         env:
@@ -58,7 +61,7 @@ jobs:
 
       - name: Set Output for Restart Condition
         id: compare_env
-        run: echo "should_restart=${should_restart}" >> $GITHUB_OUTPUT
+        run: echo "should_restart=${{ env.should_restart }}" >> $GITHUB_OUTPUT
 
   restart-docker-compose:
     runs-on: ubuntu-latest
