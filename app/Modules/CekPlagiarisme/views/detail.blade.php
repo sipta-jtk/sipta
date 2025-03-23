@@ -4,7 +4,7 @@
 
 @section('content_header')
 @php
-    $prefix = env('PREFIX_URL', '');
+$prefix = env('PREFIX_URL', '');
 @endphp
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Detail Plagiarism Check</h1>
@@ -34,10 +34,10 @@
                 </div>
                 <div class="card-body text-center">
                     @if(isset($dokumen->file))
-                        <iframe src="{{ asset('storage/' . $dokumen->file) }}" width="100%" height="600px"></iframe>
+                    <iframe src="{{ asset('storage/' . $dokumen->file) }}" width="100%" height="600px"></iframe>
                     @else
-                        <pre class="p-3 bg-light border rounded"
-                            style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
+                    <pre class="p-3 bg-light border rounded"
+                        style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
                     @endif
                 </div>
             </div>
@@ -115,29 +115,29 @@
                 <div class="tab-pane fade" id="sumber" role="tabpanel">
                     <div class="card shadow-lg">
                         <div class="card-header bg-danger text-white">
-                        <h5>Daftar Sumber - 
-                            @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
+                            <h5>Daftar Sumber -
+                                @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
                                 {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
-                            @else
+                                @else
                                 {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
-                            @endif
-                            Index Kesamaan
-                        </h5>
+                                @endif
+                                Index Kesamaan
+                            </h5>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
                                     @foreach($sumberPlagiarisme as $item)
-                                        <tr>
-                                            <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
-                                            <td>
-                                                @if(fmod($item->listJurnalPlagiarisme->persentase_kemunculan, 1) == 0)
-                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 0) }}%
-                                                @else
-                                                    {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 1) }}%
-                                                @endif
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
+                                        <td>
+                                            @if(fmod($item->listJurnalPlagiarisme->persentase_kemunculan, 1) == 0)
+                                            {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 0) }}%
+                                            @else
+                                            {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 1) }}%
+                                            @endif
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -179,11 +179,11 @@
 
 @section('js')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // Bootstrap Tab Switching
         var sidebarTabs = document.querySelectorAll("#detailTabs .nav-link");
-        sidebarTabs.forEach(function (tab) {
-            tab.addEventListener("click", function (event) {
+        sidebarTabs.forEach(function(tab) {
+            tab.addEventListener("click", function(event) {
                 event.preventDefault(); // Hindari reload halaman
 
                 // Aktifkan tab yang diklik
