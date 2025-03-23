@@ -11,10 +11,10 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 */
 
 Route::get('/repository', [RepositoryController::class, 'dashboard'])->name('Repository.dashboard');
-Route::get('repository/{kategori}', [RepositoryController::class, 'index'])->name('Repository.index');
+Route::get('/repository/{kategori}', [RepositoryController::class, 'index'])->name('Repository.index');
 
 
-Route::prefix('/repository')->middleware('auth', 'can:mahasiswa_ta-access')->group(function () {
+Route::prefix('/repository')->middleware('auth', 'can:mahasiswa_ta')->group(function () {
     
     // Akmal Goniyyu Hartono
     
