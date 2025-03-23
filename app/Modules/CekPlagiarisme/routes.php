@@ -21,11 +21,6 @@ Route::get('/cek-plagiarisme', function () {
 Route::post('/CekPlagiarisme/upload', [CekPlagiarismeController::class, 'process'])
     ->name('cek-plagiarisme.upload');
 
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});
-
-
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
