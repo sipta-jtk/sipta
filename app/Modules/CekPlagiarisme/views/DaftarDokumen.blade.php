@@ -19,8 +19,10 @@
                 </select>
             </div>
             @else(auth()->user()->role_user === 'mahasiswa')
-            <!-- Button Unggah Dokumen -->
-            <button class="btn btn-primary ml-3" id="uploadButton">Unggah Dokumen</button>
+            <div class="form-group ml-auto align-items-right mt-3">
+                <!-- Button Unggah Dokumen -->
+                <button class="btn btn-primary ml-3" id="uploadButton">Unggah Dokumen</button>
+            </div>
             @endif
         </div>
         <div class="card-body">
@@ -165,8 +167,7 @@
                             type: "number",
                             title: "Nomor",
                             width: 50,
-                            align: "center",
-                            sorting: false
+                            align: "center"
                         },
                         {
                             name: "judul",
@@ -213,42 +214,52 @@
                     ]
                 });
 
-                // Filter berdasarkan kelompok (id_kota) yang dipilih
-                $("#kelompokSelect").on("change", function() {
-                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
-                    console.log("Kota yang dipilih:", selectedKota); // Cek nilai yang dipilih
-
-                    var filteredData = response.filter(item => {
-                        if (selectedKota) {
-                            return item.id_kota == selectedKota; // Filter berdasarkan id_kota
-                        }
-                        return true; // Tampilkan semua data jika tidak ada pilihan
-                    });
-
+                // Fungsi untuk memperbarui jsGrid setelah filter
+                function updateJsGrid(filteredData) {
                     // Update nomor urut setelah filter
-                    filteredData = filteredData.map((item, index) => ({
-                        ...item,
-                        nomor: index + 1
-                    }));
-
-                    // Update data di jsGrid
-                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
-                });
-
-                $("#searchInput").on("keyup", function() {
-                    var searchValue = $(this).val().toLowerCase();
-                    var filteredData = response.filter(item =>
-                        Object.values(item).some(value => String(value).toLowerCase().includes(searchValue))
-                    );
-
-                    // Menambahkan nomor urut setelah filter
                     filteredData = filteredData.map((item, index) => ({
                         ...item,
                         nomor: index + 1 // Reset nomor urut
                     }));
 
+                    // Update data di jsGrid
                     $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+                }
+
+                // Filter berdasarkan kelompok (id_kota) yang dipilih
+                $("#kelompokSelect").on("change", function() {
+                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
+
+                    // Filter berdasarkan id_kota dan search input
+                    filterData(selectedKota, $("#searchInput").val());
                 });
+
+                // Filter berdasarkan pencarian (search input)
+                $("#searchInput").on("keyup", function() {
+                    var searchValue = $(this).val().toLowerCase();
+
+                    // Filter berdasarkan id_kota yang dipilih dan search input
+                    filterData($("#kelompokSelect").val(), searchValue);
+                });
+
+                // Fungsi untuk melakukan filter berdasarkan id_kota dan search
+                function filterData(selectedKota, searchValue) {
+                    var filteredData = response.filter(item => {
+                        // Filter berdasarkan id_kota
+                        var kotaFilter = selectedKota ? item.id_kota == selectedKota : true;
+
+                        // Filter berdasarkan pencarian (search)
+                        var searchFilter = Object.values(item).some(value =>
+                            String(value).toLowerCase().includes(searchValue)
+                        );
+
+                        // Kembalikan true jika data memenuhi kedua kondisi (id_kota dan search)
+                        return kotaFilter && searchFilter;
+                    });
+
+                    // Update data di jsGrid
+                    updateJsGrid(filteredData);
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Gagal mengambil data dari API:", status, error);
