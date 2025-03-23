@@ -611,14 +611,20 @@ return [
         ],
         [
             'text' => 'Cek Plagiarisme',
-            'url' => $prefix . '/cek-plagiarisme',
             'icon' => 'fas fa-fw fa-file',
-        ],
-        [
-            'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => $prefix . '/penentuan-ambang-batas',
-            'icon' => 'fas fa-scroll',
-            'can' => 'koordinator_ta'
+            'submenu' => [
+                [
+                    'text' => 'Cek Plagiarisme',
+                    'url' => $prefix . '/cek-plagiarisme',
+                    'icon' => 'fas fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Penentuan Ambang Batas Plagiarisme',
+                    'url' => $prefix . '/penentuan-ambang-batas',
+                    'icon' => 'fas fa-scroll',
+                    'can' => 'koordinator_ta'
+                ],
+            ]
         ],
         ['header' => 'Pengaturan Pengguna'],
         [
@@ -670,35 +676,9 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/#',
-                    // 'submenu' => [
-                    //     [
-                    //         'text' => 'Koordinator TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Pembimbing TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Penguji TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     // [
-                    //     //     'text' => 'level_two',
-                    //     //     'url' => '#',
-                    //     //     'submenu' => [
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //     ],
-                    //     // ],
-                    // ],
+                    'url' => '/manajemen-akun-mahasiswa',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'admin'
                 ],
                 // [
                 //     'text' => 'level_one',

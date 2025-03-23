@@ -182,3 +182,5 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 
 Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
+
+Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
