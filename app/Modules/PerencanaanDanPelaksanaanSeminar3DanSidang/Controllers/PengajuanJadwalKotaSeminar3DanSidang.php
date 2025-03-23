@@ -7,9 +7,13 @@ use App\Modules\Controller;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
 use App\Models\User;
+use App\Models\Dosen;
 use App\Models\Penjadwalan;
 use App\Models\PengajuanJadwalKota;
 use App\Models\VerifikasiBerkasPengajuan;
+use App\Services\NotifikasiService;
+use App\Models\TemplateNotifikasi;
+use App\Models\Notifikasi;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -17,6 +21,11 @@ use Illuminate\Http\Request;
 
 class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 {
+    public function __construct(NotifikasiService $notifikasiService)
+    {
+        $this->notifikasiService = $notifikasiService;
+    }
+
     public function indexPengajuan(): View
     {
         // mengambil id_kota dari mahasiswa by username
@@ -42,10 +51,8 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
-        // dd($pembimbing);
-
         if (is_null($id_kota)) {
-            $verifikasi = (object) ['kota' => null];
+            $verifikasi = (object) ['kota' => $id_kota];
         } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
             $verifikasi = (object) ['kota' => $id_kota, 'dosen' => null];
         } else {
@@ -53,6 +60,14 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             $verifikasi = VerifikasiBerkasPengajuan::with('kota')
                             ->where('id_kota', $id_kota)
                             ->get();
+
+            if (!$verifikasi) {
+                $verifikasi = (object) ['kota' => $id_kota, 'dosen' => $id_kota, 'pengajuan' => null];
+            } else {
+                $verifikasi->kota = $id_kota;
+                $verifikasi->dosen = $id_kota;
+                $verifikasi->pengajuan = true; 
+            }
         }
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
@@ -226,6 +241,23 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
     public function tambahPengajuanPenjadwalan(Request $request, $id_kota)
     {
+
+    $nipDosenPembimbing = DB::table('alokasi_dosen')
+        ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->where('pengajuan_pembimbing.id_kota', $id_kota)
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+        ->value('alokasi_dosen.nip');
+    $nipDosenPenguji = DB::table('alokasi_dosen')
+        ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+        ->where('pengajuan_pembimbing.id_kota', $id_kota)
+        ->where('alokasi_dosen.status_alokasi', 'fix')
+        ->where('alokasi_dosen.tipe_alokasi', 'penguji') // Ganti 'pembimbing' menjadi 'penguji'
+        ->value('alokasi_dosen.nip');
+    $koordinatorTA = User::select('user.username', 'user.nama', 'user.email')
+        ->join('kota', 'user.username', '=', 'kota.nip_koordinator_ta') // Sesuaikan kolom relasi
+        ->where('kota.id_kota', $id_kota)
+        ->first();
         // Validasi input
         $request->validate([
             'tanggal_pengajuan' => 'required|date',
@@ -359,7 +391,125 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_dosen_penguji_2' => null,
             'status_koordinator_ta' => null,
         ]);
+        $this->kirimNotifikasiPengajuan($nipDosenPembimbing, auth()->user()->username, $nipDosenPenguji, $koordinatorTA);
 
         return redirect()->route('pengajuan')->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
+    }
+
+    public function kirimNotifikasiPengajuan($dosenUsername, $mahasiswaUsername, $pengujiUsername, $koordinatorTAUsername)
+    {
+        // Ambil input dari request
+        // $dosenUsername = $request->input('dosen_username');
+        // $mahasiswaUsername = $request->input('mahasiswa_username');
+        // $pengujiUsername = $request->input('penguji_username');
+        // $koordinatorTAUsername = $request->input('koordinator_ta_username'); 
+    
+        // Validasi input
+        if (!$dosenUsername || !$mahasiswaUsername || !$pengujiUsername || !$koordinatorTAUsername) {
+            return response()->json(['error' => 'Semua field wajib diisi'], 400);
+        }
+    
+        // Cari template notifikasi berdasarkan judul
+        $template = TemplateNotifikasi::where('judul_notifikasi', '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!')->first();
+    
+        if (!$template) {
+            return response()->json(['error' => 'Template notifikasi tidak ditemukan'], 404);
+        }
+    
+        // Cari user berdasarkan username
+        $dosen = User::where('username', $dosenUsername)->first();
+        $mahasiswa = User::where('username', $mahasiswaUsername)->first();
+        $penguji = User::where('username', $pengujiUsername)->first();
+        $koordinatorTA = User::where('username', $koordinatorTAUsername)->first(); // Cari Koordinator TA
+    
+        if (!$dosen || !$mahasiswa || !$penguji || !$koordinatorTA) {
+            return response()->json(['error' => 'Dosen, Mahasiswa, Penguji, atau Koordinator TA tidak ditemukan'], 404);
+        }
+    
+        // Ganti placeholder dalam template email
+        $isiInEmailDosen = str_replace(
+            ['{nama}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
+            [$mahasiswa->nama, $mahasiswa->nama, $mahasiswa->username],
+            $template->isi_in_email
+        );
+    
+        $isiInEmailPenguji = str_replace(
+            ['{nama}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
+            [$mahasiswa->nama, $mahasiswa->nama, $mahasiswa->username],
+            $template->isi_in_email
+        );
+    
+        $isiInEmailKoordinatorTA = str_replace(
+            ['{nama}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
+            [$mahasiswa->nama, $mahasiswa->nama, $mahasiswa->username],
+            $template->isi_in_email
+        );
+    
+        try {
+            // Kirim email ke Dosen Pembimbing
+            $this->notifikasiService->kirimEmail(
+                $template->judul_notifikasi,
+                $dosenUsername,
+                [
+                    'nama_dosen' => $dosen->nama,
+                    'nama_mahasiswa' => $mahasiswa->nama,
+                    'nim_mahasiswa' => $mahasiswa->username,
+                    'email_content' => $isiInEmailDosen
+                ]
+            );
+    
+            // Kirim email ke Dosen Penguji
+            $this->notifikasiService->kirimEmail(
+                $template->judul_notifikasi,
+                $pengujiUsername,
+                [
+                    'nama_penguji' => $penguji->nama,
+                    'nama_mahasiswa' => $mahasiswa->nama,
+                    'nim_mahasiswa' => $mahasiswa->username,
+                    'email_content' => $isiInEmailPenguji
+                ]
+            );
+    
+            // Kirim email ke Koordinator TA
+            $this->notifikasiService->kirimEmail(
+                $template->judul_notifikasi,
+                $koordinatorTAUsername,
+                [
+                    'nama_koordinator_ta' => $koordinatorTA->nama,
+                    'nama_mahasiswa' => $mahasiswa->nama,
+                    'nim_mahasiswa' => $mahasiswa->username,
+                    'email_content' => $isiInEmailKoordinatorTA
+                ]
+            );
+    
+            // Simpan notifikasi ke database untuk Dosen Pembimbing
+            Notifikasi::create([
+                'tipe_notifikasi' => $template->jenis_notifikasi,
+                'judul' => $template->judul_notifikasi,
+                'isi_notifikasi' => $isiInEmailDosen,
+                'id_user' => $dosen->id,
+            ]);
+    
+            // Simpan notifikasi ke database untuk Dosen Penguji
+            Notifikasi::create([
+                'tipe_notifikasi' => $template->jenis_notifikasi,
+                'judul' => $template->judul_notifikasi,
+                'isi_notifikasi' => $isiInEmailPenguji,
+                'id_user' => $penguji->id,
+            ]);
+    
+            // Simpan notifikasi ke database untuk Koordinator TA
+            Notifikasi::create([
+                'tipe_notifikasi' => $template->jenis_notifikasi,
+                'judul' => $template->judul_notifikasi,
+                'isi_notifikasi' => $isiInEmailKoordinatorTA,
+                'id_user' => $koordinatorTA->id,
+            ]);
+    
+            return response()->json(['success' => 'Notifikasi berhasil dikirim ke Dosen Pembimbing, Dosen Penguji, dan Koordinator TA'], 200);
+    
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal mengirim notifikasi: ' . $e->getMessage()], 500);
+        }
     }
 }

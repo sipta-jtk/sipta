@@ -59,6 +59,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="prefix-url"content="{{ env('PREFIX_URL', 'sipta-dev') }}">
+
 <style>
     #jsGrid1 .jsgrid-row,
     #jsGrid1 .jsgrid-alt-row {
@@ -69,10 +71,14 @@
 </style>
 
 <script>
+    var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
         console.log("DOM siap, inisialisasi jsGrid..."); // Debugging
 
         var originalData = []; // Variabel untuk menyimpan data asli
+
+        // Ambil prefix URL dari meta tag yang ada di halaman
+        var url = `${prefixUrl}/api/ambang-batas`;
 
         /**
          * Fungsi ini digunakan untuk mengambil data ambang batas dari API
@@ -80,7 +86,7 @@
         function loadData() {
             $.ajax({
                 type: "GET",
-                url: "/api/ambang-batas",
+                url: url,
                 dataType: "json",
                 success: function(response) {
                     console.log("Data dari API:", response);
@@ -185,6 +191,12 @@
         /**
          * Fungsi untuk menambah ambang batas baru
          */
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         $("#ambangBatasForm").submit(function(e) {
             e.preventDefault();
 
@@ -194,7 +206,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/api/ambang-batas",
+                url: `${prefixUrl}/api/ambang-batas`,
                 data: formData,
                 dataType: "json"
             }).done(function(response) {
@@ -203,14 +215,15 @@
                     text: "Ambang Batas berhasil ditambahkan!",
                     icon: "success"
                 }).then(() => {
-                    $("#addAmbangBatasModal").modal('hide'); // Tutup modal
-                    $("#ambangBatasForm")[0].reset(); // Reset form
-                    loadData(); // Refresh tabel otomatis
+                    $("#addAmbangBatasModal").modal('hide');
+                    $("#ambangBatasForm")[0].reset();
+                    loadData();
                 });
             }).fail(function(xhr) {
+                console.error(xhr.responseText); // debug errornya
                 Swal.fire({
                     title: "Gagal Menambahkan!",
-                    text: "Ambang Batas gagal ditambahkan!",
+                    text: xhr.responseJSON?.message ?? "Ambang Batas gagal ditambahkan!",
                     icon: "error"
                 });
             });
