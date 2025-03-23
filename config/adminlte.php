@@ -587,10 +587,15 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => $prefix . '/repository',
+            'url'  => $prefix . '/repository/mahasiswa',
             'icon' => 'fas fa-book',
-            // 'label' => 4,
-            // 'label_color' => 'success',
+            'can' => 'akses-sidebar-repo-mahasiswa'
+        ],
+        [
+            'text' => 'Repository Tugas Akhir',
+            'url'  => $prefix . '/repository/dosen/kelompok-ta',
+            'icon' => 'fas fa-book',
+            'can' => 'akses-sidebar-repo-dosen'
         ],
         [
             'text' => 'Artefak',
