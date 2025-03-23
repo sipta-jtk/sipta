@@ -8,20 +8,20 @@ use Illuminate\Support\Facades\Mail;
 
 class NotifikasiService
 {
-    public function kirimEmail($templateId, $userId, $data)
+    public function kirimEmail($templateJudul, $username, $data)
     {
-        // Retrieve the user by ID
-        $user = User::find($userId);
+        // Cari user berdasarkan username
+        $user = User::where('username', $username)->first();
     
         if (!$user) {
-            throw new \Exception('User tidak ditemukan');
+            throw new \Exception('User tidak ditemukan oleh service');
         }
     
-        // Retrieve the email template by ID
-        $template = TemplateNotifikasi::find($templateId);
+        // Retrieve the email template by judul_notifikasi
+        $template = TemplateNotifikasi::where('judul_notifikasi', trim($templateJudul))->first();
     
         if (!$template) {
-            throw new \Exception("Template email tidak ditemukan");
+            throw new \Exception("Template email tidak ditemukan oleh service");
         }
     
         // Replace placeholders in the subject and body with data
