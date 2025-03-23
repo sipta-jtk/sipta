@@ -58,8 +58,8 @@
                             <td> {{ $data['rata-rata'] }} </td>
                             @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
                                     <td> 
-                                        <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a>
-                                        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $idFta . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
+                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['kota']) }}" class="btn btn-primary">Nilai</a>
+                                        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $idFta . '/feedback/' . $data['kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
                                             @csrf
                                             <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
                                         </form>
