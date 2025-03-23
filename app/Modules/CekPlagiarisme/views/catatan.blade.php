@@ -34,10 +34,9 @@
                                 data-bs-toggle="modal" data-bs-target="#editCommentModal">
                                 <i class="fas fa-edit me-2"></i> Edit
                             </button>
-
                         </li>
                         <li>
-                            <button class="dropdown-item copy-btn" data-id="{{ $item->id_review }}">
+                            <button class="dropdown-item copy-btn" data-review="{{ $item->review }}">
                                 <i class="fas fa-copy me-2"></i> Salin
                             </button>
                         </li>
@@ -81,9 +80,9 @@
     </form>
 @endcan
 
-<!-- ========================================================= -->
-<!-- Bagian: Modal Konfirmasi Penghapusan                       -->
-<!-- ============================================================= -->
+<!-- ========================================== -->
+<!-- Bagian: Modal untuk Konfirmasi Penghapusan -->
+<!-- ========================================== -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -102,23 +101,29 @@
     </div>
 </div>
 
-<!-- ============================================================= -->
-<!-- Bagian: Toast Notification untuk Menampilkan Pesan Salin   -->
-<!-- ============================================================= -->
-<div class="toast-container position-relative">
-    <div id="copyToast" class="toast align-items-center text-bg-success border-0 position-absolute" role="alert"
-        aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                <i class="fas fa-check-circle me-2"></i> Copied to clipboard
+<!-- ==================================== -->
+<!-- Bagian: Modal untuk konfirmasi salin -->
+<!-- ==================================== -->
+<div class="modal fade" id="copySuccessModal" tabindex="-1" aria-labelledby="copySuccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="copySuccessLabel">Sukses</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Teks telah berhasil disalin ke clipboard!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ============================================================= -->
-<!-- Bagian: Toast Notification untuk Menampilkan Pesan Edit   -->
-<!-- ============================================================= -->
+<!-- =================================== -->
+<!-- Bagian: Modal untuk konfirmasi Edit -->
+<!-- =================================== -->
 <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -439,11 +444,25 @@
             });
         }
     });
+
+    $(document).ready(function () {
+        $(".copy-btn").click(function () {
+            let commentText = $(this).data("review"); // Mengambil teks komentar dari data-attribute
+            
+            // Cek apakah Clipboard API tersedia
+            if (navigator.clipboard) {
+                // Salin teks komentar ke clipboard
+                navigator.clipboard.writeText(commentText).then(function () {
+                    // Ganti dengan alert sebagai feedback
+                    alert('Teks telah berhasil disalin ke clipboard!');
+                }).catch(function (error) {
+                    alert('Gagal menyalin komentar: ' + error);
+                });
+            } else {
+                alert('Clipboard API tidak didukung di browser ini.');
+            }
+        });
+    });
 });
 
 </script>
-
-<!-- ============================================================= -->
-<!-- Pemuatan Library JavaScript Bootstrap Terbaru                -->
-<!-- ============================================================= -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
