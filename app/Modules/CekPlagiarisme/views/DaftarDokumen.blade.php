@@ -27,6 +27,47 @@
         </div>
     </div>
 </section>
+<!-- Modal untuk Upload Dokumen -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Unggah Dokumen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="judul">Judul Dokumen</label>
+                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
+                        <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Dokumen</label>
+                        <div class="d-flex">
+                            <input type="file" class="form-control-file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" required>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-success btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
+                        </div>
+                        <small class="text-muted">
+                            Batasan Unggah <br>
+                            Ukuran dokumen maksimal: 15 MB <br>
+                            Jenis dokumen yang valid: PDF, DOCX
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" id="previewBtn">Unggah</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('js')
@@ -35,7 +76,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="role_user" content="{{ auth()->user()->role_user }}">
-<meta name="prefix-url"content="{{ env('PREFIX_URL', 'sipta-dev') }}">
+<meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
@@ -50,7 +91,7 @@
             // Mengambil data kota dari API
             $.ajax({
                 type: "GET",
-                url: urlKota, 
+                url: urlKota,
                 dataType: "json",
                 success: function(response) {
                     console.log("Data Kota:", response); // Periksa data yang diterima
@@ -79,6 +120,8 @@
             console.log("Akses dibatasi hanya untuk dosen");
             $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
         }
+    });
+
 
     $(document).ready(function() {
         // Ambil prefix URL dari meta tag yang ada di halaman
@@ -210,77 +253,77 @@
                 console.error("Gagal mengambil data dari API:", status, error);
             }
         });
+    });
 
-        // Fungsi untuk menampilkan modal upload
-        $('#uploadButton').click(function() {
-            $('#uploadModal').modal('show');
-        });
+    // Fungsi untuk menampilkan modal upload
+    $('#uploadButton').click(function() {
+        $('#uploadModal').modal('show');
+    });
 
-        // Validasi sebelum mengunggah dokumen
-        $('#uploadForm').submit(function(event) {
-            event.preventDefault(); // Mencegah form dikirimkan secara default
+    // Validasi sebelum mengunggah dokumen
+    $('#uploadForm').submit(function(event) {
+        event.preventDefault(); // Mencegah form dikirimkan secara default
 
-            var judul = $('#judulDokumen').val(); // Ambil judul dokumen
-            var file = $('#dokumenFile')[0].files[0]; // Ambil file yang diunggah
+        var judul = $('#judulDokumen').val(); // Ambil judul dokumen
+        var file = $('#dokumenFile')[0].files[0]; // Ambil file yang diunggah
 
-            // Validasi input
-            if (!judul || !file) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Silakan isi semua data dan pilih file sebelum mengunggah!',
-                });
-                return;
-            }
-
-            let jumlahKata = judul.trim().split(/\s+/).length;
-            if (jumlahKata > 20) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Judul dokumen tidak boleh lebih dari 20 kata!',
-                });
-                return;
-            }
-
-            // Validasi ukuran file (maksimal 15 MB)
-            var maxFileSize = 15 * 1024 * 1024; // 15 MB
-            if (file.size > maxFileSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal mengunggah!',
-                    text: 'Ukuran file melebihi batas maksimal 15MB.',
-                });
-                return;
-            }
-
-            // Validasi ekstensi file (hanya PDF dan DOCX)
-            var validExtensions = ['pdf', 'docx'];
-            var fileExtension = file.name.split('.').pop().toLowerCase();
-            if (!validExtensions.includes(fileExtension)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal mengunggah!',
-                    text: 'Hanya dokumen dengan format PDF atau DOCX yang diperbolehkan.',
-                });
-                return;
-            }
-
-            // Menampilkan pop-up tanda berhasil upload
+        // Validasi input
+        if (!judul || !file) {
             Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
-                confirmButtonText: 'Tutup',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload(); // Reload halaman setelah klik "Tutup"
-                }
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Silakan isi semua data dan pilih file sebelum mengunggah!',
             });
+            return;
+        }
 
-            // Tutup modal upload dokumen setelah unggah berhasil
-            $('#uploadModal').modal('hide');
+        let jumlahKata = judul.trim().split(/\s+/).length;
+        if (jumlahKata > 20) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Judul dokumen tidak boleh lebih dari 20 kata!',
+            });
+            return;
+        }
+
+        // Validasi ukuran file (maksimal 15 MB)
+        var maxFileSize = 15 * 1024 * 1024; // 15 MB
+        if (file.size > maxFileSize) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengunggah!',
+                text: 'Ukuran file melebihi batas maksimal 15MB.',
+            });
+            return;
+        }
+
+        // Validasi ekstensi file (hanya PDF dan DOCX)
+        var validExtensions = ['pdf', 'docx'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!validExtensions.includes(fileExtension)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengunggah!',
+                text: 'Hanya dokumen dengan format PDF atau DOCX yang diperbolehkan.',
+            });
+            return;
+        }
+
+        // Menampilkan pop-up tanda berhasil upload
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
+            confirmButtonText: 'Tutup',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.reload(); // Reload halaman setelah klik "Tutup"
+            }
         });
+
+        // Tutup modal upload dokumen setelah unggah berhasil
+        $('#uploadModal').modal('hide');
     });
 
     function getStatusBadge(persentase, ambangBatas) {
@@ -301,48 +344,4 @@
         }
     }
 </script>
-
- <!-- Modal untuk Upload Dokumen -->
-<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Unggah Dokumen</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="uploadForm">
-                    @csrf
-                    <div class="form-group">
-                        <label for="judul">Judul Dokumen</label>
-                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
-                        <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Pilih Dokumen</label>
-                        <div class="d-flex">
-                            <input type="file" class="form-control-file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" required>
-                        </div>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-success btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
-                        </div>
-                        <small class="text-muted">
-                            Batasan Unggah <br>
-                            Ukuran dokumen maksimal: 15 MB <br>
-                            Jenis dokumen yang valid: PDF, DOCX
-                        </small>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" id="previewBtn">Unggah</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 @stop
