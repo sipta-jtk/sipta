@@ -611,14 +611,20 @@ return [
         ],
         [
             'text' => 'Cek Plagiarisme',
-            'url' => $prefix . '/cek-plagiarisme',
             'icon' => 'fas fa-fw fa-file',
-        ],
-        [
-            'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => $prefix . '/penentuan-ambang-batas',
-            'icon' => 'fas fa-scroll',
-            'can' => 'koordinator_ta'
+            'submenu' => [
+                [
+                    'text' => 'Cek Plagiarisme',
+                    'url' => $prefix . '/cek-plagiarisme',
+                    'icon' => 'fas fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Penentuan Ambang Batas Plagiarisme',
+                    'url' => $prefix . '/penentuan-ambang-batas',
+                    'icon' => 'fas fa-scroll',
+                    'can' => 'koordinator_ta'
+                ],
+            ]
         ],
         ['header' => 'Pengaturan Pengguna'],
         [

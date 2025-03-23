@@ -3,14 +3,19 @@
 @section('title', 'Detail Plagiarism Check')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', '');
+@endphp
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <!-- Judul Halaman -->
     <h1 class="mb-0">Detail Plagiarism Check</h1>
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="me-4">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url('/cek-plagiarisme') }}">Plagiarism Checking</a></li>
+            <li class="breadcrumb-item"><a href="{{ url($prefix . '/') }}">Home</a></li>
+            <li class="breadcrumb-item">
+                <a href="{{ url($prefix . '/cek-plagiarisme') }}">
+                    Plagiarism Checking
+                </a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
         </ol>
     </nav>
