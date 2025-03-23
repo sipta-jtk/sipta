@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa')
+@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang')
 
 @section('content_header')
-    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa</strong></h1>
+    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang</strong></h1>
 @stop
 
 @section('content')
