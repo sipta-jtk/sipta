@@ -4,8 +4,10 @@ use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
+use App\Modules\KelolaPenilaianTA\Controllers\PemberianFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
+use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiController;
 use Illuminate\Support\Facades\DB;
 
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
@@ -73,16 +75,19 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     });
 
 
-    // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+    // ================= PEMBERIAN FEEDBACK =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
-        Route::get('/{id}/masukan/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSeminar']);
-        Route::get('/{id}/nilai/{kota}', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSeminar']);
-        Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanNilaiSeminar']);
-        Route::get('/{id}/nilai/{kota}/tambah', [PemberianNilaiDanFeedbackController::class, 'simpanNilaiSeminar']);
-        Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiDanFeedbackController::class, 'editNilaiSeminar']);
-        Route::get('/{id}/nilai/{kota}/edit', [PemberianNilaiDanFeedbackController::class, 'editNilaiSeminar']);
+        Route::get('/{id}/masukan/{kota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar']);
+        Route::post('/{id}/masukan/{kota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
     });
+
+        // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+        Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
+            Route::get('/{id}/nilai/{kota}', [PemberianNilaiController::class, 'pengisianNilaiSeminar']);
+            Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar']);
+            Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiController::class, 'editNilaiSeminar']);
+        });
 
     Route::prefix('nilai-sidang')->group(function () {
         Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);

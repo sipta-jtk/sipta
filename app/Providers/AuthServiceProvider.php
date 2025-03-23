@@ -113,6 +113,6 @@ class AuthServiceProvider extends ServiceProvider
         //Contoh Akses Multirole
         Gate::define('akses-penilaian-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
-
+        });
     }
 }

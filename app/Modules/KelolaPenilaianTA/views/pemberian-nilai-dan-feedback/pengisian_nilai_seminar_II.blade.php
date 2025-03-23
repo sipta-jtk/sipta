@@ -14,7 +14,7 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ ucwords(strtolower($data['nama_fta'])) }}</h1>
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($data['nama_fta']) }}</h1>
     </div>
 @stop
 
@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $data['start'] }}</span>
+                <span>{{ $data['waktu'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>
@@ -76,12 +76,15 @@
             </div>
         </div>
 
-        <!-- Preview File -->
+        <!-- Tombol Preview -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar III</strong> <br>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1Lpfnr6FSr2Sa8laHnkz_tUPRTRfTmyi5/view?usp=drive_link')">
-                    File Dokumen
+                <strong>Preview File Dokumen Seminar II</strong> <br>
+                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
+                    Laporan
+                </button>
+                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
+                    Power Point
                 </button>
             </div>
         </div>
@@ -164,7 +167,7 @@
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ url('/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['id_fta']) }}" class="btn btn-primary">Selanjutnya</a>
+                    <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['id_fta']) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>
@@ -186,4 +189,37 @@
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Menginisialisasi popover untuk elemen yang sudah ada
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover',
+                placement: 'top',
+                html: true
+            });
+
+            // Event delegation untuk elemen dinamis
+            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
+                $(this).popover('show');
+            }).on('mouseleave', '[data-toggle="popover"]', function () {
+                $(this).popover('hide');
+            });
+        });
+
+        function loadPreview(url) {
+            let fileId = extractDriveFileId(url);
+            if (fileId) {
+                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                document.getElementById('previewFrame').src = embedUrl;
+            } else {
+                alert("Format link tidak valid!");
+            }
+        }
+
+        function extractDriveFileId(url) {
+            let match = url.match(/[-\w]{25,}/);
+            return match ? match[0] : null;
+        }
+    </script>
 @stop
