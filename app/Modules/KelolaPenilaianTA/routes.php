@@ -52,7 +52,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     });
 
    // ================= PENGELOLAAN NILAI =================
-    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta']);
+    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->name('kelola.penilaian');;
 
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {

@@ -112,7 +112,8 @@
         <!-- Form Penilaian -->
         @php
             $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
-            $actionUrl = $isEdit ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+            $actionUrl = $isEdit ? route('kelola.penilaian.edit', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]) : route('kelola.penilaian.tambah', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]);
+
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
