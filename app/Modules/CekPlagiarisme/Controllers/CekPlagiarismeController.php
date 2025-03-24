@@ -27,7 +27,7 @@ class CekPlagiarismeController extends Controller
         if (auth()->user()->role_user === 'mahasiswa') {
             $idKota = auth()->user()->mahasiswa->id_kota;
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
-                ->where('kategori', 'laporan')
+                ->where('kategori', 'seminar1')
                 ->where('id_kota', $idKota)
                 ->get();
         } else {
@@ -38,7 +38,7 @@ class CekPlagiarismeController extends Controller
                     return $preferensiKota->id_kota;
                 });
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
-                ->where('kategori', 'laporan')
+                ->where('kategori', 'seminar1')
                 ->whereIn('id_kota', $idKota)
                 ->get();
         }
@@ -136,7 +136,7 @@ class CekPlagiarismeController extends Controller
             'persentase_plagiarisme' => $percentage,
             'versi' => 1,
             'ukuran_file' => $fileSizeInKB,
-            'kategori' => 'laporan',
+            'kategori' => 'seminar1',
             'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
             'highlight_dokumen' => 0,
             'status_berkas' => 'valid',
