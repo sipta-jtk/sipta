@@ -203,9 +203,14 @@
                     <div class="mb-3">
                         <label for="kode_fta" class="form-label">Kode FTA:</label>
                         <select class="form-control" id="kode_fta" name="kode_fta" required>
-                            @for ($i = 1; $i <= 23; $i++)
+                            @for ($i = 1; $i <= 9; $i++)
                                 <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                            @endfor
+                                @endfor
+                                <option value="FTA-10">FTA-10</option>
+                                <option value="FTA-10a">FTA-10a</option>
+                                @for ($i = 11; $i <= 23; $i++)
+                                    <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
+                                    @endfor
                         </select>
                     </div>
                     @endif
@@ -227,8 +232,8 @@
                     @if ($kategori === 'link_source_code')
                     <div class="mb-3">
                         <label for="repository_url" class="form-label">URL Repository:</label>
-                        <input type="url" class="form-control" id="repository_url" name="repository_url" 
-                               placeholder="https://github.com/username/repository" required>
+                        <input type="url" class="form-control" id="repository_url" name="repository_url"
+                            placeholder="https://github.com/username/repository" required>
                         <small class="form-text text-muted">Masukkan URL repository Git (GitHub, GitLab, Bitbucket, dll)</small>
                     </div>
                     @else
@@ -644,7 +649,7 @@
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-                
+
                 const id = this.getAttribute('data-id');
                 const title = this.getAttribute('data-judul');
                 const kategori = "{{ $kategori }}";
