@@ -1,0 +1,98 @@
+@extends('adminlte::page')
+
+@section('title', 'Rekap Presensi Sidang TA')
+
+@section('content_header')
+    <h1>Rekap Berita Acara Sidang TA</h1>
+@stop
+
+@section('content')
+    <div class="card">
+        <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div class="table-responsive">
+                <table id="presensiSidangTA" class="table table-striped table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="w-10">KoTA</th>
+                            <th class="w-20">Nim</th>
+                            <th class="w-20">Nama Mahasiswa</th>
+                            <th class="w-15">Tanggal</th>
+                            <th class="w-15">Ruangan</th>
+                            <th class="w-10">Sesi</th>
+                            <th class="w-10">Status Kehadiran</th>
+                            <th class="w-20">Dokumentasi</th>
+                            <th class="w-15">Batas Revisi</th>
+                            <th class="w-15">Status Kelulusan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($beritaAcaraSidangTA as $index => $item)
+                            <tr>
+                                <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
+                                <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
+                                <td>{{ $item->user->nama ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
+                                <td>
+                                    @if($item->status_hadir == 'hadir')
+                                        <button class="btn btn-success btn-sm" disabled>Hadir</button>
+                                    @elseif($item->status_hadir == 'tidak_hadir')
+                                        <button class="btn btn-danger btn-sm" disabled>Tidak Hadir</button>
+                                    @else
+                                        <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
+                                    @endif
+                                </td>
+                                <td style="width: 50px;">
+                                    @if($item->foto_sidang)
+                                        <div class="mb-2">
+                                            <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 15) }}
+                                            </a>
+                                        </div>
+                                    @else
+                                        <span style="font-size: 1 rem;"> Belum diupload</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->batas_revisi)
+                                        {{ $item->batas_revisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
+                                    @else
+                                        <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->status_kelulusan)
+                                        {{ $item->status_kelulusan }} <!-- Tampilkan status kelulusan jika sudah diisi -->
+                                    @else
+                                        <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+@stop
+
+@section('js')
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $(document).ready(function() {
+            $('#presensiSidangTA').DataTable();
+        });
+    </script>
+@stop
