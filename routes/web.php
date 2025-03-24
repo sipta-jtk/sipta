@@ -35,6 +35,15 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
 
+
+// Route::get('/login', function () {
+//     return view('auth.login');
+// });
+
+// Route::get('/register', function () {
+//     return view('auth.register');
+// });
+
 // routes/web.php
 // Route::get('/settings', function() {
 //     return view('settings'); // Sesuaikan dengan nama view yang kamu buat
@@ -91,9 +100,3 @@ Route::put('/update-data/{id}', function ($id, \Illuminate\Http\Request $request
 
 Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
 
-Route::get('/penentuan-ambang-batas', function () {
-    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
-});
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});

@@ -1,58 +1,14 @@
 $(document).ready(function () {
-    // Handle change of FTA code dropdown
-    $("#kode_fta").change(function () {
-        const selectedKodeFTA = $(this).val();
-        const selectedFormPenilaian = formPenilaianList.find(
-            (form) => form.kode_fta == selectedKodeFTA
-        );
-        
-        $("#nama_fta").val(
-            selectedFormPenilaian ? selectedFormPenilaian.nama_fta : ""
-        );
-
-        // Reset all kriteria dropdowns
-        $(".id_kriteria, .kriteria").html(
-            '<option value="" disabled selected>Pilih Kriteria</option>'
-        );
-
-        if (selectedKodeFTA) {
-            loadKriteria(selectedKodeFTA);
-        }
+    // Handle change of kriteria dropdown
+    $(document).on("change", ".id_kriteria", function () {
+        var selectedOption = $(this).find(":selected");
+        var bobot = selectedOption.data("bobot");
+        $(this)
+            .closest("tr")
+            .find(".bobot")
+            .text(bobot ? bobot + "%" : "-");
+        console.log("Selected criteria with bobot:", bobot);
     });
-
-    // Load kriteria based on selected FTA code
-    function loadKriteria(kodeFTA) {
-        $.ajax({
-            url: `/kelola-penilaian-ta/formulir-penilaian/get-kriteria/${kodeFTA}`,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("Received data:", data);
-
-                if (data.length > 0) {
-                    const kriteriaOptions = data
-                        .map(
-                            (kriteria) =>
-                                `<option value="${kriteria.id}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`
-                        )
-                        .join("");
-
-                    // Update all kriteria dropdowns
-                    $(".id_kriteria, .kriteria").each(function () {
-                        $(this).html(
-                            `<option value="" disabled selected>Pilih Kriteria</option>${kriteriaOptions}`
-                        );
-                    });
-                } else {
-                    console.log("No criteria found for this FTA code");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching criteria:", error);
-                console.log("Response:", xhr.responseText);
-            },
-        });
-    }
 
     // Add new row to table
     $("#addRow").on("click", function () {
@@ -84,6 +40,22 @@ $(document).ready(function () {
             });
         }
 
+        // Dapatkan semua kriteria yang tersedia
+        let kriteriaOptions = '';
+        // Periksa apakah kriteriaList didefinisikan secara global
+        if (typeof kriteriaList !== 'undefined') {
+            kriteriaOptions = kriteriaList.map(kriteria => 
+                `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`
+            ).join('');
+        } else {
+            // Ambil opsi kriteria dari baris yang sudah ada
+            $('#rubrikPenilaianTable tr:first .id_kriteria option').each(function() {
+                if ($(this).val()) {
+                    kriteriaOptions += `<option value="${$(this).val()}" data-bobot="${$(this).data('bobot')}">${$(this).text()}</option>`;
+                }
+            });
+        }
+
         var newRow = `
         <tr>
             <td>
@@ -103,17 +75,6 @@ $(document).ready(function () {
         $("#rubrikPenilaianTable").append(newRow);
     });
 
-    // Handle kriteria selection change (works for both .kriteria and .id_kriteria)
-    $(document).on("change", ".id_kriteria, .kriteria", function () {
-        var selectedOption = $(this).find(":selected");
-        var bobot = selectedOption.data("bobot");
-        $(this)
-            .closest("tr")
-            .find(".bobot")
-            .text(bobot ? bobot + "%" : "-");
-        console.log("Selected criteria with bobot:", bobot);
-    });
-
     // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
         // Make sure we keep at least one row
@@ -124,9 +85,40 @@ $(document).ready(function () {
         }
     });
 
-    // If kode_fta already has a value on page load, load its kriteria
-    const initialKodeFTA = $("#kode_fta").val();
-    if (initialKodeFTA) {
-        loadKriteria(initialKodeFTA);
-    }
+    // Konfirmasi sebelum submit form
+    $("form").on("submit", function (e) {
+        // Validasi form sebelum submit
+        let valid = true;
+        $("input[required], select[required]").each(function () {
+            if (!$(this).val()) {
+                valid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!valid) {
+            e.preventDefault();
+            alert("Mohon isi semua field yang diperlukan.");
+            return false;
+        }
+
+        // Konfirmasi update
+        if (!confirm("Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?")) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Inisialisasi: periksa bobot pada semua baris yang sudah ada
+    $(".id_kriteria").each(function () {
+        var selectedOption = $(this).find(":selected");
+        var bobot = selectedOption.data("bobot");
+        if (!bobot) {
+            // Jika data-bobot tidak ada, coba ambil dari teks yang sudah ada
+            bobot = $(this).closest("tr").find(".bobot").text().replace("%", "");
+        }
+        $(this).closest("tr").find(".bobot").text(bobot ? bobot + "%" : "-");
+    });
 });
