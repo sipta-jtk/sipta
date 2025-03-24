@@ -196,7 +196,7 @@ class AlokasiPembimbingController extends Controller
             }
 
             // Panggil function kirim notifikasi
-            $this->kirimNotifikasiAlokasi($nip_dosen_1->nip, auth()->user()->username);
+            $this->kirimNotifikasiAlokasi($nip_dosen_1, auth()->user()->username);
 
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
@@ -211,7 +211,7 @@ class AlokasiPembimbingController extends Controller
             }
 
             // Panggil function kirim notifikasi
-            $this->kirimNotifikasiAlokasi($nip_dosen_2->nip, auth()->user()->username);
+            $this->kirimNotifikasiAlokasi($nip_dosen_2, auth()->user()->username);
 
             // **Alokasi Penguji**
             if ($nip_penguji_1) {
@@ -254,7 +254,7 @@ class AlokasiPembimbingController extends Controller
         return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');
     }
 
-    private function kirimNotifikasiAlokasi($dosenUsername, $mahasiswaUsername) 
+    public function kirimNotifikasiAlokasi($dosenUsername, $mahasiswaUsername) 
     {
         $templateDosen = TemplateNotifikasi::where('judul_notifikasi', 'Pemberitahuan: Mahasiswa Telah Mengajukan Bimbingan')->first();
         $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', 'Pengajuan Bimbingan Berhasil')->first();

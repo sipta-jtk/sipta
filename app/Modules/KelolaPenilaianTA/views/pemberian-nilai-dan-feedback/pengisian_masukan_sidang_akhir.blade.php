@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/nilai-sidang/akhir'), 'label' => 'Penilaian Sidang D3'],
                 ['url' => '', 'label' => 'Catatan Perbaikan Laporan']
             ]
@@ -89,7 +89,7 @@
         <h3 class="heading-spacing text-center">CATATAN PERBAIKAN LAPORAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('/kelola-penilaian-ta') }}">
+        <form action="{{ route('kelola.penilaian') }}">
             @csrf
 
             <!-- Dokumen -->
