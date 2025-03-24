@@ -10,15 +10,67 @@
 <section class="content">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="search-box d-flex align-items-center">
-                <input type="text" class="form-control" id="searchInput" placeholder="Cari...">
+            <div class="search-box">
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
             </div>
+            @if(auth()->user()->role_user === 'dosen')
+            <div class="form-group ml-auto align-items-right mt-3">
+                <select id="kelompokSelect" class="form-control">
+                </select>
+            </div>
+            @else(auth()->user()->role_user === 'mahasiswa')
+            <div class="form-group ml-auto align-items-right mt-3">
+                <!-- Button Unggah Dokumen -->
+                <button class="btn btn-primary ml-3" id="uploadButton">Unggah Dokumen</button>
+            </div>
+            @endif
         </div>
         <div class="card-body">
             <div id="jsGridPlagiarism"></div>
         </div>
     </div>
 </section>
+<!-- Modal untuk Upload Dokumen -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Unggah Dokumen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="judul">Judul Dokumen</label>
+                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
+                        <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Dokumen</label>
+                        <div class="d-flex">
+                            <input type="file" class="form-control-file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" required>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-success btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
+                        </div>
+                        <small class="text-muted">
+                            Batasan Unggah <br>
+                            Ukuran dokumen maksimal: 15 MB <br>
+                            Jenis dokumen yang valid: PDF, DOCX
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" id="previewBtn">Unggah</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('js')
@@ -26,16 +78,66 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="role_user" content="{{ auth()->user()->role_user }}">
+<meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
+    var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
+        // Ambil role_user dari meta tag yang ada di halaman
+        var roleUser = $("meta[name='role_user']").attr("content");
+
+        // Ambil prefix URL dari meta tag yang ada di halaman
+        var urlKota = `${prefixUrl}/api/kotas`;
+
+        if (roleUser === 'dosen') {
+            // Mengambil data kota dari API
+            $.ajax({
+                type: "GET",
+                url: urlKota,
+                dataType: "json",
+                success: function(response) {
+                    console.log("Data Kota:", response); // Periksa data yang diterima
+
+                    var kelompokOptions;
+
+                    if (response.length === 0) {
+                        kelompokOptions = '<option value="">Tidak ada kelompok</option>';
+                    } else {
+                        kelompokOptions = '<option value="">Semua Kelompok</option>'; // Opsi default
+                        // Menambahkan opsi ke dropdown
+                        kelompokOptions += response.map(function(item) {
+                            return `<option value="${item.id_kota}">${item.nama_kota}</option>`;
+                        }).join('');
+                    }
+
+                    // Menambahkan opsi ke dropdown kelompokSelect
+                    $("#kelompokSelect").append(kelompokOptions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Gagal mengambil data kota:", status, error);
+                }
+            });
+        } else {
+            // Jika yang login bukan dosen, bisa tampilkan pesan atau tidak menjalankan AJAX sama sekali
+            console.log("Akses dibatasi hanya untuk dosen");
+            $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
+        }
+    });
+
+
+    $(document).ready(function() {
+        // Ambil prefix URL dari meta tag yang ada di halaman
+        var urlDokumen = `${prefixUrl}/api/cek-plagiarisme`;
+
         $.ajax({
             type: "GET",
-            url: "/api/cek-plagiarisme",
+            url: urlDokumen,
             dataType: "json",
             success: function(response) {
                 console.log("Data dari API:", response);
 
+                // Sorting berdasarkan waktu secara descending
                 response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
 
                 response = response.map((item, index) => ({
@@ -46,22 +148,24 @@
                     penulis: item.penulis,
                     presentase: item.persentase_plagiarisme + "%",
                     status: item.status,
-                    komentar: getKomentarLink(item.review, item.id_dokumen)
+                    komentar: getKomentar(item.review, item.id_dokumen),
+                    id_kota: item.id_kota
                 }));
 
                 $("#jsGridPlagiarism").jsGrid({
                     width: "100%",
-                    height: "450px",
+                    height: "600px",
                     sorting: true,
                     paging: true,
+                    noDataContent: "Dokumen tidak ditemukan",
                     rowClick: function(args) {
-                        window.location.href = "/cek-plagiarisme/" + args.item.id_dokumen;
+                        window.location.href = prefixUrl + "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
                     },
                     data: response,
                     fields: [{
                             name: "nomor",
                             type: "number",
-                            title: "No",
+                            title: "Nomor",
                             width: 50,
                             align: "center"
                         },
@@ -69,7 +173,8 @@
                             name: "judul",
                             type: "text",
                             title: "Judul",
-                            width: 200
+                            width: 200,
+                            align: "center"
                         },
                         {
                             name: "waktu",
@@ -109,16 +214,138 @@
                     ]
                 });
 
+                // Fungsi untuk memperbarui jsGrid setelah filter
+                function updateJsGrid(filteredData) {
+                    // Update nomor urut setelah filter
+                    filteredData = filteredData.map((item, index) => ({
+                        ...item,
+                        nomor: index + 1 // Reset nomor urut
+                    }));
+
+                    // Update data di jsGrid
+                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+                }
+
+                // Filter berdasarkan kelompok (id_kota) yang dipilih
+                $("#kelompokSelect").on("change", function() {
+                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
+
+                    // Filter berdasarkan id_kota dan search input
+                    filterData(selectedKota, $("#searchInput").val());
+                });
+
+                // Filter berdasarkan pencarian (search input)
                 $("#searchInput").on("keyup", function() {
                     var searchValue = $(this).val().toLowerCase();
-                    var filteredData = response.filter(item =>
-                        Object.values(item).some(value => String(value).toLowerCase().includes(searchValue))
-                    );
-                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+
+                    // Filter berdasarkan id_kota yang dipilih dan search input
+                    filterData($("#kelompokSelect").val(), searchValue);
                 });
+
+                // Fungsi untuk melakukan filter berdasarkan id_kota dan search
+                function filterData(selectedKota, searchValue) {
+                    var filteredData = response.filter(item => {
+                        // Filter berdasarkan id_kota
+                        var kotaFilter = selectedKota ? item.id_kota == selectedKota : true;
+
+                        // Filter berdasarkan pencarian (search)
+                        var searchFilter = Object.values(item).some(value =>
+                            String(value).toLowerCase().includes(searchValue)
+                        );
+
+                        // Kembalikan true jika data memenuhi kedua kondisi (id_kota dan search)
+                        return kotaFilter && searchFilter;
+                    });
+
+                    // Update data di jsGrid
+                    updateJsGrid(filteredData);
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Gagal mengambil data dari API:", status, error);
+            }
+        });
+    });
+
+    // Fungsi untuk menampilkan modal upload
+    $('#uploadButton').click(function () {
+        $('#uploadModal').modal('show');
+    });
+
+    // Validasi dan Kirim Form Upload
+    $('#previewBtn').click(function (event) {
+        event.preventDefault();
+
+        var judul = $('#judulDokumen').val();
+        var file = $('#dokumenFile')[0].files[0];
+
+        if (!judul || !file) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Silakan isi semua data dan pilih file sebelum mengunggah!',
+            });
+        }
+
+        let jumlahKata = judul.trim().split(/\s+/).length;
+        if (jumlahKata > 20) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Judul dokumen tidak boleh lebih dari 20 kata!',
+            });
+        }
+
+        var maxFileSize = 15 * 1024 * 1024;
+        if (file.size > maxFileSize) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengunggah!',
+                text: 'Ukuran file melebihi batas maksimal 15MB.',
+            });
+        }
+
+        var validExtensions = ['pdf', 'docx'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!validExtensions.includes(fileExtension)) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengunggah!',
+                text: 'Hanya dokumen dengan format PDF atau DOCX yang diperbolehkan.',
+            });
+        }
+
+        // ✅ Kirim Form via AJAX
+        var formData = new FormData();
+        formData.append('judul', judul);
+        formData.append('dokumen', file);
+        formData.append('_token', $('meta[name="csrf-token"]').attr("content")); // CSRF token
+
+        $.ajax({
+            url: `${prefixUrl}/cekplagiarisme/process`,
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
+                    confirmButtonText: 'Tutup',
+                }).then(() => {
+                    $('#uploadModal').modal('hide');
+                    $('#uploadForm')[0].reset();
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal mengunggah!',
+                    text: xhr.responseJSON?.message ?? 'Terjadi kesalahan saat mengunggah dokumen.',
+                });
             }
         });
     });
@@ -133,7 +360,7 @@
         }
     }
 
-    function getKomentarLink(komentar, id) {
+    function getKomentar(komentar, id) {
         if (komentar) {
             return '<span class="text-dark">Komentar diberikan</span>';
         } else {
