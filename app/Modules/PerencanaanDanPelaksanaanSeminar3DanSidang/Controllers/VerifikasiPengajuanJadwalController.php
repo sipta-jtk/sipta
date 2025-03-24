@@ -6,6 +6,8 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
@@ -145,17 +147,14 @@ class VerifikasiPengajuanJadwalController extends Controller
                 ->first();
         
             if ($roomInformation) {       
-                // Format tanggal dan waktu
-                $startDateTime = $roomInformation->tanggal . " " . $rooomInformation->start;
-                $endDateTime = $roomInformation->tanggal . " " . $roomInformation->end;
-        
+               
                 $response = Http::withHeaders([
                     'X-Requested-With' => 'XMLHttpRequest'
                 ])->post('http://host.docker.internal:8005/api/v1/schedule/action', [
                     'type' => 'add',
                     'agenda' => $roomInformation->agenda,
-                    'start' => $startDateTime,
-                    'end' => $endDateTime,
+                    'start' => $roomInformation->start,
+                    'end' => $roomInformation->end  ,
                     'id_ruangan' => $roomInformation->id_ruangan,
                     'id_kota' => $roomInformation->id_kota,
                     'nip' => '123004062006'
