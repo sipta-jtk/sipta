@@ -10,24 +10,96 @@ use App\Models\Mahasiswa;
 use App\Models\KategoriPenilaian;
 use App\Models\KriteriaPenilaian;
 use App\Models\FormPenilaian;
+use App\Models\Kota;
 use Illuminate\Support\Facades\Log;
 
 class PemberianNilaiController extends Controller
 {
+
+    public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
+    {
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        if ($namaFtaSlug == 'seminar ii') {
+            return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
+        } else {
+            return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi);
+        }
+    }
+
+    public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi): View
+    {
+        $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
+            ->with('penjadwalan', 'mahasiswa.user')
+            ->get();
+
+        $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'penilaian')
+            ->distinct()
+            ->with('kriteriaPenilaian.rubrik')
+            ->get();
+        
+        Log::info('Detail Informasi FTA: ' . json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_kriteria', [
+            'detailInformasiFta' => $detailInformasiFta,
+            'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),
+            'namaFta' => $namaFtaSlug,
+            'idKota' => $idKota,
+        ]);
+    }
+
+    public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
+    {
+        $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
+            ->with('penjadwalan', 'mahasiswa.user')
+            ->first(); // Menggunakan first() karena hanya satu data yang diambil
+
+        // Ambil semua data form penilaian beserta rubrik
+        $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'penilaian')
+            ->with([
+                'kriteriaPenilaian.rubrik' => function ($query) {
+                    $query->with('detailRubrik.nilai'); // Ambil detail rubrik dan nilai
+                }
+            ])
+            ->get();
+
+        Log::info('Detail Penilaian FTA: ' . json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
+
+        // Ekstrak rubrik ke dalam satu variabel array
+        $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
+            return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
+                return $kriteria->rubrik;
+            });
+        })->first()->detailRubrik;
+
+        // Log::info('Rubrik List: ' . json_encode($rubrikList, JSON_PRETTY_PRINT));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_rubrik', [
+            'keteranganUmumPenilaian' => $keteranganUmumPenilaian,
+            'detailInformasiFta' => $detailInformasiFta,
+            'rubrikList' => $rubrikList,
+            'idKota' => $idKota,
+            'namaFta' => $namaFtaSlug,
+        ]);
+    }
+
+    
     /**
      * Akses halaman pemberian nilai
      */
-    public function pengisianNilaiSeminar($idFta, $idKota) 
-    {
-        switch ($idFta) {
-            case 2:
-                return $this->pengisianNilaiSeminarII($idFta, $idKota);
-            case 4:
-                return $this->pengisianNilaiSeminarIII($idFta, $idKota);
-            default:
-                abort(404, "Seminar tidak ditemukan");
-        }
-    }
+    // public function pengisianNilaiSeminar($idFta, $idKota) 
+    // {
+    //     switch ($idFta) {
+    //         case 2:
+    //             return $this->pengisianNilaiSeminarII($idFta, $idKota);
+    //         case 4:
+    //             return $this->pengisianNilaiSeminarIII($idFta, $idKota);
+    //         default:
+    //             abort(404, "Seminar tidak ditemukan");
+    //     }
+    // }
 
 
     /**

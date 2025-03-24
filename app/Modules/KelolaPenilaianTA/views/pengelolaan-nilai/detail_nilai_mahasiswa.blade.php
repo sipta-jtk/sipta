@@ -14,7 +14,7 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Nilai {{ $namaKategori }}</h1>
+        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->first()->nama_fta }}</h1>
     </div>
 @stop
 
@@ -33,7 +33,7 @@
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         <th rowspan="2" class="align-middle">Rata-rata</th>
-                        @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
+                        @if (strtolower($detailInformasiFta->first()->nama_fta) == 'seminar i' || strtolower($detailInformasiFta->first()->nama_fta) == 'seminar ii')
                             <th rowspan="2" class="align-middle">Aksi</th>
                         @endif
                     </tr>
@@ -44,25 +44,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($filteredData as $data)
+                    @foreach ($detailNilaiMahasiswa as $index => $data)
                         <tr>
-                            <td> {{ $data['index']}} </td>
-                            <td> {{ $data['nama'] }} </td>
-                            <td> {{ $data['kelompok'] }} </td>
-                            @foreach ($data['kode_dosen'] as $kode)
-                                <td> {{ $kode }} </td>
+                            <td> {{ $index + 1 }} </td>
+                            <td> {{ $data->user->nama }} </td>
+                            <td> {{ $data->kota->nama_kota }} </td>
+                            @php
+                                $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
+                                while (count($pengujiList) < 3) {
+                                    $pengujiList[] = '-';
+                                }
+                            @endphp
+                        
+                            @foreach ($pengujiList as $penguji)
+                                <td> {{ $penguji }} </td>
                             @endforeach
-                            @foreach ($data['nilai'] as $nilai)
+                        
+                            @php
+                                $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
+                                while (count($nilaiList) < 3) {
+                                    $nilaiList[] = 0; // Menggunakan 0 agar tetap valid dalam perhitungan
+                                }
+                        
+                                $rataRata = count($data->nilaiKategori) > 0 
+                                    ? array_sum($nilaiList) / count($data->nilaiKategori) 
+                                    : 0;
+                            @endphp
+                        
+                            @foreach ($nilaiList as $nilai)
                                 <td> {{ $nilai }} </td>
                             @endforeach
-                            <td> {{ $data['rata-rata'] }} </td>
-                            @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
+                        
+                            <td> {{ number_format($rataRata, 2) }} </td>
+                        
+                            @if (in_array(strtolower($detailInformasiFta->first()->nama_fta), ['seminar i', 'seminar ii', 'seminar iii']))
+                                    {{-- TBD jika dosen sudah mengisi nilai maka tombol nilai akan merah --}}
+                                    {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
+                                    {{-- TBD jika dosen sudah menyimpan sebagai draf --}}
                                     <td> 
-                                        <a href="{{ route('pengisian.nilai', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Nilai</a>
-                                        <form action="{{ route('pengisian.masukan.store', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" method="POST" style="display:inline;" class="finalisasi-form">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
-                                        </form>
+                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
                                     </td>
                             @endif
                         </tr>

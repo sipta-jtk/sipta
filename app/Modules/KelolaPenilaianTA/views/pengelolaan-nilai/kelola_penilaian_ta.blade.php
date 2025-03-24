@@ -19,6 +19,7 @@
 
 @section('content')
     <div class="shadow p-3 mb-5 bg-body rounded">
+
         <table class="table table-striped table-bordered text-center">
             <thead class="bg-brown text-white">
                 <tr>
@@ -26,16 +27,16 @@
                     <th class="bg-dark w-40">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach ($kategori as $index => $data)
+            <tbody id="kategori-table">
+                @foreach ($kategoriPenilaian as $index => $nama_fta)
                     <tr>
-                        <td>{{ $data['nama_fta'] }}</td>
+                        <td>{{ $nama_fta }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
-                                @if (!in_array(strtolower($data['nama_fta']), ['seminar i', 'seminar ii']))
+                                @if (!in_array(strtolower($nama_fta), ['seminar i', 'seminar ii']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ route('pengelolaan-nilai.detail', ['id' => $data->id_fta]) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
+                                <a href="{{ route('kelola.penilaian.detail', ['namaFta' => Str::slug($nama_fta)]) }}" class="btn btn-primary buka-detail" data-id="{{ $index }}">Buka Detail</a>
                             </div>
                         </td>
                     </tr>

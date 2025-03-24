@@ -22,83 +22,45 @@ class PengelolaanNilaiController extends Controller{
     public function kelolaNilai(): View
     {
         $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
-            ->where('jenis_form', 'penilaian') // Menambahkan kondisi where untuk jenis_form
             ->orderBy('nama_fta')
-            ->get();
+            ->distinct()
+            ->pluck('nama_fta');
 
-        $kategoriFeedback = FormPenilaian::whereIn('nama_fta', ['Seminar I'])
-            ->unique('nama_fta')
-        // Log::info('Data kategori: ' . json_encode($kategori, JSON_PRETTY_PRINT));
-        // $kategori = FormPenilaian::whereIn('id_fta', [1, 2, 4, 6])
-        //     ->orderBy('id_fta', )
-        //     ->get();
-            
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('kategori'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', [
+            'kategoriPenilaian' => $kategoriPenilaian,
+        ]);
     }
 
-    /**
-     * Menampilkan halaman detail nilai mahasiswa
-     * 
-     */
-    public function detailNilaiMahasiswa($idFta): View
+    public function detailNilaiMahasiswa($namaFta): View
     {
-        $formPenilaian = FormPenilaian::where('id_fta', $idFta)
-            ->with('kategoriPenilaian')
-            ->orderBy('id_fta')
-            ->first();
+        $namaFtaSlug = Str::slug($namaFta, ' '); // Convert to lowercase and replace hyphens with spaces
+        $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->select('kode_fta', 'nama_fta', 'id_prodi', 'id_fta') // Hanya mengambil kolom yang diperlukan
+            ->orderBy('nama_fta')
+            ->distinct()
+            ->get();
+    
         
-        $namaKategori = $formPenilaian->nama_fta;
-        $idKategori = $formPenilaian->kategoriPenilaian[0]->id_kategori;
+        // Log::info('Detail FTA: ' . JSON_ENCODE($detailInformasiFta, JSON_PRETTY_PRINT));
+        $idFtaList = $detailInformasiFta->pluck('id_fta')->toArray();
 
-        $data = Mahasiswa::with(['nilaiKategori' => function ($query) use ($idKategori) {
-            $query->where('id_kategori', $idKategori);
-        }, 'nilaiKategori.dosen', 'user', 'kota'])->get();
+        $detailNilaiMahasiswa = Mahasiswa::with([
+            'nilaiKategori' => function ($query) use ($idFtaList) {
+                $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaList) {
+                    $q->whereIn('id_fta', $idFtaList);
+                });
+            },
+            'nilaiKategori.kategoriPenilaian',
+            'nilaiKategori.dosen',
+            'user',
+            'kota',
+        ])->get();
 
-        $filteredData = $this->mappingViewDetailNilaiMahasiswa($data);
+        Log::info('Detail informasi nilai: ' . JSON_ENCODE($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
+        // Log::info('Informasi FTA: ' . JSON_ENCODE($detailInformasiFta, JSON_PRETTY_PRINT));
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('filteredData', 'namaKategori', 'idFta'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta'));
     }
-
-    /**
-     * Helper function untuk mapping data mahasiswa ke view detail nilai mahasiswa
-     * 
-     */
-    private function mappingViewDetailNilaiMahasiswa($data): array
-{
-    $startTime = microtime(true);
-
-    $filteredData = [];
-
-    foreach ($data as $index => $mahasiswa) {
-        $nilaiArray = [0, 0, 0];
-        $kodeDosenArray = ['-', '-', '-'];
-
-        foreach ($mahasiswa->nilaiKategori as $index => $nilaiKategori) {
-            $nilaiArray[$index] = $nilaiKategori->nilai;
-            $kodeDosenArray[$index] = $nilaiKategori->dosen->id_dosen;
-        }
-
-        $nilaiArray = array_map(fn($nilai) => round($nilai, 2), $nilaiArray);
-
-        $filtered = array_filter($nilaiArray, fn($nilai) => $nilai > 0);
-        $rataRata = count($filtered) > 0 ? round(array_sum($filtered) / count($filtered), 2) : 0.00;
-        $filteredData[] = [
-            'index' => $index + 1,
-            'id_kota' => $mahasiswa->kota->id_kota ?? '-',
-            'nama' => $mahasiswa->user->nama ?? '-',
-            'kelompok' => $mahasiswa->kota->nama_kota ?? '-',
-            'nilai' => $nilaiArray,
-            'kode_dosen' => $kodeDosenArray,
-            'rata-rata' => $rataRata,
-        ];
-    }
-
-    $endTime = microtime(true);
-    $executionTime = $endTime - $startTime;
-    Log::info('Execution time of mappingViewDetailNilaiMahasiswa: ' . $executionTime . ' seconds');
-
-    return $filteredData;
-}
 
     /**
      * Menampilkan halaman tambah nilai mahasiswa
