@@ -4,12 +4,9 @@
 
 @section('content_header')
     <h1>Log Notifikasi Mahasiswa</h1>
-    @include('NotificationAndReminder::modals.log-modal')
-    @include('NotificationAndReminder::modals.preferences-modal')
 @stop
 
 @section('content')
-
     {{-- Daftar Log Notifikasi --}}
     <div class="card">
         <div class="card-header">
@@ -23,7 +20,6 @@
                         <th>Tanggal & Waktu</th>
                         <th>Judul Notifikasi</th>
                         <th>Sumber</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="notifications-table-body">
@@ -55,67 +51,75 @@
             </div>
         </div>
     </div>
-
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Memuat data notifikasi dari API
-            $.get('/api/notifications', function(data) {
-                const $tbody = $('#notifications-table-body');
-                $tbody.empty();
+<script>
+    $(document).ready(function () {
+        // Data dummy notifikasi
+        const dummyNotifications = [
+            {
+                judul: 'Pemberitahuan Jadwal Seminar',
+                isi_notifikasi: 'Anda telah berhasil mendaftarkan jadwal seminar pada tanggal 25 Oktober 2023.',
+                sumber_notifikasi: 'Admin Sistem',
+                created_at: '2023-10-25 10:30:00',
+            },
+            {
+                judul: 'Pengumpulan Artefak Diterima',
+                isi_notifikasi: 'Artefak yang Anda kumpulkan telah diterima dan diverifikasi oleh dosen pembimbing.',
+                sumber_notifikasi: 'Dosen Pembimbing',
+                created_at: '2023-10-24 14:45:00',
+            },
+            {
+                judul: 'Pengingat Sidang Akhir',
+                isi_notifikasi: 'Sidang akhir akan dilaksanakan pada tanggal 30 Oktober 2023 pukul 09:00 WIB.',
+                sumber_notifikasi: 'Koordinator TA',
+                created_at: '2023-10-23 08:15:00',
+            },
+        ];
 
-                // Jika data kosong, tampilkan pesan
-                if (!Array.isArray(data) || data.length === 0) {
-                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
-                    return;
-                }
+        const $tbody = $('#notifications-table-body');
+        $tbody.empty();
 
-                // Iterasi data dan menambahkan ke tabel
-                data.forEach(function(notif, index) {
-                    let row = `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${notif.created_at}</td>
-                            <td>${notif.judul}</td>
-                            <td>${notif.sumber_notifikasi}</td>
-                            <td>
-                                <button class="btn btn-info btn-sm btn-detail"
-                                    data-title="${encodeURIComponent(notif.judul)}"
-                                    data-content="${encodeURIComponent(notif.isi_notifikasi)}"
-                                    data-date="${notif.created_at}"
-                                    data-source="${notif.sumber_notifikasi}">
-                                    Detail
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $tbody.append(row);
-                });
-            });
+        // Jika data kosong, tampilkan pesan
+        if (!Array.isArray(dummyNotifications) || dummyNotifications.length === 0) {
+            $tbody.append('<tr><td colspan="4" class="text-center">Tidak ada notifikasi.</td></tr>');
+            return;
+        }
 
-            // Menangani klik pada ikon lonceng
-            $('#notificationBell').on('click', function() {
-                // Menampilkan modal myModal saat ikon lonceng diklik
-                $('#myModal').modal('show');
-            });
-
-            // Delegasi event untuk tombol "Detail"
-            $(document).on('click', '.btn-detail', function() {
-                let title = decodeURIComponent($(this).data('title'));
-                let content = decodeURIComponent($(this).data('content'));
-                let date = $(this).data('date');
-                let source = $(this).data('source');
-
-                $('#myModalLabel').text(title);
-                $('#modalDate').text(date);
-                $('#modalSource').text(source);
-                $('#modalContent').text(content);
-
-                $('#myModal').modal('show');
-            });
+        // Iterasi data dan menambahkan ke tabel
+        dummyNotifications.forEach(function (notif, index) {
+            let row = `
+                <tr class="clickable-row"
+                    data-title="${encodeURIComponent(notif.judul)}"
+                    data-content="${encodeURIComponent(notif.isi_notifikasi)}"
+                    data-date="${notif.created_at}"
+                    data-source="${notif.sumber_notifikasi}">
+                    <td>${index + 1}</td>
+                    <td>${notif.created_at}</td>
+                    <td>${notif.judul}</td>
+                    <td>${notif.sumber_notifikasi}</td>
+                </tr>
+            `;
+            $tbody.append(row);
         });
-    </script>
+
+        // Delegasi event untuk baris tabel yang dapat diklik
+        $(document).on('click', '.clickable-row', function () {
+            let title = decodeURIComponent($(this).data('title'));
+            let content = decodeURIComponent($(this).data('content'));
+            let date = $(this).data('date');
+            let source = $(this).data('source');
+
+            // Update modal content dynamically
+            $('#detailModalLabel').text(title);
+            $('#modalDate').text(date);
+            $('#modalSource').text(source);
+            $('#modalContent').text(content);
+
+            // Show the modal
+            $('#detailModal').modal('show');
+        });
+    });
+</script>
 @stop

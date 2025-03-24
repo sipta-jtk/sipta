@@ -304,10 +304,9 @@ return [
         // Navbar items:
         [
             'text' => '',  // Hapus teks "Notifications"
-            'url' => '#',
+            'url' => $prefix . '/user/log-user',
             'icon' => 'fas fa-bell',  // Ikon lonceng
             'topnav_right' => true,  // Menampilkan di navbar kanan
-            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
             'label_color' => 'danger',
             'id' => 'notificationBell',
         ],
@@ -695,11 +694,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Edit Template Notifikasi',
-                    'url' => '/notification/admin/settingawal',                    
+                    'url' => $prefix . '/notification/admin/settingawal',                    
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
-                    'url' => '/api/logAdmin',
+                    'url' => $prefix . '/api/logAdmin',
                     // 'can' => 'admin',
                 ],
             ]
