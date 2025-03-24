@@ -41,6 +41,19 @@
                     <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
                 </div>
 
+                @if ($kategori === 'artefak')
+                <div class="col-md-3">
+                    <select name="subkategori" class="form-control">
+                        <option value="">-- Pilih Subkategori --</option>
+                        @foreach ($subkategoris as $subkategori)
+                        <option value="{{ $subkategori->id_subkategori }}" {{ request('subkategori') == $subkategori->id_subkategori ? 'selected' : '' }}>
+                            {{ $subkategori->nama_subkategori }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+
                 <div class="col-md-3">
                     <select name="versi" class="form-control">
                         <option value="">-- Pilih Versi --</option>
@@ -55,8 +68,12 @@
                 </div>
 
                 <div class="col-md-3 d-flex">
-                    <button type="submit" class="btn btn-dark w-50 me-2">Filter</button>
-                    <a href="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" class="btn btn-secondary w-50 me-2">Reset</a>
+                    <button type="submit" class="btn btn-filter w-50 me-2">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <a href="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" class="btn btn-reset w-50 me-2">
+                        <i class="fas fa-undo"></i> Reset
+                    </a>
                 </div>
             </div>
         </form>
@@ -89,6 +106,9 @@
                 @endif
                 <th>Versi</th>
                 <th>Judul</th>
+                @if ($kategori === 'artefak')
+                <th>Subkategori</th>
+                @endif
                 <th>Tanggal Dibuat</th>
                 <th>Terakhir Diedit</th>
                 <th>Action</th>
@@ -120,6 +140,9 @@
                         {{ $doc->judul }}
                     </a>
                 </td>
+                @if ($kategori === 'artefak')
+                <td>{{ $doc->subkategori->nama_subkategori }}</td>
+                @endif
 
                 <td>{{ $doc->created_at }}</td>
                 <td>{{ $doc->updated_at }}</td>
@@ -317,6 +340,7 @@
                         <label for="editJudul" class="form-label">Judul:</label>
                         <input type="text" class="form-control" id="editJudul" name="judul" required>
                     </div>
+                    
 
                     <div class="mb-3">
                         <p><strong>File Terunggah:</strong></p>
@@ -530,6 +554,32 @@
 
     #downloadConfirmationModal .btn-success:hover {
         background-color: #218838;
+    }
+
+    .btn-filter {
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-filter:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-reset {
+        background-color: #6c757d;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-reset:hover {
+        background-color: #5a6268;
     }
 
     /* Filter styling */
