@@ -13,7 +13,6 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 // Mahasiswa - Repository TA
 // ============================
 
-<<<<<<< HEAD
 // Saabiq Muhyiyuddin Aulawi
 // Route untuk menampilkan halaman log aktivitas
 Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
@@ -21,13 +20,11 @@ Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
 // Route untuk menampilkan halaman monitoring penyimpanan
 Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
 
-=======
 // Redirect otomatis ke dashboard mahasiswa berdasarkan id_kota
 Route::get('/repository/mahasiswa', function () {
     $id_kota = auth()->user()->mahasiswa->id_kota ?? null;
     return redirect()->route('Repository.dashboard.kota.mahasiswa', $id_kota);
 })->middleware(['auth', 'can:akses-sidebar-repo'])->name('Repository.redirect');
->>>>>>> 94f0c457e08517110ebfd79745e5e93690badfce
 
 // Dashboard Repository TA (Mahasiswa)
 Route::get('/repository/mahasiswa/kota/{id_kota}', [RepositoryController::class, 'dashboard'])
@@ -52,12 +49,8 @@ Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:akses-sidebar-r
     Route::delete('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'destroy'])->name('Subkategori.destroy');
     Route::put('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'update'])->name('Subkategori.update');
 
-<<<<<<< HEAD
-    
-=======
 
 });
->>>>>>> 94f0c457e08517110ebfd79745e5e93690badfce
 
 // ============================
 // Dosen - Repository Mahasiswa
