@@ -497,7 +497,7 @@ return [
                         ],
                         [
                             'text' => 'Pengaturan Nilai Akhir',
-                            'url' => $prefix . 'kelola-penilaian-ta/pengaturan-nilai-akhir',
+                            'url' => $prefix . '/kelola-penilaian-ta/pengaturan-nilai-akhir',
                             'can' => 'akses-penilaian-koordinator-ta',
                         ],
                     ],
@@ -577,10 +577,15 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url' => $prefix . '/repository',
+            'url'  => $prefix . '/repository/mahasiswa',
             'icon' => 'fas fa-book',
-            // 'label' => 4,
-            // 'label_color' => 'success',
+            'can' => 'akses-sidebar-repo-mahasiswa'
+        ],
+        [
+            'text' => 'Repository Tugas Akhir',
+            'url'  => $prefix . '/repository/dosen/kelompok-ta',
+            'icon' => 'fas fa-book',
+            'can' => 'akses-sidebar-repo-dosen'
         ],
         [
             'text' => 'Artefak',
@@ -595,20 +600,31 @@ return [
         ],
         [
             'text' => 'Kelola Ruangan',
-            'url' => $prefix . '/external-service/ruangan',
+            'url' => $prefix . '/ruangan-service/ruangan',
             'icon' => 'fas fa-fw fa-building',
             'can' => 'admin',
         ],
         [
-            'text' => 'Cek Plagiarisme',
-            'url' => $prefix . '/cek-plagiarisme',
-            'icon' => 'fas fa-fw fa-file',
+            'text' => 'Kalender Penjadwalan Ruangan',
+            'url' => $prefix . '/ruangan-service/kalender',
+            'icon' => 'fas fa-fw fa-calendar',
         ],
         [
-            'text' => 'Penentuan Ambang Batas Plagiarisme',
-            'url' => $prefix . '/penentuan-ambang-batas',
-            'icon' => 'fas fa-scroll',
-            'can' => 'koordinator_ta'
+            'text' => 'Cek Plagiarisme',
+            'icon' => 'fas fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text' => 'Cek Plagiarisme',
+                    'url' => $prefix . '/cek-plagiarisme',
+                    'icon' => 'fas fa-fw fa-file',
+                ],
+                [
+                    'text' => 'Penentuan Ambang Batas Plagiarisme',
+                    'url' => $prefix . '/penentuan-ambang-batas',
+                    'icon' => 'fas fa-scroll',
+                    'can' => 'koordinator_ta'
+                ],
+            ]
         ],
         ['header' => 'Pengaturan Pengguna'],
         [
@@ -660,35 +676,9 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/#',
-                    // 'submenu' => [
-                    //     [
-                    //         'text' => 'Koordinator TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Pembimbing TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     [
-                    //         'text' => 'Penguji TA',
-                    //         'url' => '#',
-                    //     ],
-                    //     // [
-                    //     //     'text' => 'level_two',
-                    //     //     'url' => '#',
-                    //     //     'submenu' => [
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //         [
-                    //     //             'text' => 'level_three',
-                    //     //             'url' => '#',
-                    //     //         ],
-                    //     //     ],
-                    //     // ],
-                    // ],
+                    'url' => '/manajemen-akun-mahasiswa',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'admin'
                 ],
                 // [
                 //     'text' => 'level_one',
