@@ -27,7 +27,11 @@
     <!-- Card Pengajuan Seminar 3 -->
     <div class="col-md-6">
         @php
-            $seminar3Approved = collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'seminar_3' && $item->status_konfirmasi === 'disetujui');
+            if (is_null($verifikasi->pengajuan ?? null)){
+                $seminar3Approved = false;
+            } else {
+                $seminar3Approved = collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'seminar_3' && $item->status_konfirmasi === 'disetujui');
+            }
         @endphp
         <x-adminlte-card title="Pengajuan Seminar 3" theme="{{ $seminar3Approved ? 'primary' : 'secondary' }}" icon="fas fa-file-alt"
             class="d-flex flex-column h-100"
