@@ -115,7 +115,7 @@
             // $actionUrl = $isEdit ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.tambah', ['id' => $idFta, 'kota' => $data['id_kota']]);
 
         @endphp
-        <form action="" method="POST">
+        <form id="form-nilai" action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota'=> $idKota]) }}" method="POST">
             @csrf
             {{-- @if($isEdit) --}}
                 {{-- @method('PATCH') --}}

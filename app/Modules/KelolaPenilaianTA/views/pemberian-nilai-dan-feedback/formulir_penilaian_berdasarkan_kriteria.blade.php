@@ -24,7 +24,7 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->nama_fta ?? '00') }}</span>
+                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->namaFta ?? '00') }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
@@ -103,11 +103,12 @@
             </div>
         </div>
 
+
         <!-- Form Penilaian -->
         {{-- @php
             $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.store', ['id' => $idFta, 'kota' => $data['id_kota']]);
         @endphp --}}
-        <form action="" method="POST">
+        <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota'=> $idKota]) }}" method="POST">
             @csrf
             {{-- @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
                 @method('PATCH')
@@ -158,7 +159,7 @@
             <!-- Tombol Simpan -->
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">Simpan Draft</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </div>
         </form>
