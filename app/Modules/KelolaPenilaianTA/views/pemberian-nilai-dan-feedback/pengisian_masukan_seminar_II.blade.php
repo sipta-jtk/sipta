@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar II'],
                 ['url' => '', 'label' => 'Masukan Seminar II']
             ]
@@ -37,7 +37,7 @@
                 <span>{{ $data['start'] }}</span>
             </div>
             <div class="col-md-2 mt-3">
-                <strong>ID KoTA</strong> <br>
+                <strong>Kelompok KoTA</strong> <br>
                 <span>{{ $data['kota'] }}</span>
             </div>
         </div>
@@ -45,7 +45,7 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['id_kota'] . '/tambah') }}" method="POST">
+        <form action="{{ route('pengisian.masukan.store', ['id' => $id, 'kota' => $data['id_kota']]) }}" method="POST">
         <!-- <form action="{{ url('/kelola-penilaian-ta/pengelolaan-nilai/t') }}" method="POST"> -->
             @csrf
 
@@ -83,13 +83,8 @@
     <script> 
         document.addEventListener("trix-change", function(event) {
             let editor = event.target;
-            let hiddenInput = document.getElementById(editor.getAttribute("input"));
-            hiddenInput.value = editor.value;
-        });
-        document.addEventListener("trix-change", function(event) {
-            let editor = event.target;
             let inputId = editor.getAttribute("input");
-            document.getElementById(inputId).value = event.target.editor.getDocument().toString();
+            document.getElementById(inputId).value = event.target.innerHTML;
         });
     </script>
 @stop

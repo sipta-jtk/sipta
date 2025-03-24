@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Penilaian Pelaksanaan Tugas Akhir']
             ]
         ])

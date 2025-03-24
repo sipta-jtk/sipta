@@ -107,4 +107,8 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
+    <script>
+        const rentangNilai = @json($rentangNilai);
+        const kriteriaList = @json($kriteriaList);
+    </script>
 @stop
