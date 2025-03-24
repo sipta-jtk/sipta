@@ -111,7 +111,7 @@
 
         <!-- Form Penilaian -->
         @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['idFta' => $idFta, 'idFtaData' => $data['id_kota']]) : route('pengisian.nilai.store', ['idFta' => $idFta, 'idFtaData' => $data['id_kota']]);
+            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.store', ['id' => $idFta, 'kota' => $data['id_kota']]);
 
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
