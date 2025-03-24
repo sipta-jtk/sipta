@@ -41,7 +41,7 @@
                                         Lihat Nilai
                                     </a>
                                     @elseif ($item['status_penilaian'] === 'draf')
-                                    <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                    <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
                                         class="btn btn-warning btn-sm">
                                         Edit Nilai
                                     </a>
@@ -58,7 +58,7 @@
                                     </form>
                                     @endif
                                 @else
-                                <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
                                     class="btn btn-primary btn-sm"> 
                                     Isi Nilai
                                 </a>
