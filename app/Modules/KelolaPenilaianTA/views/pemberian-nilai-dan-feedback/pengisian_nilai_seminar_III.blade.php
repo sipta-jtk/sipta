@@ -112,7 +112,7 @@
         <!-- Form Penilaian -->
         @php
             $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
-            $actionUrl = $isEdit ? route('kelola.penilaian.edit', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]) : route('kelola.penilaian.tambah', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]);
+            $actionUrl = $isEdit ? route('pengisian.nilai.edit', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]) : route('pengisian.nilai.tambah', ['idFta' => $idFta, 'idFtaData' => $data['id_fta']]);
 
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
