@@ -17,15 +17,18 @@ class PemberianNilaiController extends Controller
     /**
      * Akses halaman pemberian nilai
      */
-    public function pengisianNilaiSeminar($idFta, $idKota): View
+    public function pengisianNilaiSeminar($idFta, $idKota) 
     {
         switch ($idFta) {
             case 2:
                 return $this->pengisianNilaiSeminarII($idFta, $idKota);
             case 4:
                 return $this->pengisianNilaiSeminarIII($idFta, $idKota);
+            default:
+                abort(404, "Seminar tidak ditemukan");
         }
     }
+
 
     /**
      * Menampilkan halaman pemberian nilai seminar

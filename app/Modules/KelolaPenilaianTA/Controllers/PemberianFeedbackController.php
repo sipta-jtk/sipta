@@ -92,10 +92,10 @@ class PemberianFeedbackController extends Controller
      */
     public function simpanMasukanSeminar(Request $request, $id, $kota)
     {
-        $id_fta = $id + 1;
-        Log::info("Menyimpan masukan seminar 2 untuk id_fta $id_fta di kota $kota");
-        Log::info("Seluruh request: " . json_encode($request->all()));
-    
+        if ($id > 1){
+            $id_fta = $id + 1;
+        }
+        
         $nip = auth()->user()->username; // Ambil NIP dosen yang login
     
         // Validasi data masukan
@@ -108,7 +108,6 @@ class PemberianFeedbackController extends Controller
     
         // Ambil semua masukan dari parameter request
         $feedbacks = $request->input('feedback');
-        Log::info("Data feedback: " . json_encode($feedbacks));
     
         // Ambil semua id_feedback yang sesuai dengan id_fta dari URL
         $idFeedbacks = AspekFeedback::where('id_fta', $id_fta)
