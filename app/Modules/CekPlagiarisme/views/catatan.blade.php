@@ -232,7 +232,7 @@
             const commentText = document.getElementById('comment-input').value.trim();
             const dokumenId = form.getAttribute('data-dokumen-id'); // ID dokumen dari form
 
-            const url = `/${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}`;
+            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}`;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 
@@ -394,7 +394,7 @@
                 'sipta-dev';
             let id = $("#editCommentId").attr("data-id");
             let review = $("#editCommentText").val();
-            const url = `/${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${id}`;
+            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${id}`;
 
             console.log(url)
             $.ajax({
@@ -408,6 +408,7 @@
                     comment: review
                 }),
                 success: function(response) {
+                    $("#editCommentModal").modal('hide');
                     Swal.fire({
                         title: 'Berhasil!',
                         text: response.message,
@@ -450,7 +451,7 @@
         // Saat tombol "Hapus" di modal diklik
         $("#confirmDeleteBtn").click(function() {
             if (deleteId) {
-                const url = `/${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`;
+                const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`;
 
                 $.ajax({
                     headers: {
