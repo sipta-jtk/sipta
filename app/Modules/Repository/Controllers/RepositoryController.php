@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Dokumen;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Subkategori;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -19,56 +18,61 @@ class RepositoryController extends Controller
      * Menampilkan daftar dokumen Seminar 1.
      */
     public function index($id_kota, $kategori, Request $request)
-{
-    $user = auth()->user();
-    $kota = Kota::findOrFail($id_kota);
+    {
+        $user = auth()->user();
+        $kota = Kota::findOrFail($id_kota);
 
-    // Ambil status_ta jika mahasiswa
-    $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
-    $status_ta = $mahasiswa?->status_ta;
+        // Ambil status_ta jika mahasiswa
+        $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
+        $status_ta = $mahasiswa?->status_ta;
 
-    // Base query
-    $query = Dokumen::where('kategori', $kategori);
+        // Base query
+        $query = Dokumen::where('kategori', $kategori);
 
-    // Jika mahasiswa, hanya tampilkan dokumen miliknya
-    if ($user->can('mahasiswa_ta')) {
-        $query->where('username', $user->username);
+        // Jika mahasiswa, hanya tampilkan dokumen miliknya
+        if ($user->can('mahasiswa_ta')) {
+            $query->where('username', $user->username);
+        }
+
+        // Jika dosen, tampilkan semua dokumen di kota tersebut
+        if ($user->can('akses-sidebar-repo-dosen')) {
+            $query->where('id_kota', $id_kota);
+        }
+
+        // Apply filters
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('judul', 'like', '%' . $request->search . '%')
+                    ->orWhere('versi', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('versi')) {
+            $query->where('versi', $request->versi);
+        }
+
+        if ($request->filled('tanggal_dibuat')) {
+            $query->whereDate('created_at', $request->tanggal_dibuat);
+        }
+
+        // Get final data with only the latest 7 versions
+        $dokumen = $query->orderBy('versi', 'desc')->take(7)->get();
+
+        // Ambil subkategori jika kategori artefak
+        $subkategoris = $kategori === 'artefak' ? Subkategori::all() : [];
+
+        // Ambil versi maksimum
+        $maxVersion = Dokumen::where('kategori', $kategori)->max('versi');
+
+        return view('Repository.views.cruddDokumen', compact(
+            'dokumen',
+            'kategori',
+            'subkategoris',
+            'maxVersion',
+            'status_ta',
+            'kota'
+        ));
     }
-
-    // Jika dosen, tampilkan semua dokumen di kota tersebut
-    if ($user->can('akses-sidebar-repo-dosen')) {
-        $query->where('id_kota', $id_kota);
-    }
-
-    // Apply filters
-    if ($request->filled('search')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('judul', 'like', '%' . $request->search . '%')
-              ->orWhere('versi', 'like', '%' . $request->search . '%');
-        });
-    }
-
-    if ($request->filled('versi')) {
-        $query->where('versi', $request->versi);
-    }
-
-    if ($request->filled('tanggal_dibuat')) {
-        $query->whereDate('created_at', $request->tanggal_dibuat);
-    }
-
-    // Get final data
-    $dokumen = $query->orderBy('versi', 'desc')->get();
-
-    // Ambil subkategori jika kategori artefak
-    $subkategoris = $kategori === 'artefak' ? Subkategori::all() : [];
-
-    // Ambil versi maksimum
-    $maxVersion = Dokumen::where('kategori', $kategori)->max('versi');
-
-    return view('Repository.views.cruddDokumen', compact(
-        'dokumen', 'kategori', 'subkategoris', 'maxVersion', 'status_ta', 'kota'
-    ));
-}
 
 
 
@@ -80,10 +84,19 @@ class RepositoryController extends Controller
     {
         // Daftar kategori yang diperbolehkan
         $allowedKategori = [
-            'laporan', 'poster', 'presentasi',
-            'fta', 'artefak', 'cover_abstrak', 'artikel_ilmiah',
-            'source_code', 'link_source_code', 'hasil_revisi_sidang',
-            'seminar1', 'seminar2', 'seminar3'
+            'laporan',
+            'poster',
+            'presentasi',
+            'fta',
+            'artefak',
+            'cover_abstrak',
+            'artikel_ilmiah',
+            'source_code',
+            'link_source_code',
+            'hasil_revisi_sidang',
+            'seminar1',
+            'seminar2',
+            'seminar3'
         ];
 
         if (!in_array($kategori, $allowedKategori)) {
@@ -297,7 +310,7 @@ class RepositoryController extends Controller
         $dokumen = Dokumen::where('username', $nim)->get();
 
         // Ambil daftar kategori untuk ditampilkan
-        $kategoriDokumen = ['hasil_revisi_sidang', 'seminar1', 'seminar2', 'seminar3', 'cover_abstrak', 'artikel_ilmiah','fta', 'poster', 'artefak', 'link_source_code', 'source_code'];
+        $kategoriDokumen = ['hasil_revisi_sidang', 'seminar1', 'seminar2', 'seminar3', 'cover_abstrak', 'artikel_ilmiah', 'fta', 'poster', 'artefak', 'link_source_code', 'source_code'];
 
         return view('Repository.views.dosen_dashboard_mahasiswa', compact('mahasiswa', 'dokumen', 'kategoriDokumen'));
     }
@@ -306,13 +319,13 @@ class RepositoryController extends Controller
     {
         // Ambil daftar kelompok berdasarkan tabel `kota` yang memiliki mahasiswa terkait
         $kelompok = Kota::join('mahasiswa', 'kota.id_kota', '=', 'mahasiswa.id_kota')
-                        ->select('kota.id_kota', 'kota.judul_ta', 'mahasiswa.nim')
-                        ->orderBy('kota.id_kota')
-                        ->get();
-    
+            ->select('kota.id_kota', 'kota.judul_ta', 'mahasiswa.nim')
+            ->orderBy('kota.id_kota')
+            ->get();
+
         return view('Repository.views.list_kelompok_ta', compact('kelompok'));
     }
-    
+
     // Saabiq Muhyiyuddin Aulawi
 
     // Muhammad Fahrizal Alzaelani
