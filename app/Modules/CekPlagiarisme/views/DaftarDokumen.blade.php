@@ -336,7 +336,7 @@
                 }).then(() => {
                     $('#uploadModal').modal('hide');
                     $('#uploadForm')[0].reset();
-                    location.reload();
+                    // location.reload();
                 });
             },
             error: function (xhr) {
