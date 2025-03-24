@@ -268,74 +268,86 @@
     });
 
     // Fungsi untuk menampilkan modal upload
-    $('#uploadButton').click(function() {
+    $('#uploadButton').click(function () {
         $('#uploadModal').modal('show');
     });
 
-    // Validasi sebelum mengunggah dokumen
-    $('#uploadForm').submit(function(event) {
-        event.preventDefault(); // Mencegah form dikirimkan secara default
+    // Validasi dan Kirim Form Upload
+    $('#previewBtn').click(function (event) {
+        event.preventDefault();
 
-        var judul = $('#judulDokumen').val(); // Ambil judul dokumen
-        var file = $('#dokumenFile')[0].files[0]; // Ambil file yang diunggah
+        var judul = $('#judulDokumen').val();
+        var file = $('#dokumenFile')[0].files[0];
 
-        // Validasi input
         if (!judul || !file) {
-            Swal.fire({
+            return Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Silakan isi semua data dan pilih file sebelum mengunggah!',
             });
-            return;
         }
 
         let jumlahKata = judul.trim().split(/\s+/).length;
         if (jumlahKata > 20) {
-            Swal.fire({
+            return Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Judul dokumen tidak boleh lebih dari 20 kata!',
             });
-            return;
         }
 
-        // Validasi ukuran file (maksimal 15 MB)
-        var maxFileSize = 15 * 1024 * 1024; // 15 MB
+        var maxFileSize = 15 * 1024 * 1024;
         if (file.size > maxFileSize) {
-            Swal.fire({
+            return Swal.fire({
                 icon: 'error',
                 title: 'Gagal mengunggah!',
                 text: 'Ukuran file melebihi batas maksimal 15MB.',
             });
-            return;
         }
 
-        // Validasi ekstensi file (hanya PDF dan DOCX)
         var validExtensions = ['pdf', 'docx'];
         var fileExtension = file.name.split('.').pop().toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            Swal.fire({
+            return Swal.fire({
                 icon: 'error',
                 title: 'Gagal mengunggah!',
                 text: 'Hanya dokumen dengan format PDF atau DOCX yang diperbolehkan.',
             });
-            return;
         }
 
-        // Menampilkan pop-up tanda berhasil upload
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
-            confirmButtonText: 'Tutup',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.reload(); // Reload halaman setelah klik "Tutup"
+        // ✅ Kirim Form via AJAX
+        var formData = new FormData();
+        formData.append('judul', judul);
+        formData.append('dokumen', file);
+        formData.append('_token', $('meta[name="csrf-token"]').attr("content")); // CSRF token
+
+        $.ajax({
+            url: `${prefixUrl}/cekplagiarisme/process`,
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
+                    confirmButtonText: 'Tutup',
+                }).then(() => {
+                    $('#uploadModal').modal('hide');
+                    $('#uploadForm')[0].reset();
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal mengunggah!',
+                    text: xhr.responseJSON?.message ?? 'Terjadi kesalahan saat mengunggah dokumen.',
+                });
             }
         });
-
-        // Tutup modal upload dokumen setelah unggah berhasil
-        $('#uploadModal').modal('hide');
     });
 
     function getStatusBadge(persentase, ambangBatas) {
