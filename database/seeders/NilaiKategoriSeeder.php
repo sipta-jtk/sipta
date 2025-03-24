@@ -125,7 +125,6 @@ class NilaiKategoriSeeder extends Seeder
 
         // Track inserted combinations
         $insertedCombinations = [];
-
         foreach ($data as $item) {
             $key = $item['nim'] . '-' . $item['nip'] . '-' . $item['id_kategori'];
             
