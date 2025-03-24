@@ -36,7 +36,7 @@
                             <td>
                                 @if ($item['status'] === 'Sudah dinilai')
                                     @if ($item['status_penilaian'] === 'dipublikasikan')
-                                    <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['kota']]) }}"
+                                    <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
                                         class="btn btn-success btn-sm"> 
                                         Lihat Nilai
                                     </a>
