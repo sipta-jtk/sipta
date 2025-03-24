@@ -33,8 +33,8 @@ $prefix = env('PREFIX_URL', '');
                     <h3 class="mb-0">{{ $dokumen->judul ?? 'Judul Dokumen Contoh' }}</h3>
                 </div>
                 <div class="card-body text-center">
-                    @if(isset($dokumen->file))
-                    <iframe src="{{ asset('storage/' . $dokumen->file) }}" width="100%" height="600px"></iframe>
+                    @if(isset($dokumen->file_path))
+                    <iframe src="{{ asset('storage/' . $dokumen->file_path) }}" width="100%" height="600px"></iframe>
                     @else
                     <pre class="p-3 bg-light border rounded"
                         style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>

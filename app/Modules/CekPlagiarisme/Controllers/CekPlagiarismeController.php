@@ -13,6 +13,11 @@ use App\Models\AmbangBatas;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
+
+// console::info
+// import this console::info
+use Illuminate\Support\Facades\Log as console;
 
 class CekPlagiarismeController extends Controller
 {
@@ -87,51 +92,63 @@ class CekPlagiarismeController extends Controller
                     }
                 }
             ],
-            'dokumen' => 'required|file|mimes:pdf,docx|max:15360',
+            'dokumen' => 'required|file|mimes:pdf,docx,txt|max:15360',
         ]);
-    
+
         // Simpan file yang diunggah ke storage
-        $filePath = $request->file('dokumen')->store('dokumen', 'public');
-    
-        // Lakukan pengecekan plagiarisme
-        $checker = new PlagiarismChecker();
-        $result = $checker->checkPlagiarism(storage_path('app/public/' . $filePath));
-    
-        // Ambil nilai percentage dan status secara aman
-        $percentage = $result['percentage'] ?? null;
-        $status = $result['status'] ?? 'sedang_proses';
-    
-        // Hitung ukuran file dalam KB
-        $fileSizeInBytes = $request->file('dokumen')->getSize();
-        $fileSizeInKB = round($fileSizeInBytes / 1024, 2); // simpan ke DB dalam KB
+        $file = $request->file('dokumen');
+        $filePath = $file->store('dokumen', 'public');
+
+        // Kirim file ke server Django untuk pengecekan plagiarisme
+        try {
+            $client = new Client();
+            $response = $client->post('http://192.168.116.195:8080/filetest/', [
+                'multipart' => [
+                    [
+                        'name'     => 'docfile',
+                        'contents' => fopen($file->getPathname(), 'r'),
+                        'filename' => $file->getClientOriginalName(),
+                    ],
+                ],
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+            $percentage = isset($data['percent']) ? number_format($data['percent'], 2) : null;
+            $link = $data['link'] ?? null;
+            // console::info("RESPONSE DARI DJANGO: ", $data);
+            dump($data);
+        } catch (RequestException $e) {
+            return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
+        }
+
+        // Simpan informasi file ke database
+        $fileSizeInKB = round($file->getSize() / 1024, 2);
         $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
         $nim = auth()->user()->username;
+        $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
 
-        // Simpan ke database
         Dokumen::create([
             'judul' => $request->judul,
             'file_path' => $filePath,
             'user_id' => auth()->id(),
             'username' => $nim,
-            'status_plagiarisme' => $status,
+            'status_plagiarisme' => $statusPlagiarisme,
+            'persentase_plagiarisme' => $percentage,
             'versi' => 1,
             'ukuran_file' => $fileSizeInKB,
             'kategori' => 'laporan',
-            'id_kota' => auth()->user()->mahasiswa->id_kota ?? null, // jika mahasiswa
-            'highlight_dokumen' => 0, // atau sesuaikan
-            'status_berkas' => 'valid', // atau default awal
-            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas, // default sementara
-            'id_subkategori' => 3, // sesuaikan jika ada
-            'kode_fta' => null, // sesuaikan jika ada
+            'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
+            'highlight_dokumen' => 0,
+            'status_berkas' => 'valid',
+            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+            'id_subkategori' => 3,
+            'kode_fta' => null,
         ]);
-    
-        // Kembalikan response
-        return response()->json([
-            'message' => 'Dokumen berhasil diunggah.',
-            'percentage' => $percentage,
-            'status' => $status,
-        ]);
-    }    
+
+        // Tampilkan hasil ke view PengecekanTugasAkhir
+        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
+    }
+
 
     public function getKota()
     {
