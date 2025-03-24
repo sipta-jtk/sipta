@@ -141,7 +141,7 @@ class VerifikasiPengajuanJadwalController extends Controller
             // Ambil informasi ruangan dari tabel penjadwalan
             $roomInformation = DB::table('penjadwalan')
                 ->where('id_penjadwalan', $idPenjadwalan)
-                ->select('id_ruangan', 'tanggal', 'agenda', 'sesi','tanggal','start', 'end')
+                ->select('id_ruangan', 'tanggal', 'agenda', 'sesi','tanggal','start', 'end','id_kota')
                 ->first();
         
             if ($roomInformation) {       
@@ -149,48 +149,20 @@ class VerifikasiPengajuanJadwalController extends Controller
                 $startDateTime = $roomInformation->tanggal . " " . $rooomInformation->start;
                 $endDateTime = $roomInformation->tanggal . " " . $roomInformation->end;
         
-                // Data yang akan dikirim ke API
-                $data = [
-                    "type"  => "add",
-                    "agenda" => $roomInformation->agenda,
-                    "start" => $startDateTime,
-                    "end"   => $endDateTime,
-                    "id_ruangan" => $roomInformation->id_ruangan
-                ];
-        
-                // Konversi data ke format JSON
-                $jsonData = json_encode($data);
-        
-                // Inisialisasi cURL
-                $ch = curl_init('https://your-api.com/api/v1/schedule/action?token=YOUR_SIPTA_TOKEN');
-        
-                // Set opsi cURL
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json'
+                $response = Http::withHeaders([
+                    'X-Requested-With' => 'XMLHttpRequest'
+                ])->post('http://host.docker.internal:8005/api/v1/schedule/action', [
+                    'type' => 'add',
+                    'agenda' => $roomInformation->agenda,
+                    'start' => $startDateTime,
+                    'end' => $endDateTime,
+                    'id_ruangan' => $roomInformation->id_ruangan,
+                    'id_kota' => $roomInformation->id_kota,
+                    'nip' => '123004062006'
                 ]);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        
-                // Eksekusi cURL dan dapatkan respons
-                $response = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
-                // Tutup koneksi cURL
-                curl_close($ch);
-        
-                // Log response dari API
-                if ($httpCode == 200) {
-                    Log::info('API Response: ' . $response);
-                } else {
-                    Log::error('API Request Failed. Response: ' . $response);
-                }
-            } else {
-                Log::error('Penjadwalan tidak ditemukan untuk id_penjadwalan: ' . $idPenjadwalan);
             }
         }
         
-
         // Redirect kembali ke halaman dengan pesan
         return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
                         ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
