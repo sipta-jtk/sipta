@@ -98,7 +98,7 @@
 <script>
     $(document).ready(function() {
 
-        var prefixUrl = "{{ env('TEST_URL') }}";
+        var prefixUrl = "{{ env('PREFIX_URL') }}";
 
         function handleAction(kelompokId, actionType) {
             Swal.fire({
