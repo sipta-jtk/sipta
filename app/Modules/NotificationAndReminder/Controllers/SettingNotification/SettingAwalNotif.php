@@ -25,12 +25,12 @@ class SettingAwalNotif extends Controller
 
         TemplateNotifikasi::create($validated); // Simpan ke database
 
-        return redirect()->route('notifikasi.store')->with('success', 'Notifikasi berhasil disimpan.');
+        return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil disimpan.');
     }
 
     public function edit($id)
     {
-        $notifikasi = TemplateNotifikasi::where('id_template_notifikasi', $id)->firstOrFail();
+        $notifikasi = TemplateNotifikasi::findOrFail($id);
         return view('NotificationAndReminder.views.modals.edit-notifikasi', compact('notifikasi'));
     }
     
@@ -40,7 +40,7 @@ class SettingAwalNotif extends Controller
 
         $validated = $request->validate([
             'judul_notifikasi' => 'required|string|max:255',
-            'jenis_notifikasi' => ['required', 'string', 'max:20', 'not_in:default'],
+            'jenis_notifikasi' => 'required|string|max:20',
             'isi_in_apps' => 'required|string',
             'isi_in_email' => 'required|string',
         ]);
@@ -52,7 +52,8 @@ class SettingAwalNotif extends Controller
 
     public function destroy($id)
     {
-        TemplateNotifikasi::destroy($id);
+        $notifikasi = TemplateNotifikasi::findOrFail($id);
+        $notifikasi->delete();
 
         return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil dihapus.');
     }
