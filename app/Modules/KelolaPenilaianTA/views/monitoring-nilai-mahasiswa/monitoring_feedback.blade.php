@@ -102,7 +102,7 @@
                                   <li>Feedback belum tersedia.</li>
                               @else
                                   @foreach ($feedbacks as $feedback)
-                                      <li>{{ $feedback->isi_feedback }}</li>
+                                    {!! $feedback->isi_feedback !!}
                                   @endforeach
                               @endif
                           </ol>
