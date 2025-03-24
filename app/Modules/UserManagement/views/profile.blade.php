@@ -14,7 +14,7 @@
 
                 <!-- Foto Profil -->
                 <div class="text-center mb-3">
-                <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('storage/photos/default-profile1.jpg') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
+                <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('storage/photos/default-profile.jpg') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
                     <input type="file" name="photo" class="form-control mt-2">
                     <small>Ukuran maksimum 2MB, dengan format PNG atau JPG</small>
                 </div>
