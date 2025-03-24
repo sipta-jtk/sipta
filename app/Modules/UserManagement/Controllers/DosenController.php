@@ -81,7 +81,7 @@ class DosenController extends Controller
 
         DB::commit();
         // Commit transaksi jika semua berhasil
-        return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
+        return redirect()->route('manage.dosen')->with('success', "Dosen berhasil ditambahkan! Password: $randomCode");
 
     } catch (\Exception $e) {
         // Rollback jika terjadi kesalahan

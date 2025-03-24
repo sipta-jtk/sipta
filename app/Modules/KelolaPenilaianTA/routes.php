@@ -52,7 +52,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     });
 
    // ================= PENGELOLAAN NILAI =================
-    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta']);
+    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->name('kelola.penilaian');;
 
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
@@ -70,22 +70,22 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PEMBERIAN FEEDBACK =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
-        Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
-        Route::get('/{id}/masukan/{kota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar']);
+        Route::get('/{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('pengelolaan-nilai.detail');
+        Route::get('/{id}/masukan/{kota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar'])->name('pengisian.masukan');
         Route::post('/{id}/masukan/{kota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
     });
 
-        // ================= PEMBERIAN NILAI DAN FEEDBACK =================
-        Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
-            Route::get('/{id}/nilai/{kota}', [PemberianNilaiController::class, 'pengisianNilaiSeminar']);
-            Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar']);
-            Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiController::class, 'editNilaiSeminar']);
-        });
+    // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+    Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
+        Route::get('/{id}/nilai/{kota}', [PemberianNilaiController::class, 'pengisianNilaiSeminar'])->name('pengisian.nilai');
+        Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar'])->name('pengisian.nilai.store');
+        Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiController::class, 'editNilaiSeminar'])->name('pengisian.nilai.edit');
+    });
 
     Route::prefix('nilai-sidang')->group(function () {
-        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);
-        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir']);
+        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir'])->name('pengisian.nilai-sidang-akhir');
+        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir'])->name('pengisian.masukan-sidang-akhir');
     });
-    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA']);
+    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA'])->name('pengisian.nilai-tugas-akhir');
     
 });
