@@ -231,7 +231,12 @@
                                 @endfor
                                 <option value="FTA-10">FTA-10</option>
                                 <option value="FTA-10a">FTA-10a</option>
-                                @for ($i = 11; $i <= 23; $i++)
+                                @for ($i = 11; $i <= 13; $i++)
+                                    <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
+                                    @endfor
+                                <option value="FTA-10">FTA-14</option>
+                                <option value="FTA-10a">FTA-14a</option>
+                                @for ($i = 15; $i <= 23; $i++)
                                     <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
                                     @endfor
                         </select>
