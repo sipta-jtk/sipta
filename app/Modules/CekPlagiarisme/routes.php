@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
+use App\Modules\CekPlagiarisme\Controllers\PengecekanTugasAkhirController;
 
 Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
 Route::middleware(['auth', 'can:dosen'])->get('/api/kotas', [CekPlagiarismeController::class, 'getKota']);
@@ -14,6 +15,13 @@ Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'proces
 Route::get('/cek-plagiarisme', function () {
     return view('CekPlagiarisme.views.DaftarDokumen');
 });
+
+
+Route::get('/cek-plagiarisme/cek-tugas-akhir', function () {
+    return view('CekPlagiarisme.views.PengecekanTugasAkhir');
+});
+
+Route::post('/cek-plagiarisme/cek-tugas-akhir', [PengecekanTugasAkhirController::class, 'cekTugasAkhir']);
 
 
 /**********************************
