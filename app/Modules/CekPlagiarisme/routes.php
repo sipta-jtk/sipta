@@ -17,10 +17,6 @@ Route::get('/cek-plagiarisme', function () {
     return view('CekPlagiarisme.views.DaftarDokumen');
 });
 
-// Route untuk unggah dokumen
-Route::post('/CekPlagiarisme/upload', [CekPlagiarismeController::class, 'process'])
-    ->name('cek-plagiarisme.upload');
-
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
