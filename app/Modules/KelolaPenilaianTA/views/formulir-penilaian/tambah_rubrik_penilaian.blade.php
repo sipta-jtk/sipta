@@ -20,7 +20,7 @@
 
 @section('content')
 <div class="p-4">
-        <form action="{{ route('formulir-penilaian.rubrik.tambah') }}" method="POST">
+        <form action="{{ route('formulir-penilaian.store-rubrik') }}" method="POST">
             @csrf
 
             <div class="row">
