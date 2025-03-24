@@ -14,7 +14,6 @@ class KategoriPenilaianSeeder extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('kategori_penilaian')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
             
@@ -53,6 +52,6 @@ class KategoriPenilaianSeeder extends Seeder
         foreach ($data as $item) {
             KategoriPenilaian::create($item);
         }
-
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
