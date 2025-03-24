@@ -111,7 +111,8 @@
 
         <!-- Form Penilaian -->
         @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.store', ['id' => $idFta, 'kota' => $data['id_kota']]);
+
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
@@ -167,7 +168,7 @@
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['id_fta']) }}" class="btn btn-primary">Selanjutnya</a>
+                    <a href="{{ route('pengisian.masukan', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>
