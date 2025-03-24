@@ -23,17 +23,21 @@ class PemberianFeedbackController extends Controller
 {
     public function pengisianMasukanSeminar($id, $kota): View
     {
-        // Log::info("Mengakses halaman feedback untuk seminar $id di kota $kota");
+        Log::info("Mengakses halaman feedback untuk id_fta $id di kota $kota");
 
         $seminar = KategoriPenilaian::where('id_fta', $id)
             ->with('formulirPenilaian')
             ->first();
 
+        Log::info("Data seminar: ".json_encode($seminar));
+
         $mahasiswa = Mahasiswa::where('id_kota', $kota)
             ->with('user', 'kota.penjadwalan')
             ->get();
 
-        $aspekFeedback = AspekFeedback::where('id_fta', $id)->get();
+        Log::info("Data mahasiswa: ".json_encode($mahasiswa));
+
+        $aspekFeedback = AspekFeedback::where('id_fta', $id+1)->get();
         Log::info("Data aspek feedback: ".json_encode($aspekFeedback));
 
         $data = [
@@ -41,6 +45,7 @@ class PemberianFeedbackController extends Controller
             'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
             'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
             'kota' => $mahasiswa->first()->kota->nama_kota,
+            'id_kota' => $kota
         ];
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', 
@@ -87,25 +92,28 @@ class PemberianFeedbackController extends Controller
      */
     public function simpanMasukanSeminar(Request $request, $id, $kota)
     {
+        if ($id > 1){
+            $id_fta = $id + 1;
+        }
+        
         $nip = auth()->user()->username; // Ambil NIP dosen yang login
-
+    
         // Validasi data masukan
         $request->validate([
             'feedback' => 'required|array',
             'feedback.*.masukan' => 'required|string',
         ]);
-
+    
         $idKota = Kota::where('id_kota', $kota)->first()->id_kota;
-
-        // Ambil semua masukan dari form
+    
+        // Ambil semua masukan dari parameter request
         $feedbacks = $request->input('feedback');
-        Log::info($feedbacks);
-
+    
         // Ambil semua id_feedback yang sesuai dengan id_fta dari URL
-        $idFeedbacks = AspekFeedback::where('id_fta', $id) 
+        $idFeedbacks = AspekFeedback::where('id_fta', $id_fta)
             ->pluck('id_feedback', 'nama_aspek_feedback')
             ->toArray();
-
+    
         // Buat array baru dengan array_merge
         $data = [];
         foreach ($feedbacks as $feedback) {
@@ -117,19 +125,33 @@ class PemberianFeedbackController extends Controller
                 Log::warning("Feedback dengan nama aspek '{$feedback['nama_aspek_feedback']}' tidak ditemukan.");
             }
         }
-
-        // Simpan setiap masukan ke dalam database
-        foreach ($data as $feedback) {
-            DetailFeedback::create([
-                'id_feedback' => $feedback['id_feedback'], 
-                'id_kota' => $idKota, // Kota tujuan dari URL
-                'nip' => $nip,
-                'status_penilaian_dosen' => 'draf', // Status default
-                'isi_feedback' => $feedback['masukan'], // Data feedback dari form
-            ]);
+    
+        // Mulai transaksi database
+        DB::beginTransaction();
+    
+        try {
+            // Simpan setiap masukan ke dalam database
+            foreach ($data as $feedback) {
+                DetailFeedback::create([
+                    'id_feedback' => $feedback['id_feedback'],
+                    'id_kota' => $idKota, // Kota tujuan dari URL
+                    'nip' => $nip,
+                    'status_penilaian_dosen' => 'draf', // Status default
+                    'isi_feedback' => $feedback['masukan'], // Data feedback dari form
+                ]);
+            }
+    
+            // Commit transaksi jika semua berhasil
+            DB::commit();
+    
+            return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            DB::rollback();
+    
+            Log::error("Gagal menyimpan masukan: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }
-
-        // Redirect ke halaman yang sesuai
-        return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
     }
+    
 }
