@@ -719,6 +719,16 @@
 
     var prefixUrl = "{{ env('PREFIX_URL') }}";
 
+    if (!prefixUrl.startsWith("/")) {
+        prefixUrl = "/" + prefixUrl;
+    }
+
+
+    console.log("Final Prefix URL:", prefixUrl);
+
+
+    console.log("Prefix URL:", prefixUrl);
+
     function fetchDosenDetail(nip, detailContainer) {
         if (!nip) {
             detailContainer.html(`
@@ -731,10 +741,11 @@
             return;
         }
 
-        console.log(`Fetching data for NIP: ${nip}`);
+        console.log("Final URL:", prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/` + nip);
+        console.log(`Fetching data for NIP: ` + nip);
 
         $.ajax({
-            url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
+            url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/` + nip
             , type: "GET"
             , dataType: "json"
             , success: function(response) {
