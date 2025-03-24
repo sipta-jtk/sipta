@@ -256,8 +256,8 @@ class AlokasiPembimbingController extends Controller
 
     public function kirimNotifikasiAlokasi($dosenUsername, $mahasiswaUsername) 
     {
-        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', 'Pemberitahuan: Mahasiswa Telah Mengajukan Bimbingan')->first();
-        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', 'Pengajuan Bimbingan Berhasil')->first();
+        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!')->first();
+        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!')->first();
     
         if (!$dosenUsername || !$mahasiswaUsername || !$templateDosen || !$templateMahasiswa) {
             return response()->json(['error' => 'Semua field wajib diisi'], 400);

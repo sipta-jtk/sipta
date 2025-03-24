@@ -43,7 +43,7 @@ Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
 //hrs login dl dan sebagai admin
 Route::middleware(['auth', 'can:admin'])->get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications'])->name('logAdmin');
 
-Route::group(['prefix' => 'user/log-user', 'middleware' => ['auth', 'can:mahasiswa']], function () {
+Route::group(['prefix' => 'user/log-user', 'middleware' => (['auth', 'can:mahasiswa'])], function () {
     Route::get('/', function() {
         return view('NotificationAndReminder::LogUser.logUser');
     });
