@@ -21,9 +21,17 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-        $kategori = FormPenilaian::whereIn('id_fta', [1, 2, 4, 6])
-            ->orderBy('id_fta', )
+        $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
+            ->where('jenis_form', 'penilaian') // Menambahkan kondisi where untuk jenis_form
+            ->orderBy('nama_fta')
             ->get();
+
+        $kategoriFeedback = FormPenilaian::whereIn('nama_fta', ['Seminar I'])
+            ->unique('nama_fta')
+        // Log::info('Data kategori: ' . json_encode($kategori, JSON_PRETTY_PRINT));
+        // $kategori = FormPenilaian::whereIn('id_fta', [1, 2, 4, 6])
+        //     ->orderBy('id_fta', )
+        //     ->get();
             
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', compact('kategori'));
     }
