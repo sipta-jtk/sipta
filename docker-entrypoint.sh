@@ -18,43 +18,24 @@ if [ "${MIGRATE_ON_START}" = "true" ]; then
     echo "Menjalankan migrasi..."
     # php artisan migrate:fresh --seed    
     # Coba menjalankan migrasi, jika gagal lakukan wipe dan coba lagi
-    if php artisan migrate --force; then
-        echo "Migrasi berhasil."
-    else
-        echo "Gagal menjalankan migrasi. Melakukan wipe..."
-        # Jika WIPE_DATABASE diaktifkan, lakukan wipe database
-        if [ "${WIPE_DATABASE}" = "true" ]; then
-            echo "Menghapus database..."
-            # Lakukan rollback pada migrasi yang ada
-            php artisan db:wipe --force
-
-            # Setelah wipe, coba jalankan migrasi lagi
-            if php artisan migrate --force; then
-                echo "Migrasi berhasil setelah wipe."
-            else
-                echo "Gagal menjalankan migrasi setelah wipe."
-                exit 1
-            fi
+    if [ "${RUN_SEEDER}" = "true" ]; then
+        if php artisan migrate:fresh --seed --force; then
+            echo "Migrasi berhasil."
         else
-            echo "Migrasi gagal, tapi wipe database tidak diaktifkan (WIPE_DATABASE=false)."
+            echo "Gagal menjalankan migrasi."
+            exit 1
+        fi
+    else
+        if php artisan migrate --force; then
+            echo "Migrasi berhasil."
+            echo "Seeder tidak dijalankan. Karena pengaturan RUN_SEEDER tidak diatur ke true."
+        else
+            echo "Gagal menjalankan migrasi."
             exit 1
         fi
     fi
 else
     echo "Migrasi dilewati karena pengaturan MIGRATE_ON_START tidak diatur ke true."
-fi
-
-# Jalankan seeder jika diatur di .env
-if [ "${RUN_SEEDER}" = "true" ]; then
-    echo "Menjalankan seeder..."
-    if php artisan db:seed --force; then
-        echo "Seeder berhasil."
-    else
-        echo "Gagal menjalankan seeder."
-        exit 1
-    fi
-else
-    echo "Seeder tidak dijalankan (RUN_SEEDER=false)."
 fi
 
 # Jalankan server Laravel

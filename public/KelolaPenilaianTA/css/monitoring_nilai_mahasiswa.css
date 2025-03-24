@@ -1,0 +1,81 @@
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    position: relative;
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+}
+.table-container::-webkit-scrollbar {
+    height: 12px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc !important;
+    padding: 10px;
+    text-align: start;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-bottom: 2px solid #fff;
+}
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+tbody tr:hover {
+    background-color: #e2e6ea;
+}
+
+.disabled-link {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    position: absolute;
+    width: 280px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130%;
+    z-index: 10;
+    text-align: center;
+}
+.tooltip-wrapper:hover .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+}
