@@ -34,14 +34,14 @@ class AmbangBatasSeeder extends Seeder
             [
                 'ambang_batas' => 20.0,
                 'status_ambang_batas' => 'digunakan',
-                'nip' => '197604182001121004',
+                'nip' => '197109031999032001',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'ambang_batas' => 25.0,
                 'status_ambang_batas' => 'tidak_digunakan',
-                'nip' => '198012122008122001',
+                'nip' => '199301062019031017',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

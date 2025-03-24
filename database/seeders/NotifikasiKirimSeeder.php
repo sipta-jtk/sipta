@@ -21,7 +21,7 @@ class NotifikasiKirimSeeder extends Seeder
 
         NotifikasiKirim::create([
             'id_notifikasi' => 1,
-            'username' => '198009162009122001',
+            'username' => '196610181995121001',
             'kanal' => 'email',
             'status' => 'terkirim',
             'waktu_kirim' => Carbon::now(),
@@ -30,7 +30,7 @@ class NotifikasiKirimSeeder extends Seeder
 
         NotifikasiKirim::create([
             'id_notifikasi' => 2,
-            'username' => '198604122014041001',
+            'username' => '198706302019031011',
             'kanal' => 'whatsapp',
             'status' => 'gagal terkirim',
             'waktu_kirim' => Carbon::now(),
@@ -39,7 +39,7 @@ class NotifikasiKirimSeeder extends Seeder
 
         NotifikasiKirim::create([
             'id_notifikasi' => 3,
-            'username' => '198502102015042001',
+            'username' => '197109031999032001',
             'kanal' => 'email',
             'status' => 'gagal terkirim',
             'waktu_kirim' => Carbon::now(),

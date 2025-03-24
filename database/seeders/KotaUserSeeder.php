@@ -13,14 +13,14 @@ class KotaUserSeeder extends Seeder
      */
     public function run(): void
     {
-        KotaUser::create([
-            'id_kota' => 1,
-            'username' => '221524059',
-        ]);
+        // KotaUser::create([
+        //     'id_kota' => 1,
+        //     'username' => '221524059',
+        // ]);
 
-        KotaUser::create([
-            'id_kota' => 2,
-            'username' => '221524049',
-        ]);
+        // KotaUser::create([
+        //     'id_kota' => 2,
+        //     'username' => '221524049',
+        // ]);
     }
 }

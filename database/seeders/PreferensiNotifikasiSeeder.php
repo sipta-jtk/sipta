@@ -19,7 +19,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => '197312271999031003',
+            'username' => '199301062019031017',
             'whatsapp' => 1,
             'reminder_h5' => 1,
             'email' => 1
@@ -27,7 +27,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => '196810141993032002',
+            'username' => '198502102015042001',
             'whatsapp' => 1,
             'reminder_h5' => 1,
             'email' => 0
@@ -35,7 +35,7 @@ class PreferensiNotifikasiSeeder extends Seeder
 
         PreferensiNotifikasi::create
         ([
-            'username' => '197201061999031002',
+            'username' => '198104072006041001',
             'whatsapp' => 0,
             'reminder_h5' => 1,
             'email' => 1

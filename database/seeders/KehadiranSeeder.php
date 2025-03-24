@@ -14,52 +14,52 @@ class KehadiranSeeder extends Seeder
      */
     public function run(): void
     {
-    DB::table('kehadiran')->insert([
-        [
-        'id_kehadiran' => 1,
-        'status_kelulusan' => 'lulus_dengan_perbaikan_laporan',
-        'batas_revisi' => '2025-04-15',
-        'foto_sidang' => 'sidang1.png',
-        'id_penjadwalan' => 1,
-        'username' => '221524036',
-        'status_hadir' => 'hadir',
-        ],
-        [
-        'id_kehadiran' => 2,
-        'status_kelulusan' => 'lulus_dengan_perbaikan_laporan',
-        'batas_revisi' => '2025-04-30',
-        'foto_sidang' => 'sidang2.png',
-        'id_penjadwalan' => 2,
-        'username' => '221524039',
-        'status_hadir' => 'hadir',
-        ],
-        [
-        'id_kehadiran' => 3,
-        'status_kelulusan' => 'lulus_tanpa_perbaikan_laporan',
-        'batas_revisi' => '2025-04-30',
-        'foto_sidang' => 'sidang3.png',
-        'id_penjadwalan' => 3,
-        'username' => '221524036',
-        'status_hadir' => 'tidak_hadir',
-        ],
-        [
-        'id_kehadiran' => 4,
-        'status_kelulusan' => 'mengulang_sidang_tugas_akhir',
-        'batas_revisi' => '2025-04-30',
-        'foto_sidang' => 'sidang4.png',
-        'id_penjadwalan' => 4,
-        'username' => '221524046',
-        'status_hadir' => 'tidak_hadir',
-        ],
-        [
-        'id_kehadiran' => 5,
-        'status_kelulusan' => 'tidak_lulus',
-        'batas_revisi' => '2025-04-30',
-        'foto_sidang' => 'sidang5.png',
-        'id_penjadwalan' => 5,
-        'username' => '221524053',
-        'status_hadir' => 'hadir',
-        ],
-    ]);
+    // DB::table('kehadiran')->insert([
+    //     [
+    //     'id_kehadiran' => 1,
+    //     'status_kelulusan' => 'lulus_dengan_perbaikan_laporan',
+    //     'batas_revisi' => '2025-04-15',
+    //     'foto_sidang' => 'sidang1.png',
+    //     'id_penjadwalan' => 1,
+    //     'username' => '221524036',
+    //     'status_hadir' => 'hadir',
+    //     ],
+    //     [
+    //     'id_kehadiran' => 2,
+    //     'status_kelulusan' => 'lulus_dengan_perbaikan_laporan',
+    //     'batas_revisi' => '2025-04-30',
+    //     'foto_sidang' => 'sidang2.png',
+    //     'id_penjadwalan' => 2,
+    //     'username' => '221524039',
+    //     'status_hadir' => 'hadir',
+    //     ],
+    //     [
+    //     'id_kehadiran' => 3,
+    //     'status_kelulusan' => 'lulus_tanpa_perbaikan_laporan',
+    //     'batas_revisi' => '2025-04-30',
+    //     'foto_sidang' => 'sidang3.png',
+    //     'id_penjadwalan' => 3,
+    //     'username' => '221524036',
+    //     'status_hadir' => 'tidak_hadir',
+    //     ],
+    //     [
+    //     'id_kehadiran' => 4,
+    //     'status_kelulusan' => 'mengulang_sidang_tugas_akhir',
+    //     'batas_revisi' => '2025-04-30',
+    //     'foto_sidang' => 'sidang4.png',
+    //     'id_penjadwalan' => 4,
+    //     'username' => '221524046',
+    //     'status_hadir' => 'tidak_hadir',
+    //     ],
+    //     [
+    //     'id_kehadiran' => 5,
+    //     'status_kelulusan' => 'tidak_lulus',
+    //     'batas_revisi' => '2025-04-30',
+    //     'foto_sidang' => 'sidang5.png',
+    //     'id_penjadwalan' => 5,
+    //     'username' => '221524053',
+    //     'status_hadir' => 'hadir',
+    //     ],
+    // ]);
     }
 }

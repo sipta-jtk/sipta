@@ -14,38 +14,38 @@ class PengajuanPisahKotaSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!Schema::hasTable('pengajuan_pisah_kota')) {
-            return;
-        }
+        // if (!Schema::hasTable('pengajuan_pisah_kota')) {
+        //     return;
+        // }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('pengajuan_pisah_kota')->truncate();
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // DB::table('pengajuan_pisah_kota')->truncate();
 
-        $data = [
-            [
-                'id_pengajuan' => 1,
-                'nim' => '221524033',
-                'id_kota' => 1,
-                'fta_20' => 1,
-            ],
-            [
-                'id_pengajuan' => 2,
-                'nim' => '221524042',
-                'id_kota' => 5,
-                'fta_20' => 1,
-            ],
-            [
-                'id_pengajuan' => 3,
-                'nim' => '221524061',
-                'id_kota' => 8,
-                'fta_20' => 1,
-            ]
-        ];
+        // $data = [
+        //     [
+        //         'id_pengajuan' => 1,
+        //         'nim' => '221524033',
+        //         'id_kota' => 1,
+        //         'fta_20' => 1,
+        //     ],
+        //     [
+        //         'id_pengajuan' => 2,
+        //         'nim' => '221524042',
+        //         'id_kota' => 5,
+        //         'fta_20' => 1,
+        //     ],
+        //     [
+        //         'id_pengajuan' => 3,
+        //         'nim' => '221524061',
+        //         'id_kota' => 8,
+        //         'fta_20' => 1,
+        //     ]
+        // ];
 
-        foreach ($data as $item) {
-            PengajuanPisahKota::create($item);
-        }
+        // foreach ($data as $item) {
+        //     PengajuanPisahKota::create($item);
+        // }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
