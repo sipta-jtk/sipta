@@ -723,11 +723,7 @@
         prefixUrl = "/" + prefixUrl;
     }
 
-
     console.log("Final Prefix URL:", prefixUrl);
-
-
-    console.log("Prefix URL:", prefixUrl);
 
     function fetchDosenDetail(nip, detailContainer) {
         if (!nip) {
