@@ -76,7 +76,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     {
         VerifikasiBerkasPengajuan::create([
             'nip' => '196610181995121001',
-            'tanggal_verifikasi' => Carbon::now(),
+            'tanggal_pengajuan' => Carbon::now(),
             'status_konfirmasi' => 'pending',
             'jenis_pengajuan' => 'seminar_3',
             'id_kota' => Auth::user()->mahasiswa->id_kota,
@@ -92,7 +92,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
         // Ambil pengajuan berdasarkan id_kota
         $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
-            ->where('jenis_pengajuan', 'sidang')
+            ->where('jenis_pengajuan', 'sidang_akhir')
             ->first();
 
         // Daftar artefak yang harus di-upload
@@ -141,7 +141,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     {
         VerifikasiBerkasPengajuan::create([
             'nip' => '196610181995121001',
-            'tanggal_verifikasi' => Carbon::now(),
+            'tanggal_pengajuan' => Carbon::now(),
             'status_konfirmasi' => 'pending',
             'jenis_pengajuan' => 'sidang',
             'id_kota' => Auth::user()->mahasiswa->id_kota,
