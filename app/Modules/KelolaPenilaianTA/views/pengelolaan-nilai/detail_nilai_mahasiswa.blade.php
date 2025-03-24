@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/pengelolaan-nilai'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
             ]
@@ -58,8 +58,8 @@
                             <td> {{ $data['rata-rata'] }} </td>
                             @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
                                     <td> 
-                                        <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $idFta . '/nilai/' . $data['id_kota']) }}" class="btn btn-primary">Nilai</a>
-                                        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $idFta . '/feedback/' . $data['id_kota']) }}" method="POST" style="display:inline;" class="finalisasi-form">
+                                        <a href="{{ route('pengisian.nilai', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Nilai</a>
+                                        <form action="{{ route('pengisian.masukan.store', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" method="POST" style="display:inline;" class="finalisasi-form">
                                             @csrf
                                             <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
                                         </form>

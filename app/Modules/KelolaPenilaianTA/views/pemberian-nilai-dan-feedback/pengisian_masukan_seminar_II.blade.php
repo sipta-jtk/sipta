@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar II'],
                 ['url' => '', 'label' => 'Masukan Seminar II']
             ]
@@ -45,7 +45,7 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ url('kelola-penilaian-ta/nilai-seminar/' . $id . '/masukan/' . $data['id_kota'] . '/tambah') }}" method="POST">
+        <form action="{{ route('pengisian.masukan.store', ['id' => $id, 'kota' => $data['id_kota']]) }}" method="POST">
         <!-- <form action="{{ url('/kelola-penilaian-ta/pengelolaan-nilai/t') }}" method="POST"> -->
             @csrf
 

@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => url('/'), 'label' => 'Home'],
                 ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
             ]
         ])
@@ -35,7 +35,7 @@
                                 @if (!in_array(strtolower($data['nama_fta']), ['seminar i', 'seminar ii']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ url('kelola-penilaian-ta/nilai-seminar/' . $data->id_fta) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
+                                <a href="{{ route('pengelolaan-nilai.detail', ['id' => $data->id_fta]) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
                             </div>
                         </td>
                     </tr>
