@@ -30,13 +30,10 @@
                     </select>
                 </div>
 
-
                 <div>
-                    <a href="{{ url('/log-aktifitas') }}" class="btn btn-secondary">Log Aktivitas</a>
+                    <a href="{{ url('/log-aktivitas') }}" class="btn btn-secondary">Log Aktivitas</a>
                     <a href="{{ url('/repository') }}" class="btn btn-secondary">Akses Dokumen</a>
                 </div>
-
-
             </div>
 
             <!-- Tabel Data -->
@@ -45,20 +42,27 @@
                     <tr>
                         <th>No</th>
                         <th>Kategori</th>
+                        <th>Subkategori</th>
                         <th>Penggunaan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1.</td><td>Laporan TA</td><td>1 GB</td></tr>
-                    <tr><td>2.</td><td>Poster</td><td>10 GB</td></tr>
-                    <tr><td>3.</td><td>Dataset</td><td>5 GB</td></tr>
-                    <tr><td>4.</td><td>Dokumen Penting</td><td>3 GB</td></tr>
+                    @foreach($penyimpanan as $index => $item)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $item->kategori }}</td>
+                            <td>{{ $item->subkategori ? $item->subkategori->nama_subkategori : 'No Subkategori' }}</td>
+                            <!-- Mengonversi ukuran file dari KB ke GB -->
+                            <td>{{ number_format($item->total_ukuran / (1024 * 1024), 2) }} GB</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
 
             <div class="mt-3">
-                <p>Penyimpanan Tersedia: 86 GB</p>
-                <p>Penyimpanan Terpakai: 14 GB</p>
+                <!-- Menampilkan total penyimpanan -->
+                <p>Penyimpanan Tersedia: {{ 100 - $penyimpanan->sum('total_ukuran') / (1024 * 1024) }} GB</p>
+                <p>Penyimpanan Terpakai: {{ number_format($penyimpanan->sum('total_ukuran') / (1024 * 1024), 2) }} GB</p>
             </div>
         </div>
     </div>
@@ -92,8 +96,8 @@
         rows.sort((a, b) => {
             let kategoriA = a.cells[1].textContent.toLowerCase();
             let kategoriB = b.cells[1].textContent.toLowerCase();
-            let penggunaanA = parseInt(a.cells[2].textContent);
-            let penggunaanB = parseInt(b.cells[2].textContent);
+            let penggunaanA = parseFloat(a.cells[3].textContent);
+            let penggunaanB = parseFloat(b.cells[3].textContent);
 
             // Sorting berdasarkan Kategori (A-Z / Z-A)
             if (sortKategori) {

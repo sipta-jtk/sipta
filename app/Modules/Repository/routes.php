@@ -13,6 +13,13 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 Route::get('/repository', [RepositoryController::class, 'dashboard'])->name('Repository.dashboard');
 Route::get('repository/{kategori}', [RepositoryController::class, 'index'])->name('Repository.index');
 
+// Saabiq Muhyiyuddin Aulawi
+// Route untuk menampilkan halaman log aktivitas
+Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
+
+// Route untuk menampilkan halaman monitoring penyimpanan
+Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
+
 
 Route::prefix('/repository')->middleware('auth', 'can:mahasiswa_ta-access')->group(function () {
     
@@ -37,12 +44,7 @@ Route::prefix('/repository')->middleware('auth', 'can:mahasiswa_ta-access')->gro
 
     Route::post('/{kategori}/subkategori', [SubkategoriController::class, 'store'])->name('Subkategori.store');
 
-    // Saabiq Muhyiyuddin Aulawi
-    // Route untuk menampilkan halaman log aktivitas
-    Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
-
-    // Route untuk menampilkan halaman monitoring penyimpanan
-    Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
+    
 
     // Farrel Keiza Muhammad Yamin Putra
     // Route utama untuk halaman daftar dokumen berdasarkan kategori

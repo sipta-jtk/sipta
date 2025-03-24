@@ -20,9 +20,6 @@
         </div>
     </div>
 
-    
-    
-
     <!-- Form Filter -->
     <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
         <form>
@@ -84,27 +81,15 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>2025-03-13 10:00:00</td>
-                <td>User 1</td>
-                <td>101</td>
-                <td>Login</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>2025-03-13 10:15:00</td>
-                <td>User 2</td>
-                <td>102</td>
-                <td>Download</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>2025-03-13 10:30:00</td>
-                <td>User 3</td>
-                <td>103</td>
-                <td>Edit</td>
-            </tr>
+            @foreach($logAktivitas as $log)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $log->waktu_aktivitas }}</td>
+                    <td>{{ $log->user ? $log->user->nama : 'No user' }}</td>
+                    <td>{{ $log->kota ? $log->kota->nama_kota : 'No KoTA' }}</td>
+                    <td>{{ $log->action }}</td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
 </div>

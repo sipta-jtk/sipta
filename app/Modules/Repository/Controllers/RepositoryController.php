@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Subkategori;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Models\LogAktivitas;
+use Illuminate\Support\Facades\DB;
 
 class RepositoryController extends Controller
 {
@@ -259,6 +261,29 @@ class RepositoryController extends Controller
 
 
     // Saabiq Muhyiyuddin Aulawi
+    public function logAktivitas()
+    {
+        // Ambil data log aktivitas dari database dengan relasi user dan kota
+        $logAktivitas = LogAktivitas::with('user', 'kota')->get();
+    
+        // Mengirim data log aktivitas ke view
+        return view('Repository.views.log_aktivitas', compact('logAktivitas'));
+    }
+    
+
+    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
+    public function monitoringPenyimpanan()
+{
+    // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
+    $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+        ->groupBy('kategori', 'id_subkategori')
+        ->with('subkategori')  // Pastikan mengambil relasi subkategori
+        ->get();
+
+    // Kirim data penyimpanan ke view
+    return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
+}
+
 
     // Muhammad Fahrizal Alzaelani
 
