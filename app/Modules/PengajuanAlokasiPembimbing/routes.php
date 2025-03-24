@@ -54,6 +54,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
         Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir'])->name('topik-tugas-akhir');
+        Route::get('/check-existing-data', [PengajuanPembimbingController::class, 'checkExistingData'])->name('checkExistingData');
 
         Route::group(['prefix' => 'prioritas-dosen-pembimbing', 'as' => 'prioritas-dosen-pembimbing.'], function () {
             Route::get('/', [PengajuanPembimbingController::class, 'view_prioritasDosenPembimbing'])->name('index');
