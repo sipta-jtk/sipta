@@ -60,36 +60,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($notifikasis as $key => $notifikasi)
-                <tr>
-                    <td>{{ $key + 1 }}</td>
-                    <td>{{ $notifikasi->judul_notifikasi }}</td>
-                    <td>{{ ucfirst($notifikasi->jenis_notifikasi) }}</td>
-                    <td>{{ Str::limit($notifikasi->isi_in_apps, 50) }}</td>
-                    <td>{{ Str::limit($notifikasi->isi_in_email, 50) }}</td>
-                    <td>
-                        @include('NotificationAndReminder.views.modals.edit-notifikasi', ['notifikasi' => $notifikasi])
+                @if($notifikasis->isEmpty())
+                    <tr>
+                        <td colspan="6" class="text-center">Belum ada template notifikasi.</td>
+                    </tr>
+                @else
+                    @foreach($notifikasis as $key => $notifikasi)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $notifikasi->judul_notifikasi }}</td>
+                        <td>{{ ucfirst($notifikasi->jenis_notifikasi) }}</td>
+                        <td>{{ Str::limit($notifikasi->isi_in_apps, 50) }}</td>
+                        <td>{{ Str::limit($notifikasi->isi_in_email, 50) }}</td>
+                        <td>
+                            @include('NotificationAndReminder.views.modals.edit-notifikasi', ['notifikasi' => $notifikasi])
 
-                        <!-- Tombol untuk menampilkan alert konfirmasi -->
-                        <button type="button" class="btn btn-danger btn-sm" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').show()">Hapus</button>
+                            <!-- Tombol untuk menampilkan alert konfirmasi -->
+                            <button type="button" class="btn btn-danger btn-sm" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').show()">Hapus</button>
 
-                        <!-- AdminLTE Alert untuk konfirmasi hapus -->
-                        <div id="alert-delete-{{ $notifikasi->id_template_notifikasi }}" class="alert-hapus" style="display: none;">
-                            <x-adminlte-alert theme="warning" title="Konfirmasi Hapus" dismissable>
-                                <p>Apakah Anda yakin ingin menghapus template notifikasi ini?</p>
-                                <div class="d-flex justify-content-end">
-                                    <form action="{{ route('notifikasi.delete', $notifikasi->id_template_notifikasi) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm mr-2">Iya, Hapus</button>
-                                    </form>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').hide()">Batal</button>
-                                </div>
-                            </x-adminlte-alert>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
+                            <!-- AdminLTE Alert untuk konfirmasi hapus -->
+                            <div id="alert-delete-{{ $notifikasi->id_template_notifikasi }}" class="alert-hapus" style="display: none;">
+                                <x-adminlte-alert theme="warning" title="Konfirmasi Hapus" dismissable>
+                                    <p>Apakah Anda yakin ingin menghapus template notifikasi ini?</p>
+                                    <div class="d-flex justify-content-end">
+                                        <form action="{{ route('notifikasi.delete', $notifikasi->id_template_notifikasi) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm mr-2">Iya, Hapus</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').hide()">Batal</button>
+                                    </div>
+                                </x-adminlte-alert>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                @endif
             </tbody>
             </table>
         </div>

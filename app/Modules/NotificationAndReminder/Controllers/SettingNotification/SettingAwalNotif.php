@@ -25,7 +25,7 @@ class SettingAwalNotif extends Controller
 
         TemplateNotifikasi::create($validated); // Simpan ke database
 
-        return redirect()->route('notification_reminder.admin.notifikasi')->with('success', 'Notifikasi berhasil disimpan.');
+        return redirect()->route('notifikasi.store')->with('success', 'Notifikasi berhasil disimpan.');
     }
 
     public function edit($id)
