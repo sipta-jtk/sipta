@@ -731,10 +731,10 @@
             return;
         }
 
-        console.log(`Fetching data for NIP: ${nip}`);
+        console.log(`Fetching data for NIP: ` + nip);
 
         $.ajax({
-            url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/${nip}`
+            url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/` + nip
             , type: "GET"
             , dataType: "json"
             , success: function(response) {
