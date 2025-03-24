@@ -217,7 +217,10 @@ class RepositoryController extends Controller
 
             $dokumen->save();
 
-            return redirect()->route('Repository.index', $kategori)->with('success', 'Dokumen berhasil diperbarui');
+            return redirect()->route('Repository.index.kota', [
+                'id_kota' => auth()->user()->mahasiswa->id_kota ?? auth()->user()->dosen->id_kota ?? 1,
+                'kategori' => $kategori
+            ])->with('success', 'Dokumen berhasil diperbarui');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui dokumen: ' . $e->getMessage());
         }
