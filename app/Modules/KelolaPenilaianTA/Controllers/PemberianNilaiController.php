@@ -85,7 +85,7 @@ class PemberianNilaiController extends Controller
             'judul_ta' => $mahasiswa->first()->kota->judul_ta,
             'waktu' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
             'nama_kota' => $mahasiswa->first()->kota->nama_kota,
-            'id_fta' => $idKota,
+            'id_kota' => $idKota,
         ];
     }
 

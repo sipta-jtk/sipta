@@ -79,7 +79,7 @@
         <!-- Tombol Preview -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
+                <strong>Preview File Dokumen Seminar III</strong> <br>
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Laporan
                 </button>
@@ -112,7 +112,7 @@
         <!-- Form Penilaian -->
         @php
             $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
-            $actionUrl = $isEdit ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+            $actionUrl = $isEdit ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_kota'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_kota'] . '/tambah');
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
@@ -171,7 +171,8 @@
             <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-warning">Simpan Draft</button>
+                    <a href="{{ route('pengisian.masukan', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Selanjutnya</a>
                 </div>
             </div>
         </form>
