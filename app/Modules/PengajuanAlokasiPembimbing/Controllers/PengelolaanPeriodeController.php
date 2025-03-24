@@ -8,6 +8,10 @@ use Illuminate\View\View;
 
 class PengelolaanPeriodeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function view_PengelolaanPeriode(): View
     {
         $data = [
