@@ -13,7 +13,7 @@ class LogUserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getLogNotifications()
+    public function getLogNotification()
     {
         try {
             // Mendapatkan ID pengguna saat ini
