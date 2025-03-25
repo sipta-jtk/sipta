@@ -105,14 +105,22 @@
 
 
         <!-- Form Penilaian -->
-        {{-- @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.store', ['id' => $idFta, 'kota' => $data['id_kota']]);
-        @endphp --}}
-        <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota'=> $idKota]) }}" method="POST">
+        @php
+            $kriteriaPenilaian = $detailInformasiFta->first()?->kriteriaPenilaian;
+
+            if (isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false) {
+                $actionUrl = route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
+            } else {
+                $actionUrl = route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
+            }
+        @endphp
+        <form action="{{ $actionUrl }}" method="POST">
             @csrf
-            {{-- @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+            @if(isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false)
                 @method('PATCH')
-            @endif --}}
+            @else
+                @method('POST')
+            @endif
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -144,10 +152,12 @@
                                     </td>
                                     <td>{{ $kriteria->bobot_kriteria }} %</td>
                                     @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
-                                        {{-- @php
-                                            $nilai = isset($nilaiKriteria[$index][$key]) ? $nilaiKriteria[$index][$key] : '';
-                                        @endphp --}}
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
+                                        @php
+                                            $nilai = isset($kriteria->nilaiKriteria[$key]) ? $kriteria->nilaiKriteria[$key]->nilai_kriteria : '';
+                                        @endphp
+                                        <td>
+                                            <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                        </td>
                                     @endforeach
                                 </tr>
                             @endforeach

@@ -29,16 +29,23 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi): View
     {
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
-            ->with('penjadwalan', 'mahasiswa.user')
+            ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
             ->get();
 
         // TBD tambahkan where untuk membedakan mana research dan pengembangan
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->where('id_prodi', $idProdi)
-            ->where('jenis_form', 'penilaian')
-            ->distinct()
-            ->with('kriteriaPenilaian.rubrik')
-            ->get();
+        ->where('id_prodi', $idProdi)
+        ->where('jenis_form', 'penilaian')
+        ->distinct()
+        ->with([
+            'kriteriaPenilaian.rubrik',
+            'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota) {
+                $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                    $q->where('id_kota', $idKota);
+                });
+            }
+        ])
+        ->get();
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_kriteria', [
             'detailInformasiFta' => $detailInformasiFta,
@@ -63,8 +70,13 @@ class PemberianNilaiController extends Controller
                 'kriteriaPenilaian.rubrik' => function ($query) {
                     $query->with('detailRubrik.nilai'); 
                 }
-            ])
+            , 'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                    $q->where('id_kota', $idKota);
+                });
+            }])
             ->get();
+        Log::info('detailInformasiFta'. json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
@@ -86,16 +98,18 @@ class PemberianNilaiController extends Controller
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
         if ($namaFtaSlug == 'seminar ii') {
-            return $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
+            $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
         } else {
-            return $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
+            $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
         }
+
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan');
     }
 
     private function simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota)
     {
         $nip = auth()->user()->username;
-        $nilai = $request->except('_token');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -109,16 +123,14 @@ class PemberianNilaiController extends Controller
         $kategoriPenilaian = $formPenilaian->kategoriPenilaian;
         $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian;
 
-        $nilai_rata_rata = $this->inputNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-        $this->inputNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
-
-        // return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+        $nilai_rata_rata = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
+        $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
     }
 
-    private function simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota): View
+    private function simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota)
     {
         $nip = auth()->user()->username;
-        $nilai = $request->except('_token');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
         
     
@@ -136,33 +148,35 @@ class PemberianNilaiController extends Controller
         $kategoriPenilaian = $formPenilaian->kategoriPenilaian;
         $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian;
 
-        $nilai_rata_rata_rubrik = $this->inputNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-        $nilai_rata_rata_kriteria = $this->inputNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
-        $this->inputNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
-
-        // return response()->json(['success' => 'Nilai berhasil disimpan']);
+        $nilai_rata_rata_rubrik = $this->ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
+        $nilai_rata_rata_kriteria = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
+        $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
     }
     
 
-    private function inputNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
+    private function ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
     {
         $nilai_rata_rata = [];
     
         foreach ($mahasiswa as $index => $mhs) {
-            $nilai_rata_rata[$index] = []; // Array untuk menyimpan rata-rata nilai per kriteria
-    
+            $nilai_rata_rata[$index] = []; // Menyimpan rata-rata nilai per mahasiswa
             $nilaiIndex = 0; // Menunjuk indeks nilai yang sedang diproses
     
             foreach ($kriteriaPenilaian as $kriteria) {
                 $jumlahRubrik = count($kriteria['rubrik']);
                 $totalNilai = 0;
     
-                // Mengambil nilai sesuai jumlah rubrik dalam kriteria
                 foreach ($kriteria['rubrik'] as $rubrik) {
-                    $nilaiRubrik = (double) $nilai[$index][$nilaiIndex];
-                    $totalNilai += $nilaiRubrik;
+                    // Hapus hanya nilai rubrik spesifik untuk mahasiswa ini
+                    $mhs->nilaiRubrik()
+                        ->where('nim', $mhs->nim)
+                        ->where('nip', $nip)
+                        ->where('id_rubrik', $rubrik['id_rubrik'])
+                        ->delete();
     
-                    // Simpan ke database untuk setiap rubrik
+                    $nilaiRubrik = (double) $nilai[$index][$nilaiIndex];
+    
+                    // Insert ulang data baru
                     $mhs->nilaiRubrik()->create([
                         'nim' => $mhs->nim,
                         'nip' => $nip,
@@ -171,10 +185,11 @@ class PemberianNilaiController extends Controller
                         'status_penilaian_dosen' => 'sudah_dinilai'
                     ]);
     
+                    $totalNilai += $nilaiRubrik;
                     $nilaiIndex++;
                 }
     
-                // Menghitung rata-rata nilai untuk kriteria tersebut
+                // Hitung rata-rata nilai rubrik dalam satu kriteria
                 $rataRata = $jumlahRubrik > 0 ? $totalNilai / $jumlahRubrik : 0;
                 $nilai_rata_rata[$index][] = $rataRata;
             }
@@ -184,23 +199,26 @@ class PemberianNilaiController extends Controller
     }
     
     
-    
-
-
-    private function inputNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
+    private function ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
     {
         $nilai_rata_rata = [];
         $bobotKriteria = $kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
-        
+        Log::info('nilai'. json_encode($nilai, JSON_PRETTY_PRINT));
+    
         foreach ($mahasiswa as $index => $mhs) {
-            Log::info("dipanggil");
             $totalNilai = 0;
             $totalBobot = array_sum($bobotKriteria);
-
+    
             foreach ($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
                 $nilaiKriteria = (double) $nilai[$index][$kriteriaIndex];
-  
-                Log::info('Insert nilai kriteria');
+    
+                // Hapus data lama berdasarkan composite key
+                $mhs->nilaiKriteria()
+                    ->where('id_kriteria', $kriteria->id_kriteria)
+                    ->where('nip', $nip)
+                    ->where('nim', $mhs->nim)
+                    ->delete();
+    
                 $mhs->nilaiKriteria()->create([
                     'nim' => $mhs->nim,
                     'nip' => $nip,
@@ -211,18 +229,27 @@ class PemberianNilaiController extends Controller
     
                 $totalNilai += $nilaiKriteria * $bobotKriteria[$kriteriaIndex];
             }
-  
+    
             $nilai_rata_rata[] = $totalBobot > 0 ? $totalNilai / $totalBobot : 0;
         }
     
         return $nilai_rata_rata;
     }
+    
+    
 
-    private function inputNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip): void
+    private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip): void
     {
         $idKategori = $kategoriPenilaian->first()->id_kategori;
     
         foreach ($mahasiswa as $index => $mhs) {
+            $mhs->nilaiKategori()
+                ->where('nim', $mhs->nim)
+                ->where('nip', $nip)
+                ->where('id_kategori', $idKategori)
+                ->delete();
+    
+            // Buat data baru
             $mhs->nilaiKategori()->create([
                 'nim' => $mhs->nim,
                 'nip' => $nip,
@@ -231,256 +258,17 @@ class PemberianNilaiController extends Controller
             ]);
         }
     }
-
-    // private function inputNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta): void
-    // {
-    //     $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik')->get();
-    //     $rubrikDiKriteriaPenilaian = $this->ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian);
     
-    //     foreach ($mahasiswa as $index => $mhs) {
-    //         foreach ($rubrikDiKriteriaPenilaian as $rubrikIndex => $rubrik) {
-    //             $nilaiRubrik = (double) $nilai['nilai' . $index][$rubrikIndex];
-    
-    //             // Simpan nilai rubrik ke database
-    //             $mhs->nilaiRubrik()->create([
-    //                 'nim' => $mhs->nim,
-    //                 'nip' => $nip,
-    //                 'id_rubrik' => $rubrik['id_rubrik'],
-    //                 'nilai_rubrik' => $nilaiRubrik,
-    //                 'status_penilaian_dosen' => 'sudah_dinilai' //TBD INI MUNGKIN DIHAPUS
-    //             ]);
-    //         }
-    //     }
-    // }
 
-    /**
-     * Helper function untuk menghitung rata-rata nilai
-     */
-    public function hitungRataRataNilaiDenganBobot(array $nilai, array $bobot): float
+    public function ubahNilaiSeminar(Request $request, $namaFta, $idKota)
     {
-        $totalNilai = 0;
-        $totalBobot = 0;
-
-        foreach ($nilai as $index => $value) {
-            $totalNilai += $value * $bobot[$index];
-            $totalBobot += $bobot[$index];
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        if ($namaFtaSlug == 'seminar ii') {
+            $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
+        } else {
+             $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
         }
 
-        return $totalBobot > 0 ? $totalNilai / $totalBobot : 0;
-    }
-
-    /**
-     * Helper function untuk menghitung nilai rubrik per mahasiswa tanpa bobot kriteria
-     */
-    private function hitungNilaiRubrikPerMahasiswa($kriteriaPenilaian)
-    {
-        $nilaiPerMahasiswa = [];
-    
-        foreach ($kriteriaPenilaian as $kriteria) {
-            foreach ($kriteria->rubrik as $rubrik) {
-                foreach ($rubrik->nilaiRubrik as $nilaiRubrik) {
-                    $nim = $nilaiRubrik['nim'];
-                    if (!isset($nilaiPerMahasiswa[$nim])) {
-                        $nilaiPerMahasiswa[$nim] = 0;
-                    }
-                    $nilaiPerMahasiswa[$nim] += $nilaiRubrik['nilai_rubrik'];
-                }
-            }
-        }
-    
-        return $nilaiPerMahasiswa;
-    }
-
-    public function ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian)
-    {
-        $rubrikArray = [];
-
-        foreach ($kriteriaPenilaian as $kriteria) {
-            foreach ($kriteria->rubrik as $rubrik) {
-                $rubrikArray[] = $rubrik;
-            }
-        }
-
-        return $rubrikArray;
-    }
-
-    public function editNilaiSeminar(Request $request, $idFta, $idKota): View
-    {
-        if ($idFta == 2) {
-            return $this->editNilaiSeminarII($request, $idFta, $idKota);
-        } else if ($idFta == 4) {
-            return $this->editNilaiSeminarIII($request, $idFta, $idKota);
-        }
-    }
-
-    /**
-     * Helper function untuk mengedit nilai seminar
-     */
-    public function editNilaiSeminarII(Request $request, $idFta, $idKota): View
-    {
-        $nip = auth()->user()->username;
-        $nilai = $request->except('_token', '_method');
-
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
-
-        $this->updateNilaiKeDatabaseKriteriaPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta);
-        $this->updateNilaiKeDatabaseKategoriPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta);
-
-        $pengelolaanNilai = new PengelolaanNilaiController();
-        return $pengelolaanNilai->detailNilaiMahasiswa($idFta);
-    }
-
-    /**
-     * Helper function untuk update nilai kriteria penilaian ke database
-     */
-    private function updateNilaiKeDatabaseKriteriaPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta): void
-    {
-        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->get();
-
-        foreach ($mahasiswa as $index => $mhs) {
-            // Hapus nilai kriteria yang sudah ada untuk mahasiswa ini agar tidak perlu update
-            $mhs->nilaiKriteria()->whereIn('id_kriteria', $kriteriaPenilaian->pluck('id_kriteria'))->delete();
-
-            foreach ($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
-                $nilaiKriteria = (double) $nilai['nilai' . $index][$kriteriaIndex];
-
-                // Masukkan data baru setelah penghapusan
-                $mhs->nilaiKriteria()->create([
-                    'nim' => $mhs->nim,
-                    'nip' => $nip,
-                    'id_kriteria' => $kriteria->id_kriteria,
-                    'nilai_kriteria' => $nilaiKriteria,
-                ]);
-            }
-        }
-    }
-
-    /**
-     * Helper function untuk update nilai kategori penilaian ke database tanpa UPDATE
-     */
-    private function updateNilaiKeDatabaseKategoriPenilaianSeminarII($mahasiswa, $nilai, $nip, $idFta): void
-    {
-        $nilai_rata_rata = [];
-        $bobot = FormPenilaian::where('id_fta', $idFta)->with('kriteriaPenilaian')->first();
-        $bobotKriteria = $bobot->kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
-        $idKategori = KategoriPenilaian::where('id_fta', $idFta)->first()->id_kategori;
-
-        // Menghitung rata-rata nilai untuk setiap mahasiswa dengan bobot
-        foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilaiDenganBobot($values, $bobotKriteria);
-            $nilai_rata_rata[] = $average;
-        }
-
-        foreach ($mahasiswa as $index => $mhs) {
-            // Hapus nilai kategori yang sudah ada agar tidak perlu update
-            $mhs->nilaiKategori()->where('id_kategori', $idKategori)->delete();
-
-            // Masukkan data baru setelah penghapusan
-            $mhs->nilaiKategori()->create([
-                'nim' => $mhs->nim,
-                'nip' => $nip,
-                'id_kategori' => $idKategori,
-                'nilai' => $nilai_rata_rata[$index],
-            ]);
-        }
-    }
-
-    public function editNilaiSeminarIII(Request $request, $idFta, $idKota): View
-    {
-        $nip = auth()->user()->username;
-        $nilai = $request->except('_token', '_method');
-    
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
-    
-        $this->updateNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta);
-        $this->updateNilaiKeDatabaseNilaiKriteriaSeminarIII($mahasiswa, $nilai, $nip, $idFta);
-        $this->updateNilaiKeDatabaseKategoriPenilaianSeminarIII($mahasiswa, $nilai, $nip, $idFta);
-    
-        $pengelolaanNilai = new PengelolaanNilaiController();
-        return $pengelolaanNilai->detailNilaiMahasiswa($idFta);
-    }
-    
-    /**
-     * Helper function untuk update nilai rubrik ke database
-     */
-    private function updateNilaiKeDatabaseNilaiRubrik($mahasiswa, $nilai, $nip, $idFta): void
-    {
-        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik')->get();
-        $rubrikDiKriteriaPenilaian = $this->ambilRubrikDiKriteriaPenilaian($kriteriaPenilaian);
-    
-        foreach ($mahasiswa as $index => $mhs) {
-            // Hapus nilai rubrik yang sudah ada untuk mahasiswa ini agar tidak perlu update
-            $mhs->nilaiRubrik()->whereIn('id_rubrik', array_column($rubrikDiKriteriaPenilaian, 'id_rubrik'))->delete();
-    
-            foreach ($rubrikDiKriteriaPenilaian as $rubrikIndex => $rubrik) {
-                $nilaiRubrik = (double) $nilai['nilai' . $index][$rubrikIndex];
-    
-                // Masukkan data baru setelah penghapusan
-                $mhs->nilaiRubrik()->create([
-                    'nim' => $mhs->nim,
-                    'nip' => $nip,
-                    'id_rubrik' => $rubrik['id_rubrik'],
-                    'nilai_rubrik' => $nilaiRubrik,
-                    'status_penilaian_dosen' => 'sudah_dinilai' //TBD INI MUNGKIN DIHAPUS
-                ]);
-            }
-        }
-    }
-    
-    /**
-     * Helper function untuk update nilai kriteria penilaian ke database
-     */
-    private function updateNilaiKeDatabaseNilaiKriteriaSeminarIII($mahasiswa, $nilai, $nip, $idFta): void
-    {
-        $kriteriaPenilaian = KriteriaPenilaian::where('id_fta', $idFta)->with('rubrik.nilaiRubrik')->get();
-    
-        foreach ($mahasiswa as $index => $mhs) {
-            // Hapus nilai kriteria yang sudah ada untuk mahasiswa ini agar tidak perlu update
-            $mhs->nilaiKriteria()->whereIn('id_kriteria', $kriteriaPenilaian->pluck('id_kriteria'))->delete();
-    
-            foreach ($kriteriaPenilaian as $kriteriaIndex => $kriteria) {
-                $nilaiKriteria = (double) $nilai['nilai' . $index][$kriteriaIndex];
-                $nilaiKriteria = round($nilaiKriteria, 2);
-    
-                // Masukkan data baru setelah penghapusan
-                $mhs->nilaiKriteria()->create([
-                    'nim' => $mhs->nim,
-                    'nip' => $nip,
-                    'id_kriteria' => $kriteria->id_kriteria,
-                    'nilai_kriteria' => $nilaiKriteria,
-                    'status_penilaian_dosen' => 'draf'
-                ]);
-            }
-        }
-    }
-    
-    /**
-     * Helper function untuk update nilai kategori penilaian ke database tanpa UPDATE
-     */
-    private function updateNilaiKeDatabaseKategoriPenilaianSeminarIII($mahasiswa, $nilai, $nip, $idFta): void
-    {
-        $nilai_rata_rata = [];
-        $idKategori = KategoriPenilaian::where('id_fta', $idFta)->first()->id_kategori;
-    
-        // Menghitung rata-rata nilai untuk setiap mahasiswa tanpa bobot
-        foreach ($nilai as $index => $values) {
-            $totalNilai = array_sum($values);
-            $jumlahNilai = count($values);
-            $average = $jumlahNilai > 0 ? round($totalNilai / $jumlahNilai, 2) : 0;
-            $nilai_rata_rata[] = $average;
-        }
-    
-        foreach ($mahasiswa as $index => $mhs) {
-            // Hapus nilai kategori yang sudah ada agar tidak perlu update
-            $mhs->nilaiKategori()->where('id_kategori', $idKategori)->delete();
-    
-            // Masukkan data baru setelah penghapusan
-            $mhs->nilaiKategori()->create([
-                'nim' => $mhs->nim,
-                'nip' => $nip,
-                'id_kategori' => $idKategori,
-                'nilai' => $nilai_rata_rata[$index],
-            ]);
-        }
+        return redirect()->back()->with('success', 'Nilai berhasil diubah');
     }
 }

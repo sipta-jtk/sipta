@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN {{ strtoupper($namaFta) }}')
+@section('title', 'PENILAIAN ' . strtoupper($namaFta))
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -111,15 +111,14 @@
 
         <!-- Form Penilaian -->
         @php
-            // $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
-            // $actionUrl = $isEdit ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.tambah', ['id' => $idFta, 'kota' => $data['id_kota']]);
-
+            $isEdit = count($detailInformasiFta->first()?->kriteriaPenilaian->first()?->rubrik->first()?->nilaiRubrik ?? []) > 0;
+            $action = $isEdit ? route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) : route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
         @endphp
-        <form id="form-nilai" action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota'=> $idKota]) }}" method="POST">
+        <form action="{{ $action }}" method="POST">
             @csrf
-            {{-- @if($isEdit) --}}
-                {{-- @method('PATCH') --}}
-            {{-- @endif --}}
+            @if($isEdit)
+                @method('PATCH')
+            @endif
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -157,10 +156,10 @@
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
                                         @foreach($keteranganUmumPenilaian->first()?->mahasiswa ?? [] as $key => $mhs)
-                                            {{-- @php
-                                                $nilai = isset($kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik) ? $kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik : '';
-                                            @endphp --}}
-                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value=""></td>
+                                            @php
+                                                $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
+                                            @endphp
+                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
                                         @endforeach
                                     </tr>
                                 @endforeach
