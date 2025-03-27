@@ -6,12 +6,14 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Mahasiswa;
 use App\Models\KategoriPenilaian;
 use App\Models\KriteriaPenilaian;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
-use Illuminate\Support\Facades\Log;
 
 class PemberianNilaiController extends Controller
 {
@@ -76,7 +78,6 @@ class PemberianNilaiController extends Controller
                 });
             }])
             ->get();
-        Log::info('detailInformasiFta'. json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
@@ -98,18 +99,27 @@ class PemberianNilaiController extends Controller
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
         if ($namaFtaSlug == 'seminar ii') {
-            $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
+            return $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
         } else {
-            $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
+            return $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
         }
+    }
 
-        return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+    public function ubahNilaiSeminar(Request $request, $namaFta, $idKota)
+    {
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        if ($namaFtaSlug == 'seminar ii') {
+            return $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
+        } else {
+             return $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
+        }
     }
 
     private function simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota)
     {
         $nip = auth()->user()->username;
-        $nilai = $request->except('_token', '_method');
+        $action = $request->form_action;
+        $nilai = $request->except('_token', '_method', 'form_action');
         $nilai = array_values($nilai);
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -123,21 +133,35 @@ class PemberianNilaiController extends Controller
         $kategoriPenilaian = $formPenilaian->kategoriPenilaian;
         $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian;
 
-        $nilai_rata_rata = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-        $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
+        DB::beginTransaction();
+
+        try {
+            $nilai_rata_rata = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
+
+            DB::commit();
+
+            if ($action == 'draft') {
+                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            } else {
+                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
+                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', 'Gagal menyimpan nilai: ' . $e->getMessage());
+        }
     }
 
     private function simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota)
     {
         $nip = auth()->user()->username;
-        $nilai = $request->except('_token', '_method');
+        $action = $request->form_action;
+        $nilai = $request->except('_token', '_method', 'form_action');
         $nilai = array_values($nilai);
-        
     
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
-        if ($mahasiswa->isEmpty()) {
-            return response()->json(['error' => 'Tidak ada mahasiswa yang ditemukan'], 404);
-        }
     
         $formPenilaian = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->where('jenis_form', 'penilaian')
@@ -147,11 +171,29 @@ class PemberianNilaiController extends Controller
     
         $kategoriPenilaian = $formPenilaian->kategoriPenilaian;
         $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian;
-
-        $nilai_rata_rata_rubrik = $this->ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-        $nilai_rata_rata_kriteria = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
-        $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
+    
+        DB::beginTransaction();
+    
+        try {
+            $nilai_rata_rata_rubrik = $this->ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
+            $nilai_rata_rata_kriteria = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
+    
+            DB::commit();
+    
+            if ($action == 'draft') {
+                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            } else {
+                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
+                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            return redirect()->back()->with('error', 'Gagal menyimpan nilai: ' . $e->getMessage());
+        }
     }
+    
     
 
     private function ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
@@ -257,18 +299,5 @@ class PemberianNilaiController extends Controller
                 'nilai' => $nilai_rata_rata[$index],
             ]);
         }
-    }
-    
-
-    public function ubahNilaiSeminar(Request $request, $namaFta, $idKota)
-    {
-        $namaFtaSlug = Str::slug($namaFta, ' ');
-        if ($namaFtaSlug == 'seminar ii') {
-            $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
-        } else {
-             $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
-        }
-
-        return redirect()->back()->with('success', 'Nilai berhasil diubah');
     }
 }

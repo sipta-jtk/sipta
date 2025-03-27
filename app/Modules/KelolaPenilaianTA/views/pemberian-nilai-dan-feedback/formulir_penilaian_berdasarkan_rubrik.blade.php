@@ -5,6 +5,7 @@
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
+        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
@@ -119,6 +120,7 @@
             @if($isEdit)
                 @method('PATCH')
             @endif
+            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -159,7 +161,10 @@
                                             @php
                                                 $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
                                             @endphp
-                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
+
+                                            <td>
+                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                            </td>
                                         @endforeach
                                     </tr>
                                 @endforeach
@@ -172,7 +177,12 @@
             <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
+                        Simpan draft
+                    </button>
+                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
+                        Selanjutnya
+                    </button>
                 </div>
             </div>
         </form>
