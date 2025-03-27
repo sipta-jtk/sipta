@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Mahasiswa;
 use App\Models\kategoriPenilaian;
 use App\Models\FormPenilaian;
+use App\Models\Kota;
+use App\Models\DetailFeedback;
 
 class PengelolaanNilaiController extends Controller{
     /**
@@ -31,17 +33,21 @@ class PengelolaanNilaiController extends Controller{
         ]);
     }
 
+    /**
+     * Menampilkan detail nilai mahasiswa
+     * 
+     * @param string $namaFta
+     */
     public function detailNilaiMahasiswa($namaFta): View
     {
-        $namaFtaSlug = Str::slug($namaFta, ' '); // Convert to lowercase and replace hyphens with spaces
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'id_fta') // Hanya mengambil kolom yang diperlukan
+            ->select('kode_fta', 'nama_fta', 'id_prodi', 'id_fta')
             ->orderBy('nama_fta')
             ->distinct()
             ->get();
     
-        
-        // Log::info('Detail FTA: ' . JSON_ENCODE($detailInformasiFta, JSON_PRETTY_PRINT));
         $idFtaList = $detailInformasiFta->pluck('id_fta')->toArray();
 
         $detailNilaiMahasiswa = Mahasiswa::with([
@@ -53,76 +59,41 @@ class PengelolaanNilaiController extends Controller{
             'nilaiKategori.kategoriPenilaian',
             'nilaiKategori.dosen',
             'user',
-            'kota',
+            'kota.detailFeedback',
         ])->get();
-
-        Log::info('Detail informasi nilai: ' . JSON_ENCODE($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
-        // Log::info('Informasi FTA: ' . JSON_ENCODE($detailInformasiFta, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta'));
     }
 
-    /**
-     * Menampilkan halaman tambah nilai mahasiswa
-     * 
-     */
-    public function formPenilaianSeminar2(): View
+    public function togglePublishNilai($namaFta, $idKota, $action)
     {
-        // Data statis untuk kota yang akan nilai
-        $kota = 2;
-
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
-
-        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2', compact('mahasiswa'));
-    }
-
-    /**
-     * Menyimpan nilai mahasiswa
-     * 
-     */
-    public function simpanNilaiMahasiswa(Request $request): View
-    {   
-        // Data statis untuk id penyimpanan nilai
-        $kota = 2;
-        $nip = 198502102015042001;
-        
-        $nilai = $request->except('_token');
-        $nilai_mahasiswa = [];
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)->get();
-        
-        // Menghitung rata-rata nilai untuk setiap mahasiswa
-        foreach ($nilai as $index => $values) {
-            $average = $this->hitungRataRataNilai($values);
-            $nilai_mahasiswa[] = $average;
-        }
-
-        // Log::info('Nilai mahasiswa: ' . JSON_ENCODE($nilai_mahasiswa, JSON_PRETTY_PRINT));
-
-        $this->inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip);
+        $nip = auth()->user()->username;
+        $namaFtaSlug = Str::slug($namaFta, ' ');
     
-        return view ('KelolaPenilaianTA.views.pengelolaan-nilai.dummy_formulir_seminar2');
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->first();
+    
+        $idProdi = $mahasiswa->id_prodi;
+    
+        $formPenilaian = FormPenilaian::where([
+                ['nama_fta', $namaFtaSlug],
+                ['id_prodi', $idProdi],
+                ['jenis_form', 'feedback']
+            ])
+            ->with('aspekFeedback')
+            ->first();
+    
+        $aspekFeedback = $formPenilaian->aspekFeedback->pluck('id_feedback')->toArray();
+        
+        $status = $action === 'publish' ? 'dipublikasikan' : 'draft';
+        
+        DetailFeedback::where('id_kota', $idKota)
+            ->where('nip', $nip)
+            ->whereIn('id_feedback', $aspekFeedback)
+            ->update(['status_penilaian_dosen' => $status]);
+        
+        $message = $action === 'publish' ? 'Nilai berhasil dipublikasikan.' : 'Nilai berhasil diunpublikasikan.';
+        
+        return back()->with('success', $message);
     }
-
-    /**
-     * Helper function untuk menghitung rata-rata nilai
-     */
-    public static function hitungRataRataNilai(array $nilai): float
-    {
-        return count($nilai) > 0 ? array_sum($nilai) / count($nilai) : 0;
-    }
-
-    /**
-     * Helper function untuk input nilai ke database
-     */
-    private function inputNilaiKeDatabase($mahasiswa, $nilai_mahasiswa, $nip): void
-    {
-        foreach ($mahasiswa as $index => $mhs) {
-            $mhs->nilaiKategori()->create([
-                'nim' => $mhs->nim,
-                'nip' => $nip,
-                'id_kategori' => 1,
-                'nilai' => $nilai_mahasiswa[$index],
-            ]);
-        }
-    }
+    
 }

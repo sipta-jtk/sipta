@@ -83,6 +83,18 @@
                                     {{-- TBD jika dosen sudah menyimpan sebagai draf --}}
                                     <td> 
                                         <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
+
+                                        @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Unpublish</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary">Publish</button>
+                                            </form>
+                                        @endif
                                     </td>
                             @endif
                         </tr>
@@ -102,18 +114,4 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const finalisasiButtons = document.querySelectorAll('.finalisasi-button');
-            finalisasiButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = this.closest('form');
-                    if (confirm('Apakah Anda yakin ingin memfinalisasi nilai ini?')) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
 @stop

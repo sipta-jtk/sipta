@@ -52,8 +52,11 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     });
 
    // ================= PENGELOLAAN NILAI =================
-    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->name('kelola.penilaian');
-    Route::get('/pengelolaan-nilai/{namaFta}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->name('kelola.penilaian.detail');
+    Route::prefix('pengelolaan-nilai')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
+        Route::get('/', [PengelolaanNilaiController::class, 'kelolaNilai'])->name('kelola.penilaian');
+        Route::get('/{namaFta}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('kelola.penilaian.detail');
+        Route::post('/{namaFta}/{idKota}/{action}', [PengelolaanNilaiController::class, 'togglePublishNilai'])->name('kelola.penilaian.toggle-publish');
+    });
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         // ================= REKAPITULASI NILAI =================
