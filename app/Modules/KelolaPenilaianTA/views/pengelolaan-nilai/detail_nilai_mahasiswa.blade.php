@@ -14,7 +14,7 @@
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->first()->nama_fta }}</h1>
+        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
     </div>
 @stop
 
@@ -78,10 +78,9 @@
                             <td> {{ number_format($rataRata, 2) }} </td>
                         
                             @if (in_array(strtolower($detailInformasiFta->first()->nama_fta), ['seminar i', 'seminar ii', 'seminar iii']))
-                                    {{-- TBD jika dosen sudah mengisi nilai maka tombol nilai akan merah --}}
-                                    {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
-                                    {{-- TBD jika dosen sudah menyimpan sebagai draf --}}
                                     <td> 
+                                        {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
+                                        {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
                                         <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
 
                                         @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')

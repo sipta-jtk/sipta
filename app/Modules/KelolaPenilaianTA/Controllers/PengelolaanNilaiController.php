@@ -24,12 +24,17 @@ class PengelolaanNilaiController extends Controller{
     public function kelolaNilai(): View
     {
         $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
+            ->where('jenis_form', 'feedback')
+            ->with('prodi')
+            ->orderBy('id_prodi')
             ->orderBy('nama_fta')
-            ->distinct()
-            ->pluck('nama_fta');
+            ->get();
+
+        $prodiList = $kategoriPenilaian->pluck('prodi')->unique('nama_prodi')->values();
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', [
             'kategoriPenilaian' => $kategoriPenilaian,
+            'prodiList' => $prodiList,
         ]);
     }
 
@@ -38,19 +43,20 @@ class PengelolaanNilaiController extends Controller{
      * 
      * @param string $namaFta
      */
-    public function detailNilaiMahasiswa($namaFta): View
+    public function detailNilaiMahasiswa($namaFta, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
         
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'id_fta')
             ->orderBy('nama_fta')
-            ->distinct()
-            ->get();
+            ->where('id_prodi', $idProdi)
+            ->with('prodi')
+            ->first();
     
         $idFtaList = $detailInformasiFta->pluck('id_fta')->toArray();
 
-        $detailNilaiMahasiswa = Mahasiswa::with([
+        $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
+        ->with([
             'nilaiKategori' => function ($query) use ($idFtaList) {
                 $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaList) {
                     $q->whereIn('id_fta', $idFtaList);
@@ -61,6 +67,8 @@ class PengelolaanNilaiController extends Controller{
             'user',
             'kota.detailFeedback',
         ])->get();
+
+        Log::info(json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta'));
     }
@@ -94,6 +102,11 @@ class PengelolaanNilaiController extends Controller{
         $message = $action === 'publish' ? 'Nilai berhasil dipublikasikan.' : 'Nilai berhasil diunpublikasikan.';
         
         return back()->with('success', $message);
+    }
+
+    public function toggleKunciPenilaian($namaFta)
+    {
+
     }
     
 }
