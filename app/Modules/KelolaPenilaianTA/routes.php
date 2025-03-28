@@ -56,7 +56,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/', [PengelolaanNilaiController::class, 'kelolaNilai'])->name('kelola.penilaian');
         Route::get('/{namaFta}/{idProdi}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('kelola.penilaian.detail');
         Route::post('/{namaFta}/{idKota}/{action}/toggle-publish', [PengelolaanNilaiController::class, 'togglePublishNilai'])->name('kelola.penilaian.toggle-publish');
-        Route::post('/{namaFta}/{idKota}/{action}/toggle-kunci', [PengelolaanNilaiController::class, 'toggleKunciNilai'])->name('kelola.penilaian.toggle-kunci');
+        Route::post('/{idKategori}/{action}/toggle-kunci', [PengelolaanNilaiController::class, 'toggleKunciPenilaian'])->name('kelola.penilaian.toggle-kunci');
     });
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {

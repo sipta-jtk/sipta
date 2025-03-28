@@ -23,13 +23,18 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-        $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
-            ->where('jenis_form', 'feedback')
-            ->with('prodi')
-            ->orderBy('id_prodi')
-            ->orderBy('nama_fta')
-            ->get();
 
+        // TBD Seminar I mungkin bisa dianggap penilaian saja
+        $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
+        ->where(function ($query) {
+            $query->where('jenis_form', 'penilaian')
+                  ->orWhere('nama_fta', 'Seminar I'); // Biarkan "Seminar I" tanpa filter jenis_form
+        })
+        ->with('prodi', 'kategoriPenilaian')
+        ->orderBy('id_prodi')
+        ->orderBy('nama_fta')
+        ->get();
+    
         $prodiList = $kategoriPenilaian->pluck('prodi')->unique('nama_prodi')->values();
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.kelola_penilaian_ta', [
@@ -68,11 +73,17 @@ class PengelolaanNilaiController extends Controller{
             'kota.detailFeedback',
         ])->get();
 
-        Log::info(json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
-
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta'));
     }
 
+    /**
+     * Mengubah status publish nilai
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param string $action
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function togglePublishNilai($namaFta, $idKota, $action)
     {
         $nip = auth()->user()->username;
@@ -104,9 +115,27 @@ class PengelolaanNilaiController extends Controller{
         return back()->with('success', $message);
     }
 
-    public function toggleKunciPenilaian($namaFta)
+    /**
+     * Mengunci atau membuka kunci penilaian
+     * 
+     * @param string $namaFta
+     * @param int $idProdi
+     * @param string $action
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toggleKunciPenilaian($idKategori, $action)
     {
-
+        $kategoriPenilaian = kategoriPenilaian::find($idKategori);
+    
+        if ($kategoriPenilaian) {
+            $kategoriPenilaian->kunci_penilaian = $action === 'kunci' ? 1 : 0;
+            $kategoriPenilaian->save();
+    
+            $message = $action === 'kunci' ? 'Penilaian berhasil dikunci.' : 'Penilaian berhasil dibuka kuncinya.';
+            return back()->with('success', $message);
+        }
+    
+        return back()->with('error', 'Kategori penilaian tidak ditemukan.');
     }
     
 }

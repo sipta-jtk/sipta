@@ -44,8 +44,19 @@
                         <td>{{ $fta->prodi->nama_prodi }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
+                                {{ Log::info(json_encode($fta, JSON_PRETTY_PRINT)) }}
                                 @if (!in_array(strtolower($fta->nama_fta), ['seminar i', 'seminar ii']))
-                                    <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
+                                    @if (($fta->kategoriPenilaian->first()?->kunci_penilaian ?? 0) == 1)
+                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'buka']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger">Buka Kunci Penilaian</button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'kunci']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary">Kunci Penilaian</button>
+                                        </form>
+                                    @endif
                                 @endif
                                 <a href="{{ route('kelola.penilaian.detail', ['namaFta' => Str::slug($fta->nama_fta), 'idProdi' => $fta->prodi->id_prodi]) }}" class="btn btn-primary buka-detail" data-id="{{ $index }}">Buka Detail</a>
                             </div>
