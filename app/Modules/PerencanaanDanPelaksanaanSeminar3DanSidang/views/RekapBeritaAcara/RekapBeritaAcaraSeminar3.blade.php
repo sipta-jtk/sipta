@@ -3,7 +3,7 @@
 @section('title', 'Rekap Presensi Seminar 3')
 
 @section('content_header')
-    <h1>Rekap Presensi Seminar 3</h1>
+    <h1>Rekap Berita Acara Seminar 3</h1>
 @stop
 
 @section('content')

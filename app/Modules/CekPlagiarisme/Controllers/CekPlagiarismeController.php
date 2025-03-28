@@ -9,6 +9,15 @@ use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use App\Modules\CekPlagiarisme\Services\PlagiarismChecker;
 use App\Models\Dokumen;
+use App\Models\AmbangBatas;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
+
+// console::info
+// import this console::info
+use Illuminate\Support\Facades\Log as console;
 
 class CekPlagiarismeController extends Controller
 {
@@ -18,7 +27,7 @@ class CekPlagiarismeController extends Controller
         if (auth()->user()->role_user === 'mahasiswa') {
             $idKota = auth()->user()->mahasiswa->id_kota;
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
-                ->where('kategori', 'laporan')
+                ->where('kategori', 'seminar1')
                 ->where('id_kota', $idKota)
                 ->get();
         } else {
@@ -29,7 +38,7 @@ class CekPlagiarismeController extends Controller
                     return $preferensiKota->id_kota;
                 });
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
-                ->where('kategori', 'laporan')
+                ->where('kategori', 'seminar1')
                 ->whereIn('id_kota', $idKota)
                 ->get();
         }
@@ -78,37 +87,68 @@ class CekPlagiarismeController extends Controller
                 'string',
                 'max:255',
                 function ($attribute, $value, $fail) {
-                    // Menambahkan validasi custom untuk memastikan jumlah kata tidak lebih dari 20
                     if (str_word_count($value) > 20) {
                         $fail('Judul dokumen tidak boleh lebih dari 20 kata.');
                     }
                 }
             ],
-            'dokumen' => 'required|file|mimes:pdf,docx|max:15360', // Validasi file: PDF, DOCX, max 15MB
+            'dokumen' => 'required|file|mimes:pdf,docx,txt|max:15360',
         ]);
 
-        // Proses file yang diunggah
-        $filePath = $request->file('dokumen')->store('uploads', 'public');
+        // Simpan file yang diunggah ke storage
+        $file = $request->file('dokumen');
+        $filePath = $file->store('dokumen', 'public');
 
-        // Lakukan pengecekan plagiarisme
-        $checker = new PlagiarismChecker();
-        $result = $checker->checkPlagiarism(storage_path('app/public/' . $filePath));
+        // Kirim file ke server Django untuk pengecekan plagiarisme
+        try {
+            $client = new Client();
+            $response = $client->post('http://192.168.116.195:8080/filetest/', [
+                'multipart' => [
+                    [
+                        'name'     => 'docfile',
+                        'contents' => fopen($file->getPathname(), 'r'),
+                        'filename' => $file->getClientOriginalName(),
+                    ],
+                ],
+            ]);
 
-        // Simpan dokumen dan hasil pengecekan ke database
+            $data = json_decode($response->getBody()->getContents(), true);
+            $percentage = isset($data['percent']) ? number_format($data['percent'], 2) : null;
+            $link = $data['link'] ?? null;
+            // console::info("RESPONSE DARI DJANGO: ", $data);
+            dump($data);
+        } catch (RequestException $e) {
+            return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
+        }
+
+        // Simpan informasi file ke database
+        $fileSizeInKB = round($file->getSize() / 1024, 2);
+        $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
+        $nim = auth()->user()->username;
+        $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
+
         Dokumen::create([
             'judul' => $request->judul,
             'file_path' => $filePath,
             'user_id' => auth()->id(),
-            'persentase_plagiarisme' => $result['percentage'],
-            'status' => $result['status'],
+            'username' => $nim,
+            'status_plagiarisme' => $statusPlagiarisme,
+            'persentase_plagiarisme' => $percentage,
+            'versi' => 1,
+            'ukuran_file' => $fileSizeInKB,
+            'kategori' => 'seminar1',
+            'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
+            'highlight_dokumen' => 0,
+            'status_berkas' => 'valid',
+            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+            'id_subkategori' => 3,
+            'kode_fta' => null,
         ]);
 
-        // Kembalikan hasil pengecekan
-        return view('CekPlagiarisme.views.DaftarDokumen', [
-            'results' => $result['results'],
-            'percentage' => $result['percentage']
-        ]);
+        // Tampilkan hasil ke view PengecekanTugasAkhir
+        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
     }
+
 
     public function getKota()
     {
