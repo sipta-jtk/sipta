@@ -47,11 +47,11 @@ $prefix = env('PREFIX_URL', '');
         <div class="col-md-4">
             <ul class="nav nav-tabs mb-3" id="detailTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋
-                        Detail</a>
+                    <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">📄 Sumber</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">📄 Sumber</a>
+                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋
+                        Detail</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab">⬇️ Unduh</a>
