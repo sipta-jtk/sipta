@@ -32,11 +32,6 @@ Route::prefix('/notification/admin')->middleware('auth', 'can:admin')->group(fun
         ->name('notifikasi.delete');
 });
 
-// Route::get('/notification_reminder/user/notifikasi', function () {
-//     return view('NotificationAndReminder::LogUser.logUser');
-// });
-
-// Route untuk mengambil notifikasi
 Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
 Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
 Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
