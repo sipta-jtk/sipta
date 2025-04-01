@@ -4,6 +4,7 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        {{-- TBD perbaiki breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/'), 'label' => 'Home'],
@@ -44,7 +45,6 @@
                         <td>{{ $fta->prodi->nama_prodi }}</td>
                         <td>
                             <div class="action d-flex flex-row align-items-center justify-content-center"> 
-                                {{ Log::info(json_encode($fta, JSON_PRETTY_PRINT)) }}
                                 @if (!in_array(strtolower($fta->nama_fta), ['seminar i', 'seminar ii']))
                                     @if (($fta->kategoriPenilaian->first()?->kunci_penilaian ?? 0) == 1)
                                         <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'buka']) }}" method="POST" style="display:inline;">

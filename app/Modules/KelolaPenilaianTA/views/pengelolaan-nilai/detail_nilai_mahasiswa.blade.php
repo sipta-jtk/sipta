@@ -4,6 +4,7 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/'), 'label' => 'Home'],
@@ -63,7 +64,7 @@
                             @php
                                 $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
                                 while (count($nilaiList) < 3) {
-                                    $nilaiList[] = 0; // Menggunakan 0 agar tetap valid dalam perhitungan
+                                    $nilaiList[] = 0;
                                 }
                         
                                 $rataRata = count($data->nilaiKategori) > 0 
@@ -83,6 +84,8 @@
                                         {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
                                         <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
 
+
+                                        {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
                                         @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
                                             <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
                                                 @csrf
