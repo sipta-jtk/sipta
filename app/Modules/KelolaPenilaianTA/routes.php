@@ -79,7 +79,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::post('/nilai/{namaFta}/masukan/{idKota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
     });
 
-    // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+    // ================= PEMBERIAN NILAI =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         Route::get('/nilai/{namaFta}/{idKota}/{idProdi}', [PemberianNilaiController::class, 'pengisianNilaiSeminar'])->name('pengisian.nilai');
         Route::post('/nilai/{namaFta}/{idKota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar'])->name('pengisian.nilai.store');

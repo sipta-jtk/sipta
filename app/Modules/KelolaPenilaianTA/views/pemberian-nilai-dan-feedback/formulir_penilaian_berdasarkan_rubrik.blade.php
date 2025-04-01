@@ -80,7 +80,7 @@
         <!-- Tombol Preview -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
+                <strong>Preview File Dokumen Seminar III</strong> <br>
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Laporan
                 </button>
