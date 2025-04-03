@@ -43,6 +43,9 @@ COPY --chown=www-data:www-data . /var/www/
 RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /var/log/supervisor
 
+# Update composer.lock
+RUN composer update
+
 # Install dependency
 RUN composer install
 

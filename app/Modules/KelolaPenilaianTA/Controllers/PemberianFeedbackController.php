@@ -37,7 +37,7 @@ class PemberianFeedbackController extends Controller
 
         Log::info("Data mahasiswa: ".json_encode($mahasiswa));
 
-        $aspekFeedback = AspekFeedback::where('id_fta', $id+1)->get();
+        $aspekFeedback = AspekFeedback::where('id_fta', $id)->get();
         Log::info("Data aspek feedback: ".json_encode($aspekFeedback));
 
         $data = [
@@ -144,7 +144,10 @@ class PemberianFeedbackController extends Controller
             // Commit transaksi jika semua berhasil
             DB::commit();
     
-            return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
+            $pengelolaanNilai = new PengelolaanNilaiController();
+            return $pengelolaanNilai->detailNilaiMahasiswa($id);
+            // return View
+            // return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi error
             DB::rollback();
