@@ -50,6 +50,7 @@ class PengelolaanNilaiController extends Controller{
      */
     public function detailNilaiMahasiswa($namaFta, $idProdi): View
     {
+        $nip = auth()->user()->username;
         $namaFtaSlug = Str::slug($namaFta, ' ');
         
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
@@ -58,22 +59,23 @@ class PengelolaanNilaiController extends Controller{
             ->with('prodi')
             ->first();
     
-        $idFtaList = $detailInformasiFta->pluck('id_fta')->toArray();
+        $idFta = $detailInformasiFta->id_fta;
 
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
+        ->where('mahasiswa.status_ta', 'mahasiswa_ta')
+        ->whereNotNull('mahasiswa.id_kota')
         ->with([
-            'nilaiKategori' => function ($query) use ($idFtaList) {
-                $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaList) {
-                    $q->whereIn('id_fta', $idFtaList);
+            'nilaiKategori' => function ($query) use ($idFta) {
+                $query->whereHas('kategoriPenilaian', function ($q) use ($idFta) {
+                    $q->where('id_fta', $idFta);
                 });
             },
-            'nilaiKategori.kategoriPenilaian',
             'nilaiKategori.dosen',
             'user',
             'kota.detailFeedback',
         ])->get();
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta'));
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta', 'nip'));
     }
 
     /**
