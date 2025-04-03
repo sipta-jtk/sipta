@@ -123,9 +123,6 @@ class PemberianNilaiController extends Controller
         $nilai = $request->except('_token', '_method', 'form_action');
         $nilai = array_values($nilai);
 
-        // Pakai JSON PRETTY
-        Log::info("Nilai yang diterima". json_encode($nilai, JSON_PRETTY_PRINT));
-
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
 
         $formPenilaian = FormPenilaian::where('nama_fta', $namaFtaSlug)
