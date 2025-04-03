@@ -25,6 +25,67 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         3 => ['start' => '13:00', 'end' => '15:00'],
         4 => ['start' => '15:00', 'end' => '17:00'],
     ];
+
+    private function checkPengajuanSeminar3($id_kota)
+    {
+        return $this->checkPengajuanStatus($id_kota, 'seminar_3');
+    }
+
+    private function checkPengajuanSidang($id_kota)
+    {
+        return $this->checkPengajuanStatus($id_kota, 'sidang');
+    }
+
+    private function checkPengajuanStatus($id_kota, $agenda)
+    {
+        $pengajuan = PengajuanJadwalKota::where('id_kota', $id_kota)
+            ->whereHas('penjadwalan', function ($query) use ($agenda) {
+                $query->where('agenda', $agenda);
+            })
+            ->where('status_mahasiswa', 1) 
+            ->orderBy('id_penjadwalan', 'desc')
+            ->get();
+
+        if ($pengajuan->isEmpty()) {
+            return ['status' => 'Belum Ada Pengajuan', 'agenda' => $agenda];
+        }
+
+        foreach ($pengajuan as $item) {
+            if ($item->status_dosen_pembimbing_1 === 0 || $item->status_dosen_pembimbing_2 === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 2];
+            }
+
+            if (is_null($item->status_dosen_pembimbing_1) || is_null($item->status_dosen_pembimbing_2)) {
+                return ['status' => 'Diajukan', 'agenda' => $agenda];
+            }
+
+            if ((is_null($item->status_dosen_penguji_1) || is_null($item->status_dosen_penguji_2)) && (($item->status_dosen_pembimbing_1 === 1) && ($item->status_dosen_pembimbing_2 === 1))) {
+                return ['status' => 'Pembimbing', 'agenda' => $agenda];
+            }
+
+            if ($item->status_dosen_penguji_1 === 0 || $item->status_dosen_penguji_2 === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 3];
+            }
+
+            if (is_null($item->status_koordinator_ta)) {
+                return ['status' => 'Penguji', 'agenda' => $agenda];
+            }
+
+            if ($item->status_koordinator_ta === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 4];
+            }
+
+            if (
+                ($item->status_dosen_pembimbing_1 === 1 && $item->status_dosen_pembimbing_2 === 1) &&
+                ($item->status_dosen_penguji_1 === 1 && $item->status_dosen_penguji_2 === 1) &&
+                $item->status_koordinator_ta === 1
+            ) {
+                return ['status' => 'Diterima', 'agenda' => $agenda];
+            }
+        }
+
+        return ['status' => 'Diajukan', 'agenda' => $agenda];
+    }
     
     public function indexPengajuan(): View
     {
@@ -66,8 +127,11 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             } else {
                 $verifikasi->kota = $id_kota;
                 $verifikasi->dosen = $id_kota;
-                $verifikasi->pengajuan = true; 
+                $verifikasi->pengajuan = true;
+                $verifikasi->pengajuanSeminar3 = $this->checkPengajuanSeminar3($id_kota);
+                $verifikasi->pengajuanSidang = $this->checkPengajuanSidang($id_kota);
             }
+            // dd($verifikasi);
         }
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
@@ -107,7 +171,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->get();
 
         // mengambil data ruangan dari API Topik 3
-        $response = Http::withoutVerifying()->get('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/rooms/names');
+        $response = Http::withoutVerifying()->get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
     
         if ($response->successful()) {
             $ruangan = collect($response->json())->map(function ($item) {
@@ -167,7 +231,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->get();
 
         // mengambil data ruangan dari API Topik 3
-        $response = Http::get('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/rooms/names');
+        $response = Http::get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
 
         if ($response->successful()) {
             $ruangan = collect($response->json())->map(function ($item) {
@@ -219,7 +283,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         $end = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
 
         // mengambil data jadwal yang sudah dibuat dari API Topik 3
-        $response = Http::get('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedules');
+        $response = Http::get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedules');
 
         if ($response->successful()) {
             $schedules = collect($response->json())->map(function ($item) {
