@@ -79,7 +79,7 @@
                                         <p class="form-control-plaintext bobot">{{ $kriteria->bobot_kriteria }}%</p>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="detail[]" value="{{ $rubrik->nama_rubrik }}" required>
+                                        <textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required>{{ $rubrik->nama_rubrik }}</textarea>
                                     </td>
                                     
                                     @foreach ($rentangNilai as $nilai)
@@ -87,8 +87,7 @@
                                             $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
                                         @endphp
                                         <td>
-                                            <input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" 
-                                                value="{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}" required>
+                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
                                         </td>
                                     @endforeach
                                     <td>

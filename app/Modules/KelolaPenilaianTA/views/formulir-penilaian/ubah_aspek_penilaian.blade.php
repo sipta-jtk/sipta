@@ -20,6 +20,10 @@
 
 @section('content')
     <div class="p-4">
+        <div id="notification" class="alert alert-danger d-none" role="alert">
+            <span id="notificationMessage"></span>
+        </div>
+
         <form action="{{ route('aspek-penilaian.update', $aspek->id) }}" method="POST" id="aspekForm">
             @csrf
             @method('PUT')
@@ -93,21 +97,14 @@
 
                             @endforelse
                             
-                            <!-- Tambahkan baris kosong jika diperlukan -->
-                            @if(count($aspek->penilaian) == 0)
-                                @for ($i = 0; $i < 4; $i++)
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="nama_kriteria[]" value=""></td>
-                                        <td><input type="number" class="form-control" name="bobot_kriteria[]" value=""></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm remove-row">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endfor
-                            @endif
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right">
+                                <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                            </td>
+                        </tr>
+                    </tfoot>
                     </table>
 
                     @if(count($aspek->penilaian) == 0)
@@ -147,19 +144,6 @@
                                 </tr>
                             @endforelse
                             
-                            <!-- Tambahkan baris kosong jika diperlukan -->
-                            @if(count($aspek->feedback) == 0)
-                                @for ($i = 0; $i < 4; $i++)
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value=""></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endfor
-                            @endif
                         </tbody>
                     </table>
                 </div>

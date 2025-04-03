@@ -31,6 +31,38 @@ class FormulirPenilaianController extends Controller {
 
     public function store(Request $request)
     {
+        $messages = [
+            'kodeFTA.regex' => 'Kode FTA harus mengikuti format FTA.XX atau FTA.XXX.',
+        ];
+        
+        // Validasi input form
+        $validator = \Validator::make($request->all(), [
+            'kodeFTA' => ['required', 'regex:/^FTA\.\d{2,3}$/'], // Format FTA.XX atau FTA.XXX
+            'namaFTA' => 'required',
+            'namaProdi' => 'required',
+            'jenisForm' => 'required',
+            'tanggalTenggat' => 'required|date',
+            'waktuTenggat' => 'required',
+        ], $messages);
+
+        // Validasi untuk Kode FTA unik dalam jenis formulir yang sama
+        $validator->after(function ($validator) use ($request) {
+            $exists = FormPenilaian::where('kode_fta', $request->kodeFTA)
+                                ->where('jenis_form', $request->jenisForm)
+                                ->where('id_prodi', $request->namaProdi)
+                                ->exists();
+            
+            if ($exists) {
+                $validator->errors()->add('kodeFTA', 'Kode FTA sudah digunakan');
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                            ->withErrors($validator)
+                            ->withInput();
+        }
+
         DB::beginTransaction();
 
         try {
@@ -46,8 +78,9 @@ class FormulirPenilaianController extends Controller {
 
             $id_fta = $formPenilaian->id_fta;
 
-            // Simpan ke tabel kriteria_penilaian jika jenis form adalah "Penilaian"
+            // Proses berdasarkan jenis formulir (kode yang sudah ada)
             if ($request->jenisForm === 'Penilaian') {
+                // Kode untuk Penilaian (tetap sama seperti sebelumnya)
                 if ($request->has('nama_kriteria')) {
                     // Kalkulasi total bobot
                     $totalBobot = array_sum($request->bobot_kriteria);
@@ -66,10 +99,8 @@ class FormulirPenilaianController extends Controller {
                         ]);
                     }
                 }
-            }
-
-            // Simpan ke tabel aspek_feedback jika jenis form adalah "Feedback"
-            if ($request->jenisForm === 'Feedback') {
+            } else if ($request->jenisForm === 'Feedback') {
+                // Kode untuk Feedback (tetap sama seperti sebelumnya)
                 if ($request->has('nama_aspek_feedback')) {
                     foreach ($request->nama_aspek_feedback as $kriteria) {
                         AspekFeedback::create([

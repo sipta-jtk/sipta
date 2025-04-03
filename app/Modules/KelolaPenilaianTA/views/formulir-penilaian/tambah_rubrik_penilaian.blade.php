@@ -80,9 +80,13 @@
                             <td>
                                 <p class="form-control-plaintext bobot">-</p> 
                             </td>                            
-                            <td><input type="text" class="form-control" name="detail[]" required></td>
+                            <td>
+                                <textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required></textarea>
+                            </td>
                             @foreach ($rentangNilai as $nilai)
-                                <td><input type="text" class="form-control" name="nilai_{{ $nilai->id_nilai }}[]" required></td>
+                                <td>
+                                    <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required></textarea>
+                                </td>
                             @endforeach
                             <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>

@@ -20,6 +20,10 @@
 
 @section('content')
     <div class="p-4">
+        <div id="notification" class="alert alert-danger d-none" role="alert">
+            <span id="notificationMessage"></span>
+        </div>
+
         <form id="aspekFormulirForm" action="{{ route('formulir-penilaian.simpan') }}" method="POST">
             @csrf
 
@@ -28,7 +32,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="kodeFTA">Kode FTA</label>
-                        <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" required>
+                        <input type="text" class="form-control @error('kodeFTA') is-invalid @enderror" id="kodeFTA" name="kodeFTA" value="{{ old('kodeFTA') }}" placeholder="Format FTA: FTA.XX, FTA.01" required>
+                        @error('kodeFTA')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
                 </div>
 
@@ -101,6 +110,13 @@
                             </td>
                         </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right">
+                                <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
 
                 <table class="table text-center" id="tableFeedback" style="display: none;">

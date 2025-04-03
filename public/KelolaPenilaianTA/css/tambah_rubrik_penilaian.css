@@ -1,5 +1,5 @@
 .table-container {
-    max-height: 500px;
+    max-height: 800px;
     overflow-y: auto;
     overflow-x: auto;
     border: 1px solid #ddd;
@@ -18,7 +18,7 @@
     background: #555;
 }
 table {
-    width: 100%;
+    width: 800px;
     border-collapse: collapse;
 }
 th, td {
@@ -46,6 +46,8 @@ thead th {
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
 }
+
 tbody tr:hover {
     background-color: #e2e6ea;
 }
+
