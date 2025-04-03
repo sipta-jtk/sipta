@@ -23,22 +23,15 @@ class PemberianFeedbackController extends Controller
 {
     public function pengisianMasukanSeminar($id, $kota): View
     {
-        Log::info("Mengakses halaman feedback untuk id_fta $id di kota $kota");
-
         $seminar = KategoriPenilaian::where('id_fta', $id)
             ->with('formulirPenilaian')
             ->first();
-
-        Log::info("Data seminar: ".json_encode($seminar));
 
         $mahasiswa = Mahasiswa::where('id_kota', $kota)
             ->with('user', 'kota.penjadwalan')
             ->get();
 
-        Log::info("Data mahasiswa: ".json_encode($mahasiswa));
-
         $aspekFeedback = AspekFeedback::where('id_fta', $id)->get();
-        Log::info("Data aspek feedback: ".json_encode($aspekFeedback));
 
         $data = [
             'kode_fta' => $seminar->formulirPenilaian->kode_fta,
