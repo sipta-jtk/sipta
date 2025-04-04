@@ -49,17 +49,22 @@
                             <td class="align-middle">{{ $row->jenis_form }}</td>
                             <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
                             <td class="align-middle">
-                                @if ($row->jenis_form == 'penilaian')
-                                    <a href="{{ route('detail.penilaian', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
-                                       class="btn btn-info btn-sm">
-                                        Lihat Detail
-                                    </a>
-                                @elseif ($row->jenis_form == 'feedback')
-                                    <a href="{{ route('detail.feedback', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
-                                       class="btn btn-info btn-sm">
-                                        Lihat Detail
-                                    </a>
-                                @endif
+                            @if ($row->nama_fta == 'Dosen Pembimbing')
+                                <a href="{{ route('detail.dosen-pembimbing', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                class="btn btn-info btn-sm">
+                                    Lihat Detail
+                                </a>
+                            @elseif ($row->jenis_form == 'penilaian')
+                                <a href="{{ route('detail.penilaian', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                class="btn btn-info btn-sm">
+                                    Lihat Detail
+                                </a>
+                            @elseif ($row->jenis_form == 'feedback')
+                                <a href="{{ route('detail.feedback', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                class="btn btn-info btn-sm">
+                                    Lihat Detail
+                                </a>
+                            @endif
                                 <a href="{{ route('aspek-penilaian.edit', $row->id_fta) }}" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>

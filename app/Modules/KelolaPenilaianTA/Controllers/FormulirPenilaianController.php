@@ -313,6 +313,45 @@ class FormulirPenilaianController extends Controller {
         return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_feedback', compact('kategori', 'aspekFeedback'));
     }
 
+    public function viewDetailDosenPembimbing($idFta, $idProdi): View
+    {
+        // Ambil data kategori berdasarkan id_fta
+        $kategori = DB::table('form_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian')
+            ->first();
+
+        // Log data untuk memastikan query berhasil
+        \Log::info('Kategori:', (array) $kategori);
+
+        // Pastikan data kategori ditemukan
+        if (!$kategori) {
+            abort(404, 'Data formulir penilaian tidak ditemukan.');
+        }
+
+        // Ambil data aspek penilaian dari database
+        $aspekPenilaianDb = DB::table('kriteria_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('nama_kriteria as nama', 'bobot_kriteria as bobot')
+            ->get();
+
+        // Definisikan pengelompokan kategori
+        $kategoriHardcoded = [
+            'A Luaran Tugas Akhir' => ['Dokumen', 'Produk Perangkat Lunak/Hasil Penelitian'],
+            'B Proses Bimbingan' => ['Softskill', 'Hardskill'],
+        ];
+
+        // Kelompokkan data dari database berdasarkan kategori yang telah ditentukan
+        $aspekPenilaian = [];
+        foreach ($kategoriHardcoded as $kategoriName => $aspekList) {
+            $aspekPenilaian[$kategoriName] = $aspekPenilaianDb->filter(function ($aspek) use ($aspekList) {
+                return in_array($aspek->nama, $aspekList);
+            })->values()->toArray();
+        }
+
+        return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
+    }
+
     public function tambahFormRubrik($idFta)
     {
         $data = DB::table('form_penilaian')

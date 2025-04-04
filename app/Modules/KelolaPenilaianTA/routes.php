@@ -28,6 +28,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         // Detail
         Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])->name('detail.penilaian');
         Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])->name('detail.feedback');
+        Route::get('/detail-dosen-pembimbing/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailDosenPembimbing'])->name('detail.dosen-pembimbing');
 
         // Formulir Penilaian
         Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');

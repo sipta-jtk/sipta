@@ -59,7 +59,7 @@
                             <th style="min-width: 100px;">Bobot (%)</th>
                             <th style="min-width: 200px;">Detail Kriteria</th>
                             @foreach ($rentangNilai as $nilai)
-                                <th style="min-width: 200px;">≥ {{ $nilai->batas_bawah }} - {{ $nilai->batas_atas }} ({{ $nilai->id_nilai }})</th>
+                                <th style="min-width: 200px;">{{ $nilai->batas_bawah }} - {{ $nilai->batas_atas }} ({{ $nilai->id_nilai }})</th>
                             @endforeach
                             <th style="min-width: 100px;">Aksi</th>
                         </tr>
