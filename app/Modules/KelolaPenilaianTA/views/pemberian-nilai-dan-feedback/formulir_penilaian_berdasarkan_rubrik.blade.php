@@ -56,7 +56,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($keteranganUmumPenilaian->first()?->mahasiswa as $key => $mhs)
+                            @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -128,7 +128,7 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->first()?->mahasiswa ?? []) }}">Nilai Perorangan</th>
+                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->mahasiswa ?? []) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($rubrikList as $index => $rubrik)
@@ -141,7 +141,7 @@
                                     </th>
                                 @endforeach
 
-                                @foreach($keteranganUmumPenilaian->first()?->mahasiswa ?? [] as $key => $mhs)
+                                @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
                                     <th>{{ $key + 1 }}</th>  
                                 @endforeach
                             </tr>
@@ -149,7 +149,7 @@
                         <tbody>
                             @foreach ($detailInformasiFta->first()?->kriteriaPenilaian ?? [] as $indexKriteria => $kriteria)
                                 <tr>
-                                    <td colspan="{{ 8 + count($keteranganUmumPenilaian->first()?->mahasiswa ?? []) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
+                                    <td colspan="{{ 8 + count($keteranganUmumPenilaian->mahasiswa ?? []) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
                                 @foreach ($kriteria->rubrik as $index => $rubrik)
                                     <tr>
@@ -157,7 +157,7 @@
                                         @foreach ($rubrik->detailRubrik as $detail)
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
-                                        @foreach($keteranganUmumPenilaian->first()?->mahasiswa ?? [] as $key => $mhs)
+                                        @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
                                             @php
                                                 $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
                                             @endphp

@@ -58,9 +58,11 @@ class PengelolaanNilaiController extends Controller{
             ->with('prodi')
             ->first();
     
-        $idFtaList = $detailInformasiFta->pluck('id_fta')->toArray();
+        $idFtaList = $detailInformasiFta->pluck('id_fta');
 
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
+        ->where('status_ta', 'mahasiswa_ta')
+        ->whereNotNull('id_kota') 
         ->with([
             'nilaiKategori' => function ($query) use ($idFtaList) {
                 $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaList) {

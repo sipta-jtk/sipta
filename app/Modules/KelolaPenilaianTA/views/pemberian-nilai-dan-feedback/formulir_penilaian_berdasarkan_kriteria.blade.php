@@ -25,7 +25,7 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->namaFta ?? '00') }}</span>
+                <span>{{ ($detailInformasiFta->first()?->kode_fta) }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
