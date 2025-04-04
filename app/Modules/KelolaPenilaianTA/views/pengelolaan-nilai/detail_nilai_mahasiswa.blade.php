@@ -21,6 +21,14 @@
 
 @section('content')
     <div class="p-4">
+        <!-- Button Import From Excel -->
+        <div class="mb-3">
+            <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="form-control d-inline-block w-auto" required>
+                <button type="submit" class="btn btn-success">Import from Excel</button>
+            </form>
+        </div>
         {{-- Tabel Scrollable --}}
         <div class="table-container">
             <table id="alokasiTable" class="table text-center">

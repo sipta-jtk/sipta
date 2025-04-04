@@ -59,6 +59,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::post('/{idKategori}/{action}/toggle-kunci', [PengelolaanNilaiController::class, 'toggleKunciPenilaian'])->name('kelola.penilaian.toggle-kunci');
     });
 
+    Route::post('/import-nilai', [PemberianNilaiController::class, 'importNilai'])->name('import.nilai');
+
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         // ================= REKAPITULASI NILAI =================
         Route::get('/rekapitulasi-nilai-sidang', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
