@@ -62,6 +62,12 @@
                 @method('POST')
             @endif
 
+            @if($aspekFeedback->isEmpty())
+                <div class="alert alert-warning">Belum ada aspek feedback untuk {{ strtoupper($data['namaFta']) }}.</div>
+            @else
+                <!-- Form feedback -->
+            @endif
+
             @foreach ($aspekFeedback as $index=> $feedback)
                 <div class="form-group">
                     <label for="{{ Str::slug($feedback->nama_aspek_feedback) }}">
@@ -69,15 +75,20 @@
                     </label>
                     <input type="hidden" name="feedback[{{ $index }}][id_fta]" value="{{ $data['kode_fta'] }}">
                     <input type="hidden" name="feedback[{{ $index }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
-
-                    <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="">
                     
+                    @php
+                        $existingFeedback = $data['detailFeedback']->get($feedback->id_feedback);
+                        $oldValue = old("feedback.{$index}.masukan", $existingFeedback->isi_feedback ?? '');
+                    @endphp
+
+                    <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="{{ $oldValue }}">
+
                     <!-- Trix Editor -->
                     <trix-editor input="feedback-{{ $index }}"></trix-editor>
                 </div>
             @endforeach
 
-            <button type="submit" class="btn btn-primary">Kirim Masukan</button>
+            <button type="submit" class="btn btn-primary" {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}>Kirim Masukan</button>
         </form>
     </div>
 @stop

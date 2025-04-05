@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 use App\Models\Mahasiswa;
 use App\Models\Kota;
-// use App\Models\KriteriaPenilaian;
-// use App\Models\KategoriPenilaian;
+use App\Models\KriteriaPenilaian;
+use App\Models\KategoriPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
@@ -62,6 +62,17 @@ class PemberianFeedbackController extends Controller
             'id_kota' => $idKota,
             'aspekFeedback' => $aspekFeedback
         ];
+
+        $nip = auth()->user()->username;
+
+        // Ambil feedback yang sudah diisi dosen ini untuk FTA dan kota terkait
+        $detailFeedback = DetailFeedback::whereIn('id_feedback', $aspekFeedback->pluck('id_feedback'))
+            ->where('id_kota', $idKota)
+            ->where('nip', $nip)
+            ->get()
+            ->keyBy('id_feedback'); // agar bisa diakses dengan mudah di Blade
+
+        $data['detailFeedback'] = $detailFeedback;
     
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data'));
     }
@@ -121,45 +132,36 @@ class PemberianFeedbackController extends Controller
         try {
             // Simpan setiap masukan ke dalam database
             foreach ($data as $feedback) {
-                DetailFeedback::create([
-                    'id_feedback' => $feedback['id_feedback'],
-                    'id_kota' => $idKota, // Kota tujuan dari URL
-                    'nip' => $nip,
-                    'status_penilaian_dosen' => 'dipublikasikan', // Status default
-                    'isi_feedback' => $feedback['masukan'], // Data feedback dari form
-                ]);
+                $existingFeedback = DetailFeedback::where('id_feedback', $feedback['id_feedback'])
+                    ->where('id_kota', $idKota)
+                    ->where('nip', $nip)
+                    ->first();
+        
+                if ($existingFeedback) {
+                    // Update jika sudah ada
+                    $existingFeedback->update([
+                        'isi_feedback' => $feedback['masukan'],
+                        'status_penilaian_dosen' => 'dipublikasikan', // update status juga kalau perlu
+                    ]);
+                } else {
+                    // Insert jika belum ada
+                    DetailFeedback::create([
+                        'id_feedback' => $feedback['id_feedback'],
+                        'id_kota' => $idKota,
+                        'nip' => $nip,
+                        'status_penilaian_dosen' => 'dipublikasikan',
+                        'isi_feedback' => $feedback['masukan'],
+                    ]);
+                }
             }
-
-            // Commit transaksi jika semua berhasil
+        
             DB::commit();
-
-            // $pengelolaanNilai = new PengelolaanNilaiController();
-            // return $pengelolaanNilai->detailNilaiMahasiswa($idKota);
-            
-            // return View
+        
             return redirect()->route('kelola.penilaian')->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi error
             DB::rollback();
-
             Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }
     }
-
-    /**
-     * Ubah feedback
-     */
-    public function ubahMasukanSeminar(Request $request, $namaFta, $idKota)
-    {
-        $namaFtaSlug = Str::slug($namaFta, ' ');
-        if ($namaFtaSlug == 'seminar i') {
-            return $this->simpanMasukanSeminarI($request, $namaFtaSlug, $idKota);
-        } else if ($namaFtaSlug == 'sidang d3') {
-            return $this->simpanMasukanSidang($request, $namaFtaSlug, $idKota);
-        } else {
-            return $this->simpanMasukanSeminarIIDanIII($request, $namaFtaSlug, $idKota);
-        }
-    }
-
 }
