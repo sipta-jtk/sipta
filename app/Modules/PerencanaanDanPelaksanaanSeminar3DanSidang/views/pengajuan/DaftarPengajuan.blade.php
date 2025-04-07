@@ -34,7 +34,7 @@
                 $Seminar3Finished = $verifikasi->pengajuanSeminar3['status'] === 'Diterima'
             @endphp
             <x-adminlte-card title="Pengajuan Seminar 3" 
-                theme="{{ $Seminar3Finished ? 'secondary' : ($seminar3Approved ? ($seminar3InProgress ? 'warning' : ($seminar3Active ? 'primary' : 'secondary')) : 'secondary') }}" 
+                theme="{{ $Seminar3Finished ? 'success' : ($seminar3Approved ? ($seminar3InProgress ? 'warning' : ($seminar3Active ? 'primary' : 'secondary')) : 'secondary') }}" 
                 icon="fas fa-file-alt"
                 class="d-flex flex-column h-100"
                 style="{{ $Seminar3Finished ? 'opacity: 0.5; pointer-events: none;' : ($seminar3Approved && !$seminar3InProgress ? '' : 'opacity: 0.5; pointer-events: none;') }}">
@@ -46,7 +46,7 @@
                         @elseif (!$Seminar3Finished && $seminar3Approved && $seminar3InProgress)
                             <button class="btn btn-warning" disabled>Sedang dalam Pengajuan</button>
                         @elseif ($Seminar3Finished)
-                            <button class="btn btn-secondary" disabled>Sudah Diterima</button>
+                            <button class="btn btn-success" disabled>Sudah Diterima</button>
                         @else
                             <button class="btn btn-secondary" disabled>Belum Memenuhi Syarat</button>
                         @endif
@@ -58,17 +58,26 @@
         <!-- Card Pengajuan Sidang Akhir -->
         <div class="col-md-6">
             @php
-                $sidangApproved = $seminar3Approved && collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'sidang' && $item->status_konfirmasi === 'disetujui');
-                $sidangActive = isset($verifikasi->pengajuan) && $verifikasi->pengajuanSidang['status'] !== 'Ditolak';
+                $sidangApproved = $Seminar3Finished && $seminar3Approved && collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'sidang_akhir' && $item->status_konfirmasi === 'disetujui');
+                $sidangStatus = $verifikasi->pengajuanSidang['status'] ?? null;
+                $sidangActive = isset($verifikasi->pengajuanSidang);
+                $sidangInProgress = in_array($sidangStatus, ['Diajukan', 'Pembimbing', 'Penguji', 'Koordinator']);
+                $sidangFinished = $sidangStatus === 'Diterima';
             @endphp
-            <x-adminlte-card title="Pengajuan Sidang Akhir" theme="{{ $sidangApproved ? 'primary' : 'secondary' }}" icon="fas fa-graduation-cap"
+            <x-adminlte-card title="Pengajuan Sidang Akhir"
+                theme="{{ $sidangFinished ? 'success' : ($sidangApproved ? ($sidangInProgress ? 'warning' : ($sidangActive ? 'primary' : 'secondary')) : 'secondary') }}"
+                icon="fas fa-graduation-cap"
                 class="d-flex flex-column h-100"
-                style="{{ $sidangApproved && !$sidangActive ? '' : 'opacity: 0.5; pointer-events: none;' }}">
+                style="{{ $sidangFinished ? 'opacity: 0.5; pointer-events: none;' : ($sidangApproved && !$sidangInProgress ? '' : 'opacity: 0.5; pointer-events: none;') }}">
                 <div class="d-flex flex-column flex-grow-1">
                     <p class="flex-grow-1">Sidang Akhir dapat diajukan setelah Seminar 3 selesai dan pengajuan berkas persyaratan Sidang Akhir telah mendapat persetujuan.</p>
                     <div class="mt-auto">
-                        @if ($sidangApproved && !$sidangActive)
+                        @if (!$sidangFinished && $sidangApproved && !$sidangInProgress)
                             <a href="{{ route('pengajuan-sidang') }}" class="btn btn-primary">Buat Pengajuan</a>
+                        @elseif (!$sidangFinished && $sidangApproved && $sidangInProgress)
+                            <button class="btn btn-warning" disabled>Sedang dalam Pengajuan</button>
+                        @elseif ($sidangFinished)
+                            <button class="btn btn-success" disabled>Sudah Diterima</button>
                         @else
                             <button class="btn btn-secondary" disabled>Belum Memenuhi Syarat</button>
                         @endif

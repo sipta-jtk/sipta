@@ -59,7 +59,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                 return ['status' => 'Diajukan', 'agenda' => $agenda];
             }
 
-            if ((is_null($item->status_dosen_penguji_1) || is_null($item->status_dosen_penguji_2)) && (($item->status_dosen_pembimbing_1 === 1) && ($item->status_dosen_pembimbing_2 === 1))) {
+            if ((is_null($item->status_dosen_penguji_1) || is_null($item->status_dosen_penguji_2)) && (($item->status_dosen_penguji_1 !== 0) && ($item->status_dosen_penguji_2 !== 0)) && (($item->status_dosen_pembimbing_1 === 1) && ($item->status_dosen_pembimbing_2 === 1))) {
                 return ['status' => 'Pembimbing', 'agenda' => $agenda];
             }
 
@@ -67,7 +67,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                 return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 3];
             }
 
-            if (is_null($item->status_koordinator_ta)) {
+            if (is_null($item->status_koordinator_ta) && (($item->status_dosen_penguji_1 === 1) && ($item->status_dosen_penguji_2 === 1))) {
                 return ['status' => 'Penguji', 'agenda' => $agenda];
             }
 
@@ -349,6 +349,6 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_koordinator_ta' => null,
         ]);
 
-        return redirect()->route('pengajuan')->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
+        return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }
 }
