@@ -131,14 +131,7 @@ class VerifikasiPengajuanJadwalController extends Controller
     {
         // Ambil status verifikasi dari request
         $status = $request->input('status_verifikasi') === 'Ditolak' ? false : true;
-
-        // fungsi to api farhan
-        DB::table('pengajuan_jadwal_kota')
-        ->where('id_penjadwalan', $idPenjadwalan)
-        ->update(['status_koordinator_ta' => $status]);
-
-
-
+        
         if ($status == true) {
             // Ambil informasi ruangan dari tabel penjadwalan
             $roomInformation = DB::table('penjadwalan')
@@ -147,19 +140,39 @@ class VerifikasiPengajuanJadwalController extends Controller
                 ->first();
         
             if ($roomInformation) {       
-               
+                // Mengambil token dari auth
+                $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
+            
                 $response = Http::withHeaders([
                     'X-Requested-With' => 'XMLHttpRequest'
-                ])->post('http://host.docker.internal:8005/api/v1/schedule/action', [
+                ])->post('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedule/action?token={$token}', [
                     'type' => 'add',
                     'agenda' => $roomInformation->agenda,
                     'start' => $roomInformation->start,
                     'end' => $roomInformation->end  ,
                     'id_ruangan' => $roomInformation->id_ruangan,
                     'id_kota' => $roomInformation->id_kota,
-                    'nip' => '123004062006'
+                    'nip' => auth()->user()->username,
                 ]);
+
+                if( $response->successful()) {
+                    // Jika berhasil, lakukan update status verifikasi
+                    DB::table('pengajuan_jadwal_kota')
+                        ->where('id_penjadwalan', $idPenjadwalan)
+                        ->update(['status_koordinator_ta' => $status]);
+                } else {
+                    // Jika gagal, kirimkan pop up error response json dari API
+                    $responseData = $response->json();
+                    $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat memproses permintaan.';
+                    return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
+                        ->with('error', "Gagal memverifikasi: " . $errorMessage);
+                }
             }
+        } else {
+            // Jika status ditolak, update status verifikasi tanpa menghubungi API
+            DB::table('pengajuan_jadwal_kota')
+                ->where('id_penjadwalan', $idPenjadwalan)
+                ->update(['status_koordinator_ta' => $status]); 
         }
         
         // Redirect kembali ke halaman dengan pesan
