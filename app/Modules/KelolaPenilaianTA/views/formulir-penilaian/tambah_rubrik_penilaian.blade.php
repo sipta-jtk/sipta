@@ -20,7 +20,7 @@
 
 @section('content')
 <div class="p-4">
-        <form action="{{ route('formulir-penilaian.store-rubrik') }}" method="POST">
+        <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST">
             @csrf
 
             <div class="row">
@@ -107,8 +107,4 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
-    <script>
-        const rentangNilai = @json($rentangNilai);
-        const kriteriaList = @json($kriteriaList);
-    </script>
 @stop

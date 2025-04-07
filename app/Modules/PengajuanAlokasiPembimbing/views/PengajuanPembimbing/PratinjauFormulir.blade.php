@@ -10,8 +10,6 @@
 
 @section('content')
 
-    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
-
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="4"
@@ -64,7 +62,9 @@
                 <p id="preview-topik" style="font-weight: bold;">Memuat...</p>
 
                 <h5 class="mt-3 mb-3">Bidang Tugas Akhir</h5>
-                <p id="preview-bidang" style="font-weight: bold;">Memuat...</p>
+                <ol id="preview-bidang" style="font-weight: bold;">
+                    <li>Memuat...</li>
+                </ol>
 
                 <h5 class="mt-3 mb-3">Prioritas Dosen Pembimbing</h5>
                 <ul id="preview-prioritas" style="font-weight: bold;">
@@ -73,8 +73,8 @@
 
                 <div class="d-flex justify-content-between mt-3">
                     <a href="{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }}"
-                        class="btn btn-info mr-3">Sebelumnya</a>
-                    <button type="submit" id="finalisasiData" class="btn btn-sm btn-primary" style="font-size: 16px">Finalisasi Data</button>
+                        class="btn btn-info">Sebelumnya</a>
+                    <button type="submit" class="btn btn-sm btn-primary" style="font-size: 16px">Finalisasi Data</button>
                 </div>
             </div>
         </div>
@@ -104,39 +104,19 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Mengecek apakah mahasiswa sudah memiliki pengajuan
-            $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
-                if (response.hasExistingData || response.Periode === false) {
-                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
-                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
-                    if (response.Periode === false) {
-                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
-                    }
-                    else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
-                    }
-                    if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
-                    }
-                }
-            });
-
-            // Menampilkan topik tugas akhir dan bidang yang sudah disimpan di localStorage
+            // Menampilkan data topik tugas akhir yang sudah disimpan di localStorage
             let savedData = JSON.parse(localStorage.getItem("pengajuanTopikDraft"));
 
             if (savedData) {
-                document.getElementById("preview-topik").textContent = savedData.topik || "<span style='color: red;'>Topik belum diisi</span>";
+                document.getElementById("preview-topik").textContent = savedData.topik || "Tidak ada data";
 
                 let namaBidang = document.getElementById("preview-bidang");
-                namaBidang.textContent = ""; // Kosongkan sebelumnya
+                namaBidang.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
 
-                if (savedData.bidang) {
-                    // Tampilkan bidang yang dipilih sebagai teks biasa
-                    namaBidang.textContent = savedData.bidang;
+                if (savedData.bidang.length > 0) {
+                    namaBidang.innerHTML = savedData.bidang; 
                 } else {
-                    namaBidang.innerHTML = "<span style='color: red;'>Tidak ada bidang yang dipilih</span>";
+                    namaBidang.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
                 }
             }
 
@@ -161,7 +141,7 @@
                 });
             } else {
                 document.getElementById("preview-prioritas").innerHTML =
-                    "<span style='color: red;'>Prioritas dosen belum dipilih</span>";
+                    "<li>Tidak ada prioritas dosen yang dipilih.</li>";
             }
         });
 

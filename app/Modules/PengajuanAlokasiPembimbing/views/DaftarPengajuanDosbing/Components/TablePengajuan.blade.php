@@ -97,10 +97,8 @@
 
 <script>
     $(document).ready(function() {
+
         function handleAction(kelompokId, actionType) {
-            let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
-            routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
-            
             Swal.fire({
                 title: "Konfirmasi"
                 , text: actionType === "accept" ? "Apakah Anda yakin ingin menerima pengajuan ini?" : "Apakah Anda yakin ingin menolak pengajuan ini?"
@@ -113,7 +111,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: routeUrl
+                        url: "/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/" + kelompokId + "/" + actionType
                         , method: "POST"
                         , headers: {
                             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")

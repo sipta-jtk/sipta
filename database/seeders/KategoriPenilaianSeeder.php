@@ -17,7 +17,7 @@ class KategoriPenilaianSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
-
+            
             [
                 'id_kategori' => 1,
                 'id_fta' => 2,
@@ -40,12 +40,6 @@ class KategoriPenilaianSeeder extends Seeder
                 'id_kategori' => 4,
                 'id_fta' => 8,
                 'nama_kategori' => 'Pelaksanaan TA',
-                'kunci_penilaian' => false,
-            ],
-            [
-                'id_kategori' => 5,
-                'id_fta' => 7,
-                'nama_kategori' => 'Dosen Pembimbing',
                 'kunci_penilaian' => false,
             ]
         ];

@@ -112,8 +112,10 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
+        // dd($pembimbing);
+
         if (is_null($id_kota)) {
-            $verifikasi = (object) ['kota' => $id_kota];
+            $verifikasi = (object) ['kota' => null];
         } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
             $verifikasi = (object) ['kota' => $id_kota, 'dosen' => null];
         } else {

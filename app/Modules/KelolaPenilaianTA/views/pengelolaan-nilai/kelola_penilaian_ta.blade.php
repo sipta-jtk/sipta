@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
                 ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
             ]
         ])
@@ -22,8 +22,8 @@
         <table class="table table-striped table-bordered text-center">
             <thead class="bg-brown text-white">
                 <tr>
-                    <th class="bg-dark">Kategori</th>
-                    <th class="bg-dark w-40">Aksi</th>
+                    <th>Kategori</th>
+                    <th class="w-40">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@
                                 @if (!in_array(strtolower($data['nama_fta']), ['seminar i', 'seminar ii']))
                                     <button type="button" class="btn btn-primary me-2">Kunci Penilaian</button>
                                 @endif
-                                <a href="{{ route('pengelolaan-nilai.detail', ['id' => $data->id_fta]) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
+                                <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/' . $data->id_fta) }}" class="btn btn-primary buka-detail" data-id="{{ $data['id_kategori'] }}">Buka Detail</a>
                             </div>
                         </td>
                     </tr>

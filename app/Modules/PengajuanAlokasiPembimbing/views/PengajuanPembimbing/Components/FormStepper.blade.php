@@ -29,18 +29,3 @@
     </div>
 </div>
 
-@section('css')
-    <style>
-        .step-divider {
-            width: 2px;
-            height: 60px;
-        }
-
-        @media (max-width: 767px) {
-            .step-divider {
-                width: 60px;
-                height: 2px;
-            }
-        }
-    </style>
-@endsection

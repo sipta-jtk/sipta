@@ -19,7 +19,7 @@
         <!-- Tombol Add -->
         <div class="ms-auto">
             @if ($kategori === 'artefak')
-            <a href="{{ route('Subkategori.index', ['kategori' => $kategori]) }}" class="btn btn-success mr-2">
+            <a href="{{ url('/repository/'.$kategori.'/subkategori') }}" class="btn btn-success mr-2">
                 + Subkategori
             </a>
             @endif
@@ -35,24 +35,11 @@
 
     <!-- Form Filter (Hidden by Default) -->
     <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
-        <form action="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" method="GET">
+        <form action="{{ route('Repository.index', $kategori) }}" method="GET">
             <div class="row g-2">
                 <div class="col-md-3">
                     <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
                 </div>
-
-                @if ($kategori === 'artefak')
-                <div class="col-md-3">
-                    <select name="subkategori" class="form-control">
-                        <option value="">-- Pilih Subkategori --</option>
-                        @foreach ($subkategoris as $subkategori)
-                        <option value="{{ $subkategori->id_subkategori }}" {{ request('subkategori') == $subkategori->id_subkategori ? 'selected' : '' }}>
-                            {{ $subkategori->nama_subkategori }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                @endif
 
                 <div class="col-md-3">
                     <select name="versi" class="form-control">
@@ -68,12 +55,8 @@
                 </div>
 
                 <div class="col-md-3 d-flex">
-                    <button type="submit" class="btn btn-filter w-50 me-2">
-                        <i class="fas fa-filter"></i> Filter
-                    </button>
-                    <a href="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" class="btn btn-reset w-50 me-2">
-                        <i class="fas fa-undo"></i> Reset
-                    </a>
+                    <button type="submit" class="btn btn-dark w-50 me-2">Filter</button>
+                    <a href="{{ route('Repository.index', $kategori) }}" class="btn btn-secondary w-50 me-2">Reset</a>
                 </div>
             </div>
         </form>
@@ -106,9 +89,6 @@
                 @endif
                 <th>Versi</th>
                 <th>Judul</th>
-                @if ($kategori === 'artefak')
-                <th>Subkategori</th>
-                @endif
                 <th>Tanggal Dibuat</th>
                 <th>Terakhir Diedit</th>
                 <th>Action</th>
@@ -140,9 +120,6 @@
                         {{ $doc->judul }}
                     </a>
                 </td>
-                @if ($kategori === 'artefak')
-                <td>{{ $doc->subkategori->nama_subkategori }}</td>
-                @endif
 
                 <td>{{ $doc->created_at }}</td>
                 <td>{{ $doc->updated_at }}</td>
@@ -196,7 +173,7 @@
 
     <!-- Tombol Kembali -->
     <div class="d-flex justify-content-start mb-3">
-        <a href="{{ route('Repository.dashboard.kota.mahasiswa', ['id_kota' => $kota->id_kota]) }}" class="btn btn-secondary">
+        <a href="{{ url($prefix . '/repository') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -226,19 +203,9 @@
                     <div class="mb-3">
                         <label for="kode_fta" class="form-label">Kode FTA:</label>
                         <select class="form-control" id="kode_fta" name="kode_fta" required>
-                            @for ($i = 1; $i <= 9; $i++)
+                            @for ($i = 1; $i <= 23; $i++)
                                 <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
                                 @endfor
-                                <option value="FTA-10">FTA-10</option>
-                                <option value="FTA-10a">FTA-10a</option>
-                                @for ($i = 11; $i <= 13; $i++)
-                                    <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                    @endfor
-                                <option value="FTA-10">FTA-14</option>
-                                <option value="FTA-10a">FTA-14a</option>
-                                @for ($i = 15; $i <= 23; $i++)
-                                    <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                    @endfor
                         </select>
                     </div>
                     @endif
@@ -256,21 +223,10 @@
                     </div>
                     @endif
 
-                    <!-- Conditional input based on kategori -->
-                    @if ($kategori === 'link_source_code')
-                    <div class="mb-3">
-                        <label for="repository_url" class="form-label">URL Repository:</label>
-                        <input type="url" class="form-control" id="repository_url" name="repository_url"
-                            placeholder="https://github.com/username/repository" required>
-                        <small class="form-text text-muted">Masukkan URL repository Git (GitHub, GitLab, Bitbucket, dll)</small>
-                    </div>
-                    @else
                     <div class="mb-3">
                         <label for="file" class="form-label">File:</label>
                         <input type="file" class="form-control" id="file" name="file" required>
                     </div>
-                    @endif
-
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi:</label>
                         <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required></textarea>
@@ -345,7 +301,6 @@
                         <label for="editJudul" class="form-label">Judul:</label>
                         <input type="text" class="form-control" id="editJudul" name="judul" required>
                     </div>
-                    
 
                     <div class="mb-3">
                         <p><strong>File Terunggah:</strong></p>
@@ -561,32 +516,6 @@
         background-color: #218838;
     }
 
-    .btn-filter {
-        background-color: #007bff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        color: white;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-filter:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-reset {
-        background-color: #6c757d;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        color: white;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-reset:hover {
-        background-color: #5a6268;
-    }
-
     /* Filter styling */
     #filterOptions {
         border-radius: 8px;
@@ -704,19 +633,11 @@
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-
                 const id = this.getAttribute('data-id');
                 const title = this.getAttribute('data-judul');
-                const kategori = "{{ $kategori }}";
-                const idKota = "{{ auth()->user()->mahasiswa->id_kota ?? auth()->user()->dosen->id_kota ?? 1 }}";
 
-                // Set judul dokumen ke dalam modal
                 document.getElementById('deleteDocumentTitle').textContent = title;
-
-                // Set form action ke route yang sesuai
-                document.getElementById('deleteForm').action = `/repository/mahasiswa/{{ $kategori }}/${id}`;
-
-                // Tampilkan modal konfirmasi
+                document.getElementById('deleteForm').action = `/repository/{{ $kategori }}/${id}`;
                 $('#deleteConfirmationModal').modal('show');
             });
         });

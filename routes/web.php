@@ -100,3 +100,9 @@ Route::put('/update-data/{id}', function ($id, \Illuminate\Http\Request $request
 
 Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
 
+Route::get('/penentuan-ambang-batas', function () {
+    return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+});
+Route::get('/cek-plagiarisme', function () {
+    return view('CekPlagiarisme.views.DaftarDokumen');
+});
