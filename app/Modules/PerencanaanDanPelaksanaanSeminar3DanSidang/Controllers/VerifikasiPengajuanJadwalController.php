@@ -142,10 +142,8 @@ class VerifikasiPengajuanJadwalController extends Controller
             if ($roomInformation) {       
                 // Mengambil token dari auth
                 $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
-            
-                $response = Http::withHeaders([
-                    'X-Requested-With' => 'XMLHttpRequest'
-                ])->post('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedule/action?token={$token}', [
+
+                $data = [
                     'type' => 'add',
                     'agenda' => $roomInformation->agenda,
                     'start' => $roomInformation->start,
@@ -153,7 +151,15 @@ class VerifikasiPengajuanJadwalController extends Controller
                     'id_ruangan' => $roomInformation->id_ruangan,
                     'id_kota' => $roomInformation->id_kota,
                     'nip' => auth()->user()->username,
-                ]);
+                ];
+            
+                $response = Http::withHeaders([
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'content-type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->withToken($token)
+                ->post('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
                 if( $response->successful()) {
                     // Jika berhasil, lakukan update status verifikasi
