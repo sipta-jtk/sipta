@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Penilaian Seminar 1']
             ]
         ])
@@ -79,7 +79,7 @@
         <h3 class="heading-spacing text-center">EVALUASI</h3>
 
         <!-- Form -->
-        <form action="{{ route('kelola.penilaian') }}"> <!-- route('feedback.store') method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta') }}"> <!-- route('feedback.store') method="POST" -->
             @csrf
 
             <!-- Deskripsi Topik -->

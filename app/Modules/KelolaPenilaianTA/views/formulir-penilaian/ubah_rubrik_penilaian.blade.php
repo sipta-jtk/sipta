@@ -20,6 +20,7 @@
 
 @section('content')
 <div class="p-4">
+        <!-- <form action="{{ url('/kelola-penilaian-ta/formulir-penilaian/tambah-rubrik-penilaian') }}" method="POST"> -->
         <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
@@ -81,7 +82,6 @@
                                     <td>
                                         <input type="text" class="form-control" name="detail[]" value="{{ $rubrik->nama_rubrik }}" required>
                                     </td>
-                                    
                                     @foreach ($rentangNilai as $nilai)
                                         @php
                                             $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
@@ -114,14 +114,21 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/ubah_rubrik_penilaian.css') }}">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/tambah_rubrik_penilaian.css') }}">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ asset('KelolaPenilaianTA/js/ubah_rubrik_penilaian.js') }}"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/tambah_rubrik_penilaian.js') }}"></script>
+
     <script>
-        const rentangNilai = @json($rentangNilai);
-        const kriteriaList = @json($kriteriaList);
+        $(document).ready(function () {
+            $(document).on('change', '.id_kriteria', function () {
+                var selectedOption = $(this).find(':selected'); // Ambil opsi yang dipilih
+                var bobot = selectedOption.data('bobot'); // Ambil nilai dari atribut data-bobot
+                $(this).closest('tr').find('.bobot').text(bobot ? bobot + "%" : "-"); // Tampilkan bobot di kolom
+                console.log("Data Bobot:", bobot); // ✅ Console log di sini
+            });
+        });
     </script>
 @stop

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 
 class DosenController extends Controller
@@ -56,7 +57,7 @@ class DosenController extends Controller
 
         DB::beginTransaction();
         try{
-        $randomCode = "password123";
+        $randomCode = Str::random(7);
         $user = User::create([
             'username' => $request->nip,
             'email' => $request->email,
@@ -69,6 +70,14 @@ class DosenController extends Controller
 
         $email = $request->email;
         $nama = $request->nama;
+        Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
+            $message->to($email)
+                    ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
+                    ->subject('Info Akun Sipta');
+        });
+
+
+
 
         Dosen::create([
             'nip' => $request->nip,
@@ -234,7 +243,7 @@ public function inputBulk(Request $request){
     $dosen = [];
 
     foreach ($validatedData['data'] as $userData) {
-        $randomCode = "password123"; // Atau gunakan default password
+        $randomCode = \Str::random(8); // Atau gunakan default password
 
         $users[] = [
             'username' => $userData['username'],
@@ -255,7 +264,12 @@ public function inputBulk(Request $request){
 
     $email = $userData['email'];
     $nama = $userData['nama'];
- 
+    Mail::raw("Halo $nama, berikut adalah password untuk sipta anda : $randomCode", function ($message)  use($email,$nama,$randomCode){
+        $message->to($email)
+                ->from('pemberitahuan.tugas.akhir@gmail.com', 'sipta')
+                ->subject('Info Akun Sipta');
+    });
+
 
     }
 

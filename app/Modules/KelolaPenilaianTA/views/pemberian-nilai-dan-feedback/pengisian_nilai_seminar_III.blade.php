@@ -111,13 +111,11 @@
 
         <!-- Form Penilaian -->
         @php
-            $isEdit = count($kriteriaPenilaian[0]->rubrik[0]->nilaiRubrik) > 0;
-            $actionUrl = $isEdit ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.tambah', ['id' => $idFta, 'kota' => $data['id_kota']]);
-
+            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
-            @if($isEdit)
+            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
                 @method('PATCH')
             @endif
             <div class="row mt-4">
@@ -127,7 +125,8 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                <th style="min-width: 200px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                                <th style="min-width: 100px;" rowspan="2">Rentang Nilai</th>
+                                <th style="min-width: 100px;" colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($nilaiBatas[0] as $nilai)
@@ -145,21 +144,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteriaPenilaian as $indexKriteria => $kriteria)
+                            @foreach ($kriteriaPenilaian as $index => $kriteria)
                                 <tr>
                                     <td colspan="{{ 8 + count($mahasiswa) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
-                                @foreach ($kriteria->rubrik as $index => $rubrik)
+                                @foreach ($kriteria->rubrik as $key => $rubrik)
                                     <tr>
                                         <td>{{ $rubrik->nama_rubrik }}</td>
                                         @foreach ($rubrik->detailRubrik as $detail)
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
+                                        <td>0-100</td>
                                         @foreach($mahasiswa as $key => $mhs)
-                                            @php
-                                                $nilai = isset($kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik) ? $kriteriaPenilaian[$indexKriteria]->rubrik[$index]->nilaiRubrik[$key]->nilai_rubrik : '';
-                                            @endphp
-                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
+                                            <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100"></td>
                                         @endforeach
                                     </tr>
                                 @endforeach
@@ -234,15 +231,5 @@
             let match = url.match(/[-\w]{25,}/);
             return match ? match[0] : null;
         }
-
-
-        $(document).ready(function() {
-            // Menginisialisasi DataTable dengan FixedColumns
-            var table = $('#myTable').DataTable({
-                scrollX: true,
-                fixedColumns: {
-                    rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
-                }
-            });
     </script>
 @stop

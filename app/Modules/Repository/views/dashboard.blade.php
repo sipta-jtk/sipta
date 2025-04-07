@@ -3,12 +3,7 @@
 @section('title', 'RepositoryTA')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center">
-    <h1>RepositoryTA</h1>
-    <span class="text-muted">
-        {{ $kota->nama_kota ?? 'Kota Tidak Diketahui' }} - {{ $kota->id_kota }}
-    </span>
-</div>
+<h1>RepositoryTA</h1>
 @stop
 
 @section('content')
