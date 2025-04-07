@@ -31,7 +31,14 @@ class PengelolaanPeriodeController extends Controller
         $periode_mulai = date('Y-m-d', strtotime($periode[0]));
         $periode_akhir = date('Y-m-d', strtotime($periode[1]));
 
-        if (($periode_mulai > $periode_akhir) || (PeriodePengajuan::where('periode_mulai', '<=', $periode_akhir)->where('periode_akhir', '>=', $periode_mulai)->exists()) || ($mode == 'update' && $data['periodeId'] == null)) {
+        if ($periode_mulai > $periode_akhir || 
+            PeriodePengajuan::where('periode_mulai', '<=', $periode_akhir)
+            ->where('periode_akhir', '>=', $periode_mulai)
+            ->when($mode == 'update', function ($query) use ($data) {
+                return $query->where('id_periode_pengajuan', '!=', $data['periodeId']);
+            })
+            ->exists() || 
+            ($mode == 'update' && $data['periodeId'] == null)) {
             session()->flash('error', 'Periode pengajuan tidak valid');
             return redirect()->back();
         }
