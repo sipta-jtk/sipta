@@ -442,7 +442,7 @@ return [
                     'can' => 'mahasiswa_ta',
                 ],
                 [
-                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang',
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir',
                     'url' => $prefix . '/verifikasi-berkas-sidang',
                     'can' => 'mahasiswa_ta',
                 ],

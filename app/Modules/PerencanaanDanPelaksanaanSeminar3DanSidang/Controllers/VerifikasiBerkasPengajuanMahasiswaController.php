@@ -143,7 +143,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             'nip' => '196610181995121001',
             'tanggal_pengajuan' => Carbon::now(),
             'status_konfirmasi' => 'pending',
-            'jenis_pengajuan' => 'sidang',
+            'jenis_pengajuan' => 'sidang_akhir',
             'id_kota' => Auth::user()->mahasiswa->id_kota,
         ]);
 

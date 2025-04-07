@@ -30,7 +30,7 @@
                         <p><strong>Catatan dari Koor TA:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
+                    <p><strong>Jenis Pengajuan:</strong> Seminar 3</p>
                 </div>
             </div>
         @endif
