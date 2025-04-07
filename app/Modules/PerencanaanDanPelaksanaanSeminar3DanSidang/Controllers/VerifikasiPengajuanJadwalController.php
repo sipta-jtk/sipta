@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 
 class VerifikasiPengajuanJadwalController extends Controller
@@ -140,8 +141,15 @@ class VerifikasiPengajuanJadwalController extends Controller
                 ->first();
         
             if ($roomInformation) {       
-                // Mengambil token dari auth
-                $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
+                // Mengambil token dari auth untuk server API
+                // $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
+
+
+                // Token yang digunakan untuk mengakses API secara local untuk testing
+                $token = "7|TXXovaiNFiwOxbvAaccHPMYVxnUVLn0EQ5jSH9dG63d9d88c";
+
+                // $roomInformation->start = Carbon::parse($roomInformation->start)->format('Y-m-d H:i:sP');
+                // $roomInformation->end = Carbon::parse($roomInformation->end)->format('Y-m-d H:i:sP');
 
                 $data = [
                     'type' => 'add',
