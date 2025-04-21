@@ -58,8 +58,7 @@ class MahasiswaController extends Controller
         $nama = $request->nama;
 
         // Commit transaksi jika semua berhasil
-        return redirect()->route('manage.mhs')->with('success', 'Mahasiswa berhasil ditambahkan!');
-
+        return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan! Password: $randomCode");
         
 
 }
@@ -204,4 +203,3 @@ public function import(Request $request)
     }
 
 }
-

@@ -84,6 +84,5 @@ class DatabaseSeeder extends Seeder
         // Ninth batch: Logs (should be last as they depend on many entities)
         $this->call(LogAktivitasSeeder::class); // depends on Kota, User, Dokumen
         $this->call(PembatalanSeeder::class); // depends on penjadwalan and dosen
-        $this->call(KotaArtefakSeeder::class); // depends on Kota, Artefak
     }
 }

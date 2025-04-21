@@ -76,7 +76,7 @@ class PengelolaanNilaiController extends Controller{
         $rataRata = count($filtered) > 0 ? round(array_sum($filtered) / count($filtered), 2) : 0.00;
         $filteredData[] = [
             'index' => $index + 1,
-            'id_kota' => $mahasiswa->kota->id_kota ?? '-',
+            'kota' => $mahasiswa->kota->id_kota ?? '-',
             'nama' => $mahasiswa->user->nama ?? '-',
             'kelompok' => $mahasiswa->kota->nama_kota ?? '-',
             'nilai' => $nilaiArray,
