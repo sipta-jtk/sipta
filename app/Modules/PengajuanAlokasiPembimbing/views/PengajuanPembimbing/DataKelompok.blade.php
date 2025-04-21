@@ -12,6 +12,8 @@
 
     {{-- <p>Data Kelompok > <a href="www">Topik Tugas Akhir</a> > <a href="www">Prioritas Dosen Pembimbing</a> > <a href="www">Pratinjau</a></p> --}}
 
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="1"
@@ -70,8 +72,9 @@
                     </div>
                 </div>
 
-                <!-- Tombol Simpan & Selanjutnya -->
-                <div class="d-flex justify-content-end mt-3">
+                <!-- Tombol Ubah Data & Selanjutnya -->
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" id="ubahData" class="btn btn-primary" onclick="window.location.href='{{ route('kota.saya') }}'">Ubah Data</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }}
                         class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
@@ -94,6 +97,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mengecek apakah mahasiswa sudah memiliki pengajuan
+            $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $("#warningMessage").show(); // Menampilkan pesan peringatan
+
+                    if (response.Periode === false) {
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+                }
+            });
+
             Swal.fire({
                 icon: 'info',
                 title: 'Periksa kembali data anggota kelompok',
