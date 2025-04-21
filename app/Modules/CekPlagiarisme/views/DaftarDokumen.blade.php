@@ -148,7 +148,7 @@
                     penulis: item.penulis,
                     presentase: item.persentase_plagiarisme + "%",
                     status: item.status,
-                    komentar: getKomentar(item.review, item.id_dokumen),
+                    catatan: getCatatan(item.review, item.id_dokumen),
                     id_kota: item.id_kota
                 }));
 
@@ -205,9 +205,9 @@
                             align: "center"
                         },
                         {
-                            name: "komentar",
+                            name: "catatan",
                             type: "html",
-                            title: "Komentar",
+                            title: "Catatan",
                             width: 150,
                             align: "center"
                         }
@@ -315,7 +315,7 @@
             });
         }
 
-        // ✅ Kirim Form via AJAX
+        // Kirim Form via AJAX
         var formData = new FormData();
         formData.append('judul', judul);
         formData.append('dokumen', file);
@@ -360,11 +360,11 @@
         }
     }
 
-    function getKomentar(komentar, id) {
-        if (komentar) {
-            return '<span class="text-dark">Komentar diberikan</span>';
+    function getCatatan(catatan, id) {
+        if (catatan) {
+            return '<span class="text-dark">Catatan diberikan</span>';
         } else {
-            return '<span class="text-muted">Belum ada komentar</span>';
+            return '<span class="text-muted">Belum ada Catatan</span>';
         }
     }
 </script>
