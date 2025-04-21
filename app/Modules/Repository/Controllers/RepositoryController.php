@@ -10,6 +10,7 @@ use App\Models\Subkategori;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LogAktivitas;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class RepositoryController extends Controller
@@ -357,13 +358,51 @@ class RepositoryController extends Controller
     }
 
     // Saabiq Muhyiyuddin Aulawi
-    public function logAktivitas()
+    public function logAktivitas(Request $request)
     {
-        // Ambil data log aktivitas dari database dengan relasi user dan kota
-        $logAktivitas = LogAktivitas::with('user', 'kota')->get();
-    
-        // Mengirim data log aktivitas ke view
-        return view('Repository.views.log_aktivitas', compact('logAktivitas'));
+        // Start with a base query
+        $query = LogAktivitas::with('user', 'kota');
+        
+        // Apply filters if provided
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->whereHas('user', function($userQuery) use ($request) {
+                    $userQuery->where('nama', 'like', '%' . $request->search . '%');
+                })
+                ->orWhere('action', 'like', '%' . $request->search . '%');
+            });
+        }
+        
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        
+        if ($request->filled('kota_id')) {
+            $query->where('kota_id', $request->kota_id);
+        }
+        
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+        
+        if ($request->filled('date_from')) {
+            $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
+        }
+        
+        if ($request->filled('date_to')) {
+            $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
+        }
+        
+        // Get filtered results
+        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
+        
+        // Get data for filter dropdowns
+        $users = User::orderBy('nama')->get();
+        $kotas = KoTA::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::distinct('action')->pluck('action');
+        
+        // Return view with all needed data
+        return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
     }
     
 
