@@ -268,12 +268,12 @@
     });
 
     // Fungsi untuk menampilkan modal upload
-    $('#uploadButton').click(function () {
+    $('#uploadButton').click(function() {
         $('#uploadModal').modal('show');
     });
 
     // Validasi dan Kirim Form Upload
-    $('#previewBtn').click(function (event) {
+    $('#previewBtn').click(function(event) {
         event.preventDefault();
 
         var judul = $('#judulDokumen').val();
@@ -321,13 +321,24 @@
         formData.append('dokumen', file);
         formData.append('_token', $('meta[name="csrf-token"]').attr("content")); // CSRF token
 
+        // Tampilkan popup loading
+        Swal.fire({
+            title: 'Mengunggah dokumen...',
+            text: 'Silakan tunggu proses upload selesai',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         $.ajax({
             url: `${prefixUrl}/cekplagiarisme/process`,
             method: "POST",
             data: formData,
             contentType: false,
             processData: false,
-            success: function (response) {
+            success: function(response) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
@@ -339,7 +350,7 @@
                     location.reload();
                 });
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 console.error(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
