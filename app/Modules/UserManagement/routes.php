@@ -13,13 +13,19 @@ use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
 use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
-use App\Modules\UserManagement\Controllers\PengajuanKoTAController;
+
+
+use App\Modules\UserManagement\Controllers\PerekrutanAnggotaKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
+use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+
+use App\Modules\UserManagement\Controllers\TestServiceCallController;
+use App\Modules\UserManagement\Controllers\TokenVerify;
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -65,14 +71,15 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     
     Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])
     ->name('pengajuan.pisah.kota.show');
-
-
-
 });
 
 
-Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])->name('form.pisah.kota');
+Route::get('/form-pisah-kota', [FormPisahKoTAController::class, 'showFormPisah'])
+        ->name('form.pisah.kota')
+        ->middleware('can:mahasiswa_ta');
+
 Route::post('/form-pisah-kota/ajukan', [FormPisahKoTAController::class, 'ajukan'])->name('form.pisah.kota.ajukan');
+Route::post('/form-pisah-kota/prakota', [FormPisahKoTAController::class, 'prakota'])->name('form.pisah.kota.prakota');
 Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])->name('form.pisah.kota.batal');
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
         ->name('pengajuan.pisah.kota.terima')
@@ -127,11 +134,11 @@ Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name
 
 
 
-Route::get('/pengajuan-kota', [PengajuanKoTAController::class, 'index'])->name('pengajuan-kota');
-Route::post('/pengajuan-kota', [PengajuanKoTAController::class, 'submit'])->name('pengajuan-kota.submit');
+Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
+Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
 Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
 Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
-Route::get('/detail-kota', [DetailKoTAController::class, 'index'])->name('detail.kota');
+Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
 
 
 
@@ -153,18 +160,27 @@ Route::middleware(['auth'])->group(function () {
 
 // );
 
-Route::get('/kelola-kbk', [KBKController::class, 'index'])->name('kelola-kbk');
-Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
-Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
-Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
-//
 
-// Route::get('program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
-//
+Route::middleware(['auth', 'can:admin'])->group(function () {
+    // route untuk kelola KBK
+    Route::get('/kelola-kbk', [KBKController::class, 'index'])->name('kelola-kbk');
+    Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
+    Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
+    Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
 
-Route::get('program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
-Route::get('program-studi/create', [ProgramStudiController::class, 'create'])->name('program-studi.create');
-Route::post('program-studi', [ProgramStudiController::class, 'store'])->name('program-studi.store');
-Route::get('program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
-Route::put('program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
-Route::delete('program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+    // route untuk kelola program studi
+    Route::get('/program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
+    Route::get('/program-studi/create', [ProgramStudiController::class, 'create'])->name('program-studi.create');
+    Route::post('/program-studi', [ProgramStudiController::class, 'store'])->name('program-studi.store');
+    Route::get('/program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
+    Route::put('/program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
+    Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+});
+
+// define the route for TokenVerify verifyToken
+Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
+
+Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
+
+Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');

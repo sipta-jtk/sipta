@@ -158,7 +158,15 @@ class DosenController extends Controller
             'id_kbk' => $request->id_kbk,
         ]);
 
-        return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil Diubah!');
+        DB::commit();
+        // Commit transaksi jika semua berhasil
+        return redirect()->route('manage.dosen')->with('success', "Dosen berhasil ditambahkan! Password: $randomCode");
+
+    } catch (\Exception $e) {
+        // Rollback jika terjadi kesalahan
+        DB::rollBack();
+
+        return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
     }
 
     /**

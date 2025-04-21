@@ -11,7 +11,8 @@ use App\Models\Kota;
 class PengajuanPisahKoTAController extends Controller
 {
     public function index()
-    {   
+    {       
+
         // Ambil data dari model baru
         $pengajuan = PengajuanPisahKota::with('kota')->get();
         
@@ -38,6 +39,7 @@ class PengajuanPisahKoTAController extends Controller
 
         // Set id_kota jadi null di tabel mahasiswa
         $pengajuan->mahasiswa->update(['id_kota' => null]);
+        $pengajuan->mahasiswa->update(['status_ta' => 'mahasiswa_non_ta']);
 
         // Hapus data pengajuan biar bersih
         $pengajuan->delete();

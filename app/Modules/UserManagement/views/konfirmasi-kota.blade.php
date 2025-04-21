@@ -33,7 +33,7 @@
         </div>
 
         <div class="d-flex justify-content-between">
-            <a href="{{ route('pengajuan-kota') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ url(env('PREFIX_URL', 'sipta') . '/') }}" class="btn btn-secondary">Kembali ke Dashboard</a>
             <a href="#" class="btn btn-danger">Tinggalkan Pra-KoTA</a>
         </div>
     </div>
