@@ -235,6 +235,9 @@ class AlokasiPembimbingController extends Controller
                     ]
                 );
             }
+
+            PengajuanPembimbing::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->update(['status_pengajuan' => ($value->status_pembimbing1 == 'fix' && $value->status_pembimbing2 == 'fix') ? 'diterima' : 'diproses']);
         }
 
         return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');
