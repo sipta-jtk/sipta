@@ -160,7 +160,7 @@ class VerifikasiPengajuanJadwalController extends Controller
                     'Accept' => 'application/json',
                 ])
                 ->withToken($token)
-                ->post('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedule/action', $data);
+                ->post('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
                 if( $response->successful()) {
                     // Jika berhasil, lakukan update status verifikasi
