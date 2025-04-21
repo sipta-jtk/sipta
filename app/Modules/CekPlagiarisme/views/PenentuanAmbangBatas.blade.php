@@ -59,7 +59,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="prefix-url"content="{{ env('PREFIX_URL', 'sipta-dev') }}">
+<meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <style>
     #jsGrid1 .jsgrid-row,
@@ -73,7 +73,6 @@
 <script>
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
-        console.log("DOM siap, inisialisasi jsGrid..."); // Debugging
 
         var originalData = []; // Variabel untuk menyimpan data asli
 
@@ -89,10 +88,16 @@
                 url: url,
                 dataType: "json",
                 success: function(response) {
-                    console.log("Data dari API:", response);
-
-                    // Sorting berdasarkan tanggal terbaru (descending)
+                    // Sorting berdasarkan status: "digunakan" paling atas
                     response.sort(function(a, b) {
+                        // Ubah status ke angka: digunakan = 0, tidak_digunakan = 1
+                        const statusOrder = (status) => status.toLowerCase() === 'digunakan' ? 0 : 1;
+
+                        // Urutkan dulu berdasarkan status, lalu berdasarkan tanggal update terbaru
+                        const statusCompare = statusOrder(a.status) - statusOrder(b.status);
+                        if (statusCompare !== 0) return statusCompare;
+
+                        // Jika status sama, urutkan berdasarkan tanggal terbaru
                         return new Date(b.tanggal) - new Date(a.tanggal);
                     });
 
@@ -212,7 +217,7 @@
             }).done(function(response) {
                 Swal.fire({
                     title: "Berhasil!",
-                    text: "Ambang Batas berhasil ditambahkan!",
+                    text: response.message,
                     icon: "success"
                 }).then(() => {
                     $("#addAmbangBatasModal").modal('hide');
@@ -220,12 +225,13 @@
                     loadData();
                 });
             }).fail(function(xhr) {
-                console.error(xhr.responseText); // debug errornya
                 Swal.fire({
                     title: "Gagal Menambahkan!",
                     text: xhr.responseJSON?.message ?? "Ambang Batas gagal ditambahkan!",
                     icon: "error"
                 });
+                $("#addAmbangBatasModal").modal('hide');
+                $("#ambangBatasForm")[0].reset();
             });
         });
     });
