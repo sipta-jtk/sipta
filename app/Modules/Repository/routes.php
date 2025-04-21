@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Modules\Repository\Controllers\RepositoryController;
 use App\Modules\Repository\Controllers\SubkategoriController;
@@ -10,49 +9,69 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/repository', [RepositoryController::class, 'dashboard'])->name('Repository.dashboard');
-Route::get('/repository/{kategori}', [RepositoryController::class, 'index'])->name('Repository.index');
+// ============================
+// Mahasiswa - Repository TA
+// ============================
 
+// Redirect otomatis ke dashboard mahasiswa berdasarkan id_kota
+Route::get('/repository/mahasiswa', function () {
+    $id_kota = auth()->user()->mahasiswa->id_kota ?? null;
+    return redirect()->route('Repository.dashboard.kota.mahasiswa', $id_kota);
+})->middleware(['auth', 'can:akses-sidebar-repo'])->name('Repository.redirect');
 
-Route::prefix('/repository')->middleware('auth', 'can:mahasiswa_ta')->group(function () {
-    
-    // Akmal Goniyyu Hartono
-    
-    // Route untuk menyimpan dokumen baru berdasarkan kategori
+// Dashboard Repository TA (Mahasiswa)
+Route::get('/repository/mahasiswa/kota/{id_kota}', [RepositoryController::class, 'dashboard'])
+    ->middleware(['auth', 'can:akses-sidebar-repo'])
+    ->name('Repository.dashboard.kota.mahasiswa');
+
+// Dokumen berdasarkan kategori (Mahasiswa)
+Route::get('/repository/mahasiswa/kota/{id_kota}/{kategori}', [RepositoryController::class, 'index'])
+    ->middleware(['auth', 'can:akses-sidebar-repo'])
+    ->name('Repository.index.kota');
+
+// CRUD Dokumen (Mahasiswa)
+Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:akses-sidebar-repo'])->group(function () {
     Route::post('/{kategori}', [RepositoryController::class, 'store'])->name('Repository.store');
-    
-    // Route untuk menampilkan halaman edit dokumen berdasarkan kategori dan ID
     Route::get('/{kategori}/{id}/edit', [RepositoryController::class, 'edit'])->name('Repository.edit');
-    
-    // Route untuk memperbarui dokumen berdasarkan kategori dan ID
     Route::put('/{kategori}/{id}', [RepositoryController::class, 'update'])->name('Repository.update');
-    
-    // Route untuk menghapus dokumen berdasarkan kategori dan ID
     Route::delete('/{kategori}/{id}', [RepositoryController::class, 'destroy'])->name('Repository.destroy');
-    
-    // Route untuk mendownload dokumen berdasarkan kategori dan ID
     Route::get('/{kategori}/{id}/download', [RepositoryController::class, 'download'])->name('Repository.download');
-    
+
     Route::get('/{kategori}/subkategori', [SubkategoriController::class, 'index'])->name('Subkategori.index');
-
     Route::post('/{kategori}/subkategori', [SubkategoriController::class, 'store'])->name('Subkategori.store');
+    Route::delete('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'destroy'])->name('Subkategori.destroy');
+    Route::put('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'update'])->name('Subkategori.update');
 
-    // Saabiq Muhyiyuddin Aulawi
-    // Route untuk menampilkan halaman log aktivitas
-    Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
 
-    // Route untuk menampilkan halaman monitoring penyimpanan
-    Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
-
-    // Farrel Keiza Muhammad Yamin Putra
-    // Route utama untuk halaman daftar dokumen berdasarkan kategori
-    Route::get('/repository/list_kelompok_ta', [RepositoryController::class, 'Repository.list_kelompok_ta']);
-        
-    // Muhammad Fahrizal Alzaelani
-
-    // Muhammad Alvyn Adhianto
-    Route::get('/v0', action: [RepositoryController::class, 'v0']);
-    Route::get('/kategori', action: [RepositoryController::class, 'v1']);
-    Route::get('/dokumen', action: [RepositoryController::class, 'v2']);
-    Route::get('/uji', action: [RepositoryController::class, 'p1']);
 });
+
+// ============================
+// Dosen - Repository Mahasiswa
+// ============================
+
+// List KoTA (kelompok TA)
+Route::get('/repository/dosen/kelompok-ta', [RepositoryController::class, 'list_kelompok_ta'])
+    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->name('Repository.list_kelompok_ta');
+
+// Dashboard Repository TA berdasarkan id_kota (Dosen)
+Route::get('/repository/dosen/kota/{id_kota}', [RepositoryController::class, 'dashboard'])
+    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->name('Repository.dashboard.kota.dosen');
+
+// Lihat Repository Mahasiswa
+Route::prefix('/repository/dosen')->middleware(['auth', 'can:akses-sidebar-repo-dosen'])->group(function () {
+    Route::get('/mahasiswa/{nim}', [RepositoryController::class, 'lihatRepositoryMahasiswa'])->name('Repository.mahasiswa');
+    Route::get('/mahasiswa/{nim}/{kategori}/{id}/download', [RepositoryController::class, 'download'])->name('Repository.mahasiswa.download');
+});
+
+// ============================
+// Utilitas
+// ============================
+Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
+Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
+
+Route::get('/v0', [RepositoryController::class, 'v0']);
+Route::get('/kategori', [RepositoryController::class, 'v1']);
+Route::get('/dokumen', [RepositoryController::class, 'v2']);
+Route::get('/uji', [RepositoryController::class, 'p1']);
