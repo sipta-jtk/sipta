@@ -72,13 +72,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     public function store(Request $request)
     {
         VerifikasiBerkasPengajuan::create([
-            'nip' => '196610181995121001',
-            'catatan' => 'bagus',
-            'tanggal_verifikasi' => Carbon::now(),
-            'status_konfirmasi' => 'disetujui',
             'tanggal_pengajuan' => Carbon::now(),
             'jenis_pengajuan' => 'seminar_3',
             'id_kota' => Auth::user()->mahasiswa->id_kota,
+            'status_konfirmasi' => 'pending',
         ]);
 
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
@@ -139,7 +136,6 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     public function store_sidang(Request $request)
     {
         VerifikasiBerkasPengajuan::create([
-            'nip' => '196610181995121001',
             'tanggal_pengajuan' => Carbon::now(),
             'status_konfirmasi' => 'pending',
             'jenis_pengajuan' => 'sidang_akhir',
