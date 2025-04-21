@@ -41,6 +41,12 @@ class KategoriPenilaianSeeder extends Seeder
                 'id_fta' => 8,
                 'nama_kategori' => 'Pelaksanaan TA',
                 'kunci_penilaian' => false,
+            ],
+            [
+                'id_kategori' => 5,
+                'id_fta' => 11,
+                'nama_kategori' => 'Dosen Pembimbing',
+                'kunci_penilaian' => false,
             ]
         ];
 

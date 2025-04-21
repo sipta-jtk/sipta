@@ -13,13 +13,6 @@ use App\Modules\Repository\Controllers\SubkategoriController;
 // Mahasiswa - Repository TA
 // ============================
 
-// Saabiq Muhyiyuddin Aulawi
-// Route untuk menampilkan halaman log aktivitas
-Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
-
-// Route untuk menampilkan halaman monitoring penyimpanan
-Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
-
 // Redirect otomatis ke dashboard mahasiswa berdasarkan id_kota
 Route::get('/repository/mahasiswa', function () {
     $id_kota = auth()->user()->mahasiswa->id_kota ?? null;
@@ -75,7 +68,11 @@ Route::prefix('/repository/dosen')->middleware(['auth', 'can:akses-sidebar-repo-
 // ============================
 // Utilitas
 // ============================
+// Saabiq Muhyiyuddin Aulawi
+// Route untuk menampilkan halaman log aktivitas
 Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
+
+// Route untuk menampilkan halaman monitoring penyimpanan
 Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
 
 Route::get('/v0', [RepositoryController::class, 'v0']);
