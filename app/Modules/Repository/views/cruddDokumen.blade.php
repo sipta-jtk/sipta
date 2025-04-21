@@ -234,11 +234,11 @@
                                 @for ($i = 11; $i <= 13; $i++)
                                     <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
                                     @endfor
-                                <option value="FTA-10">FTA-14</option>
-                                <option value="FTA-10a">FTA-14a</option>
-                                @for ($i = 15; $i <= 23; $i++)
-                                    <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                    @endfor
+                                    <option value="FTA-10">FTA-14</option>
+                                    <option value="FTA-10a">FTA-14a</option>
+                                    @for ($i = 15; $i <= 23; $i++)
+                                        <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
+                                        @endfor
                         </select>
                     </div>
                     @endif
@@ -345,7 +345,7 @@
                         <label for="editJudul" class="form-label">Judul:</label>
                         <input type="text" class="form-control" id="editJudul" name="judul" required>
                     </div>
-                    
+
 
                     <div class="mb-3">
                         <p><strong>File Terunggah:</strong></p>
@@ -656,7 +656,7 @@
                 document.getElementById('editDeskripsi').value = deskripsi;
 
                 // Set form action with dynamic kategori
-                document.getElementById('editForm').action = `/repository/{{ $kategori }}/${id}`;
+                document.getElementById('editForm').action = `/repository/mahasiswa/{{ $kategori }}/${id}`;
 
                 // Handle file display
                 const fileLink = document.getElementById('editFileLink');
