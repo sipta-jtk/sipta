@@ -8,9 +8,10 @@
 
 @section('content')
     @php
-        if ($savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia') {
-            $savedInformation['Periode'] = false;
-        }
+        $AllowEdit =
+            $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' || !$savedInformation['Periode']
+                ? false
+                : true;
     @endphp
 
     @if ($savedInformation['StatusBersediaMembimbing'] == 'belum_konfirmasi')
@@ -47,7 +48,7 @@
                         </div>
                         <div class="col text-right">
                             <button type="button" class="btn btn-sm p-0 m-0 bg-transparent text-light" data-toggle="modal"
-                                data-target="#AddNewModal" {{ $savedInformation['Periode'] ? '' : 'disabled' }}>
+                                data-target="#AddNewModal" {{ $AllowEdit ? '' : 'disabled' }}>
                                 <i class="fas fa-plus"></i> Tambah Bidang
                             </button>
                         </div>
@@ -69,7 +70,7 @@
                                         <input class="form-check-input" type="checkbox"
                                             id="bidang{{ $bidangitem->id_bidang }}" name="bidang[]"
                                             value="{{ $bidangitem->id_bidang }}"
-                                            {{ $savedInformation['Periode'] ? '' : 'disabled' }}>
+                                            {{ $AllowEdit ? '' : 'disabled' }}>
                                         <label class="form-check-label text-dark" for="bidang{{ $bidangitem->id_bidang }}">
                                             {{ $bidangitem->bidang }}
                                         </label>
@@ -80,7 +81,8 @@
                     </div>
                 </div>
                 <div class="container-fluid form-check">
-                    <input type="checkbox" id="checkAll" class="form-check-input">
+                    <input type="checkbox" id="checkAll" class="form-check-input" disabled
+                        {{ $AllowEdit ? '' : 'disabled' }}>
                     <label class="form-check-label text-dark" for="checkAll">Pilih Semua</label>
                 </div>
 
@@ -88,7 +90,7 @@
                 {{-- ================== --}}
                 <div class="container-fluid d-flex justify-content-end mt-2 pl-0 pt-3 pb-3 pr-0">
                     <button type="submit" class="btn btn-primary ml-3"
-                        {{ $savedInformation['Periode'] ? '' : 'disabled' }}>Simpan <i
+                        {{ $AllowEdit ? '' : 'disabled' }}>Simpan <i
                             class="fas fa-save pl-1"></i></button>
                     <button type="button" onclick="nextPage()" form="nextForm" class="btn btn-info ml-3"><i
                             class="fas fa-chevron-right pl-1"></i></button>
@@ -96,7 +98,7 @@
             </form>
         </div>
 
-        @if ($savedInformation['Periode'])
+        @if ($AllowEdit)
             <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">

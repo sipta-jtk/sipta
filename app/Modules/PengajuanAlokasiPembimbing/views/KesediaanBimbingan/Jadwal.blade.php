@@ -28,6 +28,9 @@
         <div class="container-fluid m-0 p-0">
             @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_ErrorPeriode')
 
+            <div class="alert alert-warning d-none" role="alert" id="alertPerubahan">
+                Tekan tombol simpan untuk menyimpan perubahan!
+            </div>
 
             {{-- ================== --}}
             <div class="border rounded">
@@ -71,7 +74,8 @@
             <div class="container-fluid d-flex justify-content-end p-3 p-md-0 mt-2">
                 <button type="button" onclick="previousPage()" class="btn btn-info">Sebelumnya <i
                         class="fas fa-chevron-left pl-1"></i></button>
-                <button type="button" onclick="saveJadwal()" class="btn btn-primary ml-3">Simpan <i
+                <button type="button" onclick="saveJadwal()" class="btn btn-primary ml-3" id="saveJadwalBtn"
+                    {{ $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' ? 'disabled' : '' }}>Simpan <i
                         class="fas fa-save pl-1"></i></button>
             </div>
         </div>
@@ -113,8 +117,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-sm btn-primary" id="saveFormJadwalBtn">Simpan <i
-                                class="fas fa-save"></i></button>
+                        <button type="button" class="btn btn-sm btn-primary" id="saveFormJadwalBtn"
+                            {{ $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' ? 'disabled' : '' }}>Simpan
+                            <i class="fas fa-save"></i></button>
                     </div>
                 </div>
             </div>
@@ -127,7 +132,60 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            var dataJadwal = [
+            Object.defineProperty(window, 'isEdit', {
+                set: function(value) {
+                    this._isEdit = value;
+                    if (value) {
+                        $('#alertPerubahan').removeClass('d-none');
+                    } else {
+                        $('#alertPerubahan').addClass('d-none');
+                    }
+                },
+                get: function() {
+                    return this._isEdit;
+                }
+            });
+
+            function validateJadwalLength(length) {
+                var disabled = false;
+                if (length == 0) {
+                    $('#saveJadwalBtn').addClass('disabled');
+                    disabled = true;
+                } else {
+                    $('#saveJadwalBtn').removeClass('disabled');
+                }
+
+                var isAlertAlreadyShown = $('#alertPerubahan').hasClass('d-none');
+                if (disabled){
+                    $('#alertPerubahan').removeClass('alert-warning');
+                    $('#alertPerubahan').addClass('alert-danger');
+                    $('#alertPerubahan').text('Jadwal tidak boleh kosong');
+                }else{
+                    $('#alertPerubahan').removeClass('alert-danger');
+                    $('#alertPerubahan').addClass('alert-warning');
+                    $('#alertPerubahan').text('Tekan tombol simpan untuk menyimpan perubahan!');
+                }
+
+                if (!isAlertAlreadyShown) {
+                    $('#alertPerubahan').removeClass('d-none');
+                }
+            }
+
+            Object.defineProperty(window, 'dataJadwal', {
+                set: function(value) {
+                    this._dataJadwal = value;
+                    validateJadwalLength(value.length);
+                },
+                push: function(value) {
+                    this._dataJadwal.push(value);
+                    validateJadwalLength(this._dataJadwal.length);
+                },
+                get: function() {
+                    return this._dataJadwal;
+                }
+            });
+
+            window.dataJadwal = [
                 @foreach ($jadwal as $jadwalitem)
                     {
                         id: '{{ $jadwalitem->id_jadwal_dosbim }}',
@@ -189,6 +247,9 @@
                         time: [timeA, timeB]
                     });
                     renderScedule();
+                    validateJadwalLength(dataJadwal.length);
+
+                    isEdit = true;
 
                     $('#TimeModal').modal('hide');
                 } else {
@@ -204,8 +265,6 @@
             }
 
             function removeJadwal(id) {
-                console.log(id);
-
                 dataJadwal = dataJadwal.filter((jadwal) => jadwal.id != id);
                 renderScedule();
             }
@@ -266,6 +325,7 @@
                                             if (confirmed) {
                                                 removeJadwal(jadwal.id);
                                                 toast('success', 'Berhasil', 'Jadwal berhasil dihapus', 5000);
+                                                isEdit = true;
                                             }
                                         });
                                 });

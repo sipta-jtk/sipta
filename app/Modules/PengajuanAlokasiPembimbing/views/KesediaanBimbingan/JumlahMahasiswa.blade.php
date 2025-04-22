@@ -7,10 +7,12 @@
 @stop
 
 @section('content')
+
     @php
-        if ($savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia') {
-            $savedInformation['Periode'] = false;
-        }
+        $AllowEdit =
+            $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' || !$savedInformation['Periode']
+                ? false
+                : true;
     @endphp
 
     @if ($savedInformation['StatusBersediaMembimbing'] == 'belum_konfirmasi')
@@ -77,7 +79,7 @@
                                                         class="form-control bg-transparent border-0 text-light p-0 fs-1"
                                                         min="0" id="val{!! str_replace(' ', '', $value['id_prodi']) !!}"
                                                         name="val{!! str_replace(' ', '', $value['id_prodi']) !!}"
-                                                        {{ $savedInformation['Periode'] ? '' : 'disabled' }}
+                                                        {{ $AllowEdit ? '' : 'disabled' }}
                                                         value="{{ old('val' . $value['id_prodi']) ? old('val' . $value['id_prodi']) : $value['jumlah'] }}">
                                                 </div>
                                                 <hr class="text-light m-0 border-light">
@@ -133,7 +135,7 @@
                     <button type="button" onclick="previousPage()" class="btn btn-info ml-3"><i
                             class="fas fa-chevron-left pl-1"></i></button>
                     <button type="submit" class="btn btn-primary ml-3"
-                        {{ $savedInformation['Periode'] ? '' : 'disabled' }}><i class="fas fa-save pl-1"></i></button>
+                        {{ $AllowEdit ? '' : 'disabled' }}><i class="fas fa-save pl-1"></i></button>
                     <button type="button" onclick="nextPage()" class="btn btn-info ml-3"><i
                             class="fas fa-chevron-right pl-1"></i></button>
                 </div>
