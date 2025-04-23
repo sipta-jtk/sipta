@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
+use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
@@ -8,7 +9,10 @@ use App\Modules\KelolaPenilaianTA\Controllers\PemberianFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiController;
-use Illuminate\Support\Facades\DB;
+
+
+
+Route::get('/', [KelolaPenilaianTAController::class, 'getBeranda'])->name('beranda.get');
 
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 

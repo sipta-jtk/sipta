@@ -8,8 +8,8 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar II'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('pengisian.nilai'), 'label' => 'Penilaian Seminar II'],
                 ['url' => '', 'label' => 'Masukan Seminar II']
             ]
         ])
