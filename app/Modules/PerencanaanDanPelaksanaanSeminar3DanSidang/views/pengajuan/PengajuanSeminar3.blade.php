@@ -82,7 +82,7 @@
                             <option value="" disabled selected>Pilih Ruangan</option>
                             @foreach($ruanganTersedia as $ruangan)
                                 <option value="{{ $ruangan['id_ruangan'] }}">
-                                    {{ $ruangan['kode_ruangan'] }} - {{ $ruangan['nama_ruangan'] }}
+                                    {{ $ruangan['nama_ruangan'] }}
                                 </option>
                             @endforeach
                         </select>

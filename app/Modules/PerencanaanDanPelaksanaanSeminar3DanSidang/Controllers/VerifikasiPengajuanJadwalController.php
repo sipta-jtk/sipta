@@ -6,6 +6,9 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
+
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
@@ -129,11 +132,56 @@ class VerifikasiPengajuanJadwalController extends Controller
     {
         // Ambil status verifikasi dari request
         $status = $request->input('status_verifikasi') === 'Ditolak' ? false : true;
+        
+        if ($status == true) {
+            // Ambil informasi ruangan dari tabel penjadwalan
+            $roomInformation = DB::table('penjadwalan')
+                ->where('id_penjadwalan', $idPenjadwalan)
+                ->select('id_ruangan', 'tanggal', 'agenda', 'sesi','tanggal','start', 'end','id_kota')
+                ->first();
+        
+            if ($roomInformation) {       
+                // Mengambil token dari auth untuk server API
+                $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
 
-        DB::table('pengajuan_jadwal_kota')
-        ->where('id_penjadwalan', $idPenjadwalan)
-        ->update(['status_koordinator_ta' => $status]);
+                $data = [
+                    'type' => 'add',
+                    'agenda' => $roomInformation->agenda,
+                    'start' => $roomInformation->start,
+                    'end' => $roomInformation->end  ,
+                    'id_ruangan' => $roomInformation->id_ruangan,
+                    'id_kota' => $roomInformation->id_kota,
+                    'nip' => auth()->user()->username,
+                ];
+            
+                $response = Http::withHeaders([
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'content-type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->withToken($token)
+                ->post('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
+                if( $response->successful()) {
+                    // Jika berhasil, lakukan update status verifikasi
+                    DB::table('pengajuan_jadwal_kota')
+                        ->where('id_penjadwalan', $idPenjadwalan)
+                        ->update(['status_koordinator_ta' => $status]);
+                } else {
+                    // Jika gagal, kirimkan pop up error response json dari API
+                    $responseData = $response->json();
+                    $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat memproses permintaan.';
+                    return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
+                        ->with('error', "Gagal memverifikasi: " . $errorMessage);
+                }
+            }
+        } else {
+            // Jika status ditolak, update status verifikasi tanpa menghubungi API
+            DB::table('pengajuan_jadwal_kota')
+                ->where('id_penjadwalan', $idPenjadwalan)
+                ->update(['status_koordinator_ta' => $status]); 
+        }
+        
         // Redirect kembali ke halaman dengan pesan
         return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
                         ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
