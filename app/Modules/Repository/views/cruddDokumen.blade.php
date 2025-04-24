@@ -283,7 +283,7 @@
 
 <!-- Modal Detail Dokumen -->
 <div class="modal fade" id="detailDocumentModal" tabindex="-1" aria-labelledby="detailDocumentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Changed to modal-lg to give more space for the document -->
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="detailDocumentModalLabel">Detail Dokumen</h5>
@@ -298,11 +298,28 @@
                     <input type="text" class="form-control" id="detailJudul" readonly>
                 </div>
 
+                <!-- Document Preview -->
+                <div class="mb-3">
+                    <label class="form-label">Preview Dokumen:</label>
+                    <div class="document-preview-container" style="height: 400px; border: 1px solid #ddd;">
+                        <iframe id="documentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="previewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- File Terunggah -->
                 <div class="mb-3">
-                    <label for="detailFile" class="form-label">File Terunggah:</label>
+                    <label class="form-label">Aksi File:</label>
                     <div id="detailFileLink">
-                        <a href="#" target="_blank" class="btn btn-primary" id="detailFileLinkBtn">Lihat File</a>
+                        <a href="#" target="_blank" class="btn btn-primary" id="detailFileLinkBtn">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#" class="btn btn-success" id="detailFileDownloadBtn">
+                            <i class="fas fa-download"></i> Download
+                        </a>
                     </div>
                     <p id="noFileMessage" style="display: none;">Tidak ada file terunggah</p>
                 </div>
@@ -592,6 +609,59 @@
         height: 38px;
     }
 
+    /* Add these styles to your existing CSS section */
+    .document-preview-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .document-preview-container:hover {
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #previewNotAvailable {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: #6c757d;
+    }
+
+    #detailFileLink {
+        display: flex;
+        gap: 10px;
+    }
+
+    #detailDocumentModal .modal-dialog {
+        max-width: 800px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .document-preview-container {
+            height: 300px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .document-preview-container {
+            height: 200px !important;
+        }
+
+        #detailFileLink {
+            flex-direction: column;
+        }
+
+        #detailFileLink a {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+    }
+
     @media (max-width: 768px) {
         .col-md-3 {
             width: 100%;
@@ -686,15 +756,55 @@
                 // Handle file display
                 const fileLink = document.getElementById('detailFileLink');
                 const fileLinkBtn = document.getElementById('detailFileLinkBtn');
+                const fileDownloadBtn = document.getElementById('detailFileDownloadBtn');
                 const noFileMessage = document.getElementById('noFileMessage');
+                const documentPreview = document.getElementById('documentPreview');
+                const previewNotAvailable = document.getElementById('previewNotAvailable');
 
                 if (filePath && filePath.trim() !== '') {
-                    fileLinkBtn.href = `/storage/${filePath}`;
-                    fileLink.style.display = 'inline';
+                    const fileUrl = `/storage/${filePath}`;
+
+                    // Set link and download buttons
+                    fileLinkBtn.href = fileUrl;
+                    fileDownloadBtn.href = "{{ route('Repository.download', [$kategori, '']) }}/" + id;
+                    fileLink.style.display = 'block';
                     noFileMessage.style.display = 'none';
+
+                    // Check if this is a URL repository (for link_source_code)
+                    if (filePath.startsWith('http')) {
+                        // This is a repository URL, not a file
+                        documentPreview.style.display = 'none';
+                        previewNotAvailable.style.display = 'block';
+                        previewNotAvailable.innerHTML = `
+                    <i class="fas fa-link fa-3x mb-3 text-secondary"></i>
+                    <p>Link repository: <a href="${filePath}" target="_blank">${filePath}</a></p>
+                `;
+                    } else {
+                        // Check file type for preview compatibility
+                        const fileExtension = filePath.split('.').pop().toLowerCase();
+                        const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'txt'];
+
+                        if (previewableTypes.includes(fileExtension)) {
+                            // File can be previewed
+                            documentPreview.src = fileUrl;
+                            documentPreview.style.display = 'block';
+                            previewNotAvailable.style.display = 'none';
+                        } else {
+                            // File cannot be previewed
+                            documentPreview.style.display = 'none';
+                            previewNotAvailable.style.display = 'block';
+                            previewNotAvailable.innerHTML = `
+                        <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                        <p>Preview tidak tersedia untuk jenis file ini</p>
+                    `;
+                        }
+                    }
                 } else {
+                    // No file uploaded
                     fileLink.style.display = 'none';
                     noFileMessage.style.display = 'block';
+                    documentPreview.style.display = 'none';
+                    previewNotAvailable.style.display = 'block';
                 }
             });
         });
