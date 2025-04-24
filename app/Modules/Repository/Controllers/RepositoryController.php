@@ -136,11 +136,20 @@ class RepositoryController extends Controller
             $id_kota = $user->mahasiswa->id_kota ?? $user->dosen->id_kota ?? null;
             $username = $user->username;
 
+            if ($kategori === 'fta') {
+                $latestVersion = Dokumen::where('kategori', $kategori)
+                    ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
+                    ->orderByDesc('versi')
+                    ->value('versi');
+            }
+
+            else if ($kategori === 'artefak') {
+                $latestVersion = Dokumen::where('kategori', $kategori)
+                    ->when($kategori === 'artefak', fn($q) => $q->where('id_subkategori', $request->id_subkategori))
+                    ->orderByDesc('versi')
+                    ->value('versi');
+            }
             // Cari versi terakhir
-            $latestVersion = Dokumen::where('kategori', $kategori)
-                ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
-                ->orderByDesc('versi')
-                ->value('versi');
 
             $newVersion = $latestVersion ? $latestVersion + 1 : 1;
 
