@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Mahasiswa;
-use App\Models\KategoriPenilaian;
-use App\Models\KriteriaPenilaian;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
 
@@ -119,7 +117,7 @@ class PemberianNilaiController extends Controller
     {
         $nip = auth()->user()->username;
         $action = $request->form_action;
-        $nilai = $request->except('_token', '_method', 'form_action');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -141,12 +139,7 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -181,12 +174,7 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
@@ -270,8 +258,6 @@ class PemberianNilaiController extends Controller
     
         return $nilai_rata_rata;
     }
-    
-    
 
     private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip): void
     {

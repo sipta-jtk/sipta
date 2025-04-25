@@ -120,7 +120,6 @@
             @if($isEdit)
                 @method('PATCH')
             @endif
-            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -177,11 +176,8 @@
             <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
+                    <button type="submit" class="btn btn-warning">
                         Simpan draft
-                    </button>
-                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
-                        Selanjutnya
                     </button>
                 </div>
             </div>
