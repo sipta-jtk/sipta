@@ -24,7 +24,7 @@
             </a>
             @endif
             <button class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">
-                + Add
+                + Tambah Dokumen
             </button>
         </div>
         @endif
@@ -111,7 +111,7 @@
                 @endif
                 <th>Tanggal Dibuat</th>
                 <th>Terakhir Diedit</th>
-                <th>Action</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -144,8 +144,8 @@
                 <td>{{ $doc->subkategori->nama_subkategori }}</td>
                 @endif
 
-                <td>{{ $doc->created_at }}</td>
-                <td>{{ $doc->updated_at }}</td>
+                <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
                 <td>
                     @if ($status_ta === 'mahasiswa_ta')
                     <!-- Edit button -->
@@ -272,8 +272,8 @@
                         <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required></textarea>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-dark" data-dismiss="modal">Back</button>
-                        <button type="submit" class="btn btn-dark">Submit</button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -300,7 +300,7 @@
 
                 <!-- Document Preview -->
                 <div class="mb-3">
-                    <label class="form-label">Preview Dokumen:</label>
+                    <label class="form-label">Pratinjau Dokumen:</label>
                     <div class="document-preview-container" style="height: 400px; border: 1px solid #ddd;">
                         <iframe id="documentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
                         <div id="previewNotAvailable" class="text-center p-5" style="display: none;">
@@ -318,10 +318,8 @@
                             <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
                         </a>
                         <a href="#" class="btn btn-success" id="detailFileDownloadBtn"
-                            data-id="{{ $doc->id_dokumen }}"
                             data-kategori="{{ $kategori }}"
-                            data-judul="{{ $doc->judul }}">
-                            <i class="fas fa-download"></i> Download
+                            <i class="fas fa-download"></i> Unduh
                         </a>
                     </div>
                     <p id="noFileMessage" style="display: none;">Tidak ada file terunggah</p>
