@@ -4,6 +4,17 @@
 
 @section('content_header')
 <h1>Daftar Kesediaan Membimbing</h1>
+
+<div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Daftar Kesediaan Membimbing']
+    ]
+    ])
+    @endcomponent
+</div>
+
 @stop
 
 @section('css')
@@ -58,7 +69,6 @@
 
 @section('content')
 
-<p>Beranda > <a href="www">Daftar Kesediaan Menjadi Dosen Pembimbing</a></p>
 
 <div class="card p-2">
     <table id="kesediaanTable" class="table table-responsive table-bordered w-100">
