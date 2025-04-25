@@ -31,13 +31,11 @@
     $(document).ready(function() {
         $('#jadwalTable').DataTable({
             columns: [
-        { searchable: false, orderable: false }, // No filtering for the first column
-        { searchable: true, orderable: false  },  // Enable filtering for the second column
+        { searchable: false, orderable: true }, // No filtering for the first column
+        { searchable: true, orderable: true  },  // Enable filtering for the second column
         { searchable: true,  orderable: false },  // Enable filtering for the third column
         { searchable: false, orderable: false  }, // No filtering for the fourth column
         { searchable: false, orderable: false  }  // No filtering for the fifth column
-
-
             ],
             language: {
                 search: "Cari:",
@@ -65,7 +63,7 @@
 <div class="card p-2">
     <div class="table-responsive">
         @if (count($groupedData) > 0)
-        <table id="jadwalTable" class="table table-bordered bg-white">
+        <table id="jadwalTable" class="table table-bordered bg-white table-striped">
             <thead>
                 <tr class="bg-dark text-white">
                     <th class="text-center" style="min-width: 0.5vw;">No</th>

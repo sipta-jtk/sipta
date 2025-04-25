@@ -71,7 +71,7 @@
 
 
 <div class="card p-2">
-    <table id="kesediaanTable" class="table table-responsive table-bordered w-100">
+    <table id="kesediaanTable" class="table table-responsive table-bordered w-100 table-striped">
         <thead>
             <tr class="bg-dark text-white">
                 <th colspan="6" class="text-center">Dosen Eligible Sebagai Pembimbing 1</th>
