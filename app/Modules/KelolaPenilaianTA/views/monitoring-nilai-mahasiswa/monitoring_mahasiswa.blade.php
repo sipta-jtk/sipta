@@ -9,7 +9,7 @@
                 ['url' => route('beranda.get'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
-        ])
+        ])c
         @endcomponent
 
         <!-- Judul Halaman -->
