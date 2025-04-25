@@ -3,7 +3,17 @@
 @section('title', 'Alokasi Dosen Pembimbing dan Dosen Penguji')
 
 @section('content_header')
-<h1>Alokasi Dosen Pembimbing dan Dosen Penguji</h1>
+    <h1 class="mb-3">Alokasi Dosen Pembimbing</h1>
+
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Alokasi Dosen Pembimbing']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
@@ -427,15 +437,29 @@
         });
 
         let table = $('#alokasiTable').DataTable({
-            responsive: true
-            , paging: true
-            , lengthMenu: [10, 25, 50, 100]
-            , pageLength: 10
-            , searching: true
-            , ordering: true
-            , info: true
-            , autoWidth: false
-            , drawCallback: function() {
+            responsive: true,
+            paging: true,
+            lengthMenu: [10, 25, 50, 100],
+            pageLength: 10,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            },
+            drawCallback: function () {
                 initializeScripts();
             }
         });
