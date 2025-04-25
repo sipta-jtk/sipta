@@ -27,7 +27,7 @@
                         <strong>Status:</strong><span class="badge bg-warning">Pending</span>
                     @endif
                     @if($pengajuan->catatan)
-                        <p><strong>Catatan dari Dosen:</strong> {{ $pengajuan->catatan }}</p>
+                        <p><strong>Catatan dari Koor TA:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
                     <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
