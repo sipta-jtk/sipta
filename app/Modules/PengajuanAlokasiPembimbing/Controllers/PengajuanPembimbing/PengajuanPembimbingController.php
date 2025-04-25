@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\PengajuanPembimbing;
 use App\Models\PrioritasPembimbing;
+use App\Models\PeriodePengajuan;
 use App\Models\Dosen;
 use App\Modules\Controller;
 use Illuminate\Http\Request;
@@ -119,9 +120,7 @@ class PengajuanPembimbingController extends Controller
         $validator = Validator::make($request->all(), [
             'topik' => 'required|string|max:255',
             'bidang' => 'required|min:1',
-            'bidang.*' => 'string',
-            // 'prioritas_dosen' => 'required|min:1|max:5',
-            // 'prioritas_dosen.*' => 'string', // Validasi NIP dosen
+            // 'prioritas_dosen.*' => 'required|min:1|max:5',
         ],
         [
             'topik.required' => 'Topik tugas akhir harus diisi',
@@ -152,6 +151,14 @@ class PengajuanPembimbingController extends Controller
             $nim_user = $sessionUser->nim;
         }
 
+        $existingPengajuan = DB::table('pengajuan_pembimbing')
+        ->where('id_kota', $id_kota_user)
+        ->exists();
+    
+        if ($existingPengajuan) {
+            return back()->withErrors(['duplicate' => 'Anda sudah pernah mengajukan dosen pembimbing.']);
+        }
+        
         // Mencari ID berdasarkan nama bidang
         $bidangId = DB::table('bidang')->where('bidang', $bidang)->value('id_bidang');
 
@@ -199,6 +206,27 @@ class PengajuanPembimbingController extends Controller
         // Redirect setelah data disimpan
         session()->flash('success', 'Pengajuan dosen pembimbing sudah direkap. Silahkan menunggu status pengajuan diterima.');
 
-        return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index');
+        // return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index');
+        return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'); // Redirect ke halaman utama SIPTA
+    }
+
+    public function checkExistingData()
+    {
+        $currentdate = date('Y-m-d');
+
+        // Cek apakah mahasiswa sudah memiliki topik tugas akhir atau pembimbing
+        $sessionUser = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('mahasiswa.nim', auth()->user()->username)
+            ->first(); 
+
+        $existingData = DB::table('pengajuan_pembimbing')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->exists(); // Memeriksa apakah ada pengajuan pembimbing sebelumnya
+
+        return response()->json([
+            'hasExistingData' => $existingData,
+            'Periode' => PeriodePengajuan::where('periode_mulai', '<=', $currentdate)->where('periode_akhir', '>=', $currentdate)->exists()
+        ]);
     }
 }

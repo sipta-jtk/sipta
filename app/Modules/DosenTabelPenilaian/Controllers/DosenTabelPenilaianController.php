@@ -77,4 +77,9 @@ class DosenTabelPenilaianController extends Controller
         // Redirect kembali ke halaman dengan pesan sukses
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil dipublikasikan.');
     }
+
+    public function getForm($id, $kota)
+    {
+        return redirect()->route('nilai.index');
+    }
 }

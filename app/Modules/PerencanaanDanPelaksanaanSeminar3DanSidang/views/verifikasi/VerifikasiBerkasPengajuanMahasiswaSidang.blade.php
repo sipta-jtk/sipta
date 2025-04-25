@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang')
+@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir')
 
 @section('content_header')
-    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang</strong></h1>
+    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir</strong></h1>
 @stop
 
 @section('content')
@@ -30,7 +30,7 @@
                         <p><strong>Catatan dari Koor TA:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
+                    <p><strong>Jenis Pengajuan:</strong> Sidang Akhir</p>
                 </div>
             </div>
         @endif

@@ -6,8 +6,8 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('kelola-penilaian-ta/monitoring/mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                 ['url' => '', 'label' => 'Detail Feedback']
             ]
         ])

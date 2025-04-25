@@ -7,7 +7,7 @@
         {{-- TBD perbaiki breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
                 ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
             ]
         ])
