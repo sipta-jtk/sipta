@@ -76,3 +76,10 @@ tbody tr:hover {
 .text-danger {
     font-weight: bold;
 }
+
+#toggleFilter i {
+    margin-left: 5px;
+}
+#filterSection select {
+    min-width: 150px;
+}
