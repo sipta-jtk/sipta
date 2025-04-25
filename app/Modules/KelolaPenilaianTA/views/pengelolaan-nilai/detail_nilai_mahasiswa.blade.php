@@ -34,7 +34,7 @@
             </div>
         @endif
         {{-- Tabel Scrollable --}}
-        <div class="table-container">
+        <div>
             <table id="alokasiTable" class="table text-center">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
@@ -92,24 +92,26 @@
                         
                             @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar i', 'seminar ii', 'seminar iii', 'sidang akhir']))
                                     <td> 
-                                        {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
-                                        {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
-                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
+                                        <div class="d-flex flex-column gap-1">
+                                            {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
+                                            {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
+                                            <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary btn-md w-100">Nilai</a>
 
-                                        {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
-                                        @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))
-                                            @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
-                                                <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-danger">Unpublish</button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-primary">Publish</button>
-                                                </form>
+                                            {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
+                                            @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))
+                                                @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
+                                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-md btn-danger w-100">Batal Publikasi</button>
+                                                    </form>
+                                                @else
+                                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-md btn-primary w-100">Publikasi</button>
+                                                    </form>
+                                                @endif
                                             @endif
-                                        @endif
+                                        </div>
                                     </td>
                             @endif
                         </tr>
@@ -117,17 +119,23 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="d-flex justify-content-between mt-1">
+            <div id="infoControls"></div> <!-- Placeholder untuk info -->
+            <div id="paginationControls"></div> <!-- Placeholder untuk pagination -->
+        </div>
     </div>
 @stop
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola_penilaian_ta.css') }}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 @stop
-
+    
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
 @stop
