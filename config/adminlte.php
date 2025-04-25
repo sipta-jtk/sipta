@@ -344,6 +344,7 @@ return [
                             'text' => 'Daftar Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                             'can' => 'koordinator_ta',
+                            'icon' => 'fas fa-fw fa-table'
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
@@ -382,6 +383,7 @@ return [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-calendar'
                 ],
             ]
         ],

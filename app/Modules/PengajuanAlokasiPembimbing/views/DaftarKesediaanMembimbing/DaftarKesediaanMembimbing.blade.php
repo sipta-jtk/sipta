@@ -18,7 +18,40 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#kesediaanTable').DataTable();
+        $('#kesediaanTable').DataTable({
+
+            columns: [
+                { orderable: true, searchable: true }, // No
+                { orderable: false, searchable: false }, // KD DOSEN/ID DOSEN
+                { orderable: true, searchable: true }, // NAMA
+                { orderable: false, searchable: true }, // NIP
+                { orderable: false, searchable: true }, // KBK
+                { orderable: false, searchable: false }, // Status Pengumpulan
+                @foreach (range(1, count($prodiList)) as $i)
+                { orderable: false, searchable: false }, // Jumlah TA columns
+                @endforeach
+                @foreach (range(1, count($prodiList)) as $i)
+                { orderable: false, searchable: false }, // Kesediaan Membimbing columns
+                @endforeach
+                { orderable: false, searchable: true } // Topik
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ per halaman",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ entri keseluruhan)",
+                loadingRecords: "Memuat...",
+                zeroRecords: "Tidak ada data yang tersedia",
+                emptyTable: "Tidak ada data yang tersedia",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            }
+        });
     });
 </script>
 @stop
@@ -27,7 +60,7 @@
 
 <p>Beranda > <a href="www">Daftar Kesediaan Menjadi Dosen Pembimbing</a></p>
 
-<div >
+<div class="card p-2">
     <table id="kesediaanTable" class="table table-responsive table-bordered w-100">
         <thead>
             <tr class="bg-dark text-white">
@@ -54,33 +87,33 @@
 
         <tbody>
             @if (count($data) > 0)
-                @foreach ($data as $item)
-                <tr>
-                    <td class="text-center align-middle">{{ $loop->iteration }}</td>
-                    <td class="text-center align-middle">
-                        {{ $item['kode_dosen'] }}<br>
-                        {{ $item['id_dosen'] }}<br>
-                    </td>
-                    <td class="text-center align-middle">{{ $item['nama'] }}</td>
-                    <td class="text-center align-middle">{{ $item['nip'] }}</td>
-                    <td class="text-center align-middle">{{ $item['kbk'] }}</td>
-                    <td class="text-center align-middle">{{ $item['Status_Pengumpulan'] }}</td>
+            @foreach ($data as $item)
+            <tr>
+                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                <td class="text-center align-middle">
+                    {{ $item['kode_dosen'] }}<br>
+                    {{ $item['id_dosen'] }}<br>
+                </td>
+                <td class="text-center align-middle">{{ $item['nama'] }}</td>
+                <td class="text-center align-middle">{{ $item['nip'] }}</td>
+                <td class="text-center align-middle">{{ $item['kbk'] }}</td>
+                <td class="text-center align-middle">{{ $item['Status_Pengumpulan'] }}</td>
 
-                    @foreach ($prodiList as $prodi)
-                    <td class="text-center align-middle">{{ $item[$prodi] ?? '-' }}</td>
-                    @endforeach
-
-                    @foreach ($prodiList as $prodi)
-                    <td class="text-center align-middle">{{ $item['Kesediaan_' . $prodi] ?? '-' }}</td>
-                    @endforeach
-
-                    <td class="text-left truncate">{{ $item['bidang'] }}</td>
-                </tr>
+                @foreach ($prodiList as $prodi)
+                <td class="text-center align-middle">{{ $item[$prodi] ?? '-' }}</td>
                 @endforeach
+
+                @foreach ($prodiList as $prodi)
+                <td class="text-center align-middle">{{ $item['Kesediaan_' . $prodi] ?? '-' }}</td>
+                @endforeach
+
+                <td class="text-left truncate">{{ $item['bidang'] }}</td>
+            </tr>
+            @endforeach
             @else
-                <tr>
-                    <td colspan="{{ 6 + 2 * count($prodiList) + 1 }}" class="text-center">Tidak ada data</td>
-                </tr>
+            <tr>
+                <td colspan="{{ 6 + 2 * count($prodiList) + 1 }}" class="text-center">Tidak ada data</td>
+            </tr>
             @endif
         </tbody>
 
