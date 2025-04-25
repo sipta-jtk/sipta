@@ -29,7 +29,7 @@
                 <td>{{ $s->sesi }}</td>
                 <td>{{ $s->id_ruangan }}</td>
                 <td>
-                    @if ($s->id_pembatalan == null && $s->status_pembatalan == 0)
+                    @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                         <span>Terjadwal</span>
                     @elseif ($s->id_pembatalan != null && $s->status_pembatalan == 1)
                         <span>Dibatalkan</span>
@@ -38,7 +38,7 @@
                     @endif
                 </td>
                 <td>
-                    @if ($s->id_pembatalan == null && $s->status_pembatalan == 0)
+                    @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                     <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
                         data-target="#modalMin{{ $s->id }}" />
                     @else
@@ -88,7 +88,7 @@
                 <td>{{ $s->sesi }}</td>
                 <td>{{ $s->id_ruangan }}</td>
                 <td>
-                    @if ($s->id_pembatalan == null && $s->status_pembatalan == 0)
+                    @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                         <span>Terjadwal</span>
                     @elseif ($s->id_pembatalan != null && $s->status_pembatalan == 1)
                         <span>Dibatalkan</span>
@@ -97,7 +97,7 @@
                     @endif
                 </td>
                 <td>
-                    @if ($s->id_pembatalan == null && $s->status_pembatalan == 0)
+                    @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                     <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
                         data-target="#modalMin{{ $s->id }}" />
                     @else

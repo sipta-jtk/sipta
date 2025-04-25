@@ -49,6 +49,7 @@ class DosenTabelPenilaianController extends Controller
                 'tanggal' => $item->tanggal,
                 'judul' => $item->kota->judul_ta,
                 'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
+                'id_kota' => $item->kota->id_kota,
                 'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
                 'status_penilaian' => $statusPenilaian ?? 'Belum dinilai',
                 'id' => $item->agenda === 'seminar_3' ? 4 : ($item->agenda === 'sidang' ? 6 : null)
@@ -77,8 +78,8 @@ class DosenTabelPenilaianController extends Controller
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil dipublikasikan.');
     }
 
-    // public function getForm($id, $kota)
-    // {
-    //     return redirect()->route('nilai.index');
-    // }
+    public function getForm($id, $kota)
+    {
+        return redirect()->route('nilai.index');
+    }
 }
