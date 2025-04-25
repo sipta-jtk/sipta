@@ -55,6 +55,10 @@ EXPOSE 9000
 # Tambahkan konfigurasi supervisor
 COPY Docker/supervisor/ /etc/
 
+# Set max upload file size
+RUN echo "upload_max_filesize=50M" > $PHP_INI_DIR/conf.d/uploads.ini && \
+    echo "post_max_size=50M" >> $PHP_INI_DIR/conf.d/uploads.ini
+
 # Copy entrypoint script
 COPY prod-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh

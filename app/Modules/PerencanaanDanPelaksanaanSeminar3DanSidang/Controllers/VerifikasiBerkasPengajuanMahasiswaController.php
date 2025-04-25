@@ -169,5 +169,5 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
         }
         
         return redirect()->route('verifikasi-sidang.create')->with('success', 'Pengajuan berhasil diajukan.');
-    }
+    } //nambah
 }
