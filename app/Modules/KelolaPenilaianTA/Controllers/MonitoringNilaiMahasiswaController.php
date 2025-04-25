@@ -77,14 +77,6 @@ class MonitoringNilaiMahasiswaController extends Controller{
             ->select('id_fta', 'nama_fta')
             ->get()
             ->keyBy('nama_fta');
-
-        // $ftaWithFeedback = DB::table('aspek_feedback')
-        //     ->join('detail_feedback', 'aspek_feedback.id_feedback', '=', 'detail_feedback.id_feedback')
-        //     ->whereIn('aspek_feedback.id_fta', $ftaFeedbackList->pluck('id_fta')) // Hanya id_fta yang ada di ftaFeedbackList
-        //     ->where('detail_feedback.status_penilaian_dosen', 'dipublikasikan')
-        //     ->pluck('aspek_feedback.id_fta') // Ambil hanya id_fta
-        //     ->unique()
-        //     ->toArray(); // Konversi ke array
         
         $ftaWithFeedback = DB::table('aspek_feedback')
             ->join('detail_feedback', 'aspek_feedback.id_feedback', '=', 'detail_feedback.id_feedback')
