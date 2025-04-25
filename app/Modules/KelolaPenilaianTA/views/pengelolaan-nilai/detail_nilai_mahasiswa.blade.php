@@ -7,8 +7,8 @@
         {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('/kelola-penilaian-ta/pengelolaan-nilai'), 'label' => 'Kelola Nilai'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
             ]
         ])
@@ -21,6 +21,14 @@
 
 @section('content')
     <div class="p-4">
+        <!-- Button Import From Excel -->
+        <div class="mb-3">
+            <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="form-control d-inline-block w-auto" required>
+                <button type="submit" class="btn btn-success">Import from Excel</button>
+            </form>
+        </div>
         {{-- Tabel Scrollable --}}
         <div class="table-container">
             <table id="alokasiTable" class="table text-center">
@@ -79,26 +87,25 @@
                             <td> {{ number_format($rataRata, 2) }} </td>
                         
                             @if (in_array(strtolower($detailInformasiFta->first()->nama_fta), ['seminar i', 'seminar ii', 'seminar iii']))
-                                <td> 
-                                    {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
-                                    {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
-                                    <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
+                                    <td> 
+                                        {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
+                                        {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
+                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
 
-                                    @if (in_array(strtolower($detailInformasiFta->first()->nama_fta), ['seminar iii']))
+
                                         {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
                                         @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
-                                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger">Batal Publikasi</button>
-                                        </form>
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Unpublish</button>
+                                            </form>
                                         @else
-                                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary">Publikasi</button>
-                                        </form>
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary">Publish</button>
+                                            </form>
                                         @endif
-                                    @endif
-                                </td>
+                                    </td>
                             @endif
                         </tr>
                     @endforeach

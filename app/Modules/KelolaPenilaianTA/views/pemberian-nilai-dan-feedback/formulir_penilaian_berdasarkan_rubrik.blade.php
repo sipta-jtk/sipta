@@ -8,7 +8,7 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
@@ -56,7 +56,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($keteranganUmumPenilaian->first()?->mahasiswa as $key => $mhs)
+                            @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -120,6 +120,7 @@
             @if($isEdit)
                 @method('PATCH')
             @endif
+            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -127,7 +128,7 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->first()?->mahasiswa ?? []) }}">Nilai Perorangan</th>
+                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->mahasiswa ?? []) }}">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($rubrikList as $index => $rubrik)
@@ -140,7 +141,7 @@
                                     </th>
                                 @endforeach
 
-                                @foreach($keteranganUmumPenilaian->first()?->mahasiswa ?? [] as $key => $mhs)
+                                @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
                                     <th>{{ $key + 1 }}</th>  
                                 @endforeach
                             </tr>
@@ -148,7 +149,7 @@
                         <tbody>
                             @foreach ($detailInformasiFta->first()?->kriteriaPenilaian ?? [] as $indexKriteria => $kriteria)
                                 <tr>
-                                    <td colspan="{{ 8 + count($keteranganUmumPenilaian->first()?->mahasiswa ?? []) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
+                                    <td colspan="{{ 8 + count($keteranganUmumPenilaian->mahasiswa ?? []) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
                                 @foreach ($kriteria->rubrik as $index => $rubrik)
                                     <tr>
@@ -156,7 +157,7 @@
                                         @foreach ($rubrik->detailRubrik as $detail)
                                             <td> {{ $detail->detail_rubrik_penilaian }} </td>
                                         @endforeach
-                                        @foreach($keteranganUmumPenilaian->first()?->mahasiswa ?? [] as $key => $mhs)
+                                        @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
                                             @php
                                                 $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
                                             @endphp
@@ -176,8 +177,11 @@
             <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">
+                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
                         Simpan draft
+                    </button>
+                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
+                        Selanjutnya
                     </button>
                 </div>
             </div>
