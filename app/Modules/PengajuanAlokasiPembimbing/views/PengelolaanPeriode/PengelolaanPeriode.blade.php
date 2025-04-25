@@ -125,12 +125,14 @@
                 $('#formPeriode').attr('action',
                     '{{ route('pengajuanalokasipembimbing.pengelolaan-periode.store', ['mode' => 'add']) }}');
                 $('#periodeInput').val('');
+                populateInvalidDate();
             } else {
                 $('#periode').val(data.periode_mulai + ' - ' + data.periode_akhir);
                 $('#periodeInput').val(data.id_periode_pengajuan);
                 $('#formPeriode').attr('action',
                     '{{ route('pengajuanalokasipembimbing.pengelolaan-periode.store', ['mode' => 'update']) }}');
                 $('#exampleModalLabel').text('Edit Periode');
+                excludeDate(moment(data.periode_mulai), moment(data.periode_akhir));
             }
             $('#PeriodeModal').modal('show');
         }
@@ -237,5 +239,96 @@
                 }
             });
         });
+
+        function populateInvalidDate() {
+            $('#periode').data('daterangepicker').remove();
+            $('#periode').daterangepicker({
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "separator": " - ",
+                    "applyLabel": "Pilih",
+                    "cancelLabel": "Batal",
+                    "fromLabel": "Dari",
+                    "toLabel": "Ke",
+                    "customRangeLabel": "Custom",
+                    "weekLabel": "W",
+                    "daysOfWeek": [
+                        "Mg",
+                        "Sn",
+                        "Sl",
+                        "Rb",
+                        "Km",
+                        "Jm",
+                        "Sb"
+                    ],
+                    "monthNames": [
+                        "Januari",
+                        "Februari",
+                        "Maret",
+                        "April",
+                        "Mei",
+                        "Juni",
+                        "Juli",
+                        "Agustus",
+                        "September",
+                        "Oktober",
+                        "November",
+                        "Desember"
+                    ],
+                    firstDay: 1
+                },
+                isInvalidDate: function(date) {
+                    return periodes.some(p => {
+                        return date.isBetween(moment(p.periode_mulai), moment(p.periode_akhir), null, '[]');
+                    });
+                }
+            });
+        }
+
+        function excludeDate(from,to){
+            $('#periode').data('daterangepicker').remove();
+            $('#periode').daterangepicker({
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "separator": " - ",
+                    "applyLabel": "Pilih",
+                    "cancelLabel": "Batal",
+                    "fromLabel": "Dari",
+                    "toLabel": "Ke",
+                    "customRangeLabel": "Custom",
+                    "weekLabel": "W",
+                    "daysOfWeek": [
+                        "Mg",
+                        "Sn",
+                        "Sl",
+                        "Rb",
+                        "Km",
+                        "Jm",
+                        "Sb"
+                    ],
+                    "monthNames": [
+                        "Januari",
+                        "Februari",
+                        "Maret",
+                        "April",
+                        "Mei",
+                        "Juni",
+                        "Juli",
+                        "Agustus",
+                        "September",
+                        "Oktober",
+                        "November",
+                        "Desember"
+                    ],
+                    firstDay: 1
+                },
+                isInvalidDate: function(date) {
+                    return periodes.some(p => {
+                        return date.isBetween(moment(p.periode_mulai), moment(p.periode_akhir), null, '[]') &&
+                            (date.isBefore(from) || date.isAfter(to));
+                    });
+                }
+            });
+        }
     </script>
 @endsection

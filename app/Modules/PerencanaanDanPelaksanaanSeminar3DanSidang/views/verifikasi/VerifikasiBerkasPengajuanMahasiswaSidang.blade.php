@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa')
+@section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir')
 
 @section('content_header')
-    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa</strong></h1>
+    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir</strong></h1>
 @stop
 
 @section('content')
@@ -27,10 +27,10 @@
                         <strong>Status:</strong><span class="badge bg-warning">Pending</span>
                     @endif
                     @if($pengajuan->catatan)
-                        <p><strong>Catatan dari Dosen:</strong> {{ $pengajuan->catatan }}</p>
+                        <p><strong>Catatan dari Koor TA:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> Seminar 3</p>
+                    <p><strong>Jenis Pengajuan:</strong> Sidang Akhir</p>
                 </div>
             </div>
         @endif
@@ -66,7 +66,7 @@
                     @endforelse
                 </tbody>
             </table>
-            <form action="{{ route('verifikasi.store') }}" method="POST" class="text-center mt-4">
+            <form action="{{ route('verifikasi-sidang.store') }}" method="POST" class="text-center mt-4">
                 @csrf
                 <button type="submit" class="btn btn-primary" 
                     @if ($tidakBisaAjukan) disabled @endif>

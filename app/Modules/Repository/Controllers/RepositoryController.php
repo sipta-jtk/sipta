@@ -190,7 +190,13 @@ class RepositoryController extends Controller
 
         $dokumen->save();
 
-        return redirect()->route('Repository.index', $kategori)->with('success', 'Dokumen berhasil diperbarui');
+            return redirect()->route('Repository.index.kota', [
+                'id_kota' => auth()->user()->mahasiswa->id_kota ?? auth()->user()->dosen->id_kota ?? 1,
+                'kategori' => $kategori
+            ])->with('success', 'Dokumen berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui dokumen: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -230,27 +236,43 @@ class RepositoryController extends Controller
     // Farrel Keiza Muhammad Yamin Putra
     public function dashboard()
     {
-        $data = collect([
-            'Laporan Tugas Akhir' => [
-                ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Tugas Akhir versi hasil revisi sidang', 'url' => route('Repository.index', ['kategori' => 'hasil_revisi_sidang'])],
-                ['key' => 'laporan_seminar_3', 'label' => 'Laporan Tugas Akhir versi hasil seminar 3', 'url' => route('Repository.index', ['kategori' => 'seminar1'])],
-                ['key' => 'laporan_seminar_2', 'label' => 'Laporan Tugas Akhir versi hasil seminar 2', 'url' => route('Repository.index', ['kategori' => 'seminar2'])],
-                ['key' => 'laporan_seminar_1', 'label' => 'Laporan Tugas Akhir versi hasil seminar 1', 'url' => route('Repository.index', ['kategori' => 'seminar3'])],
-            ],
-            'Dokumen Pendukung' => [
-                ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index', ['kategori' => 'cover_abstrak'])],
-                ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => route('Repository.index', ['kategori' => 'artikel_ilmiah'])],
-                ['key' => 'poster', 'label' => 'Poster', 'url' => route('Repository.index', ['kategori' => 'poster'])],
-                ['key' => 'fta', 'label' => 'FTA', 'url' => route('Repository.index', ['kategori' => 'fta'])],
-            ],
-            'Kode Sumber' => [
-                ['key' => 'source_code', 'label' => 'Source Code', 'url' => route('Repository.index', ['kategori' => 'source_code'])],
-                ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => route('Repository.index', ['kategori' => 'link_source_code'])],
-            ],
-            'Artefak' => [
-                ['key' => 'artefak', 'label' => 'Artefak', 'url' => route('Repository.index', ['kategori' => 'artefak'])],
-            ]
-        ]);
+        try {
+            $user = auth()->user();
+
+            // Cek jika user adalah mahasiswa
+            if ($user->role_user === 'mahasiswa') {
+                $mahasiswa = $user->mahasiswa;
+                if ($mahasiswa->id_kota != $id_kota) {
+                    abort(403, 'Anda tidak boleh mengakses repository kota lain.');
+                }
+            }
+
+            // Jika dosen, lewati validasi karena bisa akses semua
+            $kota = Kota::with('mahasiswa')->findOrFail($id_kota);
+            $nims = $kota->mahasiswa->pluck('nim')->toArray();
+            $dokumen = Dokumen::whereIn('username', $nims)->get();
+
+            $data = collect([
+                'Laporan Tugas Akhir' => [
+                    ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'hasil_revisi_sidang'])],
+                    ['key' => 'laporan_seminar_3', 'label' => 'Seminar 3', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar3'])],
+                    ['key' => 'laporan_seminar_2', 'label' => 'Seminar 2', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar2'])],
+                    ['key' => 'laporan_seminar_1', 'label' => 'Seminar 1', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar1'])],
+                ],
+                'Dokumen Pendukung' => [
+                    ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'cover_abstrak'])],
+                    ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'artikel_ilmiah'])],
+                    ['key' => 'poster', 'label' => 'Poster', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'poster'])],
+                    ['key' => 'fta', 'label' => 'FTA', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'fta'])],
+                ],
+                'Kode Sumber' => [
+                    ['key' => 'source_code', 'label' => 'Source Code', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'source_code'])],
+                    ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'link_source_code'])],
+                ],
+                'Artefak' => [
+                    ['key' => 'artefak', 'label' => 'Artefak', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'artefak'])],
+                ],
+            ]);
 
         return view('Repository.views.dashboard', compact('data'));
     }

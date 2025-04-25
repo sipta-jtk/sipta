@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 
 class VerifikasiPengajuanJadwalController extends Controller
@@ -140,12 +141,10 @@ class VerifikasiPengajuanJadwalController extends Controller
                 ->first();
         
             if ($roomInformation) {       
-                // Mengambil token dari auth
+                // Mengambil token dari auth untuk server API
                 $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
-            
-                $response = Http::withHeaders([
-                    'X-Requested-With' => 'XMLHttpRequest'
-                ])->post('http://host.docker.internal:8005/penjadwalan-ruangan/api/v1/schedule/action?token={$token}', [
+
+                $data = [
                     'type' => 'add',
                     'agenda' => $roomInformation->agenda,
                     'start' => $roomInformation->start,
@@ -153,7 +152,15 @@ class VerifikasiPengajuanJadwalController extends Controller
                     'id_ruangan' => $roomInformation->id_ruangan,
                     'id_kota' => $roomInformation->id_kota,
                     'nip' => auth()->user()->username,
-                ]);
+                ];
+            
+                $response = Http::withHeaders([
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'content-type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->withToken($token)
+                ->post('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
                 if( $response->successful()) {
                     // Jika berhasil, lakukan update status verifikasi
