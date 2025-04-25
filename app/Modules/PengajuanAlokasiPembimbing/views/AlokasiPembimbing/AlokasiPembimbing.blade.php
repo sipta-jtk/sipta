@@ -2,7 +2,13 @@
 
 @section('title', 'Alokasi Dosen Pembimbing dan Dosen Penguji')
 
-@section('content_header')
+@section('content')
+<form action="{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.submit') }}" method="POST" id="alokasiForm">
+    @csrf
+    <input type="hidden" id="dataToSend" name="dataToSend">
+</form>
+
+<div class="p-4">
     <h1 class="mb-3">Alokasi Dosen Pembimbing</h1>
 
     <div>
@@ -14,15 +20,6 @@
         ])
         @endcomponent
     </div>
-@stop
-
-@section('content')
-<form action="{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.submit') }}" method="POST" id="alokasiForm">
-    @csrf
-    <input type="hidden" id="dataToSend" name="dataToSend">
-</form>
-
-<div class="p-4">
 
     <datalist id="dosenList">
         @foreach ($dosenList as $dosen)
