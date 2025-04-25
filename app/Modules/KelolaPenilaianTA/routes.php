@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
+use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
@@ -8,7 +9,10 @@ use App\Modules\KelolaPenilaianTA\Controllers\PemberianFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiController;
-use Illuminate\Support\Facades\DB;
+
+
+
+Route::get('/', [KelolaPenilaianTAController::class, 'getBeranda'])->name('beranda.get');
 
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
@@ -60,6 +64,8 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::post('/{idKategori}/{action}/toggle-kunci', [PengelolaanNilaiController::class, 'toggleKunciPenilaian'])->name('kelola.penilaian.toggle-kunci');
     });
 
+    Route::post('/import-nilai', [PemberianNilaiController::class, 'importNilai'])->name('import.nilai');
+
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         // ================= REKAPITULASI NILAI =================
         Route::get('/rekapitulasi-nilai-sidang', [RekapitulasiNilaiController::class, 'getRekapNilaiSidang']);
@@ -75,9 +81,10 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PEMBERIAN FEEDBACK =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
-        Route::get('/{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('pengelolaan-nilai.detail');
+        // Route::get('/{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('pengelolaan-nilai.detail');
         Route::get('/nilai/{namaFta}/masukan/{idKota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar'])->name('pengisian.masukan');
         Route::post('/nilai/{namaFta}/masukan/{idKota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
+        Route::post('/nilai/{namaFta}/masukan/{idKota}/edit', [PemberianFeedbackController::class, 'ubahMasukanSeminar'])->name('pengisian.masukan.edit');
     });
 
     // ================= PEMBERIAN NILAI =================

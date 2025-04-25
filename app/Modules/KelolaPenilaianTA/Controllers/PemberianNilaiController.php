@@ -8,12 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
 use App\Models\Mahasiswa;
-use App\Models\KategoriPenilaian;
-use App\Models\KriteriaPenilaian;
+use App\Models\Dosen;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\Validator;
 
 class PemberianNilaiController extends Controller
 {
@@ -292,4 +293,133 @@ class PemberianNilaiController extends Controller
             ]);
         }
     }
+
+    /**
+     * Mengimpor nilai dari file Excel
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function importNilai(Request $request)
+    {
+        // Validasi input file
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $file = $request->file('file');
+
+            $data = Excel::toCollection([], $file);
+
+            $rows = $data[0]->slice(1)->toArray(); // Lewati header
+
+            foreach ($rows as $row) {
+                $this->prosesBarisExcel($row);
+            }
+
+            DB::commit();
+            return back()->with('success', 'Nilai berhasil diimport.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Memproses setiap baris dari file Excel
+     * 
+     * @param array $row
+     * @return void
+     */
+    private function prosesBarisExcel(array $row): void
+    {
+        $nama = $row[1] ?? null;
+        $kelompok = $row[2] ?? null;
+        $penguji = [
+            strval($row[3] ?? null),
+            strval($row[4] ?? null),
+            strval($row[5] ?? null),
+        ];
+        $nilai = [
+            $row[6] ?? null,
+            $row[7] ?? null,
+            $row[8] ?? null,
+        ];
+
+        if (empty($nama) || empty($kelompok)) {
+            return;
+        }
+
+        $mahasiswa = $this->cariMahasiswa($nama, $kelompok);
+        if (!$mahasiswa) {
+            return;
+        }
+
+        foreach ($penguji as $index => $idPenguji) {
+            if (!empty($idPenguji)) {
+                $this->simpanNilaiKategori($mahasiswa, $idPenguji, $nilai[$index]);
+            }
+        }
+    }
+
+    /**
+     * Mencari mahasiswa berdasarkan nama dan kelompok
+     * 
+     * @param string $nama
+     * @param string $kelompok
+     * @return \App\Models\Mahasiswa|null
+     */
+    private function cariMahasiswa(string $nama, string $kelompok): ?Mahasiswa
+    {
+        return Mahasiswa::select('mahasiswa.nim', 'user.nama as nama', 'mahasiswa.kelas', 'prodi.nama_prodi as prodi', 'kota.nama_kota as kelompok', 'mahasiswa.id_prodi', 'mahasiswa.id_kota')
+            ->leftJoin('user', 'mahasiswa.nim', '=', 'user.username')
+            ->leftJoin('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
+            ->leftJoin('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
+            ->where('user.nama', $nama)
+            ->where('kota.nama_kota', $kelompok)
+            ->where('mahasiswa.status_ta', 'mahasiswa_ta')
+            ->whereNotNull('mahasiswa.id_kota')
+            ->first();
+    }
+
+    /**
+     * Menyimpan nilai kategori ke database
+     * 
+     * @param \App\Models\Mahasiswa $mahasiswa
+     * @param string $idPenguji
+     * @param mixed $nilai
+     * @return void
+     */
+    private function simpanNilaiKategori(Mahasiswa $mahasiswa, string $idPenguji, $nilai): void
+    {
+        $dosen = Dosen::select('nip')
+            ->where('id_dosen', $idPenguji)
+            ->where('status_dosen', 'aktif')
+            ->first();
+
+        if (!$dosen) {
+            return;
+        }
+
+        $mahasiswa->nilaiKategori()
+            ->where('nim', $mahasiswa->nim)
+            ->where('nip', $dosen->nip)
+            ->where('id_kategori', 2)
+            ->delete();
+
+        $mahasiswa->nilaiKategori()->create([
+            'nim' => $mahasiswa->nim,
+            'nip' => $dosen->nip,
+            'id_kategori' => 2,
+            'nilai' => $nilai,
+        ]);
+    }
+    
 }
