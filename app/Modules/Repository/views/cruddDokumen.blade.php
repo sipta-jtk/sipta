@@ -317,7 +317,10 @@
                         <a href="#" target="_blank" class="btn btn-primary" id="detailFileLinkBtn">
                             <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
                         </a>
-                        <a href="#" class="btn btn-success" id="detailFileDownloadBtn">
+                        <a href="#" class="btn btn-success" id="detailFileDownloadBtn"
+                            data-id="{{ $doc->id_dokumen }}"
+                            data-kategori="{{ $kategori }}"
+                            data-judul="{{ $doc->judul }}">
                             <i class="fas fa-download"></i> Download
                         </a>
                     </div>
@@ -757,6 +760,10 @@
                 const fileLink = document.getElementById('detailFileLink');
                 const fileLinkBtn = document.getElementById('detailFileLinkBtn');
                 const fileDownloadBtn = document.getElementById('detailFileDownloadBtn');
+
+                // FIXED: Update the data attributes for the download button
+                fileDownloadBtn.setAttribute('data-id', id);
+                fileDownloadBtn.setAttribute('data-judul', judul);
                 const noFileMessage = document.getElementById('noFileMessage');
                 const documentPreview = document.getElementById('documentPreview');
                 const previewNotAvailable = document.getElementById('previewNotAvailable');
@@ -855,6 +862,20 @@
                 // Set the download link on the confirm button
                 document.getElementById('confirmDownloadBtn').href = "{{ route('Repository.download', [$kategori, 'ID_PLACEHOLDER']) }}".replace('ID_PLACEHOLDER', id);
             });
+        });
+
+        document.getElementById('detailFileDownloadBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            const kategori = "{{ $kategori }}"; // This can be hardcoded since it's the same for all docs in this view
+            const judul = this.getAttribute('data-judul');
+
+            // Tambahkan timestamp untuk menghindari cache
+            const timestamp = new Date().getTime();
+            const downloadUrl = `${prefix}/repository/mahasiswa/${kategori}/${id}/download?t=${timestamp}`;
+
+            console.log('Download URL:', downloadUrl);
+            window.location.href = downloadUrl;
         });
 
         // Auto-close alert messages
