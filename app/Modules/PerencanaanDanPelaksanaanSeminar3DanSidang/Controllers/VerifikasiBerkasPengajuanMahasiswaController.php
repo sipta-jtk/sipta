@@ -71,12 +71,26 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
     public function store(Request $request)
     {
-        VerifikasiBerkasPengajuan::create([
-            'tanggal_pengajuan' => Carbon::now(),
-            'jenis_pengajuan' => 'seminar_3',
-            'id_kota' => Auth::user()->mahasiswa->id_kota,
-            'status_konfirmasi' => 'pending',
-        ]);
+        $idKota = Auth::user()->mahasiswa->id_kota;
+
+        $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
+            ->where('jenis_pengajuan', 'seminar_3')
+            ->first();
+
+        if ($pengajuan) {
+            // Jika pengajuan sudah ada, tidak perlu membuat yang baru
+            $pengajuan->update([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+            ]);
+        } else{
+            VerifikasiBerkasPengajuan::create([
+                'tanggal_pengajuan' => Carbon::now(),
+                'jenis_pengajuan' => 'seminar_3',
+                'id_kota' => $idKota,
+                'status_konfirmasi' => 'pending',
+            ]);
+        }
 
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
     }
@@ -135,13 +149,25 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
     public function store_sidang(Request $request)
     {
-        VerifikasiBerkasPengajuan::create([
-            'tanggal_pengajuan' => Carbon::now(),
-            'status_konfirmasi' => 'pending',
-            'jenis_pengajuan' => 'sidang_akhir',
-            'id_kota' => Auth::user()->mahasiswa->id_kota,
-        ]);
-
+        $idKota = Auth::user()->mahasiswa->id_kota;
+        $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
+            ->where('jenis_pengajuan', 'sidang_akhir')
+            ->first();
+        if ($pengajuan) {
+            // Jika pengajuan sudah ada, tidak perlu membuat yang baru
+            $pengajuan->update([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+            ]);
+        } else {
+            VerifikasiBerkasPengajuan::create([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+                'jenis_pengajuan' => 'sidang_akhir',
+                'id_kota' => Auth::user()->mahasiswa->id_kota,
+            ]);
+        }
+        
         return redirect()->route('verifikasi-sidang.create')->with('success', 'Pengajuan berhasil diajukan.');
-    } //nambah
+    }
 }
