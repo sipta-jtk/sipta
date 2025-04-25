@@ -4,22 +4,31 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('/kelola-penilaian-ta/pengelolaan-nilai'), 'label' => 'Kelola Nilai'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Nilai {{ $namaKategori }}</h1>
+        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
     </div>
 @stop
 
 @section('content')
     <div class="p-4">
+        <!-- Button Import From Excel -->
+        <div class="mb-3">
+            <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="form-control d-inline-block w-auto" required>
+                <button type="submit" class="btn btn-success">Import from Excel</button>
+            </form>
+        </div>
         {{-- Tabel Scrollable --}}
         <div class="table-container">
             <table id="alokasiTable" class="table text-center">
@@ -33,7 +42,7 @@
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         <th rowspan="2" class="align-middle">Rata-rata</th>
-                        @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
+                        @if (strtolower($detailInformasiFta->first()->nama_fta) == 'seminar i' || strtolower($detailInformasiFta->first()->nama_fta) == 'seminar ii')
                             <th rowspan="2" class="align-middle">Aksi</th>
                         @endif
                     </tr>
@@ -44,25 +53,58 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($filteredData as $data)
+                    @foreach ($detailNilaiMahasiswa as $index => $data)
                         <tr>
-                            <td> {{ $data['index']}} </td>
-                            <td> {{ $data['nama'] }} </td>
-                            <td> {{ $data['kelompok'] }} </td>
-                            @foreach ($data['kode_dosen'] as $kode)
-                                <td> {{ $kode }} </td>
+                            <td> {{ $index + 1 }} </td>
+                            <td> {{ $data->user->nama }} </td>
+                            <td> {{ $data->kota->nama_kota }} </td>
+                            @php
+                                $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
+                                while (count($pengujiList) < 3) {
+                                    $pengujiList[] = '-';
+                                }
+                            @endphp
+                        
+                            @foreach ($pengujiList as $penguji)
+                                <td> {{ $penguji }} </td>
                             @endforeach
-                            @foreach ($data['nilai'] as $nilai)
+                        
+                            @php
+                                $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
+                                while (count($nilaiList) < 3) {
+                                    $nilaiList[] = 0;
+                                }
+                        
+                                $rataRata = count($data->nilaiKategori) > 0 
+                                    ? array_sum($nilaiList) / count($data->nilaiKategori) 
+                                    : 0;
+                            @endphp
+                        
+                            @foreach ($nilaiList as $nilai)
                                 <td> {{ $nilai }} </td>
                             @endforeach
-                            <td> {{ $data['rata-rata'] }} </td>
-                            @if (strtolower($namaKategori) == 'seminar iii' || strtolower($namaKategori) == 'seminar ii')
+                        
+                            <td> {{ number_format($rataRata, 2) }} </td>
+                        
+                            @if (in_array(strtolower($detailInformasiFta->first()->nama_fta), ['seminar i', 'seminar ii', 'seminar iii']))
                                     <td> 
-                                        <a href="{{ route('pengisian.nilai', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Nilai</a>
-                                        <form action="{{ route('pengisian.masukan.store', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" method="POST" style="display:inline;" class="finalisasi-form">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary finalisasi-button">Finalisasi</button>
-                                        </form>
+                                        {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
+                                        {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
+                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
+
+
+                                        {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
+                                        @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Unpublish</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary">Publish</button>
+                                            </form>
+                                        @endif
                                     </td>
                             @endif
                         </tr>
@@ -82,18 +124,4 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/kelola_penilaian_ta.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const finalisasiButtons = document.querySelectorAll('.finalisasi-button');
-            finalisasiButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = this.closest('form');
-                    if (confirm('Apakah Anda yakin ingin memfinalisasi nilai ini?')) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
 @stop

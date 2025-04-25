@@ -506,30 +506,35 @@ return [
         ],
         [
             'text' => 'Kelola Penilaian Tugas Akhir',
-            'icon' => 'fas fa-fw fa-file',
+            'icon' => 'fas fa-fw fa-file-alt',
             'submenu' => [
                 [
                     'text' => 'Monitoring Mahasiswa',
                     'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
                     'can' => 'akses-penilaian-mahasiswa',
+                    'icon' => 'fas fa-fw fa-user-check',
                 ],
                 [
                     'text' => 'Rekapitulasi Nilai',
+                    'icon' => 'fas fa-fw fa-table',
                     'submenu' => [
                         [
                             'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
                             'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
                             'can' => 'akses-penilaian-koordinator-ta',
+                            'icon' => 'fas fa-fw fa-chalkboard-teacher',  
                         ],
                         [
                             'text' => 'Rekapitulasi Nilai Akhir',
                             'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-akhir',
                             'can' => 'akses-penilaian-koordinator-ta',
+                            'icon' => 'fas fa-fw fa-clipboard-check',
                         ],
                         [
                             'text' => 'Pengaturan Nilai Akhir',
                             'url' => $prefix . '/kelola-penilaian-ta/pengaturan-nilai-akhir',
                             'can' => 'akses-penilaian-koordinator-ta',
+                            'icon' => 'fas fa-fw fa-sliders-h',
                         ],
                     ],
                 ],
@@ -537,16 +542,19 @@ return [
                     'text' => 'Formulir Penilaian',
                     'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
                     'can' => 'akses-penilaian-koordinator-ta',
+                    'icon' => 'fas fa-fw fa-clipboard-list',
                     'submenu' => [
                         [
                             'text' => 'Pengelolaan Formulir',
                             'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian',
-                            'can' => 'akses-penilaian-koordinator-ta'
+                            'can' => 'akses-penilaian-koordinator-ta',
+                            'icon' => 'fas fa-fw fa-edit',
                         ],
                         [
                             'text' => 'Pengelolaan Rubrik',
                             'url' => $prefix . '/kelola-penilaian-ta/formulir-penilaian/kelola-rubrik',
-                            'can' => 'akses-penilaian-koordinator-ta'
+                            'can' => 'akses-penilaian-koordinator-ta',
+                            'icon' => 'fas fa-fw fa-th-list',
                         ],
                     ]
                 ],
@@ -554,6 +562,7 @@ return [
                     'text' => 'Pengelolaan Nilai',
                     'url' => $prefix . '/kelola-penilaian-ta/pengelolaan-nilai',
                     'can' => 'akses-penilaian-koordinator-ta',
+                    'icon' => 'fas fa-fw fa-calculator',
                 ]
             ]
         ],
