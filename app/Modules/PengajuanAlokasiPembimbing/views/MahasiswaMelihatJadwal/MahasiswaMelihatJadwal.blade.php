@@ -35,22 +35,38 @@
                 </thead>
                 <tbody>
                     @php $counter = 1; @endphp 
-                    
+
                     @foreach ($groupedData as $dosen)
-                        @php $rowspan = count($dosen['jadwal']); @endphp
+                        @php 
+                            // Count total rowspan for the lecturer
+                            $rowspan_dosen = count($dosen['jadwal']);
+                            $groupedByDay = [];
 
-                        @foreach ($dosen['jadwal'] as $index => $jadwal)
-                            <tr>
-                                @if ($index == 0)
-                                    <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $counter }}</td>
-                                    <td class="text-center align-middle" rowspan="{{ $rowspan }}">{{ $dosen['nama_dosen'] }}</td>
-                                    @php $counter++; @endphp 
-                                @endif
+                            // Group schedules by day
+                            foreach ($dosen['jadwal'] as $jadwal) {
+                                $groupedByDay[$jadwal['hari']][] = $jadwal;
+                            }
+                        @endphp
 
-                                <td class="text-center align-middle">{{ ucfirst($jadwal['hari']) }}</td>
-                                <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_mulai'])) }}</td>
-                                <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_selesai'])) }}</td>
-                            </tr>
+                        @foreach ($groupedByDay as $hari => $jadwal_list)
+                            @php $rowspan_hari = count($jadwal_list); @endphp
+
+                            @foreach ($jadwal_list as $index => $jadwal)
+                                <tr>
+                                    @if ($index == 0 && $loop->parent->first)
+                                        <td class="text-center align-middle" rowspan="{{ $rowspan_dosen }}">{{ $counter }}</td>
+                                        <td class="text-center align-middle" rowspan="{{ $rowspan_dosen }}">{{ $dosen['nama_dosen'] }}</td>
+                                        @php $counter++; @endphp 
+                                    @endif
+
+                                    @if ($index == 0)
+                                        <td class="text-center align-middle" rowspan="{{ $rowspan_hari }}">{{ ucfirst($hari) }}</td>
+                                    @endif
+                                    
+                                    <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_mulai'])) }}</td>
+                                    <td class="text-center align-middle">{{ date('H:i', strtotime($jadwal['jam_selesai'])) }}</td>
+                                </tr>
+                            @endforeach
                         @endforeach
                     @endforeach
                 </tbody>
@@ -60,5 +76,3 @@
         @endif
     </div>
 @stop
-
-

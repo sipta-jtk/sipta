@@ -43,16 +43,18 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
 
+    Route::group(['prefix' => 'alokasi-pembimbing', 'as' => 'alokasi-pembimbing.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
+        Route::get('/', [AlokasiPembimbingController::class, 'index'])->name('index');
+        Route::post('/submit', [AlokasiPembimbingController::class, 'submit'])->name('submit');
+        Route::post('/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('simpan');
+        Route::get('/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+    });
 
-    Route::get('/alokasi-pembimbing', [AlokasiPembimbingController::class, 'index'])->name('alokasi-pembimbing.index');
-    Route::post('/alokasi-pembimbing/submit', [AlokasiPembimbingController::class, 'submit'])->name('alokasi-pembimbing.submit');
-    Route::post('/alokasi-pembimbing/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('alokasi-pembimbing.simpan');
-    Route::get('/alokasi-pembimbing/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
 
-
-    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.'], function () {
+    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
         Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir'])->name('topik-tugas-akhir');
+        Route::get('/check-existing-data', [PengajuanPembimbingController::class, 'checkExistingData'])->name('checkExistingData');
 
         Route::group(['prefix' => 'prioritas-dosen-pembimbing', 'as' => 'prioritas-dosen-pembimbing.'], function () {
             Route::get('/', [PengajuanPembimbingController::class, 'view_prioritasDosenPembimbing'])->name('index');

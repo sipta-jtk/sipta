@@ -10,12 +10,18 @@
 
 @section('content')
 
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="3"
                 activeColor="primary" inactiveColor="secondary" 
-                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
-        </div>
+                :hrefs="[
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index')]"/>
+        </div> 
 
         <div class="col">
             <div class="card p-4 bg-light">
@@ -31,13 +37,50 @@
                                 @foreach ($listDosen as $d)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span class="dosen-name">{{ $d->nama }}</span>
-                                        <div>
-                                            <button class="btn btn-sm btn-secondary viewHistory" data-name="{{ $d->nama }}" data-nip="{{ $d->nip }}">
+                                        <div class="button-container d-flex justify-content-end">
+                                            <button class="btn btn-sm btn-secondary viewHistory mr-1" type="button" data-toggle="modal" data-target="#historyModal{{$d->nip}}">
                                                 <i class="fas fa-file-alt"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
+                                            <button id="addDosen" class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
                                         </div>
                                     </li>
+
+                                    <!-- Modal untuk Riwayat Topik -->
+                                    <div class="modal fade" id="historyModal{{$d->nip}}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p id="dosenName">
+                                                        {{ $d->nama }}
+                                                    </p>
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>List Ketertarikan Bidang</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="historyContent">
+                                                            @forelse ($d->history as $bidang)
+                                                            <tr>
+                                                                <td>{{ $bidang->bidang }}</td>
+                                                            </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="1" class="text-center">Tidak ada data</td>
+                                                                </tr>
+                                                            @endforelse
+                                                            </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </ul>
                         </div>
@@ -47,7 +90,7 @@
                         <ul id="prioritasList" class="list-group mt-2">
                             @for ($i = 1; $i <= 5; $i++)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="priority-number">{{ $i }}</span>
+                                    <span class="pr-3 priority-number">{{ $i }}</span>
                                     <span class="priority-name">-</span>
                                     <button class="btn btn-sm btn-danger removeDosen" style="display: none;">X</button>
                                 </li>
@@ -59,37 +102,11 @@
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info ml-3">Sebelumnya</a>
-                    <button type="submit" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info mr-3">Sebelumnya</a>
+                    <button type="submit" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
-    </div>
-
-    <!-- Modal untuk Riwayat Topik -->
-    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="dosenName"></p>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Tahun</th>
-                                <th>Bidang</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyContent">
-                            {{-- Data akan diisi lewat JS --}}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 @stop
 
@@ -97,6 +114,14 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href=" https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
+
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 5px; /* Space between the buttons */
+        }
+    </style>
 @stop
 
 @section ('js')
@@ -106,6 +131,25 @@
 
 <script>
     $(document).ready(function () {
+        // Mengecek apakah mahasiswa sudah memiliki pengajuan
+        $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $("#warningMessage").show(); // Menampilkan pesan peringatan
+
+                    if (response.Periode === false) {
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+                }
+        });
+
         // Menambahkan dosen ke daftar prioritas
         $(".addDosen").click(function () {
             let name = $(this).data("name");
@@ -204,49 +248,6 @@
             }
         });
 
-        // Fungsi untuk menampilkan riwayat topik dosen pembimbing
-        $(".viewHistory").click(function (event) {
-            event.preventDefault();
-            
-            let nip = $(this).data("nip"); // Ambil NIP dari atribut data
-            let name = $(this).data("name");
-            $("#dosenName").text(name);
-            
-            let historyContent = $("#historyContent");
-            historyContent.html("<tr><td colspan='2' class='text-center'>Loading...</td></tr>");
-
-            $.ajax({
-                url: `/prioritas-dosen-pembimbing/dosen/history/${nip}`,
-                type: "GET",
-                success: function (response) {
-                    historyContent.empty(); // Kosongkan tabel sebelum memasukkan data
-
-                    if (Object.keys(response).length === 0) {
-                        historyContent.html("<tr><td colspan='2' class='text-center'>Tidak ada data</td></tr>");
-                    } else {
-                        $.each(response, function (tahun, bidangList) {
-                            let bidangHtml = "<ul>";
-                            bidangList.forEach(function (bidang) {
-                                bidangHtml += `<li>${bidang.bidang}</li>`;
-                            });
-                            bidangHtml += "</ul>";
-
-                            historyContent.append(`
-                                <tr>
-                                    <td>${tahun}</td>
-                                    <td>${bidangHtml}</td>
-                                </tr>
-                            `);
-                        });
-                    }
-                },
-                error: function () {
-                    historyContent.html("<tr><td colspan='2' class='text-center text-danger'>Gagal mengambil data</td></tr>");
-                }
-            });
-
-            $("#historyModal").modal("show");
-        });
     });
 
     // Mencari dosen berdasarkan nama
