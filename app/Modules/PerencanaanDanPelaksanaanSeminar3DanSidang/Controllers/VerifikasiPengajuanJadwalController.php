@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+Carbon::setLocale('id');
 
 
 class VerifikasiPengajuanJadwalController extends Controller
@@ -38,7 +39,11 @@ class VerifikasiPengajuanJadwalController extends Controller
         ->where('pengajuan_jadwal_kota.status_dosen_penguji_2', 1)
         ->whereNull('pengajuan_jadwal_kota.status_koordinator_ta')
         ->get();
-        
+
+        $dataPengajuan = $dataPengajuan->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalKoordinator', compact('dataPengajuan', 'tipe'));
     }
