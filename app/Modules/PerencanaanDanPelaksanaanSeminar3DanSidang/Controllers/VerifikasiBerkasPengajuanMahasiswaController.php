@@ -82,6 +82,8 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             $pengajuan->update([
                 'tanggal_pengajuan' => Carbon::now(),
                 'status_konfirmasi' => 'pending',
+                'nip' => null,
+                'tanggal_verifikasi' => null,
             ]);
         } else{
             VerifikasiBerkasPengajuan::create([
@@ -158,6 +160,8 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             $pengajuan->update([
                 'tanggal_pengajuan' => Carbon::now(),
                 'status_konfirmasi' => 'pending',
+                'nip' => null,
+                'tanggal_verifikasi' => null,
             ]);
         } else {
             VerifikasiBerkasPengajuan::create([
