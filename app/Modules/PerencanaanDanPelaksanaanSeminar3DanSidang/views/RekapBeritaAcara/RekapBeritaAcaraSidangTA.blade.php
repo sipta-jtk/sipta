@@ -51,11 +51,11 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-sm" disabled>Hadir</button>
+                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-sm" disabled>Tidak Hadir</button>
+                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Tidak Hadir</button>
                                     @else
-                                        <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">

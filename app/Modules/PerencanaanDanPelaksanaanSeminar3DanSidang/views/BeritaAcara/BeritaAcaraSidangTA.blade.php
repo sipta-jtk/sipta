@@ -18,12 +18,6 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="thead-dark">
@@ -51,20 +45,20 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-sm" disabled>Hadir</button>
+                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->isSameDay($item->penjadwalan->tanggal))
                                         <form action="{{ route('presensi.hadir') }}" method="POST" style="display:inline;">
                                             @csrf
                                             <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                             <input type="hidden" name="status_hadir" value="hadir">
-                                            <button type="submit" class="btn btn-info btn-sm">Absensi</button>
+                                            <button type="submit" class="btn btn-info btn-md my-1">Absensi</button>
                                         </form>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
                                     @else
-                                        <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
@@ -75,7 +69,7 @@
                                                 {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),15) }}
                                             </a>
                                         </div>
-                                    <button class="btn btn-primary btn-sm" 
+                                    <button class="btn btn-primary btn-md my-1" 
                                         data-toggle="modal" 
                                         data-target="#modalDokumentasi{{ $item->id_kehadiran }}">
                                         <i class=""></i> Unggah Dokumentasi
@@ -86,7 +80,7 @@
                                     @if($item->batas_revisi)
                                       {{ $item->batas_revisi_formatted }}
                                     @else
-                                    <button class="btn btn-sm btn-primary" 
+                                    <button class="btn btn-primary btn-md my-1" 
                                         data-toggle="modal" 
                                         data-target="#modalBatasRevisi{{ $item->id_kehadiran }}">
                                     <i class=""></i> Atur Tanggal
@@ -96,7 +90,7 @@
                                 <td>
                                     @if($item->status_kelulusan == 'tidak_lulus')
                                         <!-- Tombol untuk membuka modal -->
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
+                                        <button type="button" class="btn btn-primary btn-md my-1" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
                                             Isi Status
                                         </button>
                                     @else
@@ -126,7 +120,7 @@
                                         <div class="mb-2 form-group">
                                             <label for="status_kelulusan">Status Kelulusan</label>
                                             <x-adminlte-select name="status_kelulusan" required>
-                                                <option value="" disabled >-- Pilih Status Kelulusan --</option>
+                                                <option value="" disabled selected>-- Pilih Status Kelulusan --</option>
                                                 <option value="lulus_tanpa_perbaikan_laporan">Lulus Tanpa Perbaikan Laporan</option>
                                                 <option value="lulus_dengan_perbaikan_laporan">Lulus Dengan Perbaikan Laporan</option>
                                                 <option value="mengulang_sidang_tugas_akhir">Mengulang Sidang Tugas Akhir</option>

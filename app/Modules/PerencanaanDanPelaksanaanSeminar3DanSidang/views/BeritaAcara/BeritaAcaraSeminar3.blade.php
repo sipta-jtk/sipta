@@ -18,12 +18,6 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="thead-dark">
@@ -49,20 +43,20 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-sm" disabled>Hadir</button>
+                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->isSameDay($item->penjadwalan->tanggal))
                                         <form action="{{ route('presensi.hadir') }}" method="POST" style="display:inline;">
                                             @csrf
                                             <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                             <input type="hidden" name="status_hadir" value="hadir">
-                                            <button type="submit" class="btn btn-info btn-sm">Absensi</button>
+                                            <button type="submit" class="btn btn-info btn-md my-1">Absensi</button>
                                         </form>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
-                                        <button class="btn btn-danger btn-sm" disabled>Absen</button>
+                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
                                     @else
-                                        <button class="btn btn-warning btn-sm" disabled>Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
@@ -73,18 +67,38 @@
                                                 {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),15) }}
                                             </a>
                                         </div>
+                                    <button class="btn btn-primary btn-md my-1" 
+                                        data-toggle="modal" 
+                                        data-target="#modalDokumentasi{{ $item->id_kehadiran }}">
+                                        <i class=""></i> Unggah Dokumentasi
+                                    </button>
                                     @endif
-                                    <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
-                                        <div class="form-group">
-                                            <input type="file" name="dokumentasi" class="form-control-file form-control-sm" accept=".jpg,.jpeg,.png,.pdf">
-                                            <small class="text-muted">Maksimal 5 MB (JPG, JPEG, PNG, PDF)</small>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah</button>
-                                    </form>
                                 </td>
                             </tr>
+                            <!-- Modal untuk upload dokumentasi -->
+                            <x-adminlte-modal id="modalDokumentasi{{ $item->id_kehadiran }}" 
+                                title="Unggah Dokumentasi Sidang" 
+                                theme="blue"
+                                icon="fas fa-camera"
+                                size="md">
+                                <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                    <div class="mb-2 input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="form-control-file form-control-sm" name="dokumentasi" id="dokumentasi" accept=".jpg,.jpeg,.png,.pdf">
+                                            <label class="custom-file-label" for="dokumentasi" data-browse="Cari" >Pilih file</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex pt-3 justify-content-end">
+                                        <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"
+                                        class="mx-1"/>
+                                        <x-adminlte-button type="submit" theme="success" label="Simpan"
+                                        class="mx-1"/>
+                                    </div>
+                                    <x-slot name="footerSlot"></x-slot>
+                                </form>
+                            </x-adminlte-modal>
                         @endforeach
                     </tbody>
                 </table>
