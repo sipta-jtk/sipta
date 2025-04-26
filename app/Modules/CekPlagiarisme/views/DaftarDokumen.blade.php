@@ -3,16 +3,26 @@
 @section('title', 'Cek Plagiarisme')
 
 @section('content_header')
-<h1 class="text-center mb-3">Cek Plagiarisme</h1>
+<h1 class="mb-3">Cek Plagiarisme</h1>
+<div>
+    @php
+    $prefix = rtrim(config('adminlte.dashboard_url', 'sipta'), '/');
+    @endphp
+
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/' . $prefix), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Cek Plagiarisme']
+    ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
 <section class="content">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="search-box">
-                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
-            </div>
             @if(auth()->user()->role_user === 'dosen')
             <div class="form-group ml-auto align-items-right mt-3">
                 <select id="kelompokSelect" class="form-control">
@@ -30,6 +40,7 @@
         </div>
     </div>
 </section>
+
 <!-- Modal untuk Upload Dokumen -->
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
