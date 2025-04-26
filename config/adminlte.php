@@ -358,6 +358,7 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-file-alt',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                             'can' => 'mahasiswa_ta',
                         ],
