@@ -3,7 +3,16 @@
 @section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir')
 
 @section('content_header')
-    <h1 class="mx-4"><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir</strong></h1>
+    <h1 class=""><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir</strong></h1>
+    <div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir']
+    ]
+    ])
+    @endcomponent
+    </div>
 @stop
 
 @section('content')
@@ -64,11 +73,11 @@
             <h3 class="card-title">Daftar Artefak Yang Perlu Dikumpulkan</h3>
         </div>
         <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nama Artefak</th>
-                        <th>Status</th>
+            <table id="artefakTable" class="table table-striped" width="100%">
+                <thead class="sticky-header">
+                    <tr class="bg-dark text-white">
+                        <th style="width: 80%">Nama Artefak</th>
+                        <th style="width: 20%">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,7 +115,7 @@
 
             @if ($adaBelumUpload)
                 <div class="alert alert-danger mt-3">
-                    Pengajuan tidak dapat dilakukan karena ada artefak yang belum di-upload.
+                    Pengajuan tidak dapat dilakukan karena ada artefak yang belum diunggah.
                 </div>
             @endif
         </div>
@@ -115,16 +124,45 @@
 </div>
 @stop
 
+@section('css')
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+@stop
 
 @section('js')
-<script>
-    setTimeout(function() {
-        let alert = document.querySelector(".alert");
-        if (alert) {
-            alert.style.transition = "opacity 0.5s";
-            alert.style.opacity = "0";
-            setTimeout(() => alert.remove(), 500);
-        }
-    }, 10000); 
-</script>
+    <script>
+        setTimeout(function() {
+            let alert = document.querySelector(".alert");
+            if (alert) {
+                alert.style.transition = "opacity 0.5s";
+                alert.style.opacity = "0";
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 10000); 
+    </script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $('#artefakTable').DataTable({
+            paging: false,          // Matikan pagination
+            searching: false,       // Matikan kolom pencarian
+            ordering: false,        // Matikan sorting
+            info: false,            // Matikan info "Menampilkan x sampai y"
+            lengthChange: false,
+
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            }
+        });
+    </script>
 @stop
