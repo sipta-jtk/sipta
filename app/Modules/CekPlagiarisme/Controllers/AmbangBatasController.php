@@ -5,8 +5,10 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\AmbangBatas;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+Carbon::setLocale('id');
 
 class AmbangBatasController extends Controller
 {
@@ -20,7 +22,9 @@ class AmbangBatasController extends Controller
             return [
                 'id' => $item->id_ambang_batas,
                 'ambang_batas' => $item->ambang_batas,
-                'tanggal' => $item->updated_at->format('Y-m-d H:i:s'),
+                'tanggal' => $item->updated_at
+                    ? Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y')
+                    : Carbon::now()->translatedFormat('H:i d F Y'),
                 'koordinator' => $item->dosen && $item->dosen->user ? $item->dosen->user->nama : 'Tidak Ada', // Ambil nama dosen dari user
                 'status' => ucfirst(str_replace('_', ' ', $item->status_ambang_batas)) // Ubah menjadi format yang lebih rapi
             ];
