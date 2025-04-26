@@ -8,36 +8,60 @@
 
 @section('content')
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-12">
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
         @if($pengajuan)
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title">Status Pengajuan</h3>
-                </div>
-                <div class="card-body">
+        <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Status Pengajuan</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-sm-4 font-weight-bold">Status</div>
+                <div class="col-sm-8">
                     @if($pengajuan->status_konfirmasi === 'disetujui')
-                        <strong>Status:</strong><span class="badge bg-success">Disetujui</span>
+                        <span class="badge bg-success">Disetujui</span>
                     @elseif($pengajuan->status_konfirmasi === 'tidak_disetujui')
-                        <strong>Status:</strong><span class="badge bg-danger">Ditolak</span>
+                        <span class="badge bg-danger">Ditolak</span>
                     @else
-                        <strong>Status:</strong><span class="badge bg-warning">Pending</span>
+                        <span class="badge bg-warning text-dark">Pending</span>
                     @endif
-                    @if($pengajuan->catatan)
-                        <p><strong>Catatan dari Koor TA:</strong> {{ $pengajuan->catatan }}</p>
-                    @endif
-                    <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> Sidang Akhir</p>
                 </div>
             </div>
+
+            @if($pengajuan->catatan)
+            <div class="row mb-2">
+                <div class="col-sm-4 font-weight-bold">Catatan dari Koordinator TA</div>
+                <div class="col-sm-8">
+                    {{ $pengajuan->catatan }}
+                </div>
+            </div>
+            @endif
+
+            <div class="row mb-2">
+                <div class="col-sm-4 font-weight-bold">Tanggal Pengajuan</div>
+                <div class="col-sm-8">
+                    {{ $pengajuan->formatted_tanggal_pengajuan }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4 font-weight-bold">Jenis Pengajuan</div>
+                <div class="col-sm-8">
+                    Sidang Akhir
+                </div>
+            </div>
+            </div>
+        </div>
+
         @endif
 
         <div class="card">
         <div class="card-header bg-primary text-white">
-            <h3 class="card-title">Daftar Artefak</h3>
+            <h3 class="card-title">Daftar Artefak Yang Perlu Dikumpulkan</h3>
         </div>
         <div class="card-body">
             <table class="table table-bordered">
@@ -52,7 +76,7 @@
                         <tr>
                             <td>{{ $item['nama_artefak'] }}</td>
                             <td>
-                                @if ($item['status'] === 'Sudah di-upload')
+                                @if ($item['status'] === 'Sudah diunggah')
                                     <span class="badge bg-success">{{ $item['status'] }}</span>
                                 @else
                                     <span class="badge bg-danger">{{ $item['status'] }}</span>
@@ -68,7 +92,7 @@
             </table>
             <form action="{{ route('verifikasi-sidang.store') }}" method="POST" class="text-center mt-4">
                 @csrf
-                <button type="submit" class="btn btn-primary" 
+                <button type="submit" class="btn btn-primary btn-md" 
                     @if ($tidakBisaAjukan) disabled @endif>
                     Ajukan Verifikasi Berkas
                 </button>
