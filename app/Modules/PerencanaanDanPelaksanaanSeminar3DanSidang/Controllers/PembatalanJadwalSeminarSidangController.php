@@ -103,8 +103,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,
-            'nip' => $nip,
-            'status_pembatalan' => null
+            'nip' => $nip
         ]);
 
 
@@ -144,8 +143,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,
-            'nip' => $nip,
-            'status_pembatalan' => null
+            'nip' => $nip
         ]);
 
 
