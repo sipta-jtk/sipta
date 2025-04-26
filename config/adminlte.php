@@ -670,7 +670,7 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/manajemen-akun-mahasiswa',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],

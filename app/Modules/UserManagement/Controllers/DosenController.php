@@ -3,6 +3,7 @@
 namespace App\Modules\UserManagement\Controllers;
 
 use App\Models\Dosen;
+use App\Models\Kaprodi;
 use App\Models\AlokasiPembimbing;
 use App\Models\Kbk;
 use App\Modules\Controller;
@@ -28,14 +29,20 @@ class DosenController extends Controller
      */
     public function update_role(Request $request)
     {
-        $request->validate([
-            'nip' => 'required',
-            'role' => 'required|in:dosen,koordinator_ta,kajur'
-        ]);
 
+    // Validasi input
+    $request->validate([
+        'nip' => 'required',
+        'role' => 'required|in:dosen,koordinator_ta,kajur'
+    ]);
+
+    DB::beginTransaction();
+
+    try {
         $nip = $request->nip;
         $old_role = Dosen::where('nip', $nip)->value('role_dosen');
-
+ 
+        // Handle kajur uniqueness
         if ($request->role == "kajur" || $old_role == "kajur") {
             $kajur_lama = Dosen::where('role_dosen', 'kajur')->first();
             if ($kajur_lama) {
@@ -43,13 +50,25 @@ class DosenController extends Controller
                     'role_dosen' => 'dosen'
                 ]);
             }
+            $exists = Kaprodi::where('nip', $nip)->exists();
+            if($exists){
+                return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: Dosen ini sudah menjadi Kaprodi!');
+            }
         }
 
+            
+        // Update selected dosen's role
         Dosen::where('nip', $nip)->update([
             'role_dosen' => $request->role
         ]);
 
-        return redirect()->route('manage.dosen');
+        DB::commit();
+
+        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -158,15 +177,10 @@ class DosenController extends Controller
             'id_kbk' => $request->id_kbk,
         ]);
 
-        DB::commit();
         // Commit transaksi jika semua berhasil
         return redirect()->route('manage.dosen')->with('success', "Dosen berhasil ditambahkan! Password: $randomCode");
 
-    } catch (\Exception $e) {
-        // Rollback jika terjadi kesalahan
-        DB::rollBack();
-
-        return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
+  
     }
 
     /**
