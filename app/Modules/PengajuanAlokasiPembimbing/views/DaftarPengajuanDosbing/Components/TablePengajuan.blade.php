@@ -1,6 +1,5 @@
 @section('content')
 <div class="container">
-    <p> Beranda > Pengajuan dan Alokasi Pembimbing > Daftar Kesediaan dan Pengajuan > <a href="{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.index') }}"> Daftar Pengajuan Dosen Pembimbing </p>
     @if (isset($kelompokData) && count($kelompokData) > 0)
     <table id="kesediaanTable" class="table table-bordered table-striped">
         <thead class="text-center bg-dark text-white">
