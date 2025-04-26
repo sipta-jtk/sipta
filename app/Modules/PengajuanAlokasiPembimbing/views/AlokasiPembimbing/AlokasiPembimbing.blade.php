@@ -23,7 +23,7 @@
 
     <datalist id="dosenList">
         @foreach ($dosenList as $dosen)
-        <option value="{{ $dosen['id_dosen'] }}">{{ $dosen['nama'] }}</option>
+            <option value="{{ $dosen['id_dosen'] }}">{{ $dosen['nama'] }}</option>
         @endforeach
     </datalist>
 
@@ -39,8 +39,10 @@
             <table id="alokasiTable" class="table text-center" style="min-width: 1400px;">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="2" class="sticky-column no-sort" style="width: 5%; position: sticky; left: 0; background: rgba(0, 0, 0, 0.9);">No</th>
-                        <th rowspan="2" class="sticky-column no-sort" style="width: 15%; position: sticky; left: 5%; background: rgba(0, 0, 0, 0.9);">Kelompok
+                        <th rowspan="2" class="sticky-column no-sort"
+                            style="width: 5%; position: sticky; left: 0; background: rgba(0, 0, 0, 0.9);">No</th>
+                        <th rowspan="2" class="sticky-column no-sort"
+                            style="width: 15%; position: sticky; left: 5%; background: rgba(0, 0, 0, 0.9);">Kelompok
                         </th>
                         <th rowspan="2" class="no-sort" style="width: 20%;">Anggota</th>
                         <th rowspan="2" class="no-sort" style="width: 15%;">Bidang</th>
@@ -67,112 +69,143 @@
                 </thead>
                 <tbody>
                     @foreach ($list_pengajuan as $index => $row)
-                    <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
-                        <td class="align-middle sticky-column" style="position: sticky; left: 0; background: white;">
-                            {{ $index + 1 }}</td>
-                        <td class="align-middle sticky-column" style="position: sticky; left: 5%; background: white;">
-                            {{ $row['nama_kota'] }}</td>
-                        <td class="align-middle">
-                            <ul class="m-0 p-0" style="list-style-type: none;">
-                                @foreach ($row['mahasiswa'] as $anggota)
-                                <li>{{ $anggota['nama'] }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td class="align-middle">{{ $row['bidang'] }}</td>
-                        <td class="align-middle">{{ $row['judul_ta'] }}</td>
-                        @for ($i = 1; $i <= 5; $i++) <td class="align-middle">
-                            @php
-                            $found = false;
-                            @endphp
-                            @foreach ($row['usulan_dosen'] as $dosen)
-                            @if ($dosen['urutan_prioritas'] == $i)
-                            @php
-                            $found = true;
-                            @endphp
-                            {{ $dosen['id_dosen'] }}
-                            @endif
-                            @endforeach
-                            @if (!$found)
-                            -
-                            @endif
-                            </td>
-                            @endfor
+                                    <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
+                                        <td class="align-middle sticky-column" style="position: sticky; left: 0; background: white;">
+                                            {{ $index + 1 }}
+                                        </td>
+                                        <td class="align-middle sticky-column" style="position: sticky; left: 5%; background: white;">
+                                            {{ $row['nama_kota'] }}
+                                        </td>
+                                        <td class="align-middle">
+                                            <ul class="m-0 p-0" style="list-style-type: none;">
+                                                @foreach ($row['mahasiswa'] as $anggota)
+                                                    <li>{{ $anggota['nama'] }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </td>
+                                        <td class="align-middle">{{ $row['bidang'] }}</td>
+                                        <td class="align-middle">{{ $row['judul_ta'] }}</td>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <td class="align-middle">
+                                                                @php
+                                                                    $found = false;
+                                                                @endphp
+                                                                @foreach ($row['usulan_dosen'] as $dosen)
+                                                                                @if ($dosen['urutan_prioritas'] == $i)
+                                                                                                @php
+                                                                                                    $found = true;
+                                                                                                @endphp
+                                                                                                {{ $dosen['id_dosen'] }}
+                                                                                @endif
+                                                                @endforeach
+                                                                @if (!$found)
+                                                                    -
+                                                                @endif
+                                                            </td>
+                                        @endfor
 
-                            <td class="align-middle status-cell" data-status="belum_fix">
-                                <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing1{{ $row['nama_kota'] }}" list="dosenList" value="{{ $row['preferensi_dosen'][0]['id_dosen'] ?? '' }}" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
-                                <label>Status:</label>
-                                <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing1" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
-                                    <option value="belum_fix" {{ isset($row['preferensi_dosen'][0]) ? '' : 'selected' }}>Belum Fix</option>
-                                    <option value="fix" {{ isset($row['preferensi_dosen'][0]) ? 'selected' : '' }}>Fix</option>
-                                </select>
-                            </td>
-                            <td class="align-middle text-left">
-                                <div class="detail-content" id="detailPembimbing1">
-                                    <div><strong>Nama:</strong> {{ $row['detailPembimbing1']['nama'] ?? '-' }}</div>
-                                    <div><strong>KoTA:</strong> P1: {{ $row['detailPembimbing1']['pembimbing1_KoTA'] ?? '0' }} |
-                                        P2: {{ $row['detailPembimbing1']['pembimbing2_KoTA'] ?? '0' }} |
-                                        Total: {{ $row['detailPembimbing1']['jumlah_KoTA'] ?? '0' }}</div>
-                                    <div><strong>Mhs:</strong> P1: {{ $row['detailPembimbing1']['pembimbing1_Mhs'] ?? '0' }} |
-                                        P2: {{ $row['detailPembimbing1']['pembimbing2_Mhs'] ?? '0' }} |
-                                        Total: {{ $row['detailPembimbing1']['jumlahMahasiswa'] ?? '0' }}</div>
-                                    <div><strong>Kuota:</strong> {{ $row['detailPembimbing1']['kuota'] ?? '0' }}</div>
-                                    <div><strong>Kelebihan:</strong>
-                                        @if (($row['detailPembimbing1']['jumlahMahasiswa'] ?? 0) > ($row['detailPembimbing1']['kuota'] ?? 0))
-                                        <span style="color: red;">
-                                            {{ ($row['detailPembimbing1']['jumlahMahasiswa'] ?? 0) - ($row['detailPembimbing1']['kuota'] ?? 0) }} (Overload)
-                                        </span>
-                                        @else
-                                        <span style="color: green;">Aman</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle status-cell" data-status="belum_fix">
-                                <input type="text" class="form-control text-center pembimbing mb-2" data-index="{{ $index }}" name="pembimbing2{{ $row['nama_kota'] }}" list="dosenList" value="{{ $row['preferensi_dosen'][1]['id_dosen'] ?? '' }}" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
-                                <label>Status:</label>
-                                <select class="form-control status-dropdown w-100" data-detail-container="#detailPembimbing2" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
-                                    <option value="belum_fix" {{ isset($row['preferensi_dosen'][1]) ? '' : 'selected' }}>Belum Fix</option>
-                                    <option value="fix" {{ isset($row['preferensi_dosen'][1]) ? 'selected' : '' }}>Fix</option>
-                                </select>
-                            </td>
-                            <td class="align-middle text-left">
-                                <div class="detail-content" id="detailPembimbing2">
-                                    <div><strong>Nama:</strong> {{ $row['detailPembimbing2']['nama'] ?? '-' }}</div>
-                                    <div><strong>KoTA:</strong> P1:
-                                        {{ $row['detailPembimbing2']['pembimbing1_KoTA'] ?? '0' }} |
-                                        P2: {{ $row['detailPembimbing2']['pembimbing2_KoTA'] ?? '0' }} |
-                                        Total: {{ $row['detailPembimbing2']['jumlah_KoTA'] ?? '0' }}</div>
-                                    <div><strong>Mhs:</strong> P1:
-                                        {{ $row['detailPembimbing2']['pembimbing1_Mhs'] ?? '0' }} |
-                                        P2: {{ $row['detailPembimbing2']['pembimbing2_Mhs'] ?? '0' }} |
-                                        Total: {{ $row['detailPembimbing2']['jumlahMahasiswa'] ?? '0' }}</div>
-                                    <div><strong>Kuota:</strong> {{ $row['detailPembimbing2']['kuota'] ?? '0' }}</div>
-                                    <div><strong>Kelebihan:</strong>
-                                        @if (($row['detailPembimbing2']['jumlahMahasiswa'] ?? 0) > ($row['detailPembimbing2']['kuota'] ?? 0))
-                                        <span style="color: red;">
-                                            {{ ($row['detailPembimbing2']['jumlahMahasiswa'] ?? 0) - ($row['detailPembimbing2']['kuota'] ?? 0) }}
-                                            (Overload)
-                                        </span>
-                                        @else
-                                        <span style="color: green;">Aman</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">
-                                <input type="text" class="form-control text-center penguji" data-index="{{ $index }}" name="penguji1{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji1', this.value)">
-                            </td>
-                            <td class="align-middle">
-                                <input type="text" class="form-control text-center penguji" data-index="{{ $index }}" name="penguji2{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji2', this.value)">
-                            </td>
-                            <td class="align-middle">
-                                <input type="text" class="form-control text-center penguji" data-index="{{ $index }}" name="penguji3{{ $row['nama_kota'] }}" list="dosenList" onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji3', this.value)">
-                            </td>
-                            <td class="align-middle" style="min-width: 150px;">
-                                <textarea class="form-control text-left auto-expand catatan-input" data-id="{{ $row['id_pengajuan_pembimbing'] }}" name="catatan_{{ $index }}" rows="1" style="overflow: hidden; resize: none;" oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">{{ trim($row['catatan'] ?? '') }}</textarea>
-                            </td>
-                    </tr>
+                                        <td class="align-middle status-cell" data-status="belum_fix">
+                                            <input type="text" class="form-control text-center pembimbing mb-2"
+                                                data-index="{{ $index }}" name="pembimbing1{{ $row['nama_kota'] }}" list="dosenList"
+                                                value="{{ $row['preferensi_dosen'][0]['id_dosen'] ?? '' }}"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing1', this.value)">
+                                            <label>Status:</label>
+                                            <select class="form-control status-dropdown w-100"
+                                                data-detail-container="#detailPembimbing1"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing1', this.value)">
+                                                <option value="belum_fix" {{ isset($row['preferensi_dosen'][0]) ? '' : 'selected' }}>
+                                                    Belum Fix</option>
+                                                <option value="fix" {{ isset($row['preferensi_dosen'][0]) ? 'selected' : '' }}>Fix
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            <div class="detail-content" id="detailPembimbing1">
+                                                <div><strong>Nama:</strong> {{ $row['detailPembimbing1']['nama'] ?? '-' }}</div>
+                                                <div><strong>KoTA:</strong> P1:
+                                                    {{ $row['detailPembimbing1']['pembimbing1_KoTA'] ?? '0' }} |
+                                                    P2: {{ $row['detailPembimbing1']['pembimbing2_KoTA'] ?? '0' }} |
+                                                    Total: {{ $row['detailPembimbing1']['jumlah_KoTA'] ?? '0' }}</div>
+                                                <div><strong>Mhs:</strong> P1: {{ $row['detailPembimbing1']['pembimbing1_Mhs'] ?? '0' }}
+                                                    |
+                                                    P2: {{ $row['detailPembimbing1']['pembimbing2_Mhs'] ?? '0' }} |
+                                                    Total: {{ $row['detailPembimbing1']['jumlahMahasiswa'] ?? '0' }}</div>
+                                                <div><strong>Kuota:</strong> {{ $row['detailPembimbing1']['kuota'] ?? '0' }}</div>
+                                                <div><strong>Kelebihan:</strong>
+                                                    @if (($row['detailPembimbing1']['jumlahMahasiswa'] ?? 0) > ($row['detailPembimbing1']['kuota'] ?? 0))
+                                                        <span style="color: red;">
+                                                            {{ ($row['detailPembimbing1']['jumlahMahasiswa'] ?? 0) - ($row['detailPembimbing1']['kuota'] ?? 0) }}
+                                                            (Overload)
+                                                        </span>
+                                                    @else
+                                                        <span style="color: green;">Aman</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle status-cell" data-status="belum_fix">
+                                            <input type="text" class="form-control text-center pembimbing mb-2"
+                                                data-index="{{ $index }}" name="pembimbing2{{ $row['nama_kota'] }}" list="dosenList"
+                                                value="{{ $row['preferensi_dosen'][1]['id_dosen'] ?? '' }}"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'pembimbing2', this.value)">
+                                            <label>Status:</label>
+                                            <select class="form-control status-dropdown w-100"
+                                                data-detail-container="#detailPembimbing2"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'status_pembimbing2', this.value)">
+                                                <option value="belum_fix" {{ isset($row['preferensi_dosen'][1]) ? '' : 'selected' }}>
+                                                    Belum Fix</option>
+                                                <option value="fix" {{ isset($row['preferensi_dosen'][1]) ? 'selected' : '' }}>Fix
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            <div class="detail-content" id="detailPembimbing2">
+                                                <div><strong>Nama:</strong> {{ $row['detailPembimbing2']['nama'] ?? '-' }}</div>
+                                                <div><strong>KoTA:</strong> P1:
+                                                    {{ $row['detailPembimbing2']['pembimbing1_KoTA'] ?? '0' }} |
+                                                    P2: {{ $row['detailPembimbing2']['pembimbing2_KoTA'] ?? '0' }} |
+                                                    Total: {{ $row['detailPembimbing2']['jumlah_KoTA'] ?? '0' }}
+                                                </div>
+                                                <div><strong>Mhs:</strong> P1:
+                                                    {{ $row['detailPembimbing2']['pembimbing1_Mhs'] ?? '0' }} |
+                                                    P2: {{ $row['detailPembimbing2']['pembimbing2_Mhs'] ?? '0' }} |
+                                                    Total: {{ $row['detailPembimbing2']['jumlahMahasiswa'] ?? '0' }}
+                                                </div>
+                                                <div><strong>Kuota:</strong> {{ $row['detailPembimbing2']['kuota'] ?? '0' }}</div>
+                                                <div><strong>Kelebihan:</strong>
+                                                    @if (($row['detailPembimbing2']['jumlahMahasiswa'] ?? 0) > ($row['detailPembimbing2']['kuota'] ?? 0))
+                                                        <span style="color: red;">
+                                                            {{ ($row['detailPembimbing2']['jumlahMahasiswa'] ?? 0) - ($row['detailPembimbing2']['kuota'] ?? 0) }}
+                                                            (Overload)
+                                                        </span>
+                                                    @else
+                                                        <span style="color: green;">Aman</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control text-center penguji" data-index="{{ $index }}"
+                                                name="penguji1{{ $row['nama_kota'] }}" list="dosenList"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji1', this.value)">
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control text-center penguji" data-index="{{ $index }}"
+                                                name="penguji2{{ $row['nama_kota'] }}" list="dosenList"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji2', this.value)">
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control text-center penguji" data-index="{{ $index }}"
+                                                name="penguji3{{ $row['nama_kota'] }}" list="dosenList"
+                                                onchange="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'penguji3', this.value)">
+                                        </td>
+                                        <td class="align-middle" style="min-width: 150px;">
+                                            <textarea class="form-control text-left auto-expand catatan-input"
+                                                data-id="{{ $row['id_pengajuan_pembimbing'] }}" name="catatan_{{ $index }}" rows="1"
+                                                style="overflow: hidden; resize: none;"
+                                                oninput="saveData('{{ $row['id_pengajuan_pembimbing'] }}', 'catatan', this.value)">{{ trim($row['catatan'] ?? '') }}</textarea>
+                                        </td>
+                                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -201,17 +234,17 @@
                 </thead>
                 <tbody>
                     @foreach ($dosenList as $index => $dosen)
-                    <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
-                        <td class="align-middle">{{ $index + 1 }}</td>
-                        <td class="align-middle">{{ $dosen['id_dosen'] }}</td>
-                        <td class="align-middle">{{ $dosen['nama'] }}</td>
-                        <td class="align-middle text-left">
-                            @foreach ($dosen['ketertarikan_bidang'] as $kbk)
-                            {{ $kbk['bidang'] }}
-                            <br>
-                            @endforeach
-                        </td>
-                    </tr>
+                        <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
+                            <td class="align-middle">{{ $index + 1 }}</td>
+                            <td class="align-middle">{{ $dosen['id_dosen'] }}</td>
+                            <td class="align-middle">{{ $dosen['nama'] }}</td>
+                            <td class="align-middle text-left">
+                                @foreach ($dosen['ketertarikan_bidang'] as $kbk)
+                                    {{ $kbk['bidang'] }}
+                                    <br>
+                                @endforeach
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -375,7 +408,6 @@
     td:nth-child(17) {
         min-width: 70px !important;
     }
-
 </style>
 @stop
 
@@ -385,8 +417,8 @@
 
 <script>
     var DataToSend = [];
-    $(document).ready(function() {
-        $(".pembimbing, .penguji, .catatan-input").each(function() {
+    $(document).ready(function () {
+        $(".pembimbing, .penguji, .catatan-input").each(function () {
             var row = $(this).closest("tr");
             var id_pengajuan_pembimbing = row.data("id");
 
@@ -420,13 +452,13 @@
             console.log("Updated DataToSend:", DataToSend);
         }
 
-        $(".catatan-input").on("input", function() {
+        $(".catatan-input").on("input", function () {
             var id_pengajuan_pembimbing = $(this).data("id");
             var catatan = $(this).val();
             saveData(id_pengajuan_pembimbing, "catatan", catatan);
         });
 
-        $(".penguji").on("input", function() {
+        $(".penguji").on("input", function () {
             var id_pengajuan_pembimbing = $(this).closest("tr").find("td:first").text().trim();
             var role = $(this).attr("name").split(id_pengajuan_pembimbing)[0];
             var value = $(this).val();
@@ -462,27 +494,27 @@
         });
 
         function autoExpandTextarea() {
-            $(".auto-expand").each(function() {
+            $(".auto-expand").each(function () {
                 this.style.height = "auto";
                 this.style.height = (this.scrollHeight) + "px";
             });
         }
 
         function initializeScripts() {
-            $(".status-dropdown").off("change").on("change", function() {
+            $(".status-dropdown").off("change").on("change", function () {
                 let cell = $(this).closest('.status-cell');
                 let status = $(this).val();
                 cell.attr('data-status', status);
                 cell.removeClass("belum_fix fix").addClass(status);
             });
 
-            $(".auto-expand").off("input").on("input", function() {
+            $(".auto-expand").off("input").on("input", function () {
                 this.style.height = "auto";
                 this.style.height = (this.scrollHeight) + "px";
             });
         }
 
-        $('#saveDraftBtn').click(function() {
+        $('#saveDraftBtn').click(function () {
             Swal.fire({
                 icon: 'success'
                 , title: 'Draft Disimpan'
@@ -501,7 +533,7 @@
             let draftData = {};
 
             // Simpan nilai setiap input dalam form
-            $("input, select, textarea").each(function() {
+            $("input, select, textarea").each(function () {
                 draftData[$(this).attr("name")] = $(this).val();
             });
 
@@ -525,7 +557,7 @@
                 savedData = JSON.parse(savedData);
 
                 // Isi kembali form dengan data yang disimpan
-                $("input, select, textarea").each(function() {
+                $("input, select, textarea").each(function () {
                     if (savedData[$(this).attr("name")]) {
                         $(this).val(savedData[$(this).attr("name")]);
                     }
@@ -539,17 +571,17 @@
         }
 
         // Event listener untuk tombol "Simpan" -> Simpan ke Local Storage
-        $("#saveDraftBtn").click(function() {
+        $("#saveDraftBtn").click(function () {
             saveDraft();
         });
 
         // Event listener untuk tombol "Finalisasi" -> Hapus draft dari Local Storage
-        $("#openConfirmModal").click(function() {
+        $("#openConfirmModal").click(function () {
             clearDraft();
         });
 
         // Saat halaman pertama kali dimuat, langsung ambil detail dosen jika pembimbing sudah terisi
-        $(".pembimbing").each(function() {
+        $(".pembimbing").each(function () {
             var nip = $(this).val();
             var detailContainer = $(this).closest("td").next().find(".detail-content");
 
@@ -559,7 +591,7 @@
         });
 
         // Saat halaman pertama kali dimuat, langsung ubah warna dropdown status
-        $(".status-dropdown").each(function() {
+        $(".status-dropdown").each(function () {
             let selectedStatus = $(this).val();
             let cell = $(this).closest('.status-cell');
 
@@ -593,19 +625,19 @@
         let pengujiCount = 0;
         let hasPendingStatus = false;
 
-        $(".pembimbing").each(function() {
+        $(".pembimbing").each(function () {
             if ($(this).val().trim() !== "") {
                 pembimbingCount++;
             }
         });
 
-        $(".penguji").each(function() {
+        $(".penguji").each(function () {
             if ($(this).val().trim() !== "") {
                 pengujiCount++;
             }
         });
 
-        $(".status-dropdown").each(function() {
+        $(".status-dropdown").each(function () {
             if ($(this).val() !== "fix") {
                 hasPendingStatus = true;
             }
@@ -613,7 +645,7 @@
 
         let isValidRow = true;
 
-        $("#alokasiTable tbody tr").each(function() {
+        $("#alokasiTable tbody tr").each(function () {
             let pembimbing1 = $(this).find(".pembimbing").eq(0).val().trim();
             let pembimbing2 = $(this).find(".pembimbing").eq(1).val().trim();
             let penguji1 = $(this).find(".penguji").eq(0).val().trim();
@@ -690,7 +722,7 @@
                 , cancelButtonText: 'Batal'
                 , preConfirm: () => {
                     return new Promise((resolve, reject) => {
-                        $(".status-dropdown").each(function() {
+                        $(".status-dropdown").each(function () {
                             $(this).val("fix").trigger("change");
 
                             let id_pengajuan_pembimbing = $(this).closest("tr").find(".pembimbing").first().data("index");
@@ -709,10 +741,10 @@
                                 _token: "{{ csrf_token() }}"
                                 , dataToSend: ParseddataToSend
                             }
-                            , success: function(response) {
+                            , success: function (response) {
                                 resolve(response);
                             }
-                            , error: function() {
+                            , error: function () {
                                 reject("Terjadi kesalahan saat mengirim data!");
                             }
                         });
@@ -773,7 +805,7 @@
             url: prefixUrl + `/PengajuanAlokasiPembimbing/alokasi-pembimbing/getDetailDosen/` + nip
             , type: "GET"
             , dataType: "json"
-            , success: function(response) {
+            , success: function (response) {
                 console.log("Response Data:", response);
 
                 if (response.error) {
@@ -821,21 +853,21 @@
                 </div>
             `);
             }
-            , error: function(xhr) {
+            , error: function (xhr) {
                 console.log("AJAX Error:", xhr.responseText);
                 detailContainer.html(`<div style="color: red;">Gagal mengambil data dosen.</div>`);
             }
         });
     }
 
-    $(document).on("change", ".pembimbing", function() {
+    $(document).on("change", ".pembimbing", function () {
         var nip = $(this).val();
         var detailContainer = $(this).closest("td").next().find(".detail-content");
         fetchDosenDetail(nip, detailContainer);
     });
 
-    $(document).ready(function() {
-        $(".catatan-input").on("input", function() {
+    $(document).ready(function () {
+        $(".catatan-input").on("input", function () {
             var id_pengajuan_pembimbing = $(this).data("id");
             var catatan = $(this).val();
             saveData(id_pengajuan_pembimbing, "catatan", catatan);
@@ -845,14 +877,14 @@
     function updateDosenList() {
         let allocatedDosen = new Set();
 
-        $(".pembimbing, .penguji").each(function() {
+        $(".pembimbing, .penguji").each(function () {
             let selectedDosen = $(this).val();
             if (selectedDosen) {
                 allocatedDosen.add(selectedDosen);
             }
         });
 
-        $("#dosenTable tbody tr").each(function() {
+        $("#dosenTable tbody tr").each(function () {
             let dosenId = $(this).find("td:nth-child(2)").text().trim();
             if (allocatedDosen.has(dosenId)) {
                 $(this).hide();
@@ -864,16 +896,16 @@
 
     updateDosenList();
 
-    $(document).on("change", ".pembimbing, .penguji", function() {
+    $(document).on("change", ".pembimbing, .penguji", function () {
         updateDosenList();
     });
 
-    $(document).on("input", ".pembimbing, .penguji", function() {
+    $(document).on("input", ".pembimbing, .penguji", function () {
         updateDosenList();
     });
-    $(document).ready(function() {
+    $(document).ready(function () {
         function validateSelection() {
-            $(".pembimbing, .penguji").each(function() {
+            $(".pembimbing, .penguji").each(function () {
                 let row = $(this).closest("tr");
                 let pembimbing1 = row.find(".pembimbing").eq(0).val();
                 let pembimbing2 = row.find(".pembimbing").eq(1).val();
