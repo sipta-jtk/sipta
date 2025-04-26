@@ -148,7 +148,7 @@
                     penulis: item.penulis,
                     presentase: item.persentase_plagiarisme + "%",
                     status: item.status,
-                    komentar: getKomentar(item.review, item.id_dokumen),
+                    catatan: getCatatan(item.review, item.id_dokumen),
                     id_kota: item.id_kota
                 }));
 
@@ -205,9 +205,9 @@
                             align: "center"
                         },
                         {
-                            name: "komentar",
+                            name: "catatan",
                             type: "html",
-                            title: "Komentar",
+                            title: "Catatan",
                             width: 150,
                             align: "center"
                         }
@@ -268,12 +268,12 @@
     });
 
     // Fungsi untuk menampilkan modal upload
-    $('#uploadButton').click(function () {
+    $('#uploadButton').click(function() {
         $('#uploadModal').modal('show');
     });
 
     // Validasi dan Kirim Form Upload
-    $('#previewBtn').click(function (event) {
+    $('#previewBtn').click(function(event) {
         event.preventDefault();
 
         var judul = $('#judulDokumen').val();
@@ -315,11 +315,22 @@
             });
         }
 
-        // ✅ Kirim Form via AJAX
+        // Kirim Form via AJAX
         var formData = new FormData();
         formData.append('judul', judul);
         formData.append('dokumen', file);
         formData.append('_token', $('meta[name="csrf-token"]').attr("content")); // CSRF token
+
+        // Tampilkan popup loading
+        Swal.fire({
+            title: 'Mengunggah dokumen...',
+            text: 'Silakan tunggu proses upload selesai',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
         $.ajax({
             url: `${prefixUrl}/cekplagiarisme/process`,
@@ -327,7 +338,7 @@
             data: formData,
             contentType: false,
             processData: false,
-            success: function (response) {
+            success: function(response) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
@@ -339,7 +350,7 @@
                     location.reload();
                 });
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 console.error(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
@@ -360,11 +371,11 @@
         }
     }
 
-    function getKomentar(komentar, id) {
-        if (komentar) {
-            return '<span class="text-dark">Komentar diberikan</span>';
+    function getCatatan(catatan, id) {
+        if (catatan) {
+            return '<span class="text-dark">Catatan diberikan</span>';
         } else {
-            return '<span class="text-muted">Belum ada komentar</span>';
+            return '<span class="text-muted">Belum ada Catatan</span>';
         }
     }
 </script>
