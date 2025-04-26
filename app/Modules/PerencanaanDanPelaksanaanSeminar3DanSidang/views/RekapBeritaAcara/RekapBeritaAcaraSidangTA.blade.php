@@ -28,21 +28,23 @@
                 <table id="RekapBeritaAcaraSidangTA" class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th class="w-10">KoTA</th>
-                            <th class="w-20">NIM</th>
-                            <th class="w-20">Nama Mahasiswa</th>
-                            <th class="w-17">Tanggal</th>
-                            <th class="w-15">Ruangan</th>
-                            <th class="w-10">Sesi</th>
-                            <th class="w-10">Status Kehadiran</th>
-                            <th class="w-20">Dokumentasi</th>
-                            <th class="w-15">Batas Revisi</th>
-                            <th class="w-15">Status Kelulusan</th>
+                            <th style="width: 1%;">NO</th>
+                            <th style="width: 8%;">KoTA</th>
+                            <th style="width: 8%;">NIM</th>
+                            <th style="width: 13%;">Nama Mahasiswa</th>
+                            <th style="width: 10%;">Tanggal</th>
+                            <th style="width: 8%;">Ruangan</th>
+                            <th style="width: 1%;">Sesi</th>
+                            <th style="width: 13%;">Status Kehadiran</th>
+                            <th style="width: 10%;">Dokumentasi</th>
+                            <th style="width: 10%;">Batas Revisi</th>
+                            <th style="width: 13%;">Status Kelulusan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($beritaAcaraSidangTA as $index => $item)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
@@ -63,7 +65,7 @@
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 15) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 13) }}
                                             </a>
                                         </div>
                                     @else

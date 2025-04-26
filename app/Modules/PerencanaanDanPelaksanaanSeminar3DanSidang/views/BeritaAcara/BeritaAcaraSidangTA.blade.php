@@ -22,16 +22,16 @@
                 <table class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th class="w-10">KoTA</th>
-                            <th class="w-20">NIM</th>
-                            <th class="w-20">Nama Mahasiswa</th>
-                            <th class="w-15">Tanggal</th>
-                            <th class="w-15">Ruangan</th>
-                            <th class="w-10">Sesi</th>
-                            <th class="w-10">Status Kehadiran</th>
-                            <th class="w-20">Dokumentasi</th>
-                            <th class="w-10">Batas Revisi</th>
-                            <th class="w-15">Status Kelulusan</th>
+                            <th style="width: 8%;">KoTA</th>
+                            <th style="width: 8%;">NIM</th>
+                            <th style="width: 13%;">Nama Mahasiswa</th>
+                            <th style="width: 10%;">Tanggal</th>
+                            <th style="width: 8%;">Ruangan</th>
+                            <th style="width: 1%;">Sesi</th>
+                            <th style="width: 13%;">Status Kehadiran</th>
+                            <th style="width: 10%;">Dokumentasi</th>
+                            <th style="width: 10%;">Batas Revisi</th>
+                            <th style="width: 13%;">Status Kelulusan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,20 +45,20 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
+                                        <button class="btn btn-success btn-md my-1 w-100" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
+                                        <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Absen</button>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->isSameDay($item->penjadwalan->tanggal))
                                         <form action="{{ route('presensi.hadir') }}" method="POST" style="display:inline;">
                                             @csrf
                                             <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                             <input type="hidden" name="status_hadir" value="hadir">
-                                            <button type="submit" class="btn btn-info btn-md my-1">Absensi</button>
+                                            <button type="submit" class="btn btn-info btn-md my-1 w-100">Absensi</button>
                                         </form>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
-                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Absen</button>
+                                        <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Absen</button>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
@@ -66,13 +66,13 @@
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
-                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),15) }}
+                                                {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),13) }}
                                             </a>
                                         </div>
-                                    <button class="btn btn-primary btn-md my-1" 
+                                    <button class="btn btn-primary btn-md my-1 w-100" 
                                         data-toggle="modal" 
                                         data-target="#modalDokumentasi{{ $item->id_kehadiran }}">
-                                        <i class=""></i> Unggah Dokumentasi
+                                        <i class=""></i> Unggah File
                                     </button>
                                     @endif
                                 </td>
@@ -80,17 +80,17 @@
                                     @if($item->batas_revisi)
                                       {{ $item->batas_revisi_formatted }}
                                     @else
-                                    <button class="btn btn-primary btn-md my-1" 
+                                    <button class="btn btn-primary btn-md my-1 w-100" 
                                         data-toggle="modal" 
                                         data-target="#modalBatasRevisi{{ $item->id_kehadiran }}">
-                                    <i class=""></i> Atur Tanggal
+                                    <i class=""></i> Isi Tanggal
                                     </button>
                                     @endif
                                 </td>
                                 <td>
                                     @if($item->status_kelulusan == 'tidak_lulus')
                                         <!-- Tombol untuk membuka modal -->
-                                        <button type="button" class="btn btn-primary btn-md my-1" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
+                                        <button type="button" class="btn btn-primary btn-md my-1 w-100" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
                                             Isi Status
                                         </button>
                                     @else
