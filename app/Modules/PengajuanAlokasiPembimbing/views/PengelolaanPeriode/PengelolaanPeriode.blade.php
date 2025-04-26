@@ -23,60 +23,58 @@
             <button type="button" class="btn btn-primary" onclick="openModal('add')">
                 <i class="fas fa-plus"></i> Tambah</button>
         </div>
-        <div class="table-responsive">
-            <table id="periodeTable" class="table table-striped table-bordered w-100 text-center">
+        <table id="periodeTable" class="table table-striped table-bordered w-100 text-center table-responsive">
 
-                <thead class="bg-dark text-white">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <th>No</th>
+                    <th>Periode</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($periodes as $index => $periode)
                     <tr>
-                        <th>No</th>
-                        <th>Periode</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($periodes as $index => $periode)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                <span
-                                    class="badge badge-primary">{{ \Carbon\Carbon::parse($periode->periode_mulai)->translatedFormat('d F Y') }}</span>
-                                -
-                                <span
-                                    class="badge badge-primary">{{ \Carbon\Carbon::parse($periode->periode_akhir)->translatedFormat('d F Y') }}</span>
-                                ({{ \Carbon\Carbon::parse($periode->periode_mulai)->diffInDays(\Carbon\Carbon::parse($periode->periode_akhir)) }}
-                                hari)
-                            </td>
-                            <td>
-                                @if (\Carbon\Carbon::now()->lt($periode->periode_mulai))
-                                    <span class="badge badge-warning">Belum Dimulai</span>
-                                @elseif (\Carbon\Carbon::now()->between($periode->periode_mulai, $periode->periode_akhir))
-                                    <span class="badge badge-success">Berlangsung</span>
-                                @else
-                                    <span class="badge badge-secondary">Berakhir</span>
-                                @endif
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-warning mr-0 mr-md-1"
-                                    onclick="openModal('edit', {{ $periode }})">
-                                    <i class="fas fa-edit"></i></button>
-                                <form
-                                    action="{{ route('pengajuanalokasipembimbing.pengelolaan-periode.delete', ['id' => $periode->id_periode_pengajuan]) }}"
-                                    method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-danger"
-                                        onclick="FireSweetAlert('warning', 'Apakah anda yakin?', 'Data yang dihapus tidak dapat dikembalikan', 'Ya', 'Tidak', '#d33', 'gray', true, true, (result) => {if(result) {
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            <span
+                                class="badge badge-primary">{{ \Carbon\Carbon::parse($periode->periode_mulai)->translatedFormat('d F Y') }}</span>
+                            -
+                            <span
+                                class="badge badge-primary">{{ \Carbon\Carbon::parse($periode->periode_akhir)->translatedFormat('d F Y') }}</span>
+                            ({{ \Carbon\Carbon::parse($periode->periode_mulai)->diffInDays(\Carbon\Carbon::parse($periode->periode_akhir)) }}
+                            hari)
+                        </td>
+                        <td>
+                            @if (\Carbon\Carbon::now()->lt($periode->periode_mulai))
+                                <span class="badge badge-warning">Belum Dimulai</span>
+                            @elseif (\Carbon\Carbon::now()->between($periode->periode_mulai, $periode->periode_akhir))
+                                <span class="badge badge-success">Berlangsung</span>
+                            @else
+                                <span class="badge badge-secondary">Berakhir</span>
+                            @endif
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-warning mr-0 mr-md-1"
+                                onclick="openModal('edit', {{ $periode }})">
+                                <i class="fas fa-edit"></i></button>
+                            <form
+                                action="{{ route('pengajuanalokasipembimbing.pengelolaan-periode.delete', ['id' => $periode->id_periode_pengajuan]) }}"
+                                method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="btn btn-danger"
+                                    onclick="FireSweetAlert('warning', 'Apakah anda yakin?', 'Data yang dihapus tidak dapat dikembalikan', 'Ya', 'Tidak', '#d33', 'gray', true, true, (result) => {if(result) {
                                     this.closest('form').submit();
                                 }})"><i
-                                            class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                                        class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
     </div>
 
@@ -171,6 +169,7 @@
                 "pagingType": "full_numbers",
                 "searching": true,
                 "ordering": true,
+                responsive: true,
                 "order": [
                     [0, "asc"]
                 ],
