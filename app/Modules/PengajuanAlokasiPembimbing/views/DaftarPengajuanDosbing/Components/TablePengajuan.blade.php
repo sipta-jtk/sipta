@@ -30,13 +30,23 @@
                 <td rowspan="{{ count($kelompok['anggota']) }}">{{ $kelompok['judul'] ?? '-' }}</td>
                 <td rowspan="{{ count($kelompok['anggota']) }}">{{ $kelompok['tanggal'] ?? '-' }}</td>
                 <td rowspan="{{ count($kelompok['anggota']) }}">
-                    <button class="btn btn-success mb-3 w-100" data-id="{{ $kelompok['id'] }}" data-action="accept">
+                    @if ($kelompok['status'] === 'accepted')
+                    <button class="btn btn-success w-100" disabled>Diterima</button>
+                    @else
+                    <button class="btn btn-success mb-3 w-100 btn-accept" data-id="{{ $kelompok['id'] }}" data-action="accept">
                         Terima
                     </button>
-                    <button class="btn btn-danger w-100" data-id="{{ $kelompok['id'] }}" data-action="reject">
+                    @endif
+
+                    @if ($kelompok['status'] === 'rejected')
+                    <button class="btn btn-danger w-100" disabled>Ditolak</button>
+                    @else
+                    <button class="btn btn-danger w-100 btn-reject" data-id="{{ $kelompok['id'] }}" data-action="reject">
                         Tolak
                     </button>
+                    @endif
                 </td>
+
                 @endif
             </tr>
             @endforeach
@@ -91,7 +101,7 @@
         function handleAction(kelompokId, actionType) {
             let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
             routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
-            
+
             Swal.fire({
                 title: "Konfirmasi"
                 , text: actionType === "accept" ? "Apakah Anda yakin ingin menerima pengajuan ini?" : "Apakah Anda yakin ingin menolak pengajuan ini?"
@@ -110,30 +120,40 @@
                             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
                         }
                         , success: function(response) {
-                                console.log("Response dari server:", response);
-                                console.log("Memanggil Swal", response.status);
+                            console.log("Response dari server:", response);
 
-                                // Jika kota sudah dipilih sebelumnya, hanya tampilkan pesan "exists" dan hentikan eksekusi berikutnya
-                                if (response.status === "exists") {
-                                    Swal.fire({
-                                        title: "Kota sudah dipilih!"
-                                        , text: response.message
-                                        , icon: "warning"
-                                    });
-                                    return; // Hentikan eksekusi agar Swal success tidak muncul
-                                }
-
-                                // Jika tidak masuk ke kondisi "exists", jalankan Swal sukses
+                            // Handle existing city selection scenario
+                            if (response.status === "exists") {
                                 Swal.fire({
-                                    title: "Berhasil!"
+                                    title: "Kota sudah dipilih!"
                                     , text: response.message
-                                    , icon: "success"
-                                }).then(() => {
-                                    location.reload();
+                                    , icon: "warning"
                                 });
+                                return; // Stop further execution
                             }
 
+                            // Success handling after accepting or rejecting the proposal
+                            Swal.fire({
+                                title: "Berhasil!"
+                                , text: response.message
+                                , icon: "success"
+                            }).then(() => {
+                                // Update the button states dynamically
+                                if (actionType === "accept") {
+                                    // Set the accept button to "Diterima" and disable it
+                                    $(`[data-id="${kelompokId}"][data-action="accept"]`).text("Diterima").prop("disabled", true);
 
+                                    // Leave the reject button enabled
+                                    $(`[data-id="${kelompokId}"][data-action="reject"]`).prop("disabled", false);
+                                } else if (actionType === "reject") {
+                                    // Set the reject button to "Ditolak" and disable it
+                                    $(`[data-id="${kelompokId}"][data-action="reject"]`).text("Ditolak").prop("disabled", true);
+
+                                    // Enable the accept button again
+                                    $(`[data-id="${kelompokId}"][data-action="accept"]`).prop("disabled", false).text("Terima");
+                                }
+                            });
+                        }
                         , error: function(xhr) {
                             if (xhr.status === 422) {
                                 Swal.fire({

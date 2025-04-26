@@ -54,6 +54,7 @@ class DaftarPengajuanDosbingController extends Controller
     
             $index = array_search($namaKota, $kotaList);
             if ($index === false) continue;
+            
 
             $kelompokData[] = [
                 'id' => $index + 1,
@@ -62,6 +63,7 @@ class DaftarPengajuanDosbingController extends Controller
                 'judul' => $judulList[$index] ?? '-',
                 'tanggal' => $formattedTanggalList[$index % max(1, count($formattedTanggalList))] ?? date('H:i d F Y'),
                 'anggota' => $anggotaFormatted,
+                'status' => 'pending'
             ];
         }
 
