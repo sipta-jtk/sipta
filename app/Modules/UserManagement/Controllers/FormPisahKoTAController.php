@@ -88,5 +88,12 @@ class FormPisahKoTAController extends Controller
 
         return redirect()->back()->with('success', 'Pengajuan pisah berhasil dibatalkan!');
     }
+
+    public function tolak()
+    {
+        
+
+    }
+
     
 }
