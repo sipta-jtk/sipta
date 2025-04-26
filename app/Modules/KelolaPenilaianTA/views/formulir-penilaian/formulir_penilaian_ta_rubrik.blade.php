@@ -1,67 +1,69 @@
 @extends('adminlte::page')
 
-@section('title', 'Pengelolaan Formulir Penilaian')
+@section('title', 'Pengelolaan Rubrik Penilaian')
 
 @section('content_header')
-    <div class="container-fluid p-3">
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => '', 'label' => 'Formulir Penilaian']
-            ]
-        ])
-        @endcomponent
+<div class="container-fluid p-2">
+    <!-- Judul Halaman -->
+    <h1 class="mb-0">Pengelolaan Rubrik Penilaian</h1>
 
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Pengelolaan Formulir Penilaian</h1>
-    </div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => '', 'label' => 'Formulir Penilaian']
+        ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
-    <div class="p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Daftar Rubrik Penilaian TA</h3>
-        </div>
-
-        <div class="table-container">
-            <table id="formulirTable" class="table text-center">
-                <thead class="sticky-header">
-                    <tr class="bg-dark text-white">
-                        <th style="width: 3%;">No</th>
-                        <th style="width: 12%;">Kode Formulir</th>
-                        <th style="width: 19%;">Nama Formulir</th>
-                        <th style="width: 12%;">Program Studi</th>
-                        <th style="width: 19%;">Jenis Formulir</th>
-                        <th style="width: 15%;">Tanggal Tenggat Pengisian</th>
-                        <th style="width: 15%;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data as $index => $row)
-                        <tr class="bg-light">
-                            <td class="align-middle">{{ $index + 1 }}</td>
-                            <td class="align-middle">{{ $row->kode_fta }}</td>
-                            <td class="align-middle">{{ $row->nama_fta }}</td>
-                            <td class="align-middle">{{ $row->id_prodi }}</td>
-                            <td class="align-middle">{{ $row->jenis_form }}</td>
-                            <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
-                            <td class="align-middle">
-                                @if ($row->hasRubrik)
-                                    <a href="{{ route('formulir-penilaian.rubrik.edit', $row->id_fta) }}" class="btn btn-primary btn-sm">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                @else
-                                    <a href="{{ route('formulir-penilaian.rubrik.tambah', $row->id_fta) }}" class="btn btn-warning btn-sm">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </a>
-                                @endif
-                            </td>                            
-                        </tr>
-                    @endforeach
-                </tbody>                
-            </table>
-        </div>
+<div class="p-2">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Daftar Rubrik Penilaian TA</h3>
     </div>
+
+    <div class="table-container">
+        <table id="formulirTable" class="table table-striped text-center">
+            <thead class="sticky-header bg-dark text-white">
+                <tr>
+                    <th style="width: 3%;">No</th>
+                    <th style="width: 12%;">Kode Formulir</th>
+                    <th style="width: 19%;">Nama Formulir</th>
+                    <th style="width: 12%;">Program Studi</th>
+                    <th style="width: 19%;">Jenis Formulir</th>
+                    <th style="width: 15%;">Tanggal Tenggat Pengisian</th>
+                    <th style="width: 15%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($data as $index => $row)
+                    <tr>
+                        <td class="align-middle">{{ $index + 1 }}</td>
+                        <td class="align-middle">{{ $row->kode_fta }}</td>
+                        <td class="align-middle">{{ $row->nama_fta }}</td>
+                        <td class="align-middle">{{ $row->id_prodi }}</td>
+                        <td class="align-middle">{{ $row->jenis_form }}</td>
+                        <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
+                        <td class="align-middle">
+                            @if ($row->hasRubrik)
+                                <a href="{{ route('formulir-penilaian.rubrik.edit', $row->id_fta) }}" 
+                                class="btn btn-warning btn-md my-1 w-30" title="Ubah Rubrik">
+                                    Ubah <i class="mx-1 fas fa-edit"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('formulir-penilaian.rubrik.tambah', $row->id_fta) }}" 
+                                class="btn btn-primary btn-md my-1 w-30" title="Tambah Rubrik">
+                                    Tambah <i class="mx-1 fas fa-plus"></i>
+                                </a>
+                            @endif
+                        </td>                            
+                    </tr>
+                @endforeach
+            </tbody>                
+        </table>
+    </div>
+</div>
 @stop
 
 @section('css')

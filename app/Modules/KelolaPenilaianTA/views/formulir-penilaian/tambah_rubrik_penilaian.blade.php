@@ -3,23 +3,23 @@
 @section('title', 'Penambahan Rubrik Penilaian')
 
 @section('content_header')
-    <div class="container-fluid p-3">
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
-                ['url' => '', 'label' => 'Tambah Rubrik Penilaian']
-            ]
-        ])
-        @endcomponent
+<div class="container-fluid p-3">
+    <!-- Judul Halaman -->
+    <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
 
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
-    </div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
+            ['url' => '', 'label' => 'Tambah Rubrik Penilaian']
+        ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
-<div class="p-4">
+<div class="p-2">
         <form action="{{ route('formulir-penilaian.store-rubrik') }}" method="POST">
             @csrf
 
@@ -46,8 +46,8 @@
             <!-- Aspek Penilaian -->
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <h6><strong>Rubrik Penilaian</strong></h6>
-                <button type="button" class="btn btn-dark btn-sm" id="addRow">
-                    <i class="fa-solid fa-plus"></i>
+                <button type="button" class="btn btn-primary btn-md my-1" id="addRow" title="Tambah Rubrik Penilaian">
+                    <i class="fas fa-plus text-white"></i>
                 </button>
             </div>
 
@@ -88,15 +88,17 @@
                                     <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required></textarea>
                                 </td>
                             @endforeach
-                            <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
+                            <td><button type="button" class="btn btn-danger btn-md remove-row" title="Hapus Baris Rubrik Penilaian"><i class="fa-solid fa-minus"></i></button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <!-- Tombol Submit -->
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+            <div class="d-flex justify-content-end px-3">
+                <button type="submit" class="btn btn-primary btn-md my-1">
+                    Simpan <i class="fa-solid fa-floppy-disk"></i>
+                </button>
             </div>
         </form>
     </div>

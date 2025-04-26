@@ -10,8 +10,6 @@ $(document).ready(function () {
         return totalBobot;
     }
 
-    updateBobotSummary();
-
     function setMinDate() {
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -27,42 +25,71 @@ $(document).ready(function () {
 
     // Update total bobot saat nilai bobot diubah
     $(document).on("input", "input[name='bobot_kriteria[]']", function () {
-        updateBobotSummary();
+        if ($("#jenisForm").val() === "penilaian") {
+            updateBobotSummary();
+        }
     });
 
-    // Form tidak bisa dikirim jika total bobot tidak 100%
+    // Form tidak bisa dikirim jika total bobot tidak 100% (hanya untuk penilaian)
     $('#aspekForm').on('submit', function (e) {
-        let totalBobot = updateBobotSummary();
-        if (totalBobot !== 100) {
-            e.preventDefault();
-            $("#notificationMessage").text("Total bobot harus 100%");
-            $("#notification").removeClass("d-none");
-        }
+        const jenisForm = $("#jenisForm").val();
+        if (jenisForm === "penilaian") {
+            let totalBobot = updateBobotSummary();
+            if (totalBobot !== 100) {
+                e.preventDefault();
+                $("#notificationMessage").text("Total bobot harus 100%");
+                $("#notification").removeClass("d-none");
 
-        setTimeout(function () {
-            $("#notification").addClass("d-none");
-        }, 3000);
+                setTimeout(function () {
+                    $("#notification").addClass("d-none");
+                }, 3000);
+            }
+        }
     });
 
     // Menambahkan baris baru di tabel Aspek Penilaian
     $("#addRow").on("click", function () {
-        var newRow = `
+        const jenisForm = $("#jenisForm").val();
+
+        if (jenisForm === "penilaian") {
+            const newRow = `
+            <tr>
+                <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
+                <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </td>
+            </tr>`;
+            $("#aspekPenilaianTable").append(newRow);
+        }
+    });
+
+    // Tambah baris baru di tabel Aspek Feedback
+    $("#addFeedbackRow").on("click", function () {
+        const newFeedbackRow = `
         <tr>
-            <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
-            <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
+            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
             <td>
-                <button type="button" class="btn btn-danger btn-sm remove-row">
+                <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
                     <i class="fa-solid fa-minus"></i>
                 </button>
             </td>
         </tr>`;
-        $("#aspekPenilaianTable").append(newRow);
-        updateBobotSummary();
+        $("#aspekFeedbackTable").append(newFeedbackRow);
     });
 
     // Hapus baris dari tabel Aspek Penilaian
     $(document).on("click", ".remove-row", function () {
         $(this).closest("tr").remove();
-        updateBobotSummary();
+        if ($("#jenisForm").val() === "penilaian") {
+            updateBobotSummary();
+        }
+    });
+
+    // Hapus baris dari tabel Aspek Feedback
+    $(document).on("click", ".remove-feedback-row", function () {
+        $(this).closest("tr").remove();
     });
 });
