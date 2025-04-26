@@ -91,7 +91,7 @@
         function handleAction(kelompokId, actionType) {
             let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
             routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
-
+            
             Swal.fire({
                 title: "Konfirmasi"
                 , text: actionType === "accept" ? "Apakah Anda yakin ingin menerima pengajuan ini?" : "Apakah Anda yakin ingin menolak pengajuan ini?"
