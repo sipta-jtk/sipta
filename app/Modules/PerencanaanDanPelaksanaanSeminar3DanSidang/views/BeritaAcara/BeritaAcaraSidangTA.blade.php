@@ -1,19 +1,35 @@
 @extends('adminlte::page')
 
-@section('title', 'PerencanaanDanPelaksanaanSeminarDanSidang')
+@section('title', 'Berita Acara Pelaksanaan Sidang TA')
 
 @section('content_header')
-    <h1>Berita Acara Pelaksanaan Sidang TA</h1>
+    <h1 class="mb-3">Berita Acara Pelaksanaan Sidang TA</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Berita Acara Pelaksanaan Sidang TA']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
+    <div class="card">
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
-                    <thead class="thead-light">
+                    <thead class="thead-dark">
                         <tr>
                             <th class="w-10">KoTA</th>
-                            <th class="w-20">Nim</th>
+                            <th class="w-20">NIM</th>
                             <th class="w-20">Nama Mahasiswa</th>
                             <th class="w-15">Tanggal</th>
                             <th class="w-15">Ruangan</th>
@@ -30,7 +46,7 @@
                                 <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
@@ -59,31 +75,26 @@
                                                 {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang),15) }}
                                             </a>
                                         </div>
+                                    <button class="btn btn-primary btn-sm" 
+                                        data-toggle="modal" 
+                                        data-target="#modalDokumentasi{{ $item->id_kehadiran }}">
+                                        <i class=""></i> Unggah Dokumentasi
+                                    </button>
                                     @endif
-                                    <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
-                                        <div class="form-group">
-                                            <input type="file" name="dokumentasi" class="form-control-file form-control-sm" accept=".jpg,.jpeg,.png,.pdf">
-                                            <small class="text-muted">Maksimal 5 MB (JPG, JPEG, PNG, PDF)</small>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah</button>
-                                    </form>
                                 </td>
                                 <td>
                                     @if($item->batas_revisi)
-                                        {{ $item->batas_revisi }}
+                                      {{ $item->batas_revisi_formatted }}
                                     @else
-                                        <form action="{{ route('simpan.batas.revisi') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
-                                            <input type="date" name="batas_revisi" class="form-control form-control-sm" value="{{ $item->batas_revisi }}">
-                                            <button type="submit" class="btn btn-primary btn-sm mt-2">Simpan</button>
-                                        </form>
+                                    <button class="btn btn-sm btn-primary" 
+                                        data-toggle="modal" 
+                                        data-target="#modalBatasRevisi{{ $item->id_kehadiran }}">
+                                    <i class=""></i> Atur Tanggal
+                                    </button>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->status_kelulusan == 'lulus_tanpa_perbaikan_laporan')
+                                    @if($item->status_kelulusan == 'tidak_lulus')
                                         <!-- Tombol untuk membuka modal -->
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
                                             Isi Status
@@ -94,40 +105,124 @@
                                 </td>
                             </tr>
                             <!-- Modal untuk mengisi status kelulusan -->
-                            <div class="modal fade" id="modalStatusKelulusan{{ $item->id_kehadiran }}" tabindex="-1" role="dialog" aria-labelledby="modalStatusKelulusanLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalStatusKelulusanLabel">Isi Status Kelulusan</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                            <x-adminlte-modal id="modalStatusKelulusan{{ $item->id_kehadiran }}" 
+                                title="Isi Status Kelulusan" 
+                                theme="blue" 
+                                icon="fas fa-graduation-cap"
+                                size="md">
+                                <form action="{{ route('simpan.status.kelulusan') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                    
+                                    <div class="px-3"> <!-- Padding horizontal sesuai standar -->
+
+                                        <!-- Alert Peringatan -->
+                                        <div class="alert alert-info alert-dismissible">
+                                            <h5><i class="icon fas fa-info-circle"></i> Informasi Penting!</h5>
+                                            Pastikan status kelulusan sudah diverifikasi dengan benar sebelum disimpan.
+                                            Status Kelulusan hanya dapat disimpan <strong>sekali saja</strong>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="{{ route('simpan.status.kelulusan') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
-                                                <div class="form-group">
-                                                    <label for="status_kelulusan">Pilih Status Kelulusan:</label>
-                                                    <select name="status_kelulusan" class="form-control" required>
-                                                        <option value="lulus_tanpa_perbaikan_laporan">Lulus Tanpa Perbaikan</option>
-                                                        <option value="lulus_dengan_perbaikan_laporan">Lulus Dengan Perbaikan</option>
-                                                        <option value="mengulang_sidang_tugas_akhir">Mengulang Sidang</option>
-                                                        <option value="tidak_lulus">Tidak Lulus</option>
-                                                    </select>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </form>
+
+                                        <div class="mb-2 form-group">
+                                            <label for="status_kelulusan">Status Kelulusan</label>
+                                            <x-adminlte-select name="status_kelulusan" required>
+                                                <option value="" disabled >-- Pilih Status Kelulusan --</option>
+                                                <option value="lulus_tanpa_perbaikan_laporan">Lulus Tanpa Perbaikan Laporan</option>
+                                                <option value="lulus_dengan_perbaikan_laporan">Lulus Dengan Perbaikan Laporan</option>
+                                                <option value="mengulang_sidang_tugas_akhir">Mengulang Sidang Tugas Akhir</option>
+                                                <option value="tidak_lulus">Tidak Lulus</option>
+                                            </x-adminlte-select>
                                         </div>
                                     </div>
+
+                                    <div class="d-flex pt-3 justify-content-end">
+                                        <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"
+                                        class="mx-1"/>
+                                        <x-adminlte-button type="submit" theme="success" label="Simpan"
+                                        class="mx-1"/>
+                                    </div>
+                                        <x-slot name="footerSlot"> </x-slot>
+                                </form>
+                            </x-adminlte-modal>
+                            
+                             <!-- Modal untuk upload dokumentasi -->
+                             <x-adminlte-modal id="modalDokumentasi{{ $item->id_kehadiran }}" 
+                                title="Unggah Dokumentasi Sidang" 
+                                theme="blue"
+                                icon="fas fa-camera"
+                                size="md">
+                                <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                    <div class="mb-2 input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="form-control-file form-control-sm" name="dokumentasi" id="dokumentasi" accept=".jpg,.jpeg,.png,.pdf">
+                                            <label class="custom-file-label" for="dokumentasi" data-browse="Cari" >Pilih file</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex pt-3 justify-content-end">
+                                        <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"
+                                        class="mx-1"/>
+                                        <x-adminlte-button type="submit" theme="success" label="Simpan"
+                                        class="mx-1"/>
+                                    </div>
+                                    <x-slot name="footerSlot"></x-slot>
+                                </form>
+                            </x-adminlte-modal>
+
+                            <x-adminlte-modal id="modalBatasRevisi{{ $item->id_kehadiran }}" 
+                                title="Set Batas Revisi" 
+                                theme="blue"
+                                icon="fas fa-calendar-day"
+                                size="md">
+                                <form action="{{ route('simpan.batas.revisi') }}" method="POST" id="formBatasRevisi{{ $item->id_kehadiran }}">
+                                    @csrf
+                                    <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
+                                    <!-- Alert Peringatan -->
+                                    <div class="alert alert-info alert-dismissible">
+                                        <h5><i class="icon fas fa-info-circle"></i> Informasi Penting!</h5>
+                                        Pastikan tanggal batas revisi sudah benar sebelum disimpan.
+                                        Batas Revisi hanya dapat disimpan <strong>sekali saja</strong>
+                                    </div>
+                                    {{-- <div class="form-group">
+                                        <label>Tanggal Batas Revisi:</label>
+                                        <input type="date" name="batas_revisi" class="form-control" 
+                                            value="{{ $item->batas_revisi }}" required>
+                                    </div> --}}
+                                    <div class="form-group">
+                                        <label class="h6">Tanggal Batas Revisi</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                            <input type="date" name="batas_revisi" 
+                                                   class="form-control form-control-lg"
+                                                   placeholder="-- Pilih Tanggal --"
+                                                   onfocus="this.showPicker()"
+                                                   value="{{ $item->batas_revisi }}"
+                                                   required>
+                                        </div>
+                                        <small class="form-text text-muted">
+                                            Klik untuk memilih tanggal
+                                        </small>
+                                    </div>
+                                </form>
+                                <div class="d-flex pt-3 justify-content-end">
+                                    <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"
+                                    class="mx-1"/>
+                                    <x-adminlte-button type="submit" theme="success" label="Simpan" form="formBatasRevisi{{ $item->id_kehadiran }}"
+                                    class="mx-1"/>
                                 </div>
-                            </div>                            
+                                <x-slot name="footerSlot"> </x-slot>
+                            </x-adminlte-modal>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
+    </div>
 @stop
 
 @section('css')

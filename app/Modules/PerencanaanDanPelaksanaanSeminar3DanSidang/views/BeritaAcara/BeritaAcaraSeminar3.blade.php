@@ -1,9 +1,18 @@
 @extends('adminlte::page')
 
-@section('title', 'PerencanaanDanPelaksanaanSeminarDanSidang')
+@section('title', 'Berita Acara Pelaksanaan Seminar 3')
 
 @section('content_header')
-    <h1>Berita Acara Pelaksanaan Seminar 3</h1>
+    <h1 class="mb-3">Berita Acara Pelaksanaan Seminar 3</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Berita Acara Pelaksanaan Seminar 3']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
@@ -17,10 +26,10 @@
 
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
-                    <thead class="thead-light">
+                    <thead class="thead-dark">
                         <tr>
                             <th class="w-10">KoTA</th>
-                            <th class="w-15">Nim</th>
+                            <th class="w-15">NIM</th>
                             <th class="w-20">Nama Mahasiswa</th>
                             <th class="w-15">Tanggal</th>
                             <th class="w-15">Ruangan</th>
@@ -35,7 +44,7 @@
                                 <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>

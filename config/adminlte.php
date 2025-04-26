@@ -431,23 +431,27 @@ return [
                     'can' => 'dosen',
                 ],
                 [
-                    'text' => 'Rekap Berita Acara Seminar 3',
-                    'url' => $prefix . '/rekap-berita-acara-seminar-3',
+                    'text' => 'Rekapitulasi Berita Acara Seminar 3',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-seminar-3',
+                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Rekap Berita Acara Sidang TA',
-                    'url' => $prefix . '/rekap-berita-acara-sidang-ta',
+                    'text' => 'Rekapitulasi Berita Acara Sidang TA',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-sidang-ta',
+                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
                     'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Berita Acara Seminar 3',
-                    'url' => $prefix . '/berita-acara-pelaksanaan-seminar3',
+                    'url' => $prefix . '/berita-acara-pelaksanaan-seminar-3',
+                    'icon' => 'fas fa-calendar-check', // Icon Kalender cek menggambarkan isi berita acara
                     'can' => 'all_mahasiswa',
                 ],
                 [
                     'text' => 'Berita Acara Sidang TA',
                     'url' => $prefix . '/berita-acara-pelaksanaan-sidang-ta',
+                    'icon' => 'fas fa-calendar-check', // Icon Kalender cek menggambarkan isi berita acara
                     'can' => 'all_mahasiswa',
                 ],
                 [

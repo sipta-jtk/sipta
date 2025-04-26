@@ -1,9 +1,18 @@
 @extends('adminlte::page')
 
-@section('title', 'Rekap Presensi Sidang TA')
+@section('title', 'Rekapitulasi Berita Acara Sidang TA')
 
 @section('content_header')
-    <h1>Rekap Presensi Sidang TA</h1>
+    <h1 class="mb-3">Rekapitulasi Berita Acara Sidang TA</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Rekapitulasi Berita Acara Sidang TA']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
@@ -16,11 +25,11 @@
             @endif
 
             <div class="table-responsive">
-                <table id="presensiSidangTA" class="table table-striped table-bordered">
-                    <thead class="thead-light">
+                <table id="RekapBeritaAcaraSidangTA" class="table table-striped table-bordered">
+                    <thead class="thead-dark">
                         <tr>
                             <th class="w-10">KoTA</th>
-                            <th class="w-20">Nim</th>
+                            <th class="w-20">NIM</th>
                             <th class="w-20">Nama Mahasiswa</th>
                             <th class="w-15">Tanggal</th>
                             <th class="w-15">Ruangan</th>
@@ -37,7 +46,7 @@
                                 <td>{{ $item->penjadwalan->kota->nama_kota ?? '-' }}</td>
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->tanggal ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
@@ -62,7 +71,7 @@
                                 </td>
                                 <td>
                                     @if($item->batas_revisi)
-                                        {{ $item->batas_revisi }} <!-- Tampilkan batas revisi jika sudah diisi -->
+                                        {{ $item->batas_revisi_formatted }} <!-- Tampilkan batas revisi jika sudah diisi -->
                                     @else
                                         <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif
@@ -91,8 +100,21 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         <script>
-            $(document).ready(function() {
-            $('#presensiSidangTA').DataTable();
-        });
+            $('#RekapBeritaAcaraSidangTA').DataTable({
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    "infoEmpty": "Tidak ada data tersedia",
+                    "infoFiltered": "(difilter dari total _MAX_ data)",
+                    "paginate": {
+                        "first": "<<",
+                        "last": ">>",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                }
+            });
     </script>
 @stop
