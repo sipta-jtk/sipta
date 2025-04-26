@@ -68,7 +68,7 @@
                 </thead>
                 <tbody>
                     @foreach ($list_pengajuan as $index => $row)
-                                    <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
+                                    <tr data-id="{{ $row['id_pengajuan_pembimbing'] }}">
                                         <td class="align-middle sticky-column" style="position: sticky; left: 0; background: white;">
                                             {{ $index + 1 }}
                                         </td>
@@ -232,7 +232,7 @@
                 </thead>
                 <tbody>
                     @foreach ($dosenList as $index => $dosen)
-                        <tr class="bg-light" data-id="{{ $row['id_pengajuan_pembimbing'] }}">
+                        <tr data-id="{{ $row['id_pengajuan_pembimbing'] }}">
                             <td class="align-middle">{{ $index + 1 }}</td>
                             <td class="align-middle">{{ $dosen['id_dosen'] }}</td>
                             <td class="align-middle">{{ $dosen['nama'] }}</td>
@@ -315,7 +315,7 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
+        background-color: #dee2e6;
     }
 
     tbody tr:hover {
@@ -334,6 +334,26 @@
 
     table.dataTable thead th.no-sort {
         background-image: none !important;
+    }
+
+    table.dataTable tbody tr.even {
+        background-color: #dee2e6;
+    }
+
+    table.dataTable tbody tr.odd {
+        background-color: white;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #e2e6ea;
+    }
+
+    table.dataTable tbody tr.even td.sticky-column {
+        background-color: #dee2e6;
+    }
+
+    table.dataTable tbody tr.odd td.sticky-column {
+        background-color: white;
     }
 
     .status-cell[data-status="fix"] {
