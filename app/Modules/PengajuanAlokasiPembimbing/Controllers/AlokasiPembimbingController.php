@@ -48,15 +48,10 @@ class AlokasiPembimbingController extends Controller
             $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
         }
 
-        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')->get();
-
-        foreach ($dosenList as $key => $value) {
-            $dosenBidang = KetertarikanBidang::join('bidang', 'ketertarikan_bidang.id_bidang', '=', 'bidang.id_bidang')
-                ->where('nip', $value->nip)
-                ->get();
-
-            $dosenList[$key]['ketertarikan_bidang'] = $dosenBidang;
-        }
+        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
+            ->leftJoin('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
+            ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
+            ->get();
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
             'list_pengajuan' => $data_pengajuan,

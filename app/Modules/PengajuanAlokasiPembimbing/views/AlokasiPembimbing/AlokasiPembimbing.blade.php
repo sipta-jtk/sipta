@@ -236,12 +236,7 @@
                             <td class="align-middle">{{ $index + 1 }}</td>
                             <td class="align-middle">{{ $dosen['id_dosen'] }}</td>
                             <td class="align-middle">{{ $dosen['nama'] }}</td>
-                            <td class="align-middle text-left">
-                                @foreach ($dosen['ketertarikan_bidang'] as $kbk)
-                                    {{ $kbk['bidang'] }}
-                                    <br>
-                                @endforeach
-                            </td>
+                            <td class="align-middle">{{ $dosen['kbk'] ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
