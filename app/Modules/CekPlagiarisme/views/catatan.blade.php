@@ -32,7 +32,7 @@
                         <li>
                             <button class="dropdown-item edit-btn" data-id="{{ $item->id_review }}"
                                 data-review="{{ $item->review }}" data-bs-toggle="modal" data-bs-target="#editCommentModal">
-                                <i class="fas fa-edit me-2"></i> Edit
+                                <i class="fas fa-edit me-2"></i> Ubah
                             </button>
                         </li>
                         <li>
@@ -55,7 +55,7 @@
         <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
         <!-- Menampilkan tanggal komentar dengan format tertentu -->
         <small class="text-muted comment-date">
-            {{ \Carbon\Carbon::parse($item->update_at)->format('d/m/Y, H:i:s') }}
+            {{ \Carbon\Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y') }}
         </small>
     </div>
 @empty
@@ -72,10 +72,10 @@
         @csrf
         <input type="hidden" id="id_dokumen" value="{{ $dokumen->id_dokumen }}">
         <div class="mt-3">
-            <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan komentar baru..."
+            <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan catatan baru..."
                 rows="3" required></textarea>
-            <small class="text-muted float-end mt-1" id="word-count">0/500 kata</small>
-            <button type="submit" class="btn btn-primary mt-2">Kirim Komentar</button>
+            <small class="text-muted float-end mt-1" id="word-count">0/500 karakter</small>
+            <button type="submit" class="btn btn-primary mt-2">Kirim</button>
         </div>
     </form>
 @endcan
@@ -87,7 +87,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmLabel">PERINGATAN !!</h5>
+                <h5 class="modal-title" id="deleteConfirmLabel">Konfirmasi Hapus</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -129,7 +129,7 @@
         <div class="modal-content">
             <form action="" method="post" id="edit_comment_form">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCommentLabel">Edit Catatan</h5>
+                    <h5 class="modal-title" id="editCommentLabel">Ubah Catatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
