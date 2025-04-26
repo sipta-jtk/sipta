@@ -81,9 +81,9 @@
             language: {
                 search: "Cari:",
                 lengthMenu: "Tampilkan _MENU_ data per halaman",
-                zeroRecords: "Data tidak ditemukan",
+                zeroRecords: "Data ambang batas tidak ditemukan",
                 info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                infoEmpty: "Tidak ada data tersedia",
+                infoEmpty: "Tidak ada data ambang batas tersedia",
                 infoFiltered: "(difilter dari total _MAX_ data)",
                 paginate: {
                     first: "<<",
