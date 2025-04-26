@@ -39,17 +39,14 @@
             <table id="alokasiTable" class="table text-center" style="min-width: 1400px;">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
-                        <th rowspan="2" class="sticky-column no-sort"
-                            style="width: 5%; position: sticky; left: 0; background: rgba(0, 0, 0, 0.9);">No</th>
-                        <th rowspan="2" class="sticky-column no-sort"
-                            style="width: 15%; position: sticky; left: 5%; background: rgba(0, 0, 0, 0.9);">Kelompok
-                        </th>
+                        <th rowspan="2" class="sticky-column no-sort" style="width: 5%; position: sticky; left: 0;">No</th>
+                        <th rowspan="2" class="sticky-column no-sort" style="width: 15%; position: sticky; left: 5%;">Kelompok</th>
                         <th rowspan="2" class="no-sort" style="width: 20%;">Anggota</th>
                         <th rowspan="2" class="no-sort" style="width: 15%;">Bidang</th>
                         <th rowspan="2" class="no-sort" style="width: 20%;">Judul/Topik</th>
-                        <th colspan="5" class="no-sort" style="width: 20%">Usulan Pembimbing</th>
-                        <th colspan="4" class="no-sort" style="width: 30%">Pembimbing</th>
-                        <th colspan="3" class="no-sort" style="width: 20%">Penguji</th>
+                        <th colspan="5" class="no-sort" style="width: 20%;">Usulan Pembimbing</th>
+                        <th colspan="4" class="no-sort" style="width: 30%;">Pembimbing</th>
+                        <th colspan="3" class="no-sort" style="width: 20%;">Penguji</th>
                         <th rowspan="2" class="no-sort" style="width: 15%;">Catatan</th>
                     </tr>
                     <tr class="bg-secondary text-white">
@@ -258,156 +255,170 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
+/* --- Table Container --- */
+.table-container {
+    max-height: 500px;
+    overflow: auto;
+    border: 1px solid #ddd;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- Table Structure --- */
+table {
+    width: 100%;
+    min-width: 1400px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #ccc !important;
+    padding: 10px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Sticky Header & Columns --- */
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+th.sticky-column {
+    position: sticky;
+    background: #343a40;
+    color: white;
+    z-index: 11;
+}
+
+th.sticky-column:first-child {
+    left: 0;
+}
+
+th.sticky-column:nth-child(2) {
+    left: 5%;
+}
+
+/* --- Table Body --- */
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:hover {
+    background-color: #e2e6ea;
+    transition: background-color 0.2s ease;
+}
+
+/* --- Sorting Indicators --- */
+table.dataTable thead th.no-sort {
+    background-image: none !important;
+}
+
+table.dataTable thead th.no-sort.sorting::before,
+table.dataTable thead th.no-sort.sorting::after,
+table.dataTable thead th.no-sort.sorting_asc::before,
+table.dataTable thead th.no-sort.sorting_asc::after,
+table.dataTable thead th.no-sort.sorting_desc::before,
+table.dataTable thead th.no-sort.sorting_desc::after {
+    display: none !important;
+}
+
+/* --- Status Cells --- */
+.status-cell {
+    min-width: 120px;
+    padding: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border-radius: 3px;
+}
+
+.status-cell[data-status="fix"] {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.status-cell[data-status="belum_fix"] {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.status-dropdown {
+    width: 100%;
+    text-align: center;
+    padding: 5px;
+    font-weight: bold;
+    min-width: 120px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* --- Form Elements --- */
+.auto-expand {
+    width: 100%;
+    min-height: 35px;
+    max-height: 150px;
+    resize: none;
+    overflow-y: hidden;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-size: 14px;
+    transition: height 0.2s ease;
+    border-radius: 4px;
+}
+
+/* --- Buttons --- */
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+/* --- Specific Column Widths --- */
+th:nth-child(15),
+th:nth-child(16),
+th:nth-child(17),
+td:nth-child(15),
+td:nth-child(16),
+td:nth-child(17) {
+    min-width: 70px !important;
+    max-width: 100px;
+}
+
+/* --- Responsive Considerations --- */
+@media (max-width: 1600px) {
     .table-container {
-        max-height: 500px;
-        overflow: auto;
-        border: 1px solid #ddd;
-        position: relative;
-        width: 100%;
+        max-height: 400px;
     }
-
-    table {
-        width: 100%;
-        min-width: 1400px;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        border: 1px solid #ccc !important;
-        padding: 10px;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    thead {
-        position: sticky;
-        top: 0;
-        z-index: 1030;
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-    }
-
-    thead th {
-        position: sticky;
-        top: 0;
-        z-index: 1031;
-        background-color: rgba(0, 0, 0, 0.9);
-        color: white !important;
-        text-align: center;
-        padding: 12px;
-        border-bottom: 2px solid #fff;
-    }
-
-    th.sticky-column {
-        background: rgba(0, 0, 0, 0.9) !important;
-        color: white !important;
-        z-index: 1032 !important;
-    }
-
-    td.sticky-column {
-        color: black !important;
-        background: white !important;
-        z-index: 1025;
-    }
-
-    .sticky-column:first-child {
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-    }
-
-    th:first-child {
-        white-space: nowrap;
-        text-align: center;
-    }
-
-    tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    tbody tr:hover {
-        background-color: #e2e6ea;
-    }
-
-    table.dataTable thead th.no-sort.sorting::before,
-    table.dataTable thead th.no-sort.sorting::after,
-    table.dataTable thead th.no-sort.sorting_asc::before,
-    table.dataTable thead th.no-sort.sorting_asc::after,
-    table.dataTable thead th.no-sort.sorting_desc::before,
-    table.dataTable thead th.no-sort.sorting_desc::after {
-        display: none !important;
-        background-image: none !important;
-    }
-
-    table.dataTable thead th.no-sort {
-        background-image: none !important;
-    }
-
-    .status-cell[data-status="fix"] {
-        background-color: green !important;
-        color: white !important;
-    }
-
-    .status-cell[data-status="belum_fix"] {
-        background-color: yellow !important;
-        color: black !important;
-    }
-
-    .status-cell {
-        min-width: 120px;
-        padding: 5px;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .status-dropdown {
-        width: 100%;
-        text-align: center;
-        padding: 5px;
-        font-weight: bold;
-        min-width: 120px;
-        border-radius: 5px;
-    }
-
-    .auto-expand {
-        width: 100%;
-        min-height: 35px;
-        max-height: 150px;
-        resize: none;
-        overflow-y: hidden;
-        border: 1px solid #ccc;
-        padding: 5px;
-        font-size: 14px;
-        transition: height 0.2s ease-in-out;
-    }
-
-    button:hover {
-        opacity: 0.8;
-        transition: 0.2s;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
-
-    .btn-dark {
-        background-color: #343a40;
-        border-color: #343a40;
-    }
-
-    th:nth-child(15),
-    th:nth-child(16),
-    th:nth-child(17),
-    td:nth-child(15),
-    td:nth-child(16),
-    td:nth-child(17) {
-        min-width: 70px !important;
-    }
+}
 </style>
 @stop
 
@@ -546,8 +557,11 @@ $(document).ready(function () {
     autoExpandTextarea();
 
     let table = $('#alokasiTable').DataTable({
-        responsive: true,
+        scrollX: true,
+        autoWidth: false,
+        responsive: false,
         paging: true,
+        fixedHeader: true,
         lengthMenu: [10, 25, 50, 100],
         language: {
             search: "Cari:",
