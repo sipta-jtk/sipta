@@ -118,6 +118,7 @@
                 </div>
                 <div class="modal-body">
                     <textarea id="editCommentText" class="form-control" rows="3" required></textarea>
+                    <small class="text-muted mt-1" id="edit-word-count">0/500 karakter</small>
                 </div>
                 <input type="text" id="editCommentId" hidden>
                 <div class="modal-footer">
@@ -340,21 +341,18 @@
 
         // Character counter untuk textarea
         const commentInput = document.getElementById('comment-input');
-        const charCount = document.getElementById('word-count');  // Mengganti nama variabel menjadi charCount
+        const charCount = document.getElementById('word-count');
 
         if (commentInput && charCount) {
             commentInput.addEventListener('input', function () {
-                // Menghitung jumlah karakter tanpa spasi di awal, tengah, dan akhir
-                const charCountValue = this.value.replace(/\s+/g, '').length;
+                const charCountValue = this.value.length;
 
-                // Menampilkan jumlah karakter di UI
                 if (this.value.trim() === '') {
                     charCount.textContent = '0/500 karakter';
                 } else {
                     charCount.textContent = `${charCountValue}/500 karakter`;
                 }
 
-                // Menambahkan atau menghapus class 'over-limit' jika lebih dari 500 karakter
                 if (charCountValue > 500) {
                     charCount.classList.add('over-limit');
                 } else {
@@ -367,6 +365,9 @@
 
     $(document).ready(function () {
 
+        const editCommentInput = document.getElementById('editCommentText');
+        const editCharCount = document.getElementById('edit-word-count');
+
         $(".edit-btn").click(function () {
 
             let review = $(this).data("review");
@@ -375,11 +376,38 @@
             // Set nilai ke dalam modal
             $("#editCommentText").val(review);
             $("#editCommentId").attr("data-id", id);
+
+            const editCharCount = document.getElementById('edit-word-count');
+            if (editCharCount) {
+                editCharCount.textContent = `${review.length}/500 karakter`;
+                if (review.length > 500) {
+                    editCharCount.classList.add('over-limit');
+                } else {
+                    editCharCount.classList.remove('over-limit');
+                }
+            }
         });
+
+        if (editCommentInput && editCharCount) {
+            editCommentInput.addEventListener('input', function () {
+                const charCountValue = this.value.length;
+
+                if (this.value.trim() === '') {
+                    editCharCount.textContent = '0/500 karakter';
+                } else {
+                    editCharCount.textContent = `${charCountValue}/500 karakter`;
+                }
+
+                if (charCountValue > 500) {
+                    editCharCount.classList.add('over-limit');
+                } else {
+                    editCharCount.classList.remove('over-limit');
+                }
+            });
+        }
 
         $("#saveEditComment").click(function () {
             const dokumenId = $("#id_dokumen").val();
-
             const prefixUrl = document.querySelector("meta[name='prefix-url']") ?
                 document.querySelector("meta[name='prefix-url']").getAttribute("content") :
                 'sipta-dev';
@@ -435,9 +463,7 @@
 
         const dokumenId = $("#id_dokumen").val();
 
-
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
 
         // Saat tombol "Hapus" di modal diklik
         $("#confirmDeleteBtn").click(function () {
