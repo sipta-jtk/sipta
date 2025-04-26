@@ -20,8 +20,10 @@
 {{-- <x-pengajuan-alokasi-pembimbing.table-pengajuan :pengajuan="$pengajuan" /> --}}
 <div class="container">
     <p>Beranda > <a href="www">Daftar Pengajuan Dosen Pembimbing</a>
+
         <div class="justify-content-center">
             <div class="mr-2">
+                <p>Beranda>Pengajuan dan Alokasi Pembimbing>Daftar Kesediaan dan Pengajuan> <a href="{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.index') }}">Daftar Pengajuan Dosen Pembimbing</p>
                 {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
                 <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
             </div>
