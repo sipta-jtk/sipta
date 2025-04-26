@@ -3,6 +3,7 @@
 namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
 use Carbon\Carbon;
+Carbon::setLocale('id');
 use App\Modules\Controller;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
@@ -27,6 +28,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     // Ambil pengajuan berdasarkan id_kota
     $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
 
+    if($pengajuan) {
+        $pengajuan->formatted_tanggal_pengajuan = Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('H:i d F Y');
+    }
+
     // Daftar artefak yang harus di-upload
     $namaArtefak = ['FTA 10', 'FTA 10a', 'Proposal Tugas Akhir', 'Presentasi'];
     $artefaks = Artefak::whereIn('nama_artefak', $namaArtefak)->get();
@@ -43,7 +48,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
         $data[] = [
             'nama_artefak' => $artefak->nama_artefak,
-            'status' => $isUploaded ? 'Sudah di-upload' : 'Belum di-upload',
+            'status' => $isUploaded ? 'Sudah diunggah' : 'Belum diunggah',
         ];
 
         if (!$isUploaded) {
@@ -57,7 +62,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
         if (!$exists) {
             $data[] = [
                 'nama_artefak' => $nama,
-                'status' => 'Belum di-upload',
+                'status' => 'Belum diunggah',
             ];
             $adaBelumUpload = true; // Set flag jika ada artefak yang belum di-upload
         }
@@ -107,6 +112,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             ->where('jenis_pengajuan', 'sidang_akhir')
             ->first();
 
+        if($pengajuan) {
+            $pengajuan->formatted_tanggal_pengajuan = Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('H:i d F Y');
+        }
+
         // Daftar artefak yang harus di-upload
         $namaArtefak = ['FTA 14', 'FTA 14a', 'Laporan Tugas Akhir', 'Presentasi'];
         $artefaks = Artefak::whereIn('nama_artefak', $namaArtefak)->get();
@@ -123,7 +132,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
             $data[] = [
                 'nama_artefak' => $artefak->nama_artefak,
-                'status' => $isUploaded ? 'Sudah di-upload' : 'Belum di-upload',
+                'status' => $isUploaded ? 'Sudah diunggah' : 'Belum diunggah',
             ];
 
             if (!$isUploaded) {
@@ -137,7 +146,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             if (!$exists) {
                 $data[] = [
                     'nama_artefak' => $nama,
-                    'status' => 'Belum di-upload',
+                    'status' => 'Belum diunggah',
                 ];
                 $adaBelumUpload = true; // Set flag jika ada artefak yang belum di-upload
             }

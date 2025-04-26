@@ -419,16 +419,19 @@ return [
                     'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Seminar 3',
                     'url' => $prefix . '/verifikasi-berkas-3',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-file',
                 ],
                 [
                     'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir',
                     'url' => $prefix . '/verifikasi-berkas-sidang',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-file',
                 ],
                 [
                     'text' => 'Penilaian',
                     'url' => $prefix . '/DosenTabelPenilaian',
                     'can' => 'dosen',
+                    'icon' => 'fas fa-fw fa-award',
                 ],
                 [
                     'text' => 'Rekap Berita Acara Seminar 3',
