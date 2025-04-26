@@ -69,12 +69,12 @@
                 <tbody>
                     @foreach ($list_pengajuan as $index => $row)
                                     <tr data-id="{{ $row['id_pengajuan_pembimbing'] }}">
-                                        <td class="align-middle sticky-column" style="position: sticky; left: 0; background: white;">
-                                            {{ $index + 1 }}
-                                        </td>
-                                        <td class="align-middle sticky-column" style="position: sticky; left: 5%; background: white;">
-                                            {{ $row['nama_kota'] }}
-                                        </td>
+                                    <td class="align-middle sticky-column" style="position: sticky; left: 0;">
+                                        {{ $index + 1 }}
+                                    </td>
+                                    <td class="align-middle sticky-column" style="position: sticky; left: 5%;">
+                                        {{ $row['nama_kota'] }}
+                                    </td>
                                         <td class="align-middle">
                                             <ul class="m-0 p-0" style="list-style-type: none;">
                                                 @foreach ($row['mahasiswa'] as $anggota)
@@ -300,7 +300,6 @@
 
     td.sticky-column {
         color: black !important;
-        background: white !important;
         z-index: 1025;
     }
 
@@ -315,11 +314,11 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: #dee2e6;
+        background-color: #f2f2f2;
     }
 
     tbody tr:hover {
-        background-color: #e2e6ea;
+        background-color: #f2f2f2;
     }
 
     table.dataTable thead th.no-sort.sorting::before,
@@ -337,7 +336,7 @@
     }
 
     table.dataTable tbody tr.even {
-        background-color: #dee2e6;
+        background-color: #f2f2f2;
     }
 
     table.dataTable tbody tr.odd {
@@ -349,7 +348,7 @@
     }
 
     table.dataTable tbody tr.even td.sticky-column {
-        background-color: #dee2e6;
+        background-color: #f2f2f2;
     }
 
     table.dataTable tbody tr.odd td.sticky-column {
