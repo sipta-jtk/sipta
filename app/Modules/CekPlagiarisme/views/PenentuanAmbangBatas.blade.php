@@ -29,7 +29,7 @@
                     <tr class="bg-dark text-white">
                         <th style="width: 50">Nomor</th>
                         <th style="width: 100">Ambang Batas</th>
-                        <th style="width: 150">Waktu Tambah</th>
+                        <th style="width: 150">Waktu Ditambahkan</th>
                         <th style="width: 200">Nama Koordinator TA</th>
                         <th style="width: 150">Status</th>
                     </tr>
