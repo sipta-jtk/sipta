@@ -59,6 +59,13 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $sekarang = Carbon::now('Asia/Jakarta');
 
         // Ambil data kehadiran dari database
+        $statusMap = [
+            'lulus_tanpa_perbaikan_laporan' => 'Lulus Tanpa Pebaikan Laporan',
+            'lulus_dengan_perbaikan_laporan' => 'Lulus Dengan Pebaikan Laporan',
+            'mengulang_sidang_tugas_akhir' => 'Mengulang Sidang Tugas Akhir',
+            'tidak_lulus' => 'Tidak Lulus',
+            'pending' => 'Dalam Proses Penilaian'
+        ];
         $beritaAcaraSidangTA = Kehadiran::with(['penjadwalan', 'user'])
             ->whereHas('penjadwalan', function ($query) {
                 $query->where('agenda', 'sidang'); // Ambil hanya data sidang TA
@@ -67,7 +74,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
                 $query->where('username', $nim); // Filter berdasarkan nim mahasiswa yang sedang login
             })
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item) use($statusMap) {
                 if ($item->penjadwalan && $item->penjadwalan->tanggal) {
                     $item->penjadwalan->translatedFormat = Carbon::parse($item->penjadwalan->tanggal)->translatedFormat('d F Y');
                 }
@@ -76,6 +83,10 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
                 $item->batas_revisi_formatted = $item->batas_revisi 
                 ? Carbon::parse($item->batas_revisi)->translatedFormat('d F Y')
                 : null;
+
+                // Format status kelulusan untuk tampilan
+                $item->status_kelulusan_formatted = $statusMap[$item->status_kelulusan] ?? 'Unknown'; // Format status kelulusan untuk tampilan
+                return $item;
 
                 return $item;
             });
@@ -104,13 +115,20 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
     
     public function rekapBeritaAcaraSidangTA(): View
     {
+        $statusMap = [
+            'lulus_tanpa_perbaikan_laporan' => 'Lulus Tanpa Pebaikan Laporan',
+            'lulus_dengan_perbaikan_laporan' => 'Lulus Dengan Pebaikan Laporan',
+            'mengulang_sidang_tugas_akhir' => 'Mengulang Sidang Tugas Akhir',
+            'tidak_lulus' => 'Tidak Lulus',
+            'pending' => 'Dalam Proses Penilaian'
+        ];
         // Data Berita Acara Sidang TA Semua MHS Sementara
         $beritaAcaraSidangTA = Kehadiran::with(['penjadwalan', 'user'])
         ->whereHas('penjadwalan', function ($query) {
             $query->where('agenda', 'sidang'); // Ambil hanya data sidang TA
         })
         ->get()
-        ->map(function ($item) {
+        ->map(function ($item) use($statusMap) {
             if ($item->penjadwalan && $item->penjadwalan->tanggal) {
                 $item->penjadwalan->translatedFormat = Carbon::parse($item->penjadwalan->tanggal)->translatedFormat('d F Y');
             }
@@ -119,8 +137,11 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
             ? Carbon::parse($item->batas_revisi)->translatedFormat('d F Y')
             : null;
             
+            // Format status kelulusan untuk tampilan
+            $item->status_kelulusan_formatted = $statusMap[$item->status_kelulusan] ?? 'Unknown'; // Format status kelulusan untuk tampilan
             return $item;
         });
+
 
         // Teruskan $beritaAcaraSidangTA ke view rekap
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.RekapBeritaAcara.RekapBeritaAcaraSidangTA', compact('beritaAcaraSidangTA'));

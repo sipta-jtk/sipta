@@ -31,7 +31,7 @@
                             <th class="w-10">KoTA</th>
                             <th class="w-20">NIM</th>
                             <th class="w-20">Nama Mahasiswa</th>
-                            <th class="w-15">Tanggal</th>
+                            <th class="w-17">Tanggal</th>
                             <th class="w-15">Ruangan</th>
                             <th class="w-10">Sesi</th>
                             <th class="w-10">Status Kehadiran</th>
@@ -51,16 +51,17 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
+                                        <button class="btn btn-success btn-md my-1 w-100" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Tidak Hadir</button>
+                                        <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Tidak Hadir</button>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">
                                     @if($item->foto_sidang)
                                         <div class="mb-2">
+                                            <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
                                                 {{ \Illuminate\Support\Str::limit(basename($item->foto_sidang), 15) }}
                                             </a>
@@ -78,7 +79,7 @@
                                 </td>
                                 <td>
                                     @if($item->status_kelulusan)
-                                        {{ $item->status_kelulusan }} <!-- Tampilkan status kelulusan jika sudah diisi -->
+                                        {{ $item->status_kelulusan_formatted }} <!-- Tampilkan status kelulusan jika sudah diisi -->
                                     @else
                                         <span class="text-muted">Belum diisi</span> <!-- Tampilkan pesan jika belum diisi -->
                                     @endif

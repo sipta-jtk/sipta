@@ -33,9 +33,9 @@
                             <th class="w-20">Nama Mahasiswa</th>
                             <th class="w-15">Tanggal</th>
                             <th class="w-15">Ruangan</th>
-                            <th class="w-10">Sesi</th>
-                            <th class="w-10">Status Kehadiran</th>
-                            <th class="w-15">Dokumentasi</th>
+                            <th class="w-1">Sesi</th>
+                            <th class="w-1">Status Kehadiran</th>
+                            <th class="w-1">Dokumentasi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,11 +49,11 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-md my-1" disabled style="opacity: 1">Hadir</button>
+                                        <button class="btn btn-success btn-md my-1 w-100" disabled style="opacity: 1">Hadir</button>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-md my-1" disabled style="opacity: 1">Tidak Hadir</button>
+                                        <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Tidak Hadir</button>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1" disabled style="opacity: 1">Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">

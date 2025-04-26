@@ -94,7 +94,7 @@
                                             Isi Status
                                         </button>
                                     @else
-                                        {{ $item->status_kelulusan }}  
+                                        {{ $item->status_kelulusan_formatted }}  
                                     @endif
                                 </td>
                             </tr>
