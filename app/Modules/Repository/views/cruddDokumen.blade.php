@@ -190,10 +190,6 @@
     </div>
     @endif
 
-    @php
-    $prefix = env('PREFIX_URL', 'sipta');
-    @endphp
-
     <!-- Tombol Kembali -->
     <div class="d-flex justify-content-start mb-3">
         <a href="{{ route('Repository.dashboard.kota.mahasiswa', ['id_kota' => $kota->id_kota]) }}" class="btn btn-secondary">
@@ -605,9 +601,12 @@
 </style>
 @stop
 
+
+
 @section('js')
 <script>
     console.log("Laporan TA page loaded.");
+    const prefix = "/{{ env('PREFIX_URL') }}";
 
     // Toggle filter button functionality
     const statusTa = "{{ $status_ta }}";
@@ -656,7 +655,7 @@
                 document.getElementById('editDeskripsi').value = deskripsi;
 
                 // Set form action with dynamic kategori
-                document.getElementById('editForm').action = `/repository/mahasiswa/{{ $kategori }}/${id}`;
+                document.getElementById('editForm').action = `${prefix}/repository/mahasiswa/{{ $kategori }}/${id}`;
 
                 // Handle file display
                 const fileLink = document.getElementById('editFileLink');
@@ -714,7 +713,7 @@
                 document.getElementById('deleteDocumentTitle').textContent = title;
 
                 // Set form action ke route yang sesuai
-                document.getElementById('deleteForm').action = `/repository/mahasiswa/{{ $kategori }}/${id}`;
+                document.getElementById('deleteForm').action = `${prefix}/repository/mahasiswa/{{ $kategori }}/${id}`;
 
                 // Tampilkan modal konfirmasi
                 $('#deleteConfirmationModal').modal('show');
