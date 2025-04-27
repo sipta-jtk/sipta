@@ -47,7 +47,7 @@
                         <div class="col-md-4">
                             <div class="form-group text-secondary">
                                 <label>
-                                    <i class="fas fa-school mr-1"></i> Kategori A
+                                    <i class="fas fa-user mr-1"> KoTa</i> 
                                 </label>
 
                                 <select id="kelompokSelect" class="form-control select2bs4"
@@ -310,9 +310,9 @@
                     var kelompokOptions;
 
                     if (response.length === 0) {
-                        kelompokOptions = '<option value="">Tidak ada kelompok</option>';
+                        kelompokOptions = '<option value="">Tidak ada KoTa</option>';
                     } else {
-                        kelompokOptions = '<option value="">Semua Kelompok</option>'; // Opsi default
+                        kelompokOptions = '<option value="">Semua KoTa</option>'; // Opsi default
                         // Menambahkan opsi ke dropdown
                         kelompokOptions += response.map(function(item) {
                             return `<option value="${item.id_kota}">${item.nama_kota}</option>`;
