@@ -303,12 +303,11 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'text' => '',  // Hapus teks "Notifications"
-            'url' => $prefix . '/user/log-user',
-            'icon' => 'fas fa-bell',  // Ikon lonceng
-            'topnav_right' => true,  // Menampilkan di navbar kanan
-            'label_color' => 'danger',
+            'text' => '',
+            'icon' => 'fas fa-bell',
+            'topnav_right' => true,
             'id' => 'notificationBell',
+            'classes' => 'nav-link',
         ],
         [
             'type' => 'navbar-search',
@@ -690,15 +689,17 @@ return [
         ],
         [
             'text' => 'Notifikasi dan Reminder',
-            'icon' => 'fas fa-fw fa-file',
+            'icon' => 'fas fa-bell',
             'submenu' => [
                 [
                     'text' => 'Edit Template Notifikasi',
-                    'url' => $prefix . '/notification/admin/settingawal',                    
+                    'url' => $prefix . '/notification/admin/settingawal',
+                    'icon' => 'fas fa-pen',                    
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
                     'url' => $prefix . '/api/logAdmin',
+                    'icon' => 'fas fa-clipboard-list',
                     // 'can' => 'admin',
                 ],
             ]

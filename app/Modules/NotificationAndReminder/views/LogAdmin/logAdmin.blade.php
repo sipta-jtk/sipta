@@ -3,9 +3,18 @@
 @section('title', 'Log Notifikasi Admin')
 
 @section('content_header')
-    <h1>Log Notifikasi Admin</h1>
-    @include('NotificationAndReminder.views.modals.log-modal')
-    @include('NotificationAndReminder.views.modals.preferences-modal')
+    <h1 class="mb-3">Log Notifikasi Admin</h1>
+    <!-- <h1>Log Notifikasi Admin</h1> -->
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Notifikasi dan Reminder'],
+                ['url' => '', 'label' => 'Log Notifikasi Admin']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
