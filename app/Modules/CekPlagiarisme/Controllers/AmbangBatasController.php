@@ -48,32 +48,43 @@ class AmbangBatasController extends Controller
             DB::transaction(function () use ($request, $nip, &$response) {
                 $existing = AmbangBatas::where('ambang_batas', $request->ambang_batas)->first();
 
-                AmbangBatas::where('status_ambang_batas', 'digunakan')->update([
-                    'status_ambang_batas' => 'tidak_digunakan'
-                ]);
-
                 if ($existing) {
-                    $existing->update([
-                        'status_ambang_batas' => 'digunakan',
-                        'nip' => $nip,
-                        'updated_at' => now()
-                    ]);
+                    if ($existing->status_ambang_batas !== 'digunakan') {
+                        // Kalau sudah ada, tapi belum digunakan, reset semua
+                        AmbangBatas::where('status_ambang_batas', 'digunakan')->update([
+                            'status_ambang_batas' => 'tidak_digunakan'
+                        ]);
+
+                        // Ubah yang ini jadi digunakan
+                        $existing->update([
+                            'status_ambang_batas' => 'digunakan',
+                            'nip' => $nip,
+                            'updated_at' => now()
+                        ]);
+                    }
                     $response = [
                         'success' => true,
                         'message' => 'Ambang Batas sudah pernah ditambahkan, status diubah menjadi digunakan!',
                         'data' => $existing
                     ];
                 } else {
-                    AmbangBatas::create([
+                    // Kalau tidak ada ambang batas ini, reset semua lalu create baru
+                    AmbangBatas::where('status_ambang_batas', 'digunakan')->update([
+                        'status_ambang_batas' => 'tidak_digunakan'
+                    ]);
+
+                    $new = AmbangBatas::create([
                         'ambang_batas' => $request->ambang_batas,
                         'status_ambang_batas' => 'digunakan',
                         'nip' => $nip,
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+
                     $response = [
                         'success' => true,
-                        'message' => 'Ambang Batas berhasil ditambahkan!',
+                        'message' => 'Ambang Batas baru berhasil ditambahkan!',
+                        'data' => $new
                     ];
                 }
             });
