@@ -84,11 +84,32 @@
                                 <form action="{{ route('presensi.dokumentasi') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
-                                    <div class="mb-2 input-group">
-                                        <div class="custom-file">
-                                            <input type="file" class="form-control-file form-control-sm" name="dokumentasi" id="dokumentasi" accept=".jpg,.jpeg,.png,.pdf">
-                                            <label class="custom-file-label" for="dokumentasi" data-browse="Cari" >Pilih file</label>
-                                        </div>
+                                    <!-- Alert Peringatan -->
+                                    <div class="alert alert-info alert-dismissible">
+                                        <h5><i class="icon fas fa-info-circle"></i> Informasi Penting!</h5>
+                                        <li>Hanya <strong>satu file</strong> yang diperbolehkan</li>
+                                        <li>Format file: <strong>JPG, PNG, atau PDF</strong></li>
+                                        <li>Ukuran maksimal: <strong>5MB</strong></li>
+                                        <li>File sebelumnya akan diganti jika upload baru</li>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dokumentasi{{ $item->id_kehadiran }}" class="btn btn-default btn-block text-left" id="fileLabel{{ $item->id_kehadiran }}">
+                                            <i class="fas fa-paperclip mr-2"></i>
+                                            @if($item->foto_sidang)
+                                                {{ basename($item->foto_sidang) }}
+                                            @else
+                                                Pilih file...
+                                            @endif
+                                        </label>
+                                        <input type="file" 
+                                            class="d-none" 
+                                            name="dokumentasi" 
+                                            id="dokumentasi{{ $item->id_kehadiran }}"
+                                            accept=".jpg,.jpeg,.png,.pdf" 
+                                            required>
+                                        <small class="form-text text-muted">
+                                            Klik area di atas untuk memilih file
+                                        </small>
                                     </div>
                                     <div class="d-flex pt-3 justify-content-end">
                                         <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"
@@ -112,4 +133,19 @@
 @stop
 
 @section('js')
+    <script>
+    // Fungsi untuk semua file input
+    function handleFileInput() {
+        document.querySelectorAll('input[type="file"].d-none').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.previousElementSibling;
+                const fileName = this.files[0]?.name || 'Pilih file...';
+                label.innerHTML = `<i class="fas fa-paperclip mr-2"></i>${fileName}`;
+            });
+        });
+    }
+
+    // Jalankan saat modal terbuka
+    $(document).on('shown.bs.modal', '.modal', handleFileInput);
+    </script>
 @stop
