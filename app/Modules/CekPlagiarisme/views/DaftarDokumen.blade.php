@@ -59,12 +59,6 @@
                 <form id="uploadForm">
                     @csrf
 
-                    <!-- Penulis -->
-                    <div class="form-group">
-                        <label for="penulisDokumen">Penulis</label>
-                        <input type="text" class="form-control" id="penulisDokumen" name="penulis" placeholder="Masukkan nama penulis" required>
-                    </div>
-
                     <!-- Judul Dokumen -->
                     <div class="form-group">
                         <label for="judulDokumen">Judul Dokumen</label>
@@ -103,7 +97,7 @@
 
             <!-- Footer -->
             <div class="modal-footer d-flex justify-content-end">
-            <button type="button" class="btn btn-danger" id="batalUploadBtn" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="batalUploadBtn" data-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-success" id="openConfirmBtn">Lanjutkan</button>
             </div>
 
@@ -128,7 +122,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-7">
-                        <p><strong>Penulis:</strong> <span id="penulisPreview"></span></p>
+                        <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
@@ -143,8 +137,8 @@
 
             <!-- Footer -->
             <div class="modal-footer d-flex justify-content-end">
-            <button type="button" class="btn btn-danger" id="backToUploadBtn">Kembali</button>
-            <button type="button" class="btn btn-success" id="finalUploadBtn">Unggah</button>
+                <button type="button" class="btn btn-danger" id="backToUploadBtn">Kembali</button>
+                <button type="button" class="btn btn-success" id="finalUploadBtn">Unggah</button>
             </div>
 
         </div>
@@ -156,10 +150,10 @@
 
 @section('js')
 <style>
-.modal-body {
-    overflow-y: auto;
-    max-height: calc(100vh - 200px);
-}
+    .modal-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+    }
 </style>
 
 <script src="https://apis.google.com/js/api.js"></script>
@@ -174,45 +168,60 @@
 <meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
-// Google Picker Setup
-var clientId = '22453178479-2lelvpruokcgqqat527ce5sbk9glld4f.apps.googleusercontent.com';
-var developerKey = 'AIzaSyCfPOTwZ8_N2Nzpfagl-JszIBkrN0xfYuk';
-var scope = ['https://www.googleapis.com/auth/drive.file'];
-var pickerApiLoaded = false;
-var oauthToken = '';
+    // Google Picker Setup
+    var clientId = '22453178479-2lelvpruokcgqqat527ce5sbk9glld4f.apps.googleusercontent.com';
+    var developerKey = 'AIzaSyCfPOTwZ8_N2Nzpfagl-JszIBkrN0xfYuk';
+    var scope = ['https://www.googleapis.com/auth/drive.file'];
+    var pickerApiLoaded = false;
+    var oauthToken = '';
 
-function onApiLoad() {
-    gapi.load('auth', {'callback': onAuthApiLoad});
-    gapi.load('picker', {'callback': onPickerApiLoad});
-}
-function onAuthApiLoad() {
-    gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
-}
-function onPickerApiLoad() { pickerApiLoaded = true; }
-function handleAuthResult(authResult) {
-    if (authResult && !authResult.error) {
-        oauthToken = authResult.access_token;
-        createPicker();
+    function onApiLoad() {
+        gapi.load('auth', {
+            'callback': onAuthApiLoad
+        });
+        gapi.load('picker', {
+            'callback': onPickerApiLoad
+        });
     }
-}
-function createPicker() {
-    if (pickerApiLoaded && oauthToken) {
-        var picker = new google.picker.PickerBuilder()
-            .enableFeature(google.picker.Feature.NAV_HIDDEN)
-            .setOAuthToken(oauthToken)
-            .addView(google.picker.ViewId.DOCS)
-            .setDeveloperKey(developerKey)
-            .setCallback(pickerCallback)
-            .build();
-        picker.setVisible(true);
+
+    function onAuthApiLoad() {
+        gapi.auth.authorize({
+            client_id: clientId,
+            scope: scope,
+            immediate: false
+        }, handleAuthResult);
     }
-}
-function pickerCallback(data) {
-    if (data.action === google.picker.Action.PICKED) {
-        var fileName = data.docs[0].name;
-        $('#namaFileTerpilih').text(fileName);
+
+    function onPickerApiLoad() {
+        pickerApiLoaded = true;
     }
-}
+
+    function handleAuthResult(authResult) {
+        if (authResult && !authResult.error) {
+            oauthToken = authResult.access_token;
+            createPicker();
+        }
+    }
+
+    function createPicker() {
+        if (pickerApiLoaded && oauthToken) {
+            var picker = new google.picker.PickerBuilder()
+                .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                .setOAuthToken(oauthToken)
+                .addView(google.picker.ViewId.DOCS)
+                .setDeveloperKey(developerKey)
+                .setCallback(pickerCallback)
+                .build();
+            picker.setVisible(true);
+        }
+    }
+
+    function pickerCallback(data) {
+        if (data.action === google.picker.Action.PICKED) {
+            var fileName = data.docs[0].name;
+            $('#namaFileTerpilih').text(fileName);
+        }
+    }
 
 
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
@@ -410,7 +419,7 @@ function pickerCallback(data) {
         onApiLoad();
     });
 
-    
+
 
     function getStatusBadge(persentase, ambangBatas) {
         if (persentase === null) {
@@ -431,184 +440,179 @@ function pickerCallback(data) {
     }
 
     function resetUploadForm() {
-    $('#penulisDokumen').val('');
-    $('#judulDokumen').val('');
-    $('#dokumenFile').val('');
-    $('#namaFileTerpilih').text('Tidak ada file');
-    $('#judulCounter').text('0/20 kata');
+        $('#judulDokumen').val('');
+        $('#dokumenFile').val('');
+        $('#namaFileTerpilih').text('Tidak ada file');
+        $('#judulCounter').text('0/20 kata');
     }
 
 
     // Validasi real-time + counter + enable/disable tombol Unggah
-$('#judulDokumen').on('input', function() {
-    var judul = $(this).val().trim();
-    var jumlahKata = judul.length > 0 ? judul.split(/\s+/).length : 0;
+    $('#judulDokumen').on('input', function() {
+        var judul = $(this).val().trim();
+        var jumlahKata = judul.length > 0 ? judul.split(/\s+/).length : 0;
 
-    // Update counter
-    if ($('#judulCounter').length === 0) {
-        $('#judulDokumen').after('<small id="judulCounter" class="form-text text-muted mt-1"></small>');
-    }
-    $('#judulCounter').text(jumlahKata + '/20 kata');
+        // Update counter
+        if ($('#judulCounter').length === 0) {
+            $('#judulDokumen').after('<small id="judulCounter" class="form-text text-muted mt-1"></small>');
+        }
+        $('#judulCounter').text(jumlahKata + '/20 kata');
 
-    // Validasi jumlah kata
-    if (jumlahKata > 20) {
-        $('#judulError').removeClass('d-none'); // Tampilkan pesan error
-        $('#judulCounter').addClass('text-danger').removeClass('text-muted'); // Counter jadi merah
-        $('#judulDokumen').addClass('is-invalid'); // Input merah
-        $('#openConfirmBtn').prop('disabled', true);
-    } else {
-        $('#judulError').addClass('d-none'); // Sembunyikan pesan error
-        $('#judulCounter').removeClass('text-danger').addClass('text-muted'); // Counter normal
-        $('#judulDokumen').removeClass('is-invalid'); // Input normal
-        $('#openConfirmBtn').prop('disabled', false);
-    }
-});
-
-$('#dokumenFile').on('change', function() {
-    var fileName = $(this).val().split('\\').pop();
-    $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
-});
-
-let pdfFile, pdfDoc;
-
-// Saat klik "Unggah" pertama
-$('#openConfirmBtn').click(function() {
-    const fileInput = $('#dokumenFile')[0].files[0];
-    const judulInput = $('#judulDokumen').val().trim();
-    const penulisInput = $('#penulisDokumen').val().trim();
-
-    if (!fileInput || !judulInput || !penulisInput) {
-        Swal.fire('Peringatan', 'Silakan isi penulis, judul, dan pilih dokumen.', 'warning');
-        return;
-    }
-
-     // validasi ukuran file
-     var maxFileSize = 15 * 1024 * 1024; // 15 MB
-    if (fileInput.size > maxFileSize) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal mengunggah!',
-            text: 'Ukuran dokumen melebihi batas maksimal 15MB.',
-        });
-        return;
-    }
-
-    if (fileInput.type !== 'application/pdf') {
-        Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
-        return;
-    }
-
-    pdfFile = fileInput;
-
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const typedarray = new Uint8Array(e.target.result);
-        pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-
-        
-
-
-        let kataTotal = await countWords(pdfDoc);
-        $('#jumlahKataPreview').val(kataTotal);
-
-        // Isi field preview
-        $('#penulisPreview').text(penulisInput);
-        $('#judulPreview').text(judulInput);
-        $('#namaFilePreview').text(fileInput.name);
-        $('#ukuranFilePreview').text((fileInput.size / (1024*1024)).toFixed(2) + ' MB');
-        $('#jumlahHalamanPreview').text(pdfDoc.numPages);
-        $('#jumlahKataPreview').text(kataTotal);
-
-        renderThumbnail(pdfDoc);
-
-        // Munculkan modal konfirmasi
-        $('#uploadModal').modal('hide');  // Sembunyikan modal upload
-        $('#confirmModal').modal('show'); // Tampilkan modal konfirmasi
-    };
-    reader.readAsArrayBuffer(fileInput);
-});
-
-
-// Render thumbnail
-function renderThumbnail(pdfDoc) {
-    pdfDoc.getPage(1).then(function(page) {
-        const scale = 1.5;
-        const viewport = page.getViewport({ scale: scale });
-        const canvas = document.getElementById('thumbnailCanvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-        };
-        page.render(renderContext);
-    });
-}
-
-// Hitung jumlah kata
-async function countWords(pdfDoc) {
-    let totalText = '';
-    for (let i = 1; i <= pdfDoc.numPages; i++) {
-        let page = await pdfDoc.getPage(i);
-        let textContent = await page.getTextContent();
-        let strings = textContent.items.map(item => item.str);
-        totalText += strings.join(' ');
-    }
-    return totalText.trim().split(/\s+/).length;
-}
-
-// Final unggah ke server
-$('#finalUploadBtn').click(function() {
-    let formData = new FormData();
-    formData.append('judul', $('#judulDokumen').val());
-    formData.append('penulis', $('#penulisDokumen').val());
-    formData.append('dokumen', pdfFile);
-    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
-    Swal.fire({
-        title: 'Mengunggah...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
+        // Validasi jumlah kata
+        if (jumlahKata > 20) {
+            $('#judulError').removeClass('d-none'); // Tampilkan pesan error
+            $('#judulCounter').addClass('text-danger').removeClass('text-muted'); // Counter jadi merah
+            $('#judulDokumen').addClass('is-invalid'); // Input merah
+            $('#openConfirmBtn').prop('disabled', true);
+        } else {
+            $('#judulError').addClass('d-none'); // Sembunyikan pesan error
+            $('#judulCounter').removeClass('text-danger').addClass('text-muted'); // Counter normal
+            $('#judulDokumen').removeClass('is-invalid'); // Input normal
+            $('#openConfirmBtn').prop('disabled', false);
         }
     });
 
-    $.ajax({
-        url: `${prefixUrl}/cekplagiarisme/process`,
-        method: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
-                location.reload();
+    $('#dokumenFile').on('change', function() {
+        var fileName = $(this).val().split('\\').pop();
+        $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
+    });
+
+    let pdfFile, pdfDoc;
+
+    // Saat klik "Unggah" pertama
+    $('#openConfirmBtn').click(function() {
+        const fileInput = $('#dokumenFile')[0].files[0];
+        const judulInput = $('#judulDokumen').val().trim();
+
+        if (!fileInput || !judulInput) {
+            Swal.fire('Peringatan', 'Silakan isi judul, dan pilih dokumen.', 'warning');
+            return;
+        }
+
+        // validasi ukuran file
+        var maxFileSize = 15 * 1024 * 1024; // 15 MB
+        if (fileInput.size > maxFileSize) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengunggah!',
+                text: 'Ukuran dokumen melebihi batas maksimal 15MB.',
             });
-        },
-        error: function(xhr) {
-            console.error(xhr.responseText);
-            Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
+            return;
         }
+
+        if (fileInput.type !== 'application/pdf') {
+            Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
+            return;
+        }
+
+        pdfFile = fileInput;
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const typedarray = new Uint8Array(e.target.result);
+            pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+
+
+
+
+            let kataTotal = await countWords(pdfDoc);
+            $('#jumlahKataPreview').val(kataTotal);
+
+            // Isi field preview
+            $('#judulPreview').text(judulInput);
+            $('#namaFilePreview').text(fileInput.name);
+            $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
+            $('#jumlahHalamanPreview').text(pdfDoc.numPages);
+            $('#jumlahKataPreview').text(kataTotal);
+
+            renderThumbnail(pdfDoc);
+
+            // Munculkan modal konfirmasi
+            $('#uploadModal').modal('hide'); // Sembunyikan modal upload
+            $('#confirmModal').modal('show'); // Tampilkan modal konfirmasi
+        };
+        reader.readAsArrayBuffer(fileInput);
     });
-});
-
-$('#backToUploadBtn').click(function() {
-    $('#confirmModal').modal('hide');      // Tutup modal konfirmasi
-    $('#uploadModal').modal('show');        // Balik ke modal upload
-});
-
-// Button Batal di Modal Upload
-$('#batalUploadBtn').click(function() {
-    resetUploadForm();
-});
-
-// Button Close Modal Upload (ikon X)
-$('#uploadModal .close').click(function() {
-    resetUploadForm();
-});
 
 
+    // Render thumbnail
+    function renderThumbnail(pdfDoc) {
+        pdfDoc.getPage(1).then(function(page) {
+            const scale = 1.5;
+            const viewport = page.getViewport({
+                scale: scale
+            });
+            const canvas = document.getElementById('thumbnailCanvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            page.render(renderContext);
+        });
+    }
+
+    // Hitung jumlah kata
+    async function countWords(pdfDoc) {
+        let totalText = '';
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+            let page = await pdfDoc.getPage(i);
+            let textContent = await page.getTextContent();
+            let strings = textContent.items.map(item => item.str);
+            totalText += strings.join(' ');
+        }
+        return totalText.trim().split(/\s+/).length;
+    }
+
+    // Final unggah ke server
+    $('#finalUploadBtn').click(function() {
+        let formData = new FormData();
+        formData.append('judul', $('#judulDokumen').val());
+        formData.append('dokumen', pdfFile);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+        Swal.fire({
+            title: 'Mengunggah...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: `${prefixUrl}/cekplagiarisme/process`,
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
+            }
+        });
+    });
+
+    $('#backToUploadBtn').click(function() {
+        $('#confirmModal').modal('hide'); // Tutup modal konfirmasi
+        $('#uploadModal').modal('show'); // Balik ke modal upload
+    });
+
+    // Button Batal di Modal Upload
+    $('#batalUploadBtn').click(function() {
+        resetUploadForm();
+    });
+
+    // Button Close Modal Upload (ikon X)
+    $('#uploadModal .close').click(function() {
+        resetUploadForm();
+    });
 </script>
 @stop
