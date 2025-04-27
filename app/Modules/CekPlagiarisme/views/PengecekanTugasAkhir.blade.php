@@ -27,12 +27,28 @@
 
     <!-- Tampilkan hasil jika ada -->
     @if(isset($percent) && isset($link))
-    <div class="mt-4">
-        <h3>Hasil Pengecekan:</h3>
-        <p><strong>Persentase Plagiarisme:</strong> {{ $percent }}%</p>
-        <p><strong>Referensi:</strong></p>
-        <pre>{{ print_r($link, true) }}</pre>
-    </div>
+        <div class="mt-4">
+            <h3>Hasil Pengecekan:</h3>
+            <p><strong>Persentase Plagiarisme:</strong> {{ $percent }}%</p>
+            <p><strong>Link Laporan:</strong> <a href="{{ $link }}" target="_blank">{{ $link }}</a></p>
+
+            @if(isset($sources) && count($sources) > 0)
+            <div class="mt-3">
+                <h5>Sumber yang Terdeteksi:</h5>
+                <ul class="list-group">
+                    @foreach($sources as $source)
+                    <li class="list-group-item">
+                        <strong>{{ $source['percent'] }}%</strong> - 
+                        <a href="{{ $source['url'] }}" target="_blank">{{ $source['url'] }}</a>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @else
+            <p>Tidak ada sumber yang terdeteksi.</p>
+            @endif
+
+        </div>
     @endif
 
     <!-- Menampilkan error jika terjadi masalah -->
