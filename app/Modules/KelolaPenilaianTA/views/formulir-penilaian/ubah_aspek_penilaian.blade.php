@@ -121,8 +121,8 @@
                     <div class="mb-4 px-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6><strong>Aspek Feedback</strong></h6>
-                            <button type="button" class="btn btn-dark btn-sm" id="addFeedbackRow">
-                                <i class="fa-solid fa-plus"></i>
+                            <button type="button" class="btn btn-primary btn-md my-1" id="addFeedbackRow" title="Tambah Aspek Feedback">
+                                <i class="fas fa-plus text-white"></i>
                             </button>
                         </div>
 
