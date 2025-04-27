@@ -239,8 +239,8 @@ class CekPlagiarismeController extends Controller
             $reportData = json_decode($reportResponse->getBody()->getContents(), true);
 
             $percentage = isset($reportData['data']['report']['percent'])
-            ? number_format($reportData['data']['report']['percent'], 2)
-            : null;
+                ? number_format($reportData['data']['report']['percent'], 2)
+                : null;
 
             $link = "https://plagiarismcheck.org/report/{$textId}";
 
@@ -254,8 +254,6 @@ class CekPlagiarismeController extends Controller
                     ];
                 }
             }
-
-
         } catch (RequestException $e) {
             return back()->withErrors(['error' => 'Gagal menghubungi API PlagiarismCheck.']);
         } catch (\Exception $e) {
