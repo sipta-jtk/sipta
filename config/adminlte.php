@@ -453,11 +453,13 @@ return [
                 [
                     'text' => 'Verifikasi Berkas Seminar 3',
                     'url' => $prefix . '/kelola-pengajuan-berkas/seminar-3',
+                    'icon' => 'fas fa-fw fa-file',
                     'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Verifikasi Berkas Seminar Sidang Akhir',
                     'url' => $prefix . '/kelola-pengajuan-berkas/sidang-akhir',
+                    'icon' => 'fas fa-fw fa-file',
                     'can' => 'koordinator_ta',
                 ],
                 [
