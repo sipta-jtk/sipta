@@ -35,7 +35,7 @@
                             <th style="width: 10%;">Tanggal</th>
                             <th style="width: 8%;">Ruangan</th>
                             <th style="width: 1%;">Sesi</th>
-                            <th style="width: 13%;">Status Kehadiran</th>
+                            <th style="width: 10%;">Status Kehadiran</th>
                             <th style="width: 10%;">Dokumentasi</th>
                             <th style="width: 10%;">Batas Revisi</th>
                             <th style="width: 13%;">Status Kelulusan</th>
@@ -53,11 +53,11 @@
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
-                                        <button class="btn btn-success btn-md my-1 w-100" disabled style="opacity: 1">Hadir</button>
+                                        <span class="text-success font-weight-bold">Hadir</span>
                                     @elseif($item->status_hadir == 'tidak_hadir')
-                                        <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Tidak Hadir</button>
+                                        <span class="text-danger font-weight-bold">Tidak Hadir</span>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
+                                        <span class="text-warning font-weight-bold">Belum Absen</span>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">
