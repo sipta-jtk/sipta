@@ -348,6 +348,7 @@ return [
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-list-ol',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',
                         ],

@@ -12,6 +12,9 @@
 @section('content_header')
 <div class="container">
     <h1>Daftar Pengajuan Dosen Pembimbing</h1>
+    <div class="mt-3">
+        <p>Beranda / <a href="www">Daftar Pengajuan Dosen Pembimbing</a></p>
+    </div>
 </div>
 @stop
 
@@ -19,13 +22,12 @@
 
 {{-- <x-pengajuan-alokasi-pembimbing.table-pengajuan :pengajuan="$pengajuan" /> --}}
 <div class="container">
-    <p>Beranda > <a href="www">Daftar Pengajuan Dosen Pembimbing</a>
-        <div class="justify-content-center">
-            <div class="mr-2">
-                {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
-                <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
-            </div>
+    <div class="justify-content-center">
+        <div class="mr-2">
+            {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
+            <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
         </div>
+    </div>
 </div>
 
 
