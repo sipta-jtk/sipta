@@ -384,7 +384,7 @@ return [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     'can' => 'koordinator_ta',
-                     'icon' => 'fas fa-user'
+                     'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
