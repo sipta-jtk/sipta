@@ -3,6 +3,7 @@
 namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 
 use Carbon\Carbon;
+Carbon::setLocale('id');
 use App\Modules\Controller;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
@@ -27,6 +28,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
     // Ambil pengajuan berdasarkan id_kota
     $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
 
+    if($pengajuan) {
+        $pengajuan->formatted_tanggal_pengajuan = Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('H:i d F Y');
+    }
+
     // Daftar artefak yang harus di-upload
     $namaArtefak = ['FTA 10', 'FTA 10a', 'Proposal Tugas Akhir', 'Presentasi'];
     $artefaks = Artefak::whereIn('nama_artefak', $namaArtefak)->get();
@@ -43,7 +48,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
         $data[] = [
             'nama_artefak' => $artefak->nama_artefak,
-            'status' => $isUploaded ? 'Sudah di-upload' : 'Belum di-upload',
+            'status' => $isUploaded ? 'Sudah diunggah' : 'Belum diunggah',
         ];
 
         if (!$isUploaded) {
@@ -57,7 +62,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
         if (!$exists) {
             $data[] = [
                 'nama_artefak' => $nama,
-                'status' => 'Belum di-upload',
+                'status' => 'Belum diunggah',
             ];
             $adaBelumUpload = true; // Set flag jika ada artefak yang belum di-upload
         }
@@ -71,12 +76,28 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
     public function store(Request $request)
     {
-        VerifikasiBerkasPengajuan::create([
-            'tanggal_pengajuan' => Carbon::now(),
-            'jenis_pengajuan' => 'seminar_3',
-            'id_kota' => Auth::user()->mahasiswa->id_kota,
-            'status_konfirmasi' => 'pending',
-        ]);
+        $idKota = Auth::user()->mahasiswa->id_kota;
+
+        $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
+            ->where('jenis_pengajuan', 'seminar_3')
+            ->first();
+
+        if ($pengajuan) {
+            // Jika pengajuan sudah ada, tidak perlu membuat yang baru
+            $pengajuan->update([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+                'nip' => null,
+                'tanggal_verifikasi' => null,
+            ]);
+        } else{
+            VerifikasiBerkasPengajuan::create([
+                'tanggal_pengajuan' => Carbon::now(),
+                'jenis_pengajuan' => 'seminar_3',
+                'id_kota' => $idKota,
+                'status_konfirmasi' => 'pending',
+            ]);
+        }
 
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
     }
@@ -90,6 +111,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
         $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
             ->where('jenis_pengajuan', 'sidang_akhir')
             ->first();
+
+        if($pengajuan) {
+            $pengajuan->formatted_tanggal_pengajuan = Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('H:i d F Y');
+        }
 
         // Daftar artefak yang harus di-upload
         $namaArtefak = ['FTA 14', 'FTA 14a', 'Laporan Tugas Akhir', 'Presentasi'];
@@ -107,7 +132,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
             $data[] = [
                 'nama_artefak' => $artefak->nama_artefak,
-                'status' => $isUploaded ? 'Sudah di-upload' : 'Belum di-upload',
+                'status' => $isUploaded ? 'Sudah diunggah' : 'Belum diunggah',
             ];
 
             if (!$isUploaded) {
@@ -121,7 +146,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             if (!$exists) {
                 $data[] = [
                     'nama_artefak' => $nama,
-                    'status' => 'Belum di-upload',
+                    'status' => 'Belum diunggah',
                 ];
                 $adaBelumUpload = true; // Set flag jika ada artefak yang belum di-upload
             }
@@ -135,13 +160,27 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 
     public function store_sidang(Request $request)
     {
-        VerifikasiBerkasPengajuan::create([
-            'tanggal_pengajuan' => Carbon::now(),
-            'status_konfirmasi' => 'pending',
-            'jenis_pengajuan' => 'sidang_akhir',
-            'id_kota' => Auth::user()->mahasiswa->id_kota,
-        ]);
-
+        $idKota = Auth::user()->mahasiswa->id_kota;
+        $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
+            ->where('jenis_pengajuan', 'sidang_akhir')
+            ->first();
+        if ($pengajuan) {
+            // Jika pengajuan sudah ada, tidak perlu membuat yang baru
+            $pengajuan->update([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+                'nip' => null,
+                'tanggal_verifikasi' => null,
+            ]);
+        } else {
+            VerifikasiBerkasPengajuan::create([
+                'tanggal_pengajuan' => Carbon::now(),
+                'status_konfirmasi' => 'pending',
+                'jenis_pengajuan' => 'sidang_akhir',
+                'id_kota' => Auth::user()->mahasiswa->id_kota,
+            ]);
+        }
+        
         return redirect()->route('verifikasi-sidang.create')->with('success', 'Pengajuan berhasil diajukan.');
     } //nambah
 }
