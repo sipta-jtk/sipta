@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Smalot\PdfParser\Parser as PdfParser;
+use ZipArchive;
 
 // console::info
 // import this console::info
@@ -173,24 +176,45 @@ class CekPlagiarismeController extends Controller
         $file = $request->file('dokumen');
         $filePath = $file->store('dokumen', 'public');
 
-        // Baca isi file (hanya support txt untuk saat ini)
-        $fileContent = file_get_contents($file->getPathname());
-        if (!$fileContent) {
-            return back()->withErrors(['error' => 'Gagal membaca isi dokumen. Pastikan file berupa teks.']);
-        }
-
         try {
-            $client = new Client();
-            $apiToken = 'iWDfXNb6z9U93jF8zzCxVe6oilFtPYNL';
+            $text = '';
 
-            // Kirim ke plagiarismcheck.org
-            $uploadResponse = $client->post('https://plagiarismcheck.org/api/v1/text', [
+            // Ekstrak teks dari file
+            $extension = $file->getClientOriginalExtension();
+            if ($extension === 'txt') {
+                $text = file_get_contents($file->getPathname());
+            } elseif ($extension === 'pdf') {
+                $parser = new PdfParser();
+                $pdf = $parser->parseFile($file->getPathname());
+                $text = $pdf->getText();
+            } elseif ($extension === 'docx') {
+                $zip = new ZipArchive;
+                if ($zip->open($file->getPathname()) === true) {
+                    $xml = $zip->getFromName('word/document.xml');
+                    $text = strip_tags(str_replace(["</w:p>", "</w:tbl>"], "\n", $xml));
+                    $zip->close();
+                } else {
+                    throw new \Exception("Gagal membaca file DOCX.");
+                }
+            } else {
+                throw new \Exception("Format dokumen tidak didukung untuk ekstraksi teks.");
+            }
+
+            if (empty(trim($text))) {
+                return back()->withErrors(['error' => 'Gagal membaca isi dokumen. Pastikan file memiliki isi teks.']);
+            }
+
+            $client = new Client([
                 'headers' => [
-                    'X-API-TOKEN' => $apiToken
-                ],
+                    'X-API-TOKEN' => 'LHrwX5_0EyVEEOw74qJ4ff1Bah0eNmqM'
+                ]
+            ]);
+
+            // Kirim teks ke PlagiarismCheck API
+            $uploadResponse = $client->post('https://plagiarismcheck.org/api/v1/text', [
                 'form_params' => [
                     'language' => 'en',
-                    'text' => $fileContent,
+                    'text' => $text,
                 ]
             ]);
 
@@ -198,26 +222,38 @@ class CekPlagiarismeController extends Controller
             $textId = $uploadData['data']['text']['id'] ?? null;
 
             if (!$textId) {
-                return back()->withErrors(['error' => 'Gagal mendapatkan ID laporan dari PlagiarismCheck.org.']);
+                throw new \Exception("Gagal mendapatkan ID teks dari API.");
             }
 
-            // Ambil report hasil pengecekan
-            $reportResponse = $client->get("https://plagiarismcheck.org/api/v1/text/report/$textId", [
-                'headers' => [
-                    'X-API-TOKEN' => $apiToken
-                ]
-            ]);
+            // Tunggu 3 detik (opsional, jika perlu delay untuk pemrosesan)
+            sleep(3);
 
+            // Dapatkan hasil report
+            $reportResponse = $client->get("https://plagiarismcheck.org/api/v1/text/report/{$textId}");
             $reportData = json_decode($reportResponse->getBody()->getContents(), true);
-            $percentage = isset($reportData['data']['report']['percent']) 
-                ? number_format($reportData['data']['report']['percent'], 2) 
-                : null;
 
-            // Untuk demo, link kosong karena PlagiarismCheck.org tidak menyediakan link langsung
-            $link = null;
+            $percentage = isset($reportData['data']['report']['percent']) 
+            ? number_format($reportData['data']['report']['percent'], 2) 
+            : null;
+
+            $link = "https://plagiarismcheck.org/report/{$textId}";
+
+            $sources = [];
+
+            if (isset($reportData['data']['report_data']['sources'])) {
+                foreach ($reportData['data']['report_data']['sources'] as $source) {
+                    $sources[] = [
+                        'percent' => $source['percent'],
+                        'url' => $source['source'],
+                    ];
+                }
+            }
+
 
         } catch (RequestException $e) {
-            return back()->withErrors(['error' => 'Gagal menghubungi plagiarismcheck.org: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Gagal menghubungi API PlagiarismCheck.']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
 
         // Simpan ke database
@@ -245,7 +281,7 @@ class CekPlagiarismeController extends Controller
         ]);
 
         // Tampilkan hasil ke view
-        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
+        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link', 'sources'));
     }
 
 
