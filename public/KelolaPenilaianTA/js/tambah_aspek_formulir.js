@@ -57,3 +57,51 @@ $(document).ready(function () {
         $('#aspekFormulirForm').submit();
     });
 });
+
+
+// $(document).ready(function () {
+//     $('#jenisForm').change(function() {
+//         var jenisForm = $(this).val();
+//         if (jenisForm === 'Penilaian') {
+//             $('#tablePenilaian').show();
+//             $('#tableFeedback').hide();
+//         } else if (jenisForm === 'Feedback') {
+//             $('#tablePenilaian').hide();
+//             $('#tableFeedback').show();
+//         }
+//     });
+
+//     $('#addRow').on('click', function () {
+//         var jenisForm = $('#jenisForm').val();
+//         var newRow = '';
+//         if (jenisForm === 'Penilaian') {
+//             newRow = `<tr>
+//                 <td><input type="text" class="form-control" name="kriteria[]" required></td>
+//                 <td><input type="number" class="form-control" name="bobot[]" required></td>
+//                 <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
+//             </tr>`;
+//             $('#aspekPenilaianTable').append(newRow);
+//         } else if (jenisForm === 'Feedback') {
+//             newRow = `<tr>
+//                 <td><input type="text" class="form-control" name="kriteria[]" required></td>
+//                 <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fa-solid fa-minus"></i></button></td>
+//             </tr>`;
+//             $('#aspekFeedbackTable').append(newRow);
+//         }
+//     });
+
+//     $(document).on('click', '.remove-row', function () {
+//         $(this).closest('tr').remove();
+//     });
+
+//     $('#aspekFormulirForm').on('submit', function(e) {
+//         console.log('Form submitted');
+//         // Remove any code that might be preventing form submission
+//     });
+    
+//     // Add a direct click handler to the button
+//     $('.btn-primary').on('click', function() {
+//         console.log('Button clicked');
+//         $('#aspekFormulirForm').submit();
+//     });
+// });

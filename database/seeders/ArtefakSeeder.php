@@ -62,47 +62,5 @@ class ArtefakSeeder extends Seeder
             'kategori_artefak' => 'Dokumen',
             'tenggat_waktu' => '2024-06-30 23:59:00',
         ]);
-
-        Artefak::create([
-            'nama_artefak' => 'Laporan Tugas Akhir',
-            'deskripsi' => 'Dokumen Lengkap Laporan Tugas Akhir',
-            'kategori_artefak' => 'Dokumen',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
-
-        Artefak::create([
-            'nama_artefak' => 'Presentasi',
-            'deskripsi' => 'Presentasi Tugas Akhir',
-            'kategori_artefak' => 'Dokumen',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
-
-        Artefak::create([
-            'nama_artefak' => 'FTA 10',
-            'deskripsi' => 'Bukti Bimbingan Seminar 3',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
-
-        Artefak::create([
-            'nama_artefak' => 'FTA 10a',
-            'deskripsi' => 'Resume Bimbingan Seminar 3',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
-
-        Artefak::create([
-            'nama_artefak' => 'FTA 14',
-            'deskripsi' => 'Bukti Bimbingan Sidang',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
-
-        Artefak::create([
-            'nama_artefak' => 'FTA 14a',
-            'deskripsi' => 'Resume Bimbingan Sidang',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
     }
 }

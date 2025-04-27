@@ -99,10 +99,10 @@
                                   $feedbacks = $detailFeedback->where('id_feedback', $aspek->id_feedback)->where('nip', $dosen->nip);
                               @endphp
                               @if ($feedbacks->isEmpty())
-                                  Feedback belum tersedia.
+                                  <li>Feedback belum tersedia.</li>
                               @else
                                   @foreach ($feedbacks as $feedback)
-                                    {!! $feedback->isi_feedback !!}
+                                      <li>{{ $feedback->isi_feedback }}</li>
                                   @endforeach
                               @endif
                           </ol>

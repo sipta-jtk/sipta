@@ -13,33 +13,40 @@ use Illuminate\Support\Facades\DB;
 Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= FORMULIR PENILAIAN =================
-    Route::prefix('formulir-penilaian')->middleware('auth', 'can:akses-penilaian-koordinator-ta')->group(function () {
-        // Aspek Penilaian
-        Route::get('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek-formulir');
-        Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
-        Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
-
-        // Rubrik Penilaian
-        Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
-        Route::post('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'storeRubrik'])->name('formulir-penilaian.store-rubrik');
-        Route::get('/ubah-rubrik/{idFta}', [FormulirPenilaianController::class, 'ubahFormRubrik'])->name('formulir-penilaian.rubrik.edit');
-        Route::post('/update-rubrik-penilaian', [FormulirPenilaianController::class, 'updateRubrik'])->name('formulir-penilaian.update-rubrik');
-
-        // Detail
-        Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])->name('detail.penilaian');
-        Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])->name('detail.feedback');
-
-        // Formulir Penilaian
+    Route::prefix('formulir-penilaian')->group(function () {
+        // Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian']);
         Route::get('/', [FormulirPenilaianController::class, 'getFormPenilaian'])->name('formulir-penilaian.index');
+        Route::get('/tambah-rubrik-penilaian', [FormulirPenilaianController::class, 'tambahRubrikPenilaian'])->name('formulir-penilaian.tambah-rubrik-penilaian');
+        Route::get('/tambah-aspek-formulir', [FormulirPenilaianController::class, 'tambahAspekFormulir'])->name('formulir-penilaian.tambah-aspek-formulir');
         Route::post('/formulir-penilaian/simpan', [FormulirPenilaianController::class, 'store'])->name('formulir-penilaian.simpan');
+
         Route::get('/ubah-formulir/{id}', [FormulirPenilaianController::class, 'edit'])->name('formulir-penilaian.edit');
         Route::put('/update-formulir/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
+    
+        Route::get('/ubah-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'ubahAspek'])->name('aspek-penilaian.edit');
+        Route::put('/aspek-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('aspek-penilaian.update');
+        Route::put('/update-aspek-penilaian/{id}', [FormulirPenilaianController::class, 'updateAspek'])->name('aspek-penilaian.update');
 
-        // Additional Routes
         Route::get('/get-kriteria/{kodeFTA}', [FormulirPenilaianController::class, 'getKriteriaByKodeFTA']);
+
+        Route::get('/detail-penilaian/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailPenilaian'])
+        ->name('detail.penilaian');
+        Route::get('/detail-feedback/{idFta}/{idProdi}', [FormulirPenilaianController::class, 'viewDetailFeedback'])
+        ->name('detail.feedback');
+
+        Route::post('/tambah-rubrik-penilaian', 
+        [FormulirPenilaianController::class, 'storeRubrik'])
+        ->name('formulir-penilaian.store-rubrik');
         Route::get('/kelola-rubrik', [FormulirPenilaianController::class, 'viewTabelRubrik'])->name('tabelRubrik');
         Route::get('/tambah-rubrik/{idFta}', [FormulirPenilaianController::class, 'tambahFormRubrik'])->name('formulir-penilaian.rubrik.tambah');
+        Route::get('/ubah-rubrik/{idFta}', [FormulirPenilaianController::class, 'ubahFormRubrik'])->name('formulir-penilaian.rubrik.edit');
+        Route::post('/update-rubrik-penilaian', [FormulirPenilaianController::class, 'updateRubrik'])->name('formulir-penilaian.update-rubrik');
     });
+
+
+    // Route yang dikomentari
+    // Route::get('KelolaPenilaianTA/formulir-penilaian/edit', [FormulirPenilaianController::class, 'edit'])->name('formulir-penilaian.edit');
+    // Route::put('formulir-penilaian/{id}', [FormulirPenilaianController::class, 'update'])->name('formulir-penilaian.update');
 
     // ================= MONITORING NILAI MAHASISWA =================
     Route::prefix('monitoring')->middleware('auth', 'can:akses-penilaian-mahasiswa')->group(function () {
@@ -52,7 +59,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
     });
 
    // ================= PENGELOLAAN NILAI =================
-    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->name('kelola.penilaian');;
+    Route::get('/pengelolaan-nilai', [PengelolaanNilaiController::class, 'kelolaNilai'])->middleware(['auth', 'can:akses-penilaian-koordinator-ta']);
 
 
     Route::middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
@@ -70,22 +77,22 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PEMBERIAN FEEDBACK =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
-        Route::get('/{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('pengelolaan-nilai.detail');
-        Route::get('/{id}/masukan/{kota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar'])->name('pengisian.masukan');
+        Route::get('{id}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa']);
+        Route::get('/{id}/masukan/{kota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar']);
         Route::post('/{id}/masukan/{kota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
     });
 
-    // ================= PEMBERIAN NILAI DAN FEEDBACK =================
-    Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
-        Route::get('/{id}/nilai/{kota}', [PemberianNilaiController::class, 'pengisianNilaiSeminar'])->name('pengisian.nilai');
-        Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar'])->name('pengisian.nilai.store');
-        Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiController::class, 'editNilaiSeminar'])->name('pengisian.nilai.edit');
-    });
+        // ================= PEMBERIAN NILAI DAN FEEDBACK =================
+        Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
+            Route::get('/{id}/nilai/{kota}', [PemberianNilaiController::class, 'pengisianNilaiSeminar']);
+            Route::post('/{id}/nilai/{kota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar']);
+            Route::patch('/{id}/nilai/{kota}/edit', [PemberianNilaiController::class, 'editNilaiSeminar']);
+        });
 
     Route::prefix('nilai-sidang')->group(function () {
-        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir'])->name('pengisian.nilai-sidang-akhir');
-        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir'])->name('pengisian.masukan-sidang-akhir');
+        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir']);
+        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir']);
     });
-    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA'])->name('pengisian.nilai-tugas-akhir');
+    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA']);
     
 });

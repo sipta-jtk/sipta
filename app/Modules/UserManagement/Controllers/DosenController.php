@@ -281,4 +281,3 @@ public function updateBulkRole(Request $request)
 }
 
 }
-

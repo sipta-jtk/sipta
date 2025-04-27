@@ -167,23 +167,6 @@ class AlokasiDosenSeeder extends Seeder
                 'catatan' => null, 
                 'tipe_alokasi' => 'pembimbing'
             ],
-            [
-                'id_alokasi' => 20, 
-                'id_pengajuan_pembimbing' => 2, 
-                'nip' => '198104072006041001', 'urutan_prioritas_terpilih' => 1, 
-                'status_alokasi' => 'fix', 
-                'catatan' => null, 
-                'tipe_alokasi' => 'penguji'
-            ],
-            [
-                'id_alokasi' => 21, 
-                'id_pengajuan_pembimbing' => 2, 
-                'nip' => '196904041998031001', 'urutan_prioritas_terpilih' => 2, 
-                'status_alokasi' => 'fix', 
-                'catatan' => null, 
-                'tipe_alokasi' => 'penguji'
-                
-            ]
         ]);
     }
 }

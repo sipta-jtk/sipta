@@ -10,8 +10,6 @@
 
 @section('content')
 
-    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
-
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="3"
@@ -38,10 +36,10 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span class="dosen-name">{{ $d->nama }}</span>
                                         <div class="button-container d-flex justify-content-end">
-                                            <button class="btn btn-sm btn-secondary viewHistory mr-1" type="button" data-toggle="modal" data-target="#historyModal{{$d->nip}}">
+                                            <button class="btn btn-sm btn-secondary viewHistory" type="button" data-toggle="modal" data-target="#historyModal{{$d->nip}}">
                                                 <i class="fas fa-file-alt"></i>
                                             </button>
-                                            <button id="addDosen" class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
+                                            <button class="btn btn-sm btn-primary addDosen" data-name="{{ $d->nama }}">+</button>
                                         </div>
                                     </li>
 
@@ -90,7 +88,7 @@
                         <ul id="prioritasList" class="list-group mt-2">
                             @for ($i = 1; $i <= 5; $i++)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="pr-3 priority-number">{{ $i }}</span>
+                                    <span class="priority-number">{{ $i }}</span>
                                     <span class="priority-name">-</span>
                                     <button class="btn btn-sm btn-danger removeDosen" style="display: none;">X</button>
                                 </li>
@@ -102,8 +100,8 @@
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info mr-3">Sebelumnya</a>
-                    <button type="submit" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }} class="btn btn-info ml-3">Sebelumnya</a>
+                    <button type="submit" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
@@ -131,25 +129,6 @@
 
 <script>
     $(document).ready(function () {
-        // Mengecek apakah mahasiswa sudah memiliki pengajuan
-        $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
-                if (response.hasExistingData || response.Periode === false) {
-                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
-                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
-                    if (response.Periode === false) {
-                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
-                    }
-                    else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
-                    }
-                    if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
-                    }
-                }
-        });
-
         // Menambahkan dosen ke daftar prioritas
         $(".addDosen").click(function () {
             let name = $(this).data("name");

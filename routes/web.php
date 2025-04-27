@@ -99,4 +99,3 @@ Route::put('/update-data/{id}', function ($id, \Illuminate\Http\Request $request
 // })->name('logout');
 
 Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
-

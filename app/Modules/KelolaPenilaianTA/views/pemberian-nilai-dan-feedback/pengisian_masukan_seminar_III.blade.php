@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
+                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
                 ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar III'],
                 ['url' => '', 'label' => 'Masukan Seminar III']
             ]
@@ -45,7 +45,7 @@
         <h3 class="heading-spacing text-center">ISI MASUKAN</h3>
 
         <!-- Form -->
-        <form action="{{ route('kelola.penilaian') }}"><!-- route('feedback.store') method="POST" -->
+        <form action="{{ url('/kelola-penilaian-ta') }}"> <!-- route('feedback.store') method="POST" -->
             @csrf
 
             <!-- Dokumen -->
