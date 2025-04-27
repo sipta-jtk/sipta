@@ -6,6 +6,7 @@
 <h1 class="mb-3 text-left">Dokumen Seminar 1</h1>
 @stop
 
+
 @section('content')
 
 {{-- Navigasi Tab --}}
@@ -61,7 +62,7 @@
                                     <label>Versi</label>
                                     <select class="form-control version-filter">
                                         <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 10; $i++)
+                                        @for ($i = 1; $i <= 15; $i++)
                                             <option value="{{ $i }}">V{{ $i }}</option>
                                             @endfor
                                     </select>
@@ -86,7 +87,7 @@
                 <table class="table table-bordered text-center datatable" data-table="laporan">
                     <thead class="bg-dark text-white">
                         <tr>
-                            <th>No</th>
+                            <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
                             <th>Tanggal Dibuat</th>
@@ -104,7 +105,7 @@
                         @else
                         @foreach ($laporan as $index => $doc)
                         <tr>
-                            <td>{{ $index - 1 }}</td>
+                            <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
@@ -164,7 +165,7 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
                     <div class="d-flex align-items-center">
                         <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuFTA">
+                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuFta">
                             <i class="fas fa-filter"></i>
                         </button>
 
@@ -178,7 +179,7 @@
                     </button>
                 </div>
 
-                <div class="collapse" id="filterMenuFTA">
+                <div class="collapse filter-menu" id="filterMenuFta" data-target="fta">
                     <div class="card mb-3">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -189,28 +190,19 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-code-branch mr-1"></i> Versi
-                                        </label>
-                                        <select class="form-control select2bs4" style="width: 100%;">
-                                            <option selected disabled>Pilih Versi</option>
-                                            @for ($i = 1; $i <= 10; $i++)
-                                                <option value="{{ $i }}">V{{ $i }}</option>
-                                                @endfor
-                                        </select>
-                                    </div>
+                                    <label>Versi</label>
+                                    <select class="form-control version-filter">
+                                        <option value="">Semua</option>
+                                        @for ($i = 1; $i <= 10; $i++)
+                                            <option value="{{ $i }}">V{{ $i }}</option>
+                                            @endfor
+                                    </select>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-calendar-alt mr-1"></i> Tanggal Dibuat
-                                        </label>
-                                        <input type="date" class="form-control" name="tanggal_dibuat">
-                                    </div>
+                                    <label>Tanggal Dibuat</label>
+                                    <input type="date" class="form-control date-filter">
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="form-group text-secondary">
                                         <label>
@@ -228,7 +220,7 @@
                         </div>
 
                         <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary">
+                            <button type="button" class="btn btn-primary apply-filter-btn">
                                 Terapkan
                             </button>
                         </div>
@@ -238,7 +230,7 @@
                 <table class="table table-bordered text-center datatable" data-table="fta">
                     <thead class="bg-dark text-white">
                         <tr>
-                            <th>No</th>
+                            <th class="no-sort">No</th>
                             <th>Kode-FTA</th>
                             <th>Versi</th>
                             <th>Judul</th>
@@ -257,7 +249,7 @@
                         @else
                         @foreach ($fta as $index => $doc)
                         <tr>
-                            <td>{{ $index }}</td>
+                            <td></td>
                             <td>{{ $doc->kode_fta }}</td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
@@ -317,12 +309,12 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
                     <div class="d-flex align-items-center">
                         <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuPP">
+                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuPpt">
                             <i class="fas fa-filter"></i>
                         </button>
 
                         <!-- Length Change untuk PowerPoint -->
-                        <div id="custom-length-pp"></div>
+                        <div id="custom-length-ppt"></div>
                     </div>
 
                     <!-- Tombol Tambah -->
@@ -331,7 +323,7 @@
                     </button>
                 </div>
 
-                <div class="collapse" id="filterMenuPP">
+                <div class="collapse filter-menu" id="filterMenuPpt" data-target="ppt">
                     <div class="card mb-3">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -342,46 +334,24 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-code-branch mr-1"></i> Versi
-                                        </label>
-                                        <select class="form-control select2bs4" style="width: 100%;">
-                                            <option selected disabled>Pilih Versi</option>
-                                            @for ($i = 1; $i <= 10; $i++)
-                                                <option value="{{ $i }}">V{{ $i }}</option>
-                                                @endfor
-                                        </select>
-                                    </div>
+                                    <label>Versi</label>
+                                    <select class="form-control version-filter">
+                                        <option value="">Semua</option>
+                                        @for ($i = 1; $i <= 10; $i++)
+                                            <option value="{{ $i }}">V{{ $i }}</option>
+                                            @endfor
+                                    </select>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-calendar-alt mr-1"></i> Tanggal Dibuat
-                                        </label>
-                                        <input type="date" class="form-control" name="tanggal_dibuat">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-project-diagram mr-1"></i> Kode FTA
-                                        </label>
-                                        <select class="form-control select2bs4" style="width: 100%;">
-                                            <option selected disabled>Pilih Kode FTA</option>
-                                            @for ($i = 1; $i <= 23; $i++)
-                                                <option value="FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">FTA-{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                                @endfor
-                                        </select>
-                                    </div>
+                                    <label>Tanggal Dibuat</label>
+                                    <input type="date" class="form-control date-filter">
                                 </div>
                             </div>
                         </div>
 
                         <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary">
+                            <button type="button" class="btn btn-primary apply-filter-btn">
                                 Terapkan
                             </button>
                         </div>
@@ -391,7 +361,7 @@
                 <table class="table table-bordered text-center datatable" data-table="ppt">
                     <thead class="bg-dark text-white">
                         <tr>
-                            <th>No</th>
+                            <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
                             <th>Tanggal Dibuat</th>
@@ -409,7 +379,7 @@
                         @else
                         @foreach ($powerpoint as $index => $doc)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
@@ -673,23 +643,28 @@
         const prefix = "/{{ env('PREFIX_URL') }}";
         const kategori = '{{ $kategori }}';
 
+        const dataTables = {};
+
         $('.datatable').each(function(index) {
             let tableId = $(this).closest('.tab-pane').attr('id');
             let customLengthId = 'custom-length';
             var tableKey = $(this).data('table');
 
-            // Set custom length ID berdasarkan tab
+            if (!tableKey) {
+                tableKey = tableId || 'table-' + index;
+            }
+
             if (tableId === 'tab-fta') {
                 customLengthId = 'custom-length-fta';
             } else if (tableId === 'tab-pp') {
-                customLengthId = 'custom-length-pp';
+                customLengthId = 'custom-length-ppt';
             }
 
-            $(this).DataTable({
+            dataTables[tableKey] = $(this).DataTable({
                 searching: false,
                 info: false,
-                lengthChange: true, // Length change aktif untuk semua tabel
-                dom: '<"d-none"l>t<"d-flex justify-content-end"ip>', // Paginasi di sebelah kanan
+                lengthChange: true,
+                dom: '<"d-none"l>t<"d-flex justify-content-end"ip>',
                 language: {
                     zeroRecords: "Data tidak ditemukan",
                     lengthMenu: "Tampilkan _MENU_ entri",
@@ -701,35 +676,30 @@
                     }
                 },
                 initComplete: function() {
-                    // Ambil lengthMenu dari tabel ini
                     var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
-
                     var customLengthHtml = `
-                    <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
+                <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
                     <label class="mb-0" for="customLengthSelect">Tampilkan</label>
                     ${lengthMenu.find('select').prop('outerHTML')}
                     <span>data per halaman</span>
-                    </div>
-                    `;
-
-                    // Tempatkan di elemen custom length yang sesuai
+                </div>`;
                     $(`#${customLengthId}`).empty().append(customLengthHtml);
-                }
-            });
 
-            dataTables[tableKey] = $(this).DataTable({
-                searching: true,
-                info: true,
-                lengthChange: true,
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ data per halaman",
-                    paginate: {
-                        first: "<<",
-                        last: ">>",
-                        next: ">",
-                        previous: "<"
-                    },
-                    zeroRecords: "Data tidak ditemukan"
+                    // ⬇⬇⬇ Tambahkan isi No saat init pertama
+                    var api = this.api();
+                    api.on('order.dt search.dt', function() {
+                        api.column(0, {
+                                search: 'applied',
+                                order: 'applied'
+                            })
+                            .nodes()
+                            .each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                    });
+
+                    // ⬇⬇⬇ Jalankan manual untuk pertama kali
+                    api.draw();
                 }
             });
         });
