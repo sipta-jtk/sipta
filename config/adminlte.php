@@ -692,7 +692,7 @@ return [
             'icon' => 'fas fa-bell',
             'submenu' => [
                 [
-                    'text' => 'Edit Template Notifikasi',
+                    'text' => 'Pengaturan Notifikasi',
                     'url' => $prefix . '/notification/admin/settingawal',
                     'icon' => 'fas fa-pen',                    
                 ],
