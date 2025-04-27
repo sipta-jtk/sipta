@@ -5,9 +5,13 @@
 @section('content_header')
 <h1 class="mb-3">Penentuan Ambang Batas</h1>
 <div>
+    @php
+    $prefix = rtrim(config('adminlte.dashboard_url', 'sipta'), '/');
+    @endphp
+
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => url('/' . $prefix), 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Penentuan Ambang Batas']
     ]
     ])
