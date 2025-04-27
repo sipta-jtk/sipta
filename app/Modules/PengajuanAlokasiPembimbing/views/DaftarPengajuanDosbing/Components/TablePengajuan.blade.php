@@ -1,5 +1,5 @@
 @section('content')
-<div class="container">
+<div class="card p-3 container">
     @if (isset($kelompokData) && count($kelompokData) > 0)
     <table id="kesediaanTable" class="table table-bordered table-stripped table-responsive">
         {{-- <table id="myTable" class="table"> --}}

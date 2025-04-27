@@ -34,7 +34,7 @@
         <div class="card-header text-center">
             <h3 class="card-title w-100 mb-0">Tabel Alokasi Pembimbing dan Penguji</h3>
         </div>
-        <div class="table-container">
+        <div class="table-container pr-3 pl-3">
             <table id="alokasiTable" class="table text-center" style="min-width: 1400px;">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
@@ -220,7 +220,7 @@
         <h3 class="card-title w-100 mb-0">Daftar Dosen Pembimbing</h3>
     </div>
     <div class="card-body p-0">
-        <div class="table-container">
+        <div class="table-container pr-3 pl-3">
             <table id="dosenTable" class="table text-center" style="min-width: 600px;">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
@@ -565,7 +565,7 @@ $(document).ready(function () {
             search: "Cari:",
             lengthMenu: "Tampilkan _MENU_ data",
             zeroRecords: "Tidak ada data",
-            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
             paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
         }
     });

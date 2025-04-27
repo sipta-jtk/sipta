@@ -339,6 +339,7 @@ return [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fa-solid fa-rectangle-list',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
@@ -357,6 +358,7 @@ return [
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fas fa-fw fa-file-alt',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Dosen Pembimbing',
@@ -382,6 +384,7 @@ return [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     'can' => 'koordinator_ta',
+                     'icon' => 'fas fa-user'
                 ],
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',

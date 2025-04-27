@@ -12,16 +12,22 @@
 @section('content_header')
 <div class="container">
     <h1>Daftar Pengajuan Dosen Pembimbing</h1>
-    <div class="mt-3">
-        <p>Beranda / <a href="www">Daftar Pengajuan Dosen Pembimbing</a></p>
-    </div>
+    <div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Daftar Pengajuan Dosen Pembimbing']
+    ]
+    ])
+    @endcomponent
+</div>
 </div>
 @stop
 
 @section('content')
 
 {{-- <x-pengajuan-alokasi-pembimbing.table-pengajuan :pengajuan="$pengajuan" /> --}}
-<div class="container">
+<div class="card p-3 container">
     <div class="justify-content-center">
         <div class="mr-2">
             {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
