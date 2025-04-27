@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
 
+use Carbon\Carbon;
+
+Carbon::setLocale('id');
+
 // console::info
 // import this console::info
 use Illuminate\Support\Facades\Log as console;
@@ -48,7 +52,9 @@ class CekPlagiarismeController extends Controller
             return [
                 'id_dokumen' => $item->id_dokumen,
                 'judul' => $item->judul,
-                'waktu' => $item->created_at->format('Y-m-d H:i:s'),
+                'waktu' => $item->created_at
+                    ? Carbon::parse($item->created_at)->translatedFormat('H:i d F Y')
+                    : Carbon::now()->translatedFormat('H:i d F Y'),
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
@@ -209,13 +215,12 @@ class CekPlagiarismeController extends Controller
             ]);
 
             $reportData = json_decode($reportResponse->getBody()->getContents(), true);
-            $percentage = isset($reportData['data']['report']['percent']) 
-                ? number_format($reportData['data']['report']['percent'], 2) 
+            $percentage = isset($reportData['data']['report']['percent'])
+                ? number_format($reportData['data']['report']['percent'], 2)
                 : null;
 
             // Untuk demo, link kosong karena PlagiarismCheck.org tidak menyediakan link langsung
             $link = null;
-
         } catch (RequestException $e) {
             return back()->withErrors(['error' => 'Gagal menghubungi plagiarismcheck.org: ' . $e->getMessage()]);
         }

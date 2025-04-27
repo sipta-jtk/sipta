@@ -22,21 +22,65 @@
 @section('content')
 <section class="content">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between px-3 pt-3">
             @if(auth()->user()->role_user === 'dosen')
-            <div class="form-group ml-auto align-items-right mt-3">
-                <select id="kelompokSelect" class="form-control">
-                </select>
-            </div>
+            <button class="btn btn-primary btn-md" type="button"
+                data-toggle="collapse" data-target="#filterMenu">
+                <i class="fas fa-filter"></i>
+            </button>
             @else(auth()->user()->role_user === 'mahasiswa')
             <div class="form-group ml-auto align-items-right mt-3">
                 <!-- Button Unggah Dokumen -->
-                <button class="btn btn-primary ml-3" id="uploadButton"> + Unggah Dokumen</button>
+                <button class="btn btn-primary ml-3 btn-md" id="uploadButton"> + Unggah Dokumen</button>
             </div>
             @endif
         </div>
+        <div class="collapse" id="filterMenu">
+            <div class="card mx-3 mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-filter mr-2"></i>Filter Data
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group text-secondary">
+                                <label>
+                                    <i class="fas fa-school mr-1"></i> Kategori A
+                                </label>
+
+                                <select id="kelompokSelect" class="form-control select2bs4"
+                                    style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-primary">
+                        Terapkan
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="card-body">
-            <div id="jsGridPlagiarism"></div>
+            <table id="table" class="table table-striped" width="100%">
+                <thead class="sticky-header">
+                    <tr class="bg-dark text-white">
+                        <th style="width:5%;">Id_dokumen</th>
+                        <th style="width:5%;">Nomor</th>
+                        <th style="width:30%;">Judul</th>
+                        <th style="width:15%;">Waktu Pengecekan</th>
+                        <th style="width:20%;">Penulis</th>
+                        <th style="width:10%;">Presentase</th>
+                        <th style="width:10%;">Status</th>
+                        <th style="width:10%;">Catatan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
@@ -148,6 +192,23 @@
 
 @stop
 
+@section('css')
+{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+<link rel="stylesheet"
+    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+
+<style>
+    #table tbody tr {
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #table tbody tr:hover {
+        background-color:rgb(200, 200, 200);
+    }
+</style>
+@stop
+
 @section('js')
 <style>
     .modal-body {
@@ -155,6 +216,11 @@
         max-height: calc(100vh - 200px);
     }
 </style>
+
+<script
+    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script
+    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="https://apis.google.com/js/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
@@ -261,8 +327,6 @@
                 }
             });
         } else {
-            // Jika yang login bukan dosen, bisa tampilkan pesan atau tidak menjalankan AJAX sama sekali
-            console.log("Akses dibatasi hanya untuk dosen");
             $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
         }
     });
@@ -272,11 +336,48 @@
         // Ambil prefix URL dari meta tag yang ada di halaman
         var urlDokumen = `${prefixUrl}/api/cek-plagiarisme`;
 
+        var table = $('#table').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Dokumen tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada dokumen tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            },
+            columnDefs: [{
+                targets: [0],
+                visible: false,
+                searchable: false
+            }],
+            responsive: true,
+            autoWidth: false
+        });
+
+        $('#table tbody').on('click', 'tr', function() {
+            var data = table.row(this).data();
+            if (data) {
+                var idDokumen = data[0]; // ambil id_dokumen dari kolom tersembunyi
+                window.location.href = prefixUrl + "/cek-plagiarisme/" + idDokumen + "/detail-dokumen";
+            }
+        });
+
+
         $.ajax({
             type: "GET",
             url: urlDokumen,
             dataType: "json",
             success: function(response) {
+
+                // Clear dulu sebelum isi
+                table.clear();
+
                 console.log("Data dari API:", response);
 
                 // Sorting berdasarkan waktu secara descending
@@ -294,67 +395,23 @@
                     id_kota: item.id_kota
                 }));
 
-                $("#jsGridPlagiarism").jsGrid({
-                    width: "100%",
-                    height: "600px",
-                    sorting: true,
-                    paging: true,
-                    noDataContent: "Dokumen tidak ditemukan",
-                    rowClick: function(args) {
-                        window.location.href = prefixUrl + "/cek-plagiarisme/" + args.item.id_dokumen + "/detail-dokumen";
-                    },
-                    data: response,
-                    fields: [{
-                            name: "nomor",
-                            type: "number",
-                            title: "Nomor",
-                            width: 50,
-                            align: "center"
-                        },
-                        {
-                            name: "judul",
-                            type: "text",
-                            title: "Judul",
-                            width: 200,
-                            align: "center"
-                        },
-                        {
-                            name: "waktu",
-                            type: "text",
-                            title: "Waktu Pengecekan",
-                            width: 150,
-                            align: "center"
-                        },
-                        {
-                            name: "penulis",
-                            type: "text",
-                            title: "Penulis",
-                            width: 150,
-                            align: "center"
-                        },
-                        {
-                            name: "presentase",
-                            type: "text",
-                            title: "Presentase",
-                            width: 100,
-                            align: "center"
-                        },
-                        {
-                            name: "status",
-                            type: "html",
-                            title: "Status",
-                            width: 150,
-                            align: "center"
-                        },
-                        {
-                            name: "catatan",
-                            type: "html",
-                            title: "Catatan",
-                            width: 150,
-                            align: "center"
-                        }
-                    ]
+                // Tambahkan ke tabel
+                response.forEach(function(item) {
+                    table.row.add([
+                        item.id_dokumen,
+                        item.nomor,
+                        item.judul,
+                        item.waktu,
+                        item.penulis,
+                        item.presentase,
+                        item.status,
+                        item.catatan,
+                        item.id_kota
+                    ]);
                 });
+
+                // Draw ulang tabel
+                table.draw();
 
                 // Fungsi untuk memperbarui jsGrid setelah filter
                 function updateJsGrid(filteredData) {
