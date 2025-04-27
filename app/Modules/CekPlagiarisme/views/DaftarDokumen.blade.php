@@ -31,7 +31,7 @@
             @else(auth()->user()->role_user === 'mahasiswa')
             <div class="form-group ml-auto align-items-right mt-3">
                 <!-- Button Unggah Dokumen -->
-                <button class="btn btn-primary ml-3" id="uploadButton">Unggah Dokumen</button>
+                <button class="btn btn-primary ml-3" id="uploadButton"> + Unggah Dokumen</button>
             </div>
             @endif
         </div>
@@ -45,46 +45,127 @@
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="uploadModalLabel">Unggah Dokumen</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+
+            <!-- Body -->
             <div class="modal-body">
                 <form id="uploadForm">
                     @csrf
+
+                    <!-- Penulis -->
                     <div class="form-group">
-                        <label for="judul">Judul Dokumen</label>
+                        <label for="penulisDokumen">Penulis</label>
+                        <input type="text" class="form-control" id="penulisDokumen" name="penulis" placeholder="Masukkan nama penulis" required>
+                    </div>
+
+                    <!-- Judul Dokumen -->
+                    <div class="form-group">
+                        <label for="judulDokumen">Judul Dokumen</label>
                         <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
                         <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
                     </div>
+
+                    <!-- Pilih Dokumen -->
                     <div class="form-group">
                         <label>Pilih Dokumen</label>
-                        <div class="d-flex">
-                            <input type="file" class="form-control-file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" required>
+                        <div class="d-flex align-items-center">
+                            <label class="btn btn-outline-secondary btn-sm mb-0">
+                                Pilih dokumen dari komputer ini
+                                <input type="file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                            </label>
+                            <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-success btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
-                        </div>
+                    </div>
+
+                    <!-- Pilih dari Google Drive -->
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
+                    </div>
+
+                    <!-- Info Batasan Unggah -->
+                    <div class="form-group">
                         <small class="text-muted">
                             Batasan Unggah <br>
                             Ukuran dokumen maksimal: 15 MB <br>
                             Jenis dokumen yang valid: PDF, DOCX
                         </small>
                     </div>
-                </form>
-            </div>
+
+                </form> <!-- Penutup form di dalam modal-body -->
+            </div> <!-- Penutup modal-body -->
+
+            <!-- Footer -->
             <div class="modal-footer d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" id="previewBtn">Unggah</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-danger" id="batalUploadBtn" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-success" id="openConfirmBtn">Lanjutkan</button>
             </div>
+
+        </div> <!-- Penutup modal-content -->
+    </div> <!-- Penutup modal-dialog -->
+</div> <!-- Penutup modal -->
+
+<!-- Modal Konfirmasi -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Dokumen</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-7">
+                        <p><strong>Penulis:</strong> <span id="penulisPreview"></span></p>
+                        <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
+                        <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
+                        <p><strong>Jumlah Halaman:</strong> <span id="jumlahHalamanPreview"></span></p>
+                        <p><strong>Jumlah Kata:</strong> <span id="jumlahKataPreview"></span></p>
+                    </div>
+                    <div class="col-md-5 text-center">
+                        <canvas id="thumbnailCanvas" style="max-width:100%; border:1px solid #ddd;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer d-flex justify-content-end">
+            <button type="button" class="btn btn-danger" id="backToUploadBtn">Kembali</button>
+            <button type="button" class="btn btn-success" id="finalUploadBtn">Unggah</button>
+            </div>
+
         </div>
     </div>
 </div>
+
+
 @stop
 
 @section('js')
+<style>
+.modal-body {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+</style>
+
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
@@ -93,6 +174,47 @@
 <meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
+// Google Picker Setup
+var clientId = '22453178479-2lelvpruokcgqqat527ce5sbk9glld4f.apps.googleusercontent.com';
+var developerKey = 'AIzaSyCfPOTwZ8_N2Nzpfagl-JszIBkrN0xfYuk';
+var scope = ['https://www.googleapis.com/auth/drive.file'];
+var pickerApiLoaded = false;
+var oauthToken = '';
+
+function onApiLoad() {
+    gapi.load('auth', {'callback': onAuthApiLoad});
+    gapi.load('picker', {'callback': onPickerApiLoad});
+}
+function onAuthApiLoad() {
+    gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
+}
+function onPickerApiLoad() { pickerApiLoaded = true; }
+function handleAuthResult(authResult) {
+    if (authResult && !authResult.error) {
+        oauthToken = authResult.access_token;
+        createPicker();
+    }
+}
+function createPicker() {
+    if (pickerApiLoaded && oauthToken) {
+        var picker = new google.picker.PickerBuilder()
+            .enableFeature(google.picker.Feature.NAV_HIDDEN)
+            .setOAuthToken(oauthToken)
+            .addView(google.picker.ViewId.DOCS)
+            .setDeveloperKey(developerKey)
+            .setCallback(pickerCallback)
+            .build();
+        picker.setVisible(true);
+    }
+}
+function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+        var fileName = data.docs[0].name;
+        $('#namaFileTerpilih').text(fileName);
+    }
+}
+
+
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
@@ -283,94 +405,12 @@
         $('#uploadModal').modal('show');
     });
 
-    // Validasi dan Kirim Form Upload
-    $('#previewBtn').click(function(event) {
-        event.preventDefault();
-
-        var judul = $('#judulDokumen').val();
-        var file = $('#dokumenFile')[0].files[0];
-
-        if (!judul || !file) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Silakan isi semua data dan pilih file sebelum mengunggah!',
-            });
-        }
-
-        let jumlahKata = judul.trim().split(/\s+/).length;
-        if (jumlahKata > 20) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Judul dokumen tidak boleh lebih dari 20 kata!',
-            });
-        }
-
-        var maxFileSize = 15 * 1024 * 1024;
-        if (file.size > maxFileSize) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Gagal mengunggah!',
-                text: 'Ukuran file melebihi batas maksimal 15MB.',
-            });
-        }
-
-        var validExtensions = ['pdf', 'docx'];
-        var fileExtension = file.name.split('.').pop().toLowerCase();
-        if (!validExtensions.includes(fileExtension)) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Gagal mengunggah!',
-                text: 'Hanya dokumen dengan format PDF atau DOCX yang diperbolehkan.',
-            });
-        }
-
-        // Kirim Form via AJAX
-        var formData = new FormData();
-        formData.append('judul', judul);
-        formData.append('dokumen', file);
-        formData.append('_token', $('meta[name="csrf-token"]').attr("content")); // CSRF token
-
-        // Tampilkan popup loading
-        Swal.fire({
-            title: 'Mengunggah dokumen...',
-            text: 'Silakan tunggu proses upload selesai',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        $.ajax({
-            url: `${prefixUrl}/cekplagiarisme/process`,
-            method: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Dokumen berhasil diunggah, silahkan tunggu hasil pengecekan.',
-                    confirmButtonText: 'Tutup',
-                }).then(() => {
-                    $('#uploadModal').modal('hide');
-                    $('#uploadForm')[0].reset();
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal mengunggah!',
-                    text: xhr.responseJSON?.message ?? 'Terjadi kesalahan saat mengunggah dokumen.',
-                });
-            }
-        });
+    // Google Drive Picker
+    $('#uploadGoogleDrive').click(function() {
+        onApiLoad();
     });
+
+    
 
     function getStatusBadge(persentase, ambangBatas) {
         if (persentase === null) {
@@ -389,5 +429,186 @@
             return '<span class="text-muted">Belum ada Catatan</span>';
         }
     }
+
+    function resetUploadForm() {
+    $('#penulisDokumen').val('');
+    $('#judulDokumen').val('');
+    $('#dokumenFile').val('');
+    $('#namaFileTerpilih').text('Tidak ada file');
+    $('#judulCounter').text('0/20 kata');
+    }
+
+
+    // Validasi real-time + counter + enable/disable tombol Unggah
+$('#judulDokumen').on('input', function() {
+    var judul = $(this).val().trim();
+    var jumlahKata = judul.length > 0 ? judul.split(/\s+/).length : 0;
+
+    // Update counter
+    if ($('#judulCounter').length === 0) {
+        $('#judulDokumen').after('<small id="judulCounter" class="form-text text-muted mt-1"></small>');
+    }
+    $('#judulCounter').text(jumlahKata + '/20 kata');
+
+    // Validasi jumlah kata
+    if (jumlahKata > 20) {
+        $('#judulError').removeClass('d-none'); // Tampilkan pesan error
+        $('#judulCounter').addClass('text-danger').removeClass('text-muted'); // Counter jadi merah
+        $('#judulDokumen').addClass('is-invalid'); // Input merah
+        $('#openConfirmBtn').prop('disabled', true);
+    } else {
+        $('#judulError').addClass('d-none'); // Sembunyikan pesan error
+        $('#judulCounter').removeClass('text-danger').addClass('text-muted'); // Counter normal
+        $('#judulDokumen').removeClass('is-invalid'); // Input normal
+        $('#openConfirmBtn').prop('disabled', false);
+    }
+});
+
+$('#dokumenFile').on('change', function() {
+    var fileName = $(this).val().split('\\').pop();
+    $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
+});
+
+let pdfFile, pdfDoc;
+
+// Saat klik "Unggah" pertama
+$('#openConfirmBtn').click(function() {
+    const fileInput = $('#dokumenFile')[0].files[0];
+    const judulInput = $('#judulDokumen').val().trim();
+    const penulisInput = $('#penulisDokumen').val().trim();
+
+    if (!fileInput || !judulInput || !penulisInput) {
+        Swal.fire('Peringatan', 'Silakan isi penulis, judul, dan pilih dokumen.', 'warning');
+        return;
+    }
+
+     // validasi ukuran file
+     var maxFileSize = 15 * 1024 * 1024; // 15 MB
+    if (fileInput.size > maxFileSize) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal mengunggah!',
+            text: 'Ukuran dokumen melebihi batas maksimal 15MB.',
+        });
+        return;
+    }
+
+    if (fileInput.type !== 'application/pdf') {
+        Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
+        return;
+    }
+
+    pdfFile = fileInput;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const typedarray = new Uint8Array(e.target.result);
+        pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+
+        
+
+
+        let kataTotal = await countWords(pdfDoc);
+        $('#jumlahKataPreview').val(kataTotal);
+
+        // Isi field preview
+        $('#penulisPreview').text(penulisInput);
+        $('#judulPreview').text(judulInput);
+        $('#namaFilePreview').text(fileInput.name);
+        $('#ukuranFilePreview').text((fileInput.size / (1024*1024)).toFixed(2) + ' MB');
+        $('#jumlahHalamanPreview').text(pdfDoc.numPages);
+        $('#jumlahKataPreview').text(kataTotal);
+
+        renderThumbnail(pdfDoc);
+
+        // Munculkan modal konfirmasi
+        $('#uploadModal').modal('hide');  // Sembunyikan modal upload
+        $('#confirmModal').modal('show'); // Tampilkan modal konfirmasi
+    };
+    reader.readAsArrayBuffer(fileInput);
+});
+
+
+// Render thumbnail
+function renderThumbnail(pdfDoc) {
+    pdfDoc.getPage(1).then(function(page) {
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale: scale });
+        const canvas = document.getElementById('thumbnailCanvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+        };
+        page.render(renderContext);
+    });
+}
+
+// Hitung jumlah kata
+async function countWords(pdfDoc) {
+    let totalText = '';
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+        let page = await pdfDoc.getPage(i);
+        let textContent = await page.getTextContent();
+        let strings = textContent.items.map(item => item.str);
+        totalText += strings.join(' ');
+    }
+    return totalText.trim().split(/\s+/).length;
+}
+
+// Final unggah ke server
+$('#finalUploadBtn').click(function() {
+    let formData = new FormData();
+    formData.append('judul', $('#judulDokumen').val());
+    formData.append('penulis', $('#penulisDokumen').val());
+    formData.append('dokumen', pdfFile);
+    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+    Swal.fire({
+        title: 'Mengunggah...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: `${prefixUrl}/cekplagiarisme/process`,
+        method: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
+                location.reload();
+            });
+        },
+        error: function(xhr) {
+            console.error(xhr.responseText);
+            Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
+        }
+    });
+});
+
+$('#backToUploadBtn').click(function() {
+    $('#confirmModal').modal('hide');      // Tutup modal konfirmasi
+    $('#uploadModal').modal('show');        // Balik ke modal upload
+});
+
+// Button Batal di Modal Upload
+$('#batalUploadBtn').click(function() {
+    resetUploadForm();
+});
+
+// Button Close Modal Upload (ikon X)
+$('#uploadModal .close').click(function() {
+    resetUploadForm();
+});
+
+
+
 </script>
 @stop
