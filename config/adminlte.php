@@ -462,45 +462,39 @@ return [
                 ],
                 [
                     'text' => 'Koordinator Kelola Pengajuan Jadwal',
-                    // 'url' => 'admin/pages',
                     'icon' => 'fas fa-fw fa-file',
                     'submenu' => [
                         [
                             'text' => 'Pengajuan Jadwal Seminar 3',
                             'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
                             'can' => 'koordinator_ta',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Pengajuan Jadwal Sidang Akhir',
                             'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
                             'can' => 'koordinator_ta',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'icon' => 'far fa-fw fa-file',
                         ],
                     ],
-                    // 'label' => 4,
-                    // 'label_color' => 'success',
                 ],
                 [
                     'text' => 'Dosen Kelola Pengajuan Jadwal',
-                    // 'url' => 'admin/pages',
                     'icon' => 'fas fa-fw fa-file',
                     'submenu' => [
                         [
                             'text' => 'Pengajuan Jadwal Seminar 3',
                             'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
                             'can' => 'akses-dosen-kelola-pengajuan-jadwal',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'icon' => 'far fa-fw fa-file',
                         ],
                         [
                             'text' => 'Pengajuan Jadwal Sidang Akhir',
                             'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
                             'can' => 'akses-dosen-kelola-pengajuan-jadwal',
-                            // 'icon' => 'far fa-fw fa-file',
+                            'icon' => 'far fa-fw fa-file',
                         ],
                     ],
-                    // 'label' => 4,
-                    // 'label_color' => 'success',
                 ],
             ]
         ],
