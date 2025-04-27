@@ -1,202 +1,42 @@
 @extends('adminlte::page')
 
-@section('title', 'Laporan TA - ' . ucfirst($kategori))
-
-@section('content_header')
-<h1 class="text-center">LAPORAN TA - {{ strtoupper($kategori) }}</h1>
+@section('title')
+    @if ($kategori === 'seminar1')
+        Dokumen Seminar 1
+    @elseif ($kategori === 'seminar2')
+        Dokumen Seminar 2
+    @elseif ($kategori === 'seminar3')
+        Dokumen Seminar 3
+    @else
+        Daftar Dokumen
+    @endif
 @stop
 
-@section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<div class="container">
-    <div class="d-flex justify-content-between mb-3">
-        @if ($status_ta === 'mahasiswa_ta')
-        <!-- Tombol Filter -->
-        <button id="toggleFilter" class="btn btn-outline-secondary">
-            <i class="fas fa-filter"></i>
-        </button>
-
-        <!-- Tombol Add -->
-        <div class="ms-auto">
-            @if ($kategori === 'artefak')
-            <a href="{{ route('Subkategori.index', ['kategori' => $kategori]) }}" class="btn btn-success mr-2">
-                + Subkategori
-            </a>
-            @endif
-            <button class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">
-                + Tambah Dokumen
-            </button>
-        </div>
+@section('content_header')
+    <h1 class="mb-3 text-left">
+        @if ($kategori === 'seminar1')
+            Dokumen Seminar 1
+        @elseif ($kategori === 'seminar2')
+            Dokumen Seminar 2
+        @elseif ($kategori === 'seminar3')
+            Dokumen Seminar 3
+        @else
+            Daftar Dokumen
         @endif
-    </div>
+    </h1>
+@stop
 
 
-
-
-    <!-- Form Filter (Hidden by Default) -->
-    <div id="filterOptions" class="card p-3 shadow-sm mb-3" style="display: none;">
-        <form action="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" method="GET">
-            <div class="row g-2">
-                <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Cari Judul atau Versi" value="{{ request('search') }}">
-                </div>
-
-                @if ($kategori === 'artefak')
-                <div class="col-md-3">
-                    <select name="subkategori" class="form-control">
-                        <option value="">-- Pilih Subkategori --</option>
-                        @foreach ($subkategoris as $subkategori)
-                        <option value="{{ $subkategori->id_subkategori }}" {{ request('subkategori') == $subkategori->id_subkategori ? 'selected' : '' }}>
-                            {{ $subkategori->nama_subkategori }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                @endif
-
-                <div class="col-md-3">
-                    <select name="versi" class="form-control">
-                        <option value="">-- Pilih Versi --</option>
-                        @for ($i = 1; $i <= $maxVersion; $i++)
-                            <option value="{{ $i }}" {{ request('versi') == $i ? 'selected' : '' }}>V{{ $i }}</option>
-                            @endfor
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <input type="date" name="tanggal_dibuat" class="form-control" value="{{ request('tanggal_dibuat') }}">
-                </div>
-
-                <div class="col-md-3 d-flex">
-                    <button type="submit" class="btn btn-filter w-50 me-2">
-                        <i class="fas fa-filter"></i> Filter
-                    </button>
-                    <a href="{{ route('Repository.index.kota', ['id_kota' => $kota->id_kota, 'kategori' => $kategori]) }}" class="btn btn-reset w-50 me-2">
-                        <i class="fas fa-undo"></i> Reset
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+@section('content')
+<!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
+    @if ($kategori === 'seminar1')
+        @include('Repository.views.cardSeminar1')
+    @elseif ($kategori === 'seminar2')
+        @include('Repository.views.seminar2')
+    @elseif ($kategori === 'seminar3')
+        @include('Repository.views.seminar3')
     @endif
 
-    @if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    @endif
-
-    <table class="table table-bordered text-center">
-        <thead class="table-light">
-            <tr>
-                <th>No</th>
-                @if ($kategori === 'fta')
-                <th>Kode FTA</th>
-                @endif
-                <th>Versi</th>
-                <th>Judul</th>
-                @if ($kategori === 'artefak')
-                <th>Subkategori</th>
-                @endif
-                <th>Tanggal Dibuat</th>
-                <th>Terakhir Diedit</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($dokumen->isEmpty())
-            <tr>
-                <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                    <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                </td>
-            </tr>
-            @else
-            @foreach ($dokumen as $index => $doc)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                @if ($kategori === 'fta')
-                <td>{{ $doc->kode_fta }}</td>
-                @endif
-                <td>{{ $doc->versi }}</td>
-                <td>
-                    <a href="#" class="document-title"
-                        data-id="{{ $doc->id_dokumen }}"
-                        data-judul="{{ $doc->judul }}"
-                        data-file="{{ $doc->file_path }}"
-                        data-deskripsi="{{ $doc->deskripsi }}"
-                        data-toggle="modal"
-                        data-target="#detailDocumentModal">
-                        {{ $doc->judul }}
-                    </a>
-                </td>
-                @if ($kategori === 'artefak')
-                <td>{{ $doc->subkategori->nama_subkategori }}</td>
-                @endif
-
-                <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
-                <td>
-                    @if ($status_ta === 'mahasiswa_ta')
-                    <!-- Edit button -->
-                    <button class="btn btn-sm btn-outline-primary edit-btn"
-                        data-id="{{ $doc->id_dokumen }}"
-                        data-judul="{{ $doc->judul }}"
-                        data-versi="{{ $doc->versi }}"
-                        data-deskripsi="{{ $doc->deskripsi }}"
-                        data-file="{{ $doc->file_path }}"
-                        data-toggle="modal" data-target="#editDocumentModal">
-                        <i class="fas fa-edit"></i>
-                    </button>
-
-                    <!-- Delete button -->
-                    <button class="btn btn-sm btn-outline-danger delete-btn"
-                        data-id="{{ $doc->id_dokumen }}"
-                        data-judul="{{ $doc->judul }}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-
-                    <!-- Download button -->
-                    <a href="#" class="btn btn-sm btn-outline-success download-btn"
-                        data-id="{{ $doc->id_dokumen }}"
-                        data-judul="{{ $doc->judul }}"
-                        data-toggle="modal"
-                        data-target="#downloadConfirmationModal">
-                        <i class="fas fa-download"></i>
-                    </a>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
-            @endif
-        </tbody>
-    </table>
-
-
-    <!-- Pagination -->
-    @if(method_exists($dokumen, 'links'))
-    <div class="d-flex justify-content-center">
-        {{ $dokumen->links() }}
-    </div>
-    @endif
-
-    <!-- Tombol Kembali -->
-    <div class="d-flex justify-content-start mb-3">
-        <a href="{{ route('Repository.dashboard.kota.mahasiswa', ['id_kota' => $kota->id_kota]) }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
-    </div>
-</div>
 
 <!-- Modal Tambah Dokumen -->
 <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
