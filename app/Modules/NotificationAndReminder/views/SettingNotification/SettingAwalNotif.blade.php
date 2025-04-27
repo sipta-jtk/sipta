@@ -3,16 +3,26 @@
 @section('title', 'Setting Notification')
 
 @section('content_header')
-    <h1>Pengaturan Notifikasi</h1>
+    <h1 class="mb-3">Pengaturan Pola Notifikasi</h1>
     @include('NotificationAndReminder.views.modals.log-modal')
     @include('NotificationAndReminder.views.modals.preferences-modal')
+
+    <div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+            ['url' => '', 'label' => 'Pengaturan Pola Notifikasi']
+        ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
     {{-- Formulir Input Notifikasi --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Tambah Template Notifikasi</h3>
+            <h3 class="card-title">Tambah Pola Notifikasi</h3>
         </div>
         <div class="card-body">
             <form action="{{ route('notifikasi.store') }}" method="POST">
@@ -26,18 +36,20 @@
                     <x-adminlte-select name="jenis_notifikasi" id="jenis_notifikasi" required>
                         <option value="" disabled selected>Pilih Jenis Notifikasi</option>
                         <option value="pemberitahuan">Pemberitahuan</option>
-                        <option value="reminder">Reminder</option>
+                        <option value="reminder">Pengingat</option>
                     </x-adminlte-select>
                 </div>
                 <div class="form-group">
-                    <label for="isi_in_apps">Template Notifikasi In Apps</label>
+                    <label for="isi_in_apps">Pola Notifikasi Pada Aplikasi</label>
                     <x-adminlte-textarea name="isi_in_apps" id="isi_in_apps" rows=4 placeholder="Masukkan isi template untuk notifikasi In Apps" required></x-adminlte-textarea>
                 </div>
                 <div class="form-group">
-                    <label for="isi_in_email">Template Notifikasi In Email</label>
+                    <label for="isi_in_email">Pola Notifikasi Pada Email</label>
                     <x-adminlte-textarea name="isi_in_email" id="isi_in_email" rows=4 placeholder="Masukkan isi template untuk notifikasi In Email" required></x-adminlte-textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
             </form>
         </div>
     </div>
@@ -45,17 +57,17 @@
     {{-- Tabel Daftar Notifikasi --}}
     <div class="card mt-4">
         <div class="card-header">
-            <h3 class="card-title">Daftar Template Notifikasi</h3>
+            <h3 class="card-title">Daftar Pola Notifikasi</h3>
         </div>
         <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
+            <table id="table" class="table table-striped" width="100%">
+                <thead class="sticky-header">
+                    <tr class="bg-dark text-white">
                         <th>No</th>
                         <th>Judul Notifikasi</th>
                         <th>Jenis Notifikasi</th>
-                        <th>Template In Apps</th>
-                        <th>Template In Email</th>
+                        <th>Pola Pada Aplikasi</th>
+                        <th>Pola Pada Email</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -71,8 +83,9 @@
                         @include('NotificationAndReminder.views.modals.edit-notifikasi', ['notifikasi' => $notifikasi])
 
                         <!-- Tombol untuk menampilkan alert konfirmasi -->
-                        <button type="button" class="btn btn-danger btn-sm" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').show()">Hapus</button>
-
+                        <a title="Hapus" class="btn btn-danger btn-sm my-1 mx-1" onclick="$('#alert-delete-{{ $notifikasi->id_template_notifikasi }}').show()" style="cursor: pointer;">
+                            <i class="fas fa-trash"></i>
+                        </a>
                         <!-- AdminLTE Alert untuk konfirmasi hapus -->
                         <div id="alert-delete-{{ $notifikasi->id_template_notifikasi }}" class="alert-hapus" style="display: none;">
                             <x-adminlte-alert theme="warning" title="Konfirmasi Hapus" dismissable>
@@ -99,6 +112,8 @@
 @section('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <link rel="stylesheet"
+        href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <style>
         .alert-dismissible {
             position: relative;
@@ -118,9 +133,28 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
+
+            var table = $('#table').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
+                    }
+                }
+            });
             // Menangani klik pada ikon lonceng
             $('#notificationBell').on('click', function() {
                 $('#myModal').modal('show');
