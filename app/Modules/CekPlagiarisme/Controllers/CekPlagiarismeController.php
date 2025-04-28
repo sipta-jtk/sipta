@@ -108,9 +108,10 @@ class CekPlagiarismeController extends Controller
         $filePath = $file->store('dokumen', 'public');
 
         // Kirim file ke server Django untuk pengecekan plagiarisme
+        $plagiarismUrl = config('app.plagiarism_url', env('PLAGIARISM_URL'));
         try {
             $client = new Client();
-            $response = $client->post('http://host.docker.internal:8080/filetest/', [
+            $response = $client->post("{$plagiarismUrl}/filetest/", [
                 'multipart' => [
                     [
                         'name'     => 'docfile',

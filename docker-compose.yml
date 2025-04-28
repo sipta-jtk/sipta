@@ -19,19 +19,19 @@ services:
     networks:
       - sipta-dev
   
-  # plagiarism:
-  #   image: najibalimudin/plagiarism-checking:latest
-  #   container_name: sipta-plagiarism-dev
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - cache
-  #     - database
-  #   ports:
-  #     - "8001:9001"
-  #   networks:
-  #     - sipta-dev
+  plagiarism:
+    image: najibalimudin/plagiarism-checking:latest
+    container_name: sipta-plagiarism-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - cache
+      - database
+    ports:
+      - "8001:9001"
+    networks:
+      - sipta-dev
 
   cache:
     image: redis:alpine
