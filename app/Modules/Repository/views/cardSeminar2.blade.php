@@ -954,7 +954,9 @@
                 customLengthId = 'custom-length-ppt';
             } else if (tableId === 'tab-srs') {
                 customLengthId = 'custom-length-srs';
-            }
+            } else if (tableId === 'tab-sdd') {
+                customLengthId = 'custom-length-sdd';
+            } 
 
             dataTables[tableKey] = $(this).DataTable({
                 searching: false,
