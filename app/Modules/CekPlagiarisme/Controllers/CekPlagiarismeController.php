@@ -2,8 +2,6 @@
 
 namespace App\Modules\CekPlagiarisme\Controllers;
 
-set_time_limit(300);
-
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
