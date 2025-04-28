@@ -671,6 +671,7 @@
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
                                 <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-toggle="modal" data-target="#HapusDokumen">
@@ -937,6 +938,24 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function() {
+        $('#addDocumentForm, #editDocumentForm, #deleteDocumentForm').on('submit', function() {
+            saveActiveTab();
+        });
+        // Restore tab setelah reload
+        var activeTabId = localStorage.getItem('seminar1_active_tab');
+        if (activeTabId) {
+            // Nonaktifkan semua tab
+            $('.nav-tabs .nav-link').removeClass('active');
+            $('.tab-pane').removeClass('show active');
+
+            // Aktifkan tab dan tab-pane sesuai yang terakhir
+            $('#' + activeTabId).addClass('active');
+            var targetPaneId = $('#' + activeTabId).attr('data-target');
+            $(targetPaneId).addClass('show active');
+
+            // Optional: hapus localStorage supaya tidak terus-terusan
+            // localStorage.removeItem('seminar1_active_tab');
+        }
 
 
         const dataTables = {};
@@ -956,6 +975,8 @@
                 customLengthId = 'custom-length-ppt';
             } else if (tableId === 'tab-srs') {
                 customLengthId = 'custom-length-srs';
+            } else if (tableId === 'tab-sdd') {
+                customLengthId = 'custom-length-sdd';
             }
 
             dataTables[tableKey] = $(this).DataTable({
@@ -976,11 +997,11 @@
                 initComplete: function() {
                     var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
                     var customLengthHtml = `
-                <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
-                    <label class="mb-0" for="customLengthSelect">Tampilkan</label>
-                    ${lengthMenu.find('select').prop('outerHTML')}
-                    <span>data per halaman</span>
-                </div>`;
+                    <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
+                        <label class="mb-0" for="customLengthSelect">Tampilkan</label>
+                        ${lengthMenu.find('select').prop('outerHTML')}
+                        <span>data per halaman</span>
+                    </div>`;
                     $(`#${customLengthId}`).empty().append(customLengthHtml);
 
                     // ⬇⬇⬇ Tambahkan isi No saat init pertama
@@ -1014,6 +1035,7 @@
 
     // $('.edit-btn').on('click', function() {
     function EditDokumen(id, judul, deskripsi, filePath) {
+        saveActiveTab();
         console.log("Tes2");
         // const button = event.target;
         // var id = button.dataset.id;
@@ -1060,6 +1082,7 @@
 
     // $('.delete-btn').on('click', function() {
     function HapusDokumen(id, judul) {
+        saveActiveTab();
         // var id = $(this).data('id');
         // var judul = $(this).data('judul');
 
@@ -1069,6 +1092,14 @@
         // Set action form delete
         $('#deleteDocumentForm').attr('action', `${prefix}/repository/mahasiswa/${kategori}/${id}`);
     };
+
+    function saveActiveTab() {
+        const activeTabId = $('.nav-tabs .nav-link.active').attr('id'); // Contoh hasil: "tab-fta-tab"
+        if (activeTabId) {
+            localStorage.setItem('seminar1_active_tab', activeTabId);
+        }
+    }
+
 
     // $('.view-btn').on('click', function() {
     function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
@@ -1148,20 +1179,21 @@
 
 
     function TambahDokumen(type, id) {
+        saveActiveTab();
         var title = '';
         var showKodeFTA = false;
 
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan Seminar 2';
+            title = 'Tambah Laporan seminar 2';
         } else if (type === 'btn-tambah-fta') {
-            title = 'Tambah FTA Seminar 2';
+            title = 'Tambah FTA seminar 2';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint Seminar 2';
+            title = 'Tambah PowerPoint seminar 2';
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS Seminar 2';
+            title = 'Tambah SRS seminar 2';
         } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD Seminar 2';
+            title = 'Tambah SDD seminar 2';
         }
 
         $('#TambahDokumen .modal-title').text(title);
