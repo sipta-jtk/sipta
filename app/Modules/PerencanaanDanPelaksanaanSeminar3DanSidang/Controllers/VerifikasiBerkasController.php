@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+Carbon::setLocale('id');
 
 class VerifikasiBerkasController extends Controller
 {
@@ -21,6 +22,10 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'pending')
         ->get();
 
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
@@ -37,6 +42,11 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'tidak_disetujui')
         ->get();
 
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
+
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDitolak', compact('dataKota', 'tipe'));
     }
 
@@ -49,6 +59,11 @@ class VerifikasiBerkasController extends Controller
         ->where('jenis_pengajuan', $jenisPengajuan)
         ->where('status_konfirmasi', 'disetujui')
         ->get();
+
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
@@ -90,9 +105,6 @@ class VerifikasiBerkasController extends Controller
             ]);
         }
     
-        
-
-
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }
