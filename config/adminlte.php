@@ -338,14 +338,17 @@ return [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fa-solid fa-rectangle-list',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                             'can' => 'koordinator_ta',
+                            'icon' => 'fas fa-fw fa-table'
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-list-ol',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',
                         ],
@@ -354,9 +357,11 @@ return [
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fas fa-fw fa-file-alt',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-file-alt',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                             'can' => 'mahasiswa_ta',
                         ],
@@ -364,6 +369,7 @@ return [
                             'text' => 'Formulir Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
                             'can' => 'dosen',
+                            'icon' => 'fas fa-fw fa-file-alt'
                         ],
                     ],
                 ],
@@ -371,16 +377,19 @@ return [
                     'text' => 'Pengelolaan Periode',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                     'can' => 'koordinator_ta',
+                    'icon' => 'fas fa-fw fa-clock'
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     'can' => 'koordinator_ta',
+                     'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-calendar'
                 ],
             ]
         ],
@@ -646,13 +655,13 @@ return [
 
                 [
                     'text' => 'Program Studi',
-                    'url'  => $prefix . '/program-studi',
+                    'url' => $prefix . '/program-studi',
                     'icon' => 'fas fa-school',
                     'can' => 'admin',
                 ],
                 [
                     'text' => 'Kelola KBK',
-                    'url'  => $prefix . '/kelola-kbk',
+                    'url' => $prefix . '/kelola-kbk',
                     'icon' => 'fas fa-sitemap',
                     'can' => 'admin',
                 ],
@@ -670,7 +679,7 @@ return [
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url'  => $prefix . '/kota-saya',
+                    'url' => $prefix . '/kota-saya',
                     'icon' => 'fas fa-info',
                     'can' => 'mahasiswa_kota',
                 ],
