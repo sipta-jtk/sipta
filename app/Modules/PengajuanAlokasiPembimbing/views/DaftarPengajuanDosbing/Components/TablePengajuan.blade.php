@@ -30,10 +30,10 @@
                 <td rowspan="{{ count($kelompok['anggota']) }}">{{ $kelompok['judul'] ?? '-' }}</td>
                 <td rowspan="{{ count($kelompok['anggota']) }}">{{ $kelompok['tanggal'] ?? '-' }}</td>
                 <td rowspan="{{ count($kelompok['anggota']) }}">
-                    <button class="btn-action btn-accept" data-id="{{ $kelompok['id'] }}" data-action="accept">
+                    <button class="btn btn-success mb-3 w-100" data-id="{{ $kelompok['id'] }}" data-action="accept">
                         Terima
                     </button>
-                    <button class="btn-action btn-reject" data-id="{{ $kelompok['id'] }}" data-action="reject">
+                    <button class="btn btn-danger w-100" data-id="{{ $kelompok['id'] }}" data-action="reject">
                         Tolak
                     </button>
                 </td>
@@ -55,15 +55,6 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
 <style>
-    .btn-action {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        display: block;
-        width: 100%;
-    }
-
     .btn-accept {
         background-color: #28a745 !important;
         color: white;
@@ -97,8 +88,10 @@
 
 <script>
     $(document).ready(function() {
-
         function handleAction(kelompokId, actionType) {
+            let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
+            routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
+            
             Swal.fire({
                 title: "Konfirmasi"
                 , text: actionType === "accept" ? "Apakah Anda yakin ingin menerima pengajuan ini?" : "Apakah Anda yakin ingin menolak pengajuan ini?"
@@ -111,7 +104,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/" + kelompokId + "/" + actionType
+                        url: routeUrl
                         , method: "POST"
                         , headers: {
                             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -162,7 +155,7 @@
             });
         }
 
-        $(document).on("click", ".btn-action", function() {
+        $(document).on("click", ".btn", function() {
             let kelompokId = $(this).data("id");
             let actionType = $(this).data("action");
             handleAction(kelompokId, actionType);

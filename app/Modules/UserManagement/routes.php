@@ -84,6 +84,9 @@ Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
         ->name('pengajuan.pisah.kota.terima')
         ->middleware('can:koordinator_ta');
+Route::patch('/pengajuan-pisah-kota/{id}/tolak', [PengajuanPisahKoTAController::class, 'tolak'])
+        ->name('pengajuan.pisah.kota.tolak')
+        ->middleware('can:koordinator_ta');
 
 
 Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
