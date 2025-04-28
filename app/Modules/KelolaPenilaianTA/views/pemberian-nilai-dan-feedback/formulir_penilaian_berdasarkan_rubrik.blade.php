@@ -23,14 +23,16 @@
     <div class="card p-4">
         <div class="row">
             <!-- Kode FTA -->
+            {{ Log::info(json_encode($detailInformasiFta->first())) }}
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->nama_fta ?? '00') }}</span>
+                <span>{{ ($detailInformasiFta->first()?->nama_fta) }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
+                {{-- TBD perbaiki tanggal --}}
                 <span>{{ $keteranganUmumPenilaian->first()?->tanggal }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -120,7 +122,6 @@
             @if($isEdit)
                 @method('PATCH')
             @endif
-            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="table-container">
                     <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
@@ -174,14 +175,10 @@
                 </div>
             </div>
 
-            <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
-                        Simpan draft
-                    </button>
-                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
-                        Selanjutnya
+                    <button type="submit" class="btn btn-warning">
+                        Simpan
                     </button>
                 </div>
             </div>

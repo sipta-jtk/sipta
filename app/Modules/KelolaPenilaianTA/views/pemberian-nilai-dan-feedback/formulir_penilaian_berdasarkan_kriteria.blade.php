@@ -122,7 +122,6 @@
             @else
                 @method('POST')
             @endif
-            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -169,16 +168,9 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <div class="row mt-0">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
-                        Simpan draft
-                    </button>
-                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
-                        Selanjutnya
-                    </button>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-warning">
+                Simpan
+            </button>
         </form>
     </div>
 @stop

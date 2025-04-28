@@ -120,7 +120,7 @@ class PemberianNilaiController extends Controller
     {
         $nip = auth()->user()->username;
         $action = $request->form_action;
-        $nilai = $request->except('_token', '_method', 'form_action');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -142,12 +142,7 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -159,7 +154,7 @@ class PemberianNilaiController extends Controller
     {
         $nip = auth()->user()->username;
         $action = $request->form_action;
-        $nilai = $request->except('_token', '_method', 'form_action');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
     
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -182,12 +177,9 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            
+            // return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
