@@ -22,20 +22,20 @@
             @csrf
             @method('PUT')
             <div class="table-container">
-                <table id="nilaiAkhirTable" class="table text-center">
+                <table id="nilaiAkhirTable" class="table table-striped table-bordered text-center" width="100%">
                     <thead class="sticky-header">
-                        <tr class="bg-dark text-white">
-                            <th class="bg-dark">No</th>
-                            <th class="bg-dark">Komponen Nilai Akhir</th>
-                            <th class="bg-dark">Bobot (%)</th>
-                            <th class="bg-dark">Sumber Nilai</th>
-                            <th class="bg-dark">Aksi</th>
+                        <tr class="bg-dark text-white text-center">
+                            <th>No</th>
+                            <th>Komponen Nilai Akhir</th>
+                            <th>Bobot (%)</th>
+                            <th>Sumber Nilai</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data as $index => $row)
-                            <tr class="bg-light">
-                                <td class="align-middle">{{ $loop->iteration }}</td>
+                            <tr>
+                                <td class="align-middle"></td>
                                 <td class="align-middle">{{ $row['komponen'] }}</td>
                                 <td class="align-middle">
                                     <input type="number" name="bobot[{{ $row['komponen'] }}]" class="form-control bobot-input" value="{{ $row['bobot'] }}" min="0" max="100" required disabled>
@@ -55,6 +55,11 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Pesan Warning -->
+            <div id="warning-message" class="alert alert-warning d-none mt-3">
+                <ul id="warning-list" class="mb-0"></ul>
             </div>
 
             {{-- Pesan Error --}}
@@ -83,11 +88,15 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/rekapitulasi_nilai.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pengaturan_bobot.js') }}"></script>
 
 @stop

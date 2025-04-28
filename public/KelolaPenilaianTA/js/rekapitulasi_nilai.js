@@ -29,13 +29,14 @@ $(document).ready(function () {
                 previous: "<",
             },
         },
-        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+        dom:
+            "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-5'p>>",
-        initComplete: function() {
+        initComplete: function () {
             $("#infoControls").html($(".dataTables_info"));
             $("#paginationControls").html($(".dataTables_paginate"));
-        }
+        },
     });
 
     $("#toggleFilter").click(function () {
