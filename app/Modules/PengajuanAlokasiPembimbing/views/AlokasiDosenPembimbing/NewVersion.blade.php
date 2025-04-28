@@ -133,7 +133,7 @@
                 </div>
             </div>
             <!-- punya gwejh -->
-            <div class="col border p-0">
+            <div class="col border p-0" style="max-width: 25%; min-width: 25%;">
                 <div style="height: 75vh; overflow: hidden; display: flex; flex-direction: column;">
 
                     <!-- HEADER -->
@@ -142,19 +142,27 @@
                     </div>
 
                     <!-- DATATABLE -->
-                    <div style="flex: 1; overflow-y: auto;">
+                    <div style="flex: 1;">
                         <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
-                            <thead class="bg-dark">
+                            <thead class="bg-dark text-white">
                                 <tr>
-                                    <th>No</th>
+                                    <th></th> <!-- Kolom buat tombol expand -->
                                     <th>Nama Dosen</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @for ($i = 1; $i < 100; $i++)
                                     <tr>
-                                        <td>{{ $i }}</td>
-                                        <td>Mathar Riqzi {{ $i }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary toggle-detail">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span class="badge fw-normal bg-secondary">
+                                                Mathar Riqzi {{ $i }}
+                                            </span>
+                                        </td>
                                     </tr>
                                 @endfor
                             </tbody>
@@ -182,6 +190,49 @@
 
         $(document).ready(function() {
             adjustSidebar();
+            var table = $('#dosenTable').DataTable({
+            responsive: true,
+            paging: true,
+            searching: true,
+            info: true,
+            scrollY: 'calc(75vh - 120px)',
+            scrollCollapse: true
+        });
+
+        $('#dosenTable tbody').on('click', '.toggle-detail', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+
+                row.child.hide();
+                $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                // Buka child row
+                var childContent = `
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>D3</th>
+                                <th>D4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3/7</td>
+                                <td>2/10</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+                row.child(childContent).show();
+                $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
+            }
+        });
         });
 
         $(window).resize(function() {
