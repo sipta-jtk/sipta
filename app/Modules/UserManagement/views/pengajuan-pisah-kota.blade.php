@@ -8,17 +8,13 @@
 
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Daftar Pengajuan</h3>
-    </div>
-
     <div class="card-body rounded-top-start">
-        <table id="datatable" class="table table-borderd">
-            <thead class="bg-primary text-white">
-                <tr>
-                    <th style="width: 50%">Nama Mahasiswa</th>
-                    <th style="width: 30%">KoTA</th>
-                    <th style="width: 20%">Action</th>
+        <table id="pengajuanPisah" class="table table-striped" width="100%">
+            <thead class="sticky-header">
+                <tr class="bg-dark text-white">
+                    <th style="width: 65%">Nama Mahasiswa</th>
+                    <th style="width: 20%">KoTA</th>
+                    <th style="width: 15%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,9 +23,11 @@
                     <td>{{ $item->mahasiswa->user->nama }}</td>
                     <td>{{ $item->kota->nama_kota }}</td>
                     <td>
-                    <a href="{{ route('pengajuan.pisah.kota.show', $item->id_pengajuan) }}" class="btn btn-sm btn-info">
-                        Tinjau <i class="mx-1 fas fa-arrow-circle-right"></i>
-                    </a>
+                        <div>
+                            <a class="btn btn-primary btn-md my-1 w-100" href="{{ route('pengajuan.pisah.kota.show', $item->id_pengajuan) }}" class="btn btn-sm btn-info">
+                                Tinjau<i class="mx-1 my-1 fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -40,22 +38,41 @@
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css"> --}}
+{{-- Add here extra stylesheets --}}
+{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-    <script> console.log("Ini user management bang!"); </script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script>
-    $(document).ready(function() {
-        let table = $('#datatable').DataTable();
+    $(document).ready(function () {
+        const config = {
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            },
+            columnDefs: [
+              {
+                targets: [2],
+                orderable: false
+              }
+            ]
+        };
 
-        // Tambah placeholder di search box
-        $('input[type="search"]').attr('placeholder', 'Cari nama/kota...').addClass('form-control');
+        $('#pengajuanPisah').DataTable(config);
+        $('#pengajuanPisah2').DataTable(config);
     });
     </script>
 @stop
