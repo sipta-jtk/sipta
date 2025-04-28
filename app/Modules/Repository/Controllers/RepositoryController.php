@@ -396,20 +396,32 @@ class RepositoryController extends Controller
         }
     }
 
-    public function list_kelompok_ta()
-    {
-        try {
-            // Ambil daftar kelompok berdasarkan tabel `kota` yang memiliki mahasiswa terkait
-            $kelompok = Kota::join('mahasiswa', 'kota.id_kota', '=', 'mahasiswa.id_kota')
-                ->select('kota.id_kota', 'kota.judul_ta', 'mahasiswa.nim')
-                ->orderBy('kota.id_kota')
-                ->get();
+    public function list_kelompok_ta(Request $request)
+{
+    try {
+        $query = Kota::with(['mahasiswa.user', 'mahasiswa.prodi']) // tambahkan prodi
+            ->whereHas('mahasiswa', function ($q) use ($request) {
+                // Jika ada filter prodi, tambahkan kondisi
+                if ($request->filled('prodi')) {
+                    $q->where('id_prodi', $request->prodi);
+                }
+            })
+            ->select('id_kota', 'judul_ta');
 
-            return view('Repository.views.list_kelompok_ta', compact('kelompok'));
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat daftar kelompok TA: ' . $e->getMessage());
-        }
+        $kelompok = $query->get()
+            ->sortBy(function ($kota) {
+                return optional($kota->mahasiswa->first())->tahun_masuk;
+            });
+
+        return view('Repository.views.list_kelompok_ta', [
+            'kelompok' => $kelompok,
+            'prodiTerpilih' => $request->prodi,
+        ]);
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
+
 
     // Saabiq Muhyiyuddin Aulawi
     public function logAktivitas(Request $request)
