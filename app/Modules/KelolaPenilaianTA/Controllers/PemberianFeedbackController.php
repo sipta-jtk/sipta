@@ -17,6 +17,7 @@ use App\Models\KategoriPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
+use App\Models\Penjadwalan;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -33,7 +34,20 @@ class PemberianFeedbackController extends Controller
     public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        
+
+        $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
+            ->with('penjadwalan', 'mahasiswa.user')
+            ->first();
+
+        // Konversi namaFta ke format database
+        $namaAgenda = $this->konversiNamaAgenda($namaFta);
+
+        // Ambil jadwal langsung filter di query
+        $jadwal = Penjadwalan::where('id_kota', $idKota)
+            ->where('agenda', $namaAgenda)
+            ->select('tanggal', 'start', 'end', 'agenda')
+            ->first();
+       
         // Ambil informasi seminar
         $seminar = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->where('id_prodi', $idProdi)
@@ -58,7 +72,7 @@ class PemberianFeedbackController extends Controller
         $data = [
             'kode_fta' => $seminar->kode_fta ?? null,
             'namaFta' => $namaFtaSlug,
-            // 'tanggal' => $seminar->tanggal_tenggat_pengisian ?? null,
+            // 'tanggal' => $seminar->tanggal_tenggat_pengisian ?? ' - ',
             // 'start' => $mahasiswa->first()->kota->penjadwalan[0]->start ?? null,
             'namaKota' => $mahasiswa->first()->kota->nama_kota ?? null,
             'id_kota' => $idKota,
@@ -76,7 +90,25 @@ class PemberianFeedbackController extends Controller
 
         $data['detailFeedback'] = $detailFeedback;
     
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data', 'keteranganUmumPenilaian', 'keteranganUmumPenilaian', 'jadwal'));
+    }
+
+    // Fungsi untuk konversi nama agenda dari database ke format namaFta
+    private function konversiNamaAgenda($namaFta)
+    {
+        $namaFtaLower = strtolower($namaFta);
+
+        if ($namaFtaLower === 'seminar-i') {
+            return 'seminar_1';
+        } elseif ($namaFtaLower === 'seminar-ii') {
+            return 'seminar_2';
+        } elseif ($namaFtaLower === 'seminar-iii') {
+            return 'seminar_3';
+        } elseif ($namaFtaLower === 'sidang-akhir') {
+            return 'sidang';
+        } else {
+            return null;
+        }
     }
 
     /**
