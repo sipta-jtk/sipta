@@ -178,7 +178,7 @@ class VerifikasiPengajuanJadwalController extends Controller
                     // create kehadiran
                     $mahasiswa = DB::table('kota')
                         ->where('id_kota', $roomInformation->id_kota)
-                        ->select('nim')
+                        ->select('username')
                         ->first();
 
                     if ($mahasiswa){
