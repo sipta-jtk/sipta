@@ -32,3 +32,4 @@ PyPDF2
 python-docx
 gunicorn
 nltk==3.6.2
+python-dotenv
