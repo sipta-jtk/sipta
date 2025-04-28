@@ -7,7 +7,7 @@
         {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
                 ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
             ]
@@ -44,7 +44,7 @@
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         <th colspan="3" style="width: 10%;">Feedback</th>
-                        <th rowspan="2" class="align-middle">Aksi</th>
+                        {{-- <th rowspan="2" class="align-middle">Aksi</th> --}}
                     </tr>
                     <tr class="bg-secondary text-white">
                         <th style="width: 2%;">P1</th>
@@ -77,15 +77,17 @@
                                     <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">{{ $data->kota->nama_kota }}</td>
                                 @endif
                 
-                                {{-- Penguji --}}
                                 @php
                                     $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
                                     while (count($pengujiList) < 3) {
                                         $pengujiList[] = '-';
                                     }
                                 @endphp
+                                {{-- Penguji --}}
                                 @foreach ($pengujiList as $penguji)
-                                    <td>{{ $penguji }}</td>
+                                    @if ($index == 0)
+                                        <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle"> {{ $penguji }}</td>
+                                    @endif
                                 @endforeach
                 
                                 {{-- Nilai --}}
@@ -101,15 +103,21 @@
                 
                                 {{-- Feedback static --}}
                                 @foreach ($nilaiList as $nilai)
-                                    <td>
-                                        <i class="far fa-check-square text-success"></i>
-                                    </td>
+                                    @if ($index == 0)
+                                        <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">
+                                            <i class="far fa-check-square text-success"></i>
+                                        </td>
+                                    @endif
+
+                                    {{-- <td> --}}
+                                        {{-- <i class="far fa-check-square text-success"></i> --}}
+                                    {{-- </td> --}}
                                     {{-- <i class="far fa-square text-muted"></i> Kotak kosong --}}
                                     {{-- <i class="far fa-check-square text-success"></i> Centang hijau --}}
                                 @endforeach
                 
                                 {{-- Aksi --}}
-                                @if ($index == 0)
+                                {{-- @if ($index == 0)
                                     <td rowspan="{{ count($mahasiswaKelompok) }}" class="d-flex flex-column gap-1">
                                         <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
                                         <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
@@ -126,7 +134,7 @@
                                             </form>
                                         @endif
                                     </td>
-                                @endif
+                                @endif --}}
                             </tr>
                         @endforeach
                     @endforeach
