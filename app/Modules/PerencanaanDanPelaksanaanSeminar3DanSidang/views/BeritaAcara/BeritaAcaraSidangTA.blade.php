@@ -62,7 +62,7 @@
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
-                                    @if($item->foto_sidang)
+                                    @if($item->foto_sidang=='')
                                         <div class="mb-2">
                                             <strong>File Terupload:</strong>
                                             <a href="{{ asset('storage/' . $item->foto_sidang) }}" target="_blank">
