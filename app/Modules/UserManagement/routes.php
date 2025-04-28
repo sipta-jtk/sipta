@@ -169,6 +169,8 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
     Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
     Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
+    Route::put('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
+
 
     // route untuk kelola program studi
     Route::get('/program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
