@@ -83,7 +83,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->status_kelulusan == 'lulus_tanpa_perbaikan_laporan')
+                                    @if($item->status_kelulusan == 'pending')
                                         <!-- Tombol untuk membuka modal -->
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalStatusKelulusan{{ $item->id_kehadiran }}">
                                             Isi Status
