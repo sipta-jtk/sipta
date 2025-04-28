@@ -265,7 +265,6 @@ return [
     'register_url' => env('PREFIX_URL', 'sipta') . '/register',
     'password_reset_url' => env('PREFIX_URL', 'sipta') . '/password/reset',
     'password_email_url' => env('PREFIX_URL', 'sipta') . '/password/email',
-    'profile_url' => env('PREFIX_URL', 'sipta') . '/profile',
     'disable_darkmode_routes' => false,
 
     /*
