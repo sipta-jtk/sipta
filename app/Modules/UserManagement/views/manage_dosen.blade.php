@@ -16,44 +16,48 @@
 
 @section('content')
 <!-- Button Tambah Dosen -->
-<div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
 
-<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#uploadExcel">
-    <i class="fa fa-upload"></i> Unggah Excel
-</button>
-
-<a href="{{ route('download.template-dosen') }}" class="btn btn-primary mb-3">
-    <i class="fa fa-download"></i> Unduh Format Excel
-</a>
-
-<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addNewDosen">
-    <i class="fa fa-plus"></i> Tambah Dosen
-</button>
-</div>
 @if(session('successrole'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-<div id="role_section" style="display: none;">
-    <div class="mb-3">
-        <label for="new_role">Pilih Peran Baru:</label>
-        <select id="new_role" class="form-control">
-            <option value="">-- Pilih Peran --</option>
-            <option value="dosen">Dosen</option>
-            <option value="koordinator_ta">Koordinator TA</option>
-        </select>
-    </div>
-    <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
-    <button id="updateRoleButton" class="btn btn-success">Ubah Peran</button>
-    </div>
-</div>
+
 
 <div class="card">
     {{-- <div class="card-header d-flex justify-content-between align-items-left">
     </div> --}}
     <div class="card-body">
+        <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
+
+            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#uploadExcel">
+                <i class="fa fa-upload"></i> Unggah Excel
+            </button>
+            
+            <a href="{{ route('download.template-dosen') }}" class="btn btn-primary mb-3">
+                <i class="fa fa-download"></i> Unduh Format Excel
+            </a>
+            
+            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addNewDosen">
+                <i class="fa fa-plus"></i> Tambah Dosen
+            </button>
+        </div>
+
+        <div id="role_section" style="display: none;">
+            <div class="mb-3">
+                <label for="new_role">Pilih Peran Baru:</label>
+                <select id="new_role" class="form-control">
+                    <option value="">-- Pilih Peran --</option>
+                    <option value="dosen">Dosen</option>
+                    <option value="koordinator_ta">Koordinator TA</option>
+                </select>
+            </div>
+            <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
+            <button id="updateRoleButton" class="btn btn-success">Ubah Peran</button>
+            </div>
+        </div>
+
         <table id="datatable" class="table table-striped">
             <thead class="bg-dark text-white">
                 <tr>
@@ -101,13 +105,13 @@
 
                     <td>    
                         @if($d->status_dosen != 'nonaktif')
-                        <button class="btn btn-danger btn-xs shadow btn-nonaktif-dosen" title="Nonaktif" data-toggle="modal" data-target="#nonAktifDosen" 
+                        <button class="btn btn-danger btn-xs shadow btn-nonaktif-dosen" title="Nonaktifkan Dosen" data-toggle="modal" data-target="#nonAktifDosen" 
                         data-nip="{{ $d->nip }}"
                         data-nama="{{ $d->nama }}">
                         <i class="fas fa-power-off m-1"></i>
                     </button>
                     @else
-                    <button class="btn btn-success btn-xs shadow btn-aktif-dosen" title="Aktif" data-toggle="modal" data-target="#AktifDosen" 
+                    <button class="btn btn-success btn-xs shadow btn-aktif-dosen" title="Aktifkan Dosen" data-toggle="modal" data-target="#AktifDosen" 
                         data-nip="{{ $d->nip }}"
                         data-nama="{{ $d->nama }}">
                         <i class="fas fa-power-off m-1"></i> 
@@ -116,7 +120,7 @@
     
 
                         {{-- Edit Button --}}
-                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-dosen" title="Edit" data-toggle="modal" data-target="#updateDosen" class="bg-purple"
+                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-dosen" title="Edit Data" data-toggle="modal" data-target="#updateDosen" class="bg-purple"
                             data-nip="{{ $d->nip }}"
                             data-nama="{{ $d->nama }}"
                             data-role="{{ $d->role_dosen }}"
@@ -131,7 +135,7 @@
                             
                         </button>
                         @if($d->role_dosen != 'kajur')
-                            <button class="btn btn-xs btn-primary shadow btn-change-role" title="Keys" data-toggle="modal" data-target="#changeRole" class="bg-purple"
+                            <button class="btn btn-xs btn-primary shadow btn-change-role" title="Ubah Peran" data-toggle="modal" data-target="#changeRole" class="bg-purple"
                             data-nip="{{ $d->nip }}"
                             data-nama="{{ $d->nama }}"
                             data-role="{{ $d->role_dosen }}">
@@ -148,63 +152,46 @@
 
             </tbody>
         </table>
-                        {{-- <x-adminlte-modal id="deleteDosen" title="Menghapus Dosen" theme="purple" icon="fa fa-trash" size='lg' disable-animations>
-                            <form action="{{route('dosen.deleteDosen')}}" method="POST">
-                                @csrf
-                                <input type="hidden" name="nip" class="form-control" id="nip-hapus">
-                                <h5>Yakin ingin menghapus dosen atas nama <b> '<span id="nama-dosen"></span>'</b></h5>
-                                <button class="btn btn-danger" type="submit" >Delete</button>
-                            </form>
-                        </x-adminlte-modal> --}}
         
                         <x-adminlte-modal id="updateDosen" title="Mengubah Data Dosen" theme="blue" size='lg' >
                             <form action="{{route('dosen.updateDosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                <div class="row">
                                     <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
-                                        fgroup-class="col-md-6" disable-feedback required/>
+                                        fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" id="nip-update" label="NIP" placeholder="NIP"
-                                            fgroup-class="col-md-6" disable-feedback  readonly   />
-                                    
-                                </div>
-        
-                                <div class="row">
+                                            fgroup-class="col-md" disable-feedback  readonly   />
+
                                     
                                     <x-adminlte-input name="id" id="id_dosen-update" label="ID Dosen" placeholder="ID"
-                                        fgroup-class="col-md-6" disable-feedback  required  />
+                                        fgroup-class="col-md" disable-feedback  required  />
 
-                                        <x-adminlte-input name="kode" label="Kode" id="kode_dosen-update" placeholder="Kode"
-                                        fgroup-class="col-md-6" disable-feedback  required  />
-                                 </div>
-                                <div class="row">
-                                    <x-adminlte-select2 name="id_kbk" label="KBK" id="kbk-update" fgroup-class="col-md-6" required>
+                                        <x-adminlte-input name="kode" label="Kode Dosen" id="kode_dosen-update" placeholder="Kode"
+                                        fgroup-class="col-md" disable-feedback  required  />
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" id="kbk-update" fgroup-class="col-md" required>
                                         <option selected disabled>Pilih KBK ....</option>
                                         @foreach($listkbk as $kbk)
                                         <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
                                     @endforeach
                                 </x-adminlte-select2>
 
-                                {{-- <x-adminlte-select2 name="status_dosen" label="Status" id="status_dosen-update" fgroup-class="col-md-6" required>
+                                {{-- <x-adminlte-select2 name="status_dosen" label="Status" id="status_dosen-update" fgroup-class="col-md" required>
                                     <option selected disabled>Pilih Status ....</option>
                                     <option value="aktif">Aktif</option>
                                     <option value="nonaktif">Non Aktif</option>
 
                             </x-adminlte-select2> --}}
-                                </div>
 
                                 <p class="text-secondary text-md border-bottom">Kontak</p>
-                                <div class="row">
                                     <x-adminlte-input name="no_wa" id="no_whatsapp-update" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
-                                               fgroup-class="col-md-6" disable-feedback  required  />
+                                               fgroup-class="col-md" disable-feedback  required  />
 
                                     <x-adminlte-input name="email" id="email-update" label="Email" placeholder="Email"
-                                            fgroup-class="col-md-6" disable-feedback  required  />
-                                </div>
+                                            fgroup-class="col-md" disable-feedback  readonly />
 
-                                <div class="d-flex pt-3 justify-content-end">
+                                <div class="d-flex justify-content-end">
                                     <x-adminlte-button theme="danger" label="Tutup"
                                     data-dismiss="modal" class="mx-1"/>
                                     <x-adminlte-button theme="success" label="Simpan"
@@ -249,44 +236,35 @@
                             <form action="{{route('dosen.add_new_dosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                <div class="row">
-
                                     <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
-                                    fgroup-class="col-md-6" disable-feedback required/>
+                                    fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
-                                            fgroup-class="col-md-6" disable-feedback  required  />
-                                </div>
+                                            fgroup-class="col-md" disable-feedback  required  />
 
-                                <div class="row">
                                     <x-adminlte-input name="id" label="ID Dosen" placeholder="Misal: AE (sebagai Ardhian Ekawijana)"
-                                        fgroup-class="col-md-6" disable-feedback  required  />
+                                        fgroup-class="col-md" disable-feedback  required  />
                                         <x-adminlte-input name="kode" label="Kode Dosen" placeholder="Misal: KO001N"
-                                        fgroup-class="col-md-6" disable-feedback  required  />
-                                </div>
-                                <div class="row">
-                                    <x-adminlte-select2 name="id_kbk" label="KBK" fgroup-class="col-md-6" required>
+                                        fgroup-class="col-md" disable-feedback  required  />
+                                    <x-adminlte-select2 name="id_kbk" label="KBK" fgroup-class="col-md" required>
                                         <option selected disabled>Pilih KBK ....</option>
                                         @foreach($listkbk as $kbk)
                                         <option value="{{ $kbk->id_kbk }}">{{ $kbk->kbk }}</option>
                                     @endforeach
                                 </x-adminlte-select2>
 
-                                <x-adminlte-select2 name="status_dosen" label="Status" fgroup-class="col-md-6" required>
+                                <x-adminlte-select2 name="status_dosen" label="Status" fgroup-class="col-md" required>
                                     <option selected disabled>Pilih Status ....</option>
                                     <option value="aktif">Aktif</option>
                                     <option value="nonaktif">Non Aktif</option>
 
                             </x-adminlte-select2>
-                            </div>
                             <p class="text-secondary text-md border-bottom">Kontak</p>
 
-                            <div class="row">
                                 <x-adminlte-input name="no_wa" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
-                                            fgroup-class="col-md-6" disable-feedback  required  />
+                                            fgroup-class="col-md" disable-feedback  required  />
                                 <x-adminlte-input name="email" label="Email" placeholder="Email"
-                                            fgroup-class="col-md-6" disable-feedback  required  />
-                            </div>
+                                            fgroup-class="col-md" disable-feedback  required  />
 
                             <div class="d-flex pt-3 justify-content-end">
                                 <x-adminlte-button theme="danger" label="Tutup"
@@ -303,7 +281,7 @@
 
                         <form action="{{route('import-dosen')}}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Pilih file excel ..." fgroup-class="col-md-6" disable-feedback required accept=".xls,.xlsx,.csv"/>
+                            <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Pilih file excel ..." fgroup-class="col-md" disable-feedback required accept=".xls,.xlsx,.csv"/>
                         <div class="d-flex pt-3 justify-content-end">
                             <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1"/>
                             <x-adminlte-button theme="success" label="Simpan" class="mx-1" type="submit"/>
