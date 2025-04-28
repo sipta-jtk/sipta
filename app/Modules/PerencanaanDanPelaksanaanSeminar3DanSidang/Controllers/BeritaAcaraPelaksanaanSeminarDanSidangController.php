@@ -86,7 +86,6 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
 
                 // Format status kelulusan untuk tampilan
                 $item->status_kelulusan_formatted = $statusMap[$item->status_kelulusan] ?? 'Unknown'; // Format status kelulusan untuk tampilan
-                return $item;
 
                 return $item;
             });
