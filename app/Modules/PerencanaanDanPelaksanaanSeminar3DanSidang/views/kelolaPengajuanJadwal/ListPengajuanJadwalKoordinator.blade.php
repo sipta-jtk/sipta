@@ -212,7 +212,8 @@
             $('#inputId').val(id);
 
             // Set action form
-            $('#formVerifikasi').attr('action', `/koordinator-kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
+            $prefix = env('PREFIX_URL', 'sipta');
+            $('#formVerifikasi').attr('action', `/${prefix}/koordinator-kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');
