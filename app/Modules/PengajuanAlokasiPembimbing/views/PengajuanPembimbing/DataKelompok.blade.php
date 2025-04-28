@@ -3,8 +3,19 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
@@ -28,7 +39,7 @@
         <!-- Form Pengajuan -->
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Data Mahasiswa</h5>
+                <p class="text-secondary text-md border-bottom">Data Mahasiswa</p> 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Lengkap</label>
@@ -46,7 +57,8 @@
                     </div>
                 </div>
 
-                <h5 class="mb-3">Data Kelompok</h5>
+                {{-- <h5 class="mb-3">Data Kelompok</h5> --}}
+                <p class="text-secondary text-md border-bottom">Data Kelompok</p> 
                 @php
                     $anggota1 = $dataAnggota[0] ?? (object) ['nama' => '-', 'nim' => '-'];
                     $anggota2 = $dataAnggota[1] ?? (object) ['nama' => '-', 'nim' => '-'];
@@ -123,7 +135,7 @@
                 cancelButtonText: 'Ubah Data',
                 confirmButtonText: 'OK',
                 showCancelButton: true,
-                cancelButtonColor: '#3085d6',
+                cancelButtonColor: '#FFC107',
                 confirmButtonColor: '#3085d6',
                 reverseButtons: true
 

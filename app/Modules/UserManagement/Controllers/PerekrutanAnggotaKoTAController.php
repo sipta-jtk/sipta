@@ -10,8 +10,18 @@ use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use Carbon\Carbon;
 
+/**
+ *  class PerekrutanAnggotaKoTAController
+ */
 class PerekrutanAnggotaKoTAController extends Controller
-{
+{    
+    /**
+     * index
+     * 
+     * Menampilkan halaman perekrutan anggota KoTA
+     *
+     * @return void
+     */
     public function index()
     {
         $mahasiswaAnggota1 = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
@@ -43,6 +53,15 @@ class PerekrutanAnggotaKoTAController extends Controller
         return view('UserManagement.views.perekrutan-anggota-kota', compact('mahasiswa', 'mahasiswaAnggota1', 'maksimalAnggota'));
     }
 
+        
+    /**
+     * submit
+     * 
+     * Proses rekrut anggota KoTA dengan menambahkan anggota ke dalam KoTA
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function submit(Request $request)
     {
         $request->validate([
