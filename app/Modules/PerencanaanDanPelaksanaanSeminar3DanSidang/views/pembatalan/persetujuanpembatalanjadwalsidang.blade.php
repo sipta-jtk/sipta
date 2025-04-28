@@ -1,30 +1,5 @@
-@extends('adminlte::page')
 
-@section('title', 'Pembatalan Jadwal Sidang')
-
-@section('content_header')
-<h1>Persetujuan Pembatalan Jadwal Sidang</h1>
-@stop
-
-@section('content')
-<table id="seminarTable" class="table table-striped" width="100%">
-    <thead class="sticky-header">
-        <tr class="bg-dark text-white">
-            <th>Kota No</th>
-            <th>Judul</th>
-            <th>Tanggal Siddang</th>
-            <th>Sesi Sidang</th>
-            <th>Ruangan</th>
-            <th>Dosen Pengaju</th>
-            <th>Alasan</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($jadwal as $s)
-            <tr>
-                <td>{{ $s->nama_kota }}</td>
+<td>{{ $s->nama_kota }}</td>
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
@@ -44,26 +19,26 @@
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-primary" disabled>Setuju</button>
+                        <button type="submit" class="btn btn-primary btn-md w-100 my-1" disabled>Setuju</button>
                     </form>
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-danger" disabled>Tolak</button>
+                        <button type="submit" class="btn btn-danger btn-md w-100 my-1" disabled>Tolak</button>
                     </form>
                     @else
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-primary">Setuju</button>
+                        <button type="submit" class="btn btn-primary btn-md w-100 my-1">Setuju</button>
                     </form>
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-danger">Tolak</button>
+                        <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>
                     </form>
                     @endif
                 </td>
@@ -71,6 +46,8 @@
         @endforeach
     </tbody>
 </table>
+</div>
+</div>
 @stop
 
 @section('css')
@@ -88,5 +65,4 @@
         $('#seminarTable').DataTable();
     });
 </script>
-<script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop
