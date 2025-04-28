@@ -182,6 +182,7 @@ class AlokasiDosenSeeder extends Seeder
                 'status_alokasi' => 'fix', 
                 'catatan' => null, 
                 'tipe_alokasi' => 'penguji'
+                
             ]
         ]);
     }
