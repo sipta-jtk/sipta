@@ -265,7 +265,6 @@ return [
     'register_url' => env('PREFIX_URL', 'sipta') . '/register',
     'password_reset_url' => env('PREFIX_URL', 'sipta') . '/password/reset',
     'password_email_url' => env('PREFIX_URL', 'sipta') . '/password/email',
-    'profile_url' => false,
     'disable_darkmode_routes' => false,
 
     /*
@@ -337,14 +336,17 @@ return [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fa-solid fa-rectangle-list',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-kesediaan-membimbing/',
                             'can' => 'koordinator_ta',
+                            'icon' => 'fas fa-fw fa-table'
                         ],
                         [
                             'text' => 'Daftar Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-list-ol',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',
                         ],
@@ -353,9 +355,11 @@ return [
                 [
                     'text' => 'Formulir Pengajuan dan Kesediaan',
                     'url' => $prefix . '/#',
+                    'icon' => 'fas fa-fw fa-file-alt',
                     'submenu' => [
                         [
                             'text' => 'Formulir Pengajuan Dosen Pembimbing',
+                            'icon' => 'fas fa-fw fa-file-alt',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok',
                             'can' => 'mahasiswa_ta',
                         ],
@@ -363,6 +367,7 @@ return [
                             'text' => 'Formulir Kesediaan Membimbing',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang',
                             'can' => 'dosen',
+                            'icon' => 'fas fa-fw fa-file-alt'
                         ],
                     ],
                 ],
@@ -370,39 +375,21 @@ return [
                     'text' => 'Pengelolaan Periode',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/pengelolaan-periode/',
                     'can' => 'koordinator_ta',
+                    'icon' => 'fas fa-fw fa-clock'
                 ],
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
                     'can' => 'koordinator_ta',
+                     'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-calendar'
                 ],
             ]
-        ],
-        [
-            'text' => 'Kelola Pengajuan Berkas',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Berkas Seminar 3',
-                    'url' => 'kelola-pengajuan-berkas/seminar-3',
-                    'can' => 'koordinator_ta',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Berkas Sidang Akhir',
-                    'url' => 'kelola-pengajuan-berkas/sidang-akhir',
-                    'can' => 'koordinator_ta',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ]
-            // 'label' => 4,
-            // 'label_color' => 'success',
         ],
         [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
@@ -411,22 +398,26 @@ return [
                 [
                     'text' => 'Pembatalan Jadwal Seminar 3',
                     'url' => $prefix . '/batal-jadwal-seminar',
-                    'can' => 'dosen'
+                    'can' => 'dosen',
+                    'icon' => 'fa-regular fa-calendar-xmark'
                 ],
                 [
                     'text' => 'Pembatalan Jadwal Sidang',
                     'url' => $prefix . '/batal-jadwal-sidang',
-                    'can' => 'dosen'
+                    'can' => 'dosen',
+                    'icon' => 'fa-regular fa-calendar-xmark'
                 ],
                 [
                     'text' => 'Persetujuan Pembatalan Seminar 3',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
-                    'can' => 'koordinator_ta'
+                    'can' => 'koordinator_ta',
+                    'icon' => 'fa-regular fa-calendar-xmark'
                 ],
                 [
                     'text' => 'Persetujuan Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
-                    'can' => 'koordinator_ta'
+                    'can' => 'koordinator_ta',
+                    'icon' => 'fa-regular fa-calendar-xmark'
                 ],
                 [
                     'text' => 'Pengajuan',
@@ -438,37 +429,92 @@ return [
                     'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Seminar 3',
                     'url' => $prefix . '/verifikasi-berkas-3',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang',
+                    'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir',
                     'url' => $prefix . '/verifikasi-berkas-sidang',
                     'can' => 'mahasiswa_ta',
+                    'icon' => 'fas fa-fw fa-file',
                 ],
                 [
                     'text' => 'Penilaian',
                     'url' => $prefix . '/DosenTabelPenilaian',
                     'can' => 'dosen',
+                    'icon' => 'fas fa-fw fa-award',
                 ],
                 [
-                    'text' => 'Rekap Berita Acara Seminar 3',
-                    'url' => $prefix . '/rekap-berita-acara-seminar-3',
+                    'text' => 'Rekapitulasi Berita Acara Seminar 3',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-seminar-3',
+                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Rekap Berita Acara Sidang TA',
-                    'url' => $prefix . '/rekap-berita-acara-sidang-ta',
+                    'text' => 'Rekapitulasi Berita Acara Sidang TA',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-sidang-ta',
+                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
                     'can' => 'koordinator_ta',
                 ],
                 [
                     'text' => 'Berita Acara Seminar 3',
-                    'url' => $prefix . '/berita-acara-pelaksanaan-seminar3',
+                    'url' => $prefix . '/berita-acara-pelaksanaan-seminar-3',
+                    'icon' => 'fas fa-calendar-check', // Icon Kalender cek menggambarkan isi berita acara
                     'can' => 'all_mahasiswa',
                 ],
                 [
                     'text' => 'Berita Acara Sidang TA',
                     'url' => $prefix . '/berita-acara-pelaksanaan-sidang-ta',
+                    'icon' => 'fas fa-calendar-check', // Icon Kalender cek menggambarkan isi berita acara
                     'can' => 'all_mahasiswa',
-                ]
+                ],
+                [
+                    'text' => 'Verifikasi Berkas Seminar 3',
+                    'url' => $prefix . '/kelola-pengajuan-berkas/seminar-3',
+                    'icon' => 'fas fa-fw fa-file',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Verifikasi Berkas Seminar Sidang Akhir',
+                    'url' => $prefix . '/kelola-pengajuan-berkas/sidang-akhir',
+                    'icon' => 'fas fa-fw fa-file',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Koordinator Kelola Pengajuan Jadwal',
+                    'icon' => 'fas fa-fw fa-file',
+                    'submenu' => [
+                        [
+                            'text' => 'Pengajuan Jadwal Seminar 3',
+                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Pengajuan Jadwal Sidang Akhir',
+                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Dosen Kelola Pengajuan Jadwal',
+                    'icon' => 'fas fa-fw fa-file',
+                    'submenu' => [
+                        [
+                            'text' => 'Pengajuan Jadwal Seminar 3',
+                            'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
+                            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Pengajuan Jadwal Sidang Akhir',
+                            'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
+                            'can' => 'akses-dosen-kelola-pengajuan-jadwal',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                    ],
+                ],
             ]
         ],
         [
@@ -525,48 +571,6 @@ return [
             ]
         ],
         [
-            'text' => 'Koordinator Kelola Pengajuan Jadwal',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
-                    'can' => 'koordinator_ta',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
-                    'can' => 'koordinator_ta',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ],
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
-            'text' => 'Dosen Kelola Pengajuan Jadwal',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Pengajuan Jadwal Seminar 3',
-                    'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/seminar-3',
-                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-                [
-                    'text' => 'Pengajuan Jadwal Sidang Akhir',
-                    'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
-                    'can' => 'akses-dosen-kelola-pengajuan-jadwal',
-                    // 'icon' => 'far fa-fw fa-file',
-                ],
-            ],
-            // 'label' => 4,
-            // 'label_color' => 'success',
-        ],
-        [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
@@ -578,13 +582,13 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url'  => $prefix . '/repository/mahasiswa',
+            'url' => $prefix . '/repository/mahasiswa',
             'icon' => 'fas fa-book',
             'can' => 'akses-sidebar-repo-mahasiswa'
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url'  => $prefix . '/repository/dosen/kelompok-ta',
+            'url' => $prefix . '/repository/dosen/kelompok-ta',
             'icon' => 'fas fa-book',
             'can' => 'akses-sidebar-repo-dosen'
         ],
@@ -635,13 +639,13 @@ return [
 
                 [
                     'text' => 'Program Studi',
-                    'url'  => $prefix . '/program-studi',
+                    'url' => $prefix . '/program-studi',
                     'icon' => 'fas fa-school',
                     'can' => 'admin',
                 ],
                 [
                     'text' => 'Kelola KBK',
-                    'url'  => $prefix . '/kelola-kbk',
+                    'url' => $prefix . '/kelola-kbk',
                     'icon' => 'fas fa-sitemap',
                     'can' => 'admin',
                 ],
@@ -659,7 +663,7 @@ return [
                 ],
                 [
                     'text' => 'Detail KoTA',
-                    'url'  => $prefix . '/kota-saya',
+                    'url' => $prefix . '/kota-saya',
                     'icon' => 'fas fa-info',
                     'can' => 'mahasiswa_kota',
                 ],
@@ -677,7 +681,7 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/manajemen-akun-mahasiswa',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],

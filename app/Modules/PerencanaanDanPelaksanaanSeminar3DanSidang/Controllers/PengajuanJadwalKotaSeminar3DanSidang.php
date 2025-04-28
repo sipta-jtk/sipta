@@ -15,17 +15,90 @@ use App\Services\NotifikasiService;
 use App\Models\TemplateNotifikasi;
 use App\Models\Notifikasi;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Constraint\IsFalse;
 
 class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 {
+<<<<<<< HEAD
     public function __construct(NotifikasiService $notifikasiService)
     {
         $this->notifikasiService = $notifikasiService;
     }
 
+=======
+    private $jadwal_waktu = [
+        1 => ['start' => '07:00', 'end' => '09:00'],
+        2 => ['start' => '09:00', 'end' => '11:00'],
+        3 => ['start' => '13:00', 'end' => '15:00'],
+        4 => ['start' => '15:00', 'end' => '17:00'],
+    ];
+
+    private function checkPengajuanSeminar3($id_kota)
+    {
+        return $this->checkPengajuanStatus($id_kota, 'seminar_3');
+    }
+
+    private function checkPengajuanSidang($id_kota)
+    {
+        return $this->checkPengajuanStatus($id_kota, 'sidang');
+    }
+
+    private function checkPengajuanStatus($id_kota, $agenda)
+    {
+        $pengajuan = PengajuanJadwalKota::where('id_kota', $id_kota)
+            ->whereHas('penjadwalan', function ($query) use ($agenda) {
+                $query->where('agenda', $agenda);
+            })
+            ->where('status_mahasiswa', 1) 
+            ->orderBy('id_penjadwalan', 'desc')
+            ->get();
+
+        if ($pengajuan->isEmpty()) {
+            return ['status' => 'Belum Ada Pengajuan', 'agenda' => $agenda];
+        }
+
+        foreach ($pengajuan as $item) {
+            if ($item->status_dosen_pembimbing_1 === 0 || $item->status_dosen_pembimbing_2 === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 2];
+            }
+
+            if (is_null($item->status_dosen_pembimbing_1) || is_null($item->status_dosen_pembimbing_2)) {
+                return ['status' => 'Diajukan', 'agenda' => $agenda];
+            }
+
+            if ((is_null($item->status_dosen_penguji_1) || is_null($item->status_dosen_penguji_2)) && (($item->status_dosen_penguji_1 !== 0) && ($item->status_dosen_penguji_2 !== 0)) && (($item->status_dosen_pembimbing_1 === 1) && ($item->status_dosen_pembimbing_2 === 1))) {
+                return ['status' => 'Pembimbing', 'agenda' => $agenda];
+            }
+
+            if ($item->status_dosen_penguji_1 === 0 || $item->status_dosen_penguji_2 === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 3];
+            }
+
+            if (is_null($item->status_koordinator_ta) && (($item->status_dosen_penguji_1 === 1) && ($item->status_dosen_penguji_2 === 1))) {
+                return ['status' => 'Penguji', 'agenda' => $agenda];
+            }
+
+            if ($item->status_koordinator_ta === 0) {
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 4];
+            }
+
+            if (
+                ($item->status_dosen_pembimbing_1 === 1 && $item->status_dosen_pembimbing_2 === 1) &&
+                ($item->status_dosen_penguji_1 === 1 && $item->status_dosen_penguji_2 === 1) &&
+                $item->status_koordinator_ta === 1
+            ) {
+                return ['status' => 'Diterima', 'agenda' => $agenda];
+            }
+        }
+
+        return ['status' => 'Diajukan', 'agenda' => $agenda];
+    }
+    
+>>>>>>> f80af96eb7b92302beaf42dc87b10471b5a7a7a9
     public function indexPengajuan(): View
     {
         // mengambil id_kota dari mahasiswa by username
@@ -51,8 +124,10 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
+        // dd($pembimbing);
+
         if (is_null($id_kota)) {
-            $verifikasi = (object) ['kota' => $id_kota];
+            $verifikasi = (object) ['kota' => null];
         } elseif ($pembimbing->isEmpty() || $penguji->isEmpty()) {
             $verifikasi = (object) ['kota' => $id_kota, 'dosen' => null];
         } else {
@@ -66,8 +141,11 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             } else {
                 $verifikasi->kota = $id_kota;
                 $verifikasi->dosen = $id_kota;
-                $verifikasi->pengajuan = true; 
+                $verifikasi->pengajuan = true;
+                $verifikasi->pengajuanSeminar3 = $this->checkPengajuanSeminar3($id_kota);
+                $verifikasi->pengajuanSidang = $this->checkPengajuanSidang($id_kota);
             }
+            // dd($verifikasi);
         }
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.DaftarPengajuan', compact('verifikasi'));
@@ -106,40 +184,22 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota) // Ganti dengan id_kota yang diinginkan
         ->get();
 
-        // Ambil data ruangan (dari stub atau database)
-        $useStub = $request->query('stub', true);
-        if ($useStub) {
-            $ruangan = collect([
-                [
-                    'id_ruangan' => 1,
-                    'kode_ruangan' => 'D224',
-                    'nama_ruangan' => 'Lab Komputer',
-                    'status_ruangan' => 'tersedia',
-                    'kode_gedung' => 'A',
-                    'link_photo' => 'https://example.com/photo1.jpg'
-                ],
-                [
-                    'id_ruangan' => 2,
-                    'kode_ruangan' => 'D225',
-                    'nama_ruangan' => 'Ruang Seminar',
-                    'status_ruangan' => 'tidak_tersedia',
-                    'kode_gedung' => 'B',
-                    'link_photo' => 'https://example.com/photo2.jpg'
-                ],
-                [
-                    'id_ruangan' => 5,
-                    'kode_ruangan' => 'D226',
-                    'nama_ruangan' => 'Ruang Rapat',
-                    'status_ruangan' => 'tersedia',
-                    'kode_gedung' => 'C',
-                    'link_photo' => 'https://example.com/photo3.jpg'
-                ]
-            ]);
+        // mengambil data ruangan dari API Topik 3
+        $response = Http::withoutVerifying()->get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
+    
+        if ($response->successful()) {
+            $ruangan = collect($response->json())->map(function ($item) {
+                return [
+                    'id_ruangan' => $item['id_ruangan'],
+                    'nama_ruangan' => $item['nama_ruangan']
+                ];
+            });
+        } else {
+            $ruangan = collect([]); // Handle jika API gagal
         }
 
-
         // Filter hanya ruangan yang tersedia
-        $ruanganTersedia = $ruangan->where('status_ruangan', 'tersedia');
+        $ruanganTersedia = $ruangan;
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.PengajuanSeminar3', [
             'dataKota' => $dataKota,
@@ -184,51 +244,22 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->where('pengajuan_pembimbing.id_kota', $id_kota)
         ->get();
 
-        // Simulasi filtering hanya pembimbing yang diterima
-        $pembimbing = $dataKota->pengajuanPembimbing
-            ->flatMap(fn($item) => $item->alokasiPembimbing)
-            ->where('status_alokasi', 'diterima')
-            ->map(fn($alokasi) => $alokasi->dosen);
+        // mengambil data ruangan dari API Topik 3
+        $response = Http::get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
 
-        // Simulasi filtering hanya penguji yang diterima
-        $penguji = $dataKota->pengajuanPenguji
-            ->flatMap(fn($item) => $item->alokasiPenguji)
-            ->where('status_alokasi', 'diterima')
-            ->map(fn($alokasi) => $alokasi->dosen);
-
-        // Ambil data ruangan (dari stub atau database)
-        $useStub = $request->query('stub', true);
-        if ($useStub) {
-            $ruangan = collect([
-                [
-                    'id_ruangan' => 1,
-                    'kode_ruangan' => 'D224',
-                    'nama_ruangan' => 'Lab Komputer',
-                    'status_ruangan' => 'tersedia',
-                    'kode_gedung' => 'A',
-                    'link_photo' => 'https://example.com/photo1.jpg'
-                ],
-                [
-                    'id_ruangan' => 2,
-                    'kode_ruangan' => 'D225',
-                    'nama_ruangan' => 'Ruang Seminar',
-                    'status_ruangan' => 'tidak_tersedia',
-                    'kode_gedung' => 'B',
-                    'link_photo' => 'https://example.com/photo2.jpg'
-                ],
-                [
-                    'id_ruangan' => 5,
-                    'kode_ruangan' => 'D226',
-                    'nama_ruangan' => 'Ruang Rapat',
-                    'status_ruangan' => 'tersedia',
-                    'kode_gedung' => 'C',
-                    'link_photo' => 'https://example.com/photo3.jpg'
-                ]
-            ]);
+        if ($response->successful()) {
+            $ruangan = collect($response->json())->map(function ($item) {
+                return [
+                    'id_ruangan' => $item['id_ruangan'],
+                    'nama_ruangan' => $item['nama_ruangan']
+                ];
+            });
+        } else {
+            $ruangan = collect([]); // Handle jika API gagal
         }
 
         // Filter hanya ruangan yang tersedia
-        $ruanganTersedia = $ruangan->where('status_ruangan', 'tersedia');
+        $ruanganTersedia = $ruangan;
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pengajuan.PengajuanSidang', [
             'dataKota' => $dataKota,
@@ -274,90 +305,47 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
         // Tentukan waktu `start` dan `end` berdasarkan sesi
         $tanggal = Carbon::parse($request->input('tanggal_pengajuan'));
-        $jadwal_waktu = [
-            1 => ['start' => '07:00', 'end' => '09:00'],
-            2 => ['start' => '09:00', 'end' => '11:00'],
-            3 => ['start' => '13:00', 'end' => '15:00'],
-            4 => ['start' => '15:00', 'end' => '17:00'],
-        ];
 
+        // 
         $sesi = $request->input('sesi_pengajuan');
         $id_ruangan = $request->input('ruangan_pengajuan');
 
-        $start = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['start'])->format('Y-m-d H:i:s');
-        $end = $tanggal->copy()->setTimeFromTimeString($jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
+        $start = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['start'])->format('Y-m-d H:i:s');
+        $end = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
 
+        // mengambil data jadwal yang sudah dibuat dari API Topik 3
+        $response = Http::get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedules');
 
-        // Dummy API Response http://127.0.0.1:8080/api/v1/schedules
-        $useStub = $request->query('stub', true);
-        if ($useStub) {
-            $schedules = collect([
-                [                  
-                    "id"=>1,
-                    "title"=>"seminar_3",
-                    "sesi"=>"2",
-                    "start"=>"2025-03-22T09:00:00+00:00",
-                    "end"=>"2025-03-22T11:00:00+00:00",
-                    "id_ruangan"=>5,
-                    "resourceId"=>5
-                ],
-                [                    
-                    "id"=>2,
-                    "title"=>"sidang",
-                    "sesi"=>"4",
-                    "start"=>"2025-03-20T15:00:00+00:00",
-                    "end"=>"2025-03-20T17:00:00+00:00",
-                    "id_ruangan"=>2,
-                    "resourceId"=>2
-                ],
-                [
-                    "id"=>3,
-                    "title"=>"sidang",
-                    "sesi"=>"3",
-                    "start"=>"2025-03-20T13:00:00+00:00",
-                    "end"=>"2025-03-20T15:00:00+00:00",
-                    "id_ruangan"=>2,
-                    "resourceId"=>2
-                ],
-                [ 
-                    "id"=>4,
-                    "title"=>"sidang",
-                    "sesi"=>"4",
-                    "start"=>"2025-03-19T15:00:00+00:00",
-                    "end"=>"2025-03-19T17:00:00+00:00",
-                    "id_ruangan"=>2,
-                    "resourceId"=>2                    
-                ],
-                [
-                    "id"=>5,
-                    "title"=>"seminar_1",
-                    "sesi"=>"1",
-                    "start"=>"2025-03-17T07:00:00+00:00",
-                    "end"=>"2025-03-17T09:00:00+00:00",
-                    "id_ruangan"=>2,
-                    "resourceId"=>2
-                ],
-                [
-                    "id"=>6,
-                    "title"=>"sidang",
-                    "sesi"=>"1",
-                    "start"=>"2025-03-22T07:00:00+00:00",
-                    "end"=>"2025-03-22T09:00:00+00:00",
-                    "id_ruangan"=>1,
-                    "resourceId"=>1
-                ],
-                [
-                    "id"=>8,
-                    "title"=>"sidang",
-                    "sesi"=>"3",
-                    "start"=>"2025-03-17T13:00:00+00:00",
-                    "end"=>"2025-03-17T15:00:00+00:00",
-                    "id_ruangan"=>5,
-                    "resourceId"=>5
-                ]                
-            ]);
+        if ($response->successful()) {
+            $schedules = collect($response->json())->map(function ($item) {
+
+                // Ambil jam dari start
+                $startTime = isset($item['start']) ? Carbon::parse($item['start'])->format('H:i') : null;
+
+                // Cari sesi berdasarkan start time
+                $sesi = null;
+                foreach ($this->jadwal_waktu as $key => $waktu) {
+                    if ($startTime === $waktu['start']) {
+                        $sesi = $key;
+                        break;
+                    }
+                }
+
+                return [
+                    'id_penjadwalan' => $item['id_penjadwalan'] ?? null,
+                    'agenda' => $item['agenda'] ?? 'Tidak ada agenda',
+                    'sesi' => $sesi,
+                    'start' => $item['start'] ?? null,
+                    'end' => $item['end'] ?? null,
+                    'tanggal' => $item['tanggal'] ?? null,
+                    'id_ruangan' => $item['id_ruangan'],
+                    'nama_ruangan' => $item['nama_ruangan'],
+                    'id_kota' => $item['id_kota'] ?? null,
+                ];
+            });
+        } else {
+            $schedules = collect([]); // Handle jika API gagal
         }
-
         // Cek apakah jadwal bentrok
         $conflict = $schedules->contains(function ($schedule) use ($sesi, $id_ruangan, $tanggal) {
             return $schedule['sesi'] == $sesi && $schedule['id_ruangan'] == $id_ruangan && Carbon::parse($schedule['start'])->toDateString() == $tanggal->format('Y-m-d');
@@ -393,7 +381,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ]);
         $this->kirimNotifikasiPengajuan($nipDosenPembimbing, auth()->user()->username, $nipDosenPenguji, $koordinatorTA);
 
-        return redirect()->route('pengajuan')->with('success', 'Penjadwalan berhasil dibuat dan status mahasiswa diperbarui.');
+        return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }
 
     public function kirimNotifikasiPengajuan($dosenUsername, $mahasiswaUsername, $pengujiUsername, $koordinatorTAUsername)

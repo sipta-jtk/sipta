@@ -3,14 +3,21 @@
 @section('title', 'Rekrut Anggota KoTA')
 
 @section('content_header')
-    <h1>Rekrut Anggota Kelompok TA</h1>
+    <h1 class="mb-3">Rekrut Anggota Kelompok TA</h1>
+
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Rekrut Anggota KoTA']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
-<!-- up -->
+
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Form Rekrut Anggota</h3>
-    </div>
     <div class="card-body">
         @if(session('error'))
             <div class="alert alert-danger">
@@ -29,7 +36,9 @@
 
             <div class="mb-4">
                 <div id="anggota-container"></div>
-                <x-adminlte-button id="add-member" label="Tambah Anggota" theme="success" icon="fas fa-plus"/>
+                <a class="btn btn-success btn-md my-1" id="add-member">
+                    Tambah Anggota <i class="mx-1 my-1 fas fa-plus"></i>
+                </a>
             
                 <!-- Menampilkan info maksimal anggota -->
                 <div class="mt-2">
@@ -85,9 +94,9 @@
                         </div>
                     </div>
                     <div class="col-md-2 d-flex align-items-center">
-                        <button type="button" class="btn btn-danger remove-member" data-id="anggota${anggotaCount}">
-                            <i class="fas fa-trash"></i> Hapus
-                        </button>
+                        <a class="btn btn-danger btn-md my-1 remove-member" data-id="anggota${anggotaCount}">
+                            Hapus <i class="mx-1 my-1 fas fa-trash"></i>
+                        </a>
                     </div>
                 `;
                 

@@ -47,6 +47,14 @@ class PengajuanPisahKoTAController extends Controller
         return redirect()->route('pengajuan.pisah.kota')->with('success', 'Pengajuan pisah berhasil diterima.');
     }
 
+    public function tolak($id)
+    {
+        $pengajuan = PengajuanPisahKota::findOrFail($id);
+
+        $pengajuan->delete();
+        return redirect()->route('pengajuan.pisah.kota')->with('danger', 'Pengajuan pisah berhasil ditolak.');
+    }
+
     public function ajukan($id)
     {
         $user = auth()->user();

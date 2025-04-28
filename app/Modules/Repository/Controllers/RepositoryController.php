@@ -9,6 +9,12 @@ use App\Models\Kota;
 use App\Models\Subkategori;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Models\LogAktivitas;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+Carbon::setlocale(LC_TIME, 'id');
 
 class RepositoryController extends Controller
 {
@@ -78,12 +84,6 @@ class RepositoryController extends Controller
         }
     }
 
-
-
-
-    /**
-     * Menyimpan dokumen baru ke database.
-     */
     public function store(Request $request, $kategori)
     {
         try {
@@ -136,6 +136,7 @@ class RepositoryController extends Controller
             // Cari versi terakhir
             $latestVersion = Dokumen::where('kategori', $kategori)
                 ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
+                ->when($kategori === 'artefak', fn($q) => $q->where('id_subkategori', $request->id_subkategori))
                 ->orderByDesc('versi')
                 ->value('versi');
 
@@ -151,8 +152,8 @@ class RepositoryController extends Controller
                 'id_subkategori' => $kategori === 'artefak' ? $request->id_subkategori : null,
                 'status_berkas' => 'valid',
                 'username' => $username,
-                'created_at' => now()->timezone('Asia/Jakarta'),
-                'updated_at' => now()->timezone('Asia/Jakarta'),
+                'created_at' => Carbon::now()->translatedFormat('H:i d F Y'),
+                'updated_at' => Carbon::now()->translatedFormat('H:i d F Y'),
             ];
 
             // Handle upload file atau url
@@ -186,7 +187,6 @@ class RepositoryController extends Controller
     }
 
 
-
     public function edit($kategori, $id)
     {
         try {
@@ -217,7 +217,10 @@ class RepositoryController extends Controller
 
             $dokumen->save();
 
-            return redirect()->route('Repository.index', $kategori)->with('success', 'Dokumen berhasil diperbarui');
+            return redirect()->route('Repository.index.kota', [
+                'id_kota' => auth()->user()->mahasiswa->id_kota ?? auth()->user()->dosen->id_kota ?? 1,
+                'kategori' => $kategori
+            ])->with('success', 'Dokumen berhasil diperbarui');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui dokumen: ' . $e->getMessage());
         }
@@ -291,9 +294,9 @@ class RepositoryController extends Controller
             $data = collect([
                 'Laporan Tugas Akhir' => [
                     ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'hasil_revisi_sidang'])],
-                    ['key' => 'laporan_seminar_3', 'label' => 'Seminar 3', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar1'])],
+                    ['key' => 'laporan_seminar_3', 'label' => 'Seminar 3', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar3'])],
                     ['key' => 'laporan_seminar_2', 'label' => 'Seminar 2', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar2'])],
-                    ['key' => 'laporan_seminar_1', 'label' => 'Seminar 1', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar3'])],
+                    ['key' => 'laporan_seminar_1', 'label' => 'Seminar 1', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar1'])],
                 ],
                 'Dokumen Pendukung' => [
                     ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'cover_abstrak'])],
@@ -352,6 +355,67 @@ class RepositoryController extends Controller
     }
 
     // Saabiq Muhyiyuddin Aulawi
+    public function logAktivitas(Request $request)
+    {
+        // Start with a base query
+        $query = LogAktivitas::with('user', 'kota');
+
+        // Apply filters if provided
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('user', function ($userQuery) use ($request) {
+                    $userQuery->where('nama', 'like', '%' . $request->search . '%');
+                })
+                    ->orWhere('action', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('kota_id')) {
+            $query->where('kota_id', $request->kota_id);
+        }
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
+        }
+
+        // Get filtered results
+        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
+
+        // Get data for filter dropdowns
+        $users = User::orderBy('nama')->get();
+        $kotas = KoTA::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::distinct('action')->pluck('action');
+
+        // Return view with all needed data
+        return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
+    }
+
+
+    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
+    public function monitoringPenyimpanan()
+    {
+        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
+        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->groupBy('kategori', 'id_subkategori')
+            ->with('subkategori')  // Pastikan mengambil relasi subkategori
+            ->get();
+
+        // Kirim data penyimpanan ke view
+        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
+    }
+
 
     // Muhammad Fahrizal Alzaelani
 

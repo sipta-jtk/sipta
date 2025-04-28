@@ -14,8 +14,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * class DetailKoTAController
+ */
 class DetailKoTAController extends Controller
-{
+{    
+    /**
+     * function index
+     * 
+     * Menampilkan detail informasi suatu KoTA
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function index($id = null)
     {
         // Jika ID tidak diberikan, ambil ID KoTA dari user yang login
@@ -67,31 +78,13 @@ class DetailKoTAController extends Controller
         // Jika bidang TA belum ditentukan
         $bidangTA = $bidang->bidang ?? 'Belum ditentukan';
 
-        // Ambil data dosen pembimbing
-        // $pembimbing = DB::table('pengajuan_pembimbing')
-        //     ->join('alokasi_pembimbing', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_pembimbing.id_pengajuan_pembimbing')
-        //     ->join('dosen', 'alokasi_pembimbing.nip', '=', 'dosen.nip')
-        //     ->join('user', 'dosen.nip', '=', 'user.username')
-        //     ->where('pengajuan_pembimbing.id_kota', $id)
-        //     ->orderBy('alokasi_pembimbing.urutan_prioritas_terpilih', 'asc')
-        //     ->select('alokasi_pembimbing.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
-        //     ->get();
-
-        // Jika tidak ada pembimbing yang ditemukan
-        // if ($pembimbing->isEmpty()) {
-        //     $pembimbing = [
-        //         (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Belum ditentukan', 'nip' => '-'],
-        //         (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Belum ditentukan', 'nip' => '-']
-        //     ];
-        // }
-
         // Default pembimbing jika tidak ditemukan
         $pembimbing = [
             (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Belum ditentukan', 'nip' => '-'],
             (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Belum ditentukan', 'nip' => '-']
         ];
 
-        // Coba ambil data dosen pembimbing dengan tabel alokasi_dosen (nama baru dari alokasi_pembimbing)
+        // Coba ambil data dosen pembimbing dengan tabel alokasi_dosen
         try 
         {
             if (Schema::hasTable('alokasi_dosen')) 

@@ -1,13 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Pengajuan Mahasiswa')
+@section('title', 'Daftar Pengajuan Jadwal')
 
 @section('content_header')
-<h1 class="text-center mb-5">Daftar Pengajuan {{$tipe}}</h1>
+    <h1 class="mb-3">Daftar Pengajuan Jadwal {{ $tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir' }}</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', ['links'=> [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/kelola-pengajuan-jadwal-penguji/'.$tipe), 'label' => 'Daftar Pengajuan Jadwal Penguji ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
+            ]])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
-<div class="container-fluid text-center">
+<div class="container-fluid">
     <div class="d-flex mb-3">
         <ul class="nav nav-tabs">
             @php
@@ -29,10 +36,10 @@
     </div>
 
     <!-- Tabel daftar pengajuan -->
-    <div class="container-fluid ">
+    <div class="container-fluid card">
         <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
-            <thead>
-                <tr>
+            <thead class="sticky-header">
+                <tr class="bg-dark text-white">
                     <th>No</th>
                     <th>Kelompok TA</th>
                     <th>Agenda</th>
@@ -48,41 +55,51 @@
 </div>
 
 <!-- Modal Detail Pengajuan -->
-<div class="modal fade" id="modalPengajuan" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Detail Pengajuan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Kelompok:</strong> <span id="modalKelompok"></span></p>
-        <p><strong>Judul TA:</strong> <span id="modalJudul"></span></p>
-        <p><strong>Tanggal Kegiatan:</strong> <span id="modalTanggal"></span></p>
-        <p><strong>Ruangan:</strong> <span id="modalRuangan"></span></p>
-        <p><strong>Status Verifikasi:</strong> <span id="modalStatus"></span></p>
-      </div>
-      <div class="modal-footer">
+<x-adminlte-modal id="modalPengajuan" title="Detail Pengajuan" theme="blue" size="lg" scrollable>
+
+    <x-slot name="footerSlot">
         <form id="formVerifikasi" method="POST">
-          @csrf
-          @method('PUT')
-          <input type="hidden" name="id" id="inputId">
-          <input type="hidden" name="status_verifikasi" id="inputStatus">
-          <button type="submit" class="btn btn-danger btn-tolak">Tolak</button>
-          <button type="submit" class="btn btn-success btn-setuju">Setuju</button>
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id" id="inputId">
+            <input type="hidden" name="status_verifikasi" id="inputStatus">
+            <div class="d-flex pt-3 justify-content-end">
+                <x-adminlte-button class="btn-tutup mx-1" label="Tutup" theme="secondary" data-dismiss="modal" type="button"/>
+                <x-adminlte-button class="btn-tolak mx-1" label="Tolak" theme="danger" data-dismiss="modal" type="submit"/>
+                <x-adminlte-button class="btn-setuju mx-1" label="Setuju" theme="success" data-dismiss="modal" type="submit"/>
+            </div>
         </form>
-      </div>
+    </x-slot>
+
+    <div class="px-3 mb-2">
+        <div class="col-md-6 mb-2">
+            <p><strong>Kelompok:</strong> <span id="modalKelompok"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Judul TA:</strong> <span id="modalJudul"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Agenda:</strong> <span id="modalAgenda"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Tanggal:</strong> <span id="modalTanggal"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Status Verifikasi:</strong> <span id="modalStatus"></span></p>
+        </div>
     </div>
-  </div>
-</div>
+
+</x-adminlte-modal>
 
 
 
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
     <style>
         .judul-ta-column {
@@ -99,8 +116,8 @@
 
 @section('js')
     <!-- Load DataTables -->
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -159,7 +176,18 @@
                     }
                 ],
                 language: {
-                    search: "Cari dalam semua kolom:"
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
                 }
             });
 
@@ -183,6 +211,12 @@
             let sesi = $(this).data('sesi');
             let status = $(this).data('status');
 
+            if (agenda === "seminar_3") {
+                agenda = "Seminar 3";
+            } else if (data === "sidang") {
+                agenda = "Sidang Akhir";
+            }
+
             // Isi data ke dalam modal
             $('#modalKelompok').text(id);
             $('#modalJudul').text(judul);
@@ -202,11 +236,19 @@
         });
 
         $(document).on('click', '.btn-setuju', function() {
-            $('#inputStatus').val('Disetujui'); // Set status menjadi Disetujui
+            // Set status menjadi Disetujui
+            $('#inputStatus').val('Disetujui');
+
+            // Submit form setelah setuju
+            $('#formVerifikasi').submit(); // Mengirimkan form dengan status Disetujui
         });
 
         $(document).on('click', '.btn-tolak', function() {
-            $('#inputStatus').val('Ditolak'); // Set status menjadi Ditolak
+            // Set status menjadi Ditolak
+            $('#inputStatus').val('Ditolak');
+
+            // Submit form setelah tolak
+            $('#formVerifikasi').submit(); // Mengirimkan form dengan status Ditolak
         });
     </script>
 @stop

@@ -56,15 +56,10 @@ class AlokasiPembimbingController extends Controller
             $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
         }
 
-        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')->get();
-
-        foreach ($dosenList as $key => $value) {
-            $dosenBidang = KetertarikanBidang::join('bidang', 'ketertarikan_bidang.id_bidang', '=', 'bidang.id_bidang')
-                ->where('nip', $value->nip)
-                ->get();
-
-            $dosenList[$key]['ketertarikan_bidang'] = $dosenBidang;
-        }
+        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
+            ->leftJoin('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
+            ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
+            ->get();
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
             'list_pengajuan' => $data_pengajuan,
@@ -144,7 +139,7 @@ class AlokasiPembimbingController extends Controller
                 ->pluck('id_kota')
                 ->first();
 
-            // Ambil NIP pembimbing dan penguji
+            // Ambil ID dosen (bukan NIP langsung)
             $pembimbing1 = $value->pembimbing1 ?? null;
             $pembimbing2 = $value->pembimbing2 ?? null;
 
@@ -152,7 +147,7 @@ class AlokasiPembimbingController extends Controller
             $penguji2 = $value->penguji2 ?? null;
             $penguji3 = $value->penguji3 ?? null;
 
-            // Validasi: Minimal harus ada 1 pembimbing dan 1 penguji
+            // Validasi: Minimal 1 pembimbing dan 1 penguji
             if (empty($pembimbing1) && empty($pembimbing2)) {
                 return back()->with('error', 'Minimal 1 pembimbing harus diisi sebelum finalisasi.');
             }
@@ -161,31 +156,29 @@ class AlokasiPembimbingController extends Controller
                 return back()->with('error', 'Minimal 1 penguji harus diisi sebelum finalisasi.');
             }
 
-            // Validasi: Tidak boleh ada pembimbing yang sama dalam satu kelompok
+            // Validasi duplikasi
             if (!empty($pembimbing1) && !empty($pembimbing2) && $pembimbing1 == $pembimbing2) {
                 return back()->with('error', 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu KoTA.');
             }
 
-            // Validasi: Tidak boleh ada penguji yang sama dalam satu kelompok
-            $pengujiSet = array_filter([$penguji1, $penguji2, $penguji3]); // Buang null atau kosong
+            $pengujiSet = array_filter([$penguji1, $penguji2, $penguji3]);
             if (count($pengujiSet) !== count(array_unique($pengujiSet))) {
                 return back()->with('error', 'Penguji tidak boleh sama dalam satu KoTA.');
             }
 
-            // Proses penyimpanan data
-            $nip_dosen_1 = Dosen::where('id_dosen', $pembimbing1)->select('nip')->first();
-            $nip_dosen_2 = Dosen::where('id_dosen', $pembimbing2)->select('nip')->first();
+            $nip_dosen_1 = Dosen::where('id_dosen', $pembimbing1)->value('nip');
+            $nip_dosen_2 = Dosen::where('id_dosen', $pembimbing2)->value('nip');
 
-            $nip_penguji_1 = Dosen::where('id_dosen', $penguji1)->select('nip')->first();
-            $nip_penguji_2 = Dosen::where('id_dosen', $penguji2)->select('nip')->first();
-            $nip_penguji_3 = Dosen::where('id_dosen', $penguji3)->select('nip')->first();
+            $nip_penguji_1 = Dosen::where('id_dosen', $penguji1)->value('nip');
+            $nip_penguji_2 = Dosen::where('id_dosen', $penguji2)->value('nip');
+            $nip_penguji_3 = Dosen::where('id_dosen', $penguji3)->value('nip');
 
             $catatan = $value->catatan ?? null;
 
-            // **Alokasi Pembimbing**
+            // === SIMPAN PEMBIMBING ===
             if ($nip_dosen_1) {
                 AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_1->nip],
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_1],
                     [
                         'urutan_prioritas_terpilih' => 1,
                         'status_alokasi' => $value->status_pembimbing1 ?? 'belum_fix',
@@ -200,7 +193,7 @@ class AlokasiPembimbingController extends Controller
 
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2->nip],
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2],
                     [
                         'urutan_prioritas_terpilih' => 2,
                         'status_alokasi' => $value->status_pembimbing2 ?? 'belum_fix',
@@ -210,210 +203,32 @@ class AlokasiPembimbingController extends Controller
                 );
             }
 
-            // Panggil function kirim notifikasi
-            $this->kirimNotifikasiAlokasi($nip_dosen_2, auth()->user()->username);
-
-            // **Alokasi Penguji**
-            if ($nip_penguji_1) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_1->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 1,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
+            // === SIMPAN PENGUJI ===
+            foreach ([[1, $nip_penguji_1], [2, $nip_penguji_2], [3, $nip_penguji_3]] as [$urutan, $nip]) {
+                if ($nip) {
+                    AlokasiDosen::updateOrCreate(
+                        ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip],
+                        [
+                            'urutan_prioritas_terpilih' => $urutan,
+                            'status_alokasi' => 'fix',
+                            'catatan' => $catatan,
+                            'tipe_alokasi' => 'penguji'
+                        ]
+                    );
+                }
             }
 
-            if ($nip_penguji_2) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_2->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 2,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
-            }
+            // === UPDATE STATUS PENGAJUAN ===
+            $statusFix1 = $value->status_pembimbing1 ?? null;
+            $statusFix2 = $value->status_pembimbing2 ?? null;
 
-            if ($nip_penguji_3) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_3->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 3,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
-            }
+            $status_pengajuan = ($statusFix1 === 'fix' || $statusFix2 === 'fix') ? 'diterima' : 'diproses';
+
+            PengajuanPembimbing::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->update(['status_pengajuan' => $status_pengajuan]);
         }
 
         return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');
     }
-
-    public function kirimNotifikasiAlokasi($dosenUsername, $mahasiswaUsername) 
-    {
-        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!')->first();
-        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!')->first();
-    
-        if (!$dosenUsername || !$mahasiswaUsername || !$templateDosen || !$templateMahasiswa) {
-            return response()->json(['error' => 'Semua field wajib diisi'], 400);
-        }
-    
-        // Cari user berdasarkan username
-        $dosen = User::where('username', $dosenUsername)->first();
-        $mahasiswa = User::where('username', $mahasiswaUsername)->first();
-    
-        if (!$dosen || !$mahasiswa) {
-            return response()->json(['error' => 'Dosen atau Mahasiswa tidak ditemukan'], 404);
-        }
-    
-        // Ambil template notifikasi
-        $templateDosen = TemplateNotifikasi::where('judul_notifikasi', $templateDosen)->first();
-        $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', $templateMahasiswa)->first();        
-    
-        if (!$templateDosen || !$templateMahasiswa) {
-            return response()->json(['error' => 'Template notifikasi tidak ditemukan'], 404);
-        }
-
-        // Prepare email content by dynamically replacing placeholders
-        $isiInEmailDosen = str_replace(
-            ['{nama_dosen}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
-            [$dosen->nama, $mahasiswa->nama, $mahasiswa->username],
-            $templateDosen->isi_in_email
-        );
-    
-        // Kirim email ke dosen
-        $this->notifikasiService->kirimEmail(
-            $templateDosen->judul_notifikasi,
-            $dosen->username,
-            [
-                'nama_dosen' => $dosen->nama,
-                'nama_mahasiswa' => $mahasiswa->nama,
-                'nim_mahasiswa' => $mahasiswa->nim,
-                'email_content' => $isiInEmailDosen
-            ]
-        );
-    
-        // Simpan notifikasi ke database
-        Notifikasi::create([
-            'tipe_notifikasi' => $templateDosen->jenis_notifikasi,
-            'judul' => $templateDosen->judul_notifikasi,
-            'isi_notifikasi' => $isiInEmailDosen,
-        ]);
-
-        // Prepare email content by dynamically replacing placeholders
-        $isiInEmailMahasiswa = str_replace(
-            ['{nama_mahasiswa}', '{nama_dosen}'],
-            [$mahasiswa->nama, $dosen->nama],
-            $templateMahasiswa->isi_in_email
-        );
-    
-        // Kirim email ke mahasiswa
-        $this->notifikasiService->kirimEmail(
-            $templateMahasiswa->judul_notifikasi,
-            $mahasiswa->username,
-            [
-                'nama_mahasiswa' => $mahasiswa->nama,
-                'nama_dosen' => $dosen->nama,
-                'email_content' => $isiInEmailMahasiswa
-            ]
-        );
-    
-        // Simpan notifikasi untuk mahasiswa (dengan user_id)
-        Notifikasi::create([
-            'tipe_notifikasi' => $templateMahasiswa->jenis_notifikasi,
-            'judul' => $templateMahasiswa->judul_notifikasi,
-            'isi_notifikasi' => $isiInEmailMahasiswa,
-        ]);
-    
-        return response()->json(['success' => 'Notifikasi berhasil dikirim'], 200);
-    }    
-
-    // public function kirimNotifikasiAlokasi(Request $request) 
-    // {
-    //     // Gunakan username, bukan ID
-    //     $dosenUsername = $request->input('dosen_username');
-    //     $mahasiswaUsername = $request->input('mahasiswa_username');
-    //     $templateDosen = $request->input('template_dosen_id');
-    //     $templateMahasiswa = $request->input('template_mahasiswa_id');
-    
-    //     if (!$dosenUsername || !$mahasiswaUsername || !$templateDosen || !$templateMahasiswa) {
-    //         return response()->json(['error' => 'Semua field wajib diisi'], 400);
-    //     }
-    
-    //     // Cari user berdasarkan username
-    //     $dosen = User::where('username', $dosenUsername)->first();
-    //     $mahasiswa = User::where('username', $mahasiswaUsername)->first();
-    
-    //     if (!$dosen || !$mahasiswa) {
-    //         return response()->json(['error' => 'Dosen atau Mahasiswa tidak ditemukan'], 404);
-    //     }
-    
-    //     // Ambil template notifikasi
-    //     $templateDosen = TemplateNotifikasi::where('judul_notifikasi', $templateDosen)->first();
-    //     $templateMahasiswa = TemplateNotifikasi::where('judul_notifikasi', $templateMahasiswa)->first();        
-    
-    //     if (!$templateDosen || !$templateMahasiswa) {
-    //         return response()->json(['error' => 'Template notifikasi tidak ditemukan'], 404);
-    //     }
-
-    //     // Prepare email content by dynamically replacing placeholders
-    //     $isiInEmailDosen = str_replace(
-    //         ['{nama_dosen}', '{nama_mahasiswa}', '{nim_mahasiswa}'],
-    //         [$dosen->nama, $mahasiswa->nama, $mahasiswa->username],
-    //         $templateDosen->isi_in_email
-    //     );
-    
-    //     // Kirim email ke dosen
-    //     $this->notifikasiService->kirimEmail(
-    //         $templateDosen->judul_notifikasi,
-    //         $dosen->username,
-    //         [
-    //             'nama_dosen' => $dosen->nama,
-    //             'nama_mahasiswa' => $mahasiswa->nama,
-    //             'nim_mahasiswa' => $mahasiswa->nim,
-    //             'email_content' => $isiInEmailDosen
-    //         ]
-    //     );
-    
-    //     // Simpan notifikasi ke database
-    //     Notifikasi::create([
-    //         'tipe_notifikasi' => $templateDosen->jenis_notifikasi,
-    //         'judul' => $templateDosen->judul_notifikasi,
-    //         'isi_notifikasi' => $isiInEmailDosen,
-    //     ]);
-
-    //     // Prepare email content by dynamically replacing placeholders
-    //     $isiInEmailMahasiswa = str_replace(
-    //         ['{nama_mahasiswa}', '{nama_dosen}'],
-    //         [$mahasiswa->nama, $dosen->nama],
-    //         $templateMahasiswa->isi_in_email
-    //     );
-    
-    //     // Kirim email ke mahasiswa
-    //     $this->notifikasiService->kirimEmail(
-    //         $templateMahasiswa->judul_notifikasi,
-    //         $mahasiswa->username,
-    //         [
-    //             'nama_mahasiswa' => $mahasiswa->nama,
-    //             'nama_dosen' => $dosen->nama,
-    //             'email_content' => $isiInEmailMahasiswa
-    //         ]
-    //     );
-    
-    //     // Simpan notifikasi untuk mahasiswa (dengan user_id)
-    //     Notifikasi::create([
-    //         'tipe_notifikasi' => $templateMahasiswa->jenis_notifikasi,
-    //         'judul' => $templateMahasiswa->judul_notifikasi,
-    //         'isi_notifikasi' => $isiInEmailMahasiswa,
-    //     ]);
-    
-    //     return response()->json(['success' => 'Notifikasi berhasil dikirim'], 200);
-    // }   
-    // Route::post('/api/kirim-notifikasi-alokasi', [AlokasiPembimbingController::class, 'kirimNotifikasiAlokasi']);
 
 }
