@@ -58,9 +58,9 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
 @if ($kategori === 'seminar1')
 @include('Repository.views.cardSeminar1')
 @elseif ($kategori === 'seminar2')
-@include('Repository.views.seminar2')
+@include('Repository.views.cardSeminar2')
 @elseif ($kategori === 'seminar3')
-@include('Repository.views.seminar3')
+@include('Repository.views.cardSeminar3')
 @endif
 @stop
 

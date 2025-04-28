@@ -73,10 +73,21 @@ class RepositoryController extends Controller
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'powerpoint';
             });
 
+            $srs = $allDokumen->filter(function ($doc) {
+                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'srs';
+            });
+
+            $sdd = $allDokumen->filter(function ($doc) {
+                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'sdd';
+            });
+
             // Ambil subkategori spesifik (untuk tombol tambah dokumen)
             $subkategoriLaporan = Subkategori::where('nama_subkategori', 'Laporan')->first();
+
             $subkategoriFta = Subkategori::where('nama_subkategori', 'FTA')->first();
             $subkategoriPpt = Subkategori::where('nama_subkategori', 'PowerPoint')->first();
+            $subkategoriSrs = Subkategori::where('nama_subkategori', 'SRS')->first();
+            $subkategoriSdd = Subkategori::where('nama_subkategori', 'SDD')->first();
 
             // Ambil semua subkategori kalau kategori artefak
             $subkategoris = $kategori === 'artefak' ? Subkategori::all() : collect();
@@ -88,6 +99,8 @@ class RepositoryController extends Controller
                 'laporan',
                 'fta',
                 'powerpoint',
+                'srs',
+                'sdd',
                 'kategori',
                 'subkategoris',
                 'maxVersion',
@@ -95,7 +108,9 @@ class RepositoryController extends Controller
                 'kota',
                 'subkategoriLaporan',
                 'subkategoriFta',
-                'subkategoriPpt'
+                'subkategoriPpt',
+                'subkategoriSrs',
+                'subkategoriSdd',
             ));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data: ' . $e->getMessage());
@@ -132,6 +147,8 @@ class RepositoryController extends Controller
 
             // Subkategori
             $subkategoriName = Subkategori::where('id_subkategori', $request->id_subkategori)->value('nama_subkategori');
+
+            // dd($request->all());
 
             $rules = [
                 'judul' => 'required|string|max:255',
@@ -176,10 +193,12 @@ class RepositoryController extends Controller
                 'kategori' => $kategori,
                 'deskripsi' => $request->deskripsi,
                 'id_kota' => $id_kota,
-                'id_subkategori' => $request->id_subkategori ?? null,
+                'id_subkategori' => $request->id_subkategori,
                 'status_berkas' => 'valid',
                 'username' => $username,
             ];
+
+            
 
             // Handle upload file atau url
             if ($kategori === 'link_source_code') {
