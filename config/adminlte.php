@@ -265,7 +265,7 @@ return [
     'register_url' => env('PREFIX_URL', 'sipta') . '/register',
     'password_reset_url' => env('PREFIX_URL', 'sipta') . '/password/reset',
     'password_email_url' => env('PREFIX_URL', 'sipta') . '/password/email',
-    'profile_url' => false,
+    'profile_url' => env('PREFIX_URL', 'sipta') . '/profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -665,7 +665,7 @@ return [
                 ],
                 [
                     'text' => 'Manajemen Akun Mahasiswa',
-                    'url' => '/manajemen-akun-mahasiswa',
+                    'url' => $prefix . '/manajemen-akun-mahasiswa',
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],
