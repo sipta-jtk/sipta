@@ -30,7 +30,7 @@
                         <p><strong>Catatan dari Dosen:</strong> {{ $pengajuan->catatan }}</p>
                     @endif
                     <p><strong>Tanggal Pengajuan:</strong> {{ $pengajuan->tanggal_pengajuan }}</p>
-                    <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
+                    <p><strong>Jenis Pengajuan:</strong> Seminar 3</p>
                 </div>
             </div>
         @endif
@@ -66,7 +66,7 @@
                     @endforelse
                 </tbody>
             </table>
-            <form action="{{ route('verifikasi.store') }}" method="POST" class="text-center mt-4">
+            <form action="{{ route('verifikasi3.store') }}" method="POST" class="text-center mt-4">
                 @csrf
                 <button type="submit" class="btn btn-primary" 
                     @if ($tidakBisaAjukan) disabled @endif>

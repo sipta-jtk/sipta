@@ -84,6 +84,9 @@ Route::post('/form-pisah-kota/batal', [FormPisahKotaController::class, 'batal'])
 Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])
         ->name('pengajuan.pisah.kota.terima')
         ->middleware('can:koordinator_ta');
+Route::patch('/pengajuan-pisah-kota/{id}/tolak', [PengajuanPisahKoTAController::class, 'tolak'])
+        ->name('pengajuan.pisah.kota.tolak')
+        ->middleware('can:koordinator_ta');
 
 
 Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])
@@ -133,13 +136,12 @@ Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inp
 Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
 
 
-
-Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
-Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
-Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
-Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
-Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
-
+Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
+    Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
+    Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
+    Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
+    Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
+});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -185,4 +187,7 @@ Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 
 Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
 
-Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
+    Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+    Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+});

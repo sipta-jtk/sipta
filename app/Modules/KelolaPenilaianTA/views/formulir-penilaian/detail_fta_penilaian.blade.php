@@ -39,7 +39,6 @@
 
         <h6><strong>Aspek Penilaian</strong></h6>
         <div class="card">
-            <!-- /.card-header -->
             <div class="card-body p-0">
                 <div class="table-container">
                     <table class="table text-center">
@@ -79,7 +78,6 @@
                     </table>
                 </div>
             </div>
-            <!-- /.card-body -->
         </div>
 
         <div class="row mt-4">
