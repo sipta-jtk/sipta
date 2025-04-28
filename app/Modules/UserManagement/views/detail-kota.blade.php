@@ -3,7 +3,24 @@
 @section('title', 'Detail Kelompok TA')
 
 @section('content_header')
-    <h1>Detail Kelompok TA</h1>
+    <h1 class="mb-3">Detail Kelompok TA</h1>
+
+    <div>
+        @php
+            $links = [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda']
+            ];
+            
+            if(url()->previous() && strpos(url()->previous(), 'management-kota') !== false) {
+                $links[] = ['url' => route('management-kota'), 'label' => 'Daftar Kelompok Tugas Akhir'];
+            }
+            
+            $links[] = ['url' => '', 'label' => 'Detail Kelompok TA'];
+        @endphp
+
+        @component('KelolaPenilaianTA.views.components.breadcrumb', ['links' => $links])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
@@ -12,7 +29,8 @@
         <h3 class="card-title font-weight-bold">{{ $kota->nama_kota }}</h3>
     </div>
     <div class="card-body">
-        <div class="row">
+        <div class="row mb-4 px-3">
+            <p class="text-secondary text-md border-bottom col-md-12">Anggota</p>
             @foreach($anggota as $key => $mhs)
                 <x-adminlte-input name="anggota{{ $key + 1 }}" 
                     label="Anggota {{ $key + 1 }}" 
@@ -26,7 +44,10 @@
                     value="Tidak Ada"
                     fgroup-class="col-md-6" readonly/>
             @endfor
+        </div>
 
+        <div class="row mb-4 px-3">
+            <p class="text-secondary text-md border-bottom col-md-12">Detail Informasi</p>
             <x-adminlte-input name="topik" label="Topik" value="{{ $judulTA }}"
                 fgroup-class="col-md-12" readonly/>
 
@@ -35,7 +56,10 @@
 
             <x-adminlte-input name="tahun_ta" label="Tahun TA" value="{{ $kota->tahun_kota }}"
                 fgroup-class="col-md-6" readonly/>
-            
+        </div>
+
+        <div class="row mb-4 px-3">
+            <p class="text-secondary text-md border-bottom col-md-12">Dosen Pembimbing</p>
             @php $pembimbing1 = $pembimbing[0] ?? (object)['nama' => 'Belum ditentukan']; @endphp
             <x-adminlte-input name="pembimbing1" label="Dosen Pembimbing 1"
                 value="{{ $pembimbing1->nama }}"
@@ -47,7 +71,7 @@
                 fgroup-class="col-md-6" readonly/>
         </div>
 
-        <div class="d-flex justify-content-between">
+        <div class="d-flex pt-3 px-3 justify-content-end">
             @if(url()->previous() && strpos(url()->previous(), 'management-kota') !== false)
                 <a href="{{ route('management-kota') }}" class="btn btn-secondary">Kembali</a>
             @endif
