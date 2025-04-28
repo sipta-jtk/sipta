@@ -573,15 +573,32 @@ return [
         ],
         [
             'text' => 'Repository Tugas Akhir',
-            'url'  => $prefix . '/repository/mahasiswa',
             'icon' => 'fas fa-book',
-            'can' => 'akses-sidebar-repo-mahasiswa'
-        ],
-        [
-            'text' => 'Repository Tugas Akhir',
-            'url'  => $prefix . '/repository/dosen/kelompok-ta',
-            'icon' => 'fas fa-book',
-            'can' => 'akses-sidebar-repo-dosen'
+            'submenu' => [
+                [
+                    'text' => 'List mahasiswa TA',
+                    'url'  => $prefix . '/repository/dosen/kelompok-ta',
+                    'icon' => 'fas fa-user-friends',
+                    'can' => 'akses-sidebar-repo-dosen'
+                ],
+                [
+                    'text' => 'Repository Mahasiswa',
+                    'url'  => $prefix . '/repository/mahasiswa',
+                    'can' => 'akses-sidebar-repo-mahasiswa'
+                ],
+                [
+                    'text' => 'Log Aktivitas',
+                    'url'  => $prefix . '/repository/koor-ta/log-aktivitas',
+                    'icon' => 'fas fa-clock',
+                    'can' => 'akses-sidebar-repo-dosen'
+                ],
+                [
+                    'text' => 'Monitoring Penyimpanan',
+                    'url'  => $prefix . '/repository/koor-ta/monitoring-penyimpanan',
+                    'icon' => 'fas fa-database',
+                    'can' => 'akses-sidebar-repo-dosen'
+                ],
+            ]
         ],
         [
             'text' => 'Artefak',
@@ -689,7 +706,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Edit Template Notifikasi',
-                    'url' => '/notification/admin/settingawal',                    
+                    'url' => '/notification/admin/settingawal',
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',

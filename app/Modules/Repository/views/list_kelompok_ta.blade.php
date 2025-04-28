@@ -57,12 +57,12 @@
                         <table id="table" class="table table-striped w-100">
                             <thead class="sticky-header">
                                 <tr class="bg-dark text-white text-center">
-                                    <th class="align-middle" style="width: 5%">KoTA</th>
-                                    <th class="align-middle" style="width: 15%">Tahun Masuk</th>
-                                    <th class="align-middle" style="width: 20%">Prodi</th>
-                                    <th class="align-middle" style="width: 30%">Judul TA</th>
+                                    <th class="align-middle" style="width: 3%">KoTA</th>
+                                    <th class="align-middle" style="width: 10%">Tahun Masuk</th>
+                                    <th class="align-middle" style="width: 17%">Prodi</th>
+                                    <th class="align-middle" style="width: 35%">Judul TA</th>
                                     <th class="align-middle" style="width: 20%">Mahasiswa</th>
-                                    <th class="align-middle" style="width: 10%">Aksi</th>
+                                    <th class="align-middle" style="width: 15%">Aksi</th>
                                 </tr>
                             </thead>
 
