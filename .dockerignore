@@ -1,5 +1,6 @@
 # Direktori dan file yang tidak perlu masuk ke dalam container
 node_modules
+__pycache__
 .env
 .env.local
 .env.*.local
@@ -15,3 +16,4 @@ vendor
 !docker-entrypoint.sh
 !app.Dockerfile.dev
 docker/mysql/data
+plagiarism-checking

@@ -26,39 +26,39 @@ class SubKategoriSeeder extends Seeder
         $data = [
             [
                 'id_subkategori' => 1, 
-                'nama_subkategori' => 'Pendidikan'
+                'nama_subkategori' => 'Laporan'
             ],
             [
                 'id_subkategori' => 2, 
-                'nama_subkategori' => 'Kesehatan'
+                'nama_subkategori' => 'FTA'
             ],
             [
                 'id_subkategori' => 3, 
-                'nama_subkategori' => 'Teknologi'
+                'nama_subkategori' => 'PowerPoint'
             ],
             [
                 'id_subkategori' => 4, 
-                'nama_subkategori' => 'Hiburan'
+                'nama_subkategori' => 'SRS'
             ],
             [
                 'id_subkategori' => 5, 
-                'nama_subkategori' => 'Bisnis'
+                'nama_subkategori' => 'SDD'
             ],
             [
                 'id_subkategori' => 6, 
-                'nama_subkategori' => 'Layanan'
+                'nama_subkategori' => 'Poster'
             ],
             [
                 'id_subkategori' => 7, 
-                'nama_subkategori' => 'Ekonomi'
+                'nama_subkategori' => 'Surat Bebas Masalah'
             ],
             [
                 'id_subkategori' => 8, 
-                'nama_subkategori' => 'Keamanan'
+                'nama_subkategori' => 'Hasil TOEIC'
             ],
             [
                 'id_subkategori' => 9, 
-                'nama_subkategori' => 'Data'
+                'nama_subkategori' => 'Surat Keaktifan'
             ]
         ];
 
