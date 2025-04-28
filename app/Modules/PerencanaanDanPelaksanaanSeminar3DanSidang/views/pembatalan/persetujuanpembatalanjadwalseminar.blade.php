@@ -4,9 +4,20 @@
 
 @section('content_header')
 <h1>Persetujuan Pembatalan Jadwal Seminar</h1>
+<div>
+@component('KelolaPenilaianTA.views.components.breadcrumb', [
+'links' => [
+['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+['url' => '', 'label' => 'Persetujuan Pembatalan Jadwal Seminar'],
+]
+])
+@endcomponent
+</div>
 @stop
 
 @section('content')
+<div class="card mx-3 mt-3">
+<div class="card-body">
 <table id="seminarTable" class="table table-striped" width="100%">
     <thead class="sticky-header">
         <tr class="bg-dark text-white">
@@ -44,26 +55,26 @@
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-primary" disabled>Setuju</button>
+                        <button type="submit" class="btn btn-primary btn-md w-100 my-1" disabled>Setuju</button>
                     </form>
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-danger" disabled>Tolak</button>
+                        <button type="submit" class="btn btn-danger btn-md w-100 my-1" disabled>Tolak</button>
                     </form>
                     @else
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-primary">Setuju</button>
+                        <button type="submit" class="btn btn-primary btn-md w-100 my-1">Setuju</button>
                     </form>
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
-                        <button type="submit" class="btn btn-danger">Tolak</button>
+                        <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>
                     </form>
                     @endif
                 </td>
@@ -71,6 +82,8 @@
         @endforeach
     </tbody>
 </table>
+</div>
+</div>
 @stop
 
 @section('css')
@@ -88,5 +101,4 @@
         $('#seminarTable').DataTable();
     });
 </script>
-<script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop

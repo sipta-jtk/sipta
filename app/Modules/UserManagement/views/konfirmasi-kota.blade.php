@@ -3,14 +3,22 @@
 @section('title', 'Konfirmasi Pengajuan KoTA')
 
 @section('content_header')
-    <h1>Konfirmasi Pengajuan KoTA</h1>
+    <h1 class="mb-3">Konfirmasi Pengajuan KoTA</h1>
+
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => route('perekrutan-anggota-kota'), 'label' => 'Rekrut Anggota KoTA'],
+                ['url' => '', 'label' => 'Konfirmasi KoTA']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Detail Kelompok TA</h3>
-    </div>
     <div class="card-body">
         <div class="alert alert-success">
             <h5><i class="icon fas fa-check"></i> Berhasil</h5>
@@ -32,9 +40,9 @@
                 fgroup-class="col-md-6" readonly/>
         </div>
 
-        <div class="d-flex justify-content-between">
-            <a href="{{ url(env('PREFIX_URL', 'sipta') . '/') }}" class="btn btn-secondary">Kembali ke Dashboard</a>
-            <a href="#" class="btn btn-danger">Tinggalkan Pra-KoTA</a>
+        <div class="d-flex pt-3 justify-content-end">
+            <a href="{{ url(env('PREFIX_URL', 'sipta') . '/') }}" class="btn btn-secondary mx-1">Kembali ke Dashboard</a>
+            <a href="#" class="btn btn-danger mx-1">Tinggalkan Pra-KoTA</a>
         </div>
     </div>
 </div>

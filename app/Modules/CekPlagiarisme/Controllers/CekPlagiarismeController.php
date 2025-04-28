@@ -18,6 +18,10 @@ use GuzzleHttp\Exception\RequestException;
 use Smalot\PdfParser\Parser as PdfParser;
 use ZipArchive;
 
+use Carbon\Carbon;
+
+Carbon::setLocale('id');
+
 // console::info
 // import this console::info
 use Illuminate\Support\Facades\Log as console;
@@ -51,7 +55,9 @@ class CekPlagiarismeController extends Controller
             return [
                 'id_dokumen' => $item->id_dokumen,
                 'judul' => $item->judul,
-                'waktu' => $item->created_at->format('Y-m-d H:i:s'),
+                'waktu' => $item->created_at
+                    ? Carbon::parse($item->created_at)->translatedFormat('H:i d F Y')
+                    : Carbon::now()->translatedFormat('H:i d F Y'),
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
