@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\Mahasiswa;
 use App\Models\Kota;
@@ -29,12 +30,13 @@ class PemberianFeedbackController extends Controller
      * @param string $namaFta
      * @param int $idKota
      */
-    public function pengisianMasukanSeminar($namaFta, $idKota): View
+    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
         
         // Ambil informasi seminar
         $seminar = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('id_prodi', $idProdi)
             ->where('jenis_form', 'feedback')
             ->with('kategoriPenilaian')
             ->first();
@@ -79,74 +81,84 @@ class PemberianFeedbackController extends Controller
 
     /**
      * Simpan feedback 
-     */
+     */   
     public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
-    {   
+    {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-
-        $nip = auth()->user()->username; // Ambil NIP dosen yang login
+        $nip = auth()->user()->username;
         $action = $request->form_action;
-
-        // Validasi data masukan
-        $request->validate([
-            'feedback' => 'required|array',
-            'feedback.*.masukan' => 'required|string',
-        ]);
-
         $idKota = Kota::where('id_kota', $idKota)->first()->id_kota;
-
-        // Ambil semua masukan dari parameter request
         $feedbacks = $request->input('feedback');
 
-        // Ambil id_fta berdasarkan nama_fta dan jenis_form = 'feedback'
         $idFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->where('jenis_form', 'feedback') // Pastikan hanya feedback
+            ->where('jenis_form', 'feedback')
             ->pluck('id_fta')
-            ->first(); // Ambil satu nilai yang cocok
+            ->first();
 
-        // Pastikan id_fta ditemukan
         if (!$idFta) {
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
 
-        // Ambil semua id_feedback yang sesuai dengan id_fta
         $idFeedbacks = AspekFeedback::where('id_fta', $idFta)
             ->pluck('id_feedback', 'nama_aspek_feedback')
             ->toArray();
 
-        // Buat array baru dengan array_merge
-        $data = [];
+        // Ambil masukan dari request
+        $feedbacks = $request->input('feedback');
+        $errorMessage = null;
+
+        // Loop semua masukan dan cek kondisi validasi
         foreach ($feedbacks as $feedback) {
-            if (isset($idFeedbacks[$feedback['nama_aspek_feedback']])) {
-                $data[] = array_merge($feedback, [
-                    'id_feedback' => $idFeedbacks[$feedback['nama_aspek_feedback']]
-                ]);
-            } else {
-                Log::warning("Feedback dengan nama aspek '{$feedback['nama_aspek_feedback']}' tidak ditemukan.");
+            $plainText = trim(strip_tags($feedback['masukan'] ?? ''));
+
+            if ($plainText === '') {
+                $errorMessage = "Masukan tidak boleh kosong.";
+                break;
+            }
+
+            if (Str::length($plainText) < 15) {
+                $errorMessage = "Masukan minimal 15 karakter.";
+                // Jangan break dulu, simpan kalau belum ada error
+                // Tapi kalau sudah ada error "kosong", ini tidak akan dijalankan
+            }
+
+            if (Str::length($plainText) > 100) {
+                // Kalau belum ada error apapun, set ini
+                if (!$errorMessage) {
+                    $errorMessage = "Masukan maksimal 100 karakter.";
+                }
             }
         }
 
-        // Mulai transaksi database
+        // Kalau ada error, tampilkan 1 saja
+        if ($errorMessage) {
+            return redirect()->back()
+                ->withErrors(['feedback.masukan' => $errorMessage])
+                ->withInput();
+        }
+
+        // Proses simpan
         DB::beginTransaction();
 
         try {
-            // Simpan setiap masukan ke dalam database
-            foreach ($data as $feedback) {
-                $existingFeedback = DetailFeedback::where('id_feedback', $feedback['id_feedback'])
+            foreach ($feedbacks as $index => $feedback) {
+                $idFeedback = array_values($idFeedbacks)[$index] ?? null;
+
+                if (!$idFeedback) continue;
+
+                $existingFeedback = DetailFeedback::where('id_feedback', $idFeedback)
                     ->where('id_kota', $idKota)
                     ->where('nip', $nip)
                     ->first();
-        
+
                 if ($existingFeedback) {
-                    // Update jika sudah ada
                     $existingFeedback->update([
                         'isi_feedback' => $feedback['masukan'],
-                        'status_penilaian_dosen' => 'dipublikasikan', // update status juga kalau perlu
+                        'status_penilaian_dosen' => 'dipublikasikan',
                     ]);
                 } else {
-                    // Insert jika belum ada
                     DetailFeedback::create([
-                        'id_feedback' => $feedback['id_feedback'],
+                        'id_feedback' => $idFeedback,
                         'id_kota' => $idKota,
                         'nip' => $nip,
                         'status_penilaian_dosen' => 'dipublikasikan',
@@ -154,12 +166,11 @@ class PemberianFeedbackController extends Controller
                     ]);
                 }
             }
-        
+
             DB::commit();
-        
             return redirect()->route('kelola.penilaian')->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }

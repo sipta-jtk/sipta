@@ -26,7 +26,7 @@
             <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="file" name="file" class="form-control d-inline-block w-auto" required>
-                <button type="submit" class="btn btn-success">Import from Excel</button>
+                <button type="submit" class="btn btn-success">Impor dari Excel</button>
             </form>
         </div>
         {{-- Tabel Scrollable --}}
@@ -91,18 +91,19 @@
                                         {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
                                         {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
                                         <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Nilai</a>
+                                        <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary">Masukan</a>
 
 
                                         {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
                                         @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
                                             <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
                                                 @csrf
-                                                <button type="submit" class="btn btn-danger">Unpublish</button>
+                                                <button type="submit" class="btn btn-danger">Batalkan Publikasi</button>
                                             </form>
                                         @else
                                             <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
                                                 @csrf
-                                                <button type="submit" class="btn btn-primary">Publish</button>
+                                                <button type="submit" class="btn btn-primary">Publikasi</button>
                                             </form>
                                         @endif
                                     </td>
