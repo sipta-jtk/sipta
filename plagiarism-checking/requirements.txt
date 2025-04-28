@@ -8,4 +8,6 @@ googleapis-common-protos==1.52.0
 requests==2.32.2
 urllib3==1.26.19
 nltk==3.9
-python-dotenv
+python-dotenv==1.1.0
+python-docx==1.1.2
+PyPDF2==3.0.1

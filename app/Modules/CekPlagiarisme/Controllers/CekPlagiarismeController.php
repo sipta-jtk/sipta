@@ -110,7 +110,7 @@ class CekPlagiarismeController extends Controller
         // Kirim file ke server Django untuk pengecekan plagiarisme
         try {
             $client = new Client();
-            $response = $client->post('http://192.168.116.195:8080/filetest/', [
+            $response = $client->post('http://host.docker.internal:8080/filetest/', [
                 'multipart' => [
                     [
                         'name'     => 'docfile',
@@ -144,7 +144,7 @@ class CekPlagiarismeController extends Controller
             'persentase_plagiarisme' => $percentage,
             'versi' => 1,
             'ukuran_file' => $fileSizeInKB,
-            'kategori' => 'seminar1',
+            'kategori' => 'plagiarisme',
             'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
             'highlight_dokumen' => 0,
             'status_berkas' => 'valid',
