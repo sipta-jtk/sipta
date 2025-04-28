@@ -10,6 +10,9 @@ use App\Models\ReviewDosenPembimbing;
 use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
+use Carbon\Carbon;
+
+Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
@@ -62,8 +65,8 @@ class CekPlagiarismeDetailController extends Controller
             'id_dokumen' => $id_dokumen,
             'nip' => $nip,
             'review' => $request->comment,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
         // Mengembalikan respons JSON
@@ -77,14 +80,14 @@ class CekPlagiarismeDetailController extends Controller
     public function deleteCatatan($id_dokumen, $id_catatan)
     {
 
-        $caatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
-        if (!$caatan) {
+        $catatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
+        if (!$catatan) {
             return response()->json([
                 'success' => false,
                 'message' => 'Catatan tidak ditemukan!'
             ]);
         }
-        $caatan->delete();
+        $catatan->delete();
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil dihapus!'
@@ -118,7 +121,7 @@ class CekPlagiarismeDetailController extends Controller
         }
         $catatan->update([
             'review' => $request->comment,
-            'updated_at' => now(),
+            'updated_at' => Carbon::now(),
             'nip' => $nip,
         ]);
 
