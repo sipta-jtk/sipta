@@ -6,6 +6,7 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Kehadiran;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
@@ -174,6 +175,23 @@ class VerifikasiPengajuanJadwalController extends Controller
                     DB::table('pengajuan_jadwal_kota')
                         ->where('id_penjadwalan', $idPenjadwalan)
                         ->update(['status_koordinator_ta' => $status]);
+
+                    // create kehadiran
+                    $mahasiswa = DB::table('mahasiswa')
+                        ->where('id_kota', $roomInformation->id_kota)
+                        ->select('nim')
+                        ->first();
+
+                    if ($mahasiswa){
+                        Kehadiran::Create([
+                            'id_penjadwalan' => $idPenjadwalan,
+                            'username' =>$mahasiswa->nim,
+                            'status_hadir' => 'belum_absen',
+                            'status_kelulusan' => 'pending',
+                            'batas_revisi' => null,
+                            'foto_sidang' => null,
+                        ]);
+                    }
                 } else {
                     // Jika gagal, kirimkan pop up error response json dari API
                     $responseData = $response->json();
