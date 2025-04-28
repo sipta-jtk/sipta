@@ -147,7 +147,7 @@ class RepositoryController extends Controller
 
             // Subkategori
             $subkategoriName = Subkategori::where('id_subkategori', $request->id_subkategori)->value('nama_subkategori');
-            dd($subkategoriName);
+            // dd($subkategoriName);
 
             // dd($request->all());
 
