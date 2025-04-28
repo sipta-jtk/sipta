@@ -147,6 +147,7 @@ class RepositoryController extends Controller
 
             // Subkategori
             $subkategoriName = Subkategori::where('id_subkategori', $request->id_subkategori)->value('nama_subkategori');
+            // dd($subkategoriName);
 
             // dd($request->all());
 
@@ -351,6 +352,8 @@ class RepositoryController extends Controller
             $data = collect([
                 'Laporan Tugas Akhir' => [
                     ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'hasil_revisi_sidang'])],
+                    // ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'revisi_sidang'])],
+                    // ['key' => 'laporan_revisi_sidang', 'label' => 'Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'sidang'])],
                     ['key' => 'laporan_seminar_3', 'label' => 'Seminar 3', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar3'])],
                     ['key' => 'laporan_seminar_2', 'label' => 'Seminar 2', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar2'])],
                     ['key' => 'laporan_seminar_1', 'label' => 'Seminar 1', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar1'])],
