@@ -56,8 +56,10 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
 
 //verifikasi berkas pengajuan mahasiswa
 Route::middleware(['auth', 'can:mahasiswa_ta'])->group(function () {
-    Route::get('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create'])->middleware(['auth'])->name('verifikasi.create');
-    Route::post('/verifikasi-berkas', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store'])->middleware(['auth'])->name('verifikasi.store');
+    Route::get('/verifikasi-berkas-3', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create_seminar_3'])->middleware(['auth'])->name('verifikasi3.create');
+    Route::post('/verifikasi-berkas-3', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store_seminar_3'])->middleware(['auth'])->name('verifikasi3.store');
+    Route::get('/verifikasi-berkas-sidang', [VerifikasiBerkasPengajuanMahasiswaController::class, 'create_sidang'])->middleware(['auth'])->name('verifikasi-sidang.create');
+    Route::post('/verifikasi-berkas-sidang', [VerifikasiBerkasPengajuanMahasiswaController::class, 'store_sidang'])->middleware(['auth'])->name('verifikasi-sidang.store');
 });
 // Kelola Verifikasi Berkas Pengajuan
 Route::group(['prefix' => 'kelola-pengajuan-berkas', 'as' => 'kelola.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {

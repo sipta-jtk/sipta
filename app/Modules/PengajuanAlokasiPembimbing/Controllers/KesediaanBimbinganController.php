@@ -10,6 +10,7 @@ use App\Models\Kota;
 use App\Models\KuotaMembimbing;
 use App\Models\PeriodePengajuan;
 use App\Models\Prodi;
+use App\Models\User;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\Auth;
 use DB;
@@ -46,6 +47,7 @@ class KesediaanBimbinganController extends Controller
             ->toArray();
 
         return [
+            'Name' => User::where('username', $this->USER_ID)->value('nama'),
             'BidangInterestTotal' => KetertarikanBidang::where('nip', $this->USER_ID)->count() ?: 0,
             'MaxBimbingan' => $MaxBimbingan,
             'JadwalTotal' => [
