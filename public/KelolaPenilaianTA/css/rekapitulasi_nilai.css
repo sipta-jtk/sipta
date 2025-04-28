@@ -6,15 +6,16 @@
 }
 
 table {
-    width: 600px;
-    border-collapse: collapse;
+    width: 100%;
 }
 
 th, td {
-    border: 1px solid #ccc !important; /* Tambahkan border untuk outline */
-    padding: 10px;
+    border: 1px solid #ccc !important; 
+    padding: 5px;
     text-align: center;
+    font-size: 12px;
 }
+
 
 thead {
     position: sticky;
@@ -76,3 +77,11 @@ tbody tr:hover {
 .text-danger {
     font-weight: bold;
 }
+
+#toggleFilter i {
+    margin-left: 5px;
+}
+#filterSection select {
+    min-width: 150px;
+}
+
