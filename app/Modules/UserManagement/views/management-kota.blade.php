@@ -25,8 +25,8 @@
                     <th>No</th>
                     <th>Nama Kelompok TA</th>
                     <th>Tahun</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                    <th style="width: 10%">Status</th>
+                    <th style="width: 5%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,19 +38,19 @@
                     <td>
                     @switch($kelompok->status_kota)
                             @case('pra_kota')
-                                <span class="badge badge-warning">Pra-KoTA</span>
+                                <span class="badge badge-warning text-md w-100">Pra-KoTA</span>
                                 @break
                             @case('aktif')
-                                <span class="badge badge-success">Aktif</span>
+                                <span class="badge badge-success text-md w-100">Aktif</span>
                                 @break
                             @case('lulus')
-                                <span class="badge badge-primary">Lulus</span>
+                                <span class="badge badge-primary text-md w-100">Lulus</span>
                                 @break
                             @case('bubar')
-                                <span class="badge badge-danger">Bubar</span>
+                                <span class="badge badge-danger text-md w-100">Bubar</span>
                                 @break
                             @default
-                                <span class="badge badge-secondary">{{ $kelompok->status_kota }}</span>
+                                <span class="badge badge-secondary text-md w-100">{{ $kelompok->status_kota }}</span>
                         @endswitch
                     </td>
                     <td class="text-center">
