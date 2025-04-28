@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+Carbon::setLocale('id');
 
 class VerifikasiBerkasController extends Controller
 {
@@ -21,6 +22,10 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'pending')
         ->get();
 
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
@@ -37,6 +42,11 @@ class VerifikasiBerkasController extends Controller
         ->where('status_konfirmasi', 'tidak_disetujui')
         ->get();
 
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
+
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDitolak', compact('dataKota', 'tipe'));
     }
 
@@ -49,6 +59,11 @@ class VerifikasiBerkasController extends Controller
         ->where('jenis_pengajuan', $jenisPengajuan)
         ->where('status_konfirmasi', 'disetujui')
         ->get();
+
+        $dataKota = $dataKota->map(function ($item) {
+            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
+            return $item;
+        });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
@@ -67,20 +82,10 @@ class VerifikasiBerkasController extends Controller
     {
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
-        $nip = auth()->user()->username;
 
         if ($keputusan === 'tidak_disetujui') {
             // Ambil data berkas berdasarkan ID
             $dataKota = DB::table('kota')->where('id_kota', $id)->first();
-
-            DB::table('verifikasi_berkas_pengajuan')
-            ->where('id_pengajuan', $id)
-            ->update([
-                'nip' => $nip, 
-                'status_konfirmasi' => $keputusan,
-                'catatan' => $catatan,
-                'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
 
             // Hapus berkas (jika ada)
             if ($dataKota && isset($dataKota->berkas)) {
@@ -94,16 +99,12 @@ class VerifikasiBerkasController extends Controller
             DB::table('verifikasi_berkas_pengajuan')
             ->where('id_pengajuan', $id)
             ->update([
-                'nip' => $nip,
                 'status_konfirmasi' => $keputusan,
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         }
     
-        
-
-
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }

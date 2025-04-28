@@ -3,7 +3,8 @@
 @section('title', 'Monitoring Rubrik')
 
 @section('content_header')
-    <div class="container-fluid p-3">
+    <h1 class="mb-3">Rubrik Penilaian {{ $kategori->nama_fta }}</h1>
+    <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
@@ -12,15 +13,10 @@
             ]
         ])
         @endcomponent
-
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Rubrik</h1>
     </div>
 @stop
 
 @section('content')
-<h6>Kategori : {{ $kategori->nama_fta }}</h6>
-<h6>Rubrik Penilaian</h6>
 <div class="card">
     <!-- /.card-header -->
     <div class="card-body p-0">

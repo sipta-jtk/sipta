@@ -10,6 +10,9 @@
 <div class="card">
     <div class="card-body">
         @csrf
+        <a href="{{ url()->previous() }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
 
         <!-- Nama Mahasiswa -->
         <div class="mb-3">
@@ -47,8 +50,7 @@
             <span class="text-danger">Belum ada file FTA 20.</span>
         @endif
 
-        <div class="">
-
+        <div class="d-flex justify-content-end">
             <!-- Tampilkan Tombol sesuai Role User -->
             @if(auth()->user()->role_user === 'mahasiswa')
                 <!-- Tombol Ajukan Pisah -->
@@ -56,10 +58,7 @@
                     <!-- Kalau pengajuan udah ada -->
                     <form action="{{ route('form.pisah.kota.batal') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <a href="{{ url()->previous() }}" class="btn btn-secondary mx-2 my-3">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                        </a>
-                        <button type="submit" class="btn btn-warning" onclick="return confirm('Yakin batalkan pengajuan?')">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin batalkan pengajuan?')">
                             <i class="fas fa-times-circle"></i> Batalkan Pengajuan
                         </button>
                     </form>
@@ -67,14 +66,9 @@
                     <!-- Pra KoTA pisah -->
                     <form action="{{ route('form.pisah.kota.prakota') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="gap-2">
-                            <a href="{{ route ('perekrutan-anggota-kota') }}" class="btn btn-secondary mx-2 my-3">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ajukan pisah?')">
-                                <i class="fas fa-paper-plane"></i> Pisah KoTA
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin ajukan pisah?')">
+                            <i class="fas fa-paper-plane"></i> Pisah KoTA
+                        </button>
                     </form>
                 @elseif($kota->status_kota === 'aktif')
                     <!-- Kalau belum ada pengajuan -->
@@ -83,10 +77,7 @@
                         <div class="gap-2">
                             <label class="form-label">Unggah FTA 20 (PDF)</label>
                             <input type="file" class="form-control" name="fta_20" accept=".pdf" required>
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary mx-2 my-3">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ajukan pisah?')">
+                            <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin ajukan pisah?')">
                                 <i class="fas fa-paper-plane"></i> Ajukan Pisah
                             </button>
                         </div>
@@ -94,14 +85,18 @@
                 @endif
             @elseif(auth()->user()->role_user === 'dosen' && auth()->user()->dosen->role_dosen === 'koordinator_ta')
                 <!-- Form Terima Pisah -->
-                <form action="{{ route('pengajuan.pisah.kota.terima', $pengajuan->id_pengajuan ?? 0) }}" method="POST" style="display: inline-block;">
+                <form action="{{ route('pengajuan.pisah.kota.tolak', $pengajuan->id_pengajuan ?? 0) }}" method="POST" class="mx-1" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
-                    <a href="{{ ~url()->previous() }}" class="btn btn-secondary mx-2 my-3">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                    </a>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin menolak pengajuan?')">
+                        <i class="fas fa-times-circle"></i> Tolak Pengajuan
+                    </button>                
+                </form>
+                <form action="{{ route('pengajuan.pisah.kota.terima', $pengajuan->id_pengajuan ?? 0) }}" class="mx-1" method="POST" style="display: inline-block;">
+                    @csrf
+                    @method('PATCH')
                     <button type="submit" class="btn btn-success" onclick="return confirm('Yakin terima pisah?')">
-                        <i class="fas fa-check"></i> Terima Pisah
+                        <i class="fas fa-check"></i> Terima Pengajuan
                     </button>
                 </form>
             @endif

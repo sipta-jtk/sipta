@@ -5,8 +5,10 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\AmbangBatas;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+Carbon::setLocale('id');
 
 class AmbangBatasController extends Controller
 {
@@ -20,7 +22,9 @@ class AmbangBatasController extends Controller
             return [
                 'id' => $item->id_ambang_batas,
                 'ambang_batas' => $item->ambang_batas,
-                'tanggal' => $item->created_at->format('Y-m-d H:i:s'),
+                'tanggal' => $item->updated_at
+                    ? Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y')
+                    : Carbon::now()->translatedFormat('H:i d F Y'),
                 'koordinator' => $item->dosen && $item->dosen->user ? $item->dosen->user->nama : 'Tidak Ada', // Ambil nama dosen dari user
                 'status' => ucfirst(str_replace('_', ' ', $item->status_ambang_batas)) // Ubah menjadi format yang lebih rapi
             ];
@@ -31,31 +35,67 @@ class AmbangBatasController extends Controller
 
     public function store(Request $request)
     {
-        // get nip dosen yang sedang login
         $nip = auth()->user()->username;
 
-        // Validasi input
         $request->validate([
             'ambang_batas' => 'required|numeric|min:1|max:100',
         ]);
 
-        DB::transaction(function () use ($request, $nip) {
-            // **1. Ubah semua status menjadi "tidak_digunakan"**
-            AmbangBatas::query()->update(['status_ambang_batas' => 'tidak_digunakan']);
+        try {
+            // Variabel untuk menyimpan response
+            $response = null;
 
-            // **2. Tambahkan data baru dengan status "digunakan"**
-            AmbangBatas::create([
-                'ambang_batas' => $request->ambang_batas,
-                'status_ambang_batas' => 'digunakan',
-                'nip' => $nip, 
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        });
+            DB::transaction(function () use ($request, $nip, &$response) {
+                $existing = AmbangBatas::where('ambang_batas', $request->ambang_batas)->first();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Ambang Batas berhasil ditambahkan!',
-        ]);
+                if ($existing) {
+                    if ($existing->status_ambang_batas !== 'digunakan') {
+                        // Kalau sudah ada, tapi belum digunakan, reset semua
+                        AmbangBatas::where('status_ambang_batas', 'digunakan')->update([
+                            'status_ambang_batas' => 'tidak_digunakan'
+                        ]);
+
+                        // Ubah yang ini jadi digunakan
+                        $existing->update([
+                            'status_ambang_batas' => 'digunakan',
+                            'nip' => $nip,
+                            'updated_at' => now()
+                        ]);
+                    }
+                    $response = [
+                        'success' => true,
+                        'message' => 'Ambang Batas sudah pernah ditambahkan, status diubah menjadi digunakan!',
+                        'data' => $existing
+                    ];
+                } else {
+                    // Kalau tidak ada ambang batas ini, reset semua lalu create baru
+                    AmbangBatas::where('status_ambang_batas', 'digunakan')->update([
+                        'status_ambang_batas' => 'tidak_digunakan'
+                    ]);
+
+                    $new = AmbangBatas::create([
+                        'ambang_batas' => $request->ambang_batas,
+                        'status_ambang_batas' => 'digunakan',
+                        'nip' => $nip,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+
+                    $response = [
+                        'success' => true,
+                        'message' => 'Ambang Batas baru berhasil ditambahkan!',
+                        'data' => $new
+                    ];
+                }
+            });
+
+            return response()->json($response);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan Ambang Batas.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
