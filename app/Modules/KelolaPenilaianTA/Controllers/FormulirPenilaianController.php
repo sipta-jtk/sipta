@@ -16,6 +16,7 @@ use App\Models\RentangNilai;
 use App\Models\KriteriaPenilaian;
 use App\Models\AspekFeedback;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class FormulirPenilaianController extends Controller {
     
@@ -211,13 +212,16 @@ class FormulirPenilaianController extends Controller {
         // Validate the request
         $request->validate([
             'tanggalTenggat' => 'required|date',
+            'waktuTenggat' => 'required|date_format:H:i',
             'bobot_kriteria.*' => 'required|integer|min:0|max:100',
         ]);
 
         // Find the form
         $formPenilaian = FormPenilaian::where('id_fta', $id)->firstOrFail();
         
+        // Update tanggal dan waktu tenggat pengisian
         $formPenilaian->tanggal_tenggat_pengisian = $request->tanggalTenggat;
+        $formPenilaian->waktu_tenggat_pengisian = $request->waktuTenggat;
         $formPenilaian->save();
         
         $kodeFTA = $formPenilaian->kode_fta;
@@ -286,7 +290,12 @@ class FormulirPenilaianController extends Controller {
             ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
             ->first();
 
-        // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
+        // Format tanggal menggunakan Carbon
+        if ($kategori) {
+            $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
+        }
+        
+            // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
         $rentangNilai = DB::table('rentang_nilai')
             ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
             ->select('id_nilai', 'batas_atas', 'batas_bawah')
@@ -334,6 +343,11 @@ class FormulirPenilaianController extends Controller {
             ->where('id_fta', $idFta)
             ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
             ->first();
+        
+        // Format tanggal menggunakan Carbon
+        if ($kategori) {
+            $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
+        }
 
         $aspekFeedback = DB::table('aspek_feedback')
             ->where('id_fta', $idFta)
@@ -348,42 +362,95 @@ class FormulirPenilaianController extends Controller {
      */
     public function viewDetailDosenPembimbing($idFta, $idProdi): View
     {
-        // Ambil data kategori berdasarkan id_fta
+        // Ambil data berdasarkan id_fta
         $kategori = DB::table('form_penilaian')
             ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian')
+            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
             ->first();
+            
 
-        // Log data untuk memastikan query berhasil
-        \Log::info('Kategori:', (array) $kategori);
-
-        // Pastikan data kategori ditemukan
+        // Format tanggal menggunakan Carbon
+        if ($kategori) {
+            $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
+        }
+        
+        // Pastikan data formulir ditemukan
         if (!$kategori) {
             abort(404, 'Data formulir penilaian tidak ditemukan.');
         }
 
-        // Ambil data aspek penilaian dari database
-        $aspekPenilaianDb = DB::table('kriteria_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('nama_kriteria as nama', 'bobot_kriteria as bobot')
-            ->get();
-
-        // Definisikan pengelompokan kategori
-        $kategoriHardcoded = [
-            'A Luaran Tugas Akhir' => ['Dokumen', 'Produk Perangkat Lunak/Hasil Penelitian'],
-            'B Proses Bimbingan' => ['Softskill', 'Hardskill'],
+        // Definisikan struktur kategori yang diharapkan
+        $aspekPenilaian = [
+            'A Luaran Tugas Akhir' => [],
+            'B Proses Bimbingan' => []
         ];
 
-        // Kelompokkan data dari database berdasarkan kategori yang telah ditentukan
-        $aspekPenilaian = [];
-        foreach ($kategoriHardcoded as $kategoriName => $aspekList) {
-            $aspekPenilaian[$kategoriName] = $aspekPenilaianDb->filter(function ($aspek) use ($aspekList) {
-                return in_array($aspek->nama, $aspekList);
-            })->values()->toArray();
+        // Ambil semua kriteria penilaian untuk form ini
+        $kriteriaPenilaian = DB::table('kriteria_penilaian')
+            ->where('id_fta', $idFta)
+            ->select('nama_kriteria', 'bobot_kriteria')
+            ->get();
+
+
+        // Mapping nama kriteria ke kategori yang sesuai
+        foreach ($kriteriaPenilaian as $kriteria) {
+            // Masukkan kriteria ke kategori yang sesuai berdasarkan nama
+            if ($kriteria->nama_kriteria == 'Dokumen' || $kriteria->nama_kriteria == 'Produk Perangkat Lunak/Hasil Penelitian') {
+                $aspekPenilaian['A Luaran Tugas Akhir'][] = [
+                    'nama' => $kriteria->nama_kriteria,
+                    'bobot' => $kriteria->bobot_kriteria
+                ];
+            } elseif ($kriteria->nama_kriteria == 'Softskill' || $kriteria->nama_kriteria == 'Hardskill') {
+                $aspekPenilaian['B Proses Bimbingan'][] = [
+                    'nama' => $kriteria->nama_kriteria,
+                    'bobot' => $kriteria->bobot_kriteria
+                ];
+            }
         }
+
+        Log::info(json_encode($kategori, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
     }
+
+    // public function viewDetailDosenPembimbing($idFta, $idProdi): View
+    // {
+    //     // Ambil data kategori berdasarkan id_fta
+    //     $kategori = DB::table('form_penilaian')
+    //         ->where('id_fta', $idFta)
+    //         ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian')
+    //         ->first();
+
+    //     // Log data untuk memastikan query berhasil
+    //     \Log::info('Kategori:', (array) $kategori);
+
+    //     // Pastikan data kategori ditemukan
+    //     if (!$kategori) {
+    //         abort(404, 'Data formulir penilaian tidak ditemukan.');
+    //     }
+
+    //     // Ambil data aspek penilaian dari database
+    //     $aspekPenilaianDb = DB::table('kriteria_penilaian')
+    //         ->where('id_fta', $idFta)
+    //         ->select('nama_kriteria as nama', 'bobot_kriteria as bobot')
+    //         ->get();
+
+    //     // Definisikan pengelompokan kategori
+    //     $kategoriHardcoded = [
+    //         'A Luaran Tugas Akhir' => ['Dokumen', 'Produk Perangkat Lunak/Hasil Penelitian'],
+    //         'B Proses Bimbingan' => ['Softskill', 'Hardskill'],
+    //     ];
+
+    //     // Kelompokkan data dari database berdasarkan kategori yang telah ditentukan
+    //     $aspekPenilaian = [];
+    //     foreach ($kategoriHardcoded as $kategoriName => $aspekList) {
+    //         $aspekPenilaian[$kategoriName] = $aspekPenilaianDb->filter(function ($aspek) use ($aspekList) {
+    //             return in_array($aspek->nama, $aspekList);
+    //         })->values()->toArray();
+    //     }
+
+    //     return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
+    // }
 
     /**
      * Menampilkan halaman untuk menambahkan rubrik pada formulir penilaian.

@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => route('beranda.get'), 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Aspek Penilaian']
         ]
@@ -167,13 +167,27 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
-                                <input type="date" class="form-control" id="tanggalTenggat" name="tanggalTenggat" value="{{ $aspek->tanggalTenggat }}" required>
+                                <input 
+                                    type="date" 
+                                    class="form-control" 
+                                    id="tanggalTenggat" 
+                                    name="tanggalTenggat" 
+                                    value="{{ old('tanggalTenggat', isset($aspek->tanggalTenggat) ? \Carbon\Carbon::parse($aspek->tanggalTenggat)->format('Y-m-d') : '') }}" 
+                                    required
+                                >
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="waktuTenggat">Waktu Tenggat</label>
-                                <input type="time" class="form-control" id="waktuTenggat" name="waktuTenggat" value="{{ $aspek->waktuTenggat }}" required>
+                                <input 
+                                    type="time" 
+                                    class="form-control" 
+                                    id="waktuTenggat" 
+                                    name="waktuTenggat" 
+                                    value="{{ old('waktuTenggat', isset($aspek->waktuTenggat) ? \Carbon\Carbon::parse($aspek->waktuTenggat)->format('H:i') : '') }}" 
+                                    required
+                                >
                             </div>
                         </div>
                     </div>
