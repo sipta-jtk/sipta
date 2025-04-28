@@ -153,10 +153,9 @@
                         $('#notification-list').append(html);
                     });
                 }
-            }).fail(function() {
-                $('#notification-list').html('<div class="text-center text-danger">Gagal memuat notifikasi</div>');
-            });
-        }
+            })
+            }
+        
 
         $(document).on('click', '.notification-item', function(event) {
             if (!$(event.target).hasClass('close-notification')) {

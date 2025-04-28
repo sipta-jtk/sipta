@@ -698,13 +698,14 @@ return [
                 [
                     'text' => 'Pengaturan Notifikasi',
                     'url' => $prefix . '/notification/admin/settingawal',
-                    'icon' => 'fas fa-pen',                    
+                    'icon' => 'fas fa-pen',
+                    'can' => 'admin',
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
                     'url' => $prefix . '/api/logAdmin',
                     'icon' => 'fas fa-clipboard-list',
-                    // 'can' => 'admin',
+                    'can' => 'admin',
                 ],
             ]
             // 'label' => 4,

@@ -32,8 +32,8 @@ Route::prefix('/notification/admin')->middleware('auth', 'can:admin')->group(fun
         ->name('notifikasi.delete');
 });
 
-Route::get('/api/notifications', [LogModalNotifController::class, 'getNotifications']);
-Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
+Route::get('/sipta/api/notifications', [LogModalNotifController::class, 'getNotifications']);
+Route::get('/sipta/api/notification/{id}', [LogModalNotifController::class, 'show']);
 Route::get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications']);
 //hrs login dl dan sebagai admin
 Route::middleware(['auth', 'can:admin'])->get('/api/logAdmin', [LogAdminController::class, 'getLogNotifications'])->name('logAdmin');
