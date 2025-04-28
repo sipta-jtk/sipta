@@ -38,7 +38,7 @@
                         <th>Nama Prodi</th>
                         <th>Ketua Prodi</th>
                         <th class="text-center" style="width: 15%;">Maks Anggota Kota</th>
-                        <th class="text-center" style="width: 15%;">Maks Bimbingan</th>
+                        <!-- <th class="text-center" style="width: 15%;">Maks Bimbingan</th> -->
                         <th class="text-center" style="width: 15%;">Aksi</th>
                     </tr>
                 </thead>
@@ -49,7 +49,7 @@
                             <td>{{ $prodi->nama_prodi }}</td>
                             <td>{{ $prodi->ketua_prodi ?? '-' }}</td>
                             <td class="text-center">{{ $prodi->maksimal_anggota_kota }}</td>
-                            <td class="text-center">{{ $prodi->maksimal_mahasiswa_bimbingan }}</td>
+                            <!-- <td class="text-center">{{ $prodi->maksimal_mahasiswa_bimbingan }}</td> -->
                             <td class="text-center">
                                 <a class="btn btn-warning btn-md my-1" title="Ubah" data-toggle="modal" data-target="#editModal{{ $prodi->id_prodi }}">
                                     <i class="fas fa-edit"></i>
