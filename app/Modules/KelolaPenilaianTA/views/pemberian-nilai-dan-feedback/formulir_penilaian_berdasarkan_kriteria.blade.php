@@ -5,16 +5,17 @@
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
+        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Penilaian Seminar II']
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ strtoupper($data['nama_fta']) }}</h1>
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
     </div>
 @stop
 
@@ -24,21 +25,13 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $data['nama_fta'] }}</span>
+                <span>{{ ($detailInformasiFta->first()?->kode_fta) }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
-                <strong>Pada hari/tanggal</strong> <br>
-                <span>{{ $data['tanggal'] }}</span>
-            </div>
-            <div class="col-md-2 mt-3">
-                <strong>Waktu</strong> <br>
-                <span>{{ $data['waktu'] }}</span>
-            </div>
-            <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>
-                <span>{{ $data['nama_kota'] }}</span>
+                <span>{{ $keteranganUmumPenilaian->nama_kota }}</span>
             </div>
         </div>
 
@@ -55,7 +48,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa as $key => $mhs)
+                            @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -72,7 +65,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $data['judul_ta'] }}</span>
+                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
             </div>
         </div>
 
@@ -80,9 +73,11 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Preview File Dokumen Seminar II</strong> <br>
+                {{-- TBD get file secara dinamis --}}
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Laporan
                 </button>
+                {{-- TBD get file secara dinamis --}}
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Power Point
                 </button>
@@ -109,16 +104,25 @@
             </div>
         </div>
 
+
         <!-- Form Penilaian -->
         @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? route('pengisian.nilai.edit', ['id' => $idFta, 'kota' => $data['id_kota']]) : route('pengisian.nilai.store', ['id' => $idFta, 'kota' => $data['id_kota']]);
+            $kriteriaPenilaian = $detailInformasiFta->first()?->kriteriaPenilaian;
 
+            if (isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false) {
+                $actionUrl = route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
+            } else {
+                $actionUrl = route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
+            }
         @endphp
         <form action="{{ $actionUrl }}" method="POST">
             @csrf
-            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+            @if(isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false)
                 @method('PATCH')
+            @else
+                @method('POST')
             @endif
+            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -127,35 +131,35 @@
                                 <th rowspan="2" class="align-content-center">No</th>
                                 <th rowspan="2" class="align-content-center">Kriteria Penilaian Penguji</th>
                                 <th rowspan="2" class="align-content-center">Bobot Nilai</th>
-                                <th rowspan="2" class="align-content-center">Rentang Nilai</th>
-                                <th colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                                <th colspan="{{ count($keteranganUmumPenilaian->mahasiswa) }}">Nilai Perorangan</th>
                             </tr>
                             <tr>
-                                @foreach($mahasiswa as $key => $mhs)
+                                @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                     <th data-toggle="popover" data-content="{{ $mhs->user->nama }}">{{ $key + 1 }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteriaPenilaian as $index => $item)
+                            @foreach ($detailInformasiFta->first()?->kriteriaPenilaian ?? [] as $index => $kriteria)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->nama_kriteria }}
-                                        @if ($item->rubrik->count() > 0)
+                                    <td>{{ $kriteria->nama_kriteria }}
+                                        @if ($kriteria->rubrik->count() > 0)
                                             <ul>
-                                                @foreach ($item->rubrik as $rubrik)
+                                                @foreach ($kriteria->rubrik as $rubrik)
                                                     <li>{{ $rubrik->nama_rubrik }}</li>
                                                 @endforeach
                                             </ul>
                                         @endif
                                     </td>
-                                    <td>{{ $item->bobot_kriteria }} %</td>
-                                    <td>0 - 100</td>
-                                    @foreach($mahasiswa as $key => $mhs)
+                                    <td>{{ $kriteria->bobot_kriteria }} %</td>
+                                    @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                         @php
-                                            $nilai = isset($nilaiKriteria[$index][$key]) ? $nilaiKriteria[$index][$key] : '';
+                                            $nilai = isset($kriteria->nilaiKriteria[$key]) ? $kriteria->nilaiKriteria[$key]->nilai_kriteria : '';
                                         @endphp
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
+                                        <td>
+                                            <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                        </td>
                                     @endforeach
                                 </tr>
                             @endforeach
@@ -167,8 +171,12 @@
             <!-- Tombol Simpan -->
             <div class="row mt-0">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ route('pengisian.masukan', ['id' => $idFta, 'kota' => $data['id_kota']]) }}" class="btn btn-primary">Selanjutnya</a>
+                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
+                        Simpan draft
+                    </button>
+                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
+                        Selanjutnya
+                    </button>
                 </div>
             </div>
         </form>

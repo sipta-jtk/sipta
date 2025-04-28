@@ -23,7 +23,10 @@ $(document).ready(function () {
         // Check if rentangNilai is defined globally
         if (typeof rentangNilai !== 'undefined') {
             rentangNilai.forEach(function (nilai) {
-                nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${nilai.id_nilai}[]" required></td>`;
+                nilaiColumns += `
+                    <td>
+                        <textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea>
+                    </td>`;
             });
         } else {
             // Fallback: get values from existing table headers
@@ -34,7 +37,10 @@ $(document).ready(function () {
                     const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
                     if (match && match[1]) {
                         const id_nilai = match[1];
-                        nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${id_nilai}[]" required></td>`;
+                        nilaiColumns += `
+                            <td>
+                                <textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea>
+                            </td>`;
                     }
                 }
             });
@@ -65,7 +71,9 @@ $(document).ready(function () {
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot">-</p></td>
-            <td><input type="text" class="form-control" name="detail[]" required></td>
+            <td>
+                <textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required></textarea>
+            </td>
             ${nilaiColumns}
             <td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>
