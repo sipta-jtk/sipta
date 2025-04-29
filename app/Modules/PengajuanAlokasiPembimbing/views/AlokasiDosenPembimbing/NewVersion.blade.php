@@ -20,11 +20,11 @@
         @endcomponent
     </div>
 
-    <div class="container border mb-2 p-2 m-0 m-100" style="height: 75vh;">
+    <div class="card border mb-2 p-2 m-0 m-100" style="height: 75vh;">
         <div class="row">
-            <div class="col border" style="max-width:75%; min-width: 75%;">
-                <div class=" table-responsive" style="height: 75vh; overflow-x:hidden;">
-                    <table class="table table-striped " id="alokasiTable" {{-- style="width: 1000px" --}}>
+            <div class="col" style="max-width:75%; min-width: 75%;">
+                <div class=" table-responsive" style="height: 75vh;">
+                    <table class="table table-striped m-0 " id="alokasiTable" style="min-width: 850px; max-width: 75vw;">
 
                         <thead class="bg-dark sticky-top">
                             <tr>
@@ -37,84 +37,220 @@
                                 <tr>
                                     <td class="p-0 text-center" style="width: 10px">1</td>
                                     <td class="p-0">
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
+                                        <table class="m-0 table table-striped table-bordered">
+                                            <thead class="font-weight-normal">
                                                 <tr>
-                                                    <th scope="col">Kota 101
+                                                    <th scope="col" class="font-weight-normal">Kota 101
                                                         <br>
                                                         Judul TA ABCDEFG Pelangi ada 12 warna Lorem ipsum dolor sit
                                                         <br>
                                                         Bidang TA
                                                     </th>
-                                                    <th scope="col">Alokasi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td class="p-0">
-                                                        <div class="container">
-                                                            <div class="row" style="height: 250px;">
-                                                                <div class="col-sm border-right border-dark">
-                                                                    Mahasiswa A
-                                                                    <br>
-                                                                    Mahasiswa A
-                                                                    <br>
-                                                                    Mahasiswa A
-                                                                    <br>
-                                                                    Mahasiswa A
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    Usulan Pembimbing
-                                                                    <hr class="m-0">
-                                                                    1. JLM
-                                                                    <br>
-                                                                    1. JLM
-                                                                    <br>
-                                                                    1. JLM
-                                                                    <br>
-                                                                    1. JLM
-                                                                    <br>
-                                                                    1. JLM
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="p-0">
-                                                        <div class="container p-0">
-                                                            <div class="row d-flex flex-wrap" style="height: 250px;">
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100">
-                                                                        <span class="badge fw-normal">Pembimbing
-                                                                            1</span>
+                                                        <div>
+                                                            <div class="row d-flex flex-wrap m-0" style="height: 250px;">
+                                                                <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
+                                                                    class="col-sm border-right border-dark p-0">
+
+                                                                    <div class="row d-flex flex-wrap m-0"
+                                                                        style="height: 250px;">
+                                                                        <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
+                                                                            class="col-sm border-right border-dark p-0">
+                                                                            <div
+                                                                                class="border-bottom border-dark m-0 p-1 pl-3">
+                                                                                Anggota Kelompok
+                                                                            </div>
+                                                                            <div class="p-1 pl-3">
+                                                                                @for ($MH = 1; $MH <= 4; $MH++)
+                                                                                    Mahasiswa A
+                                                                                    <br>
+                                                                                    <span
+                                                                                        class="badge font-weight-normal p-0">22150404</span>
+                                                                                    <br>
+                                                                                @endfor
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
+                                                                            class="col-sm p-0">
+                                                                            <div
+                                                                                class="border-bottom border-dark m-0 p-1 pl-3">
+                                                                                Usulan Pembimbing
+                                                                            </div>
+                                                                            <div class="p-1 pl-3">
+                                                                                @for ($pengujiList = 1; $pengujiList <= 4; $pengujiList++)
+                                                                                    <span
+                                                                                        class="badge bg-primary">{{ $pengujiList }}</span>
+                                                                                    JLM
+                                                                                    <br>
+                                                                                @endfor
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100"><span
-                                                                            class="badge fw-normal">Pembimbing 2</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100">NULL</div>
-                                                                </div>
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100"><span
-                                                                            class="badge fw-normal">Penguji 1</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100"><span
-                                                                            class="badge fw-normal">Penguji 2</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-4 p-0"
-                                                                    style="flex: 0 0 33.33%; max-width: 33.33%; height: 50%;">
-                                                                    <div class="border p-2 h-100"><span
-                                                                            class="badge fw-normal">Penguji 3</span>
+                                                                <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
+                                                                    class="col-sm border-right border-dark p-0">
+                                                                    <div class="row d-flex m-0 flex-row"
+                                                                        style="height: 250px;">
+                                                                        <div class="col-4 p-0 bg-warning"
+                                                                            style="flex: 0 0 50%; max-width: 50%; height: 50%;">
+                                                                            <div class="border border-dark p-0 h-100">
+                                                                                <div class="row d-flex flex-wrap m-0 p-2"
+                                                                                    style="height: 100%">
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <span
+                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            1</span>
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <input type="text" name=""
+                                                                                            id=""
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            style="font-size: xx-large"
+                                                                                            value="JO">
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+
+                                                                                        <div
+                                                                                            class="d-flex justify-content-between">
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-primary">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-eye"></i>
+                                                                                            </button>
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-success">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-4 p-0 bg-warning"
+                                                                            style="flex: 0 0 50%; max-width: 50%; height: 50%;">
+                                                                            <div class="border border-dark p-0 h-100">
+                                                                                <div class="row d-flex flex-wrap m-0 p-2"
+                                                                                    style="height: 100%">
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <span
+                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            2</span>
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <input type="text" name=""
+                                                                                            id=""
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            style="font-size: xx-large"
+                                                                                            value="JO">
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+
+                                                                                        <div
+                                                                                            class="d-flex justify-content-between">
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-primary">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-eye"></i>
+                                                                                            </button>
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-success">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-4 p-0 bg-warning"
+                                                                            style="flex: 0 0 50%; max-width: 50%; height: 50%;">
+                                                                            <div class="border border-dark p-0 h-100">
+                                                                                <div class="row d-flex flex-wrap m-0 p-2"
+                                                                                    style="height: 100%">
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <span
+                                                                                            class="badge fw-normal">Penguji
+                                                                                            1</span>
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <input type="text"
+                                                                                            name="" id=""
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            style="font-size: xx-large"
+                                                                                            value="JO">
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+
+                                                                                        <div
+                                                                                            class="d-flex justify-content-between">
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-primary">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-eye"></i>
+                                                                                            </button>
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-success">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-4 p-0 bg-warning"
+                                                                            style="flex: 0 0 50%; max-width: 50%; height: 50%;">
+                                                                            <div class="border border-dark p-0 h-100">
+                                                                                <div class="row d-flex flex-wrap m-0 p-2"
+                                                                                    style="height: 100%">
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <span
+                                                                                            class="badge fw-normal">Penguji
+                                                                                            2</span>
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
+                                                                                        class="col-sm p-0">
+                                                                                        <input type="text"
+                                                                                            name="" id=""
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            style="font-size: xx-large"
+                                                                                            value="JO">
+                                                                                    </div>
+                                                                                    <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
+                                                                                        class="col-sm p-0">
+
+                                                                                        <div
+                                                                                            class="d-flex justify-content-between">
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-primary">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-eye"></i>
+                                                                                            </button>
+                                                                                            <button
+                                                                                                class="btn btn-sm btn-success">
+                                                                                                <i
+                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -133,7 +269,7 @@
                 </div>
             </div>
             <!-- punya gwejh -->
-            <div class="col border p-0" style="max-width: 25%; min-width: 25%;">
+            <div class="col p-0" style="max-width: 25%; min-width: 25%;">
                 <div style="height: 75vh; overflow: hidden; display: flex; flex-direction: column;">
 
                     <!-- HEADER -->
@@ -146,22 +282,52 @@
                         <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
-                                    <th></th> <!-- Kolom buat tombol expand -->
                                     <th>Nama Dosen</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @for ($i = 1; $i < 100; $i++)
                                     <tr>
-                                        <td class="text-center">
-                                            <button class="btn btn-sm btn-outline-primary toggle-detail">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <span class="badge fw-normal bg-secondary">
-                                                Mathar Riqzi {{ $i }}
-                                            </span>
+                                        <td style="position: relative;">
+                                            <div class="d-flex align-items-start justify-content-between"
+                                                style="gap: 8px;">
+                                                <span class="badge fw-normal" style="flex-shrink: 0;">
+                                                    niggalius Rahtam Ziqri
+                                                    {{ $i }}
+                                                </span>
+                                                <div style="flex-grow: 1;">
+                                                    <table class="table table-sm table-bordered mb-0">
+                                                        <thead class="text-center">
+                                                            <tr>
+                                                                <th class="p-1">
+                                                                    <span class="badge fw-normal">D3</span>
+                                                                </th>
+                                                                <th class="p-1">
+                                                                    <span class="badge fw-normal">D4</span>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="text-center">
+                                                            <tr>
+                                                                <td class="p-1">
+                                                                    <span class="badge fw-normal">3/7</span>
+                                                                </td>
+                                                                <td class="p-1">
+                                                                    <span class="badge fw-normal">2/10</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="p-1">
+                                                                    <span class="badge fw-normal">1</span>
+                                                                </td>
+                                                                <td class="p-1">
+                                                                    <span class="badge fw-normal">2</span>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endfor
@@ -191,48 +357,14 @@
         $(document).ready(function() {
             adjustSidebar();
             var table = $('#dosenTable').DataTable({
-            responsive: true,
-            paging: true,
-            searching: true,
-            info: true,
-            scrollY: 'calc(75vh - 120px)',
-            scrollCollapse: true
-        });
-
-        $('#dosenTable tbody').on('click', '.toggle-detail', function () {
-            var tr = $(this).closest('tr');
-            var row = table.row(tr);
-
-            if (row.child.isShown()) {
-
-                row.child.hide();
-                $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
-            } else {
-                // Buka child row
-                var childContent = `
-                    <table class="table table-bordered table-sm mb-0">
-                        <thead>
-                            <tr>
-                                <th>D3</th>
-                                <th>D4</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>3/7</td>
-                                <td>2/10</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>2</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
-                row.child(childContent).show();
-                $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
-            }
-        });
+                responsive: true,
+                paging: true,
+                searching: true,
+                info: true,
+                scrollY: 'calc(75vh - 120px)',
+                scrollCollapse: true,
+                lengthChange: false
+            });
         });
 
         $(window).resize(function() {
