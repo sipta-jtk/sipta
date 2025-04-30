@@ -276,7 +276,6 @@
                     <div class="bg-dark text-white p-2">
                         Detail Dosen
                     </div>
-
                     <!-- DATATABLE -->
                     <div style="flex: 1;">
                         <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
@@ -289,11 +288,9 @@
                                 @for ($i = 1; $i < 100; $i++)
                                     <tr>
                                         <td style="position: relative;">
-                                            <div class="d-flex align-items-start justify-content-between"
-                                                style="gap: 8px;">
+                                            <div class="d-flex align-items-start justify-content-between" style="gap: 8px;">
                                                 <span class="badge fw-normal" style="flex-shrink: 0;">
-                                                    niggalius Rahtam Ziqri
-                                                    {{ $i }}
+                                                    niggalius Rahtam Ziqri {{ $i }}
                                                 </span>
                                                 <div style="flex-grow: 1;">
                                                     <table class="table table-sm table-bordered mb-0">
@@ -336,6 +333,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @stop
@@ -364,6 +362,26 @@
                 scrollY: 'calc(75vh - 120px)',
                 scrollCollapse: true,
                 lengthChange: false
+            });
+
+            // Ini ditempatkan setelah inisialisasi table
+            $('#dosenTable_filter label').contents().filter(function() {
+                return this.nodeType === 3;
+            }).remove();
+
+            $('#dosenTable_filter').addClass('flex-grow-1 m-0');
+            $('#dosenTable_filter input').addClass('form-control form-control-sm');
+
+            let customFilterWrapper = $('<div class="p-2 bg-light d-flex align-items-center" style="gap: 8px;"></div>');
+            let filterBtn = $('<button id="filterToggle" class="btn p-0" style="border: none; background: none;" title="Filter"><i class="fas fa-filter fa-lg"></i></button>');
+
+            customFilterWrapper.append(filterBtn);
+            customFilterWrapper.append($('#dosenTable_filter'));
+
+            $('#dosenTable_wrapper').prepend(customFilterWrapper);
+
+            $('#filterToggle').on('click', function () {
+                $('#filterDropdown').slideToggle(200);
             });
         });
 
