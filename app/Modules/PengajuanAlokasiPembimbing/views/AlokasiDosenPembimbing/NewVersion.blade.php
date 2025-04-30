@@ -334,7 +334,7 @@
                                         <td>
                                             <div class="d-flex align-items-start justify-content-between" style="gap: 8px;">
                                                 <span class="badge fw-normal" style="flex-shrink: 0;">
-                                                    niggalius Rahtam Ziqri {{ $i }}
+                                                    Sri Ratna Wulan {{ $i }}
                                                 </span>
                                                 <span class="d-none">kuota belum</span>
 
@@ -344,16 +344,19 @@
                                                             <tr>
                                                                 <th class="p-1"><span class="badge fw-normal">D3</span></th>
                                                                 <th class="p-1"><span class="badge fw-normal">D4</span></th>
+                                                                <th class="p-1"><span class="badge fw-normal"></span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="text-center">
                                                             <tr>
                                                                 <td class="p-1"><span class="badge fw-normal">3/7</span></td>
                                                                 <td class="p-1"><span class="badge fw-normal">2/10</span></td>
+                                                                <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="p-1"><span class="badge fw-normal">1</span></td>
                                                                 <td class="p-1"><span class="badge fw-normal">2</span></td>
+                                                                <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -399,16 +402,13 @@
                 lengthChange: false
             });
 
-            // Pencarian manual dari input luar (karena tidak auto terpasang oleh DataTables)
             $('#dosenTable_filter input').on('keyup', function () {
                 table.search(this.value).draw();
             });
 
-            // Styling tambahan untuk search input
             $('#dosenTable_filter').addClass('flex-grow-1 m-0');
             $('#dosenTable_filter input').addClass('form-control form-control-sm');
 
-            // Tombol Terapkan Filter
             $('#applyFilter').on('click', function () {
                 let searchTerms = [];
 
@@ -423,7 +423,6 @@
                 table.search(keyword).draw();
             });
 
-            // Init alokasiTable
             $('#alokasiTable').DataTable({
                 responsive: true,
             });
