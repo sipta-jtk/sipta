@@ -321,7 +321,7 @@
                     </div>
 
                     <!-- DATATABLE -->
-                    <div style="flex: 1; overflow-y: auto;">
+                    <div style="flex: 1;">
                         <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
