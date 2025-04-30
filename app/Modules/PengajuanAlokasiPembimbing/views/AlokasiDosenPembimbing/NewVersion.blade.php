@@ -276,8 +276,52 @@
                     <div class="bg-dark text-white p-2">
                         Detail Dosen
                     </div>
+
+                    <!-- WRAPPER UNTUK FILTER DAN SEARCH -->
+                    <div class="d-flex justify-content-between align-items-center p-2">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+                            data-target="#filterMenu" aria-expanded="false" aria-controls="filterMenu" title="Tampilkan Filter">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <div id="dosenTable_filter" class="dataTables_filter m-0">
+                            <input type="search" class="form-control form-control-sm" placeholder="Search" aria-controls="dosenTable">
+                        </div>
+                    </div>
+
+                    <!-- FILTER COLLAPSE -->
+                    <div class="collapse" id="filterMenu">
+                        <div class="card mx-2 mb-2">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-filter mr-2"></i>Filter Dosen
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="kuota" id="filterQuota">
+                                            <label class="form-check-label" for="filterQuota">
+                                                <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi Kuota
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="belum" id="filterUnassigned">
+                                            <label class="form-check-label" for="filterUnassigned">
+                                                <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="button" id="applyFilter" class="btn btn-primary btn-sm">Terapkan</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- DATATABLE -->
-                    <div style="flex: 1;">
+                    <div style="flex: 1; overflow-y: auto;">
                         <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
@@ -287,39 +331,29 @@
                             <tbody>
                                 @for ($i = 1; $i < 100; $i++)
                                     <tr>
-                                        <td style="position: relative;">
+                                        <td>
                                             <div class="d-flex align-items-start justify-content-between" style="gap: 8px;">
                                                 <span class="badge fw-normal" style="flex-shrink: 0;">
                                                     niggalius Rahtam Ziqri {{ $i }}
                                                 </span>
+                                                <span class="d-none">kuota belum</span>
+
                                                 <div style="flex-grow: 1;">
                                                     <table class="table table-sm table-bordered mb-0">
                                                         <thead class="text-center">
                                                             <tr>
-                                                                <th class="p-1">
-                                                                    <span class="badge fw-normal">D3</span>
-                                                                </th>
-                                                                <th class="p-1">
-                                                                    <span class="badge fw-normal">D4</span>
-                                                                </th>
+                                                                <th class="p-1"><span class="badge fw-normal">D3</span></th>
+                                                                <th class="p-1"><span class="badge fw-normal">D4</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="text-center">
                                                             <tr>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">3/7</span>
-                                                                </td>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">2/10</span>
-                                                                </td>
+                                                                <td class="p-1"><span class="badge fw-normal">3/7</span></td>
+                                                                <td class="p-1"><span class="badge fw-normal">2/10</span></td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">1</span>
-                                                                </td>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">2</span>
-                                                                </td>
+                                                                <td class="p-1"><span class="badge fw-normal">1</span></td>
+                                                                <td class="p-1"><span class="badge fw-normal">2</span></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -333,7 +367,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @stop
@@ -352,9 +385,11 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             adjustSidebar();
-            var table = $('#dosenTable').DataTable({
+
+            // Init dosenTable
+            const table = $('#dosenTable').DataTable({
                 responsive: true,
                 paging: true,
                 searching: true,
@@ -364,33 +399,38 @@
                 lengthChange: false
             });
 
-            // Ini ditempatkan setelah inisialisasi table
-            $('#dosenTable_filter label').contents().filter(function() {
-                return this.nodeType === 3;
-            }).remove();
+            // Pencarian manual dari input luar (karena tidak auto terpasang oleh DataTables)
+            $('#dosenTable_filter input').on('keyup', function () {
+                table.search(this.value).draw();
+            });
 
+            // Styling tambahan untuk search input
             $('#dosenTable_filter').addClass('flex-grow-1 m-0');
             $('#dosenTable_filter input').addClass('form-control form-control-sm');
 
-            let customFilterWrapper = $('<div class="p-2 bg-light d-flex align-items-center" style="gap: 8px;"></div>');
-            let filterBtn = $('<button id="filterToggle" class="btn p-0" style="border: none; background: none;" title="Filter"><i class="fas fa-filter fa-lg"></i></button>');
+            // Tombol Terapkan Filter
+            $('#applyFilter').on('click', function () {
+                let searchTerms = [];
 
-            customFilterWrapper.append(filterBtn);
-            customFilterWrapper.append($('#dosenTable_filter'));
+                if ($('#filterQuota').is(':checked')) {
+                    searchTerms.push('kuota');
+                }
+                if ($('#filterUnassigned').is(':checked')) {
+                    searchTerms.push('belum');
+                }
 
-            $('#dosenTable_wrapper').prepend(customFilterWrapper);
+                const keyword = searchTerms.join(' ');
+                table.search(keyword).draw();
+            });
 
-            $('#filterToggle').on('click', function () {
-                $('#filterDropdown').slideToggle(200);
+            // Init alokasiTable
+            $('#alokasiTable').DataTable({
+                responsive: true,
             });
         });
 
-        $(window).resize(function() {
+        $(window).resize(function () {
             adjustSidebar();
-        });
-
-        $('#alokasiTable').DataTable({
-            responsive: true,
         });
     </script>
 @endsection
@@ -398,4 +438,10 @@
 @section('css')
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        #dosenTable_wrapper .dataTables_filter {
+            display: none;
+        }
+    </style>
 @stop
