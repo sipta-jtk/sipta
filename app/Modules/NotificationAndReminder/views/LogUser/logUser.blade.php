@@ -26,7 +26,6 @@
                         <th style="width: 20%">Tanggal & Waktu</th>
                         <th style="width: 25%">Judul Notifikasi</th>
                         <th>Isi Notifikasi</th>
-                        <th style="width: 15%">Penerima</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +35,6 @@
                             <td>{{ $notif->waktu_kirim }}</td>
                             <td>{{ $notif->judul }}</td>
                             <td>{{ $notif->isi_notifikasi }}</td>
-                            <td>{{ $notif->user->nama ?? $notif->username ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

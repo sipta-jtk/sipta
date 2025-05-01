@@ -23,8 +23,7 @@ public function getLogUserNotifications()
         ->select(
             'notifikasi_kirim.waktu_kirim',
             'notifikasi.judul',
-            'notifikasi.isi_notifikasi',
-            'notifikasi_kirim.username'
+            'notifikasi.isi_notifikasi'
         )
         ->orderBy('notifikasi_kirim.waktu_kirim', 'desc')
         ->paginate(10);
