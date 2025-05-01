@@ -4,50 +4,37 @@ namespace App\Modules\NotificationAndReminder\Controllers\LogUser;
 
 use App\Http\Controllers\Controller;
 use App\Models\NotifikasiKirim;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+
 
 class LogUserController extends Controller
 {
-    /**
-     * Mengambil log notifikasi milik pengguna saat ini.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getLogNotification()
-    {
-        try {
-            // Mendapatkan ID pengguna saat ini
-            $userId = Auth::id();
+public function getLogUserNotifications()
+{
+    Carbon::setLocale('id'); // Set Bahasa Indonesia
 
-            // Validasi apakah pengguna terautentikasi
-            if (!$userId) {
-                return response()->json(['error' => 'Pengguna tidak terautentikasi'], 401);
-            }
+    $username = Auth::user()->username; // Ambil username user yang login
+    // dd(Auth::user()->nama);
 
-            // Ambil log notifikasi berdasarkan user_id
-            $logNotifikasi = NotifikasiKirim::join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
-                ->where('notifikasi_kirim.user_id', $userId) // Filter berdasarkan user_id
-                ->select(
-                    'notifikasi_kirim.waktu_kirim',
-                    'notifikasi.judul',
-                    'notifikasi.isi_notifikasi',
-                    'notifikasi_kirim.respon_log',
-                    'notifikasi_kirim.username'
-                )
-                ->orderBy('notifikasi_kirim.waktu_kirim', 'desc') // Urutkan berdasarkan waktu terbaru
-                ->get();
+    $logUserNotifikasi = NotifikasiKirim::with('user')
+        ->join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
+        ->where('notifikasi_kirim.username', $username) // Filter berdasarkan user login
+        ->select(
+            'notifikasi_kirim.waktu_kirim',
+            'notifikasi.judul',
+            'notifikasi.isi_notifikasi',
+            'notifikasi_kirim.username'
+        )
+        ->orderBy('notifikasi_kirim.waktu_kirim', 'desc')
+        ->paginate(10);
 
-            // Jika tidak ada data notifikasi
-            if ($logNotifikasi->isEmpty()) {
-                return response()->json(['message' => 'Tidak ada log notifikasi untuk pengguna ini'], 200);
-            }
+    // Format waktu_kirim
+    $logUserNotifikasi->getCollection()->transform(function ($notif) {
+        $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('H:i d F Y');
+        return $notif;
+    });
 
-            // Mengembalikan data sebagai JSON
-            return response()->json($logNotifikasi, 200);
-
-        } catch (\Exception $e) {
-            // Tangkap error jika terjadi masalah
-            return response()->json(['error' => 'Gagal mengambil log notifikasi: ' . $e->getMessage()], 500);
-        }
-    }
+    return view('NotificationAndReminder::LogUser.logUser', compact('logUserNotifikasi'));
+}
 }
