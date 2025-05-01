@@ -110,6 +110,9 @@
     .close-notification:hover {
         color: #f44336;
     }
+    #detailModal {
+    z-index: 1060;
+}
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -160,14 +163,14 @@
         $(document).on('click', '.notification-item', function(event) {
             if (!$(event.target).hasClass('close-notification')) {
                 let notificationId = $(this).data('id');
-                $.get(`/sipta/api/notifications/${notificationId}`, function(data) {
+                $.get(`/sipta/api/notification/${notificationId}`, function(data) {
                     if (data.error) {
                         alert(data.error);
                     } else {
                         $('#detail-title').text(data.judul);
                         $('#detail-content').text(data.isi_notifikasi);
                         $('#create-at').text(data.created_at);
-                        $('#detailModal').modal('show');
+                        $('#detailModal').modal({ backdrop: false, keyboard: false });
                     }
                 });
             }
