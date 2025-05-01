@@ -94,22 +94,22 @@ class DaftarPengajuanDosbingController extends Controller
             if ($existingPreferensi) {
                 return response()->json([
                     'status' => 'exists',
-                    'message' => 'Anda sudah memilih kota ini sebelumnya. Silakan pilih kota lain.'
+                    'message' => 'Anda sudah memilih minat ini sebelumnya. Silakan pilih minat lain.'
                 ], 200);
             }
 
-            $kuotaMembimbing = KuotaMembimbing::where('nip', $dosen->nip)->first();
-            if (!$kuotaMembimbing) {
-                return response()->json(['message' => 'Kuota membimbing tidak ditemukan.'], 404);
-            }
+            // $kuotaMembimbing = KuotaMembimbing::where('nip', $dosen->nip)->first();
+            // if (!$kuotaMembimbing) {
+            //     return response()->json(['message' => 'Kuota membimbing tidak ditemukan.'], 404);
+            // }
     
-            $jumlahPengajuanDiterima = PreferensiKota::where('nip', $dosen->nip)->count();
+            // $jumlahPengajuanDiterima = PreferensiKota::where('nip', $dosen->nip)->count();
     
-            if ($jumlahPengajuanDiterima >= $kuotaMembimbing->jumlah) {
-                return response()->json([
-                    'message' => 'Kuota membimbing sudah penuh. Anda tidak dapat menerima pengajuan baru.'
-                ], 422);
-            }
+            // if ($jumlahPengajuanDiterima >= $kuotaMembimbing->jumlah) {
+            //     return response()->json([
+            //         'message' => 'Kuota membimbing sudah penuh. Anda tidak dapat menerima pengajuan baru.'
+            //     ], 422);
+            // }
             
     
             DB::beginTransaction();
@@ -120,7 +120,7 @@ class DaftarPengajuanDosbingController extends Controller
                 );
     
                 DB::commit();
-                return response()->json(['status' => 'success', 'message' => 'Pengajuan diterima dan data telah disimpan.'], 200);
+                return response()->json(['status' => 'success', 'message' => 'Peminatan diterima.'], 200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json([
@@ -137,7 +137,7 @@ class DaftarPengajuanDosbingController extends Controller
                 ])->delete();
     
                 DB::commit();
-                return response()->json(['message' => 'Pengajuan ditolak dan data telah dihapus.'], 200);
+                return response()->json(['message' => 'Peminatan ditolak.'], 200);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json([

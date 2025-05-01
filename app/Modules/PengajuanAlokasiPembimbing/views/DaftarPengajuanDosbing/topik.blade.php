@@ -11,16 +11,16 @@
 
 @section('content_header')
 <div class="container">
-    <h1>Daftar Pengajuan Dosen Pembimbing</h1>
+    <h1>Bidang Peminatan Dosen</h1>
     <div>
-    @component('KelolaPenilaianTA.views.components.breadcrumb', [
-    'links' => [
-    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-    ['url' => '', 'label' => 'Daftar Pengajuan Dosen Pembimbing']
-    ]
-    ])
-    @endcomponent
-</div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+        ['url' => '', 'label' => 'Bidang Peminatan Dosen']
+        ]
+        ])
+        @endcomponent
+    </div>
 </div>
 @stop
 
