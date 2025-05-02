@@ -139,7 +139,7 @@
         });
 
         function loadNotifications() {
-            $.get('/sipta/api/notifications', function(data) {
+            $.get('/sipta/api/notifications', function(data) {             
                 $('#notification-list').empty();
                 if (data.length === 0) {
                     $('#notification-list').append('<div class="text-center">Tidak ada notifikasi baru</div>');
@@ -163,7 +163,7 @@
         $(document).on('click', '.notification-item', function(event) {
             if (!$(event.target).hasClass('close-notification')) {
                 let notificationId = $(this).data('id');
-                $.get(`/sipta/api/notification/${notificationId}`, function(data) {
+                $.get(`/sipta/api/notifications/${notificationId}`, function(data) {
                     if (data.error) {
                         alert(data.error);
                     } else {
