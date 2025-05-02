@@ -93,17 +93,15 @@ class VerifikasiBerkasController extends Controller
                     Storage::delete("public/berkas/{$berkas->file}");
                 }
             }
+        }
 
-        } else {
-            // Update status_konfirmasi
-            DB::table('verifikasi_berkas_pengajuan')
+        DB::table('verifikasi_berkas_pengajuan')
             ->where('id_pengajuan', $id)
             ->update([
                 'status_konfirmasi' => $keputusan,
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        }
     
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");

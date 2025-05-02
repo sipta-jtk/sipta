@@ -14,7 +14,7 @@
         </div>
       </div>
       <div id="notification-list"></div>
-      <a href="user/log-user" class="btn btn-secondary w-100">See All Notifications</a>
+      <a href="sipta/logUser" class="btn btn-secondary w-100">See All Notifications</a>
     </div>
   </div>
 </div>
