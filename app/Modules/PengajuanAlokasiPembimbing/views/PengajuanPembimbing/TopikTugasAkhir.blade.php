@@ -3,15 +3,26 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
 @section('content')
 
-    {{-- <p>Data Kelompok > <a href="www">Topik Tugas Akhir</a> > <a href="www">Prioritas Dosen Pembimbing</a> > <a href="www">Pratinjau</a></p> --}}
-
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="2"
@@ -25,11 +36,11 @@
             <!-- Form Pengajuan -->
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Topik Tugas Akhir</h5>
+                <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
-                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul" required></textarea>
+                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -64,7 +75,7 @@
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info ml-3">Sebelumnya</a>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info mr-3">Sebelumnya</a>
                     <button type="button" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
@@ -87,34 +98,64 @@
 
 <script>
     $(document).ready(function () {
+        // Mengecek apakah mahasiswa sudah memiliki pengajuan
+        $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $("#warningMessage").show(); // Menampilkan pesan peringatan
+
+                    if (response.Periode === false) {
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+                }
+            });
+
         // Load data dari localStorage jika ada
         loadDraftData();
 
         // Fungsi untuk menyimpan draft saat tombol "Simpan Draft" diklik
         $("#saveDraft").click(function () {
-            saveDraftData();
-            toast("success", "Draft berhasil disimpan!");
+            if (saveDraftData()) {
+                toast("success", "Draft berhasil disimpan!");
+            }
         });
 
-        // Simpan data secara otomatis saat input berubah
-        $("textarea, input[type='radio']").on("input change", function () {
-            saveDraftData();
-        });
+        // // Simpan data secara otomatis saat input berubah
+        // $("textarea, input[type='radio']").on("input change", function () {
+        //     saveDraftData();
+        // });
 
         // Fungsi untuk menyimpan data ke localStorage
         function saveDraftData() {
+            let topikValue = $("textarea[name='topik']").val().trim();
+            let bidangChecked = $("input[type='radio']:checked");
+
+            // Validasi: topik harus diisi
+            if (topikValue === "") {
+                toast("error", "Topik harus diisi.");
+                return false; 
+            }
+
+            // Validasi: bidang harus dipilih
+            if (bidangChecked.length === 0) {
+                toast("error", "Pilih salah satu bidang terlebih dahulu.");
+                return false;
+            }
+
             let draftData = {
-                topik: $("textarea[name='topik']").val(),
-                bidang: ""
+                topik: topikValue,
+                bidang: bidangChecked.next("label").text().trim()
             };
 
-            // Simpan checkbox yang dicentang
-            $("input[type='radio']:checked").each(function () {
-                // draftData.bidang.push($(this).next("label").text().trim());
-                draftData.bidang = $(this).next("label").text().trim();
-            });
-
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
+            return true;
         }
 
         // Fungsi untuk memuat draft dari localStorage
@@ -126,17 +167,17 @@
 
                 $("input[type='radio']").each(function () {
                     let label = $(this).next("label").text().trim();
-                    if (Array.isArray(savedData.bidang)) {
-                        // Jika bidang adalah array
-                        if (savedData.bidang.includes(label)) {
-                            $(this).prop("checked", true);
-                        }
-                    } else {
-                        // Jika bidang adalah string, cukup periksa kesesuaian langsung
-                        if (savedData.bidang === label) {
-                            $(this).prop("checked", true);
-                        }
+                    // if (Array.isArray(savedData.bidang)) {
+                    //     // Jika bidang adalah array
+                    //     if (savedData.bidang.includes(label)) {
+                    //         $(this).prop("checked", true);
+                    //     }
+                    // } else {
+                    // Jika bidang adalah string, cukup periksa kesesuaian langsung
+                    if (savedData.bidang === label) {
+                        $(this).prop("checked", true);
                     }
+                
                 });
 
             }

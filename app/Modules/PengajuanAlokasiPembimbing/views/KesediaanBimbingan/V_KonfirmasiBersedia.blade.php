@@ -6,20 +6,25 @@
                     <h3 class="card-title">Konfirmasi Bersedia Membimbing</h3>
                 </div>
                 <div class="card-body">
-                    Apakah anda atas nama <strong>{{$savedInformation['Name']}}</strong> bersedia untuk menjadi pembimbing tugas akhir?
+                    Apakah anda atas nama <strong>{{ $savedInformation['Name'] }}</strong> bersedia untuk menjadi
+                    pembimbing tugas akhir?
                     <br>
                     <br>
                     <center>
                         {{-- <button type="button" class="btn btn-success">Bersedia</button>
                         <button type="button" class="btn btn-danger ml-3">Tidak Bersedia</button> --}}
                         <div>
-                            <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'bersedia') }}" method="post" style="display: inline;">
+                            <form
+                                action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'tidak_bersedia') }}"
+                                method="post" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-danger mr-3">Tidak Bersedia</button>
+                            </form>
+                            <form
+                                action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'bersedia') }}"
+                                method="post" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-success">Bersedia</button>
-                            </form>
-                            <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'tidak_bersedia') }}" method="post" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn btn-danger ml-3">Tidak Bersedia</button>
                             </form>
                         </div>
                     </center>

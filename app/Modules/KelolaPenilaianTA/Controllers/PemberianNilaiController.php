@@ -143,7 +143,6 @@ class PemberianNilaiController extends Controller
             DB::commit();
 
             return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -180,6 +179,7 @@ class PemberianNilaiController extends Controller
     
             return redirect()->back()->with('success', 'Nilai berhasil disimpan');
             
+            // return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     

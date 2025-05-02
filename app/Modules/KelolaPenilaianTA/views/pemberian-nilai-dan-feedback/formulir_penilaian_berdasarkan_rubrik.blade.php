@@ -24,14 +24,16 @@
     <div class="card p-4">
         <div class="row">
             <!-- Kode FTA -->
+            {{ Log::info(json_encode($detailInformasiFta->first())) }}
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->nama_fta ?? '00') }}</span>
+                <span>{{ ($detailInformasiFta->first()?->nama_fta) }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
+                {{-- TBD perbaiki tanggal --}}
                 <span>{{ $keteranganUmumPenilaian->first()?->tanggal }}</span>
             </div>
             <div class="col-md-2 mt-3">
@@ -174,7 +176,6 @@
                 </div>
             </div>
 
-            <!-- Tombol Simpan -->
             <div class="row mt-3">
                 <div class="col-md-12 text-right">
                     <button type="submit" class="btn btn-warning">

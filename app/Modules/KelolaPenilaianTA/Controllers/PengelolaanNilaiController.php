@@ -52,28 +52,49 @@ class PengelolaanNilaiController extends Controller{
     {
         $nip = auth()->user()->username;
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        
+
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->orderBy('nama_fta')
             ->where('id_prodi', $idProdi)
             ->with('prodi')
             ->first();
-    
-        $idFta = $detailInformasiFta->id_fta;
+        
+        $idFtaPenilaian = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->orderBy('nama_fta')
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'penilaian')
+            ->with('prodi')
+            ->first()
+            ->id_fta;
+
+        $idFtaFeedback = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->orderBy('nama_fta')
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'feedback')
+            ->with('prodi')
+            ->first()
+            ->id_fta;
+
+        Log::info($idFtaFeedback . " " . $idFtaPenilaian);
 
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
-        ->where('mahasiswa.status_ta', 'mahasiswa_ta')
-        ->whereNotNull('mahasiswa.id_kota')
-        ->with([
-            'nilaiKategori' => function ($query) use ($idFta) {
-                $query->whereHas('kategoriPenilaian', function ($q) use ($idFta) {
-                    $q->where('id_fta', $idFta);
-                });
-            },
-            'nilaiKategori.dosen',
-            'user',
-            'kota.detailFeedback',
-        ])->get();
+            ->where('mahasiswa.status_ta', 'mahasiswa_ta')
+            ->whereNotNull('mahasiswa.id_kota')
+            ->with([
+                'nilaiKategori' => function ($query) use ($idFtaPenilaian) {
+                    $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaPenilaian) {
+                        $q->where('id_fta', $idFtaPenilaian);
+                    });
+                },
+                'nilaiKategori.dosen',
+                'user',
+                'kota.detailFeedback' => function ($query) use ($idFtaFeedback) {
+                    $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
+                        $q->where('id_fta', $idFtaFeedback);
+                    });
+                },
+            ])
+            ->get();
 
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta', 'nip'));
     }

@@ -169,13 +169,9 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <div class="row mt-0">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">
-                        Simpan
-                    </button>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-warning">
+                Simpan
+            </button>
         </form>
     </div>
 @stop

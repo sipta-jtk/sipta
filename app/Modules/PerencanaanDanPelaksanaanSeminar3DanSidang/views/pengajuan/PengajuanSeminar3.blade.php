@@ -3,12 +3,22 @@
 @section('title', 'Pengajuan Seminar dan Sidang')
 
 @section('content_header')
-    <h1 class="ml-2"><strong>Pengajuan Seminar 3</strong></h1>
+    <h1 class="ml-2">Pengajuan Seminar 3</h1>
+    <div class="ml-2">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/'), 'label' => 'Beranda'],
+                ['url' => url('/pengajuan/'), 'label' => 'Daftar Pengajuan'],
+                ['url' => '', 'label' => 'Pengajuan Seminar 3']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
 @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show ml-2" role="alert">
         {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
     </div>
@@ -68,7 +78,7 @@
                     <div class="mb-3">
                         <label for="sesi_pengajuan" class="form-label">Sesi:</label>
                         <select id="sesi_pengajuan" name="sesi_pengajuan" class="form-control" required>
-                            <option value="" disabled selected>Pilih Sesi</option>
+                            <option value="" disabled selected>-- Pilih Sesi --</option>
                             <option value="1">Sesi I</option>
                             <option value="2">Sesi II</option>
                             <option value="3">Sesi III</option>
@@ -79,10 +89,10 @@
                     <div class="mb-5">
                         <label for="ruangan_pengajuan" class="form-label">Ruangan:</label>
                         <select id="ruangan_pengajuan" name="ruangan_pengajuan" class="form-control" required>
-                            <option value="" disabled selected>Pilih Ruangan</option>
+                            <option value="" disabled selected>-- Pilih Ruangan --</option>
                             @foreach($ruanganTersedia as $ruangan)
                                 <option value="{{ $ruangan['id_ruangan'] }}">
-                                    {{ $ruangan['kode_ruangan'] }} - {{ $ruangan['nama_ruangan'] }}
+                                    {{ $ruangan['nama_ruangan'] }}
                                 </option>
                             @endforeach
                         </select>
@@ -98,7 +108,7 @@
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary" id="ajukan-btn" disabled>Ajukan</button>
+                        <button type="submit" class="btn btn-primary btn-md my-1" id="ajukan-btn" disabled>Ajukan</button>
                     </div>
                 </form>
             </div>
@@ -116,6 +126,10 @@
         checkbox.addEventListener("change", function() {
             submitButton.disabled = !checkbox.checked;
         });
+    });
+
+    document.getElementById('tanggal_pengajuan').addEventListener('focus', function() {
+        this.showPicker();
     });
 </script>
 <script>

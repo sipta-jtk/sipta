@@ -9,7 +9,7 @@
         
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
                 ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
             ]
@@ -23,13 +23,12 @@
 @section('content')
     <div class="card p-4">
         <!-- Button Import From Excel -->
-        
         @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))
             <div class="mb-3">
                 <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="file" class="form-control d-inline-block w-auto" required>
-                    <button type="submit" class="btn btn-success">Import from Excel</button>
+                    <button type="submit" class="btn btn-success">Impor dari Excel</button>
                 </form>
             </div>
         @endif
@@ -45,78 +44,102 @@
                         <th rowspan="2" class="align-middle">Penguji 2</th>
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
-                        <th rowspan="2" class="align-middle">Rata-rata</th>
-                        @if (strtolower($detailInformasiFta->first()->nama_fta) == 'seminar i' || strtolower($detailInformasiFta->first()->nama_fta) == 'seminar ii')
-                            <th rowspan="2" class="align-middle">Aksi</th>
-                        @endif
+                        <th colspan="3" style="width: 10%;">Feedback</th>
+                        {{-- <th rowspan="2" class="align-middle">Aksi</th> --}}
                     </tr>
                     <tr class="bg-secondary text-white">
+                        <th style="width: 2%;">P1</th>
+                        <th style="width: 2%;">P2</th>
+                        <th style="width: 2%;">P3</th>
                         <th style="width: 2%;">P1</th>
                         <th style="width: 2%;">P2</th>
                         <th style="width: 2%;">P3</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($detailNilaiMahasiswa as $index => $data)
-                        <tr>
-                            <td> {{ $index + 1 }} </td>
-                            <td> {{ $data->user->nama }} </td>
-                            <td> {{ $data->kota->nama_kota }} </td>
-                            @php
-                                $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
-                                while (count($pengujiList) < 3) {
-                                    $pengujiList[] = '-';
-                                }
-                            @endphp
-                        
-                            @foreach ($pengujiList as $penguji)
-                                <td> {{ $penguji }} </td>
-                            @endforeach
-                        
-                            @php
-                                $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
-                                while (count($nilaiList) < 3) {
-                                    $nilaiList[] = 0;
-                                }
-                        
-                                $rataRata = count($data->nilaiKategori) > 0 
-                                    ? array_sum($nilaiList) / count($data->nilaiKategori) 
-                                    : 0;
-                            @endphp
-                        
-                            @foreach ($nilaiList as $nilai)
-                                <td> {{ $nilai }} </td>
-                            @endforeach
-                        
-                            <td> {{ number_format($rataRata, 2) }} </td>
-                        
-                            @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar i', 'seminar ii', 'seminar iii', 'sidang akhir']))
-                                    <td> 
-                                        <div class="d-flex flex-column gap-1">
-                                            {{-- TBD jika pengisi nilai sudah oleh 3 dosen maka tombol nilai akan merah --}}
-                                            {{-- TBD jika dosen sudah menyimpan sebagai draf maka tombol berubah menjadi edit --}}
-                                            <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta,'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary btn-md w-100">Nilai</a>
+                    @php
+                        $no = 1;
+                        $grouped = $detailNilaiMahasiswa->groupBy('id_kota');
+                    @endphp
+                
+                    @foreach ($grouped as $idKota => $mahasiswaKelompok)
+                        @foreach ($mahasiswaKelompok as $index => $data)
+                            <tr>
+                                {{-- Kolom No, tampilkan sekali di baris pertama mahasiswa di kelompok --}}
+                                @if ($index == 0)
+                                    <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">{{ $no++ }}</td>
+                                @endif
+                
+                                {{-- Nama Mahasiswa --}}
+                                <td>{{ $data->user->nama }}</td>
+                
+                                {{-- Nama Kelompok, tampilkan sekali di baris pertama mahasiswa --}}
+                                @if ($index == 0)
+                                    <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">{{ $data->kota->nama_kota }}</td>
+                                @endif
+                
+                                @php
+                                    $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
+                                    while (count($pengujiList) < 3) {
+                                        $pengujiList[] = '-';
+                                    }
+                                @endphp
+                                {{-- Penguji --}}
+                                @foreach ($pengujiList as $penguji)
+                                    @if ($index == 0)
+                                        <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle"> {{ $penguji }}</td>
+                                    @endif
+                                @endforeach
+                
+                                {{-- Nilai --}}
+                                @php
+                                    $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
+                                    while (count($nilaiList) < 3) {
+                                        $nilaiList[] = 0;
+                                    }
+                                @endphp
+                                @foreach ($nilaiList as $nilai)
+                                    <td>{{ $nilai }}</td>
+                                @endforeach
+                
+                                {{-- Feedback static --}}
+                                @foreach ($nilaiList as $nilai)
+                                    @if ($index == 0)
+                                        <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">
+                                            <i class="far fa-check-square text-success"></i>
+                                        </td>
+                                    @endif
 
-                                            {{-- TBD coba lihat publish dengan menggunakna akun koordinator lain --}}
-                                            @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))
-                                                @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
-                                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-md btn-danger w-100">Batal Publikasi</button>
-                                                    </form>
-                                                @else
-                                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-md btn-primary w-100">Publikasi</button>
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </div>
+                                    {{-- <td> --}}
+                                        {{-- <i class="far fa-check-square text-success"></i> --}}
+                                    {{-- </td> --}}
+                                    {{-- <i class="far fa-square text-muted"></i> Kotak kosong --}}
+                                    {{-- <i class="far fa-check-square text-success"></i> Centang hijau --}}
+                                @endforeach
+                
+                                {{-- Aksi --}}
+                                {{-- @if ($index == 0)
+                                    <td rowspan="{{ count($mahasiswaKelompok) }}" class="d-flex flex-column gap-1">
+                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
+                                        <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
+                
+                                        @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger w-100">Batalkan Publikasi</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary w-100">Publikasi</button>
+                                            </form>
+                                        @endif
                                     </td>
-                            @endif
-                        </tr>
+                                @endif --}}
+                            </tr>
+                        @endforeach
                     @endforeach
-                </tbody>
+                </tbody>                
             </table>
         </div>
 
@@ -128,8 +151,8 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola_penilaian_ta.css') }}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/kelola_penilaian_ta.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 @stop
     
