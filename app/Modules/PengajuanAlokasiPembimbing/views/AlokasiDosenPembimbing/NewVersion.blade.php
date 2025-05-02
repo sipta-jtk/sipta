@@ -69,18 +69,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for ($i = 1; $i < 100; $i++)
+                            {{-- @for ($i = 1; $i < 100; $i++) --}}
+                            @foreach ($list_pengajuan as $index => $pengajuan)
                                 <tr>
-                                    <td class="p-0 text-center" style="width: 10px">1</td>
+                                    <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
-                                                    <th scope="col" class="font-weight-normal">Kota 101
-                                                        <br>
-                                                        Judul TA ABCDEFG Pelangi ada 12 warna Lorem ipsum dolor sit
-                                                        <br>
-                                                        Bidang TA
+                                                    <th scope="col" class="font-weight-normal">
+                                                        {{ $pengajuan->nama_kota }}<br>
+                                                        {{ $pengajuan->judul_ta }}<br>
+                                                        {{ $pengajuan->bidang }}
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -101,13 +101,11 @@
                                                                                 Anggota Kelompok
                                                                             </div>
                                                                             <div class="p-1 pl-3">
-                                                                                @for ($MH = 1; $MH <= 4; $MH++)
-                                                                                    Mahasiswa A
-                                                                                    <br>
+                                                                                @foreach ($pengajuan->mahasiswa as $mh)
+                                                                                    {{ $mh->nama }}<br>
                                                                                     <span
-                                                                                        class="badge font-weight-normal p-0">22150404</span>
-                                                                                    <br>
-                                                                                @endfor
+                                                                                        class="badge font-weight-normal p-0">{{ $mh->nim }}</span><br>
+                                                                                @endforeach
                                                                             </div>
                                                                         </div>
                                                                         <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
@@ -117,12 +115,12 @@
                                                                                 Usulan Pembimbing
                                                                             </div>
                                                                             <div class="p-1 pl-3">
-                                                                                @for ($pengujiList = 1; $pengujiList <= 4; $pengujiList++)
+                                                                                @foreach ($pengajuan->usulan_dosen as $usulan)
                                                                                     <span
-                                                                                        class="badge bg-primary">{{ $pengujiList }}</span>
-                                                                                    JLM
-                                                                                    <br>
-                                                                                @endfor
+                                                                                        class="badge bg-primary">{{ $loop->iteration }}</span>
+                                                                                    <span
+                                                                                        class="text-muted">({{ $usulan->id_dosen }})</span><br>
+                                                                                @endforeach
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -146,7 +144,7 @@
                                                                                         class="col-sm p-0">
                                                                                         <input type="text" name=""
                                                                                             id=""
-                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             value="JO">
                                                                                     </div>
@@ -185,7 +183,7 @@
                                                                                         class="col-sm p-0">
                                                                                         <input type="text" name=""
                                                                                             id=""
-                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             value="JO">
                                                                                     </div>
@@ -224,7 +222,7 @@
                                                                                         class="col-sm p-0">
                                                                                         <input type="text"
                                                                                             name="" id=""
-                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             value="JO">
                                                                                     </div>
@@ -263,7 +261,7 @@
                                                                                         class="col-sm p-0">
                                                                                         <input type="text"
                                                                                             name="" id=""
-                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center"
+                                                                                            class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             value="JO">
                                                                                     </div>
@@ -293,13 +291,12 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-
-
                                             </tbody>
                                         </table>
                                     </td>
                                 </tr>
-                            @endfor
+                                {{-- @endfor --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -370,52 +367,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @for ($i = 1; $i < 100; $i++)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-start justify-content-between"
-                                                style="gap: 8px;">
-                                                <span class="badge fw-normal" style="flex-shrink: 0;">
-                                                    Sri Ratna Wulan {{ $i }}
-                                                </span>
-                                                <span class="d-none">kuota belum</span>
-
-                                                <div style="flex-grow: 1;">
-                                                    <table class="table table-sm table-bordered mb-0">
-                                                        <thead class="text-center">
-                                                            <tr>
-                                                                <th class="p-1"><span class="badge fw-normal">D3</span>
-                                                                </th>
-                                                                <th class="p-1"><span class="badge fw-normal">D4</span>
-                                                                </th>
-                                                                <th class="p-1"><span class="badge fw-normal"></span>
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="text-center">
-                                                            <tr>
-                                                                <td class="p-1"><span
-                                                                        class="badge fw-normal">3/7</span></td>
-                                                                <td class="p-1"><span
-                                                                        class="badge fw-normal">2/10</span></td>
-                                                                <td class="p-1 align-middle"><span
-                                                                        class="badge fw-normal">MHS</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="p-1"><span class="badge fw-normal">1</span>
-                                                                </td>
-                                                                <td class="p-1"><span class="badge fw-normal">2</span>
-                                                                </td>
-                                                                <td class="p-1 align-middle"><span
-                                                                        class="badge fw-normal">KOTA</span></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endfor
+                                {{-- Isi tabel ada di JS --}}
                             </tbody>
                         </table>
                     </div>
@@ -425,12 +377,84 @@
     </div>
 @stop
 
+@php
+    $kuotaDosen[] = [
+        'dosenName' => 'Sri Ratna Wulan',
+        'id' => 'dosen-1',
+        'mhs' => [
+            'D3' => 1,
+            'D4' => 4,
+        ],
+        'kuota' => [
+            'D3' => 3,
+            'D4' => 5,
+        ],
+        'kelompok' => [
+            'D3' => 1,
+            'D4' => 1,
+        ],
+    ];
+@endphp
 
 @section('js')
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     <script>
+        var DetailDosenTable;
+
+        function updateDataTable() {
+            if (DetailDosenTable) {
+                DetailDosenTable.clear();
+                DetailDosenTable.rows.add(kuotaDosen);
+                DetailDosenTable.draw();
+            }
+        }
+
+        Object.defineProperty(window, 'kuotaDosen', {
+            set: function(value) {
+                this._kuotaDosen = value;
+                updateDataTable();
+            },
+            get: function() {
+                return this._kuotaDosen;
+            }
+        });
+
+        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
+
+        // To push and update
+        // window.kuotaDosen.push = function(value) {
+        //     Array.prototype.push.call(this, value);
+        // };
+
+        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
+
+
+        setTimeout(() => {
+            // add kuotaDosen
+            kuotaDosen.push({
+                'dosenName': 'Sri Ratna Wulannnn',
+                'id': 'dosen-2',
+                'mhs': {
+                    'D3': 1,
+                    'D4': 10,
+                },
+                'kuota': {
+                    'D3': 3,
+                    'D4': 5,
+                },
+                'kelompok': {
+                    'D3': 1,
+                    'D4': 1,
+                },
+            });
+
+            console.log(kuotaDosen);
+            updateDataTable();
+        }, 3000);
+
+
         // To automatically close the sidebar, yk, we need extra space for this :V
         function adjustSidebar() {
             let toggleNav = $('a.nav-link[data-widget="pushmenu"]');
@@ -443,15 +467,68 @@
             adjustSidebar();
 
             // Init dosenTable
-            const table = $('#dosenTable').DataTable({
+            DetailDosenTable = $('#dosenTable').DataTable({
                 responsive: true,
                 paging: true,
                 searching: true,
                 info: true,
                 scrollY: 'calc(75vh - 120px)',
                 scrollCollapse: true,
-                lengthChange: false
+                lengthChange: false,
+                data: kuotaDosen || [],
+                columns: [{
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                            <div class="d-flex align-items-start justify-content-between"style="gap: 8px;">
+                                <span class="badge fw-normal" style="flex-shrink: 0;">${row.dosenName}</span>
+                                <span class="d-none">kuota belum</span>
+
+                                <div style="flex-grow: 1;">
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="p-1"><span class="badge fw-normal">D3</span>
+                                                </th>
+                                                <th class="p-1"><span class="badge fw-normal">D4</span>
+                                                </th>
+                                                <th class="p-1"><span class="badge fw-normal"></span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            <tr>
+                                                <td class="p-1">
+                                                    <span class="badge fw-normal D3 ${row.mhs.D3 > row.kuota.D3 ? 'bg-danger' : ''}">
+                                                        ${row.mhs.D3}/${row.kuota.D3}
+                                                    </span>
+                                                </td>
+                                                <td class="p-1">
+                                                    <span class="badge fw-normal D4 ${row.mhs.D4 > row.kuota.D4 ? 'bg-danger' : ''}">
+                                                        ${row.mhs.D4}/${row.kuota.D4}
+                                                    </span>
+                                                </td>
+                                                <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D3}</span>
+                                                </td>
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D4}</span>
+                                                </td>
+                                                <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            `;
+                    }
+                }, ],
             });
+
+            setTimeout(() => {
+                table.columns.adjust().responsive.recalc();
+            }, 400);
 
             $('#dosenTable_filter input').on('keyup', function() {
                 table.search(this.value).draw();
@@ -480,7 +557,26 @@
         });
 
         $(window).resize(function() {
-            adjustSidebar();
+            setTimeout(() => {
+                adjustSidebar();
+            }, 1000);
         });
+
+        function updateKuotaDosen(id_dosen, operator) {
+            for (let i = 0; i < kuotaDosen.length; i++) {
+                if (kuotaDosen[i].id === id_dosen) {
+                    if (operator === 'increment') {
+                        kuotaDosen[i].mhs.D4 += 1;
+                    } else if (operator === 'decrement') {
+                        kuotaDosen[i].mhs.D4 -= 1;
+                    }
+                    updateDataTable();
+                    break;
+                }
+            }
+        }
+
+        // onchange on .alokasiInputText
+        
     </script>
 @endsection
