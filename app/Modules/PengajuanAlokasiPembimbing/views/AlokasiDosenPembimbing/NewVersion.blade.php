@@ -1,5 +1,37 @@
 @extends('adminlte::page')
 
+@section('css')
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        @media (max-width: 768px) {
+            .tabel-pengajuan {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .tabel-detail {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .tabel-pengajuan {
+                max-width: 75%;
+                width: 75%;
+            }
+
+            .tabel-detail {
+                /* padding-top: 10-0px; */
+                max-width: 25%;
+                width: 25%;
+            }
+        }
+    </style>
+@stop
+
 @section('title', 'Alokasi Dosen Pembimbing dan Dosen Penguji')
 
 @section('content')
@@ -22,7 +54,7 @@
 
     <div class="card border mb-2 p-2 m-0 m-100" style="height: 75vh;">
         <div class="row">
-            <div class="col" style="max-width:75%; min-width: 75%;">
+            <div class="col tabel-pengajuan">
                 <div class=" table-responsive" style="height: 75vh;">
                     <table class="table table-striped m-0 " id="alokasiTable" style="min-width: 850px; max-width: 75vw;">
 
@@ -269,7 +301,7 @@
                 </div>
             </div>
             <!-- punya gwejh -->
-            <div class="col p-0" style="max-width: 25%; min-width: 25%;">
+            <div class="col p-0 tabel-detail">
                 <div style="height: 75vh; overflow: hidden; display: flex; flex-direction: column;">
 
                     <!-- HEADER -->
@@ -279,7 +311,7 @@
 
                     <!-- DATATABLE -->
                     <div style="flex: 1;">
-                        <table id="dosenTable" class="table table-striped table-hover mb-0" style="width: 100%;">
+                        <table id="dosenTable" class="table table-striped table-hover mb-0 p-3" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
                                     <th>Nama Dosen</th>
@@ -292,7 +324,7 @@
                                             <div class="d-flex align-items-start justify-content-between"
                                                 style="gap: 8px;">
                                                 <span class="badge fw-normal" style="flex-shrink: 0;">
-                                                    niggalius Rahtam Ziqri
+                                                    Prabowo Subianto
                                                     {{ $i }}
                                                 </span>
                                                 <div style="flex-grow: 1;">
@@ -376,8 +408,3 @@
         });
     </script>
 @endsection
-
-@section('css')
-    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-@stop
