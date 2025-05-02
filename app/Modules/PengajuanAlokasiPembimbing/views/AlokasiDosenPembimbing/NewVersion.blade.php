@@ -12,6 +12,7 @@
             }
 
             .tabel-detail {
+                margin-top: 50px;
                 max-width: 100%;
                 width: 100%;
             }
@@ -24,10 +25,13 @@
             }
 
             .tabel-detail {
-                /* padding-top: 10-0px; */
                 max-width: 25%;
                 width: 25%;
             }
+        }
+
+        #dosenTable_wrapper .dataTables_filter {
+            display: none;
         }
     </style>
 @stop
@@ -309,6 +313,54 @@
                         Detail Dosen
                     </div>
 
+                    <!-- WRAPPER UNTUK FILTER DAN SEARCH -->
+                    <div class="d-flex justify-content-between align-items-center p-2">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+                            data-target="#filterMenu" aria-expanded="false" aria-controls="filterMenu"
+                            title="Tampilkan Filter">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <div id="dosenTable_filter" class="dataTables_filter m-0">
+                            <input type="search" class="form-control form-control-sm" placeholder="Search"
+                                aria-controls="dosenTable">
+                        </div>
+                    </div>
+
+                    <!-- FILTER COLLAPSE -->
+                    <div class="collapse" id="filterMenu">
+                        <div class="card mx-2 mb-2">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-filter mr-2"></i>Filter Dosen
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="kuota"
+                                                id="filterQuota">
+                                            <label class="form-check-label" for="filterQuota">
+                                                <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi
+                                                Kuota
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="belum"
+                                                id="filterUnassigned">
+                                            <label class="form-check-label" for="filterUnassigned">
+                                                <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="button" id="applyFilter" class="btn btn-primary btn-sm">Terapkan</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- DATATABLE -->
                     <div style="flex: 1;">
                         <table id="dosenTable" class="table table-striped table-hover mb-0 p-3" style="width: 100%;">
@@ -320,41 +372,42 @@
                             <tbody>
                                 @for ($i = 1; $i < 100; $i++)
                                     <tr>
-                                        <td style="position: relative;">
+                                        <td>
                                             <div class="d-flex align-items-start justify-content-between"
                                                 style="gap: 8px;">
                                                 <span class="badge fw-normal" style="flex-shrink: 0;">
-                                                    Prabowo Subianto
-                                                    {{ $i }}
+                                                    Sri Ratna Wulan {{ $i }}
                                                 </span>
+                                                <span class="d-none">kuota belum</span>
+
                                                 <div style="flex-grow: 1;">
                                                     <table class="table table-sm table-bordered mb-0">
                                                         <thead class="text-center">
                                                             <tr>
-                                                                <th class="p-1">
-                                                                    <span class="badge fw-normal">D3</span>
+                                                                <th class="p-1"><span class="badge fw-normal">D3</span>
                                                                 </th>
-                                                                <th class="p-1">
-                                                                    <span class="badge fw-normal">D4</span>
+                                                                <th class="p-1"><span class="badge fw-normal">D4</span>
+                                                                </th>
+                                                                <th class="p-1"><span class="badge fw-normal"></span>
                                                                 </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="text-center">
                                                             <tr>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">3/7</span>
-                                                                </td>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">2/10</span>
-                                                                </td>
+                                                                <td class="p-1"><span
+                                                                        class="badge fw-normal">3/7</span></td>
+                                                                <td class="p-1"><span
+                                                                        class="badge fw-normal">2/10</span></td>
+                                                                <td class="p-1 align-middle"><span
+                                                                        class="badge fw-normal">MHS</span></td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">1</span>
+                                                                <td class="p-1"><span class="badge fw-normal">1</span>
                                                                 </td>
-                                                                <td class="p-1">
-                                                                    <span class="badge fw-normal">2</span>
+                                                                <td class="p-1"><span class="badge fw-normal">2</span>
                                                                 </td>
+                                                                <td class="p-1 align-middle"><span
+                                                                        class="badge fw-normal">KOTA</span></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -388,7 +441,9 @@
 
         $(document).ready(function() {
             adjustSidebar();
-            var table = $('#dosenTable').DataTable({
+
+            // Init dosenTable
+            const table = $('#dosenTable').DataTable({
                 responsive: true,
                 paging: true,
                 searching: true,
@@ -397,14 +452,35 @@
                 scrollCollapse: true,
                 lengthChange: false
             });
+
+            $('#dosenTable_filter input').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            $('#dosenTable_filter').addClass('flex-grow-1 m-0');
+            $('#dosenTable_filter input').addClass('form-control form-control-sm');
+
+            $('#applyFilter').on('click', function() {
+                let searchTerms = [];
+
+                if ($('#filterQuota').is(':checked')) {
+                    searchTerms.push('kuota');
+                }
+                if ($('#filterUnassigned').is(':checked')) {
+                    searchTerms.push('belum');
+                }
+
+                const keyword = searchTerms.join(' ');
+                table.search(keyword).draw();
+            });
+
+            $('#alokasiTable').DataTable({
+                responsive: true,
+            });
         });
 
         $(window).resize(function() {
             adjustSidebar();
-        });
-
-        $('#alokasiTable').DataTable({
-            responsive: true,
         });
     </script>
 @endsection
