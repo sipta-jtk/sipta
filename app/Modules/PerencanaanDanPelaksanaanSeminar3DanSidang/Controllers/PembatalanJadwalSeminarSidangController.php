@@ -8,6 +8,8 @@ use App\Modules\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+Carbon::setLocale('id');
 
 class PembatalanJadwalSeminarSidangController extends Controller
 {
@@ -22,7 +24,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->join('pembatalan', 'penjadwalan.id_penjadwalan', '=', 'pembatalan.id_penjadwalan')
         ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
         ->join('user', 'pembatalan.nip', '=', 'user.username')
-        ->where('agenda', '=', 'seminar_3')->get();
+        ->where('agenda', '=', 'seminar_3')->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalseminar', compact('jadwal'));
     }
@@ -49,7 +54,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
             ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
             ->join('user', 'pembatalan.nip', '=', 'user.username')
             ->where('agenda', '=', 'sidang')
-            ->get();
+            ->get()->map(function ($item) {
+                $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+                return $item;
+            });
         // dd($jadwal);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalsidang', compact('jadwal'));
     }
@@ -80,7 +88,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'seminar_3')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'penguji')
-        ->where('alokasi_dosen.nip', '=',$user)->get();
+        ->where('alokasi_dosen.nip', '=',$user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_penguji);
         
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
@@ -91,7 +102,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'seminar_3')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-        ->where('alokasi_dosen.nip', $user)->get();
+        ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_pembimbing);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.bataljadwalseminar', compact('jadwal_penguji', 'jadwal_pembimbing'));
     }
@@ -121,7 +135,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'sidang')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'penguji')
-        ->where('alokasi_dosen.nip', '=',$user)->get();
+        ->where('alokasi_dosen.nip', '=',$user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_penguji);
         
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
@@ -132,7 +149,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'sidang')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-        ->where('alokasi_dosen.nip', $user)->get();
+        ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.bataljadwalsidang', compact('jadwal_penguji', 'jadwal_pembimbing'));
     }
 

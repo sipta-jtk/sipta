@@ -4,10 +4,23 @@
 
 @section('content_header')
 <h1>Jadwal Sidang</h1>
+<div>
+@component('KelolaPenilaianTA.views.components.breadcrumb', [
+'links' => [
+['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+['url' => '', 'label' => 'Jadwal Sidang'],
+]
+])
+@endcomponent
+</div>
 @stop
 
 @section('content')
-<h4>Jadwal Sidang Bimbingan</h4>
+<div class="card mx-3 mt-3">
+    <div class="card-header text-center">
+<h3>Jadwal Sidang Bimbingan</h3>
+</div>
+    <div class="card-body">
 <table id="sidangBimTable" class="table table-striped" width="100%">
     <thead class="sticky-header">
         <tr class="bg-dark text-white">
@@ -48,13 +61,15 @@
                 </td>
             </tr>
 
-            <x-adminlte-modal id="modalMin{{ $s->id }}" title="Alasan Pembatalan">
+            <x-adminlte-modal id="modalMin{{ $s->id }}" title="Alasan Pembatalan" theme="blue" size="lg">
                 <form action="{{ route('pembatalan.sidang') }}" method="post">
                     @csrf
                     <input type="hidden" name="id" value="{{ $s->id_penjadwalan }}">
                     <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
-                    <button type="submit" class="btn btn-primary">Kirimkan</button>
-                    <x-adminlte-button theme="danger" label="Batalkan" data-dismiss="modal" />
+                    <div class="d-flex pt-3 justify-content-end">
+                    <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
+                    <x-adminlte-button theme="danger" label="Batalkan" class="mx-1" data-dismiss="modal" />
+                    </div>
                     <x-slot name="footerSlot">
                     </x-slot>
                 </form>
@@ -62,11 +77,15 @@
         @endforeach
     </tbody>
 </table>
-
+</div>
+</div>
 <br>
 <br>
-
-<h4>Jadwal Menguji Sidang</h4>
+<div class="card mx-3 mt-3">
+    <div class="card-header text-center">
+<h3>Jadwal Menguji Sidang</h3>
+</div>
+    <div class="card-body">
 <table id="sidangUjiTable" class="table table-striped" width="100%">
     <thead class="sticky-header">
         <tr class="bg-dark text-white">
@@ -98,29 +117,34 @@
                 </td>
                 <td>
                     @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
-                    <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
-                        data-target="#modalMin{{ $s->id }}" />
+                        <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
+                            data-target="#modalMin{{ $s->id }}" />
                     @else
-                    <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
-                        data-target="#modalMin{{ $s->id }}" disabled/>
+                        <x-adminlte-button theme="danger" label="Ajukan pembatalan" data-toggle="modal"
+                            data-target="#modalMin{{ $s->id }}" disabled/>
                     @endif
                 </td>
             </tr>
 
-            <x-adminlte-modal id="modalMin{{ $s->id }}" title="Alasan Pembatalan">
+            <x-adminlte-modal id="modalMin{{ $s->id }}" title="Alasan Pembatalan" theme="blue" size="lg">
                 <form action="{{ route('pembatalan.Sidang') }}" method="post">
                     @csrf
                     <input type="hidden" name="id" value="{{ $s->id_penjadwalan }}">
                     <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
-                    <button type="submit" class="btn btn-primary">Kirimkan</button>
-                    <x-adminlte-button theme="danger" label="Batalkan" data-dismiss="modal" />
-                    <x-slot name="footerSlot">
+                    <div class="d-flex pt-3 justify-content-end">
+                    <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
+                    <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                    </div>
+                    <xname="footerSlot">
                     </x-slot>
                 </form>
             </x-adminlte-modal>
         @endforeach
     </tbody>
 </table>
+</div>
+
+</div>
 @stop
 
 @section('css')
@@ -141,5 +165,4 @@
         $('#sidangUjiTable').DataTable();
     });
 </script>
-<script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop
