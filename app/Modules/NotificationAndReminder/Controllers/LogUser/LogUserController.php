@@ -30,7 +30,7 @@ public function getLogUserNotifications()
 
     // Format waktu_kirim
     $logUserNotifikasi->getCollection()->transform(function ($notif) {
-        $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('H:i d F Y');
+        $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('d F Y H:i');
         return $notif;
     });
 
