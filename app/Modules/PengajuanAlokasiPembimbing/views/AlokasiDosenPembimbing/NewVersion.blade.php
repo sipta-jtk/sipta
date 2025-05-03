@@ -39,11 +39,6 @@
 @section('title', 'Alokasi Dosen Pembimbing')
 
 @section('content')
-    <form action="{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.submit') }}" method="POST" id="alokasiForm">
-        @csrf
-        <input type="hidden" id="dataToSend" name="dataToSend">
-    </form>
-
     <h1 class="mb-3">Alokasi Dosen Pembimbing</h1>
 
     <div>
@@ -299,25 +294,6 @@
     </div>
 @stop
 
-@php
-    $kuotaDosen[] = [
-        'dosenName' => 'Sri Ratna Wulan',
-        'id' => 'dosen-1',
-        'mhs' => [
-            'D3' => 1,
-            'D4' => 4,
-        ],
-        'kuota' => [
-            'D3' => 3,
-            'D4' => 5,
-        ],
-        'kelompok' => [
-            'D3' => 1,
-            'D4' => 1,
-        ],
-    ];
-@endphp
-
 @section('js')
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -342,16 +318,6 @@
                 return this._kuotaDosen;
             }
         });
-
-        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
-
-        // To push and update
-        // window.kuotaDosen.push = function(value) {
-        //     Array.prototype.push.call(this, value);
-        // };
-
-        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
-
 
         setTimeout(() => {
             // add kuotaDosen
@@ -388,6 +354,10 @@
         $(document).ready(function() {
             adjustSidebar();
 
+            $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function (data) {
+                window.kuotaDosen = data;
+            });
+
             // Init dosenTable
             DetailDosenTable = $('#dosenTable').DataTable({
                 responsive: true,
@@ -402,20 +372,20 @@
                     data: null,
                     render: function(data, type, row) {
                         return `
-                            <div class="d-flex align-items-start justify-content-between"style="gap: 8px;">
-                                <span class="badge fw-normal" style="flex-shrink: 0;">${row.dosenName}</span>
-                                <span class="d-none">kuota belum</span>
+                            <div class="d-flex justify-content-between align-items-start" style="gap: 8px;">
+                                <!-- Kolom Nama Dosen -->
+                                <div class="text-break" style="flex: 1; min-width: 0; word-break: break-word; white-space: normal;">
+                                    <span class="fw-bold">${row.dosenName}</span>
+                                </div>
 
-                                <div style="flex-grow: 1;">
+                                <!-- Kolom Tabel Kuota -->
+                                <div style="flex-shrink: 0;">
                                     <table class="table table-sm table-bordered mb-0">
                                         <thead class="text-center">
                                             <tr>
-                                                <th class="p-1"><span class="badge fw-normal">D3</span>
-                                                </th>
-                                                <th class="p-1"><span class="badge fw-normal">D4</span>
-                                                </th>
-                                                <th class="p-1"><span class="badge fw-normal"></span>
-                                                </th>
+                                                <th class="p-1"><span class="badge fw-normal">D3</span></th>
+                                                <th class="p-1"><span class="badge fw-normal">D4</span></th>
+                                                <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
@@ -433,27 +403,25 @@
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
-                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D3}</span>
-                                                </td>
-                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D4}</span>
-                                                </td>
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D3}</span></td>
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D4}</span></td>
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            `;
+                        `;
                     }
                 }, ],
             });
 
             setTimeout(() => {
-                table.columns.adjust().responsive.recalc();
+                DetailDosenTable.columns.adjust().responsive.recalc();
             }, 400);
 
             $('#dosenTable_filter input').on('keyup', function() {
-                table.search(this.value).draw();
+                DetailDosenTable.search(this.value).draw();
             });
 
             $('#dosenTable_filter').addClass('flex-grow-1 m-0');

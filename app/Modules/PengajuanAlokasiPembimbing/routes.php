@@ -3,7 +3,7 @@
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarKesediaanMembimbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\KesediaanBimbinganController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingController;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingv2Controller;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarPengajuanDosbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\MahasiswaMelihatJadwalController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengajuanPembimbing\PengajuanPembimbingController;
@@ -44,12 +44,11 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     });
 
     Route::group(['prefix' => 'alokasi-pembimbing', 'as' => 'alokasi-pembimbing.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
-        Route::get('/', [AlokasiPembimbingController::class, 'index'])->name('index');
-        Route::post('/submit', [AlokasiPembimbingController::class, 'submit'])->name('submit');
-        Route::post('/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('simpan');
-        Route::get('/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+        Route::get('/', [AlokasiPembimbingv2Controller::class, 'index'])->name('index');
+    
+        // route JSON
+        Route::get('/getDetailDosen', [AlokasiPembimbingv2Controller::class, 'getDetailDosen'])->name('getDetailDosen');
     });
-
 
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
