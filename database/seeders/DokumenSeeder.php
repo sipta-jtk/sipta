@@ -30,7 +30,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => true,
                 'status_plagiarisme' => 'tidak_plagiarisme',
                 'id_ambang_batas' => 1,
-                'kategori' => 'laporan',
+                'kategori' => 'plagiarisme',
                 'deskripsi' => 'Sistem berbasis web untuk memantau dan mengelola proses tugas akhir mahasiswa di Jurusan Teknik Komputer dan Informatika',
                 'versi' => 2,
                 'ukuran_file' => 15.65 * 1024,

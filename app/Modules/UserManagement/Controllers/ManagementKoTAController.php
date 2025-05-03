@@ -6,8 +6,18 @@ use Illuminate\Http\Request;
 use App\Modules\Controller;
 use App\Models\Kota;
 
+/**
+ * class ManagementKoTAController
+ */
 class ManagementKoTAController extends Controller 
-{
+{    
+    /**
+     * index
+     * 
+     * Menampilkan halaman manajemen KoTA dengan data KoTA yang tersedia
+     *
+     * @return void
+     */
     public function index()
     {
         // Ambil semua data kelompok TA dari database

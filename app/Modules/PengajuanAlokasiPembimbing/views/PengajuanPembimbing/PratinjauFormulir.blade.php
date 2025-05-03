@@ -3,8 +3,19 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
@@ -23,10 +34,10 @@
 
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3 fw-bold">Data Mahasiswa</h5>
-                <div class="row mb-3">
+                <p class="text-secondary text-md border-bottom">Data Mahasiswa</p> 
+                <div class="row mb-2">
                     <div class="col-md-4">
-                        <label class="form-label" style="font-weight: normal;">Anggota 1</label>
+                        <p class="text-secondary text-md">Anggota 1</p>
                         <table class="table table-borderless">
                             <tr>
                                 <th class="p-0" style="font-weight: bold;">Nama</th>
@@ -42,7 +53,7 @@
 
                     @foreach ($dataAnggota as $index => $anggota)
                         <div class="col-md-4">
-                            <label class="form-label" style="font-weight: normal;">Anggota {{ $index + 2 }}</label>
+                            <p class="text-secondary text-md">Anggota {{ $index + 2 }}</p>
                             <table class="table table-borderless">
                                 <tr>
                                     <th class="p-0" style="font-weight: bold;">Nama</th>
@@ -58,18 +69,20 @@
                     @endforeach
                 </div>
 
-                <h5 class="mb-3">Topik Tugas Akhir</h5>
-                <p id="preview-topik" style="font-weight: bold;">Memuat...</p>
+                <p class="text-secondary text-md border-bottom">Topik Tugas Akhir</p> 
+                <p id="preview-topik" style="font-weight: bold;">
+                    <span>Topik tugas akhir belum diisi</span>
+                </p>
 
-                <h5 class="mt-3 mb-3">Bidang Tugas Akhir</h5>
-                <ol id="preview-bidang" style="font-weight: bold;">
-                    <li>Memuat...</li>
-                </ol>
+                <p class="text-secondary text-md border-bottom">Bidang Tugas Akhir</p> 
+                <p id="preview-bidang" style="font-weight: bold;">
+                    <span>Bidang tugas akhir belum dipilih</span>
+                </p>
 
-                <h5 class="mt-3 mb-3">Prioritas Dosen Pembimbing</h5>
-                <ul id="preview-prioritas" style="font-weight: bold;">
-                    <li>Memuat...</li>
-                </ul>
+                <p class="text-secondary text-md border-bottom">Prioritas Dosen Pembimbing</p> 
+                <p id="preview-prioritas" style="font-weight: bold;">
+                    <span>Prioritas dosen belum dipilih</span>
+                </p>
 
                 <div class="d-flex justify-content-between mt-3">
                     <a href="{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }}"
@@ -131,9 +144,9 @@
                     if (index < 5) { // Maksimal 5 prioritas dosen
                         // Memastikan hanya satu angka urutan yang ditambahkan
                         let listItem = `
-                            <li>
+                            <p>
                                 ${dosen.priority}. ${dosen.name}
-                            </li>
+                            </p>
                         `;
                         // Tambahkan item baru ke dalam daftar prioritas
                         prioritasList.innerHTML += listItem;

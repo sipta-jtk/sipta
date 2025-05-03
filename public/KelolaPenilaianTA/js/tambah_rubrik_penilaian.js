@@ -1,5 +1,6 @@
 $(document).ready(function () {
     $("#kode_fta").change(function () {
+        validateKodeFTA();
         const selectedKodeFTA = $(this).val();
         const selectedFormPenilaian = formPenilaianList.find(
             (form) => form.kode_fta == selectedKodeFTA
@@ -12,6 +13,49 @@ $(document).ready(function () {
             '<option value="" disabled selected>Pilih Kriteria</option>'
         );
 
+        if (selectedKodeFTA) {
+            loadKriteria(selectedKodeFTA);
+        }
+    });
+
+    function validateKodeFTA() {
+        let kodeFTA = $('#kodeFTA').val();
+        let jenisForm = $('#jenisForm').val();
+        
+        if (kodeFTA && jenisForm) {
+            $.ajax({
+                url: '/kelola-penilaian-ta/formulir-penilaian/check-kode-fta',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    kodeFTA: kodeFTA,
+                    jenisForm: jenisForm
+                },
+                success: function(response) {
+                    if (!response.isUnique) {
+                        $("#notification")
+                            .removeClass("d-none alert-info alert-success")
+                            .addClass("alert-danger")
+                            .find("#notificationMessage")
+                            .text("Kode FTA sudah digunakan untuk jenis formulir yang sama!");
+                            
+                        // Disable submit button
+                        $('button[type="submit"]').prop('disabled', true);
+                    } else {
+                        $("#notification").addClass("d-none");
+                        // Enable submit button
+                        $('button[type="submit"]').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    console.error('Error checking Kode FTA uniqueness');
+                }
+            });
+        }
+    }
+
+    // Load kriteria based on selected FTA code
+    function loadKriteria(kodeFTA) {
         $.ajax({
             url: `/formulir-penilaian/get-kriteria/${selectedKodeFTA}`,
             method: "GET",
@@ -50,6 +94,30 @@ $(document).ready(function () {
             return;
         }
 
+        // Get rentangNilai from the page
+        let nilaiColumns = '';
+        // Check if rentangNilai is defined globally
+        if (typeof rentangNilai !== 'undefined') {
+            rentangNilai.forEach(function (nilai) {
+                // Using textarea instead of input
+                nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea></td>`;
+            });
+        } else {
+            // Fallback: get values from existing table headers
+            $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
+                if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
+                    // Extract id_nilai from header text using regex
+                    const headerText = $(this).text();
+                    const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
+                    if (match && match[1]) {
+                        const id_nilai = match[1];
+                        // Using textarea instead of input
+                        nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea></td>`;
+                    }
+                }
+            });
+        }
+
         var newRow = `
         <tr>
             <td>
@@ -57,14 +125,10 @@ $(document).ready(function () {
                     <option value="" disabled selected>Pilih Kriteria</option>
                 </select>
             </td>
-            <td><p class="form-control-plaintext bobot"></p></td>
-            <td><input type="text" class="form-control" name="detail[]" required></td>`;
-
-        rentangNilai.forEach(function (nilai) {
-            newRow += `<td><input type="text" class="form-control" name="nilai_${nilai.id_nilai}[]" required></td>`;
-        });
-
-        newRow += `<td><button type="button" class="btn btn-danger btn-sm remove-row">
+            <td><p class="form-control-plaintext bobot">-</p></td>
+            <td><textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required></textarea></td>
+            ${nilaiColumns}
+            <td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>
             </button></td>
         </tr>`;

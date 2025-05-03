@@ -14,6 +14,7 @@
             cancelButtonColor: cancelButtonColor,
             showCancelButton: showCancelButton,
             showConfirmButton: showConfirmButton,
+            reverseButtons: true
         }).then((result) => {
             callback(result.isConfirmed);
         });

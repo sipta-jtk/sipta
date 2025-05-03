@@ -3,6 +3,13 @@
 namespace App\Modules\KelolaPenilaianTA\Controllers;
 
 use App\Modules\Controller;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
@@ -10,126 +17,162 @@ use App\Models\KategoriPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Facades\Log;
 
 class PemberianFeedbackController extends Controller
 {
-    public function pengisianMasukanSeminar($id, $kota): View
+    /**
+     * Menampilkan halaman pengisian masukan seminar
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     */
+    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
-        // Log::info("Mengakses halaman feedback untuk seminar $id di kota $kota");
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        
+        // Ambil informasi seminar
+        $seminar = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'feedback')
+            ->with('kategoriPenilaian')
+            ->first();
+    
+        // Ambil data mahasiswa berdasarkan id_kota
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)
+            ->with([
+                'user', // Relasi ke tabel user
+                'kota.penjadwalan' // Relasi ke penjadwalan melalui kota
+            ])
+            ->get();
+    
+        // Ambil aspek feedback berdasarkan id_fta
+        $aspekFeedback = AspekFeedback::whereHas('formPenilaian', function ($query) use ($namaFtaSlug) {
+            $query->where('nama_fta', $namaFtaSlug);
+        })->get();
+    
+        // Siapkan data untuk dikirim ke view
+        $data = [
+            'kode_fta' => $seminar->kode_fta ?? null,
+            'namaFta' => $namaFtaSlug,
+            // 'tanggal' => $seminar->tanggal_tenggat_pengisian ?? null,
+            // 'start' => $mahasiswa->first()->kota->penjadwalan[0]->start ?? null,
+            'namaKota' => $mahasiswa->first()->kota->nama_kota ?? null,
+            'id_kota' => $idKota,
+            'aspekFeedback' => $aspekFeedback
+        ];
 
-        $seminar = KategoriPenilaian::where('id_fta', $id)
-            ->with('formulirPenilaian')
+        $nip = auth()->user()->username;
+
+        // Ambil feedback yang sudah diisi dosen ini untuk FTA dan kota terkait
+        $detailFeedback = DetailFeedback::whereIn('id_feedback', $aspekFeedback->pluck('id_feedback'))
+            ->where('id_kota', $idKota)
+            ->where('nip', $nip)
+            ->get()
+            ->keyBy('id_feedback'); // agar bisa diakses dengan mudah di Blade
+
+        $data['detailFeedback'] = $detailFeedback;
+    
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data'));
+    }
+
+    /**
+     * Simpan feedback 
+     */   
+    public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
+    {
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+        $nip = auth()->user()->username;
+        $action = $request->form_action;
+        $idKota = Kota::where('id_kota', $idKota)->first()->id_kota;
+        $feedbacks = $request->input('feedback');
+
+        $idFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('jenis_form', 'feedback')
+            ->pluck('id_fta')
             ->first();
 
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)
-            ->with('user', 'kota.penjadwalan')
-            ->get();
-
-        $aspekFeedback = AspekFeedback::where('id_fta', $id)->get();
-        Log::info("Data aspek feedback: ".json_encode($aspekFeedback));
-
-        $data = [
-            'kode_fta' => $seminar->formulirPenilaian->kode_fta,
-            'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
-            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswa->first()->kota->nama_kota,
-        ];
-
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', 
-                    compact('seminar', 'mahasiswa', 'id', 'aspekFeedback', 'kota', 'data'));
-    }
-
-    /**
-     * Helper mapping untuk data mahasiswa di form pengisian masukan seminar 2
-     */
-    public function mappingDataMahasiswaMasukan($kategoriPenilaian, $mahasiswa)
-    {
-        // Log::info($mahasiswa);
-        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
-        $data = [
-            'kode_fta' => $kategoriPenilaian->formulirPenilaian->kode_fta,
-            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
-            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswa->first()->kota->nama_kota
-        ];
-
-
-        return $data;
-    }
-
-    /**
-     * Simpan feedback berdasarkan seminar yang dipilih
-     */
-    public function simpanFeedback(Request $request, $seminar, $kota)
-    {
-        switch ($seminar) {
-            case 1:
-                return $this->simpanFeedbackSeminarI($request, $seminar, $kota);
-            case 2:
-                return $this->simpanFeedbackSeminarII($request, $seminar, $kota);
-            case 3:
-                return $this->simpanFeedbackSeminarIII($request, $kota);
-            default:
-                return $this->simpanFeedbackSidangAkhir($request, $kota);
+        if (!$idFta) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
-    }
 
-    /**
-     * Simpan feedback untuk Seminar 2
-     */
-    public function simpanMasukanSeminar(Request $request, $id, $kota)
-    {
-        $nip = auth()->user()->username; // Ambil NIP dosen yang login
-
-        // Validasi data masukan
-        $request->validate([
-            'feedback' => 'required|array',
-            'feedback.*.masukan' => 'required|string',
-        ]);
-
-        $idKota = Kota::where('id_kota', $kota)->first()->id_kota;
-
-        // Ambil semua masukan dari form
-        $feedbacks = $request->input('feedback');
-        Log::info($feedbacks);
-
-        // Ambil semua id_feedback yang sesuai dengan id_fta dari URL
-        $idFeedbacks = AspekFeedback::where('id_fta', $id) 
+        $idFeedbacks = AspekFeedback::where('id_fta', $idFta)
             ->pluck('id_feedback', 'nama_aspek_feedback')
             ->toArray();
 
-        // Buat array baru dengan array_merge
-        $data = [];
+        // Ambil masukan dari request
+        $feedbacks = $request->input('feedback');
+        $errorMessage = null;
+
+        // Loop semua masukan dan cek kondisi validasi
         foreach ($feedbacks as $feedback) {
-            if (isset($idFeedbacks[$feedback['nama_aspek_feedback']])) {
-                $data[] = array_merge($feedback, [
-                    'id_feedback' => $idFeedbacks[$feedback['nama_aspek_feedback']]
-                ]);
-            } else {
-                Log::warning("Feedback dengan nama aspek '{$feedback['nama_aspek_feedback']}' tidak ditemukan.");
+            $plainText = trim(strip_tags($feedback['masukan'] ?? ''));
+
+            if ($plainText === '') {
+                $errorMessage = "Masukan tidak boleh kosong.";
+                break;
+            }
+
+            if (Str::length($plainText) < 15) {
+                $errorMessage = "Masukan minimal 15 karakter.";
+                // Jangan break dulu, simpan kalau belum ada error
+                // Tapi kalau sudah ada error "kosong", ini tidak akan dijalankan
+            }
+
+            if (Str::length($plainText) > 100) {
+                // Kalau belum ada error apapun, set ini
+                if (!$errorMessage) {
+                    $errorMessage = "Masukan maksimal 100 karakter.";
+                }
             }
         }
 
-        // Simpan setiap masukan ke dalam database
-        foreach ($data as $feedback) {
-            DetailFeedback::create([
-                'id_feedback' => $feedback['id_feedback'], 
-                'id_kota' => $idKota, // Kota tujuan dari URL
-                'nip' => $nip,
-                'status_penilaian_dosen' => 'draf', // Status default
-                'isi_feedback' => $feedback['masukan'], // Data feedback dari form
-            ]);
+        // Kalau ada error, tampilkan 1 saja
+        if ($errorMessage) {
+            return redirect()->back()
+                ->withErrors(['feedback.masukan' => $errorMessage])
+                ->withInput();
         }
 
-        // Redirect ke halaman yang sesuai
-        return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
+        // Proses simpan
+        DB::beginTransaction();
+
+        try {
+            foreach ($feedbacks as $index => $feedback) {
+                $idFeedback = array_values($idFeedbacks)[$index] ?? null;
+
+                if (!$idFeedback) continue;
+
+                $existingFeedback = DetailFeedback::where('id_feedback', $idFeedback)
+                    ->where('id_kota', $idKota)
+                    ->where('nip', $nip)
+                    ->first();
+
+                if ($existingFeedback) {
+                    $existingFeedback->update([
+                        'isi_feedback' => $feedback['masukan'],
+                        'status_penilaian_dosen' => 'dipublikasikan',
+                    ]);
+                } else {
+                    DetailFeedback::create([
+                        'id_feedback' => $idFeedback,
+                        'id_kota' => $idKota,
+                        'nip' => $nip,
+                        'status_penilaian_dosen' => 'dipublikasikan',
+                        'isi_feedback' => $feedback['masukan'],
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('kelola.penilaian')->with('success', 'Masukan berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Gagal menyimpan masukan: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
+        }
     }
 }

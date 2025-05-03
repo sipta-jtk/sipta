@@ -68,8 +68,22 @@ Route::prefix('/repository/dosen')->middleware(['auth', 'can:akses-sidebar-repo-
 // ============================
 // Utilitas
 // ============================
-Route::get('/log-aktivitas', [RepositoryController::class, 'logAktivitas']);
-Route::get('/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan']);
+// Saabiq Muhyiyuddin Aulawi
+// Route untuk menampilkan halaman log aktivitas
+// ============================
+// Utilitas
+// ============================
+
+// Log Aktivitas (Dosen - Koordinator TA)
+Route::get('/repository/koor-ta/log-aktivitas', [RepositoryController::class, 'logAktivitas'])
+    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->name('Repository.log-aktivitas');
+
+// Monitoring Penyimpanan
+Route::get('/repository/koor-ta/monitoring-penyimpanan', [RepositoryController::class, 'monitoringPenyimpanan'])
+    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->name('Repository.monitoring-penyimpanan');
+
 
 Route::get('/v0', [RepositoryController::class, 'v0']);
 Route::get('/kategori', [RepositoryController::class, 'v1']);

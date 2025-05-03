@@ -22,7 +22,7 @@
             </span>
         </strong>
 
-        <!-- Dropdown Aksi hanya untuk Dosen yang Login dan Penulis Komentar -->
+        <!-- Dropdown Aksi hanya untuk Dosen yang Login dan Penulis catatan -->
         @if(auth()->user()->role_user === 'dosen' && auth()->user()->dosen->nip === $item->dosen->nip)
         <div class="dropdown">
             <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -30,9 +30,9 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <button class="dropdown-item edit-btn" data-id="{{ $item->id_review }}" data-review="{{ $item->review }}"
-                        data-bs-toggle="modal" data-bs-target="#editCommentModal">
-                        <i class="fas fa-edit me-2"></i> Edit
+                    <button class="dropdown-item edit-btn" data-id="{{ $item->id_review }}"
+                        data-review="{{ $item->review }}" data-bs-toggle="modal" data-bs-target="#editCommentModal">
+                        <i class="fas fa-edit me-2"></i> Ubah
                     </button>
                 </li>
                 <li>
@@ -41,8 +41,8 @@
                     </button>
                 </li>
                 <li>
-                    <button class="dropdown-item text-danger fw-bold delete-btn" data-index="{{ $index }}" data-id="{{ $item->id_review }}"
-                        data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                    <button class="dropdown-item text-danger fw-bold delete-btn" data-index="{{ $index }}"
+                        data-id="{{ $item->id_review }}" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
                         <i class="fas fa-trash me-2 text-danger"></i> Hapus
                     </button>
                 </li>
@@ -51,31 +51,33 @@
         @endif
     </div>
 
-    <!-- Menampilkan teks komentar -->
+    <!-- Menampilkan teks catatan -->
     <p class="mt-2 mb-1 comment-text">{{ $item->review }}</p>
-    <!-- Menampilkan tanggal komentar dengan format tertentu -->
+    <!-- Menampilkan tanggal catatan dengan format tertentu -->
     <small class="text-muted comment-date">
-        {{ \Carbon\Carbon::parse($item->update_at)->format('d/m/Y, H:i:s') }}
+        {{ \Carbon\Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y') }}
     </small>
 </div>
 @empty
 <div class="d-flex justify-content-center align-items-center" style="height: 80px;">
-    <p class="text-muted italic-text">Belum ada catatan</p> <!-- Pesan jika tidak ada komentar -->
+    <p class="text-muted italic-text">Belum ada catatan</p> <!-- Pesan jika tidak ada catatan -->
 </div>
 @endforelse
 
 <!-- ============================================================= -->
-<!-- Bagian: Form Input Komentar Baru (Hanya Tampil untuk Dosen)   -->
+<!-- Bagian: Form Input catatan Baru (Hanya Tampil untuk Dosen)   -->
 <!-- ============================================================= -->
 @can('dosen')
 <form id="comment-form" method="post" data-dokumen-id="{{ $dokumen->id_dokumen }}">
     @csrf
     <input type="hidden" id="id_dokumen" value="{{ $dokumen->id_dokumen }}">
     <div class="mt-3">
-        <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan komentar baru..."
-            rows="3" required></textarea>
-        <small class="text-muted float-end mt-1" id="word-count">0/500 kata</small>
-        <button type="submit" class="btn btn-primary mt-2">Kirim Komentar</button>
+        <textarea name="comment" id="comment-input" class="form-control" placeholder="Masukkan catatan baru..." rows="3"
+            required></textarea>
+        <div class="d-flex pt-2 justify-content-end">
+            <small class="text-muted me-auto my-auto" id="word-count">0/500 karakter</small>
+            <x-adminlte-button theme="success" class="bg-gradient-success border-0 mx-1" label="Kirim" type="submit" />
+        </div>
     </div>
 </form>
 @endcan
@@ -86,36 +88,18 @@
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmLabel">PERINGATAN !!</h5>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="deleteConfirmLabel">Konfirmasi Hapus</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus catatan ini?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger me-2" id="confirmDeleteBtn">Hapus</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ==================================== -->
-<!-- Bagian: Modal untuk konfirmasi salin -->
-<!-- ==================================== -->
-<div class="modal fade" id="copySuccessModal" tabindex="-1" aria-labelledby="copySuccessLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="copySuccessLabel">Sukses</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Teks telah berhasil disalin ke clipboard!
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <x-adminlte-button label="Batal" theme="secondary" class="bg-gradient-secondary mx-1 border-0"
+                    data-bs-dismiss="modal" type="button" />
+                <x-adminlte-button label="Hapus" theme="danger" class="bg-gradient-danger mx-1 border-0"
+                    id="confirmDeleteBtn" type="button" />
             </div>
         </div>
     </div>
@@ -128,18 +112,22 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form action="" method="post" id="edit_comment_form">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCommentLabel">Edit Catatan</h5>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editCommentLabel">Ubah Catatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <textarea id="editCommentText" class="form-control" rows="3" required></textarea>
+                    <small class="text-muted mt-1" id="edit-word-count">0/500 karakter</small>
                 </div>
                 <input type="text" id="editCommentId" hidden>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="saveEditComment">Simpan</button>
+                    <x-adminlte-button label="Batal" theme="secondary" class="bg-gradient-secondary mx-1 border-0"
+                        data-bs-dismiss="modal" type="button" />
+                    <x-adminlte-button label="Simpan" theme="success" class="bg-gradient-success mx-1 border-0"
+                        id="saveEditComment" type="button" />
                 </div>
+
             </form>
         </div>
     </div>
@@ -275,20 +263,20 @@
                 });
         });
 
-        // Fungsi untuk menambahkan komentar baru ke UI
+        // Fungsi untuk menambahkan catatan baru ke UI
         function addNewCommentToUI(catatan) {
-            // Cek jika container untuk komentar kosong ada
+            // Cek jika container untuk catatan kosong ada
             const emptyContainer = document.querySelector('.d-flex.justify-content-center');
             if (emptyContainer) {
                 // Jika ada container "Belum ada catatan", hapus dan buat container baru
                 const parentElement = emptyContainer.parentNode;
                 parentElement.innerHTML = '';
 
-                // Buat komentar baru
+                // Buat catatan baru
                 const newComment = createCommentElement(catatan);
                 parentElement.appendChild(newComment);
             } else {
-                // Jika sudah ada komentar, tambahkan di atas
+                // Jika sudah ada catatan, tambahkan di atas
                 const firstComment = document.querySelector('.comment-item');
                 if (firstComment && firstComment.parentNode) {
                     const newComment = createCommentElement(catatan);
@@ -297,7 +285,7 @@
             }
         }
 
-        // Fungsi untuk membuat elemen komentar baru
+        // Fungsi untuk membuat elemen catatan baru
         function createCommentElement(catatan) {
             const newComment = document.createElement('div');
             newComment.className = 'comment-item mb-3 p-3 border rounded bg-light';
@@ -307,7 +295,7 @@
             const formattedDate = date.toLocaleDateString('id-ID') + ', ' +
                 date.toLocaleTimeString('id-ID');
 
-            // HTML untuk komentar baru
+            // HTML untuk catatan baru
             newComment.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
                 <strong>
@@ -351,23 +339,24 @@
             return newComment;
         }
 
-        // Word counter untuk textarea
+        // Character counter untuk textarea
         const commentInput = document.getElementById('comment-input');
-        const wordCount = document.getElementById('word-count');
+        const charCount = document.getElementById('word-count');
 
-        if (commentInput && wordCount) {
+        if (commentInput && charCount) {
             commentInput.addEventListener('input', function() {
-                const words = this.value.trim().split(/\s+/).length;
+                const charCountValue = this.value.length;
+
                 if (this.value.trim() === '') {
-                    wordCount.textContent = '0/500 kata';
+                    charCount.textContent = '0/500 karakter';
                 } else {
-                    wordCount.textContent = `${words}/500 kata`;
+                    charCount.textContent = `${charCountValue}/500 karakter`;
                 }
 
-                if (words > 500) {
-                    wordCount.classList.add('over-limit');
+                if (charCountValue > 500) {
+                    charCount.classList.add('over-limit');
                 } else {
-                    wordCount.classList.remove('over-limit');
+                    charCount.classList.remove('over-limit');
                 }
             });
         }
@@ -375,6 +364,9 @@
 
 
     $(document).ready(function() {
+
+        const editCommentInput = document.getElementById('editCommentText');
+        const editCharCount = document.getElementById('edit-word-count');
 
         $(".edit-btn").click(function() {
 
@@ -384,11 +376,38 @@
             // Set nilai ke dalam modal
             $("#editCommentText").val(review);
             $("#editCommentId").attr("data-id", id);
+
+            const editCharCount = document.getElementById('edit-word-count');
+            if (editCharCount) {
+                editCharCount.textContent = `${review.length}/500 karakter`;
+                if (review.length > 500) {
+                    editCharCount.classList.add('over-limit');
+                } else {
+                    editCharCount.classList.remove('over-limit');
+                }
+            }
         });
+
+        if (editCommentInput && editCharCount) {
+            editCommentInput.addEventListener('input', function() {
+                const charCountValue = this.value.length;
+
+                if (this.value.trim() === '') {
+                    editCharCount.textContent = '0/500 karakter';
+                } else {
+                    editCharCount.textContent = `${charCountValue}/500 karakter`;
+                }
+
+                if (charCountValue > 500) {
+                    editCharCount.classList.add('over-limit');
+                } else {
+                    editCharCount.classList.remove('over-limit');
+                }
+            });
+        }
 
         $("#saveEditComment").click(function() {
             const dokumenId = $("#id_dokumen").val();
-
             const prefixUrl = document.querySelector("meta[name='prefix-url']") ?
                 document.querySelector("meta[name='prefix-url']").getAttribute("content") :
                 'sipta-dev';
@@ -443,9 +462,7 @@
 
         const dokumenId = $("#id_dokumen").val();
 
-
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
 
         // Saat tombol "Hapus" di modal diklik
         $("#confirmDeleteBtn").click(function() {
@@ -485,11 +502,11 @@
 
         $(document).ready(function() {
             $(".copy-btn").click(function() {
-                let commentText = $(this).data("review"); // Mengambil teks komentar dari data-attribute
+                let commentText = $(this).data("review"); // Mengambil teks catatan dari data-attribute
 
                 // Cek apakah Clipboard API tersedia
                 if (navigator.clipboard) {
-                    // Salin teks komentar ke clipboard
+                    // Salin teks catatan ke clipboard
                     navigator.clipboard.writeText(commentText).then(function() {
                         // Ganti dengan alert sebagai feedback
                         Swal.fire({
@@ -500,7 +517,7 @@
                     }).catch(function(error) {
                         Swal.fire({
                             title: 'Berhasil!',
-                            text: 'Gagal menyalin komentar: ' + error,
+                            text: 'Gagal menyalin catatan: ' + error,
                             icon: 'success'
                         });
                     });

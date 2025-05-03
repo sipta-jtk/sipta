@@ -78,6 +78,19 @@ class KesediaanBimbinganController extends Controller
             'bersedia_membimbing' => $data['bersedia_membimbing']
         ]);
 
+        $jadwalCount = JadwalDosenPembimbing::where('nip', $data['nip'])->count();
+        if ($jadwalCount == 0 && $data['bersedia_membimbing'] == 'bersedia') {
+            $days = ['senin', 'selasa', 'rabu', 'kamis', 'jumat'];
+            foreach ($days as $day) {
+                JadwalDosenPembimbing::create([
+                    'nip' => $data['nip'],
+                    'hari' => $day,
+                    'jam_mulai' => '08:00',
+                    'jam_selesai' => '16:00'
+                ]);
+            }
+        }
+
         session()->flash('success', 'Status kesediaan membimbing berhasil diubah');
 
         return redirect()->back();

@@ -3,8 +3,19 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
@@ -25,11 +36,11 @@
             <!-- Form Pengajuan -->
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Topik Tugas Akhir</h5>
+                <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
-                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul" required></textarea>
+                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
                     </div>
                 </div>
                 <div class="row mb-3">

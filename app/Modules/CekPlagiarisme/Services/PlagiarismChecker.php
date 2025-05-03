@@ -2,8 +2,6 @@
 
 namespace App\Modules\CekPlagiarisme\Services;
 
-set_time_limit(300);
-
 use Smalot\PdfParser\Parser;
 use PhpOffice\PhpWord\IOFactory;
 use simplehtmldom\HtmlWeb;

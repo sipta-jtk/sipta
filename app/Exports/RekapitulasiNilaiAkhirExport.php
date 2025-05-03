@@ -27,8 +27,8 @@ class RekapitulasiNilaiAkhirExport implements FromCollection, WithHeadings, With
                 'nilaiUts' => ($item['nilaiUts'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUts'], 2),
                 'nilaiUas' => ($item['nilaiUas'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUas'], 2),
                 'nilaiLainLain' => ($item['nilaiLainLain'] ?? 0) == 0 ? 'T' : number_format($item['nilaiLainLain'], 2),
-                'nilaiAkhir' => isset($item['nilaiAkhir']) ? number_format($item['nilaiAkhir'], 2) : '',
-                'predikat' => $item['predikat'] ?? '',
+                'nilaiAkhir' => ($item['nilaiAkhir'] ?? 0) == 0 ? 'T' : number_format($item['nilaiAkhir'], 2),
+                'predikat' => ($item['nilaiAkhir'] ?? 0) == 0 ? 'T' : $item['predikat'],
             ];
         });
     }
@@ -36,7 +36,7 @@ class RekapitulasiNilaiAkhirExport implements FromCollection, WithHeadings, With
     public function headings(): array
     {
         return [
-            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'UTS', 'UAS', 'Lain-Lain', 'Predikat'], // Baris pertama header
+            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'UTS', 'UAS', 'Lain-Lain', 'Nilai Akhir', 'Predikat'], // Baris pertama header
         ];
     }
 

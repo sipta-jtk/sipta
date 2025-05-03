@@ -1,20 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR II')
+@section('title', 'PENILAIAN ' . strtoupper($namaFta))
 
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
+        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/kelola-penilaian-ta'), 'label' => 'Home'],
-                ['url' => '', 'label' => 'Penilaian Seminar II']
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
         @endcomponent
 
         <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ strtoupper($data['nama_fta']) }}</h1>
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
     </div>
 @stop
 
@@ -24,21 +25,21 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ $data['nama_fta'] }}</span>
+                <span>{{ 'FTA-' . ($detailInformasiFta->first()?->nama_fta ?? '00') }}</span>
             </div>
 
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
-                <span>{{ $data['tanggal'] }}</span>
+                <span>{{ $keteranganUmumPenilaian->first()?->tanggal }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $data['waktu'] }}</span>
+                <span>{{ $keteranganUmumPenilaian->first()?->start . ' - ' . $keteranganUmumPenilaian->first()?->end}}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>
-                <span>{{ $data['nama_kota'] }}</span>
+               <span> {{ $keteranganUmumPenilaian->first()?->nama_kota }}</span>
             </div>
         </div>
 
@@ -55,7 +56,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($mahasiswa as $key => $mhs)
+                            @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $mhs->nim }}</td>
@@ -72,14 +73,14 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $data['judul_ta'] }}</span>
+                <span>{{ $keteranganUmumPenilaian->first()?->judul_ta ?? "Belum terdapat judul" }}</span>
             </div>
         </div>
 
         <!-- Tombol Preview -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
+                <strong>Preview File Dokumen Seminar III</strong> <br>
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
                     Laporan
                 </button>
@@ -111,52 +112,62 @@
 
         <!-- Form Penilaian -->
         @php
-            $actionUrl = isset($nilaiKriteria) && count($nilaiKriteria) > 0 ? url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/edit') : url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/nilai/' . $data['id_fta'] . '/tambah');
+            $isEdit = count($detailInformasiFta->first()?->kriteriaPenilaian->first()?->rubrik->first()?->nilaiRubrik ?? []) > 0;
+            $action = $isEdit ? route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) : route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
         @endphp
-        <form action="{{ $actionUrl }}" method="POST">
+        <form action="{{ $action }}" method="POST">
             @csrf
-            @if(isset($nilaiKriteria) && count($nilaiKriteria) > 0)
+            @if($isEdit)
                 @method('PATCH')
             @endif
+            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
-                <div class="col-md-12">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th rowspan="2" class="align-content-center">No</th>
-                                <th rowspan="2" class="align-content-center">Kriteria Penilaian Penguji</th>
-                                <th rowspan="2" class="align-content-center">Bobot Nilai</th>
-                                <th rowspan="2" class="align-content-center">Rentang Nilai</th>
-                                <th colspan="{{ count($mahasiswa) }}">Nilai Perorangan</th>
+                <div class="table-container">
+                    <table id="myTable" class="display nowrap table text-center table-bordered" style="width:100%"> 
+                        <thead class="sticky-header">
+                            <tr class="bg-dark text-white">
+                                <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
+                                <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
+                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->mahasiswa ?? []) }}">Nilai Perorangan</th>
                             </tr>
-                            <tr>
-                                @foreach($mahasiswa as $key => $mhs)
-                                    <th data-toggle="popover" data-content="{{ $mhs->user->nama }}">{{ $key + 1 }}</th>
+                            <tr class="bg-dark text-white sticky-row">
+                                @foreach($rubrikList as $index => $rubrik)
+                                    <th style="min-width: 200px;">
+                                        @if($index == count($rubrikList) - 1)
+                                            {{ $rubrik['nilai']['batas_bawah'] }} - ??? ({{ $rubrik['nilai']['id_nilai'] }})
+                                        @else
+                                            {{ $rubrik['nilai']['batas_bawah'] }} - {{ $rubrik['nilai']['batas_atas'] }} ({{ $rubrik['nilai']['id_nilai'] }})
+                                        @endif
+                                    </th>
+                                @endforeach
+
+                                @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
+                                    <th>{{ $key + 1 }}</th>  
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($kriteriaPenilaian as $index => $item)
+                            @foreach ($detailInformasiFta->first()?->kriteriaPenilaian ?? [] as $indexKriteria => $kriteria)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->nama_kriteria }}
-                                        @if ($item->rubrik->count() > 0)
-                                            <ul>
-                                                @foreach ($item->rubrik as $rubrik)
-                                                    <li>{{ $rubrik->nama_rubrik }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
-                                    </td>
-                                    <td>{{ $item->bobot_kriteria }} %</td>
-                                    <td>0 - 100</td>
-                                    @foreach($mahasiswa as $key => $mhs)
-                                        @php
-                                            $nilai = isset($nilaiKriteria[$index][$key]) ? $nilaiKriteria[$index][$key] : '';
-                                        @endphp
-                                        <td><input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}"></td>
-                                    @endforeach
+                                    <td colspan="{{ 8 + count($keteranganUmumPenilaian->mahasiswa ?? []) }}" class="bg-light text-left"><strong> {{ $kriteria->nama_kriteria }}</strong></td>
                                 </tr>
+                                @foreach ($kriteria->rubrik as $index => $rubrik)
+                                    <tr>
+                                        <td>{{ $rubrik->nama_rubrik }}</td>
+                                        @foreach ($rubrik->detailRubrik as $detail)
+                                            <td> {{ $detail->detail_rubrik_penilaian }} </td>
+                                        @endforeach
+                                        @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
+                                            @php
+                                                $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
+                                            @endphp
+
+                                            <td>
+                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
@@ -164,10 +175,14 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <div class="row mt-0">
+            <div class="row mt-3">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">Simpan Draft</button>
-                    <a href="{{ url('sipta/kelola-penilaian-ta/nilai-seminar/'. $idFta . '/masukan/' . $data['id_fta']) }}" class="btn btn-primary">Selanjutnya</a>
+                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
+                        Simpan draft
+                    </button>
+                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
+                        Selanjutnya
+                    </button>
                 </div>
             </div>
         </form>
@@ -178,17 +193,25 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
+    <style>
+        /* Hide the increment and decrement buttons */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
         $(document).ready(function() {
@@ -221,5 +244,15 @@
             let match = url.match(/[-\w]{25,}/);
             return match ? match[0] : null;
         }
+
+
+        $(document).ready(function() {
+            // Menginisialisasi DataTable dengan FixedColumns
+            var table = $('#myTable').DataTable({
+                scrollX: true,
+                fixedColumns: {
+                    rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
+                }
+            });
     </script>
 @stop

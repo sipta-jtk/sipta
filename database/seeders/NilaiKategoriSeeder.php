@@ -168,7 +168,7 @@ class NilaiKategoriSeeder extends Seeder
                 'id_kategori' => 4,
                 'nilai' => 89.30,
             ],
-                ];
+        ];
 
         foreach ($data as $item) {
             NilaiKategori::create($item);
