@@ -36,7 +36,7 @@
     </style>
 @stop
 
-@section('title', 'Alokasi Dosen Pembimbing')
+@section('title', 'Alokasi Dosen Penguji')
 
 @section('content')
     <form action="{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.submit') }}" method="POST" id="alokasiForm">
@@ -44,7 +44,7 @@
         <input type="hidden" id="dataToSend" name="dataToSend">
     </form>
 
-    <h1 class="mb-3">Alokasi Dosen Pembimbing</h1>
+    <h1 class="mb-3">Alokasi Dosen Penguji</h1>
 
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
@@ -112,7 +112,7 @@
                                                                             class="col-sm p-0">
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
-                                                                                Usulan Pembimbing
+                                                                                Usulan Penguji
                                                                             </div>
                                                                             <div class="p-1 pl-3">
                                                                                 @foreach ($pengajuan->usulan_dosen as $usulan)
@@ -137,7 +137,7 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
                                                                                         <span
-                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            class="badge fw-normal">Penguji
                                                                                             1</span>
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
@@ -176,7 +176,7 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
                                                                                         <span
-                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            class="badge fw-normal">Penguji
                                                                                             2</span>
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
