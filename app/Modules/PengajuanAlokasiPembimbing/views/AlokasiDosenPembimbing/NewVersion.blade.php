@@ -120,6 +120,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <!-- ini pembimbing -->
                                                                 <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
                                                                     class="col-sm border-right border-dark p-0">
                                                                     <div class="row d-flex m-0 flex-row"
