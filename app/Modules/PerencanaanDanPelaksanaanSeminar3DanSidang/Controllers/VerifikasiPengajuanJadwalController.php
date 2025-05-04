@@ -286,5 +286,3 @@ class VerifikasiPengajuanJadwalController extends Controller
     }
 
 }
-
-
