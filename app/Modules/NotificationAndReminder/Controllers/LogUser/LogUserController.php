@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\NotifikasiKirim;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Notifikasi;
 
 
 class LogUserController extends Controller
@@ -28,18 +27,6 @@ public function getLogUserNotifications()
         )
         ->orderBy('notifikasi_kirim.waktu_kirim', 'desc')
         ->paginate(10);
-
-        Notifikasi::kirim(
-            '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
-            '221524051', // Ganti dengan username admin, atau log system
-            [
-                'nama' => $username,
-                'Topik' => 'User membuka halaman log',
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
-    
-
 
     $logUserNotifikasi->getCollection()->transform(function ($notif) {
         $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('d F Y H:i');

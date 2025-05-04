@@ -21,7 +21,7 @@ class NotifikasiKirimSeeder extends Seeder
 
         NotifikasiKirim::create([
             'id_notifikasi' => 1,
-            'username' => '221524051',
+            'username' => '198009162009122001',
             'kanal' => 'email',
             'status' => 'terkirim',
             'waktu_kirim' => Carbon::now(),
