@@ -159,7 +159,10 @@
                                                                                         <div
                                                                                             class="d-flex justify-content-between">
                                                                                             <button
-                                                                                                class="btn btn-sm btn-primary">
+                                                                                                class="btn btn-sm btn-primary"
+                                                                                                onclick="
+                                                                                                goToDetailDosen($(this).closest('tr').find('.alokasiInputText').val());
+                                                                                                ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
@@ -199,7 +202,10 @@
                                                                                         <div
                                                                                             class="d-flex justify-content-between">
                                                                                             <button
-                                                                                                class="btn btn-sm btn-primary">
+                                                                                                class="btn btn-sm btn-primary"
+                                                                                                onclick="
+                                                                                                goToDetailDosen($(this).closest('tr').find('.alokasiInputText').val());
+                                                                                                ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
@@ -384,7 +390,7 @@
                     data: null,
                     render: function(data, type, row) {
                         return `
-                            <div class="d-flex justify-content-between align-items-start" style="gap: 8px;">
+                            <div class="d-flex justify-content-between align-items-start" style="gap: 8px;" id="detailDosen-${row.id}">
                                 <!-- Kolom Nama Dosen -->
                                 <div class="text-break" style="flex: 1; min-width: 0; word-break: break-word; white-space: normal;">
                                     <span class="fw-bold">${row.dosenName}</span>
@@ -498,6 +504,15 @@
 
                 updateDataTable();
             });
+        }
+
+        function goToDetailDosen(id) {
+            let dosen = kuotaDosen.find(d => d.id === id);
+            if (dosen) {
+                let searchInput = $('#dosenTable_filter input');
+                searchInput.val(dosen.dosenName);
+                DetailDosenTable.search(dosen.dosenName).draw();
+            }
         }
 
         // onchange on .alokasiInputText
