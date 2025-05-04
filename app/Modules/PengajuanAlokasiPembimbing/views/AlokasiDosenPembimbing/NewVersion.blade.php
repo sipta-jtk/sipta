@@ -94,6 +94,13 @@
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
                                                                                 Anggota Kelompok
+                                                                                <input type="hidden" name=""
+                                                                                    class="totalMhs"
+                                                                                    value="{{ $pengajuan->mahasiswa->count() }}">
+                                                                                <input type="hidden" name=""
+                                                                                    class="prodi"
+                                                                                    value="{{ $pengajuan->prodi }}">
+
                                                                             </div>
                                                                             <div class="p-1 pl-3">
                                                                                 @foreach ($pengajuan->mahasiswa as $mh)
@@ -142,7 +149,9 @@
                                                                                             id=""
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
-                                                                                            value="JO">
+                                                                                            value="JO"
+                                                                                            data-totalMhs="{{ $pengajuan->mahasiswa->count() }}">
+
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -181,7 +190,8 @@
                                                                                             id=""
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
-                                                                                            value="JO">
+                                                                                            value="JO"
+                                                                                            data-totalMhs="{{ $pengajuan->mahasiswa->count() }}">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -320,28 +330,28 @@
             }
         });
 
-        setTimeout(() => {
-            // add kuotaDosen
-            kuotaDosen.push({
-                'dosenName': 'Sri Ratna Wulannnn',
-                'id': 'dosen-2',
-                'mhs': {
-                    'D3': 1,
-                    'D4': 10,
-                },
-                'kuota': {
-                    'D3': 3,
-                    'D4': 5,
-                },
-                'kelompok': {
-                    'D3': 1,
-                    'D4': 1,
-                },
-            });
+        // setTimeout(() => {
+        //     // add kuotaDosen
+        //     kuotaDosen.push({
+        //         'dosenName': 'Sri Ratna Wulannnn',
+        //         'id': 'dosen-2',
+        //         'mhs': {
+        //             'D3': 1,
+        //             'D4': 10,
+        //         },
+        //         'kuota': {
+        //             'D3': 3,
+        //             'D4': 5,
+        //         },
+        //         'kelompok': {
+        //             'D3': 1,
+        //             'D4': 1,
+        //         },
+        //     });
 
-            console.log(kuotaDosen);
-            updateDataTable();
-        }, 3000);
+        //     console.log(kuotaDosen);
+        //     updateDataTable();
+        // }, 3000);
 
 
         // To automatically close the sidebar, yk, we need extra space for this :V
@@ -355,8 +365,9 @@
         $(document).ready(function() {
             adjustSidebar();
 
-            $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function (data) {
+            $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
+                console.log('kuotaDosen', kuotaDosen);
             });
 
             // Init dosenTable
@@ -453,28 +464,45 @@
             }, 1000);
         });
 
-        function updateKuotaDosen(id_dosen, operator) {
+        function updateKuotaDosen() {
             for (let i = 0; i < kuotaDosen.length; i++) {
-                if (kuotaDosen[i].id === id_dosen) {
-                    if (operator === 'increment') {
-                        kuotaDosen[i].mhs.D4 += 1;
-                    } else if (operator === 'decrement') {
-                        kuotaDosen[i].mhs.D4 -= 1;
-                    }
-                    updateDataTable();
-                    break;
-                }
+                kuotaDosen[i].mhs.D3 = 0;
+                kuotaDosen[i].mhs.D4 = 0;
+                kuotaDosen[i].kelompok.D3 = 0;
+                kuotaDosen[i].kelompok.D4 = 0;
             }
+
+            $('.alokasiInputText').each(function() {
+                let id_dosen = $(this).val();
+
+                let index = kuotaDosen.findIndex(dosen => dosen.id === id_dosen);
+
+                let prodi = $(this).closest('tr').find('.prodi').val();
+                let prodiSplit = prodi.split('-');
+                let prodiCode = prodiSplit[0];
+
+                if (index !== -1) {
+                    let closestInput = $(this).closest('tr').find('.alokasiInputText').not(this);
+                    let closestValue = closestInput.val();
+                    if (closestValue == id_dosen) {
+                        $(closestInput).val('');
+                    }
+                    if (id_dosen !== '') {
+                        let totalMhs = $(this).closest('tr').find('.totalMhs').val();
+                        totalMhs = parseInt(totalMhs);
+
+                        kuotaDosen[index].mhs[prodiCode] += totalMhs;
+                        kuotaDosen[index].kelompok[prodiCode]++;
+                    }
+                }
+
+                updateDataTable();
+            });
         }
 
         // onchange on .alokasiInputText
         $('.alokasiInputText').on('change', function() {
-            // id dosen is the value of the input, also get the previous value
-            let id_dosen = $(this).val();
-            let prevValue = $(this).data('prevValue');
-
-            console.log('id_dosen', id_dosen);
-            console.log('prevValue', prevValue);
+            updateKuotaDosen();
         });
     </script>
 @endsection

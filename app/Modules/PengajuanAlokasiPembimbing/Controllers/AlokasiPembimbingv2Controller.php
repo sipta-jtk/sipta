@@ -30,6 +30,7 @@ class AlokasiPembimbingv2Controller extends Controller
 
         foreach ($data_pengajuan as $key => $value) {
             $data_pengajuan[$key]['mahasiswa'] = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
+                ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
                 ->where('id_kota', $value->id_kota)->get();
 
             $data_pengajuan[$key]['usulan_dosen'] = PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
@@ -37,6 +38,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 ->select('dosen.id_dosen', 'prioritas_pembimbing.urutan_prioritas')
                 ->orderBy('urutan_prioritas')
                 ->get();
+
+            if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
+                $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
+                $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
+            } else {
+                $data_pengajuan[$key]['prodi'] = null;
+            }
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
@@ -50,35 +58,36 @@ class AlokasiPembimbingv2Controller extends Controller
             'dosenList' => $dosenList
         ]);
     }
-    
+
     public function getDetailDosen(): JsonResponse
     {
         $dosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
-            ->select('user.nama', 'dosen.nip')
+            ->select('user.nama', 'dosen.nip', 'dosen.id_dosen')
             ->orderBy('user.nama', 'asc')
             ->get();
-        
+
         $kuota = DB::table('kuota_membimbing')
             ->select('nip', 'id_prodi', DB::raw('SUM(jumlah) as total'))
             ->groupBy('nip', 'id_prodi')
             ->get()
             ->groupBy('nip');
-        
+
         $prodi = DB::table('prodi')->get()->keyBy('id_prodi');
 
         // Gabungkan data dosen dengan kuota berdasarkan prodi (D3/D4)
         $result = $dosen->map(function ($item) use ($kuota, $prodi) {
             $nip = $item->nip;
             $kuotaDosen = $kuota[$nip] ?? collect();
-    
+
             $d3 = $kuotaDosen->firstWhere('id_prodi', 1)?->total ?? 0;
             $d4 = $kuotaDosen->firstWhere('id_prodi', 2)?->total ?? 0;
-    
+
             return [
                 'nama' => $item->nama,
                 'nip' => $item->nip,
+                'id' => $item->id_dosen,
                 'kuota' => [
                     'D3' => [
                         'terpakai' => $d3,
@@ -93,12 +102,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 ]
             ];
         });
-        
+
         // dd($result);
         return response()->json($result->map(function ($item) {
             return [
                 'dosenName' => $item['nama'],
                 'nip' => $item['nip'],
+                'id' => $item['id'],
                 'mhs' => [
                     'D3' => $item['kuota']['D3']['terpakai'],
                     'D4' => $item['kuota']['D4']['terpakai'],
