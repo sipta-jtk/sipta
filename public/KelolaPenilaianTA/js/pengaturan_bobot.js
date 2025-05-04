@@ -35,6 +35,8 @@ $(document).ready(function () {
         initComplete: function() {
             $("#infoControls").html($(".dataTables_info"));
             $("#paginationControls").html($(".dataTables_paginate"));
+            $("#dataTableControls").html($(".dataTables_length"));
+            $("#searchBox").html($(".dataTables_filter"));
         }
     });
 

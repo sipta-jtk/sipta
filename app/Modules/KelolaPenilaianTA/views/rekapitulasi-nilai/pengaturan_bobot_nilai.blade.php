@@ -17,14 +17,20 @@
 
 @section('content')
     <div class="p-4">
+
+        <div class="d-flex justify-content-between mt-1">
+            <div id="dataTableControls"></div> <!-- Placeholder untuk info -->
+            <div id="searchBox"></div> <!-- Placeholder untuk pagination -->            
+        </div>
+
         {{-- Form untuk Simpan Data --}}
         <form id="nilaiAkhirForm" action="{{ route('pengaturan-bobot.update') }}" method="POST">
             @csrf
             @method('PUT')
             <div class="table-container">
-                <table id="nilaiAkhirTable" class="table table-striped table-bordered text-center" width="100%">
+                <table id="nilaiAkhirTable" class="table table-striped table-bordered" width="100%">
                     <thead class="sticky-header">
-                        <tr class="bg-dark text-white text-center">
+                        <tr class="bg-dark text-white">
                             <th>No</th>
                             <th>Komponen Nilai Akhir</th>
                             <th>Bobot (%)</th>
@@ -55,6 +61,11 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-1">
+                <div id="infoControls"></div> <!-- Placeholder untuk info -->
+                <div id="paginationControls"></div> <!-- Placeholder untuk pagination -->
             </div>
 
             <!-- Pesan Warning -->
