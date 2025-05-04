@@ -336,30 +336,6 @@
             }
         });
 
-        // setTimeout(() => {
-        //     // add kuotaDosen
-        //     kuotaDosen.push({
-        //         'dosenName': 'Sri Ratna Wulannnn',
-        //         'id': 'dosen-2',
-        //         'mhs': {
-        //             'D3': 1,
-        //             'D4': 10,
-        //         },
-        //         'kuota': {
-        //             'D3': 3,
-        //             'D4': 5,
-        //         },
-        //         'kelompok': {
-        //             'D3': 1,
-        //             'D4': 1,
-        //         },
-        //     });
-
-        //     console.log(kuotaDosen);
-        //     updateDataTable();
-        // }, 3000);
-
-
         // To automatically close the sidebar, yk, we need extra space for this :V
         function adjustSidebar() {
             let toggleNav = $('a.nav-link[data-widget="pushmenu"]');
@@ -373,7 +349,6 @@
 
             $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
-                console.log('kuotaDosen', kuotaDosen);
             });
 
             // Init dosenTable
