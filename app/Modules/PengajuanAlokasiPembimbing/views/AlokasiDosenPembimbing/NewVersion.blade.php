@@ -146,11 +146,10 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
                                                                                         <input type="text" name=""
-                                                                                            id=""
+                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
-                                                                                            value="JO"
-                                                                                            data-totalMhs="{{ $pengajuan->mahasiswa->count() }}">
+                                                                                            value="JO">
 
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
@@ -161,7 +160,7 @@
                                                                                             <button
                                                                                                 class="btn btn-sm btn-primary"
                                                                                                 onclick="
-                                                                                                goToDetailDosen($(this).closest('tr').find('.alokasiInputText').val());
+                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val());
                                                                                                 ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
@@ -190,11 +189,9 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
                                                                                         <input type="text" name=""
-                                                                                            id=""
+                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
-                                                                                            style="font-size: xx-large"
-                                                                                            value="JO"
-                                                                                            data-totalMhs="{{ $pengajuan->mahasiswa->count() }}">
+                                                                                            style="font-size: xx-large">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -204,7 +201,7 @@
                                                                                             <button
                                                                                                 class="btn btn-sm btn-primary"
                                                                                                 onclick="
-                                                                                                goToDetailDosen($(this).closest('tr').find('.alokasiInputText').val());
+                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val());
                                                                                                 ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
@@ -349,6 +346,7 @@
 
             $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
+                updateKuotaDosen();
             });
 
             // Init dosenTable
