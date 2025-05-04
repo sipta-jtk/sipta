@@ -2,3 +2,5 @@
 .venv
 plagiarism-checking/plagiarismchecker/__pycache__/
 plagiarism-checking/Plagiarism_Checker/__pycache__
+\__pycache__
+\Plagiarism_Checker\__pycache__\settings.cpython-311.pyc
