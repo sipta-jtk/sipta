@@ -938,24 +938,24 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#addDocumentForm, #editDocumentForm, #deleteDocumentForm').on('submit', function() {
-            saveActiveTab();
-        });
-        // Restore tab setelah reload
-        var activeTabId = localStorage.getItem('seminar1_active_tab');
-        if (activeTabId) {
-            // Nonaktifkan semua tab
-            $('.nav-tabs .nav-link').removeClass('active');
-            $('.tab-pane').removeClass('show active');
+        // $('#addDocumentForm, #editDocumentForm, #deleteDocumentForm').on('submit', function() {
+        //     saveActiveTab();
+        // });
+        // // Restore tab setelah reload
+        // var activeTabId = localStorage.getItem('seminar1_active_tab');
+        // if (activeTabId) {
+        //     // Nonaktifkan semua tab
+        //     $('.nav-tabs .nav-link').removeClass('active');
+        //     $('.tab-pane').removeClass('show active');
 
-            // Aktifkan tab dan tab-pane sesuai yang terakhir
-            $('#' + activeTabId).addClass('active');
-            var targetPaneId = $('#' + activeTabId).attr('data-target');
-            $(targetPaneId).addClass('show active');
+        //     // Aktifkan tab dan tab-pane sesuai yang terakhir
+        //     $('#' + activeTabId).addClass('active');
+        //     var targetPaneId = $('#' + activeTabId).attr('data-target');
+        //     $(targetPaneId).addClass('show active');
 
-            // Optional: hapus localStorage supaya tidak terus-terusan
-            // localStorage.removeItem('seminar1_active_tab');
-        }
+        //     // Optional: hapus localStorage supaya tidak terus-terusan
+        //     // localStorage.removeItem('seminar1_active_tab');
+        // }
 
 
         const dataTables = {};
