@@ -266,16 +266,16 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="kuota"
-                                                id="filterQuota">
+                                            <input class="form-check-input" type="radio" name="filterOption"
+                                                value="kuota" id="filterQuota" onchange="filter()">
                                             <label class="form-check-label" for="filterQuota">
                                                 <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi
                                                 Kuota
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="belum"
-                                                id="filterUnassigned">
+                                            <input class="form-check-input" type="radio" name="filterOption"
+                                                value="belum" id="filterUnassigned" onchange="filter()">
                                             <label class="form-check-label" for="filterUnassigned">
                                                 <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
                                             </label>
@@ -284,8 +284,17 @@
                                 </div>
                             </div>
                             <div class="card-footer text-right">
+                                <button type="button" id="clearFilter" class="btn btn-secondary btn-sm"
+                                    onclick="clearFilter()">Hapus Filter</button>
                                 <button type="button" id="applyFilter" class="btn btn-primary btn-sm">Terapkan</button>
                             </div>
+
+                            <script>
+                                function clearFilter() {
+                                    document.querySelectorAll('input[name="filterOption"]').forEach(input => input.checked = false);
+                                    filter();
+                                }
+                            </script>
                         </div>
                     </div>
 
@@ -485,6 +494,43 @@
                 let searchInput = $('#dosenTable_filter input');
                 searchInput.val(dosen.dosenName);
                 DetailDosenTable.search(dosen.dosenName).draw();
+            }
+        }
+
+        function filter() {
+            if ($('#filterQuota').is(':checked')) {
+                for (let i = 0; i < kuotaDosen.length; i++) {
+                    var save = false;
+                    for (const key in kuotaDosen[i].mhs) {
+                        if (kuotaDosen[i].mhs[key] > kuotaDosen[i].kuota[key]) {
+                            save = true;
+                            break;
+                        }
+                    }
+                    if (save) {
+                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
+                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
+                    } else {
+                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-none');
+                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-flex');
+                    }
+                }
+            } else if ($('#filterUnassigned').is(':checked')) {
+                for (let i = 0; i < kuotaDosen.length; i++) {
+                    if (Object.values(kuotaDosen[i].mhs).some(value => value > 0)) {
+                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-none');
+                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-flex');
+
+                    } else {
+                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
+                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
+                    }
+                }
+            } else {
+                for (let i = 0; i < kuotaDosen.length; i++) {
+                    $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
+                    $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
+                }
             }
         }
 
