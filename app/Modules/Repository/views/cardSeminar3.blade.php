@@ -536,6 +536,7 @@
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
                                 <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-toggle="modal" data-target="#HapusDokumen">
