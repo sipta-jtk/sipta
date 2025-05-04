@@ -5,18 +5,18 @@
 @section('content_header')
     <div class="container-fluid p-3">
         {{-- TBD perbaiki breadcrumb --}}   
-        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
         
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Beranda'],
                 ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
-            ]
-        ])
+                ]
+                ])
         @endcomponent
-
+        
         <!-- Judul Halaman -->
+        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
     </div>
 @stop
 
@@ -44,16 +44,22 @@
                         <th rowspan="2" class="align-middle">Penguji 2</th>
                         <th rowspan="2" class="align-middle">Penguji 3</th>
                         <th colspan="3" style="width: 10%;">Nilai</th>
-                        <th colspan="3" style="width: 10%;">Feedback</th>
-                        {{-- <th rowspan="2" class="align-middle">Aksi</th> --}}
+                        @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))    
+                            <th colspan="3" style="width: 10%;">Feedback</th>
+                        @endif
+                        @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))    
+                            <th rowspan="2" class="align-middle">Aksi</th>
+                        @endif
                     </tr>
                     <tr class="bg-secondary text-white">
                         <th style="width: 2%;">P1</th>
                         <th style="width: 2%;">P2</th>
                         <th style="width: 2%;">P3</th>
-                        <th style="width: 2%;">P1</th>
-                        <th style="width: 2%;">P2</th>
-                        <th style="width: 2%;">P3</th>
+                        @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))  
+                            <th style="width: 2%;">P1</th>
+                            <th style="width: 2%;">P2</th>
+                            <th style="width: 2%;">P3</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -65,15 +71,12 @@
                     @foreach ($grouped as $idKota => $mahasiswaKelompok)
                         @foreach ($mahasiswaKelompok as $index => $data)
                             <tr>
-                                {{-- Kolom No, tampilkan sekali di baris pertama mahasiswa di kelompok --}}
                                 @if ($index == 0)
                                     <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">{{ $no++ }}</td>
                                 @endif
                 
-                                {{-- Nama Mahasiswa --}}
                                 <td>{{ $data->user->nama }}</td>
                 
-                                {{-- Nama Kelompok, tampilkan sekali di baris pertama mahasiswa --}}
                                 @if ($index == 0)
                                     <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">{{ $data->kota->nama_kota }}</td>
                                 @endif
@@ -102,40 +105,28 @@
                                     <td>{{ $nilai }}</td>
                                 @endforeach
                 
-                                {{-- Feedback static --}}
-                                @foreach ($nilaiList as $nilai)
-                                    @if ($index == 0)
-                                        <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">
-                                            <i class="far fa-check-square text-success"></i>
-                                        </td>
-                                    @endif
+                                @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))      
+                                    @foreach ($nilaiList as $nilai)
+                                        @if ($index == 0)
+                                            <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle">
+                                                <i class="far fa-check-square text-success"></i>
+                                            </td>
+                                        @endif
 
-                                    {{-- <td> --}}
-                                        {{-- <i class="far fa-check-square text-success"></i> --}}
-                                    {{-- </td> --}}
-                                    {{-- <i class="far fa-square text-muted"></i> Kotak kosong --}}
-                                    {{-- <i class="far fa-check-square text-success"></i> Centang hijau --}}
-                                @endforeach
-                
-                                {{-- Aksi --}}
-                                {{-- @if ($index == 0)
-                                    <td rowspan="{{ count($mahasiswaKelompok) }}" class="d-flex flex-column gap-1">
-                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                                        <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
-                
-                                        @if (($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
-                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                <button type="submit" class="btn btn-danger w-100">Batalkan Publikasi</button>
-                                            </form>
+                                        {{-- <i class="far fa-square text-muted"></i> Kotak kosong --}}
+                                        {{-- <i class="far fa-check-square text-success"></i> Centang hijau --}}
+                                    @endforeach
+                                @endif
+
+                                @if ($index == 0 && in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))
+                                    <td rowspan="{{  count($mahasiswaKelompok) }}" class="text-center align-middle">
+                                        @if ($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft' == 'draft')
+                                            <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
                                         @else
-                                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                <button type="submit" class="btn btn-primary w-100">Publikasi</button>
-                                            </form>
+                                            <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
                                         @endif
                                     </td>
-                                @endif --}}
+                                @endif
                             </tr>
                         @endforeach
                     @endforeach
