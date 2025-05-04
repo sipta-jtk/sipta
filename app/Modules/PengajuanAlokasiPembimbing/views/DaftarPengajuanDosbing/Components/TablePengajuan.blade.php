@@ -4,13 +4,23 @@
     <table id="kesediaanTable" class="table table-bordered table-stripped table-responsive">
         {{-- <table id="myTable" class="table"> --}}
         <thead class="text-center bg-dark text-white">
+            <div class="mb-3">
+                <label for="filterProdi">Filter Prodi:</label>
+                <select id="filterProdi" class="form-control w-25">
+                    <option value="">Semua</option>
+                    <option value="1">D3</option>
+                    <option value="2">D4</option>
+                </select>
+            </div>
+
             <tr>
                 <th>No</th>
                 {{-- <th>Kelompok</th>
                 <th>Nama</th>
                 <th>NIM</th> --}}
-                <th>Bidang</th>
-                <th>Judul TA</th>
+                <th class="bidang-column" style="width: 30%;">Bidang</th>
+                <th class="judul-column" style="width: 70%;">Judul TA</th>
+                <th style="width: 10%;">Prodi</th>
                 {{-- <th>Pengajuan</th> --}}
                 <th>Peminatan</th>
             </tr>
@@ -46,8 +56,13 @@
             @endif
             @endforeach
     </td> --}}
-    <td>{{($kelompok['bidang'] ?? '-') }}</td>
-    <td>{{($kelompok['judul'] ?? '-') }}</td>
+    <td class="bidang-column">{{ $kelompok['bidang'] ?? '-' }}</td>
+    <td class="judul-column">{{ $kelompok['judul'] ?? '-' }}</td>
+    <td data-search="{{ $kelompok['id_prodi'] }}">
+        {{ $kelompok['id_prodi'] == 1 ? 'D3' : ($kelompok['id_prodi'] == 2 ? 'D4' : '-') }}
+    </td>
+    {{-- <pre>{{ print_r($kelompok, true) }}</pre> --}}
+
     {{-- <td>{{($kelompok['tanggal'] ?? '-') }}</td> --}}
     <td>
         @if ($kelompok['status'] === 'accepted')
@@ -69,8 +84,6 @@
         </div>
         @endif
     </td>
-
-
     </tr>
     {{-- @endforeach --}}
 
@@ -162,6 +175,12 @@
                     }
                 }
             , });
+
+            var table = $('#kesediaanTable').DataTable();
+            $('#filterProdi').on('change', function() {
+                var val = $(this).val();
+                table.column(3).search(val).draw();
+            });
             // $('#kesediaanTable').DataTable({
             //     paging: true
             //     , ordering: true
@@ -186,12 +205,12 @@
 
                 Swal.fire({
                     title: "Konfirmasi"
-                    , text: actionType === "accept" ? "Apakah Anda yakin minat dengan bidang ini?" : "Apakah Anda yakin tidak berminat dengan bidang ini?"
+                    , text: actionType === "accept" ? "Apakah Anda benar-benar berminat untuk menguji judul TA ini?" : "Apakah Anda yakin tidak jadi berminat di judul TA ini?"
                     , icon: "warning"
                     , showCancelButton: true
                     , confirmButtonColor: "#3085d6"
                     , cancelButtonColor: "#6c757d"
-                    , confirmButtonText: actionType === "accept" ? "Ya, Minat" : "Ya, tidak diminati."
+                    , confirmButtonText: actionType === "accept" ? "Ya, minat" : "Ya, tidak diminati."
                     , cancelButtonText: "Batal"
                 }).then((result) => {
                     if (result.isConfirmed) {
