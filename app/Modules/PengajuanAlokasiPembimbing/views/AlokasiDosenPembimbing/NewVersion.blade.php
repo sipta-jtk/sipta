@@ -577,6 +577,13 @@
         }
 
         // onchange on .alokasiInputText
-        
+        $('.alokasiInputText').on('change', function() {
+            // id dosen is the value of the input, also get the previous value
+            let id_dosen = $(this).val();
+            let prevValue = $(this).data('prevValue');
+
+            console.log('id_dosen', id_dosen);
+            console.log('prevValue', prevValue);
+        });
     </script>
 @endsection
