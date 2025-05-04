@@ -36,10 +36,6 @@ thead th {
     border-bottom: 2px solid #fff;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #f8f9fa; /* Warna striping */
-}
-
 tbody tr:hover {
     background-color: #e2e6ea;
 }
