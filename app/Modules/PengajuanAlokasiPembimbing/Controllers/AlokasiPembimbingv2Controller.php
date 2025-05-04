@@ -37,17 +37,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 ->select('dosen.id_dosen', 'prioritas_pembimbing.urutan_prioritas')
                 ->orderBy('urutan_prioritas')
                 ->get();
-                
-            $data_pengajuan[$key]['preferensi_dosen'] = PreferensiKota::join('dosen', 'preferensi_kota.nip', '=', 'dosen.nip')
-                ->where('preferensi_kota.id_kota', $value->id_kota)
-                ->select('dosen.id_dosen', 'dosen.nip')->limit(2)->get();
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama')
             ->get();
 
-        dd($data_pengajuan);
+        // dd($data_pengajuan);
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
