@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Dokumen seminar 3')
+@section('title', 'Dokumen Sidang')
 
 @section('content_header')
-<h1 class="mb-3 text-left">Dokumen seminar 3</h1>
+<h1 class="mb-3 text-left">Dokumen Sidang</h1>
 @stop
 
 
 @section('content')
 
 {{-- Navigasi Tab --}}
-<ul class="nav nav-tabs mb-3" id="tabseminar3" role="tablist">
+<ul class="nav nav-tabs mb-3" id="tabsidang" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="tab-laporan-tab" data-toggle="tab" data-target="#tab-laporan" type="button" role="tab" aria-controls="tab-laporan" aria-selected="true">Laporan</button>
     </li>
@@ -26,14 +26,17 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="tab-sdd-tab" data-toggle="tab" data-target="#tab-sdd" type="button" role="tab" aria-controls="tab-sdd" aria-selected="false">SDD</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-poster-tab" data-toggle="tab" data-target="#tab-poster" type="button" role="tab" aria-controls="tab-poster" aria-selected="false">Poster</button>
+    </li>
 </ul>
 
-<div class="tab-content" id="tabseminar3Content">
+<div class="tab-content" id="tabsidangContent">
     {{-- Tab: Laporan --}}
     <div class="tab-pane fade show active" id="tab-laporan" role="tabpanel" aria-labelledby="tab-laporan-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Laporan seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Laporan Sidang AKhir</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -448,7 +451,7 @@
     <div class="tab-pane fade" id="tab-srs" role="tabpanel" aria-labelledby="tab-srs-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS Sidang</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -581,7 +584,7 @@
     <div class="tab-pane fade" id="tab-sdd" role="tabpanel" aria-labelledby="tab-sdd-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SDD seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen SDD Sidang</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -709,12 +712,145 @@
             </div>
         </div>
     </div>
+
+    {{-- Tab: Poster --}}
+    <div class="tab-pane fade" id="tab-poster" role="tabpanel" aria-labelledby="tab-poster-tab">
+        <div class="card">
+            <div class="card-header d-flex justify-content-center">
+                <h3 class="card-title m-0 text-center text-bold">Poster</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
+                    <div class="d-flex align-items-center">
+                        <!-- Tombol Filter -->
+                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuPoster">
+                            <i class="fas fa-filter"></i>
+                        </button>
+
+                        <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
+                        <div id="custom-length-poster"></div>
+                    </div>
+
+                    <!-- Tombol Tambah -->
+                    <button id="btn-tambah-poster" onclick="TambahDokumen('btn-tambah-poster', '{{ $subkategoriSdd->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSdd->id_subkategori }}">
+                        <i class="fas fa-plus"></i> Tambah
+                    </button>
+                </div>
+
+
+                <div class="collapse filter-menu" id="filterMenuPoster" data-target="poster">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-filter mr-2"></i>Filter Data
+                            </h3>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Versi</label>
+                                    <select class="form-control version-filter">
+                                        <option value="">Semua</option>
+                                        @for ($i = 1; $i <= 15; $i++)
+                                            <option value="{{ $i }}">V{{ $i }}</option>
+                                            @endfor
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>Tanggal Dibuat</label>
+                                    <input type="date" class="form-control date-filter">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-right">
+                            <button type="button" class="btn btn-primary apply-filter-btn">
+                                Terapkan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <table class="table table-bordered text-center datatable" data-table="poster">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="no-sort">No</th>
+                            <th>Versi</th>
+                            <th>Judul</th>
+                            <th>Tanggal Dibuat</th>
+                            <th>Terakhir Diedit</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if ($poster->isEmpty())
+                        <tr>
+                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
+                            </td>
+                        </tr>
+                        @else
+                        @foreach ($poster as $index => $doc)
+                        <tr>
+                            <td></td>
+                            <td>{{ $doc->versi }}</td>
+                            <td>{{ $doc->judul }}</td>
+
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>
+                                @if ($status_ta === 'mahasiswa_ta')
+                                <!-- Delete button -->
+                                <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                    data-id="{{ $doc->id_dokumen }}"
+                                    data-judul="{{ $doc->judul }}"
+                                    data-toggle="modal" data-target="#HapusDokumen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                                <!-- Edit button -->
+                                <button class="btn btn-sm btn-outline-primary edit-btn"
+                                    onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
+                                    data-id="{{ $doc->id_dokumen }}"
+                                    data-judul="{{ $doc->judul }}"
+                                    data-versi="{{ $doc->versi }}"
+                                    data-deskripsi="{{ $doc->deskripsi }}"
+                                    data-file="{{ $doc->file_path }}"
+                                    data-toggle="modal" data-target="#UbahDokumen">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+
+                                <!-- View button -->
+                                <button class="btn btn-sm btn-outline-success view-btn"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}',)"
+                                    data-id="{{ $doc->id_dokumen }}"
+                                    data-judul="{{ $doc->judul }}"
+                                    data-file="{{ $doc->file_path }}"
+                                    data-deskripsi="{{ $doc->deskripsi }}"
+                                    data-toggle="modal"
+                                    data-target="#LihatDokumen">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- BAGIAN MODAL -->
 
 <!-- TAMBAH DOKUMEN -->
-<x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen seminar 3" theme="blue" size="lg">
+<x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen Sidang" theme="blue" size="lg">
     <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
@@ -774,7 +910,7 @@
 </x-adminlte-modal>
 
 <!-- EDIT DOKUMEN -->
-<x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen seminar 3" theme="yellow" size="xl">
+<x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen Sidang" theme="yellow" size="xl">
     <form id="editDocumentForm" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -975,6 +1111,8 @@
                 customLengthId = 'custom-length-srs';
             } else if (tableId === 'tab-sdd') {
                 customLengthId = 'custom-length-sdd';
+            } else if (tableId === 'tab-poster') {
+                customLengthId = 'custom-length-poster';
             }
 
             dataTables[tableKey] = $(this).DataTable({
@@ -1182,16 +1320,18 @@
         var showKodeFTA = false;
 
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan seminar 3';
+            title = 'Tambah Laporan Sidang';
         } else if (type === 'btn-tambah-fta') {
-            title = 'Tambah FTA seminar 3';
+            title = 'Tambah FTA Sidang';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint seminar 3';
+            title = 'Tambah PowerPoint Sidang';
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS seminar 3';
+            title = 'Tambah SRS Sidang';
         } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD seminar 3';
+            title = 'Tambah SDD Sidang';
+        } else if (type === 'btn-tambah-poster') {
+            title = 'Tambah Poster';
         }
 
         $('#TambahDokumen .modal-title').text(title);
