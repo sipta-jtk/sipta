@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex pt-3 justify-content-end">
-                                    <x-adminlte-button theme="danger" label="Batal" data-dismiss="modal" class="mx-1"/>
+                                    <x-adminlte-button theme="primary" label="Batal" data-dismiss="modal" class="mx-1"/>
                                     <x-adminlte-button theme="success" label="Iya" type="submit" class="mx-1"/>
                                 </div>
                                 <x-slot name="footerSlot"></x-slot>

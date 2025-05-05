@@ -28,50 +28,60 @@ class PenjadwalanSeeder extends Seeder
             'sesi' => 1, 
             'agenda' => 'seminar_1', 
             'id_ruangan' => 1, 
+            'nama_ruangan' => 'Ruang Kelas 1',
             'tanggal' => Carbon::create(2025, 3, 17),
             'id_kota' => 2, 
             'start' => Carbon::create(2025, 3, 17, 7, 0, 0),
-            'end' => Carbon::create(2025, 3, 17, 9, 0, 0)
+            'end' => Carbon::create(2025, 3, 17, 9, 0, 0),
+            'status' => 'pending'
         ]);
 
         Penjadwalan::create([
             'sesi' => 2, 
             'agenda' => 'seminar_2', 
             'id_ruangan' => 2, 
+            'nama_ruangan' => 'Lab Multi Media',
             'tanggal' => Carbon::create(2025, 3, 17),
             'id_kota' => 6, 
             'start' => Carbon::create(2025, 3, 17, 9, 0, 0),
-            'end' => Carbon::create(2025, 3, 17, 11, 0, 0)
+            'end' => Carbon::create(2025, 3, 17, 11, 0, 0),
+            'status' => 'pending'
         ]);
 
         Penjadwalan::create([
             'sesi' => 3, 
             'agenda' => 'seminar_3', 
             'id_ruangan' => 3, 
+            'nama_ruangan' => 'Lab Database',
             'tanggal' => Carbon::create(2025, 3, 17),
             'id_kota' => 1, 
             'start' => Carbon::create(2025, 3, 17, 13, 0, 0),
-            'end' => Carbon::create(2025, 3, 17, 15, 0, 0)
+            'end' => Carbon::create(2025, 3, 17, 15, 0, 0),
+            'status' => 'pending'
         ]);
 
         Penjadwalan::create([
             'sesi' => 4, 
             'agenda' => 'sidang', 
             'id_ruangan' => 4, 
+            'nama_ruangan' => 'Ruang Serba Guna',
             'tanggal' => Carbon::create(2025, 3, 17),
             'id_kota' => 5, 
             'start' => Carbon::create(2025, 3, 17, 15, 0, 0),
-            'end' => Carbon::create(2025, 3, 17, 17, 0, 0) // Fixed: end time should be after start time
+            'end' => Carbon::create(2025, 3, 17, 17, 0, 0),
+            'status' => 'pending'
         ]);
 
         Penjadwalan::create([
             'sesi' => 2, 
             'agenda' => 'sidang', 
             'id_ruangan' => 5, 
+            'nama_ruangan' => 'Ruang Rapat',
             'tanggal' => Carbon::create(2025, 3, 18),
             'id_kota' => 9, 
-            'start' => Carbon::create(2025, 3, 18, 7, 0, 0), // Fixed: date matches tanggal
-            'end' => Carbon::create(2025, 3, 18, 9, 0, 0) // Fixed: date matches tanggal
+            'start' => Carbon::create(2025, 3, 18, 7, 0, 0), 
+            'end' => Carbon::create(2025, 3, 18, 9, 0, 0),
+            'status' => 'pending'
         ]);
 
     }
