@@ -91,7 +91,7 @@
                         <select id="ruangan_pengajuan" name="ruangan_pengajuan" class="form-control" required>
                             <option value="" disabled selected>-- Pilih Ruangan --</option>
                             @foreach($ruanganTersedia as $ruangan)
-                                <option value="{{ $ruangan['id_ruangan'] }}">
+                                <option value='@json(["id" => $ruangan["id_ruangan"], "nama" => $ruangan["nama_ruangan"]])'>
                                     {{ $ruangan['nama_ruangan'] }}
                                 </option>
                             @endforeach
