@@ -6,20 +6,20 @@
 @php
 $prefix = env('PREFIX_URL', '');
 @endphp
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Detail Plagiarism Check</h1>
-    <nav aria-label="breadcrumb" class="me-4">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ url($prefix . '/') }}">Home</a></li>
-            <li class="breadcrumb-item">
-                <a href="{{ url($prefix . '/cek-plagiarisme') }}">
-                    Plagiarism Checking
-                </a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
-        </ol>
-    </nav>
+<div class="mb-4">
+    <h1 class="mb-3">Detail Pengecekan Plagiarisme</h1>
+
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+            ['url' => url($prefix . '/'), 'label' => 'Beranda'],
+            ['url' => url($prefix . '/cek-plagiarisme'), 'label' => 'Pengecekan Plagiarisme'],
+            ['url' => '', 'label' => 'Detail Laporan']
+        ]
+    ])
+    @endcomponent
 </div>
+
+
 @stop
 
 
@@ -33,8 +33,8 @@ $prefix = env('PREFIX_URL', '');
                     <h3 class="mb-0">{{ $dokumen->judul ?? 'Judul Dokumen Contoh' }}</h3>
                 </div>
                 <div class="card-body text-center">
-                    @if(isset($dokumen->file))
-                    <iframe src="{{ asset('storage/' . $dokumen->file) }}" width="100%" height="600px"></iframe>
+                    @if(isset($dokumen->file_path))
+                    <iframe src="{{ asset('storage/' . $dokumen->file_path) }}" width="100%" height="600px"></iframe>
                     @else
                     <pre class="p-3 bg-light border rounded"
                         style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
@@ -47,19 +47,25 @@ $prefix = env('PREFIX_URL', '');
         <div class="col-md-4">
             <ul class="nav nav-tabs mb-3" id="detailTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">📋
-                        Detail</a>
+                    <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">
+                        <i class="fas fa-file-alt me-1"></i> Sumber
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="sumber-tab" data-bs-toggle="tab" href="#sumber" role="tab">📄 Sumber</a>
+                    <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">
+                        <i class="fas fa-clipboard-list me-1"></i> Detail
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab">⬇️ Unduh</a>
+                    <a class="nav-link" id="unduh-tab" data-bs-toggle="tab" href="#unduh" role="tab">
+                        <i class="fas fa-download me-1"></i> Unduh
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab">💬 Catatan</a>
+                    <a class="nav-link" id="catatan-tab" data-bs-toggle="tab" href="#catatan" role="tab">
+                        <i class="fas fa-comments me-1"></i> Catatan
+                    </a>
                 </li>
-
             </ul>
 
             <!-- Tab Content -->
@@ -67,7 +73,7 @@ $prefix = env('PREFIX_URL', '');
                 <!-- Detail Dokumen -->
                 <div class="tab-pane fade show active" id="detail" role="tabpanel">
                     <div class="card shadow-lg">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header bg-dark text-white">
                             <h5>Detail Dokumen</h5>
                         </div>
                         <div class="card-body">
@@ -87,7 +93,7 @@ $prefix = env('PREFIX_URL', '');
                                     </tr>
                                     <tr>
                                         <th>Tanggal Unggah</th>
-                                        <td>{{ \Carbon\Carbon::parse($dokumen->created_at)->format('d-m-Y') }}</td> <!-- Format tanggal -->
+                                        <td>{{ \Carbon\Carbon::parse($dokumen->created_at)->format('d F Y') }}</td> <!-- Format tanggal -->
                                     </tr>
                                     <tr>
                                         <th>Jumlah Halaman</th>
@@ -114,7 +120,7 @@ $prefix = env('PREFIX_URL', '');
                 <!-- Sumber Plagiarisme -->
                 <div class="tab-pane fade" id="sumber" role="tabpanel">
                     <div class="card shadow-lg">
-                        <div class="card-header bg-danger text-white">
+                        <div class="card-header bg-dark text-white">
                             <h5>Daftar Sumber -
                                 @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
                                 {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
@@ -148,13 +154,19 @@ $prefix = env('PREFIX_URL', '');
                 <!-- Unduh Dokumen -->
                 <div class="tab-pane fade" id="unduh" role="tabpanel">
                     <div class="card shadow-lg">
-                        <div class="card-header bg-secondary text-white">
+                        <div class="card-header bg-dark text-white">
                             <h5>Unduh Dokumen</h5>
                         </div>
                         <div class="card-body">
-                            <button class="btn btn-primary w-100">📥 Unduh Dokumen Hasil Pengecekan</button>
-                            <button class="btn btn-secondary w-100 mt-2">📥 Unduh Bukti Penerimaan Digital</button>
-                            <button class="btn btn-success w-100 mt-2">📥 Unduh Dokumen Asli</button>
+                            <button title="Unduh Dokumen Hasil Pengecekan" class="btn btn-primary w-100">
+                                <i class="fas fa-file-download me-1"></i> Unduh Dokumen Hasil Pengecekan
+                            </button>
+                            <button title="Unduh Bukti Penerimaan Digital" class="btn btn-primary w-100 mt-2">
+                                <i class="fas fa-receipt me-1"></i> Unduh Bukti Penerimaan Digital
+                            </button>
+                            <button title="Unduh Dokumen Asli" class="btn btn-primary w-100 mt-2">
+                                <i class="fas fa-file-alt me-1"></i> Unduh Dokumen Asli
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -162,7 +174,7 @@ $prefix = env('PREFIX_URL', '');
                 <!-- Catatan -->
                 <div class="tab-pane fade" id="catatan" role="tabpanel">
                     <div class="card shadow-lg">
-                        <div class="card-header bg-info text-white">
+                        <div class="card-header bg-dark text-white">
                             <h5>Catatan</h5>
                         </div>
                         <div class="card-body">

@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DaftarPengajuanDosbingController extends Controller
 {
@@ -25,6 +26,11 @@ class DaftarPengajuanDosbingController extends Controller
         $bidangList = Bidang::pluck('bidang')->toArray();
         $judulList = Kota::pluck('judul_ta')->toArray();
         $tanggalPengajuanList = PengajuanPembimbing::pluck('created_at')->toArray();
+
+        Carbon::setLocale('id');
+        $formattedTanggalList = array_map(function($tanggal) {
+            return Carbon::parse($tanggal)->translatedFormat('H:i d F Y');
+        }, $tanggalPengajuanList);
         
 
         $mahasiswaList = User::where('role_user', 'mahasiswa')
@@ -48,14 +54,16 @@ class DaftarPengajuanDosbingController extends Controller
     
             $index = array_search($namaKota, $kotaList);
             if ($index === false) continue;
+            
 
             $kelompokData[] = [
                 'id' => $index + 1,
                 'kode' => $namaKota,
                 'bidang' => $bidangList[$index] ?? '-',
                 'judul' => $judulList[$index] ?? '-',
-                'tanggal' => $tanggalPengajuanList[$index % max(1, count($tanggalPengajuanList))] ?? date('Y-m-d'),
+                'tanggal' => $formattedTanggalList[$index % max(1, count($formattedTanggalList))] ?? date('H:i d F Y'),
                 'anggota' => $anggotaFormatted,
+                'status' => 'pending'
             ];
         }
 

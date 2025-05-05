@@ -6,8 +6,11 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Kehadiran;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Collection;
 use Carbon\Carbon;
+Carbon::setLocale('id');
 
 
 class VerifikasiPengajuanJadwalController extends Controller
@@ -38,7 +41,8 @@ class VerifikasiPengajuanJadwalController extends Controller
         ->where('pengajuan_jadwal_kota.status_dosen_penguji_2', 1)
         ->whereNull('pengajuan_jadwal_kota.status_koordinator_ta')
         ->get();
-        
+
+        $dataPengajuan = $this->formatTanggalPengajuan($dataPengajuan);
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalKoordinator', compact('dataPengajuan', 'tipe'));
     }
@@ -80,6 +84,8 @@ class VerifikasiPengajuanJadwalController extends Controller
             'alokasi_dosen.urutan_prioritas_terpilih'
         )
         ->get();
+
+        $dataPengajuan = $this->formatTanggalPengajuan($dataPengajuan);
     
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalPembimbing', compact('dataPengajuan', 'tipe'));
     }
@@ -123,6 +129,8 @@ class VerifikasiPengajuanJadwalController extends Controller
         )
         ->where('penjadwalan.agenda', $agenda)
         ->get();
+
+        $dataPengajuan = $this->formatTanggalPengajuan($dataPengajuan);
     
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaPengajuanJadwal.ListPengajuanJadwalPenguji', compact('dataPengajuan', 'tipe'));
     }
@@ -167,6 +175,23 @@ class VerifikasiPengajuanJadwalController extends Controller
                     DB::table('pengajuan_jadwal_kota')
                         ->where('id_penjadwalan', $idPenjadwalan)
                         ->update(['status_koordinator_ta' => $status]);
+
+                    // create kehadiran
+                    $mahasiswa = DB::table('mahasiswa')
+                        ->where('id_kota', $roomInformation->id_kota)
+                        ->select('nim')
+                        ->first();
+
+                    if ($mahasiswa){
+                        Kehadiran::Create([
+                            'id_penjadwalan' => $idPenjadwalan,
+                            'username' =>$mahasiswa->nim,
+                            'status_hadir' => 'belum_absen',
+                            'status_kelulusan' => 'pending',
+                            'batas_revisi' => null,
+                            'foto_sidang' => null,
+                        ]);
+                    }
                 } else {
                     // Jika gagal, kirimkan pop up error response json dari API
                     $responseData = $response->json();
@@ -252,5 +277,12 @@ class VerifikasiPengajuanJadwalController extends Controller
                         ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
     }
 
-}
+    private function formatTanggalPengajuan(Collection $dataPengajuan): Collection
+    {
+        return $dataPengajuan->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
+    }
 
+}

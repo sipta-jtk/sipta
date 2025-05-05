@@ -13,6 +13,19 @@ $(document).ready(function () {
     // Event listener untuk perubahan pilihan
     jenisForm.change(toggleTables);
 
+    function setMinDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const minDate = `${yyyy}-${mm}-${dd}`;
+
+        $('#tanggalTenggat').attr('min', minDate);
+    }
+
+    // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
+    setMinDate();
+
     // Event listener untuk menambah baris
     $("#addRow").click(function() {
         if ($("#jenisForm").val() === "Feedback") {
@@ -30,7 +43,7 @@ $(document).ready(function () {
             $("#aspekPenilaianTable").append(`
                 <tr>
                     <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
-                    <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
+                    <td><input type="number" class="form-control bobot-kriteria" name="bobot_kriteria[]" required></td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-row">
                             <i class="fa-solid fa-minus"></i>
@@ -39,19 +52,73 @@ $(document).ready(function () {
                 </tr>
             `);
         }
+        validateTotalBobot();
     });
 
     // Event listener untuk menghapus baris
     $(document).on('click', '.remove-row', function () {
         $(this).closest('tr').remove();
+        validateTotalBobot(); 
     });
 
-    // Log untuk debugging saat form disubmit
+    function initBobotInputs() {
+        $('input[name="bobot_kriteria[]"]').addClass('bobot-kriteria');
+    }
+
+    // Validasi total bobot
+    function validateTotalBobot() {
+        initBobotInputs();
+        
+        let totalBobot = 0;
+
+        // Hitung total bobot dari semua input
+        $(".bobot-kriteria").each(function () {
+            let value = parseFloat($(this).val());
+            if (!isNaN(value)) {
+                totalBobot += value;
+            }
+        });
+
+        // Menampilkan pesan error jika total bobot tidak 100
+        if (totalBobot !== 100) {
+            $("#bobotError")
+                .removeClass("d-none")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            $("#bobotError").addClass("d-none").text("");
+        }
+
+        $(".bobot-summary").text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        
+        return totalBobot;
+    }
+
+    // Event listener untuk memeriksa total bobot saat nilai diubah
+    $(document).on('input', '.bobot-kriteria', function () {
+        validateTotalBobot();
+    });
+
+    // Event listener untuk value yang sudah ada saat halaman dimuat
+    initBobotInputs();
+    validateTotalBobot();
+
     $('#aspekFormulirForm').on('submit', function(e) {
-        console.log('Form submitted');
+        let totalBobot = validateTotalBobot();
+
+        if (totalBobot !== 100) {
+            e.preventDefault();
+            $("#notification")
+                .removeClass("d-none")
+                .find("#notificationMessage")
+                .text("Total Bobot Harus 100%");
+
+            setTimeout(function () {
+                $("#notification").addClass("d-none");
+            }, 3000);
+        }
     });
 
-    // Memastikan tombol bisa memicu submit
+    // Memicu button submit
     $('.btn-primary').on('click', function() {
         console.log('Button clicked');
         $('#aspekFormulirForm').submit();

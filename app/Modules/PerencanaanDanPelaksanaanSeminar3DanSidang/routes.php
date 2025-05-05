@@ -98,16 +98,16 @@ Route::group(['prefix' => 'kelola-pengajuan-jadwal-penguji', 'as' => 'kelola-pen
 // Rekap berita acara seminar 3 dan sidang TA Koordinator TA
 Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     // Route untuk halaman rekap berita acara seminar 3
-    Route::get('/rekap-berita-acara-seminar-3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSeminar3'])
+    Route::get('/rekapitulasi-berita-acara-seminar-3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSeminar3'])
         ->name('rekap.presensi.seminar3');
 
     // Route untuk halaman rekap berita acara Sidang TA
-    Route::get('/rekap-berita-acara-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSidangTa'])
+    Route::get('/rekapitulasi-berita-acara-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'rekapBeritaAcaraSidangTa'])
         ->name('rekap.presensi.sidang.ta');
 });
 
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
-    Route::get('/berita-acara-pelaksanaan-seminar3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'indexBeritaAcaraSeminar3'])
+    Route::get('/berita-acara-pelaksanaan-seminar-3', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'indexBeritaAcaraSeminar3'])
         ->name('presensi.seminar3');
 
     Route::get('/berita-acara-pelaksanaan-sidang-ta', [BeritaAcaraPelaksanaanSeminarDanSidangController::class, 'indexBeritaAcaraSidangTA'])

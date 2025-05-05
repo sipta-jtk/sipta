@@ -3,12 +3,21 @@
 @section('title', 'Pengajuan')
 
 @section('content_header')
-    <h1 class="mx-4"><strong>Daftar Pengajuan</strong></h1>
+    <h1 class="mx-4 mb-3">Daftar Pengajuan</h1>
+    <div class="mx-4">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Daftar Pengajuan']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
 @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -23,7 +32,7 @@
         <h3 class="flex-grow-1 p-5">Anda belum memiliki pembimbing atau penguji.</h3>
     </div>
 @else
-<div class="p-4">
+<div class="mx-4">
     <div class="row bg-light text-center mb-3">
         <!-- Card Pengajuan Seminar 3 -->
         <div class="col-md-6">
@@ -42,13 +51,13 @@
                     <p class="flex-grow-1">Seminar 3 dapat diajukan setelah pengajuan berkas persyaratan Seminar 3 telah mendapat persetujuan.</p>
                     <div class="mt-auto">
                         @if (!$Seminar3Finished && $seminar3Approved && !$seminar3InProgress)
-                            <a href="{{ route('pengajuan-seminar3', ['id_kota']) }}" class="btn btn-primary">Buat Pengajuan</a>
+                            <a href="{{ route('pengajuan-seminar3', ['id_kota']) }}" class="btn btn-primary btn-md my-1">Buat Pengajuan</a>
                         @elseif (!$Seminar3Finished && $seminar3Approved && $seminar3InProgress)
-                            <button class="btn btn-warning" disabled>Sedang dalam Pengajuan</button>
+                            <button class="btn btn-warning btn-md my-1" disabled>Sedang dalam Pengajuan</button>
                         @elseif ($Seminar3Finished)
-                            <button class="btn btn-success" disabled>Sudah Diterima</button>
+                            <button class="btn btn-success btn-md my-1" disabled>Sudah Diterima</button>
                         @else
-                            <button class="btn btn-secondary" disabled>Belum Memenuhi Syarat</button>
+                            <button class="btn btn-secondary btn-md my-1" disabled>Belum Memenuhi Syarat</button>
                         @endif
                     </div>
                 </div>
@@ -66,20 +75,20 @@
             @endphp
             <x-adminlte-card title="Pengajuan Sidang Akhir"
                 theme="{{ $sidangFinished ? 'success' : ($sidangApproved ? ($sidangInProgress ? 'warning' : ($sidangActive ? 'primary' : 'secondary')) : 'secondary') }}"
-                icon="fas fa-graduation-cap"
+                icon="fas fa-file-alt"
                 class="d-flex flex-column h-100"
                 style="{{ $sidangFinished ? 'opacity: 0.5; pointer-events: none;' : ($sidangApproved && !$sidangInProgress ? '' : 'opacity: 0.5; pointer-events: none;') }}">
                 <div class="d-flex flex-column flex-grow-1">
                     <p class="flex-grow-1">Sidang Akhir dapat diajukan setelah Seminar 3 selesai dan pengajuan berkas persyaratan Sidang Akhir telah mendapat persetujuan.</p>
                     <div class="mt-auto">
                         @if (!$sidangFinished && $sidangApproved && !$sidangInProgress)
-                            <a href="{{ route('pengajuan-sidang') }}" class="btn btn-primary">Buat Pengajuan</a>
+                            <a href="{{ route('pengajuan-sidang') }}" class="btn btn-primary btn-md my-1">Buat Pengajuan</a>
                         @elseif (!$sidangFinished && $sidangApproved && $sidangInProgress)
-                            <button class="btn btn-warning" disabled>Sedang dalam Pengajuan</button>
+                            <button class="btn btn-warning btn-md my-1" disabled>Sedang dalam Pengajuan</button>
                         @elseif ($sidangFinished)
-                            <button class="btn btn-success" disabled>Sudah Diterima</button>
+                            <button class="btn btn-success btn-md my-1" disabled>Sudah Diterima</button>
                         @else
-                            <button class="btn btn-secondary" disabled>Belum Memenuhi Syarat</button>
+                            <button class="btn btn-secondary btn-md my-1" disabled>Belum Memenuhi Syarat</button>
                         @endif
                     </div>
                 </div>
