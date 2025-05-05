@@ -322,6 +322,12 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     <script>
+        const prodiList = @json(collect($list_prodi)->mapWithKeys(function($item) {
+            return [$item->id_prodi => substr($item->nama_prodi, 0, 2)];
+        }));
+    </script>
+
+    <script>
         var DetailDosenTable;
 
         function updateDataTable() {
@@ -370,7 +376,7 @@
                 data: kuotaDosen || [],
                 columns: [{
                     data: null,
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         return `
                             <div class="d-flex justify-content-between align-items-start" style="gap: 8px;" id="detailDosen-${row.id}">
                                 <!-- Kolom Nama Dosen -->
@@ -383,28 +389,27 @@
                                     <table class="table table-sm table-bordered mb-0">
                                         <thead class="text-center">
                                             <tr>
-                                                <th class="p-1"><span class="badge fw-normal">D3</span></th>
-                                                <th class="p-1"><span class="badge fw-normal">D4</span></th>
+                                                ${Object.entries(prodiList).map(([id, kode]) => `
+                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
-                                                <td class="p-1">
-                                                    <span class="badge fw-normal D3 ${row.mhs.D3 > row.kuota.D3 ? 'bg-danger' : ''}">
-                                                        ${row.mhs.D3}/${row.kuota.D3}
-                                                    </span>
-                                                </td>
-                                                <td class="p-1">
-                                                    <span class="badge fw-normal D4 ${row.mhs.D4 > row.kuota.D4 ? 'bg-danger' : ''}">
-                                                        ${row.mhs.D4}/${row.kuota.D4}
-                                                    </span>
-                                                </td>
+                                                ${Object.entries(prodiList).map(([_, kode]) => `
+                                                    <td class="p-1">
+                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                        </span>
+                                                    </td>
+                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
-                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D3}</span></td>
-                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D4}</span></td>
+                                                ${Object.entries(prodiList).map(([_, kode]) => `
+                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
