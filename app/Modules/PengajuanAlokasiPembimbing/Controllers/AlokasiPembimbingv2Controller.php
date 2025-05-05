@@ -45,7 +45,7 @@ class AlokasiPembimbingv2Controller extends Controller
                 ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
                 ->select('dosen.id_dosen', 'alokasi_dosen.*')
                 ->get();
-            
+
             if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
                 $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
                 $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
@@ -59,6 +59,8 @@ class AlokasiPembimbingv2Controller extends Controller
             ->get();
 
         $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
+
+        // dd($data_pengajuan);
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
