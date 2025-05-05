@@ -39,6 +39,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 ->orderBy('urutan_prioritas')
                 ->get();
 
+            $data_pengajuan[$key]['alokasi'] = AlokasiDosen::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->orderBy('urutan_prioritas_terpilih')
+                ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
+                ->select('dosen.id_dosen', 'alokasi_dosen.*')
+                ->get();
+            
             if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
                 $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
                 $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
@@ -52,8 +59,6 @@ class AlokasiPembimbingv2Controller extends Controller
             ->get();
 
         $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
-
-        // dd($data_pengajuan);
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
@@ -122,6 +127,20 @@ class AlokasiPembimbingv2Controller extends Controller
         $status_alokasi = $request->input('status_alokasi');
         $tipe_alokasi = $request->input('tipe_alokasi');
 
+        $otherUrutan = null;
+        if ($urutan_prioritas == 1) {
+            $otherUrutan = 2;
+        } elseif ($urutan_prioritas == 2) {
+            $otherUrutan = 1;
+        }
+        $currentDosenCounterPart = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $otherUrutan)
+            ->first();
+        if ($currentDosenCounterPart && $currentDosenCounterPart->nip == $nip) {
+            return null;
+        }
+
         $currentAllocation = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
@@ -141,6 +160,32 @@ class AlokasiPembimbingv2Controller extends Controller
             'tipe_alokasi' => $tipe_alokasi,
         ]);
         return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
+    }
+
+    public function deleteAlokasi(Request $request)
+    {
+        $id_pengajuan = $request->input('id_pengajuan_pembimbing');
+        $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
+
+        DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->delete();
+
+        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
+    }
+
+    public function deleteAlokasi(Request $request)
+    {
+        $id_pengajuan = $request->input('id_pengajuan_pembimbing');
+        $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
+
+        DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->delete();
+
+        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
     }
 
     public function fixAlokasi(Request $request)

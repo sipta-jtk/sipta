@@ -145,9 +145,12 @@
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        <input type="text" name=""
+                                                                                        {{-- Pembimbing 1 --}}
+                                                                                        <input type="text"
+                                                                                            value="{{ $pengajuan->alokasi->first()?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
+                                                                                            style="font-size: xx-large">
                                                                                             style="font-size: xx-large"
                                                                                             value="JO"
                                                                                             onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
@@ -189,7 +192,9 @@
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        <input type="text" name=""
+                                                                                        {{-- Pembimbing 2 --}}
+                                                                                        <input type="text"
+                                                                                            value="{{ $pengajuan->alokasi->get(1)?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
@@ -392,26 +397,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                `).join('')}
+                                                                                            <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                        `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                    <td class="p-1">
-                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                        </span>
-                                                                                    </td>
-                                                                                `).join('')}
+                                                                                            <td class="p-1">
+                                                                                                <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                    ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                `).join('')}
+                                                                                            <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -559,8 +564,22 @@
                         console.log(response);
                     },
                     error: function(xhr, status, error) {
-                        // console.error(error);
-                        // print the error Detail
+                        console.log(xhr.responseText);
+                    }
+                });
+            } else if (kode_dosen == '') {
+                $.ajax({
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.deleteAlokasi') }}",
+                    type: "POST",
+                    data: {
+                        id_pengajuan_pembimbing: id_pengajuan,
+                        urutan_prioritas_terpilih: urutan,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
                         console.log(xhr.responseText);
                     }
                 });
