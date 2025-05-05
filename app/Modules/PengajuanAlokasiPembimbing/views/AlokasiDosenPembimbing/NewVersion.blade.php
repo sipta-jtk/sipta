@@ -145,12 +145,12 @@
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        <input type="text" name=""
+                                                                                        {{-- Pembimbing 1 --}}
+                                                                                        <input type="text"
+                                                                                            value="{{ $pengajuan->alokasi->first()?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
-                                                                                            style="font-size: xx-large"
-                                                                                            value="JO">
-
+                                                                                            style="font-size: xx-large">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -188,7 +188,9 @@
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        <input type="text" name=""
+                                                                                        {{-- Pembimbing 2 --}}
+                                                                                        <input type="text"
+                                                                                            value="{{ $pengajuan->alokasi->get(1)?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large">

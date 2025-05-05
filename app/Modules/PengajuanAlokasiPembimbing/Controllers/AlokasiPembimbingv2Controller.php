@@ -39,6 +39,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 ->orderBy('urutan_prioritas')
                 ->get();
 
+            $data_pengajuan[$key]['alokasi'] = AlokasiDosen::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->orderBy('urutan_prioritas_terpilih')
+                ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
+                ->select('dosen.id_dosen', 'alokasi_dosen.*')
+                ->get();
+            
             if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
                 $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
                 $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
@@ -52,7 +59,6 @@ class AlokasiPembimbingv2Controller extends Controller
             ->get();
 
         $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
-
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
