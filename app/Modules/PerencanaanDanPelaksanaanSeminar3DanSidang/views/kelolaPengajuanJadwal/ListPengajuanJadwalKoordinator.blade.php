@@ -158,8 +158,7 @@
                                         data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
-                        },
-                        orderable: false
+                        }
                     }
                 ],
                 language: {
