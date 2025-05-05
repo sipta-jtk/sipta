@@ -257,7 +257,6 @@ class PemberianNilaiController extends Controller
                     'nip' => $nip,
                     'id_kriteria' => $kriteria->id_kriteria,
                     'nilai_kriteria' => $nilaiKriteria,
-                    'status_penilaian_dosen' => 'draf'
                 ]);
     
                 $totalNilai += $nilaiKriteria * $bobotKriteria[$kriteriaIndex];
@@ -287,6 +286,7 @@ class PemberianNilaiController extends Controller
                 'nip' => $nip,
                 'id_kategori' => $idKategori,
                 'nilai' => $nilai_rata_rata[$index],
+                'status_penilaian_dosen' => 'draf'
             ]);
         }
     }
@@ -428,13 +428,6 @@ class PemberianNilaiController extends Controller
         $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
         ->with('kriteriaPenilaian.rubrik')
         ->get();
-
-    // Log::info('Detail Informasi FTA: ' . json_encode([
-    //     'detailInformasiFta' => $detailInformasiFta,
-    //     'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),
-    //     'idKota' => $idKota,
-    //     'namaFta' => 'dosen pembimbing',
-    // ], JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,

@@ -127,6 +127,24 @@
                                         @endif
                                     </td>
                                 @endif
+
+                                <td class="d-flex flex-column gap-1">
+                                    <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
+                                    <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
+            
+                                    @if (($data->nilaiKategori->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
+                                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger w-100">Batal Publikasi</button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary w-100">Publikasi</button>
+                                        </form>
+                                    @endif
+                                </td>
+
                             </tr>
                         @endforeach
                     @endforeach
