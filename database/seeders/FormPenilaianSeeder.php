@@ -60,7 +60,7 @@ class FormPenilaianSeeder extends Seeder
             [
                 'id_fta' => 4,
                 'kode_fta' => 'FTA.011',
-                'nama_fta' => 'Seminar II',
+                'nama_fta' => 'Seminar III',
                 'id_prodi' => 1,
                 'jenis_form' => 'penilaian',
                 'tanggal_tenggat_pengisian' => '2025-04-10',
