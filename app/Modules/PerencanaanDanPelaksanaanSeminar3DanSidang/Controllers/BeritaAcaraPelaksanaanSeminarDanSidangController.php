@@ -88,7 +88,6 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
                 $item->status_kelulusan_formatted = $statusMap[$item->status_kelulusan] ?? 'Unknown'; // Format status kelulusan untuk tampilan
                 return $item;
 
-                return $item;
             });
         // Teruskan $sekarang dan $beritaAcaraSidangTA ke view
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.BeritaAcara.BeritaAcaraSidangTA', compact('beritaAcaraSidangTA', 'sekarang'));

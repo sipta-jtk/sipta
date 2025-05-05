@@ -398,28 +398,28 @@ return [
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Pembatalan Jadwal Seminar 3',
+                    'text' => 'Jadwal Seminar 3',
                     'url' => $prefix . '/batal-jadwal-seminar',
                     'can' => 'dosen',
-                    'icon' => 'fa-regular fa-calendar-xmark'
+                    'icon' => 'fas fa-regular fa-calendar'
                 ],
                 [
-                    'text' => 'Pembatalan Jadwal Sidang',
+                    'text' => 'Jadwal Sidang',
                     'url' => $prefix . '/batal-jadwal-sidang',
                     'can' => 'dosen',
-                    'icon' => 'fa-regular fa-calendar-xmark'
+                    'icon' => 'fas fa-regular fa-calendar'
                 ],
                 [
                     'text' => 'Persetujuan Pembatalan Seminar 3',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
                     'can' => 'koordinator_ta',
-                    'icon' => 'fa-regular fa-calendar-xmark'
+                    'icon' => 'fas fa-regular fa-calendar'
                 ],
                 [
                     'text' => 'Persetujuan Pembatalan Sidang',
                     'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
                     'can' => 'koordinator_ta',
-                    'icon' => 'fa-regular fa-calendar-xmark'
+                    'icon' => 'fas fa-regular fa-calendar'
                 ],
                 [
                     'text' => 'Pengajuan',
