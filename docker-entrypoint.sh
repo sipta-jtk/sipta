@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load environment variables dari .env
+export $(grep -v '^#' .env | sed -E 's/(^|[^\\])#.*$//' | xargs -d '\n')
+
 # Generate APP_KEY
 php artisan key:generate
 
