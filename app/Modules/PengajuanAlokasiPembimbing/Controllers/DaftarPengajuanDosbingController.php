@@ -9,6 +9,8 @@ use App\Models\PengajuanPembimbing;
 use App\Models\PreferensiKota;
 use App\Models\KuotaMembimbing;
 use App\Models\User;
+use App\Models\Mahasiswa;
+use App\Models\Prodi;
 use Illuminate\Http\Request;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
@@ -36,10 +38,20 @@ class DaftarPengajuanDosbingController extends Controller
         $mahasiswaList = User::where('role_user', 'mahasiswa')
             ->join('mahasiswa', 'mahasiswa.nim', '=', 'user.username')
             ->join('kota', 'kota.id_kota', '=', 'mahasiswa.id_kota')
-            ->select('user.username as nim', 'user.nama', 'kota.nama_kota')
+            ->select(
+                'user.username as nim',
+                'user.nama',
+                'kota.nama_kota',
+                'mahasiswa.id_prodi',
+                'mahasiswa.id_kota'
+            )
             ->orderBy('kota.nama_kota')
             ->get();
 
+        $kotaProdi = Mahasiswa::select('id_kota', 'id_prodi')
+            ->groupBy('id_kota', 'id_prodi')
+            ->get()
+            ->pluck('id_prodi', 'id_kota');
 
         $kelompokData = [];
         $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
@@ -55,7 +67,8 @@ class DaftarPengajuanDosbingController extends Controller
             $index = array_search($namaKota, $kotaList);
             if ($index === false) continue;
             
-
+            $idKota = $anggota->first()->id_kota;
+            
             $kelompokData[] = [
                 'id' => $index + 1,
                 'kode' => $namaKota,
@@ -63,7 +76,8 @@ class DaftarPengajuanDosbingController extends Controller
                 'judul' => $judulList[$index] ?? '-',
                 'tanggal' => $formattedTanggalList[$index % max(1, count($formattedTanggalList))] ?? date('H:i d F Y'),
                 'anggota' => $anggotaFormatted,
-                'status' => 'pending'
+                'status' => 'pending',
+                'id_prodi' => $anggota->first()->id_prodi ?? '-'
             ];
         }
 
