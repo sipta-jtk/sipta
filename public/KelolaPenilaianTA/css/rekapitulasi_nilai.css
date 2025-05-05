@@ -6,15 +6,16 @@
 }
 
 table {
-    width: 600px;
-    border-collapse: collapse;
+    width: 100%;
 }
 
 th, td {
-    border: 1px solid #ccc !important; /* Tambahkan border untuk outline */
-    padding: 10px;
+    border: 1px solid #ccc !important; 
+    padding: 5px;
     text-align: center;
+    font-size: 12px;
 }
+
 
 thead {
     position: sticky;
@@ -33,10 +34,6 @@ thead th {
     text-align: center;
     padding: 12px;
     border-bottom: 2px solid #fff;
-}
-
-tbody tr:nth-child(even) {
-    background-color: #f8f9fa; /* Warna striping */
 }
 
 tbody tr:hover {
@@ -76,3 +73,53 @@ tbody tr:hover {
 .text-danger {
     font-weight: bold;
 }
+
+#toggleFilter i {
+    margin-left: 5px;
+}
+#filterSection select {
+    min-width: 150px;
+}
+
+/* === Styling untuk DataTables control (dropdown & pencarian) === */
+
+.dataTables_length label,
+.dataTables_filter label {
+    font-weight: normal !important; /* Hilangkan tebal */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Jarak antara teks dan input/dropdown */
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+/* Ukuran input cari agar konsisten */
+.dataTables_filter input {
+    padding: 4px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Dropdown jumlah data */
+.dataTables_length select {
+    min-width: 80px;
+    width: auto;
+    padding: 4px 12px;       
+    font-size: 14px;         
+    height: auto;            
+    line-height: 1.5;       
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    color: #000;             
+    -webkit-appearance: none; 
+    appearance: none;
+}
+
+/* Pastikan tidak terjadi wrap/membungkus */
+.dataTables_length, .dataTables_filter {
+    white-space: nowrap;
+}
+
+

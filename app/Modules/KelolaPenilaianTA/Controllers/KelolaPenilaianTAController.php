@@ -6,13 +6,14 @@ use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Exports\RekapitulasiNilaiExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Resources\Views;
 
 
 class KelolaPenilaianTAController extends Controller
 {
-    
+    public function getBeranda(): View
+    {
+        return view('welcome');
+    }
     
 }

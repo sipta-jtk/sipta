@@ -5,7 +5,8 @@ namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 use App\Modules\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\VerifikasiBerkasPengajuan;
+use App\Models\Kota;
 use Carbon\Carbon;
 Carbon::setLocale('id');
 
@@ -16,16 +17,15 @@ class VerifikasiBerkasController extends Controller
 
         $jenisPengajuan = ($tipe === 'seminar-3') ? 'seminar_3' : 'sidang_akhir';
 
-        $dataKota = DB::table('verifikasi_berkas_pengajuan')
-        ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
-        ->where('jenis_pengajuan', $jenisPengajuan)
-        ->where('status_konfirmasi', 'pending')
-        ->get();
-
-        $dataKota = $dataKota->map(function ($item) {
-            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
-            return $item;
-        });
+        $dataKota = VerifikasiBerkasPengajuan::with('kota')
+            ->where('jenis_pengajuan', $jenisPengajuan)
+            ->where('status_konfirmasi', 'pending')
+            ->get()
+            ->map(function ($item) {
+                $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
+                $item->judul_ta = $item->kota->judul_ta;
+                return $item;
+            });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
@@ -36,16 +36,16 @@ class VerifikasiBerkasController extends Controller
         
         $jenisPengajuan = ($tipe === 'seminar-3') ? 'seminar_3' : 'sidang_akhir';
 
-        $dataKota = DB::table('verifikasi_berkas_pengajuan')
-        ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
-        ->where('jenis_pengajuan', $jenisPengajuan)
-        ->where('status_konfirmasi', 'tidak_disetujui')
-        ->get();
-
-        $dataKota = $dataKota->map(function ($item) {
-            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
-            return $item;
-        });
+        $dataKota = VerifikasiBerkasPengajuan::with('kota')
+            ->where('jenis_pengajuan', $jenisPengajuan)
+            ->where('status_konfirmasi', 'tidak_disetujui')
+            ->get()
+            ->map(function ($item) {
+                $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
+                $item->judul_ta = $item->kota->judul_ta;
+                $item->catatan = $item->catatan ?? '-';
+                return $item;
+            });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDitolak', compact('dataKota', 'tipe'));
     }
@@ -54,26 +54,41 @@ class VerifikasiBerkasController extends Controller
     {
         $jenisPengajuan = ($tipe === 'seminar-3') ? 'seminar_3' : 'sidang_akhir';
 
-        $dataKota = DB::table('verifikasi_berkas_pengajuan')
-        ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
-        ->where('jenis_pengajuan', $jenisPengajuan)
-        ->where('status_konfirmasi', 'disetujui')
-        ->get();
-
-        $dataKota = $dataKota->map(function ($item) {
-            $item->tanggal_verifikasi = Carbon::parse($item->tanggal_verifikasi)->translatedFormat('d F Y');
-            return $item;
-        });
+        $dataKota = VerifikasiBerkasPengajuan::with('kota')
+            ->where('jenis_pengajuan', $jenisPengajuan)
+            ->where('status_konfirmasi', 'disetujui')
+            ->get()
+            ->map(function ($item) {
+                $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
+                $item->judul_ta = $item->kota->judul_ta;
+                $item->catatan = $item->catatan ?? '-';
+                return $item;
+            });
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
 
     public function show(String $tipe, $idPengajuan): View
     {
-        
-        $dataKota = DB::table('verifikasi_berkas_pengajuan')
-        ->join('kota', 'verifikasi_berkas_pengajuan.id_kota', '=', 'kota.id_kota')
-        ->where('id_pengajuan', $idPengajuan)->first();
+        $dataKota = VerifikasiBerkasPengajuan::with('kota')
+            ->where('id_pengajuan', $idPengajuan)
+            ->first(); // Ganti dari get() ke first()
+
+        if ($dataKota) {
+            $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
+            $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
+
+            // jika agenda = seminar 3
+            if ($dataKota->jenis_pengajuan === 'seminar_3') {
+                $dataKota->jenis_pengajuan = 'Seminar 3';
+            } elseif ($dataKota->jenis_pengajuan === 'sidang_akhir') {
+                $dataKota->jenis_pengajuan = 'Sidang Akhir';
+            } else {
+                $dataKota->jenis_pengajuan = '-';
+            }
+            
+        }
+
 
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'tipe'));
     }
@@ -82,10 +97,11 @@ class VerifikasiBerkasController extends Controller
     {
         $keputusan = $request->input('keputusan');
         $catatan = $request->input('catatan', '');
+        $nip = auth()->user()->username;
 
         if ($keputusan === 'tidak_disetujui') {
             // Ambil data berkas berdasarkan ID
-            $dataKota = DB::table('kota')->where('id_kota', $id)->first();
+            $dataKota = Kota::where('id_kota', $id)->first(); 
 
             // Hapus berkas (jika ada)
             if ($dataKota && isset($dataKota->berkas)) {
@@ -93,22 +109,19 @@ class VerifikasiBerkasController extends Controller
                     Storage::delete("public/berkas/{$berkas->file}");
                 }
             }
+        }
 
-        } else {
-            // Update status_konfirmasi
-            DB::table('verifikasi_berkas_pengajuan')
-            ->where('id_pengajuan', $id)
+        VerifikasiBerkasPengajuan::where('id_pengajuan', $id)
             ->update([
+                'nip' => $nip,
                 'status_konfirmasi' => $keputusan,
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        }
     
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }
-
 }
 
 

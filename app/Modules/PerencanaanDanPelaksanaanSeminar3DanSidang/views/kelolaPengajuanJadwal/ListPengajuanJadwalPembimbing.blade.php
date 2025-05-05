@@ -15,7 +15,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex mb-3">
+    <div class="d-flex mb-3 mx-3">
         <ul class="nav nav-tabs">
             @php
                 $tipe = request()->route('tipe'); // Ambil tipe dari parameter route (seminar atau sidang)
@@ -36,7 +36,8 @@
     </div>
 
     <!-- Tabel daftar pengajuan -->
-    <div class="container-fluid card">
+    <div class="card mx-3 mt-3">
+    <div class="card-body">
         <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
             <thead class="sticky-header">
                 <tr class="bg-dark text-white">
@@ -51,6 +52,7 @@
             </thead>
             <tbody></tbody>
         </table>
+        </div>
     </div>
 </div>
 
@@ -88,6 +90,9 @@
             <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
         </div>
         <div class="col-md-6 mb-2">
+            <p><strong>Ruangan:</strong> <span id="modalRuangan"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
             <p><strong>Status Verifikasi:</strong> <span id="modalStatus"></span></p>
         </div>
     </div>
@@ -119,6 +124,9 @@
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
+
+        const prefix = "{{ env('PREFIX_URL', 'sipta') }}";
+
         $(document).ready(function() {
             let data = @json($dataPengajuan);
             console.log(data);
@@ -154,7 +162,7 @@
                         }
                     },
                     { data: "tanggal", className: 'text-center',},
-                    { data: "id_ruangan", className: 'text-center',},
+                    { data: "nama_ruangan", className: 'text-center',},
                     { data: "sesi", className: 'text-center',},
                     { 
                         data: null,
@@ -166,13 +174,12 @@
                                         data-judul="${row.judul_ta}" 
                                         data-agenda="${row.agenda}"
                                         data-tanggal="${row.tanggal}" 
-                                        data-ruangan="${row.id_ruangan}" 
+                                        data-ruangan="${row.nama_ruangan}" 
                                         data-sesi="${row.sesi}"
                                         data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
-                        },
-                        orderable: false
+                        }
                     }
                 ],
                 language: {
@@ -206,6 +213,7 @@
             let id_penjadwalan = $(this).data('idpenjadwalan');
             let id = $(this).data('kelompok');
             let judul = $(this).data('judul');
+            let agenda = $(this).data('agenda');
             let tanggal = $(this).data('tanggal');
             let ruangan = $(this).data('ruangan');
             let sesi = $(this).data('sesi');
@@ -222,14 +230,15 @@
             $('#modalJudul').text(judul);
             $('#modalTanggal').text(tanggal);
             $('#modalRuangan').text(ruangan);
+            $('#modalAgenda').text(agenda);
+            $('#modalRuangan').text(ruangan);
             $('#modalSesi').text(sesi);
             $('#modalStatus').text(status);
 
             // Set ID untuk form
             $('#inputId').val(id);
 
-            // Set action form
-            $('#formVerifikasi').attr('action', `/kelola-pengajuan-jadwal-pembimbing/${tipe}/verifikasi/${id_penjadwalan}`);
+            $('#formVerifikasi').attr('action', `/${prefix}/kelola-pengajuan-jadwal-pembimbing/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');

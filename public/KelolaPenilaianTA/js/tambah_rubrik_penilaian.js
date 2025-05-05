@@ -1,6 +1,7 @@
 $(document).ready(function () {
     // Handle change of FTA code dropdown
     $("#kode_fta").change(function () {
+        validateKodeFTA();
         const selectedKodeFTA = $(this).val();
         const selectedFormPenilaian = formPenilaianList.find(
             (form) => form.kode_fta == selectedKodeFTA
@@ -19,6 +20,42 @@ $(document).ready(function () {
             loadKriteria(selectedKodeFTA);
         }
     });
+
+    function validateKodeFTA() {
+        let kodeFTA = $('#kodeFTA').val();
+        let jenisForm = $('#jenisForm').val();
+        
+        if (kodeFTA && jenisForm) {
+            $.ajax({
+                url: '/kelola-penilaian-ta/formulir-penilaian/check-kode-fta',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    kodeFTA: kodeFTA,
+                    jenisForm: jenisForm
+                },
+                success: function(response) {
+                    if (!response.isUnique) {
+                        $("#notification")
+                            .removeClass("d-none alert-info alert-success")
+                            .addClass("alert-danger")
+                            .find("#notificationMessage")
+                            .text("Kode FTA sudah digunakan untuk jenis formulir yang sama!");
+                            
+                        // Disable submit button
+                        $('button[type="submit"]').prop('disabled', true);
+                    } else {
+                        $("#notification").addClass("d-none");
+                        // Enable submit button
+                        $('button[type="submit"]').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    console.error('Error checking Kode FTA uniqueness');
+                }
+            });
+        }
+    }
 
     // Load kriteria based on selected FTA code
     function loadKriteria(kodeFTA) {
@@ -67,7 +104,8 @@ $(document).ready(function () {
         // Check if rentangNilai is defined globally
         if (typeof rentangNilai !== 'undefined') {
             rentangNilai.forEach(function (nilai) {
-                nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${nilai.id_nilai}[]" required></td>`;
+                // Using textarea instead of input
+                nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea></td>`;
             });
         } else {
             // Fallback: get values from existing table headers
@@ -78,7 +116,8 @@ $(document).ready(function () {
                     const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
                     if (match && match[1]) {
                         const id_nilai = match[1];
-                        nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${id_nilai}[]" required></td>`;
+                        // Using textarea instead of input
+                        nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea></td>`;
                     }
                 }
             });
@@ -93,7 +132,7 @@ $(document).ready(function () {
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot">-</p></td>
-            <td><input type="text" class="form-control" name="detail[]" required></td>
+            <td><textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required></textarea></td>
             ${nilaiColumns}
             <td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>

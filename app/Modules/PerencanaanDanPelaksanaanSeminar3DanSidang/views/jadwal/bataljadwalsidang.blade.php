@@ -67,8 +67,8 @@
                     <input type="hidden" name="id" value="{{ $s->id_penjadwalan }}">
                     <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
                     <div class="d-flex pt-3 justify-content-end">
-                    <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
-                    <x-adminlte-button theme="danger" label="Batalkan" class="mx-1" data-dismiss="modal" />
+                        <x-adminlte-button theme="danger" label="Batalkan" class="mx-1" data-dismiss="modal" />
+                        <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
                     </div>
                     <x-slot name="footerSlot">
                     </x-slot>
@@ -132,8 +132,8 @@
                     <input type="hidden" name="id" value="{{ $s->id_penjadwalan }}">
                     <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
                     <div class="d-flex pt-3 justify-content-end">
-                    <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
-                    <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                        <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                        <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
                     </div>
                     <xname="footerSlot">
                     </x-slot>
@@ -159,10 +159,40 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#sidangBimTable').DataTable();
+        $('#sidangBimTable').DataTable({
+            language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
+                }
+        });
     });
     $(document).ready(function () {
-        $('#sidangUjiTable').DataTable();
+        $('#sidangUjiTable').DataTable({
+            language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
+                }
+        });
     });
 </script>
 @stop
