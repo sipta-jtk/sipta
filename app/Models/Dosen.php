@@ -18,7 +18,6 @@ class Dosen extends Model
         'id_kbk',
         'id_dosen',
         'kode_dosen',
-        'status_dosen',
         'role_dosen',
         'bersedia_membimbing'
     ];

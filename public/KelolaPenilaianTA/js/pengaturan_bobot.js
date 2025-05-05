@@ -1,7 +1,60 @@
 $(document).ready(function () {
+    var table = $("#nilaiAkhirTable").DataTable({
+        columnDefs: [
+            {
+                targets: 0, // Kolom pertama (No)
+                searchable: false,
+                orderable: false,
+            },
+        ],
+        order: [[1, "asc"]],
+        paging: true,
+        lengthMenu: [10, 25, 50, 100],
+        pageLength: 10,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        language: {
+            search: "Cari:",
+            lengthMenu: "Tampilkan _MENU_ data per halaman",
+            zeroRecords: "Data tidak ditemukan",
+            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+            infoEmpty: "Tidak ada data tersedia",
+            infoFiltered: "(difilter dari total _MAX_ data)",
+            paginate: {
+                first: "<<",
+                last: ">>",
+                next: ">",
+                previous: "<",
+            },
+        },
+        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-5'p>>",
+        initComplete: function() {
+            $("#infoControls").html($(".dataTables_info"));
+            $("#paginationControls").html($(".dataTables_paginate"));
+            $("#dataTableControls").html($(".dataTables_length"));
+            $("#searchBox").html($(".dataTables_filter"));
+        }
+    });
+
+    table
+        .on("order.dt search.dt draw.dt", function () {
+        table
+            .column(0, { search: "applied", order: "applied" })
+            .nodes()
+            .each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+    })
+    .draw();
+
     $('.btn-edit').click(function () {
         $('.bobot-input, .sumber-nilai').prop('disabled', false);
     });
+    
     function validateBobot() {
         let totalBobot = 0;
         let allValid = true;
@@ -19,44 +72,65 @@ $(document).ready(function () {
         return null;
     }
 
-    function validateSumberNilai() {
-        let sumberSet = new Set();
-        let isValid = true;
+    function checkDuplicateSumberNilai() {
+        let sumberValues = {};
+        let duplicates = [];
 
-        $('.sumber-nilai').each(function () {
+        $('.sumber-nilai').each(function(index) {
+            let komponen = $(this).closest('tr').find('td:nth-child(2)').text().trim();
             let val = $(this).val();
-            if (sumberSet.has(val)) {
-                isValid = false;
+            
+            if (sumberValues[val]) {
+                duplicates.push({
+                    komponen: komponen,
+                    sumber: $('option[value="' + val + '"]', this).text().trim()
+                });
             } else {
-                sumberSet.add(val);
+                sumberValues[val] = true;
             }
         });
 
-        if (!isValid) {
-            return 'Setiap sumber nilai harus unik. Tidak boleh ada duplikat.';
-        }
-        return null;
+        return duplicates;
     }
 
     function validateForm() {
         let errors = [];
+        let warnings = [];
         let errorBobot = validateBobot();
-        let errorSumber = validateSumberNilai();
+        let duplicates = checkDuplicateSumberNilai();
 
         if (errorBobot) errors.push(errorBobot);
-        if (errorSumber) errors.push(errorSumber);
+        
+        // Handle duplicates as warnings instead of errors
+        if (duplicates.length > 0) {
+            let warningText = 'Ditemukan sumber nilai yang sama:';
+            duplicates.forEach(function(item) {
+                warningText += ` Komponen "${item.komponen}" menggunakan sumber "${item.sumber}" yang sudah digunakan.`;
+            });
+            warnings.push(warningText);
+        }
 
+        // Display errors if any
         if (errors.length > 0) {
             let errorListHtml = errors.map(error => `<li>${error}</li>`).join('');
             $('#error-list').html(errorListHtml);
             $('#error-messages').removeClass('d-none');
             $('#submit-button').prop('disabled', true);
-            return false;
         } else {
             $('#error-messages').addClass('d-none');
             $('#submit-button').prop('disabled', false);
-            return true;
         }
+        
+        // Display warnings if any
+        if (warnings.length > 0) {
+            let warningListHtml = warnings.map(warning => `<li>${warning}</li>`).join('');
+            $('#warning-list').html(warningListHtml);
+            $('#warning-message').removeClass('d-none');
+        } else {
+            $('#warning-message').addClass('d-none');
+        }
+        
+        return errors.length === 0; // Form is valid if there are no errors (warnings are okay)
     }
 
     // Validasi saat form disubmit
@@ -68,16 +142,27 @@ $(document).ready(function () {
                 title: 'Gagal menyimpan!',
                 html: $('#error-list').html(),
             });
+        } else if ($('#warning-message').is(':visible')) {
+            // If there are warnings but no errors, confirm before submitting
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian!',
+                html: $('#warning-list').html(),
+                showCancelButton: true,
+                cancelButtonText: 'Batal',
+                confirmButtonText: 'Lanjutkan'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#nilaiAkhirForm').off('submit').submit();
+                }
+            });
         }
     });
 
     // Live validation
     $('.bobot-input, .sumber-nilai').on('input change', function () {
-        let isValid = validateForm();
-        if (isValid) {
-            $('#error-messages').addClass('d-none');
-            $('#submit-button').prop('disabled', false);
-        }
+        validateForm();
     });
 
     // Tampilkan error dari backend jika ada

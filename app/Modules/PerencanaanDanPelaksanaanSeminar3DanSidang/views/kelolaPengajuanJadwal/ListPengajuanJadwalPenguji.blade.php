@@ -88,6 +88,9 @@
             <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
         </div>
         <div class="col-md-6 mb-2">
+            <p><strong>Ruangan:</strong> <span id="modalRuangan"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
             <p><strong>Status Verifikasi:</strong> <span id="modalStatus"></span></p>
         </div>
     </div>
@@ -120,6 +123,9 @@
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
+
+        const prefix = "{{ env('PREFIX_URL', 'sipta') }}";
+
         $(document).ready(function() {
             let data = @json($dataPengajuan);
             console.log(data);
@@ -155,7 +161,7 @@
                         }
                     },
                     { data: "tanggal", className: 'text-center',},
-                    { data: "id_ruangan", className: 'text-center',},
+                    { data: "nama_ruangan", className: 'text-center',},
                     { data: "sesi", className: 'text-center',},
                     { 
                         data: null,
@@ -165,14 +171,14 @@
                                         data-idpenjadwalan="${row.id_penjadwalan}"
                                         data-kelompok="${row.id_kota}" 
                                         data-judul="${row.judul_ta}" 
+                                        data-agenda="${row.agenda}"
                                         data-tanggal="${row.tanggal}" 
-                                        data-ruangan="${row.id_ruangan}" 
+                                        data-ruangan="${row.nama_ruangan}" 
                                         data-sesi="${row.sesi}"
                                         data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
-                        },
-                        orderable: false
+                        }
                     }
                 ],
                 language: {
@@ -210,6 +216,7 @@
             let ruangan = $(this).data('ruangan');
             let sesi = $(this).data('sesi');
             let status = $(this).data('status');
+            let agenda = $(this).data('agenda');
 
             if (agenda === "seminar_3") {
                 agenda = "Seminar 3";
@@ -221,6 +228,7 @@
             $('#modalKelompok').text(id);
             $('#modalJudul').text(judul);
             $('#modalTanggal').text(tanggal);
+            $('#modalAgenda').text(agenda);
             $('#modalRuangan').text(ruangan);
             $('#modalSesi').text(sesi);
             $('#modalStatus').text(status);
@@ -229,7 +237,7 @@
             $('#inputId').val(id);
 
             // Set action form
-            $('#formVerifikasi').attr('action', `/kelola-pengajuan-jadwal-penguji/${tipe}/verifikasi/${id_penjadwalan}`);
+            $('#formVerifikasi').attr('action', `/${prefix}/kelola-pengajuan-jadwal-penguji/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');
