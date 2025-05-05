@@ -121,27 +121,30 @@ class AlokasiPembimbingv2Controller extends Controller
 
     public function updateAlokasi(Request $request)
     {
-        $id_pengajuan = $request->input('id_pengajuan');
-        $pembimbing1_nip = $request->input('pembimbing1_nip');
-        $pembimbing2_nip = $request->input('pembimbing2_nip');
+        $id_pengajuan = $request->input('id_pengajuan_pembimbing');
+        $nip = $request->input('nip');
+        $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
+        $status_alokasi = $request->input('status_alokasi');
+        $tipe_alokasi = $request->input('tipe_alokasi');
 
-        // Update alokasi dosen jadi FIX
+        $currentAllocation = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->count();
+        if ($currentAllocation > 0) {
+            DB::table('alokasi_dosen')
+                ->where('id_pengajuan_pembimbing', $id_pengajuan)
+                ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+                ->delete();
+        }
+
         DB::table('alokasi_dosen')->insert([
             'id_pengajuan_pembimbing' => $id_pengajuan,
-            'nip' => $pembimbing1_nip,
-            'urutan_prioritas_terpilih' => 1,
-            'status_alokasi' => 'belum_fix',
-            'tipe_alokasi' => 'pembimbing',
+            'nip' => $nip,
+            'urutan_prioritas_terpilih' => $urutan_prioritas,
+            'status_alokasi' => $status_alokasi,
+            'tipe_alokasi' => $tipe_alokasi,
         ]);
-
-        DB::table('alokasi_dosen')->insert([
-            'id_pengajuan_pembimbing' => $id_pengajuan,
-            'nip' => $pembimbing2_nip,
-            'urutan_prioritas_terpilih' => 2,
-            'status_alokasi' => 'belum_fix',
-            'tipe_alokasi' => 'pembimbing',
-        ]);
-
         return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
     }
 
@@ -190,7 +193,7 @@ class AlokasiPembimbingv2Controller extends Controller
                 'status_alokasi' => 'fix',
                 'tipe_alokasi' => 'pembimbing',
             ]);
-            
+
         $kota = DB::table('kota')
             ->where('id_kota', $pengajuan->id_kota)
             ->first();
@@ -208,12 +211,12 @@ class AlokasiPembimbingv2Controller extends Controller
             DB::table('kuota_membimbing')
                 ->where('nip', $pembimbing1->nip)
                 ->where('id_prodi', $mahasiswa->id_prodi)
-                ->decrement('jumlah', 1);  
-        
+                ->decrement('jumlah', 1);
+
             DB::table('kuota_membimbing')
                 ->where('nip', $pembimbing2->nip)
                 ->where('id_prodi', $mahasiswa->id_prodi)
-                ->decrement('jumlah', 1);  
+                ->decrement('jumlah', 1);
         }
 
         return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');

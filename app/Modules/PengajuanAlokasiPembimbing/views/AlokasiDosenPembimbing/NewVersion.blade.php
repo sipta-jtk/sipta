@@ -151,6 +151,10 @@
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large">
+                                                                                            style="font-size: xx-large"
+                                                                                            value="JO"
+                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
+
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -193,7 +197,8 @@
                                                                                             value="{{ $pengajuan->alokasi->get(1)?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
-                                                                                            style="font-size: xx-large">
+                                                                                            style="font-size: xx-large"
+                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 2, 'belum_fix', 'pembimbing')">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -324,9 +329,9 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     <script>
-        const prodiList = @json(collect($list_prodi)->mapWithKeys(function($item) {
-            return [$item->id_prodi => substr($item->nama_prodi, 0, 2)];
-        }));
+        const prodiList = @json(collect($list_prodi)->mapWithKeys(function ($item) {
+                return [$item->id_prodi => substr($item->nama_prodi, 0, 2)];
+            }));
     </script>
 
     <script>
@@ -378,7 +383,7 @@
                 data: kuotaDosen || [],
                 columns: [{
                     data: null,
-                    render: function (data, type, row) {
+                    render: function(data, type, row) {
                         return `
                             <div class="d-flex justify-content-between align-items-start" style="gap: 8px;" id="detailDosen-${row.id}">
                                 <!-- Kolom Nama Dosen -->
@@ -392,26 +397,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                `).join('')}
+                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                    <td class="p-1">
-                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                        </span>
-                                                    </td>
-                                                `).join('')}
+                                                                                    <td class="p-1">
+                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                        </span>
+                                                                                    </td>
+                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                `).join('')}
+                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -538,6 +543,32 @@
                     $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
                     $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
                 }
+            }
+        }
+
+        function savePembimbing(id_pengajuan, kode_dosen, urutan, status, tipe) {
+            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
+            if (dosen) {
+                $.ajax({
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.updateAlokasi') }}",
+                    type: "POST",
+                    data: {
+                        id_pengajuan_pembimbing: id_pengajuan,
+                        nip: dosen.nip,
+                        urutan_prioritas_terpilih: urutan,
+                        status_alokasi: status,
+                        tipe_alokasi: tipe,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // console.error(error);
+                        // print the error Detail
+                        console.log(xhr.responseText);
+                    }
+                });
             }
         }
 
