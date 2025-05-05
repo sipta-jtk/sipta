@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => route('beranda.get'), 'label' => 'Beranda'],
             ['url' => '', 'label' => 'Formulir Penilaian']
         ]
     ])
@@ -42,12 +42,14 @@
                 <tbody>
                     @foreach ($data as $index => $row)
                         <tr>
-                            <td class="align-middle">{{ $index + 1 }}</td>
+                            <td class="align-middle"></td>
                             <td class="align-middle">{{ $row->kode_fta }}</td>
                             <td class="align-middle">{{ $row->nama_fta }}</td>
                             <td class="align-middle">{{ $row->id_prodi }}</td>
                             <td class="align-middle">{{ $row->jenis_form }}</td>
-                            <td class="align-middle">{{ date('d-m-Y', strtotime($row->tanggal_tenggat_pengisian)) }}</td>
+                            <td class="align-middle">
+                                {{ \Carbon\Carbon::parse($row->tanggal_tenggat_pengisian)->translatedFormat('d F Y') }}
+                            </td>
                             <td class="align-middle">
                                 @if ($row->nama_fta == 'Dosen Pembimbing')
                                     <a href="{{ route('detail.dosen-pembimbing', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
@@ -78,13 +80,14 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/formulir_penilaian.css') }}">
 @stop
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/formulir_penilaian.js') }}"></script>
 @stop
