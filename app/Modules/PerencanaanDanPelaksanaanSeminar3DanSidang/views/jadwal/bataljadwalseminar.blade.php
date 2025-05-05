@@ -44,12 +44,12 @@
                         <td>{{ $s->sesi }}</td>
                         <td>{{ $s->id_ruangan }}</td>
                         <td>
-                            @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
+                            @if ($s->id_pembatalan != null && $s->status_pembatalan == null)
+                                <span>Menunggu Persetujuan Pembatalan</span>
+                            @elseif ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                                 <span>Terjadwal</span>
                             @elseif ($s->id_pembatalan != null && $s->status_pembatalan == 1)
                                 <span>Dibatalkan</span>
-                            @elseif ($s->id_pembatalan != null && $s->status_pembatalan == null)
-                                <span>Menunggu Persetujuan Pembatalan</span>
                             @endif
                         </td>
                         <td>
@@ -70,8 +70,8 @@
                             <input type="hidden" name="id" value="{{ $s->penjadwalan_id }}">
                             <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
                             <div class="d-flex pt-3 justify-content-end">
-                                <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
                                 <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                                <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
                             </div>
                             <x-slot name="footerSlot">
                             </x-slot>
@@ -110,12 +110,12 @@
                         <td>{{ $s->sesi }}</td>
                         <td>{{ $s->id_ruangan }}</td>
                         <td>
-                            @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
+                            @if ($s->id_pembatalan != null && $s->status_pembatalan == null)
+                                <span>Menunggu Persetujuan Pembatalan</span>
+                            @elseif ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                                 <span>Terjadwal</span>
                             @elseif ($s->id_pembatalan != null && $s->status_pembatalan == 1)
                                 <span>Dibatalkan</span>
-                            @elseif ($s->id_pembatalan != null && $s->status_pembatalan == null)
-                                <span>Menunggu Persetujuan Pembatalan</span>
                             @endif
                         </td>
                         <td>
@@ -135,8 +135,8 @@
                             <input type="hidden" name="id" value="{{ $s->penjadwalan_id }}">
                             <x-adminlte-textarea name="alasan" placeholder="Masukkan alasan..." required />
                             <div class="d-flex pt-3 justify-content-end">
-                            <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
-                            <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                                <x-adminlte-button theme="danger" class="mx-1" label="Batalkan" data-dismiss="modal" />
+                                <button type="submit" class="btn btn-primary mx-1">Kirimkan</button>
                             </div>
                             <x-slot name="footerSlot">
                             </x-slot>
@@ -160,10 +160,40 @@
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#seminarUjiTable').DataTable();
+            $('#seminarUjiTable').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan MENU data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan START sampai END dari TOTAL data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total MAX data)",
+                    paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                    }
+                }
+            });
         });
         $(document).ready(function () {
-            $('#seminarBimTable').DataTable();
+            $('#seminarBimTable').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan MENU data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan START sampai END dari TOTAL data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total MAX data)",
+                    paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                    }
+                }
+            });
         });
     </script>
 @endsection

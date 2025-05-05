@@ -15,10 +15,12 @@ class Penjadwalan extends Model
         'sesi',
         'agenda',
         'id_ruangan',
+        'nama_ruangan',
         'tanggal',
         'id_kota',
         'start',
-        'end'
+        'end',
+        'status'
     ];
 
     public function kota()

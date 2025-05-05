@@ -115,13 +115,13 @@
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
                                 <button class="btn btn-sm btn-outline-danger"
-                                    onclick="HapusDokumen()"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-toggle="modal" data-target="#HapusDokumen">
@@ -218,15 +218,14 @@
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
                                             <option selected disabled>Pilih Kode FTA</option>
-                                            <option value="FTA-01">FTA-01 (Dosen) - Kesediaan menjadi dosen</option>
-                                            <option value="FTA-02">FTA-02 - Pengajuan Topik TA</option>
-                                            <option value="FTA-03">FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA</option>
-                                            <option value="FTA-04">FTA-04 - Seminar I</option>
                                             <option value="FTA-05">FTA-05 - Kehadiran Mahasiswa pada Seminar I</option>
                                             <option value="FTA-05a">FTA-05a - Lesson Learnt Seminar I</option>
-                                            <option value="FTA-20">FTA-20 (Opsional) - Surat Kesepakatan Pisah/Memisahkan Diri dari Kelompok</option>
-                                            <option value="FTA-21">FTA-21 (Opsional) - Pengajuan Calon Pengganti Pembimbing Kelompok TA</option>
-                                            <option value="FTA-22">FTA-22 (Opsional) - Kesediaan Menjadi Calon Pengganti Pembimbing Kelompok</option>
+                                            <option value="FTA-06">FTA-06 - Bukti Bimbingan Seminar II</option>
+                                            <option value="FTA-06a">FTA-06a - Resume Bimbingan</option>
+                                            <option value="FTA-07">FTA-07 - Penilaian Seminar II</option>
+                                            <option value="FTA-08">FTA-08 - Masukan Seminar II</option>
+                                            <option value="FTA-023">FTA-023 - Persetujuan Pelaksanaan Seminar II/III Tugas Akhir</option>
+
                                         </select>
                                     </div>
                                 </div>
@@ -268,10 +267,19 @@
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
+                                <!-- Delete button -->
+                                <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                    data-id="{{ $doc->id_dokumen }}"
+                                    data-judul="{{ $doc->judul }}"
+                                    data-toggle="modal" data-target="#HapusDokumen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
                                 <!-- Edit button -->
                                 <button class="btn btn-sm btn-outline-primary edit-btn"
                                     onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
@@ -282,14 +290,6 @@
                                     data-file="{{ $doc->file_path }}"
                                     data-toggle="modal" data-target="#UbahDokumen">
                                     <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
                                 </button>
 
                                 <!-- View button -->
@@ -399,8 +399,8 @@
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
@@ -532,12 +532,13 @@
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
                                 <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-toggle="modal" data-target="#HapusDokumen">
@@ -664,12 +665,13 @@
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
                                 <!-- Delete button -->
                                 <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-toggle="modal" data-target="#HapusDokumen">
@@ -731,13 +733,14 @@
                         <option selected disabled>Pilih Kode FTA</option>
 
                         @php
-                        $ftaOptions = [
-                        ['value' => 'FTA-01', 'text' => 'FTA-01 (Dosen) - Kesediaan menjadi dosen'],
-                        ['value' => 'FTA-02', 'text' => 'FTA-02 - Pengajuan Topik TA'],
-                        ['value' => 'FTA-03', 'text' => 'FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA'],
-                        ['value' => 'FTA-04', 'text' => 'FTA-04 - Seminar I'],
+                        $ftaOptions =[
                         ['value' => 'FTA-05', 'text' => 'FTA-05 - Kehadiran Mahasiswa pada Seminar I'],
                         ['value' => 'FTA-05a', 'text' => 'FTA-05a - Lesson Learnt Seminar I'],
+                        ['value' => 'FTA-06', 'text' => 'FTA-06 - Bukti Bimbingan Seminar II'],
+                        ['value' => 'FTA-06a', 'text' => 'FTA-06a - Resume Bimbingan'],
+                        ['value' => 'FTA-07', 'text' => 'FTA-07 - Penilaian Seminar II'],
+                        ['value' => 'FTA-08', 'text' => 'FTA-08 - Masukan Seminar II'],
+                        ['value' => 'FTA-023', 'text' => 'FTA-023 - Persetujuan Pelaksanaan Seminar II Tugas Akhir'],
                         ];
                         @endphp
 
@@ -762,7 +765,7 @@
         </div>
 
         <div class="d-flex pt-3 justify-content-end">
-            <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
+            <x-adminlte-button theme="danger" label="Batal" data-dismiss="modal" class="mx-1" />
             <button type="submit" class="btn btn-success mx-1">Simpan</button>
         </div>
     </form>
@@ -809,7 +812,7 @@
 
 
         <div class="d-flex pt-3 justify-content-end">
-            <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
+            <x-adminlte-button theme="danger" label="Batal" data-dismiss="modal" class="mx-1" />
             <button type="submit" class="btn btn-success mx-1">Simpan</button>
         </div>
     </form>
@@ -935,6 +938,24 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function() {
+        // $('#addDocumentForm, #editDocumentForm, #deleteDocumentForm').on('submit', function() {
+        //     saveActiveTab();
+        // });
+        // // Restore tab setelah reload
+        // var activeTabId = localStorage.getItem('seminar1_active_tab');
+        // if (activeTabId) {
+        //     // Nonaktifkan semua tab
+        //     $('.nav-tabs .nav-link').removeClass('active');
+        //     $('.tab-pane').removeClass('show active');
+
+        //     // Aktifkan tab dan tab-pane sesuai yang terakhir
+        //     $('#' + activeTabId).addClass('active');
+        //     var targetPaneId = $('#' + activeTabId).attr('data-target');
+        //     $(targetPaneId).addClass('show active');
+
+        //     // Optional: hapus localStorage supaya tidak terus-terusan
+        //     // localStorage.removeItem('seminar1_active_tab');
+        // }
 
 
         const dataTables = {};
@@ -956,7 +977,7 @@
                 customLengthId = 'custom-length-srs';
             } else if (tableId === 'tab-sdd') {
                 customLengthId = 'custom-length-sdd';
-            } 
+            }
 
             dataTables[tableKey] = $(this).DataTable({
                 searching: false,
@@ -976,11 +997,11 @@
                 initComplete: function() {
                     var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
                     var customLengthHtml = `
-                <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
-                    <label class="mb-0" for="customLengthSelect">Tampilkan</label>
-                    ${lengthMenu.find('select').prop('outerHTML')}
-                    <span>data per halaman</span>
-                </div>`;
+                    <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
+                        <label class="mb-0" for="customLengthSelect">Tampilkan</label>
+                        ${lengthMenu.find('select').prop('outerHTML')}
+                        <span>data per halaman</span>
+                    </div>`;
                     $(`#${customLengthId}`).empty().append(customLengthHtml);
 
                     // ⬇⬇⬇ Tambahkan isi No saat init pertama
@@ -1014,6 +1035,7 @@
 
     // $('.edit-btn').on('click', function() {
     function EditDokumen(id, judul, deskripsi, filePath) {
+        saveActiveTab();
         console.log("Tes2");
         // const button = event.target;
         // var id = button.dataset.id;
@@ -1059,9 +1081,10 @@
     };
 
     // $('.delete-btn').on('click', function() {
-    function HapusDokumen() {
-        var id = $(this).data('id');
-        var judul = $(this).data('judul');
+    function HapusDokumen(id, judul) {
+        saveActiveTab();
+        // var id = $(this).data('id');
+        // var judul = $(this).data('judul');
 
         // Set judul yang akan ditampilkan
         $('#hapusDocumentTitle').text(judul);
@@ -1069,6 +1092,14 @@
         // Set action form delete
         $('#deleteDocumentForm').attr('action', `${prefix}/repository/mahasiswa/${kategori}/${id}`);
     };
+
+    function saveActiveTab() {
+        const activeTabId = $('.nav-tabs .nav-link.active').attr('id'); // Contoh hasil: "tab-fta-tab"
+        if (activeTabId) {
+            localStorage.setItem('seminar1_active_tab', activeTabId);
+        }
+    }
+
 
     // $('.view-btn').on('click', function() {
     function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
@@ -1148,20 +1179,21 @@
 
 
     function TambahDokumen(type, id) {
+        saveActiveTab();
         var title = '';
         var showKodeFTA = false;
 
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan Seminar 2';
+            title = 'Tambah Laporan seminar 2';
         } else if (type === 'btn-tambah-fta') {
-            title = 'Tambah FTA Seminar 2';
+            title = 'Tambah FTA seminar 2';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint Seminar 2';
+            title = 'Tambah PowerPoint seminar 2';
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS Seminar 2';
+            title = 'Tambah SRS seminar 2';
         } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD Seminar 2';
+            title = 'Tambah SDD seminar 2';
         }
 
         $('#TambahDokumen .modal-title').text(title);

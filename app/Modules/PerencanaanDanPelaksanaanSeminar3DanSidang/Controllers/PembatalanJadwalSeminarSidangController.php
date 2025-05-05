@@ -22,6 +22,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         $jadwal = Penjadwalan::select()
         ->join('pembatalan', 'penjadwalan.id_penjadwalan', '=', 'pembatalan.id_penjadwalan')
+        ->where('pembatalan.status_pembatalan', '!=', '1')
         ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
         ->join('user', 'pembatalan.nip', '=', 'user.username')
         ->where('agenda', '=', 'seminar_3')->get()->map(function ($item) {
@@ -43,6 +44,9 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan->status_pembatalan = $status;
         $pembatalan->save();
         $message = $status == '1' ? 'Pembatalan jadwal disetujui.' : 'Pembatalan jadwal ditolak';
+        if($status == '0'){
+            $pembatalan->delete();
+        }
 
         return redirect()->route('view.persetujuan.pembatalan.seminar')->with('success', $message);
     }
@@ -51,6 +55,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         $jadwal = Penjadwalan::select()
             ->join('pembatalan', 'penjadwalan.id_penjadwalan', '=', 'pembatalan.id_penjadwalan')
+            ->where('pembatalan.status_pembatalan', '!=', '1')
             ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
             ->join('user', 'pembatalan.nip', '=', 'user.username')
             ->where('agenda', '=', 'sidang')
@@ -73,7 +78,9 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan->status_pembatalan = $status;
         $pembatalan->save();
         $message = $status == '1' ? 'Pembatalan jadwal disetujui.' : 'Pembatalan jadwal ditolak';
-
+        if($status == '0'){
+            $pembatalan->delete();
+        }
         return redirect()->route('view.persetujuan.pembatalan.sidang')->with('success', $message);
     }
 
@@ -114,6 +121,14 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         // dd($request);
         $nip = Auth::user()->dosen->nip;
+        $pembatalan = Pembatalan::where('id_penjadwalan', $request->id)->first();
+        if($pembatalan){
+            if($pembatalan->status_pembatalan == '1'){
+                return redirect()->route('jadwal.seminar')->with('error', 'Pengajuan pembatalan jadwal seminar sudah disetujui.');
+            } else {
+                return redirect()->route('jadwal.seminar')->with('error', 'Pengajuan pembatalan jadwal seminar sudah diajukan.');
+            }
+        }
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,
@@ -160,6 +175,14 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         // dd($request);
         $nip = Auth::user()->dosen->nip;
+        $pembatalan = Pembatalan::where('id_penjadwalan', $request->id)->first();
+        if($pembatalan){
+            if($pembatalan->status_pembatalan == '1'){
+                return redirect()->route('jadwal.sidang')->with('error', 'Pengajuan pembatalan jadwal sidang sudah disetujui.');
+            } else {
+                return redirect()->route('jadwal.sidang')->with('error', 'Pengajuan pembatalan jadwal sidang sudah diajukan.');
+            }
+        }
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,

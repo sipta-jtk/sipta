@@ -1,528 +1,604 @@
-@extends('adminlte::page')
+    @extends('adminlte::page')
 
-@section('title', 'Dokumen Seminar 1')
+    @section('title', 'Dokumen seminar 1')
 
-@section('content_header')
-<h1 class="mb-3 text-left">Dokumen Seminar 1</h1>
-@stop
+    @section('content_header')
+    <h1 class="mb-3 text-left">Dokumen seminar 1</h1>
+    @stop
 
 
-@section('content')
+    @section('content')
 
-{{-- Navigasi Tab --}}
-<ul class="nav nav-tabs mb-3" id="tabSeminar1" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="tab-laporan-tab" data-toggle="tab" data-target="#tab-laporan" type="button" role="tab" aria-controls="tab-laporan" aria-selected="true">Laporan</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-fta-tab" data-toggle="tab" data-target="#tab-fta" type="button" role="tab" aria-controls="tab-fta" aria-selected="false">FTA</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Power Point</button>
-    </li>
-</ul>
+    {{-- Navigasi Tab --}}
+    <ul class="nav nav-tabs mb-3" id="tabseminar1" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-laporan-tab" data-toggle="tab" data-target="#tab-laporan" type="button" role="tab" aria-controls="tab-laporan" aria-selected="true">Laporan</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-fta-tab" data-toggle="tab" data-target="#tab-fta" type="button" role="tab" aria-controls="tab-fta" aria-selected="false">FTA</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Power Point</button>
+        </li>
 
-<div class="tab-content" id="tabSeminar1Content">
-    {{-- Tab: Laporan --}}
-    <div class="tab-pane fade show active" id="tab-laporan" role="tabpanel" aria-labelledby="tab-laporan-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Laporan Seminar 1</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuLaporan">
-                            <i class="fas fa-filter"></i>
-                        </button>
+    </ul>
 
-                        <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
-                        <div id="custom-length"></div>
-                    </div>
-
-                    <!-- Tombol Tambah -->
-                    <button id="btn-tambah-laporan" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriLaporan->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
+    <div class="tab-content" id="tabseminar1Content">
+        {{-- Tab: Laporan --}}
+        <div class="tab-pane fade show active" id="tab-laporan" role="tabpanel" aria-labelledby="tab-laporan-tab">
+            <div class="card">
+                <div class="card-header d-flex justify-content-center">
+                    <h3 class="card-title m-0 text-center text-bold">Laporan seminar 1</h3>
                 </div>
-
-
-                <div class="collapse filter-menu" id="filterMenuLaporan" data-target="laporan">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 15; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Tombol Filter -->
+                            <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuLaporan">
+                                <i class="fas fa-filter"></i>
                             </button>
+
+                            <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
+                            <div id="custom-length"></div>
                         </div>
-                    </div>
-                </div>
 
-
-                <table class="table table-bordered text-center datatable" data-table="laporan">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($laporan->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($laporan as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
-
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success view-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-
-
-    {{-- Tab: FTA --}}
-    <div class="tab-pane fade" id="tab-fta" role="tabpanel" aria-labelledby="tab-fta-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Formulir Tugas Akhir (FTA)</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuFta">
-                            <i class="fas fa-filter"></i>
+                        <!-- Tombol Tambah -->
+                        <button id="btn-tambah-laporan" onclick="TambahDokumen('btn-tambah-laporan', '{{ $subkategoriLaporan->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriLaporan->id_subkategori }}">
+                            <i class="fas fa-plus"></i> Tambah
                         </button>
-
-                        <!-- Length Change untuk FTA -->
-                        <div id="custom-length-fta"></div>
                     </div>
 
-                    <!-- Tombol Tambah -->
-                    <button id="btn-tambah-fta" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriFta->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
-                </div>
 
-                <div class="collapse filter-menu" id="filterMenuFta" data-target="fta">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
+                    <div class="collapse filter-menu" id="filterMenuLaporan" data-target="laporan">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-filter mr-2"></i>Filter Data
+                                </h3>
+                            </div>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-project-diagram mr-1"></i> Kode FTA
-                                        </label>
-                                        <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option selected disabled>Pilih Kode FTA</option>
-                                            <option value="FTA-01">FTA-01 (Dosen) - Kesediaan menjadi dosen</option>
-                                            <option value="FTA-02">FTA-02 - Pengajuan Topik TA</option>
-                                            <option value="FTA-03">FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA</option>
-                                            <option value="FTA-04">FTA-04 - Seminar I</option>
-                                            <option value="FTA-05">FTA-05 - Kehadiran Mahasiswa pada Seminar I</option>
-                                            <option value="FTA-05a">FTA-05a - Lesson Learnt Seminar I</option>
-                                            <option value="FTA-20">FTA-20 (Opsional) - Surat Kesepakatan Pisah/Memisahkan Diri dari Kelompok</option>
-                                            <option value="FTA-21">FTA-21 (Opsional) - Pengajuan Calon Pengganti Pembimbing Kelompok TA</option>
-                                            <option value="FTA-22">FTA-22 (Opsional) - Kesediaan Menjadi Calon Pengganti Pembimbing Kelompok</option>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Versi</label>
+                                        <select class="form-control version-filter">
+                                            <option value="">Semua</option>
+                                            @for ($i = 1; $i <= 15; $i++)
+                                                <option value="{{ $i }}">V{{ $i }}</option>
+                                                @endfor
                                         </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Tanggal Dibuat</label>
+                                        <input type="date" class="form-control date-filter">
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <table class="table table-bordered text-center datatable" data-table="fta">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Kode-FTA</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($fta->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($fta as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->kode_fta }}</td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
-
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
+                            <div class="card-footer text-right">
+                                <button type="button" class="btn btn-primary apply-filter-btn">
+                                    Terapkan
                                 </button>
-
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success view-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-kode_fta="{{$doc->kode_fta}}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    {{-- Tab: Power Point --}}
-    <div class="tab-pane fade" id="tab-pp" role="tabpanel" aria-labelledby="tab-pp-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen Presentasi</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuPpt">
-                            <i class="fas fa-filter"></i>
-                        </button>
-
-                        <!-- Length Change untuk PowerPoint -->
-                        <div id="custom-length-ppt"></div>
-                    </div>
-
-                    <!-- Tombol Tambah -->
-                    <button id="btn-tambah-ppt" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPpt->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
-                </div>
-
-                <div class="collapse filter-menu" id="filterMenuPpt" data-target="ppt">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
+
+                    <table class="table table-bordered text-center datatable" data-table="laporan">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th class="no-sort">No</th>
+                                <th>Versi</th>
+                                <th>Judul</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Terakhir Diedit</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($laporan->isEmpty())
+                            <tr>
+                                <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                                    <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
+                                </td>
+                            </tr>
+                            @else
+                            @foreach ($laporan as $index => $doc)
+                            <tr>
+                                <td></td>
+                                <td>{{ $doc->versi }}</td>
+                                <td>{{ $doc->judul }}</td>
+
+                                <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i ') }}</td>
+                                <td>
+                                    @if ($status_ta === 'mahasiswa_ta')
+                                    <!-- Delete button -->
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-toggle="modal" data-target="#HapusDokumen">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                    <!-- Edit button -->
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-versi="{{ $doc->versi }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-toggle="modal" data-target="#UbahDokumen">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <!-- View button -->
+                                    <button class="btn btn-sm btn-outline-success"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}',)"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-toggle="modal"
+                                        data-target="#LihatDokumen">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- Tab: FTA --}}
+        <div class="tab-pane fade" id="tab-fta" role="tabpanel" aria-labelledby="tab-fta-tab">
+            <div class="card">
+                <div class="card-header d-flex justify-content-center">
+                    <h3 class="card-title m-0 text-center text-bold">Formulir Tugas Akhir (FTA)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Tombol Filter -->
+                            <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuFta">
+                                <i class="fas fa-filter"></i>
                             </button>
+
+                            <!-- Length Change untuk FTA -->
+                            <div id="custom-length-fta"></div>
+                        </div>
+
+                        <!-- Tombol Tambah -->
+                        <button id="btn-tambah-fta" onclick="TambahDokumen('btn-tambah-fta', '{{ $subkategoriFta->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriFta->id_subkategori }}">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                    </div>
+
+                    <div class="collapse filter-menu" id="filterMenuFta" data-target="fta">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-filter mr-2"></i>Filter Data
+                                </h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Versi</label>
+                                        <select class="form-control version-filter">
+                                            <option value="">Semua</option>
+                                            @for ($i = 1; $i <= 10; $i++)
+                                                <option value="{{ $i }}">V{{ $i }}</option>
+                                                @endfor
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Tanggal Dibuat</label>
+                                        <input type="date" class="form-control date-filter">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group text-secondary">
+                                            <label>
+                                                <i class="fas fa-project-diagram mr-1"></i> Kode FTA
+                                            </label>
+                                            <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
+                                                <option selected disabled>Pilih Kode FTA</option>
+                                                <option value="FTA-02">FTA-02 - Pengajuan Topik TA</option>
+                                                <option value="FTA-03">FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA</option>
+                                                <option value="FTA-04">FTA-04 - Seminar I</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-right">
+                                <button type="button" class="btn btn-primary apply-filter-btn">
+                                    Terapkan
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <table class="table table-bordered text-center datatable" data-table="fta">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th class="no-sort">No</th>
+                                <th>Kode-FTA</th>
+                                <th>Versi</th>
+                                <th>Judul</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Terakhir Diedit</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($fta->isEmpty())
+                            <tr>
+                                <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                                    <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
+                                </td>
+                            </tr>
+                            @else
+                            @foreach ($fta as $index => $doc)
+                            <tr>
+                                <td></td>
+                                <td>{{ $doc->kode_fta }}</td>
+                                <td>{{ $doc->versi }}</td>
+                                <td>{{ $doc->judul }}</td>
+
+                                <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
+                                <td>
+                                    @if ($status_ta === 'mahasiswa_ta')
+                                    <!-- Delete button -->
+                                    <button class="btn btn-sm btn-outline-danger delete-btn"
+                                        onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-toggle="modal" data-target="#HapusDokumen">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                    <!-- Edit button -->
+                                    <button class="btn btn-sm btn-outline-primary edit-btn"
+                                        onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-versi="{{ $doc->versi }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-toggle="modal" data-target="#UbahDokumen">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <!-- View button -->
+                                    <button class="btn btn-sm btn-outline-success view-btn"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','{{$doc->kode_fta}}')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-kode_fta="{{$doc->kode_fta}}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-toggle="modal"
+                                        data-target="#LihatDokumen">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+        </div>
 
-                <table class="table table-bordered text-center datatable" data-table="ppt">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($powerpoint->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($powerpoint as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
+        {{-- Tab: Power Point --}}
+        <div class="tab-pane fade" id="tab-pp" role="tabpanel" aria-labelledby="tab-pp-tab">
+            <div class="card">
+                <div class="card-header d-flex justify-content-center">
+                    <h3 class="card-title m-0 text-center text-bold">Dokumen Presentasi</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Tombol Filter -->
+                            <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuPpt">
+                                <i class="fas fa-filter"></i>
+                            </button>
 
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('H:i d F Y') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
+                            <!-- Length Change untuk PowerPoint -->
+                            <div id="custom-length-ppt"></div>
+                        </div>
+
+                        <!-- Tombol Tambah -->
+                        <button id="btn-tambah-ppt" onclick="TambahDokumen('btn-tambah-ppt', '{{ $subkategoriPpt->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPpt->id_subkategori }}">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                    </div>
+
+                    <div class="collapse filter-menu" id="filterMenuPpt" data-target="ppt">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-filter mr-2"></i>Filter Data
+                                </h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Versi</label>
+                                        <select class="form-control version-filter">
+                                            <option value="">Semua</option>
+                                            @for ($i = 1; $i <= 10; $i++)
+                                                <option value="{{ $i }}">V{{ $i }}</option>
+                                                @endfor
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Tanggal Dibuat</label>
+                                        <input type="date" class="form-control date-filter">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-right">
+                                <button type="button" class="btn btn-primary apply-filter-btn">
+                                    Terapkan
                                 </button>
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                    <table class="table table-bordered text-center datatable" data-table="ppt">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th class="no-sort">No</th>
+                                <th>Versi</th>
+                                <th>Judul</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Terakhir Diedit</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($powerpoint->isEmpty())
+                            <tr>
+                                <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                                    <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
+                                </td>
+                            </tr>
+                            @else
+                            @foreach ($powerpoint as $index => $doc)
+                            <tr>
+                                <td></td>
+                                <td>{{ $doc->versi }}</td>
+                                <td>{{ $doc->judul }}</td>
 
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success view-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
+                                <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
+                                <td>
+                                    @if ($status_ta === 'mahasiswa_ta')
+                                    <!-- Delete button -->
+                                    <button class="btn btn-sm btn-outline-danger delete-btn"
+                                        onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-toggle="modal" data-target="#HapusDokumen">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                    <!-- Edit button -->
+                                    <button class="btn btn-sm btn-outline-primary edit-btn"
+                                        onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-versi="{{ $doc->versi }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-toggle="modal" data-target="#UbahDokumen">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <!-- View button -->
+                                    <button class="btn btn-sm btn-outline-success view-btn"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}',)"
+                                        data-id="{{ $doc->id_dokumen }}"
+                                        data-judul="{{ $doc->judul }}"
+                                        data-file="{{ $doc->file_path }}"
+                                        data-deskripsi="{{ $doc->deskripsi }}"
+                                        data-toggle="modal"
+                                        data-target="#LihatDokumen">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- BAGIAN MODAL -->
+    <!-- BAGIAN MODAL -->
 
-<!-- TAMBAH DOKUMEN -->
-<x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen Seminar 1" theme="blue" size="lg">
-    <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
-        <div class="row px-3">
-            <div class="col-md-10 mb-2">
-                <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
+    <!-- TAMBAH DOKUMEN -->
+    <x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen seminar 1" theme="blue" size="lg">
+        <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
+            <div class="row px-3">
+                <div class="col-md-10 mb-2">
+                    <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
 
-                <label for="judul">Judul Dokumen</label>
-                <x-adminlte-input name="judul" id="judul" required />
+                    <label for="judul">Judul Dokumen</label>
+                    <x-adminlte-input name="judul" id="judul" required />
 
-                <div id="field-kode-fta" style="display:none;">
-                    <label for="kode_fta">Kode FTA</label>
-                    <x-adminlte-select name="kode_fta" id="kode_fta" class="select2bs4">
-                        <option selected disabled>Pilih Kode FTA</option>
+                    <div id="field-kode-fta" style="display:none;">
+                        <label for="kode_fta">Kode FTA</label>
+                        <x-adminlte-select name="kode_fta" id="kode_fta" class="select2bs4">
+                            <option selected disabled>Pilih Kode FTA</option>
 
-                        @php
-                        $ftaOptions = [
-                        ['value' => 'FTA-01', 'text' => 'FTA-01 (Dosen) - Kesediaan menjadi dosen'],
-                        ['value' => 'FTA-02', 'text' => 'FTA-02 - Pengajuan Topik TA'],
-                        ['value' => 'FTA-03', 'text' => 'FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA'],
-                        ['value' => 'FTA-04', 'text' => 'FTA-04 - Seminar I'],
-                        ['value' => 'FTA-05', 'text' => 'FTA-05 - Kehadiran Mahasiswa pada Seminar I'],
-                        ['value' => 'FTA-05a', 'text' => 'FTA-05a - Lesson Learnt Seminar I'],
-                        ];
-                        @endphp
+                            @php
+                            $ftaOptions = [
+                            ['value' => 'FTA-02', 'text' => 'FTA-02 - Pengajuan Topik TA'],
+                            ['value' => 'FTA-03', 'text' => 'FTA-03 - Persetujuan Menjadi Pembimbing Kelompok TA'],
+                            ['value' => 'FTA-04', 'text' => 'FTA-04 - Seminar I'],
+                            ];
+                            @endphp
 
-                        @foreach ($ftaOptions as $fta)
-                        <option value="{{ $fta['value'] }}">{{ $fta['text'] }}</option>
-                        @endforeach
-                    </x-adminlte-select>
+                            @foreach ($ftaOptions as $fta)
+                            <option value="{{ $fta['value'] }}">{{ $fta['text'] }}</option>
+                            @endforeach
+                        </x-adminlte-select>
+                    </div>
+
+                    <label for="deskripsi">Deskripsi</label>
+                    <x-adminlte-textarea name="deskripsi" id="deskripsi" required placeholder="Berikan penjelasan terkait dokumen" rows="4" />
+
+                    <div class="form-group w-100">
+                        <label for="file">File</label>
+                        <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required />
+                    </div>
+
+                    <label for="username">Pengunggah</label>
+                    <x-adminlte-input name="username" id="username"
+                        value="{{ auth()->user()->username }}" readonly required />
                 </div>
-
-                <label for="deskripsi">Deskripsi</label>
-                <x-adminlte-textarea name="deskripsi" id="deskripsi" required placeholder="Berikan penjelasan terkait dokumen" rows="4" />
-
-                <div class="form-group w-100">
-                    <label for="file">File</label>
-                    <x-adminlte-input-file name="file" id="file" igroup-size="md" required />
-                </div>
-
-                <label for="username">Pengunggah</label>
-                <x-adminlte-input name="username" id="username"
-                    value="{{ auth()->user()->username }}" readonly required />
             </div>
+
+            <div class="d-flex pt-3 justify-content-end">
+                <x-adminlte-button theme="danger" label="Batal" data-dismiss="modal" class="mx-1" />
+                <button type="submit" class="btn btn-success mx-1">Simpan</button>
+            </div>
+        </form>
+
+        <x-slot name="footerSlot">
+            {{-- Footer kosong, supaya tidak muncul tombol Close lagi --}}
+        </x-slot>
+    </x-adminlte-modal>
+
+    <!-- EDIT DOKUMEN -->
+    <x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen seminar 1" theme="yellow" size="xl">
+        <form id="editDocumentForm" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id_dokumen" id="edit_id_dokumen">
+
+            <div class="row px-3">
+                <div class="col-md-4 mb-2">
+                    <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
+
+                    <label for="edit_judul">Judul Dokumen</label>
+                    <x-adminlte-input name="judul" id="edit_judul" required />
+
+                    <label for="edit_deskripsi" class="mt-2">Deskripsi</label>
+                    <x-adminlte-textarea name="deskripsi" id="edit_deskripsi" required placeholder="Berikan penjelasan terkait dokumen" rows="4" />
+
+                    <label for="edit_username" class="mt-2">Pengunggah</label>
+                    <x-adminlte-input name="username" id="edit_username" readonly required />
+                </div>
+
+                <div class="col-md-8 mb-2">
+                    <p class="text-secondary text-md border-bottom">Dokumen Terunggah</p>
+
+                    <label class="form-label">Pratinjau Dokumen</label>
+                    <div class="document-preview-container" style="height: 400px; border: 1px solid #ddd;">
+                        <iframe id="documentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="previewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex pt-3 justify-content-end">
+                <x-adminlte-button theme="danger" label="Batal" data-dismiss="modal" class="mx-1" />
+                <button type="submit" class="btn btn-success mx-1">Simpan</button>
+            </div>
+        </form>
+
+        <x-slot name="footerSlot"></x-slot>
+    </x-adminlte-modal>
+
+    <!-- DELETE DOKUMEN -->
+    <x-adminlte-modal id="HapusDokumen" title="Konfirmasi Hapus Dokumen" theme="danger" size="md" centered>
+        <div class="text-center">
+            <i class="fas fa-exclamation-circle text-warning mb-3" style="font-size: 3rem;"></i>
+            <p class="mb-0">Apakah Anda yakin ingin menghapus dokumen</p>
+            <p id="hapusDocumentTitle" class="font-weight-bold mb-3"></p>
+            <p class="text-muted small">Dokumen yang sudah dihapus tidak dapat dikembalikan.</p>
         </div>
 
-        <div class="d-flex pt-3 justify-content-end">
-            <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
-            <button type="submit" class="btn btn-success mx-1">Simpan</button>
-        </div>
-    </form>
+        <form id="deleteDocumentForm" method="POST">
+            @csrf
+            @method('DELETE')
+        </form>
 
-    <x-slot name="footerSlot">
-        {{-- Footer kosong, supaya tidak muncul tombol Close lagi --}}
-    </x-slot>
-</x-adminlte-modal>
+        <x-slot name="footerSlot">
+            <div class="d-flex justify-content-end">
+                <x-adminlte-button label="Batal" theme="secondary" data-dismiss="modal" class="mx-1" />
+                <button type="submit" class="btn btn-danger mx-1" form="deleteDocumentForm">Hapus</button>
+            </div>
+        </x-slot>
+    </x-adminlte-modal>
 
-<!-- EDIT DOKUMEN -->
-<x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen Seminar 1" theme="yellow" size="xl">
-    <form id="editDocumentForm" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="id_dokumen" id="edit_id_dokumen">
-
+    <!-- LIHAT DOKUMEN -->
+    <x-adminlte-modal id="LihatDokumen" title="Detail Dokumen" theme="green" size="xl">
         <div class="row px-3">
             <div class="col-md-4 mb-2">
                 <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
 
-                <label for="edit_judul">Judul Dokumen</label>
-                <x-adminlte-input name="judul" id="edit_judul" required />
+                <label for="view_judul">Judul Dokumen</label>
+                <x-adminlte-input name="judul" id="view_judul" readonly />
 
-                <label for="edit_deskripsi" class="mt-2">Deskripsi</label>
-                <x-adminlte-textarea name="deskripsi" id="edit_deskripsi" required placeholder="Berikan penjelasan terkait dokumen" rows="4" />
+                <!-- Tambahan field Kode FTA, default hidden -->
+                <div id="field_kode_fta_view" style="display: none;">
+                    <label for="view_kode_fta" class="mt-1">Kode FTA</label>
+                    <x-adminlte-input name="kode_fta" id="view_kode_fta" readonly />
+                </div>
 
-                <label for="edit_username" class="mt-2">Pengunggah</label>
-                <x-adminlte-input name="username" id="edit_username" readonly required />
+                <label for="view_deskripsi" class="mt-1">Deskripsi</label>
+                <x-adminlte-textarea name="deskripsi" id="view_deskripsi" readonly rows="4" />
+
+                <label for="username">Pengunggah</label>
+                <x-adminlte-input name="username" id="username" value="{{ auth()->user()->username }}" readonly required />
+
+                <label class="mt-2">Aksi File</label>
+                <div class="d-flex flex-column">
+                    <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                        <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                    </a>
+                    <a href="#" class="btn btn-success" id="view_file_download">
+                        <i class="fas fa-download"></i> Unduh
+                    </a>
+                </div>
             </div>
 
             <div class="col-md-8 mb-2">
-                <p class="text-secondary text-md border-bottom">Dokumen Terunggah</p>
-
-                <label class="form-label">Pratinjau Dokumen</label>
-                <div class="document-preview-container" style="height: 400px; border: 1px solid #ddd;">
-                    <iframe id="documentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
-                    <div id="previewNotAvailable" class="text-center p-5" style="display: none;">
+                <p class="text-secondary text-md border-bottom">Pratinjau Dokumen</p>
+                <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
+                    <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                    <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
                         <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
                         <p>Preview tidak tersedia untuk jenis file ini</p>
                     </div>
@@ -530,239 +606,162 @@
             </div>
         </div>
 
-
         <div class="d-flex pt-3 justify-content-end">
             <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
-            <button type="submit" class="btn btn-success mx-1">Simpan</button>
         </div>
-    </form>
+        <x-slot name="footerSlot"></x-slot>
+    </x-adminlte-modal>
 
-    <x-slot name="footerSlot"></x-slot>
-</x-adminlte-modal>
+    @stop
 
-<!-- DELETE DOKUMEN -->
-<x-adminlte-modal id="HapusDokumen" title="Konfirmasi Hapus Dokumen" theme="danger" size="md" centered>
-    <div class="text-center">
-        <i class="fas fa-exclamation-circle text-warning mb-3" style="font-size: 3rem;"></i>
-        <p class="mb-0">Apakah Anda yakin ingin menghapus dokumen</p>
-        <p id="hapusDocumentTitle" class="font-weight-bold mb-3"></p>
-        <p class="text-muted small">Dokumen yang sudah dihapus tidak dapat dikembalikan.</p>
-    </div>
-
-    <form id="deleteDocumentForm" method="POST">
-        @csrf
-        @method('DELETE')
-    </form>
-
-    <x-slot name="footerSlot">
-        <div class="d-flex justify-content-end">
-            <x-adminlte-button label="Batal" theme="secondary" data-dismiss="modal" class="mx-1" />
-            <button type="submit" class="btn btn-danger mx-1" form="deleteDocumentForm">Hapus</button>
-        </div>
-    </x-slot>
-</x-adminlte-modal>
-
-<!-- LIHAT DOKUMEN -->
-<x-adminlte-modal id="LihatDokumen" title="Detail Dokumen" theme="green" size="xl">
-    <div class="row px-3">
-        <div class="col-md-4 mb-2">
-            <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
-
-            <label for="view_judul">Judul Dokumen</label>
-            <x-adminlte-input name="judul" id="view_judul" readonly />
-
-            <!-- Tambahan field Kode FTA, default hidden -->
-            <div id="field_kode_fta_view" style="display: none;">
-                <label for="view_kode_fta" class="mt-1">Kode FTA</label>
-                <x-adminlte-input name="kode_fta" id="view_kode_fta" readonly />
-            </div>
-
-            <label for="view_deskripsi" class="mt-1">Deskripsi</label>
-            <x-adminlte-textarea name="deskripsi" id="view_deskripsi" readonly rows="4" />
-
-            <label for="username">Pengunggah</label>
-            <x-adminlte-input name="username" id="username" value="{{ auth()->user()->username }}" readonly required />
-
-            <label class="mt-2">Aksi File</label>
-            <div class="d-flex flex-column">
-                <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
-                    <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                </a>
-                <a href="#" class="btn btn-success" id="view_file_download">
-                    <i class="fas fa-download"></i> Unduh
-                </a>
-            </div>
-        </div>
-
-        <div class="col-md-8 mb-2">
-            <p class="text-secondary text-md border-bottom">Pratinjau Dokumen</p>
-            <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
-                <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
-                <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
-                    <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
-                    <p>Preview tidak tersedia untuk jenis file ini</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="d-flex pt-3 justify-content-end">
-        <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
-    </div>
-    <x-slot name="footerSlot"></x-slot>
-</x-adminlte-modal>
-
-@stop
-
-@section('css')
-<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-<style>
-    /* Button styling */
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
-    .input-group {
-        width: 100%;
-    }
-
-    .custom-wrapper .dataTables_length {
-        margin-left: auto;
-    }
-
-    #custom-length label {
-        margin-bottom: 0;
-    }
-
-    .gap-2>*+* {
-        margin-left: 0.5rem;
-    }
-
-    /* Tambahan penting ini! */
-    .gap-2 {
-        white-space: nowrap;
-    }
-
-    @media (max-width: 768px) {
-        .document-preview-container {
-            height: 400px;
-            /* Lebih pendek di HP */
+    @section('css')
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <style>
+        /* Button styling */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
         }
-    }
-</style>
-@stop
 
-@section('js')
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-<script>
-    $(document).ready(function() {
-        const prefix = "/{{ env('PREFIX_URL') }}";
-        const kategori = '{{ $kategori }}';
+        .input-group {
+            width: 100%;
+        }
 
-        const dataTables = {};
+        .custom-wrapper .dataTables_length {
+            margin-left: auto;
+        }
 
-        $('.datatable').each(function(index) {
-            let tableId = $(this).closest('.tab-pane').attr('id');
-            let customLengthId = 'custom-length';
-            var tableKey = $(this).data('table');
+        #custom-length label {
+            margin-bottom: 0;
+        }
 
-            if (!tableKey) {
-                tableKey = tableId || 'table-' + index;
+        .gap-2>*+* {
+            margin-left: 0.5rem;
+        }
+
+        /* Tambahan penting ini! */
+        .gap-2 {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .document-preview-container {
+                height: 400px;
+                /* Lebih pendek di HP */
             }
+        }
+    </style>
+    @stop
 
-            if (tableId === 'tab-fta') {
-                customLengthId = 'custom-length-fta';
-            } else if (tableId === 'tab-pp') {
-                customLengthId = 'custom-length-ppt';
-            }
+    @section('js')
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // $('#addDocumentForm, #editDocumentForm, #deleteDocumentForm').on('submit', function() {
+            //     saveActiveTab();
+            // });
+            // // Restore tab setelah reload
+            // var activeTabId = localStorage.getItem('seminar1_active_tab');
+            // if (activeTabId) {
+            //     // Nonaktifkan semua tab
+            //     $('.nav-tabs .nav-link').removeClass('active');
+            //     $('.tab-pane').removeClass('show active');
 
-            dataTables[tableKey] = $(this).DataTable({
-                searching: false,
-                info: false,
-                lengthChange: true,
-                dom: '<"d-none"l>t<"d-flex justify-content-end"ip>',
-                language: {
-                    zeroRecords: "Data tidak ditemukan",
-                    lengthMenu: "Tampilkan _MENU_ entri",
-                    paginate: {
-                        first: "<<",
-                        last: ">>",
-                        next: ">",
-                        previous: "<"
-                    }
-                },
-                initComplete: function() {
-                    var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
-                    var customLengthHtml = `
-                <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
-                    <label class="mb-0" for="customLengthSelect">Tampilkan</label>
-                    ${lengthMenu.find('select').prop('outerHTML')}
-                    <span>data per halaman</span>
-                </div>`;
-                    $(`#${customLengthId}`).empty().append(customLengthHtml);
+            //     // Aktifkan tab dan tab-pane sesuai yang terakhir
+            //     $('#' + activeTabId).addClass('active');
+            //     var targetPaneId = $('#' + activeTabId).attr('data-target');
+            //     $(targetPaneId).addClass('show active');
 
-                    // ⬇⬇⬇ Tambahkan isi No saat init pertama
-                    var api = this.api();
-                    api.on('order.dt search.dt', function() {
-                        api.column(0, {
-                                search: 'applied',
-                                order: 'applied'
-                            })
-                            .nodes()
-                            .each(function(cell, i) {
-                                cell.innerHTML = i + 1;
-                            });
-                    });
+            //     // Optional: hapus localStorage supaya tidak terus-terusan
+            //     // localStorage.removeItem('seminar1_active_tab');
+            // }
 
-                    // ⬇⬇⬇ Jalankan manual untuk pertama kali
-                    api.draw();
+
+            const dataTables = {};
+
+            $('.datatable').each(function(index) {
+                let tableId = $(this).closest('.tab-pane').attr('id');
+                let customLengthId = 'custom-length';
+                var tableKey = $(this).data('table');
+
+                if (!tableKey) {
+                    tableKey = tableId || 'table-' + index;
                 }
+
+                if (tableId === 'tab-fta') {
+                    customLengthId = 'custom-length-fta';
+                } else if (tableId === 'tab-pp') {
+                    customLengthId = 'custom-length-ppt';
+                } else if (tableId === 'tab-srs') {
+                    customLengthId = 'custom-length-srs';
+                } else if (tableId === 'tab-sdd') {
+                    customLengthId = 'custom-length-sdd';
+                }
+
+                dataTables[tableKey] = $(this).DataTable({
+                    searching: false,
+                    info: false,
+                    lengthChange: true,
+                    dom: '<"d-none"l>t<"d-flex justify-content-end"ip>',
+                    language: {
+                        zeroRecords: "Data tidak ditemukan",
+                        lengthMenu: "Tampilkan _MENU_ entri",
+                        paginate: {
+                            first: "<<",
+                            last: ">>",
+                            next: ">",
+                            previous: "<"
+                        }
+                    },
+                    initComplete: function() {
+                        var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
+                        var customLengthHtml = `
+                    <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
+                        <label class="mb-0" for="customLengthSelect">Tampilkan</label>
+                        ${lengthMenu.find('select').prop('outerHTML')}
+                        <span>data per halaman</span>
+                    </div>`;
+                        $(`#${customLengthId}`).empty().append(customLengthHtml);
+
+                        // ⬇⬇⬇ Tambahkan isi No saat init pertama
+                        var api = this.api();
+                        api.on('order.dt search.dt', function() {
+                            api.column(0, {
+                                    search: 'applied',
+                                    order: 'applied'
+                                })
+                                .nodes()
+                                .each(function(cell, i) {
+                                    cell.innerHTML = i + 1;
+                                });
+                        });
+
+                        // ⬇⬇⬇ Jalankan manual untuk pertama kali
+                        api.draw();
+                    }
+                });
             });
         });
 
-        $('#btn-tambah-laporan, #btn-tambah-fta, #btn-tambah-ppt').on('click', function() {
-            var title = '';
-            var showKodeFTA = false;
+        const prefix = "/{{ env('PREFIX_URL') }}";
+        const kategori = '{{ $kategori }}';
 
-            if (this.id === 'btn-tambah-laporan') {
-                title = 'Tambah Laporan Seminar 1';
-            } else if (this.id === 'btn-tambah-fta') {
-                title = 'Tambah FTA Seminar 1';
-                showKodeFTA = true;
-            } else if (this.id === 'btn-tambah-ppt') {
-                title = 'Tambah Power Point Seminar 1';
-            }
+        // $('#file').on('change', function() {
+        function JudulDokumen() {
+            let fileName = $('#file').val().split('\\').pop(); // Ambil nama file saja
+            $('#file').next('.custom-file-label').addClass("selected").html(fileName);
+        };
 
-            $('#TambahDokumen .modal-title').text(title);
-            $('#field-kode-fta').toggle(showKodeFTA);
-
-            if (showKodeFTA) {
-                $('#kode_fta').prop('required', true); // Tambahkan required kalau FTA
-            } else {
-                $('#kode_fta').prop('required', false); // Hilangkan required kalau bukan FTA
-                $('#kode_fta').val(''); // Reset value juga supaya kosong
-            }
-
-            $('#field-subkategori').hide();
-            $('#field-repo-url').hide();
-
-            // Set id_subkategori dari tombol
-            var idSubkategori = $(this).data('id-subkategori');
-            $('#id_subkategori_hidden').val(idSubkategori);
-        });
-
-        $('#file').on('change', function() {
-            let fileName = $(this).val().split('\\').pop(); // Ambil nama file saja
-            $(this).next('.custom-file-label').addClass("selected").html(fileName);
-        });
-
-        $('.edit-btn').on('click', function() {
-            var id = $(this).data('id');
-            var judul = $(this).data('judul');
-            var deskripsi = $(this).data('deskripsi');
-            var filePath = $(this).data('file');
+        // $('.edit-btn').on('click', function() {
+        function EditDokumen(id, judul, deskripsi, filePath) {
+            saveActiveTab();
+            console.log("Tes2");
+            // const button = event.target;
+            // var id = button.dataset.id;
+            // var judul = button.dataset.judul;
+            // var deskripsi = button.dataset.deskripsi;
+            // var filePath = button.dataset.file;
             var kategori = '{{ $kategori }}'; // Kategori juga tetap di-blade-kan
 
             // Set form action update dinamis dengan prefix
@@ -799,25 +798,37 @@
                 $('#documentPreview').hide();
                 $('#previewNotAvailable').show();
             }
-        });
+        };
 
-        $('.delete-btn').on('click', function() {
-            var id = $(this).data('id');
-            var judul = $(this).data('judul');
+        // $('.delete-btn').on('click', function() {
+        function HapusDokumen(id, judul) {
+            saveActiveTab();
+            // var id = $(this).data('id');
+            // var judul = $(this).data('judul');
 
             // Set judul yang akan ditampilkan
             $('#hapusDocumentTitle').text(judul);
 
             // Set action form delete
             $('#deleteDocumentForm').attr('action', `${prefix}/repository/mahasiswa/${kategori}/${id}`);
-        });
+        };
 
-        $('.view-btn').on('click', function() {
-            var judul = $(this).data('judul');
-            var deskripsi = $(this).data('deskripsi');
-            var filePath = $(this).data('file');
+        function saveActiveTab() {
+            const activeTabId = $('.nav-tabs .nav-link.active').attr('id'); // Contoh hasil: "tab-fta-tab"
+            if (activeTabId) {
+                localStorage.setItem('seminar1_active_tab', activeTabId);
+            }
+        }
+
+
+        // $('.view-btn').on('click', function() {
+        function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
+            console.log("Tes");
+            // var judul = $(this).data('judul');
+            // var deskripsi = $(this).data('deskripsi');
+            // var filePath = $(this).data('file');
             var kategori = '{{ $kategori }}'; // ini dari blade kamu
-            var kodeFta = $(this).data('kode-fta');
+            // var kodeFta = $(this).data('kode-fta');
 
             $('#view_judul').val(judul);
             $('#view_deskripsi').val(deskripsi);
@@ -858,10 +869,11 @@
                 $('#viewDocumentPreview').hide();
                 $('#viewPreviewNotAvailable').show();
             }
-        });
+        };
 
         // Apply Filter
-        $('.apply-filter-btn').on('click', function() {
+        // $('.apply-filter-btn').on('click', function() {
+        function filter() {
             var $filterMenu = $(this).closest('.filter-menu');
             var targetTable = $filterMenu.data('target');
             var table = dataTables[targetTable];
@@ -883,7 +895,45 @@
             }
 
             table.draw();
-        });
-    });
-</script>
-@stop
+        };
+
+
+        function TambahDokumen(type, id) {
+            saveActiveTab();
+            var title = '';
+            var showKodeFTA = false;
+
+            if (type === 'btn-tambah-laporan') {
+                title = 'Tambah Laporan seminar 1';
+            } else if (type === 'btn-tambah-fta') {
+                title = 'Tambah FTA seminar 1';
+                showKodeFTA = true;
+            } else if (type === 'btn-tambah-ppt') {
+                title = 'Tambah PowerPoint seminar 1';
+            } else if (type === 'btn-tambah-srs') {
+                title = 'Tambah SRS seminar 1';
+            } else if (type === 'btn-tambah-sdd') {
+                title = 'Tambah SDD seminar 1';
+            }
+
+            $('#TambahDokumen .modal-title').text(title);
+            $('#field-kode-fta').toggle(showKodeFTA);
+
+            if (showKodeFTA) {
+                $('#kode_fta').prop('required', true); // Tambahkan required kalau FTA
+            } else {
+                $('#kode_fta').prop('required', false); // Hilangkan required kalau bukan FTA
+                $('#kode_fta').val(''); // Reset value juga supaya kosong
+            }
+
+            $('#field-subkategori').hide();
+            $('#field-repo-url').hide();
+
+            console.log("Tes");
+            // Set id_subkategori dari tombol
+            // var idSubkategori = $(this).data('id-subkategori');
+            $('#id_subkategori_hidden').val(id);
+            console.log("Tis");
+        };
+    </script>
+    @stop

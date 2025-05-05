@@ -7,7 +7,7 @@
     <div class="ml-2">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => url('/pengajuan/'), 'label' => 'Daftar Pengajuan'],
                 ['url' => '', 'label' => 'Pengajuan Sidang Akhir']
             ]
@@ -88,7 +88,7 @@
                         <select id="ruangan_pengajuan" name="ruangan_pengajuan" class="form-control" required>
                             <option value="" disabled selected>-- Pilih Ruangan --</option>
                             @foreach($ruanganTersedia as $ruangan)
-                                <option value="{{ $ruangan['id_ruangan'] }}">
+                                <option value='@json(["id" => $ruangan["id_ruangan"], "nama" => $ruangan["nama_ruangan"]])'>
                                     {{ $ruangan['nama_ruangan'] }}
                                 </option>
                             @endforeach
