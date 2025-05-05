@@ -206,8 +206,8 @@ class PengajuanPembimbingController extends Controller
         // Redirect setelah data disimpan
         session()->flash('success', 'Pengajuan dosen pembimbing sudah direkap. Silahkan menunggu status pengajuan diterima.');
 
-        // return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index');
-        return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'); // Redirect ke halaman utama SIPTA
+        return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index');
+        // return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'); // Redirect ke halaman utama SIPTA
     }
 
     public function checkExistingData()
@@ -223,10 +223,30 @@ class PengajuanPembimbingController extends Controller
         $existingData = DB::table('pengajuan_pembimbing')
             ->where('id_kota', $sessionUser->id_kota)
             ->exists(); // Memeriksa apakah ada pengajuan pembimbing sebelumnya
+        
+        $topikTugasAkhir = DB::table('kota')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->value('judul_ta');
+        
+        $bidangTugasAkhir = DB::table('kota')
+            ->join('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
+            ->where('kota.id_kota', $sessionUser->id_kota)
+            ->value('bidang.bidang');
+
+        // $prioritas = DB::table('prioritas_pembimbing')
+        //     ->join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
+        //     ->join('user', 'dosen.nip', '=', 'user.username')
+        //     ->where('prioritas_pembimbing.id_pengajuan', $existingData->id_pengajuan)
+        //     ->select('user.nama', 'prioritas_pembimbing.urutan_prioritas')
+        //     ->orderBy('prioritas_pembimbing.urutan_prioritas', 'asc')
+        //     ->get();
 
         return response()->json([
             'hasExistingData' => $existingData,
-            'Periode' => PeriodePengajuan::where('periode_mulai', '<=', $currentdate)->where('periode_akhir', '>=', $currentdate)->exists()
+            'Periode' => PeriodePengajuan::where('periode_mulai', '<=', $currentdate)->where('periode_akhir', '>=', $currentdate)->exists(),
+            'topikTugasAkhir' => $topikTugasAkhir,
+            'bidangTugasAkhir' => $bidangTugasAkhir
+            // 'prioritas' => $prioritas
         ]);
     }
 }
