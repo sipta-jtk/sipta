@@ -19,7 +19,8 @@ class Penjadwalan extends Model
         'tanggal',
         'id_kota',
         'start',
-        'end'
+        'end',
+        'status'
     ];
 
     public function kota()
