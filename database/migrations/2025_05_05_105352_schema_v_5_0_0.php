@@ -25,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::table('nilai_kategori', function (Blueprint $table) {
-            $table->enum('status_penilaian', ['draf', 'dipublikasikan', 'belum_dinilai'])->default('belum_dinilai')->after('id_kategori');
+            $table->enum('status_penilaian_dosen', ['draf', 'dipublikasikan', 'belum_dinilai'])->default('belum_dinilai')->after('id_kategori');
         });
 
         // Tambahkan kolom status_user ke tabel user
