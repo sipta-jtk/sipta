@@ -45,24 +45,24 @@
                             <td class="align-middle"></td>
                             <td class="align-middle">{{ $row->kode_fta }}</td>
                             <td class="align-middle">{{ $row->nama_fta }}</td>
-                            <td class="align-middle">{{ $row->id_prodi }}</td>
+                            <td class="align-middle">{{ $row->nama_prodi }}</td>
                             <td class="align-middle">{{ $row->jenis_form }}</td>
                             <td class="align-middle">
                                 {{ \Carbon\Carbon::parse($row->tanggal_tenggat_pengisian)->translatedFormat('d F Y') }}
                             </td>
                             <td class="align-middle">
                                 @if ($row->nama_fta == 'Dosen Pembimbing')
-                                    <a href="{{ route('detail.dosen-pembimbing', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                    <a href="{{ route('detail.dosen-pembimbing', ['idFta' => $row->id_fta, 'idProdi' => $row->nama_prodi]) }}" 
                                     class="btn btn-primary btn-md my-1 w-30" title="Lihat Detail">
                                         Lihat Detail
                                     </a>
                                 @elseif ($row->jenis_form == 'penilaian')
-                                    <a href="{{ route('detail.penilaian', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                    <a href="{{ route('detail.penilaian', ['idFta' => $row->id_fta, 'idProdi' => $row->nama_prodi]) }}" 
                                     class="btn btn-primary btn-md my-1 w-30" title="Lihat Detail">
                                         Lihat Detail
                                     </a>
                                 @elseif ($row->jenis_form == 'feedback')
-                                    <a href="{{ route('detail.feedback', ['idFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}" 
+                                    <a href="{{ route('detail.feedback', ['idFta' => $row->id_fta, 'idProdi' => $row->nama_prodi]) }}" 
                                     class="btn btn-primary btn-md my-1 w-30" title="Lihat Detail">
                                         Lihat Detail
                                     </a>
