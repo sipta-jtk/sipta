@@ -22,10 +22,6 @@
                 <button class="btn btn-primary btn-md" type="button" data-toggle="collapse" data-target="#filterMenu">
                     <i class="fas fa-filter"></i> Filter
                 </button>
-                <div>
-                    <a href="{{ url('/log-aktivitas') }}" class="btn btn-secondary">Log Aktivitas</a>
-                    <a href="{{ url('/repository') }}" class="btn btn-secondary">Akses Dokumen</a>
-                </div>
             </div>
 
             <div class="collapse" id="filterMenu">
@@ -46,6 +42,20 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <!-- <div class="my-4">
+                <canvas id="storageChart" style="width: 5px; height: 5px;"></canvas> 
+            </div> -->
+
+            <div class="mt-4">
+                <p>
+                    Penyimpanan Tersedia: {{ number_format(1 - $penyimpanan->sum('total_ukuran') / (1024 * 1024), 2) }} GB
+                </p>
+                <p>
+                    Penyimpanan Terpakai: {{ number_format($penyimpanan->sum('total_ukuran') / 1024, 2) }} MB
+                </p>
             </div>
 
             <div class="card-body">
@@ -70,14 +80,6 @@
                     </tbody>
                 </table>
 
-                <div class="mt-4">
-                    <p>
-                        Penyimpanan Tersedia: {{ number_format(1 - $penyimpanan->sum('total_ukuran') / (1024 * 1024), 2) }} GB
-                    </p>
-                    <p>
-                        Penyimpanan Terpakai: {{ number_format($penyimpanan->sum('total_ukuran') / 1024, 2) }} MB
-                    </p>
-                </div>
             </div>
         </div>
     </div>
@@ -90,6 +92,7 @@
 @section('js')
 <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 $(document).ready(function() {
     var table = $('#penyimpananTable').DataTable({
@@ -111,6 +114,39 @@ $(document).ready(function() {
 
     $('#searchInput').on('keyup', function () {
         table.column(1).search(this.value).draw();
+    });
+
+    // Data for Pie Chart
+    var totalUsed = {{ number_format($penyimpanan->sum('total_ukuran') / 1024, 2) }};
+    var totalAvailable = {{ number_format(1 - $penyimpanan->sum('total_ukuran') / (1024 * 1024), 2) }} * 1024; // In MB
+
+    var ctx = document.getElementById('storageChart').getContext('2d');
+    var storageChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Penyimpanan Terpakai', 'Penyimpanan Tersedia'],
+            datasets: [{
+                label: 'Penyimpanan',
+                data: [totalUsed, totalAvailable],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + ' MB';
+                        }
+                    }
+                }
+            }
+        }
     });
 });
 </script>

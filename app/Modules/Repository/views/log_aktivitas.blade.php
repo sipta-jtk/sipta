@@ -22,10 +22,6 @@
         <button id="toggleFilter" class="btn btn-outline-secondary">
             <i class="fas fa-filter"></i> Filter
         </button>
-        <div>
-            <a href="{{ url('/monitoring-penyimpanan') }}" class="btn btn-secondary">Monitoring Penyimpanan</a>
-            <a href="{{ url('/repository') }}" class="btn btn-secondary">Akses Dokumen</a>
-        </div>
     </div>
 
     <!-- Form Filter -->
