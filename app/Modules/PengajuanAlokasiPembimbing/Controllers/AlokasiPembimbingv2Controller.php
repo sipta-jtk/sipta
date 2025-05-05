@@ -124,4 +124,105 @@ class AlokasiPembimbingv2Controller extends Controller
             ];
         }));
     }
+
+    public function updateAlokasi(Request $request)
+    {
+        $id_pengajuan = $request->input('id_pengajuan');
+        $pembimbing1_nip = $request->input('pembimbing1_nip');
+        $pembimbing2_nip = $request->input('pembimbing2_nip');
+
+        // Update alokasi dosen jadi FIX
+        DB::table('alokasi_dosen')->insert([
+            'id_pengajuan_pembimbing' => $id_pengajuan,
+            'nip' => $pembimbing1_nip,
+            'urutan_prioritas_terpilih' => 1,
+            'status_alokasi' => 'belum_fix',
+            'tipe_alokasi' => 'pembimbing',
+        ]);
+
+        DB::table('alokasi_dosen')->insert([
+            'id_pengajuan_pembimbing' => $id_pengajuan,
+            'nip' => $pembimbing2_nip,
+            'urutan_prioritas_terpilih' => 2,
+            'status_alokasi' => 'belum_fix',
+            'tipe_alokasi' => 'pembimbing',
+        ]);
+
+        return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
+    }
+
+    public function fixAlokasi($id_pengajuan)
+    {
+        // Update status pengajuan pembimbing jadi DITERIMA
+        $id_pengajuan = $request->input('id_pengajuan');
+
+        $pengajuan = DB::table('pengajuan_pembimbing')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->first();
+
+        if (!$pengajuan) {
+            return redirect()->back()->with('error', 'Pengajuan tidak ditemukan!');
+        }
+
+        DB::table('pengajuan_pembimbing')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->update([
+                'status_pengajuan' => 'diterima',
+                'updated_at' => now(),
+            ]);
+
+        $pembimbing1 = DB::table('dosen')->where('nip', request('pembimbing1_nip'))->first();
+        $pembimbing2 = DB::table('dosen')->where('nip', request('pembimbing2_nip'))->first();
+
+        if (!$pembimbing1 || !$pembimbing2) {
+            return redirect()->back()->with('error', 'Pembimbing tidak ditemukan!');
+        }
+
+        // Update alokasi dosen jadi FIX
+        DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('nip', $pembimbing1->nip)
+            ->update([
+                'urutan_prioritas_terpilih' => 1,
+                'status_alokasi' => 'fix',
+                'tipe_alokasi' => 'pembimbing',
+            ]);
+
+        DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('nip', $pembimbing2->nip)
+            ->update([
+                'urutan_prioritas_terpilih' => 2,
+                'status_alokasi' => 'fix',
+                'tipe_alokasi' => 'pembimbing',
+            ]);
+            
+        $kota = DB::table('kota')
+            ->where('id_kota', $pengajuan->id_kota)
+            ->first();
+
+        if (!$kota) {
+            return redirect()->back()->with('error', 'Kota tidak ditemukan!');
+        }
+
+        $mahasiswaKota = DB::table('mahasiswa')
+            ->where('id_kota', $kota->id_kota)
+            ->get(['id_prodi']);
+
+        // Update kuota dosen
+        foreach ($mahasiswaKota as $mahasiswa) {
+            DB::table('kuota_membimbing')
+                ->where('nip', $pembimbing1->nip)
+                ->where('id_prodi', $mahasiswa->id_prodi)
+                ->decrement('jumlah', 1);  
+        
+            DB::table('kuota_membimbing')
+                ->where('nip', $pembimbing2->nip)
+                ->where('id_prodi', $mahasiswa->id_prodi)
+                ->decrement('jumlah', 1);  
+        }
+
+        return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
+
+    }
 }

@@ -48,6 +48,8 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     
         // route JSON
         Route::get('/getDetailDosen', [AlokasiPembimbingv2Controller::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPembimbingv2Controller::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPembimbingv2Controller::class, 'updateAlokasi'])->name('updateAlokasi');
     });
 
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
