@@ -10,7 +10,7 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => '', 'label' => 'Penilaian Seminar II']
+                ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]
                 ])
         @endcomponent
@@ -107,64 +107,77 @@
 
 
         <!-- Form Penilaian -->
-        @php
-            $kriteriaPenilaian = $detailInformasiFta->first()?->kriteriaPenilaian;
-
-            if (isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false) {
-                $actionUrl = route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
-            } else {
-                $actionUrl = route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
-            }
-        @endphp
-        <form action="{{ $actionUrl }}" method="POST">
+        <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
-            @if(isset($kriteriaPenilaian) && $kriteriaPenilaian->first()?->nilaiKriteria->isNotEmpty() ?? false)
-                @method('PATCH')
-            @else
-                @method('POST')
-            @endif
             <div class="row mt-4">
                 <div class="col-md-12">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
+                    @php
+                        $all   = $detailInformasiFta->first()->kriteriaPenilaian;
+                        $secA  = $all->slice(0, 2);
+                        $secB  = $all->slice(2, 2);
+                        $mhs   = $keteranganUmumPenilaian->mahasiswa;
+                    @endphp
+
+                    <table class="table table-bordered text-center">
+                        <thead class="thead-dark align-middle">
                             <tr>
-                                <th rowspan="2" class="align-content-center">No</th>
-                                <th rowspan="2" class="align-content-center">Kriteria Penilaian Penguji</th>
-                                <th rowspan="2" class="align-content-center">Bobot Nilai</th>
-                                <th colspan="{{ count($keteranganUmumPenilaian->mahasiswa) }}">Nilai Perorangan</th>
+                                <th rowspan="3">No</th>
+                                <th rowspan="3">Kriteria Penilaian Penguji</th>
+                                <th rowspan="3">Bobot<br>Nilai</th>
+                                <th colspan="{{ count($mhs) }}" rowspan="2">Nilai Perorangan</th>
                             </tr>
+                            <tr></tr>
                             <tr>
-                                @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
-                                    <th data-toggle="popover" data-content="{{ $mhs->user->nama }}">{{ $key + 1 }}</th>
+                                @foreach($mhs as $i => $item)
+                                    <th>{{ $i + 1 }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($detailInformasiFta->first()?->kriteriaPenilaian ?? [] as $index => $kriteria)
+                            {{-- Section A --}}
+                            <tr class="table-secondary">
+                                <td colspan="{{ 3 + count($mhs) }}"><strong>Luaran Tugas Akhir</strong></td>
+                            </tr>
+                            @foreach($secA as $i => $krit)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $kriteria->nama_kriteria }}
-                                        @if ($kriteria->rubrik->count() > 0)
-                                            <ul>
-                                                @foreach ($kriteria->rubrik as $rubrik)
-                                                    <li>{{ $rubrik->nama_rubrik }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
-                                    </td>
-                                    <td>{{ $kriteria->bobot_kriteria }} %</td>
-                                    @foreach($keteranganUmumPenilaian->mahasiswa as $key => $mhs)
-                                        @php
-                                            $nilai = isset($kriteria->nilaiKriteria[$key]) ? $kriteria->nilaiKriteria[$key]->nilai_kriteria : '';
-                                        @endphp
+                                    <td>{{ $i + 1 }}</td>
+                                    <td class="text-left">{{ $krit->nama_kriteria }}</td>
+                                    <td>{{ $krit->bobot_kriteria }}%</td>
+                                    @foreach($mhs as $key => $item)
                                         <td>
-                                            <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                            <input type="number"
+                                                   name="nilai{{ $key }}[]"
+                                                   class="form-control form-control-sm"
+                                                   min="0" max="100"
+                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                            
+                            {{-- Section B --}}
+                            <tr class="table-secondary">
+                                <td colspan="{{ 3 + count($mhs) }}"><strong>Proses Bimbingan</strong></td>
+                            </tr>
+                            @foreach($secB as $i => $krit)
+                                <tr>
+                                    <td>{{ $i + i }}</td>
+                                    <td class="text-left">{{ $krit->nama_kriteria }}</td>
+                                    <td>{{ $krit->bobot_kriteria }}%</td>
+                                    @foreach($mhs as $key => $item)
+                                        <td>
+                                            <input type="number"
+                                                   name="nilai{{ $key }}[]"
+                                                   class="form-control form-control-sm"
+                                                   min="0" max="100"
+                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
                                         </td>
                                     @endforeach
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+
                 </div>
             </div>
 
