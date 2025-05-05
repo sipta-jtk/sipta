@@ -1456,6 +1456,10 @@
             title = 'Tambah SRS Yudisium';
         } else if (type === 'btn-tambah-sdd') {
             title = 'Tambah SDD Yudisium';
+        } else if (type === 'btn-tambah-sbm') {
+            title = 'Tambah Dokumen Surat Bebas Masalah';
+        } else if (type === 'btn-tambah-toeic') {
+            title = 'Tambah Dokumen Hasil TOEIC';
         }
 
         $('#TambahDokumen .modal-title').text(title);
