@@ -165,7 +165,7 @@ class RepositoryController extends Controller
                 'deskripsi' => 'required|string',
                 $isLink ? 'repository_url' : 'file' => $isLink
                     ? 'required|url|max:255'
-                    : 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                    : 'required|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
             ];
 
             // Validasi khusus
