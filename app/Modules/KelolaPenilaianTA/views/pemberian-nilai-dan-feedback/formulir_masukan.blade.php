@@ -57,7 +57,7 @@
             <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada Hari/Tanggal</strong> <br>
-                <span>{{ $jadwal ? \Carbon\Carbon::parse($jadwal->tanggal)->format('d-m-Y') : '-' }}</span>
+                <span>{{ $jadwal ? \Carbon\Carbon::parse($jadwal->tanggal)->translatedFormat('d F Y') : '-' }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
