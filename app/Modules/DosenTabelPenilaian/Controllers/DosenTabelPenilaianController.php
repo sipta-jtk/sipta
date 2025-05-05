@@ -27,9 +27,8 @@ class DosenTabelPenilaianController extends Controller
         // Cari kota yang dibimbing atau diuji oleh dosen tersebut
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
             ->with(['pengajuanPembimbing.kota.penjadwalan', 
-                'pengajuanPembimbing.kota.mahasiswa.nilaiKriteria' => function ($query) use ($nip) {
-                    $query->where('nip', $nip);
-                }])
+                'pengajuanPembimbing.kota.mahasiswa',
+                ])
             ->get()
             ->pluck('pengajuanPembimbing.kota.penjadwalan')
             ->flatten()
@@ -39,10 +38,10 @@ class DosenTabelPenilaianController extends Controller
         $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip) {
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
             $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip) {
-                return $mahasiswa->nilaiKriteria->where('nip', $nip)->isNotEmpty();
+                return $mahasiswa->nilaiKategori->where('nip', $nip)->isNotEmpty();
             });
             $statusPenilaian = $mahasiswa->flatMap(function ($mhs) use ($nip) {
-                return $mhs->nilaiKriteria->where('nip', $nip)->pluck('status_penilaian_dosen');
+                return $mhs->nilaiKategori->where('nip', $nip)->pluck('status_penilaian_dosen');
             })->unique()->first();
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
@@ -56,7 +55,7 @@ class DosenTabelPenilaianController extends Controller
                 'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
                 'id_kota' => $item->kota->id_kota,
                 'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
-                'status_penilaian' => $statusPenilaian ?? 'Belum dinilai',
+                'status_penilaian' => $statusPenilaian,
                 'namaFta' => match ($item->agenda) {
                     'seminar_3' => 'seminar-iii',
                     'sidang' => 'sidang-akhir',

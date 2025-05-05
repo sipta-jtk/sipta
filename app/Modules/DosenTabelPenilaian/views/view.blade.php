@@ -42,7 +42,7 @@
                 <td>{{ $item['judul'] }}</td>
                 <td>{{ $item['kota'] }}</td>
                 <td>
-                    @if ($item['status_penilaian'] === 'draf')
+                    @if ($item['status_penilaian'] === 'draf' || $item['status'] === 'Belum dinilai')
                     <div class="mb-2">
                         <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
                             class="btn btn-primary w-100">Nilai</a>
