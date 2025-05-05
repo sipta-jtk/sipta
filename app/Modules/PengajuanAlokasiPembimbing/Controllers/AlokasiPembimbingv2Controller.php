@@ -51,16 +51,20 @@ class AlokasiPembimbingv2Controller extends Controller
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama')
             ->get();
 
-        // dd($data_pengajuan);
+        $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
+
 
         return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
-            'dosenList' => $dosenList
+            'dosenList' => $dosenList,
+            'list_prodi' => $prodiList
         ]);
     }
 
     public function getDetailDosen(): JsonResponse
     {
+        $allProdi = DB::table('prodi')->pluck('nama_prodi', 'id_prodi');
+
         $dosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
@@ -69,59 +73,43 @@ class AlokasiPembimbingv2Controller extends Controller
             ->get();
 
         $kuota = DB::table('kuota_membimbing')
-            ->select('nip', 'id_prodi', DB::raw('SUM(jumlah) as total'))
-            ->groupBy('nip', 'id_prodi')
+            ->select('nip', 'id_prodi', 'jumlah')
             ->get()
             ->groupBy('nip');
 
-        $prodi = DB::table('prodi')->get()->keyBy('id_prodi');
+        $terpakai = DB::table('alokasi_dosen')
+            ->join('mahasiswa', 'alokasi_dosen.nip', '=', 'mahasiswa.nim')
+            ->select('alokasi_dosen.nip', 'mahasiswa.id_prodi', DB::raw('COUNT(*) as total'))
+            ->groupBy('alokasi_dosen.nip', 'mahasiswa.id_prodi')
+            ->get()
+            ->groupBy('nip');
 
-        // Gabungkan data dosen dengan kuota berdasarkan prodi (D3/D4)
-        $result = $dosen->map(function ($item) use ($kuota, $prodi) {
+        $result = $dosen->map(function ($item) use ($kuota, $terpakai, $allProdi) {
             $nip = $item->nip;
-            $kuotaDosen = $kuota[$nip] ?? collect();
 
-            $d3 = $kuotaDosen->firstWhere('id_prodi', 1)?->total ?? 0;
-            $d4 = $kuotaDosen->firstWhere('id_prodi', 2)?->total ?? 0;
+            $kuotaDosen = $kuota[$nip] ?? collect();
+            $terpakaiDosen = $terpakai[$nip] ?? collect();
+
+            $mhs = [];
+            $kuotas = [];
+            $kelompok = [];
+
+            foreach ($allProdi as $id => $namaProdi) {
+                $kode = substr($namaProdi, 0, 2); // Ambil D3, D4, S1, dst
+                $mhs[$kode] = $terpakaiDosen->firstWhere('id_prodi', $id)?->total ?? 0;
+                $kuotas[$kode] = $kuotaDosen->firstWhere('id_prodi', $id)?->jumlah ?? 0;
+                $kelompok[$kode] = 0;
+            }
 
             return [
-                'nama' => $item->nama,
+                'dosenName' => $item->nama,
                 'nip' => $item->nip,
                 'id' => $item->id_dosen,
-                'kuota' => [
-                    'D3' => [
-                        'terpakai' => $d3,
-                        'maksimal_mhs' => $prodi[1]->maksimal_mahasiswa_bimbingan ?? 0,
-                        'maksimal_kota' => $prodi[1]->maksimal_anggota_kota ?? 0
-                    ],
-                    'D4' => [
-                        'terpakai' => $d4,
-                        'maksimal_mhs' => $prodi[2]->maksimal_mahasiswa_bimbingan ?? 0,
-                        'maksimal_kota' => $prodi[2]->maksimal_anggota_kota ?? 0
-                    ],
-                ]
+                'mhs' => $mhs,
+                'kuota' => $kuotas,
+                'kelompok' => $kelompok
             ];
         });
-
-        // dd($result);
-        return response()->json($result->map(function ($item) {
-            return [
-                'dosenName' => $item['nama'],
-                'nip' => $item['nip'],
-                'id' => $item['id'],
-                'mhs' => [
-                    'D3' => $item['kuota']['D3']['terpakai'],
-                    'D4' => $item['kuota']['D4']['terpakai'],
-                ],
-                'kuota' => [
-                    'D3' => $item['kuota']['D3']['maksimal_mhs'],
-                    'D4' => $item['kuota']['D4']['maksimal_mhs'],
-                ],
-                'kelompok' => [
-                    'D3' => $item['kuota']['D3']['maksimal_kota'],
-                    'D4' => $item['kuota']['D4']['maksimal_kota'],
-                ]
-            ];
-        }));
+        return response()->json($result);
     }
 }
