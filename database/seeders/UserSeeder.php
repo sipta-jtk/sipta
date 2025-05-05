@@ -36,7 +36,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('adec123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
-                'photo' => 'ade_chandra_nugraha,_s.si.,_m.t..png'
+                'photo' => 'ade_chandra_nugraha,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196810141993032002',
@@ -45,7 +46,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('anir123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
-                'photo' => 'ani_rahmani,_s.si.,_m.t..png'
+                'photo' => 'ani_rahmani,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197201061999031002',
@@ -54,7 +56,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('bamb123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
-                'photo' => 'bambang_wisnuadhi,_s.si.,_m.t..png'
+                'photo' => 'bambang_wisnuadhi,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196012261992031001',
@@ -63,7 +66,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('didi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
-                'photo' => 'didik_suwito_pribadi,_bscs..png'
+                'photo' => 'didik_suwito_pribadi,_bscs..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196101141992021001',
@@ -72,7 +76,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('eddy123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567913',
-                'photo' => 'eddy_b._soewono,_drs.,_m.kom..png'
+                'photo' => 'eddy_b._soewono,_drs.,_m.kom..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198009162009122001',
@@ -81,7 +86,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('fitr123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567914',
-                'photo' => 'fitri_diani,_s.si.,_m.t..png'
+                'photo' => 'fitri_diani,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198604122014041001',
@@ -90,7 +96,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('ghif123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567915',
-                'photo' => 'ghifari_munawar,_s.t.,_m.t..png'
+                'photo' => 'ghifari_munawar,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198502102015042001',
@@ -99,7 +106,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('adeh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567916',
-                'photo' => 'ade_hodijah,_s.t.,_m.t..png'
+                'photo' => 'ade_hodijah,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197604182001121004',
@@ -108,7 +116,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('iwan123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567917',
-                'photo' => 'iwan_awaludin,_s.t.,_m.t._.png'
+                'photo' => 'iwan_awaludin,_s.t.,_m.t._.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198012122008122001',
@@ -117,7 +126,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('idas123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567918',
-                'photo' => 'ida_suhartini,_s.kom.,_mmsi..png'
+                'photo' => 'ida_suhartini,_s.kom.,_mmsi..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198004192005011002',
@@ -126,7 +136,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('irwa123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567919',
-                'photo' => 'irwan_setiawan,_s.si.,_m.t..png'
+                'photo' => 'irwan_setiawan,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196208151990031001',
@@ -135,7 +146,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('iraw123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567920',
-                'photo' => 'irawan_thamrin,_ir.,_m.t..png'
+                'photo' => 'irawan_thamrin,_ir.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198104072006041001',
@@ -144,7 +156,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('dr.p123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567921',
-                'photo' => 'dr._priyanto_hidayatullah,_st.,m.sc..png'
+                'photo' => 'dr._priyanto_hidayatullah,_st.,m.sc..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196210211993031002',
@@ -153,7 +166,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('jonn123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567922',
-                'photo' => 'jonner_hutahaean,_bset.,_m.info.sys..png'
+                'photo' => 'jonner_hutahaean,_bset.,_m.info.sys..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196610181995121001',
@@ -162,7 +176,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('joel123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567923',
-                'photo' => 'joe_lian_min,_m.eng..png'
+                'photo' => 'joe_lian_min,_m.eng..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196312131992012001',
@@ -171,7 +186,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('dr.n123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567924',
-                'photo' => 'dr._nurjannah_syakrani,_dra.,_m.t..png'
+                'photo' => 'dr._nurjannah_syakrani,_dra.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197109031999032001',
@@ -180,7 +196,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sant123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567925',
-                'photo' => 'santi_sundari,_s.si.,_m.t..png'
+                'photo' => 'santi_sundari,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196303161995121001',
@@ -189,7 +206,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('supr123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567926',
-                'photo' => 'suprihanto,_bsee.,_m.sc..png'
+                'photo' => 'suprihanto,_bsee.,_m.sc..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196904041998031001',
@@ -198,7 +216,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('seti123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567927',
-                'photo' => 'setiadi_rachmat,_m.eng..png'
+                'photo' => 'setiadi_rachmat,_m.eng..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196111091993032001',
@@ -207,7 +226,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('dr.t123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567928',
-                'photo' => 'dr._transmissia_semiawan,_bscs.,_m.it..png'
+                'photo' => 'dr._transmissia_semiawan,_bscs.,_m.it..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '196009281994031001',
@@ -216,7 +236,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('urip123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567929',
-                'photo' => 'urip_teguh_setijohatmo,_bscs.,_m.kom..png'
+                'photo' => 'urip_teguh_setijohatmo,_bscs.,_m.kom..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197912242008121001',
@@ -225,7 +246,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('yadh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567930',
-                'photo' => 'yadhi_adhitia_p.,_s.t..png'
+                'photo' => 'yadhi_adhitia_p.,_s.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197407182001121002',
@@ -234,7 +256,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('yudi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567931',
-                'photo' => 'yudi_widhiyasana,_s.si.,_m.t..png'
+                'photo' => 'yudi_widhiyasana,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198604212018031001',
@@ -243,7 +266,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('mais123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567932',
-                'photo' => 'maisevli_harika,_s.st.,_m.t.,_m.eng.png'
+                'photo' => 'maisevli_harika,_s.st.,_m.t.,_m.eng.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198801292015041003',
@@ -252,7 +276,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('zulk123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567933',
-                'photo' => 'zulkifli_arsyad,_s.t.,_m.t..png'
+                'photo' => 'zulkifli_arsyad,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198705172019031004',
@@ -261,7 +286,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('akhm123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567934',
-                'photo' => 'akhmad_bakhrun,_s.kom,_m.t..png'
+                'photo' => 'akhmad_bakhrun,_s.kom,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199304262019032028',
@@ -270,7 +296,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('apri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567935',
-                'photo' => 'aprianti_nanda_sari,_s.t.,_m.kom..png'
+                'photo' => 'aprianti_nanda_sari,_s.t.,_m.kom..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198405122019031008',
@@ -279,7 +306,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('ardh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567936',
-                'photo' => 'ardhian_ekawijana,_s.t.,_m.t..png'
+                'photo' => 'ardhian_ekawijana,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198906102019032019',
@@ -288,7 +316,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('asri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567937',
-                'photo' => 'asri_maspupah,_s.s.t.,_m.t..png'
+                'photo' => 'asri_maspupah,_s.s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198911032019031019',
@@ -297,7 +326,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('beri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567938',
-                'photo' => 'beri_noviansyah,_s.kom.,_m.t..png'
+                'photo' => 'beri_noviansyah,_s.kom.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198409012019031008',
@@ -306,7 +336,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('chol123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567939',
-                'photo' => 'cholid_fauzi,_s.t.,_m.t..png'
+                'photo' => 'cholid_fauzi,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199210222019032018',
@@ -315,7 +346,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('hash123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567940',
-                'photo' => 'hashri_hayati,_s.t.,_m.t..png'
+                'photo' => 'hashri_hayati,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199301062019031017',
@@ -324,7 +356,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('lukm123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567941',
-                'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png'
+                'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199105302019031019',
@@ -333,7 +366,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567942',
-                'photo' => 'muhammad_rizqi_sholahuddin,_s.si.,_m.t..png'
+                'photo' => 'muhammad_rizqi_sholahuddin,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199112182019032014',
@@ -342,7 +376,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('siti123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567943',
-                'photo' => 'siti_dwi_setiarini,_s.si.,_m.t..png'
+                'photo' => 'siti_dwi_setiarini,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198903252019032023',
@@ -351,7 +386,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('srir123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567944',
-                'photo' => 'sri_ratna_wulan,_s.pd.,_m.t..png'
+                'photo' => 'sri_ratna_wulan,_s.pd.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198608202019031014',
@@ -360,7 +396,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('tris123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567945',
-                'photo' => 'trisna_gelar,_s.t.,_m.kom..png'
+                'photo' => 'trisna_gelar,_s.t.,_m.kom..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198706302019031011',
@@ -369,7 +406,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('wend123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567946',
-                'photo' => 'wendi_wirasta,_s.t.,_m.t..png'
+                'photo' => 'wendi_wirasta,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199003022019032019',
@@ -378,7 +416,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('rahi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567947',
-                'photo' => 'rahil_jumiyani,_s.st.,_m.sc..png'
+                'photo' => 'rahil_jumiyani,_s.st.,_m.sc..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199312282019031013',
@@ -387,7 +426,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('djok123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567948',
-                'photo' => 'djoko_cahyo_utomo_lieharyani,_s.kom.,_m.mt..png'
+                'photo' => 'djoko_cahyo_utomo_lieharyani,_s.kom.,_m.mt..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199209092019031015',
@@ -396,7 +436,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567949',
-                'photo' => 'muhammad_riza_alifi,_s.t.,_m.t..png'
+                'photo' => 'muhammad_riza_alifi,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199106142019032022',
@@ -405,7 +446,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sofy123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567950',
-                'photo' => 'sofy_fitriani,_s.s.t.,_m.kom.png'
+                'photo' => 'sofy_fitriani,_s.s.t.,_m.kom.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '199106142019032000',
@@ -414,7 +456,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('liar123!#'),
                 'role_user' => 'admin',
                 'no_whatsapp' => '081234567950',
-                'photo' => 'lia_rahmawati.png'
+                'photo' => 'lia_rahmawati.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524033',
@@ -423,7 +466,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('alis123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567951',
-                'photo' => 'alisha_nara_chandrakirana.png'
+                'photo' => 'alisha_nara_chandrakirana.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524034',
@@ -432,7 +476,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('arna123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567952',
-                'photo' => 'arnanda_prasatya.png'
+                'photo' => 'arnanda_prasatya.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524035',
@@ -441,7 +486,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('asri123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567953',
-                'photo' => 'asri_husnul_rosadi.png'
+                'photo' => 'asri_husnul_rosadi.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524036',
@@ -450,7 +496,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('bant123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567954',
-                'photo' => 'banteng_harisantoso.png'
+                'photo' => 'banteng_harisantoso.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524037',
@@ -459,7 +506,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('bhis123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567955',
-                'photo' => 'bhisma_chandra_yudha_setiawan.png'
+                'photo' => 'bhisma_chandra_yudha_setiawan.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524039',
@@ -468,7 +516,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('farh123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567956',
-                'photo' => 'farhan_muhammad_luthfi.png'
+                'photo' => 'farhan_muhammad_luthfi.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524040',
@@ -477,7 +526,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('fari123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567957',
-                'photo' => 'faris_abulkhoir.png'
+                'photo' => 'faris_abulkhoir.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524041',
@@ -486,7 +536,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('ferd123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567958',
-                'photo' => 'ferdi_ahmad_ariesta.png'
+                'photo' => 'ferdi_ahmad_ariesta.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524042',
@@ -495,7 +546,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('jeih123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567959',
-                'photo' => 'jeihan_ilham_kusumawardhana.png'
+                'photo' => 'jeihan_ilham_kusumawardhana.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524043',
@@ -504,7 +556,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('kean123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567960',
-                'photo' => 'keanu_rayhan_harits.png'
+                'photo' => 'keanu_rayhan_harits.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524044',
@@ -513,7 +566,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('maha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567961',
-                'photo' => 'mahardika_pratama.png'
+                'photo' => 'mahardika_pratama.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524045',
@@ -522,7 +576,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('moch123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567962',
-                'photo' => 'mochamad_fathur_rabbani.png'
+                'photo' => 'mochamad_fathur_rabbani.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524046',
@@ -531,7 +586,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567963',
-                'photo' => 'muhamad_agim.png'
+                'photo' => 'muhamad_agim.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524047',
@@ -540,7 +596,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567964',
-                'photo' => 'muhamad_fahri_yuwan_dwi_putra.png'
+                'photo' => 'muhamad_fahri_yuwan_dwi_putra.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524049',
@@ -549,7 +606,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567965',
-                'photo' => 'muhammad_daffa.png'
+                'photo' => 'muhammad_daffa.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524050',
@@ -558,7 +616,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567966',
-                'photo' => 'muhammad_hanif.png'
+                'photo' => 'muhammad_hanif.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524051',
@@ -567,7 +626,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567967',
-                'photo' => 'muhammad_rizki_nurmuttaqin.png'
+                'photo' => 'muhammad_rizki_nurmuttaqin.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524052',
@@ -576,7 +636,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('naia123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567968',
-                'photo' => 'naia_siti_az-zahra.png'
+                'photo' => 'naia_siti_az-zahra.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524053',
@@ -585,7 +646,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('naji123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567969',
-                'photo' => 'najib_alimudin_fajri.png'
+                'photo' => 'najib_alimudin_fajri.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524054',
@@ -594,7 +656,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('niqa123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567970',
-                'photo' => 'niqa_nabila_nur_ihsani.png'
+                'photo' => 'niqa_nabila_nur_ihsani.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524055',
@@ -603,7 +666,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('rafi123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567971',
-                'photo' => 'rafif_shabi_prasetyo.png'
+                'photo' => 'rafif_shabi_prasetyo.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524056',
@@ -612,7 +676,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('reva123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567972',
-                'photo' => 'revandi_faudiamar_putra_sitepu.png'
+                'photo' => 'revandi_faudiamar_putra_sitepu.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524057',
@@ -621,7 +686,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('reza123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567973',
-                'photo' => 'reza_maulana_aziz.png'
+                'photo' => 'reza_maulana_aziz.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524058',
@@ -630,7 +696,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sals123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567974',
-                'photo' => 'salsabil_khoirunisa.png'
+                'photo' => 'salsabil_khoirunisa.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524059',
@@ -639,7 +706,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sara123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567975',
-                'photo' => 'sarah.png'
+                'photo' => 'sarah.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524060',
@@ -648,7 +716,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sept123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567976',
-                'photo' => 'septyana_agustina.png'
+                'photo' => 'septyana_agustina.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524061',
@@ -657,7 +726,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('thor123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567977',
-                'photo' => 'thoriq_muhammad_fadhli.png'
+                'photo' => 'thoriq_muhammad_fadhli.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524062',
@@ -666,7 +736,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('yusu123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567978',
-                'photo' => 'yusuf.png'
+                'photo' => 'yusuf.png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '221524063',
@@ -675,7 +746,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('zahr123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567979',
-                'photo' => 'zahran_anugerah_rizqullah.png'
+                'photo' => 'zahran_anugerah_rizqullah.png',
+                'status_user' => 'aktif'
             ]
         ];
 

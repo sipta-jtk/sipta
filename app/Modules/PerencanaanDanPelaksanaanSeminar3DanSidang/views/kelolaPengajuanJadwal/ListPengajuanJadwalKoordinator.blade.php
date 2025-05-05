@@ -69,6 +69,9 @@
             <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
         </div>
         <div class="col-md-6 mb-2">
+            <p><strong>Ruangan:</strong> <span id="modalRuangan"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
             <p><strong>Status Verifikasi:</strong> <span id="modalStatus"></span></p>
         </div>
     </div>
@@ -98,8 +101,11 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     
+    
 
     <script>
+        const prefix = "{{ env('PREFIX_URL', 'sipta') }}";
+        
         $(document).ready(function() {
             let data = @json($dataPengajuan);
             console.log(data);
@@ -135,7 +141,7 @@
                         }
                     },
                     { data: "tanggal", className: 'text-center',},
-                    { data: "id_ruangan", className: 'text-center',},
+                    { data: "nama_ruangan", className: 'text-center',},
                     { data: "sesi", className: 'text-center',},
                     { 
                         data: null,
@@ -147,13 +153,12 @@
                                         data-judul="${row.judul_ta}" 
                                         data-agenda="${row.agenda}"
                                         data-tanggal="${row.tanggal}" 
-                                        data-ruangan="${row.id_ruangan}" 
+                                        data-ruangan="${row.nama_ruangan}" 
                                         data-sesi="${row.sesi}"
                                         data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
-                        },
-                        orderable: false
+                        }
                     }
                 ],
                 language: {
@@ -183,7 +188,6 @@
 
         $(document).on('click', '.btn-proses', function() {
             let tipe = @json($tipe);
-            console.log(tipe);
             let id_penjadwalan = $(this).data('idpenjadwalan');
             let id = $(this).data('kelompok');
             let judul = $(this).data('judul');
@@ -212,7 +216,7 @@
             $('#inputId').val(id);
 
             // Set action form
-            $('#formVerifikasi').attr('action', `/koordinator-kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
+            $('#formVerifikasi').attr('action', `/${prefix}/koordinator-kelola-pengajuan-jadwal/${tipe}/verifikasi/${id_penjadwalan}`);
 
             // Tampilkan modal
             $('#modalPengajuan').modal('show');

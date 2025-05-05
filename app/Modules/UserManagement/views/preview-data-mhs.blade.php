@@ -6,7 +6,7 @@
     <h1>Data Import Mahasiswa</h1>
 @stop
 @section('content')
-<a href="{{route('manage.mhs')}}" class="btn btn-danger mb-3">
+<a href="{{route('manage.mhs')}}" class="btn btn-primary mb-3">
     <i class="fa fa-back"></i> Kembali
 </a>
 <div class="card">

@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Dokumen seminar 3')
+@section('title', 'Dokumen Yudisium')
 
 @section('content_header')
-<h1 class="mb-3 text-left">Dokumen seminar 3</h1>
+<h1 class="mb-3 text-left">Dokumen Yudisium</h1>
 @stop
 
 
 @section('content')
 
 {{-- Navigasi Tab --}}
-<ul class="nav nav-tabs mb-3" id="tabseminar3" role="tablist">
+<ul class="nav nav-tabs mb-3" id="tabyudisium" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="tab-laporan-tab" data-toggle="tab" data-target="#tab-laporan" type="button" role="tab" aria-controls="tab-laporan" aria-selected="true">Laporan</button>
     </li>
@@ -28,12 +28,12 @@
     </li>
 </ul>
 
-<div class="tab-content" id="tabseminar3Content">
+<div class="tab-content" id="tabyudisiumContent">
     {{-- Tab: Laporan --}}
     <div class="tab-pane fade show active" id="tab-laporan" role="tabpanel" aria-labelledby="tab-laporan-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Laporan seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Laporan Yudisium</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -217,13 +217,9 @@
                                             <i class="fas fa-project-diagram mr-1"></i> Kode FTA
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option value="FTA-09">FTA-09 - Kehadiran Seminar II</option>
-                                            <option value="FTA-09a">FTA-09a - Lesson Learnt Seminar II</option>
-                                            <option value="FTA-10">FTA-10 - Bukti Bimbingan Seminar III</option>
-                                            <option value="FTA-10a">FTA-10a - Resume Bimbingan</option>
-                                            <option value="FTA-11">FTA-11 - Penilaian Seminar III</option>
-                                            <option value="FTA-12">FTA-12 - Masukan Seminar III</option>
-                                            <option value="FTA-23">FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir</option>
+                                            <option value="FTA-18">FTA-18 - Bukti telah menyelesaikan hasil revisi laporan</option>
+                                            <option value="FTA-19">FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan</option>
+                                            <option value="FTA-19a">FTA-19a - Bukti telah merevisi abstrak dan tata tulis</option>
                                         </select>
                                     </div>
                                 </div>
@@ -448,7 +444,7 @@
     <div class="tab-pane fade" id="tab-srs" role="tabpanel" aria-labelledby="tab-srs-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS Yudisium</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -581,7 +577,7 @@
     <div class="tab-pane fade" id="tab-sdd" role="tabpanel" aria-labelledby="tab-sdd-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SDD seminar 3</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen SDD Yudisium</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -714,7 +710,7 @@
 <!-- BAGIAN MODAL -->
 
 <!-- TAMBAH DOKUMEN -->
-<x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen seminar 3" theme="blue" size="lg">
+<x-adminlte-modal id="TambahDokumen" title="Tambah Dokumen Yudisium" theme="blue" size="lg">
     <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
@@ -732,13 +728,9 @@
 
                         @php
                         $ftaOptions = [
-                        ['value' => 'FTA-09', 'text' => 'FTA-09 - Kehadiran Seminar II'],
-                        ['value' => 'FTA-09a', 'text' => 'FTA-09a - Lesson Learnt Seminar II'],
-                        ['value' => 'FTA-10', 'text' => 'FTA-10 - Bukti Bimbingan Seminar III'],
-                        ['value' => 'FTA-10a', 'text' => 'FTA-10a - Resume Bimbingan'],
-                        ['value' => 'FTA-11', 'text' => 'FTA-11 - Penilaian Seminar III'],
-                        ['value' => 'FTA-12', 'text' => 'FTA-12 - Masukan Seminar III'],
-                        ['value' => 'FTA-23', 'text' => 'FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir'],
+                        ['value' => 'FTA-18', 'text' => 'FTA-18 - Bukti telah menyelesaikan hasil revisi laporan'],
+                        ['value' => 'FTA-19', 'text' => 'FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan'],
+                        ['value' => 'FTA-19a', 'text' => 'FTA-19a - Bukti telah merevisi abstrak dan tata tulis'],
                         ];
                         @endphp
 
@@ -774,7 +766,7 @@
 </x-adminlte-modal>
 
 <!-- EDIT DOKUMEN -->
-<x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen seminar 3" theme="yellow" size="xl">
+<x-adminlte-modal id="UbahDokumen" title="Ubah Dokumen Yudisium" theme="yellow" size="xl">
     <form id="editDocumentForm" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -1182,16 +1174,16 @@
         var showKodeFTA = false;
 
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan seminar 3';
+            title = 'Tambah Laporan Yudisium';
         } else if (type === 'btn-tambah-fta') {
-            title = 'Tambah FTA seminar 3';
+            title = 'Tambah FTA Yudisium';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint seminar 3';
+            title = 'Tambah PowerPoint Yudisium';
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS seminar 3';
+            title = 'Tambah SRS Yudisium';
         } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD seminar 3';
+            title = 'Tambah SDD Yudisium';
         }
 
         $('#TambahDokumen .modal-title').text(title);

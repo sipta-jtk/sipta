@@ -25,6 +25,10 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
         Dokumen Seminar 2
         @elseif ($kategori === 'seminar3')
         Dokumen Seminar 3
+        @elseif ($kategori === 'sidang')
+        Dokumen Sidang Akhir
+        @elseif ($kategori === 'yudisium')
+        Dokumen Yudisium
         @else
         Daftar Dokumen
         @endif
@@ -45,6 +49,10 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
                 Dokumen Seminar 2
                 @elseif ($kategori === 'seminar3')
                 Dokumen Seminar 3
+                @elseif ($kategori === 'sidang')
+                Dokumen Sidang Akhir
+                @elseif ($kategori === 'yudisium')
+                Dokumen Yudisium
                 @else
                 Daftar Dokumen
                 @endif
@@ -61,6 +69,10 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
 @include('Repository.views.cardSeminar2')
 @elseif ($kategori === 'seminar3')
 @include('Repository.views.cardSeminar3')
+@elseif ($kategori === 'sidang')
+@include('Repository.views.cardSidang')
+@elseif ($kategori === 'yudisium')
+@include('Repository.views.cardYudisium')
 @endif
 @stop
 

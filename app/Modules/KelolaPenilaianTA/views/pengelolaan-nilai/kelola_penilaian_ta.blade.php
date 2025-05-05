@@ -34,32 +34,33 @@
                 <tr>
                     <th class="bg-dark">Kategori</th>
                     <th class="bg-dark">Program Studi</th>
-                    <th class="bg-dark">Aksi</th>
+                    <th class="bg-dark" style="width: 20%">Aksi</th>
                 </tr>
             </thead>
             <tbody id="kategori-table">
                 @foreach ($kategoriPenilaian as $index => $fta)
                     <tr class="kategori-row" data-kategori="{{ $fta->prodi->nama_prodi }}" 
                         @if ($index >= 4) hidden @endif>
-                        <td>{{ $fta->nama_fta }}</td>
-                        <td>{{ $fta->prodi->nama_prodi }}</td>
+                        <td class="text-center align-middle">{{ $fta->nama_fta }}</td>
+                        <td class="text-center align-middle">{{ $fta->prodi->nama_prodi }}</td>
                         <td>
-                            <div class="action d-flex flex-row align-items-center justify-content-center"> 
+                            <div class="action d-flex flex-column align-items-center justify-content-center gap-3">
+                                <a href="{{ route('kelola.penilaian.detail', ['namaFta' => Str::slug($fta->nama_fta), 'idProdi' => $fta->prodi->id_prodi]) }}" class="btn btn-primary w-100 buka-detail m-0">Buka Detail</a>
+
                                 @if (!in_array(strtolower($fta->nama_fta), ['seminar i', 'seminar ii']))
                                     @if (($fta->kategoriPenilaian->first()?->kunci_penilaian ?? 0) == 1)
-                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'buka']) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'buka']) }}" method="POST" class="w-100">
                                             @csrf
-                                            <button type="submit" class="btn btn-danger">Buka Kunci Penilaian</button>
+                                            <button type="submit" class="btn btn-danger w-100 m-0">Buka Kunci Penilaian</button>
                                         </form>
                                     @else
-                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'kunci']) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('kelola.penilaian.toggle-kunci', ['idKategori' => $fta->kategoriPenilaian->first?->id_kategori, 'action' => 'kunci']) }}" method="POST" class="w-100">
                                             @csrf
-                                            <button type="submit" class="btn btn-primary">Kunci Penilaian</button>
+                                            <button type="submit" class="btn btn-primary w-100 m-0">Kunci Penilaian</button>
                                         </form>
                                     @endif
                                 @endif
-                                <a href="{{ route('kelola.penilaian.detail', ['namaFta' => Str::slug($fta->nama_fta), 'idProdi' => $fta->prodi->id_prodi]) }}" class="btn btn-primary buka-detail" data-id="{{ $index }}">Buka Detail</a>
-                            </div>
+                            </div>                            
                         </td>
                     </tr>
                 @endforeach
