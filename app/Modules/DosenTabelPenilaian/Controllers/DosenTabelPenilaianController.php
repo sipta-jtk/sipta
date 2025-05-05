@@ -47,41 +47,25 @@ class DosenTabelPenilaianController extends Controller
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
                 'sesi' => $item->sesi,
-                'agenda' => $item->agenda,
+                'agenda' => match ($item->agenda) {
+                    'seminar_3' => 'Seminar 3',
+                    'sidang' => 'Sidang Akhir',
+                },
                 'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,
                 'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
                 'id_kota' => $item->kota->id_kota,
                 'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
                 'status_penilaian' => $statusPenilaian ?? 'Belum dinilai',
-                'id' => $item->agenda === 'seminar_3' ? 4 : ($item->agenda === 'sidang' ? 6 : 4)
+                'namaFta' => match ($item->agenda) {
+                    'seminar_3' => 'seminar-iii',
+                    'sidang' => 'sidang-akhir',
+                },
+                'id_prodi' => $mahasiswa->first()->id_prodi,
             ];
         });
 
         // Kembalikan response JSON
         return view('DosenTabelPenilaian.views.view', compact('penjadwalan'));
-    }
-
-    public function publikasikan(Request $request, $id_penjadwalan)
-    {
-        $nip = Auth::user()->dosen->nip; // Ambil NIP dosen yang login
-
-        // Cari semua nilai kriteria terkait penjadwalan dan dosen
-        $nilaiKriteria = NilaiKriteria::whereHas('mahasiswa.kota.penjadwalan', function ($query) use ($id_penjadwalan) {
-            $query->where('id_penjadwalan', $id_penjadwalan);
-        })->where('nip', $nip)->get();
-
-        // Update status_penilaian_dosen menjadi "dipublikasikan"
-        foreach ($nilaiKriteria as $nilai) {
-            $nilai->update(['status_penilaian_dosen' => 'dipublikasikan']);
-        }
-
-        // Redirect kembali ke halaman dengan pesan sukses
-        return redirect()->route('nilai.index')->with('success', 'Nilai berhasil dipublikasikan.');
-    }
-
-    public function getForm($id, $kota)
-    {
-        return redirect()->route('nilai.index');
     }
 }
