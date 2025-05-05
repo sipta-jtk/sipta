@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
 
+use App\Modules\UserManagement\Controllers\LogAktivitasController;
+
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest'])
@@ -179,6 +181,9 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
     Route::put('/program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
     Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+    //route untuk log aktivitas
+     Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
 
 });
 
