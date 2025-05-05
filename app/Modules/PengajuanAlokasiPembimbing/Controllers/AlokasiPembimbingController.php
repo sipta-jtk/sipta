@@ -23,43 +23,40 @@ class AlokasiPembimbingController extends Controller
 {
     public function index(): View
     {
-        return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion');
+        $data_pengajuan = PengajuanPembimbing::join('kota', 'pengajuan_pembimbing.id_kota', '=', 'kota.id_kota')
+            ->join('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
+            ->select('pengajuan_pembimbing.*', 'kota.nama_kota', 'kota.id_bidang', 'kota.judul_ta', 'bidang.bidang')
+            ->get();
 
+        foreach ($data_pengajuan as $key => $value) {
+            $listMahasiswaOnKelompok = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
+                ->where('id_kota', $value->id_kota)
+                ->get();
 
-        // $data_pengajuan = PengajuanPembimbing::join('kota', 'pengajuan_pembimbing.id_kota', '=', 'kota.id_kota')
-        //     ->join('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
-        //     ->select('pengajuan_pembimbing.*', 'kota.nama_kota', 'kota.id_bidang', 'kota.judul_ta', 'bidang.bidang')
-        //     ->get();
+            $listUsulanDosen = PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
+                ->where('id_pengajuan', $value->id_pengajuan_pembimbing)
+                ->get();
 
-        // foreach ($data_pengajuan as $key => $value) {
-        //     $listMahasiswaOnKelompok = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
-        //         ->where('id_kota', $value->id_kota)
-        //         ->get();
+                $preferensiDosen = PreferensiKota::join('dosen', 'preferensi_kota.nip', '=', 'dosen.nip')
+                ->where('preferensi_kota.id_kota', $value->id_kota)
+                ->select('dosen.id_dosen', 'dosen.nip')
+                ->limit(2)
+                ->get();
 
-        //     $listUsulanDosen = PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
-        //         ->where('id_pengajuan', $value->id_pengajuan_pembimbing)
-        //         ->get();
+            $data_pengajuan[$key]['mahasiswa'] = $listMahasiswaOnKelompok;
+            $data_pengajuan[$key]['usulan_dosen'] = $listUsulanDosen;
+            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen;
+        }
 
-        //         $preferensiDosen = PreferensiKota::join('dosen', 'preferensi_kota.nip', '=', 'dosen.nip')
-        //         ->where('preferensi_kota.id_kota', $value->id_kota)
-        //         ->select('dosen.id_dosen', 'dosen.nip')
-        //         ->limit(2)
-        //         ->get();
+        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
+            ->leftJoin('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
+            ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
+            ->get();
 
-        //     $data_pengajuan[$key]['mahasiswa'] = $listMahasiswaOnKelompok;
-        //     $data_pengajuan[$key]['usulan_dosen'] = $listUsulanDosen;
-        //     $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
-        // }
-
-        // $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
-        //     ->leftJoin('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
-        //     ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
-        //     ->get();
-
-        // return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
-        //     'list_pengajuan' => $data_pengajuan,
-        //     'dosenList' => $dosenList
-        // ]);
+        return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
+            'list_pengajuan' => $data_pengajuan,
+            'dosenList' => $dosenList
+        ]);
     }
 
     public function getDetailDosen($nip): JsonResponse

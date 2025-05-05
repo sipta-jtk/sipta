@@ -36,10 +36,15 @@
     </style>
 @stop
 
-@section('title', 'Alokasi Dosen Pembimbing')
+@section('title', 'Alokasi Dosen Penguji')
 
 @section('content')
-    <h1 class="mb-3">Alokasi Dosen Pembimbing</h1>
+    <form action="{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.submit') }}" method="POST" id="alokasiForm">
+        @csrf
+        <input type="hidden" id="dataToSend" name="dataToSend">
+    </form>
+
+    <h1 class="mb-3">Alokasi Dosen Penguji</h1>
 
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
@@ -94,13 +99,6 @@
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
                                                                                 Anggota Kelompok
-                                                                                <input type="hidden" name=""
-                                                                                    class="totalMhs"
-                                                                                    value="{{ $pengajuan->mahasiswa->count() }}">
-                                                                                <input type="hidden" name=""
-                                                                                    class="prodi"
-                                                                                    value="{{ $pengajuan->prodi }}">
-
                                                                             </div>
                                                                             <div class="p-1 pl-3">
                                                                                 @foreach ($pengajuan->mahasiswa as $mh)
@@ -114,7 +112,7 @@
                                                                             class="col-sm p-0">
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
-                                                                                Usulan Pembimbing
+                                                                                Usulan Penguji
                                                                             </div>
                                                                             <div class="p-1 pl-3">
                                                                                 @foreach ($pengajuan->usulan_dosen as $usulan)
@@ -127,7 +125,6 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <!-- ini pembimbing -->
                                                                 <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
                                                                     class="col-sm border-right border-dark p-0">
                                                                     <div class="row d-flex m-0 flex-row"
@@ -140,21 +137,16 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
                                                                                         <span
-                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            class="badge fw-normal">Penguji
                                                                                             1</span>
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        {{-- Pembimbing 1 --}}
-                                                                                        <input type="text"
-                                                                                            value="{{ $pengajuan->alokasi->first()?->id_dosen ?? '' }}"
-                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
+                                                                                        <input type="text" name=""
+                                                                                            id=""
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
-                                                                                            style="font-size: xx-large">
                                                                                             style="font-size: xx-large"
-                                                                                            value="JO"
-                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
-
+                                                                                            value="JO">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -162,10 +154,7 @@
                                                                                         <div
                                                                                             class="d-flex justify-content-between">
                                                                                             <button
-                                                                                                class="btn btn-sm btn-primary"
-                                                                                                onclick="
-                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val());
-                                                                                                ">
+                                                                                                class="btn btn-sm btn-primary">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
@@ -187,18 +176,16 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
                                                                                         <span
-                                                                                            class="badge fw-normal">Pembimbing
+                                                                                            class="badge fw-normal">Penguji
                                                                                             2</span>
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
-                                                                                        {{-- Pembimbing 2 --}}
-                                                                                        <input type="text"
-                                                                                            value="{{ $pengajuan->alokasi->get(1)?->id_dosen ?? '' }}"
-                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
+                                                                                        <input type="text" name=""
+                                                                                            id=""
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
-                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 2, 'belum_fix', 'pembimbing')">
+                                                                                            value="JO">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -206,10 +193,7 @@
                                                                                         <div
                                                                                             class="d-flex justify-content-between">
                                                                                             <button
-                                                                                                class="btn btn-sm btn-primary"
-                                                                                                onclick="
-                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val());
-                                                                                                ">
+                                                                                                class="btn btn-sm btn-primary">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
@@ -273,16 +257,16 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="kuota" id="filterQuota" onchange="filter()">
+                                            <input class="form-check-input" type="checkbox" value="kuota"
+                                                id="filterQuota">
                                             <label class="form-check-label" for="filterQuota">
                                                 <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi
                                                 Kuota
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="belum" id="filterUnassigned" onchange="filter()">
+                                            <input class="form-check-input" type="checkbox" value="belum"
+                                                id="filterUnassigned">
                                             <label class="form-check-label" for="filterUnassigned">
                                                 <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
                                             </label>
@@ -291,17 +275,8 @@
                                 </div>
                             </div>
                             <div class="card-footer text-right">
-                                <button type="button" id="clearFilter" class="btn btn-secondary btn-sm"
-                                    onclick="clearFilter()">Hapus Filter</button>
                                 <button type="button" id="applyFilter" class="btn btn-primary btn-sm">Terapkan</button>
                             </div>
-
-                            <script>
-                                function clearFilter() {
-                                    document.querySelectorAll('input[name="filterOption"]').forEach(input => input.checked = false);
-                                    filter();
-                                }
-                            </script>
                         </div>
                     </div>
 
@@ -324,15 +299,28 @@
     </div>
 @stop
 
+@php
+    $kuotaDosen[] = [
+        'dosenName' => 'Sri Ratna Wulan',
+        'id' => 'dosen-1',
+        'mhs' => [
+            'D3' => 1,
+            'D4' => 4,
+        ],
+        'kuota' => [
+            'D3' => 3,
+            'D4' => 5,
+        ],
+        'kelompok' => [
+            'D3' => 1,
+            'D4' => 1,
+        ],
+    ];
+@endphp
+
 @section('js')
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-    <script>
-        const prodiList = @json(collect($list_prodi)->mapWithKeys(function ($item) {
-                return [$item->id_prodi => substr($item->nama_prodi, 0, 2)];
-            }));
-    </script>
 
     <script>
         var DetailDosenTable;
@@ -355,6 +343,40 @@
             }
         });
 
+        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
+
+        // To push and update
+        // window.kuotaDosen.push = function(value) {
+        //     Array.prototype.push.call(this, value);
+        // };
+
+        window.kuotaDosen = {!! json_encode($kuotaDosen) !!};
+
+
+        setTimeout(() => {
+            // add kuotaDosen
+            kuotaDosen.push({
+                'dosenName': 'Sri Ratna Wulannnn',
+                'id': 'dosen-2',
+                'mhs': {
+                    'D3': 1,
+                    'D4': 10,
+                },
+                'kuota': {
+                    'D3': 3,
+                    'D4': 5,
+                },
+                'kelompok': {
+                    'D3': 1,
+                    'D4': 1,
+                },
+            });
+
+            console.log(kuotaDosen);
+            updateDataTable();
+        }, 3000);
+
+
         // To automatically close the sidebar, yk, we need extra space for this :V
         function adjustSidebar() {
             let toggleNav = $('a.nav-link[data-widget="pushmenu"]');
@@ -365,11 +387,6 @@
 
         $(document).ready(function() {
             adjustSidebar();
-
-            $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
-                window.kuotaDosen = data;
-                updateKuotaDosen();
-            });
 
             // Init dosenTable
             DetailDosenTable = $('#dosenTable').DataTable({
@@ -385,55 +402,58 @@
                     data: null,
                     render: function(data, type, row) {
                         return `
-                            <div class="d-flex justify-content-between align-items-start" style="gap: 8px;" id="detailDosen-${row.id}">
-                                <!-- Kolom Nama Dosen -->
-                                <div class="text-break" style="flex: 1; min-width: 0; word-break: break-word; white-space: normal;">
-                                    <span class="fw-bold">${row.dosenName}</span>
-                                </div>
+                            <div class="d-flex align-items-start justify-content-between"style="gap: 8px;">
+                                <span class="badge fw-normal" style="flex-shrink: 0;">${row.dosenName}</span>
+                                <span class="d-none">kuota belum</span>
 
-                                <!-- Kolom Tabel Kuota -->
-                                <div style="flex-shrink: 0;">
+                                <div style="flex-grow: 1;">
                                     <table class="table table-sm table-bordered mb-0">
                                         <thead class="text-center">
                                             <tr>
-                                                ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                            <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                        `).join('')}
-                                                <th class="p-1"><span class="badge fw-normal"></span></th>
+                                                <th class="p-1"><span class="badge fw-normal">D3</span>
+                                                </th>
+                                                <th class="p-1"><span class="badge fw-normal">D4</span>
+                                                </th>
+                                                <th class="p-1"><span class="badge fw-normal"></span>
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
-                                                ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                            <td class="p-1">
-                                                                                                <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                    ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                </span>
-                                                                                            </td>
-                                                                                        `).join('')}
+                                                <td class="p-1">
+                                                    <span class="badge fw-normal D3 ${row.mhs.D3 > row.kuota.D3 ? 'bg-danger' : ''}">
+                                                        ${row.mhs.D3}/${row.kuota.D3}
+                                                    </span>
+                                                </td>
+                                                <td class="p-1">
+                                                    <span class="badge fw-normal D4 ${row.mhs.D4 > row.kuota.D4 ? 'bg-danger' : ''}">
+                                                        ${row.mhs.D4}/${row.kuota.D4}
+                                                    </span>
+                                                </td>
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
-                                                ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                            <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                        `).join('')}
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D3}</span>
+                                                </td>
+                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok.D4}</span>
+                                                </td>
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                        `;
+                            `;
                     }
                 }, ],
             });
 
             setTimeout(() => {
-                DetailDosenTable.columns.adjust().responsive.recalc();
+                table.columns.adjust().responsive.recalc();
             }, 400);
 
             $('#dosenTable_filter input').on('keyup', function() {
-                DetailDosenTable.search(this.value).draw();
+                table.search(this.value).draw();
             });
 
             $('#dosenTable_filter').addClass('flex-grow-1 m-0');
@@ -464,131 +484,21 @@
             }, 1000);
         });
 
-        function updateKuotaDosen() {
+        function updateKuotaDosen(id_dosen, operator) {
             for (let i = 0; i < kuotaDosen.length; i++) {
-                kuotaDosen[i].mhs.D3 = 0;
-                kuotaDosen[i].mhs.D4 = 0;
-                kuotaDosen[i].kelompok.D3 = 0;
-                kuotaDosen[i].kelompok.D4 = 0;
-            }
-
-            $('.alokasiInputText').each(function() {
-                let id_dosen = $(this).val();
-
-                let index = kuotaDosen.findIndex(dosen => dosen.id === id_dosen);
-
-                let prodi = $(this).closest('tr').find('.prodi').val();
-                let prodiSplit = prodi.split('-');
-                let prodiCode = prodiSplit[0];
-
-                if (index !== -1) {
-                    let closestInput = $(this).closest('tr').find('.alokasiInputText').not(this);
-                    let closestValue = closestInput.val();
-                    if (closestValue == id_dosen) {
-                        $(closestInput).val('');
+                if (kuotaDosen[i].id === id_dosen) {
+                    if (operator === 'increment') {
+                        kuotaDosen[i].mhs.D4 += 1;
+                    } else if (operator === 'decrement') {
+                        kuotaDosen[i].mhs.D4 -= 1;
                     }
-                    if (id_dosen !== '') {
-                        let totalMhs = $(this).closest('tr').find('.totalMhs').val();
-                        totalMhs = parseInt(totalMhs);
-
-                        kuotaDosen[index].mhs[prodiCode] += totalMhs;
-                        kuotaDosen[index].kelompok[prodiCode]++;
-                    }
+                    updateDataTable();
+                    break;
                 }
-
-                updateDataTable();
-            });
-        }
-
-        function goToDetailDosen(id) {
-            let dosen = kuotaDosen.find(d => d.id === id);
-            if (dosen) {
-                let searchInput = $('#dosenTable_filter input');
-                searchInput.val(dosen.dosenName);
-                DetailDosenTable.search(dosen.dosenName).draw();
-            }
-        }
-
-        function filter() {
-            if ($('#filterQuota').is(':checked')) {
-                for (let i = 0; i < kuotaDosen.length; i++) {
-                    var save = false;
-                    for (const key in kuotaDosen[i].mhs) {
-                        if (kuotaDosen[i].mhs[key] > kuotaDosen[i].kuota[key]) {
-                            save = true;
-                            break;
-                        }
-                    }
-                    if (save) {
-                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
-                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
-                    } else {
-                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-none');
-                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-flex');
-                    }
-                }
-            } else if ($('#filterUnassigned').is(':checked')) {
-                for (let i = 0; i < kuotaDosen.length; i++) {
-                    if (Object.values(kuotaDosen[i].mhs).some(value => value > 0)) {
-                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-none');
-                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-flex');
-
-                    } else {
-                        $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
-                        $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
-                    }
-                }
-            } else {
-                for (let i = 0; i < kuotaDosen.length; i++) {
-                    $(`#detailDosen-${kuotaDosen[i].id}`).removeClass('d-none');
-                    $(`#detailDosen-${kuotaDosen[i].id}`).addClass('d-flex');
-                }
-            }
-        }
-
-        function savePembimbing(id_pengajuan, kode_dosen, urutan, status, tipe) {
-            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
-            if (dosen) {
-                $.ajax({
-                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.updateAlokasi') }}",
-                    type: "POST",
-                    data: {
-                        id_pengajuan_pembimbing: id_pengajuan,
-                        nip: dosen.nip,
-                        urutan_prioritas_terpilih: urutan,
-                        status_alokasi: status,
-                        tipe_alokasi: tipe,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            } else if (kode_dosen == '') {
-                $.ajax({
-                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.deleteAlokasi') }}",
-                    type: "POST",
-                    data: {
-                        id_pengajuan_pembimbing: id_pengajuan,
-                        urutan_prioritas_terpilih: urutan,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
             }
         }
 
         // onchange on .alokasiInputText
-        $('.alokasiInputText').on('change', function() {
-            updateKuotaDosen();
-        });
+        
     </script>
 @endsection
