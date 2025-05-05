@@ -18,6 +18,7 @@
 @stop
 
 @section('content')
+<div class="card p-4">
     <div class="p-2">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Daftar Formulir Penilaian TA</h3>
@@ -77,6 +78,7 @@
             </table>
         </div>
     </div>
+</div>
 @stop
 
 @section('css')
