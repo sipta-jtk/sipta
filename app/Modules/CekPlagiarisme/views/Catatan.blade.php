@@ -76,7 +76,7 @@
             required></textarea>
         <div class="d-flex pt-2 justify-content-end">
             <small class="text-muted me-auto my-auto" id="word-count">0/500 karakter</small>
-            <x-adminlte-button theme="success" class="bg-gradient-success border-0 mx-1" label="Kirim" type="submit" />
+            <x-adminlte-button id="submit-button" theme="success" class="bg-gradient-success border-0 mx-1" label="Kirim" type="submit" />
         </div>
     </div>
 </form>
@@ -127,7 +127,6 @@
                     <x-adminlte-button label="Simpan" theme="success" class="bg-gradient-success mx-1 border-0"
                         id="saveEditComment" type="button" />
                 </div>
-
             </form>
         </div>
     </div>
@@ -342,8 +341,9 @@
         // Character counter untuk textarea
         const commentInput = document.getElementById('comment-input');
         const charCount = document.getElementById('word-count');
+        const submitButton = document.getElementById('submit-button');
 
-        if (commentInput && charCount) {
+        if (commentInput && charCount && submitButton) {
             commentInput.addEventListener('input', function() {
                 const charCountValue = this.value.length;
 
@@ -355,21 +355,23 @@
 
                 if (charCountValue > 500) {
                     charCount.classList.add('over-limit');
+                    submitButton.disabled = true;
+                    this.classList.add('is-invalid');
                 } else {
                     charCount.classList.remove('over-limit');
+                    submitButton.disabled = false;
+                    this.classList.remove('is-invalid');
                 }
             });
         }
     });
 
-
     $(document).ready(function() {
-
         const editCommentInput = document.getElementById('editCommentText');
         const editCharCount = document.getElementById('edit-word-count');
+        const saveEditButton = document.getElementById('saveEditComment');
 
         $(".edit-btn").click(function() {
-
             let review = $(this).data("review");
             let id = $(this).data("id");
 
@@ -377,18 +379,19 @@
             $("#editCommentText").val(review);
             $("#editCommentId").attr("data-id", id);
 
-            const editCharCount = document.getElementById('edit-word-count');
             if (editCharCount) {
                 editCharCount.textContent = `${review.length}/500 karakter`;
                 if (review.length > 500) {
                     editCharCount.classList.add('over-limit');
+                    saveEditButton.disabled = true; 
                 } else {
                     editCharCount.classList.remove('over-limit');
+                    saveEditButton.disabled = false;
                 }
             }
         });
 
-        if (editCommentInput && editCharCount) {
+        if (editCommentInput && editCharCount && saveEditButton) {
             editCommentInput.addEventListener('input', function() {
                 const charCountValue = this.value.length;
 
@@ -398,10 +401,15 @@
                     editCharCount.textContent = `${charCountValue}/500 karakter`;
                 }
 
+                // validasi jumlah karakter
                 if (charCountValue > 500) {
                     editCharCount.classList.add('over-limit');
+                    saveEditButton.disabled = true;
+                    this.classList.add('is-invalid');
                 } else {
                     editCharCount.classList.remove('over-limit');
+                    saveEditButton.disabled = false;
+                    this.classList.remove('is-invalid');
                 }
             });
         }

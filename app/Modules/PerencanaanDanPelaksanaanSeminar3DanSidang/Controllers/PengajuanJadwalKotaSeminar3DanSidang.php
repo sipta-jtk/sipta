@@ -278,9 +278,17 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         // Tentukan waktu `start` dan `end` berdasarkan sesi
         $tanggal = Carbon::parse($request->input('tanggal_pengajuan'));
 
-        // 
+        // Decode JSON dari ruangan_pengajuan
+        $ruangan = json_decode($request->input('ruangan_pengajuan'));
+
+        if (!$ruangan) {
+            return redirect()->back()->with('error', 'Data ruangan tidak valid.');
+        }
+
+        $id_ruangan = $ruangan->id;
+        $nama_ruangan = $ruangan->nama;
+        
         $sesi = $request->input('sesi_pengajuan');
-        $id_ruangan = $request->input('ruangan_pengajuan');
 
         $start = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['start'])->format('Y-m-d H:i:s');
         $end = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
@@ -331,7 +339,8 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         $penjadwalan = Penjadwalan::create([
             'sesi' => $sesi,
             'agenda' => $request->input('agenda'),
-            'id_ruangan' => $request->input('ruangan_pengajuan'),
+            'id_ruangan' => $id_ruangan,
+            'nama_ruangan' => $nama_ruangan,
             'tanggal' => $request->input('tanggal_pengajuan'),
             'id_kota' => $id_kota,   
             'start' => $start,
