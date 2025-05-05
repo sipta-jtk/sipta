@@ -132,7 +132,7 @@
                                                                     class="col-sm border-right border-dark p-0">
                                                                     <div class="row d-flex m-0 flex-row"
                                                                         style="height: 500px;">
-                                                                        <div class="col-4 p-0 bg-warning"
+                                                                        <div class="col-4 p-0 bg-warning" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing1"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
@@ -168,7 +168,8 @@
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
                                                                                             <button
-                                                                                                class="btn btn-sm btn-success">
+                                                                                                class="btn btn-sm btn-success"
+                                                                                                onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-check"></i>
                                                                                             </button>
@@ -177,7 +178,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-4 p-0 bg-warning"
+                                                                        <div class="col-4 p-0 bg-warning" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing2"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
@@ -212,7 +213,8 @@
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
                                                                                             <button
-                                                                                                class="btn btn-sm btn-success">
+                                                                                                class="btn btn-sm btn-success"
+                                                                                                onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-check"></i>
                                                                                             </button>
@@ -320,6 +322,7 @@
 @section('js')
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
 
     <script>
         const prodiList = @json(collect($list_prodi)->mapWithKeys(function ($item) {
@@ -579,22 +582,28 @@
             }
         }
 
-        function fixAlokasi(id_pengajuan, kode_dosen, urutan, status, tipe) {
-            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
-            if (dosen) {
+        function fixAlokasi(id_pengajuan, urutan) {
                 $.ajax({
                     url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
                     type: "POST",
                     data: {
                         id_pengajuan_pembimbing: id_pengajuan,
-                        nip: dosen.nip,
                         urutan_prioritas_terpilih: urutan,
-                        status_alokasi: status,
-                        tipe_alokasi: tipe,
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
                         console.log(response);
+                        var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                        if (pembimbing.hasClass("bg-warning")) 
+                        {
+                            pembimbing.removeClass("bg-warning");
+                            pembimbing.addClass("bg-success");
+                        } else 
+                        {
+                            pembimbing.removeClass("bg-success");
+                            pembimbing.addClass("bg-warning");
+                        }
+                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
                     },
                     error: function(xhr, status, error) {
                         // console.error(error);
@@ -602,7 +611,6 @@
                         console.log(xhr.responseText);
                     }
                 });
-            }
         }
 
         // onchange on .alokasiInputText
