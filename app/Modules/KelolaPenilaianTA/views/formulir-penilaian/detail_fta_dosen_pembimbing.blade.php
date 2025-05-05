@@ -9,6 +9,7 @@
 @stop
 
 @section('content')
+<div class="card p-4">
     <div class="p-4">
         <!-- Informasi Kategori -->
         <div class="row mb-4">
@@ -81,7 +82,7 @@
             </div>
         </div>
     </div>
-    
+</div>
 @stop
 
 @section('css')

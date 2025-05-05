@@ -19,7 +19,8 @@
 @stop
 
 @section('content')
-<div class="p-4">
+<div class="card p-4">
+    <div class="p-4">
         <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
@@ -110,6 +111,7 @@
             </div>
         </form>
     </div>
+</div>
 @stop
 
 @section('css')

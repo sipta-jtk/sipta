@@ -26,10 +26,17 @@ class FormulirPenilaianController extends Controller {
     public function getFormPenilaian()
     {
         $data = DB::table('form_penilaian')
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian', 'id_fta', )
+            ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+            ->select(
+                'form_penilaian.kode_fta',
+                'form_penilaian.nama_fta',
+                'prodi.nama_prodi', // Ambil nama prodi
+                'form_penilaian.jenis_form',
+                'form_penilaian.tanggal_tenggat_pengisian',
+                'form_penilaian.id_fta'
+            )
             ->get();
 
-        $data = FormPenilaian::all();
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
