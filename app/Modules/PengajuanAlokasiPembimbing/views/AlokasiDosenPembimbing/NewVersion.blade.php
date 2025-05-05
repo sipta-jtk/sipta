@@ -567,6 +567,32 @@
             }
         }
 
+        function fixAlokasi(id_pengajuan, kode_dosen, urutan, status, tipe) {
+            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
+            if (dosen) {
+                $.ajax({
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
+                    type: "POST",
+                    data: {
+                        id_pengajuan_pembimbing: id_pengajuan,
+                        nip: dosen.nip,
+                        urutan_prioritas_terpilih: urutan,
+                        status_alokasi: status,
+                        tipe_alokasi: tipe,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // console.error(error);
+                        // print the error Detail
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        }
+
         // onchange on .alokasiInputText
         $('.alokasiInputText').on('change', function() {
             updateKuotaDosen();
