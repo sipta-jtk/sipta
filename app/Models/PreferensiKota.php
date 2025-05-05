@@ -12,7 +12,8 @@ class PreferensiKota extends Model
 
     protected $fillable = [
         'nip',
-        'id_kota'
+        'id_kota',
+        'status'
     ];
 
     public function dosen()
