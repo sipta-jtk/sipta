@@ -103,11 +103,3 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
     }
 </style>
 @stop
-
-
-
-@section('js')
-<script>
-    console.log("Hi, I'm using the Laravel-AdminLTE package!");
-</script>
-@stop
