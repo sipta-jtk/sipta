@@ -81,6 +81,10 @@ class RepositoryController extends Controller
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'sdd';
             });
 
+            $poster = $allDokumen->filter(function ($doc) {
+                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'poster';
+            });
+
             // Ambil subkategori spesifik (untuk tombol tambah dokumen)
             $subkategoriLaporan = Subkategori::where('nama_subkategori', 'Laporan')->first();
 
@@ -88,6 +92,7 @@ class RepositoryController extends Controller
             $subkategoriPpt = Subkategori::where('nama_subkategori', 'PowerPoint')->first();
             $subkategoriSrs = Subkategori::where('nama_subkategori', 'SRS')->first();
             $subkategoriSdd = Subkategori::where('nama_subkategori', 'SDD')->first();
+            $subkategoriPoster = Subkategori::where('nama_subkategori', 'Poster')->first();
 
             // Ambil semua subkategori kalau kategori artefak
             $subkategoris = $kategori === 'artefak' ? Subkategori::all() : collect();
@@ -101,6 +106,7 @@ class RepositoryController extends Controller
                 'powerpoint',
                 'srs',
                 'sdd',
+                'poster',
                 'kategori',
                 'subkategoris',
                 'maxVersion',
@@ -111,6 +117,7 @@ class RepositoryController extends Controller
                 'subkategoriPpt',
                 'subkategoriSrs',
                 'subkategoriSdd',
+                'subkategoriPoster',
             ));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data: ' . $e->getMessage());
@@ -135,7 +142,9 @@ class RepositoryController extends Controller
                 'hasil_revisi_sidang',
                 'seminar1',
                 'seminar2',
-                'seminar3'
+                'seminar3',
+                'sidang',
+                'yudisium'
             ];
 
             if (!in_array($kategori, $allowedKategori)) {
@@ -147,6 +156,7 @@ class RepositoryController extends Controller
 
             // Subkategori
             $subkategoriName = Subkategori::where('id_subkategori', $request->id_subkategori)->value('nama_subkategori');
+            // dd($subkategoriName);
 
             // dd($request->all());
 
@@ -155,7 +165,7 @@ class RepositoryController extends Controller
                 'deskripsi' => 'required|string',
                 $isLink ? 'repository_url' : 'file' => $isLink
                     ? 'required|url|max:255'
-                    : 'required|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                    : 'required|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
             ];
 
             // Validasi khusus
@@ -197,8 +207,6 @@ class RepositoryController extends Controller
                 'status_berkas' => 'valid',
                 'username' => $username,
             ];
-
-            
 
             // Handle upload file atau url
             if ($kategori === 'link_source_code') {
@@ -349,25 +357,15 @@ class RepositoryController extends Controller
             $dokumen = Dokumen::whereIn('username', $nims)->get();
 
             $data = collect([
-                'Laporan Tugas Akhir' => [
-                    ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'hasil_revisi_sidang'])],
+                'Daftar Kategori' => [
+                    ['key' => 'laporan_yudisium', 'label' => 'Yudisium', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'yudisium'])],
+                    ['key' => 'laporan_sidang', 'label' => 'Sidang Akhir', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'sidang'])],
+                    // ['key' => 'laporan_revisi_sidang', 'label' => 'Laporan Revisi Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'revisi_sidang'])],
+                    // ['key' => 'laporan_revisi_sidang', 'label' => 'Sidang', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'sidang'])],
                     ['key' => 'laporan_seminar_3', 'label' => 'Seminar 3', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar3'])],
                     ['key' => 'laporan_seminar_2', 'label' => 'Seminar 2', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar2'])],
                     ['key' => 'laporan_seminar_1', 'label' => 'Seminar 1', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'seminar1'])],
-                ],
-                'Dokumen Pendukung' => [
-                    ['key' => 'cover_abstrak', 'label' => 'Cover dan Abstrak', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'cover_abstrak'])],
-                    ['key' => 'artikel', 'label' => 'Artikel Ilmiah', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'artikel_ilmiah'])],
-                    ['key' => 'poster', 'label' => 'Poster', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'poster'])],
-                    ['key' => 'fta', 'label' => 'FTA', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'fta'])],
-                ],
-                'Kode Sumber' => [
-                    ['key' => 'source_code', 'label' => 'Source Code', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'source_code'])],
-                    ['key' => 'link_source_code', 'label' => 'Link Source Code', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'link_source_code'])],
-                ],
-                'Artefak' => [
-                    ['key' => 'artefak', 'label' => 'Artefak', 'url' => route('Repository.index.kota', ['id_kota' => $id_kota, 'kategori' => 'artefak'])],
-                ],
+                ]
             ]);
 
             return view('Repository.views.dashboard', compact('data', 'kota'));

@@ -99,7 +99,7 @@ class PemberianNilaiController extends Controller
     public function simpanNilaiSeminar(Request $request, $namaFta, $idKota)
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        if ($namaFtaSlug == 'seminar ii') {
+        if ($namaFtaSlug == 'seminar ii' || $namaFtaSlug == 'dosen pembimbing') {
             return $this->simpanNilaiBerdasarkanKriteria($request, $namaFtaSlug, $idKota);
         } else {
             return $this->simpanNilaiBerdasarkanRubrik($request, $namaFtaSlug, $idKota);
@@ -120,7 +120,7 @@ class PemberianNilaiController extends Controller
     {
         $nip = auth()->user()->username;
         $action = $request->form_action;
-        $nilai = $request->except('_token', '_method', 'form_action');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
 
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -142,12 +142,7 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -159,7 +154,7 @@ class PemberianNilaiController extends Controller
     {
         $nip = auth()->user()->username;
         $action = $request->form_action;
-        $nilai = $request->except('_token', '_method', 'form_action');
+        $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
     
         $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
@@ -182,12 +177,9 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            if ($action == 'draft') {
-                return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            } else {
-                $namaFtaSlug = Str::slug($namaFtaSlug, '-');
-                return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
-            }
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            
+            // return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
@@ -239,6 +231,11 @@ class PemberianNilaiController extends Controller
     
     private function ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
     {
+        Log::info('START');
+        Log::info('Nilai Kriteria: ' . json_encode($nilai, JSON_PRETTY_PRINT));
+        Log::info('Mahasiswa: ' . json_encode($mahasiswa, JSON_PRETTY_PRINT));
+        Log::info('Kriteria Penilaian: ' . json_encode($kriteriaPenilaian, JSON_PRETTY_PRINT));
+        Log::info('NIP: ' . $nip);
         $nilai_rata_rata = [];
         $bobotKriteria = $kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
     
@@ -260,7 +257,6 @@ class PemberianNilaiController extends Controller
                     'nip' => $nip,
                     'id_kriteria' => $kriteria->id_kriteria,
                     'nilai_kriteria' => $nilaiKriteria,
-                    'status_penilaian_dosen' => 'draf'
                 ]);
     
                 $totalNilai += $nilaiKriteria * $bobotKriteria[$kriteriaIndex];
@@ -290,6 +286,7 @@ class PemberianNilaiController extends Controller
                 'nip' => $nip,
                 'id_kategori' => $idKategori,
                 'nilai' => $nilai_rata_rata[$index],
+                'status_penilaian_dosen' => 'draf'
             ]);
         }
     }
@@ -422,4 +419,59 @@ class PemberianNilaiController extends Controller
         ]);
     }
     
+    public function pengisianNilaiDosenPembimbing($idKota): View
+    {
+        $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
+            ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
+            ->get();
+
+        $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
+        ->with('kriteriaPenilaian.rubrik')
+        ->get();
+
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
+            'detailInformasiFta' => $detailInformasiFta,
+            'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),
+            'namaFta' => 'dosen pembimbing',
+            'idKota' => $idKota,
+        ]);
+    }
+
+    public function simpanNilaiDosenPembimbing(Request $request, $idKota)
+    {
+        $nip = auth()->user()->username;
+        $action = $request->form_action;
+        $nilai = $request->except('_token', '_method');
+        $nilai = array_values($nilai);
+
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($mahasiswa as $index => $mhs) {
+                $mhs->nilaiKriteria()
+                    ->where('nim', $mhs->nim)
+                    ->where('nip', $nip)
+                    ->where('id_kriteria', 1)
+                    ->delete();
+
+                $mhs->nilaiKriteria()->create([
+                    'nim' => $mhs->nim,
+                    'nip' => $nip,
+                    'id_kriteria' => 1,
+                    'nilai_kriteria' => (double) $nilai[$index],
+                    'status_penilaian_dosen' => 'dipublikasikan'
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', 'Gagal menyimpan nilai: ' . $e->getMessage());
+        }
+    }
 }

@@ -1,18 +1,46 @@
+@extends('adminlte::page')
 
-<td>{{ $s->nama_kota }}</td>
+@section('title', 'Pembatalan Jadwal Sidang')
+
+@section('content_header')
+<h1>Persetujuan Pembatalan Jadwal Sidang</h1>
+<div>
+@component('KelolaPenilaianTA.views.components.breadcrumb', [
+'links' => [
+['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+['url' => '', 'label' => 'Persetujuan Pembatalan Jadwal Sidang'],
+]
+])
+@endcomponent
+</div>
+@stop
+
+@section('content')
+<div class="card mx-3 mt-3">
+<div class="card-body">
+<table id="seminarTable" class="table table-striped" width="100%">
+    <thead class="sticky-header">
+        <tr class="bg-dark text-white">
+            <th>Kota No</th>
+            <th>Judul</th>
+            <th>Tanggal Seminar</th>
+            <th>Sesi Seminar</th>
+            <th>Ruangan</th>
+            <th>Dosen Pengaju</th>
+            <th>Alasan</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($jadwal as $s)
+            <tr>
+                <td>{{ $s->nama_kota }}</td>
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
                 <td>{{ $s->id_ruangan }}</td>
                 <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
-                <td>
-                    @if ($s->status_pembatalan == 0)
-                        <span>Pembatalan Ditolak</span>
-                    @elseif ($s->status_pembatalan == 1)
-                        <span>Pembatalan Disetujui</span>
-                    @endif
-                </td>
                 <td>
                     @if ($s->status_pembatalan == 1 || $s->status_pembatalan == 0)
                     <form
@@ -62,7 +90,22 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#seminarTable').DataTable();
+        $('#seminarTable').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan MENU data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan START sampai END dari TOTAL data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total MAX data)",
+                paginate: {
+                first: "<<",
+                last: ">>",
+                next: ">",
+                previous: "<"
+                }
+            }
+        });
     });
 </script>
 @stop

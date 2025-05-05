@@ -49,7 +49,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => true,
                 'status_plagiarisme' => 'tidak_plagiarisme',
                 'id_ambang_batas' => 1,
-                'kategori' => 'artefak',
+                'kategori' => 'seminar1',
                 'deskripsi' => 'Sistem berbasis web untuk meningkatkan efisiensi dalam pengelolaan dan pemantauan tugas akhir mahasiswa.',
                 'versi' => 1,
                 'ukuran_file' => 20.00 * 1024, // Ukuran dalam KB
@@ -68,7 +68,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => false,
                 'status_plagiarisme' => 'sedang_proses',
                 'id_ambang_batas' => 1,
-                'kategori' => 'poster',
+                'kategori' => 'seminar1',
                 'deskripsi' => 'Aplikasi berbasis web untuk mendukung proses audit mutu internal dalam Sistem Penjaminan Mutu Internal (SPMI) di POLBAN.',
                 'versi' => 3,
                 'ukuran_file' => 11.77 * 1024, // Ukuran dalam KB
@@ -125,7 +125,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => true,
                 'status_plagiarisme' => 'plagiarisme',
                 'id_ambang_batas' => 1,
-                'kategori' => 'fta',
+                'kategori' => 'seminar1',
                 'deskripsi' => 'Sistem rekomendasi film yang mengoptimalkan pengalaman pengguna dengan menggunakan teknik content-based filtering.',
                 'versi' => 1,
                 'ukuran_file' => 17.32 * 1024, // Ukuran dalam KB
@@ -144,7 +144,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => true,
                 'status_plagiarisme' => 'tidak_plagiarisme',
                 'id_ambang_batas' => 1,
-                'kategori' => 'fta',
+                'kategori' => 'seminar1',
                 'deskripsi' => 'Sistem berbasis IoT untuk memantau kualitas udara secara real-time dan mendeteksi tingkat polusi di lingkungan sekitar.',
                 'versi' => 2,
                 'ukuran_file' => 22.32 * 1024, // Ukuran dalam KB
@@ -163,7 +163,7 @@ class DokumenSeeder extends Seeder
                 'highlight_dokumen' => true,
                 'status_plagiarisme' => 'tidak_plagiarisme',
                 'id_ambang_batas' => 1,
-                'kategori' => 'fta',
+                'kategori' => 'seminar1',
                 'deskripsi' => 'Solusi berbasis IoT untuk pemantauan kualitas udara guna menciptakan lingkungan yang lebih sehat dan berkelanjutan.',
                 'versi' => 2,
                 'ukuran_file' => 16.5 * 1024, // Ukuran dalam KB
