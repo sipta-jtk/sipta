@@ -51,7 +51,7 @@
         @endcomponent
     </div>
 
-    <div class="card border mb-2 p-2 m-0 m-100" style="height: 75vh;">
+    <div class="card border mb-2 p-2 m-0 m-100" style="height: 80vh;">
         <div class="row">
             <div class="col tabel-pengajuan">
                 <div class=" table-responsive" style="height: 75vh;">
