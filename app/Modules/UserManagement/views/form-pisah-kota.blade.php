@@ -75,11 +75,17 @@
                     <form action="{{ route('form.pisah.kota.ajukan') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="gap-2">
-                            <label class="form-label">Unggah FTA 20 (PDF)</label>
-                            <input type="file" class="form-control" name="fta_20" accept=".pdf" required>
-                            <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin ajukan pisah?')">
-                                <i class="fas fa-paper-plane"></i> Ajukan Pisah
-                            </button>
+                            <div class="d-flex justify-content-end">
+                                <label class="form-label">Unggah FTA 20 (PDF)</label>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <input type="file" class="form-control mb-2" name="fta_20" accept=".pdf" required>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin ajukan pisah?')">
+                                    <i class="fas fa-paper-plane"></i> Ajukan Pisah
+                                </button>
+                            </div>  
                         </div>
                     </form>
                 @endif
