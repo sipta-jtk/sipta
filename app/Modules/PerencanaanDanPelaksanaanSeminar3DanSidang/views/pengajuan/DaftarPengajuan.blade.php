@@ -7,7 +7,7 @@
     <div class="mx-4">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Daftar Pengajuan']
             ]
         ])

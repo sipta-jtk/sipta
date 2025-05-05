@@ -6,8 +6,8 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('/kelola-penilaian-ta/nilai-seminar/3'), 'label' => 'Penilaian Seminar III'],
+                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('pengisian.nilai'), 'label' => 'Penilaian Seminar III'],
                 ['url' => '', 'label' => 'Masukan Seminar III']
             ]
         ])
