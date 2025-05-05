@@ -175,19 +175,6 @@ class AlokasiPembimbingv2Controller extends Controller
         return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
     }
 
-    public function deleteAlokasi(Request $request)
-    {
-        $id_pengajuan = $request->input('id_pengajuan_pembimbing');
-        $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
-
-        DB::table('alokasi_dosen')
-            ->where('id_pengajuan_pembimbing', $id_pengajuan)
-            ->where('urutan_prioritas_terpilih', $urutan_prioritas)
-            ->delete();
-
-        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
-    }
-
     public function fixAlokasi(Request $request)
     {
         // Update status pengajuan pembimbing jadi DITERIMA
