@@ -177,7 +177,7 @@ class AlokasiPembimbingv2Controller extends Controller
         return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
     }
 
-    public function fixAlokasi($id_pengajuan)
+    public function fixAlokasi(Request $request)
     {
         // Update status pengajuan pembimbing jadi DITERIMA
         $id_pengajuan = $request->input('id_pengajuan');

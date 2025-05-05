@@ -239,7 +239,7 @@
             </div>
             <!-- punya gwejh -->
             <div class="col p-0 tabel-detail">
-                <div style="height: 75vh; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="d-flex flex-column" style="height: 75vh; overflow: hidden;">
 
                     <!-- HEADER -->
                     <div class="bg-dark text-white p-2">
@@ -253,7 +253,7 @@
                             title="Tampilkan Filter">
                             <i class="fas fa-filter"></i>
                         </button>
-                        <div id="dosenTable_filter" class="dataTables_filter m-0">
+                        <div id="dosenTable_filter" class="dataTables_filter flex-grow-1 m-0">
                             <input type="search" class="form-control form-control-sm" placeholder="Search"
                                 aria-controls="dosenTable">
                         </div>
@@ -268,24 +268,19 @@
                                 </h3>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="kuota" id="filterQuota" onchange="filter()">
-                                            <label class="form-check-label" for="filterQuota">
-                                                <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi
-                                                Kuota
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="belum" id="filterUnassigned" onchange="filter()">
-                                            <label class="form-check-label" for="filterUnassigned">
-                                                <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
-                                            </label>
-                                        </div>
-                                    </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="filterOption"
+                                        value="kuota" id="filterQuota" onchange="filter()">
+                                    <label class="form-check-label" for="filterQuota">
+                                        <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi Kuota
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="filterOption"
+                                        value="belum" id="filterUnassigned" onchange="filter()">
+                                    <label class="form-check-label" for="filterUnassigned">
+                                        <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
+                                    </label>
                                 </div>
                             </div>
                             <div class="card-footer text-right">
@@ -304,7 +299,7 @@
                     </div>
 
                     <!-- DATATABLE -->
-                    <div style="flex: 1;">
+                    <div class="flex-grow-1 overflow-auto">
                         <table id="dosenTable" class="table table-striped table-hover mb-0 p-3" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
@@ -578,6 +573,32 @@
                         console.log(response);
                     },
                     error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function fixAlokasi(id_pengajuan, kode_dosen, urutan, status, tipe) {
+            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
+            if (dosen) {
+                $.ajax({
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
+                    type: "POST",
+                    data: {
+                        id_pengajuan_pembimbing: id_pengajuan,
+                        nip: dosen.nip,
+                        urutan_prioritas_terpilih: urutan,
+                        status_alokasi: status,
+                        tipe_alokasi: tipe,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // console.error(error);
+                        // print the error Detail
                         console.log(xhr.responseText);
                     }
                 });

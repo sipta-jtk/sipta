@@ -22,6 +22,7 @@
 @section('content')
 
     <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
     
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -76,7 +77,7 @@
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info mr-3">Sebelumnya</a>
-                    <button type="button" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
+                    <button type="submit" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
@@ -103,17 +104,28 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
+                    
                     if (response.Periode === false) {
+                        $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                        $("textarea[name='topik']").val(response.topikTugasAkhir);
+                        $("input[type='radio']").each(function () {
+                            let label = $(this).next("label").text().trim();
+                            if (label === response.bidangTugasAkhir) {
+                                $(this).prop("checked", true); // Memilih bidang yang sudah ada
+                            }
+                        });
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
                     if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
                     }
+
+                    
                 }
             });
 
