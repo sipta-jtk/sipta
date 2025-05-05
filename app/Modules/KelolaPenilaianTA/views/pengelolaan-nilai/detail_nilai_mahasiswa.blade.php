@@ -128,7 +128,7 @@
                                     </td>
                                 @endif
 
-                                <td class="d-flex flex-column gap-1">
+                                <!-- <td class="d-flex flex-column gap-1">
                                     <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
                                     <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
             
@@ -143,7 +143,7 @@
                                             <button type="submit" class="btn btn-primary w-100">Publikasi</button>
                                         </form>
                                     @endif
-                                </td>
+                                </td> -->
 
                             </tr>
                         @endforeach
