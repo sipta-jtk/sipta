@@ -22,7 +22,6 @@ class VerifikasiPengajuanJadwalController extends Controller
     public function getListAsKoordinatorTA(Request $request, String $tipe): View
     {
         $nip = auth()->user()->username;
-
         
         $role = Dosen::where('nip', $nip)->value('role_dosen');
 
