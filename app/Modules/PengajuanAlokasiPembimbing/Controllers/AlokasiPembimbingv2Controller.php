@@ -122,6 +122,20 @@ class AlokasiPembimbingv2Controller extends Controller
         $status_alokasi = $request->input('status_alokasi');
         $tipe_alokasi = $request->input('tipe_alokasi');
 
+        $otherUrutan = null;
+        if ($urutan_prioritas == 1) {
+            $otherUrutan = 2;
+        } elseif ($urutan_prioritas == 2) {
+            $otherUrutan = 1;
+        }
+        $currentDosenCounterPart = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $otherUrutan)
+            ->first();
+        if ($currentDosenCounterPart && $currentDosenCounterPart->nip == $nip) {
+            return null;
+        }
+
         $currentAllocation = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
@@ -141,6 +155,19 @@ class AlokasiPembimbingv2Controller extends Controller
             'tipe_alokasi' => $tipe_alokasi,
         ]);
         return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
+    }
+
+    public function deleteAlokasi(Request $request)
+    {
+        $id_pengajuan = $request->input('id_pengajuan_pembimbing');
+        $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
+
+        DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->delete();
+
+        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
     }
 
     public function fixAlokasi($id_pengajuan)
