@@ -16,7 +16,7 @@
             <div class="card-body">
                 <p><strong>Kelompok:</strong> {{ $dataKota->id_kota }}</p>
                 <p><strong>Judul:</strong> {{ $dataKota->judul_ta }}</p>
-                <p><strong>Ageda:</strong> {{ $dataKota->jenis_pengajuan }}</p>
+                <p><strong>Agenda:</strong> {{ $dataKota->jenis_pengajuan }}</p>
                 <p><strong>Tanggal Pengajuan:</strong> {{ $dataKota->tanggal_pengajuan }}</p>
             </div>
         </div>

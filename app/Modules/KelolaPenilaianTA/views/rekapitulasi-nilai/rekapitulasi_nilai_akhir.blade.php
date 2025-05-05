@@ -68,19 +68,24 @@
             <div class="table-container">
                 <table id="nilaiAkhirTable" class="table table-striped table-bordered text-center" width="100%">
                     <thead class="sticky-header">
-                        <tr class="bg-dark text-white text-center">
-                            <th rowspan="1" class=" align-middle" style="width: 1%;">No</th>
-                            <th rowspan="1" class=" align-middle" style="width: 3%;">NIM</th>
-                            <th rowspan="1" class=" align-middle" style="width: 15%;">Nama</th>
-                            <th rowspan="1" class=" align-middle" style="width: 5%;">Prodi</th>
-                            <th rowspan="1" class=" align-middle" style="width: 2%;">Kelas</th>
-                            <th rowspan="1" class=" align-middle" style="width: 4%;">Kelompok</th>
-                            <th colspan="1" style="width: 5%;">UTS</th>
-                            <th colspan="1" style="width: 5%;">UAS</th>
-                            <th colspan="1" style="width: 5%;">Lain-Lain</th>
-                            <th colspan="1" style="width: 5%;">Nilai Akhir</th>
-                            <th colspan="1" style="width: 5%;">Predikat</th>
-                        </tr>
+                    <tr class="bg-dark text-white text-center">
+                    <th rowspan="1" class="align-middle" style="width: 1%;">No</th>
+                    <th rowspan="1" class="align-middle" style="width: 3%;">NIM</th>
+                    <th rowspan="1" class="align-middle" style="width: 15%;">Nama</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Prodi</th>
+                    <th rowspan="1" class="align-middle" style="width: 2%;">Kelas</th>
+                    <th rowspan="1" class="align-middle" style="width: 4%;">Kelompok</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">UTS (Teori)</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Praktikum ETS</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Lain-lain ETS</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">UAS (Teori)</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Praktikum EAS</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Lain-lain EAS</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">PjBL</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Partisipatif</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Nilai Akhir</th>
+                    <th rowspan="1" class="align-middle" style="width: 5%;">Predikat</th>
+                </tr>
                     </thead>
                     <tbody>
                         @if(empty($data) || count($data) == 0)
@@ -97,34 +102,85 @@
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>
                             <td class="align-middle nilai-cell">
-                                @if ($row['nilaiUts'] == 0)
+                                @if ($row['nilaiUtsTeori'] == null)
                                 <span class="text-danger nilai-tooltip">-1
                                     <div class="tooltip-box">Dosen belum melakukan penilaian</div>
                                 </span>
                                 @else
-                                {{ $row['nilaiUts'] }}
+                                {{ $row['nilaiUtsTeori'] }}
                                 @endif
                             </td>
 
                             <td class="align-middle nilai-cell">
-                                @if ($row['nilaiUas'] == 0)
+                                @if ($row['nilaiPraktikumETS'] == null)
                                 <span class="text-danger nilai-tooltip">-1
                                     <div class="tooltip-box">Dosen belum melakukan penilaian</div>
                                 </span>
                                 @else
-                                {{ $row['nilaiUas'] }}
+                                {{ $row['nilaiPraktikumETS'] }}
                                 @endif
                             </td>
 
                             <td class="align-middle nilai-cell">
-                                @if ($row['nilaiLainLain'] == 0)
+                                @if ($row['nilaiLainLainETS'] == null)
                                 <span class="text-danger nilai-tooltip">-1
                                     <div class="tooltip-box">Dosen belum melakukan penilaian</div>
                                 </span>
                                 @else
-                                {{ $row['nilaiLainLain'] }}
+                                {{ $row['nilaiLainLainETS'] }}
                                 @endif
                             </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiUasTeori'] == null)
+                                <span class="text-danger nilai-tooltip">-1
+                                    <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                </span>
+                                @else
+                                {{ $row['nilaiUasTeori'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiPraktikumEAS'] == null)
+                                <span class="text-danger nilai-tooltip">-1
+                                    <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                </span>
+                                @else
+                                {{ $row['nilaiPraktikumEAS'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiLainLainEAS'] == null)
+                                <span class="text-danger nilai-tooltip">-1
+                                    <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                </span>
+                                @else
+                                {{ $row['nilaiLainLainEAS'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiPjBL'] == null)
+                                <span class="text-danger nilai-tooltip">-1
+                                    <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                </span>
+                                @else
+                                {{ $row['nilaiPjBL'] }}
+                                @endif
+                            </td>
+
+                            <td class="align-middle nilai-cell">
+                                @if ($row['nilaiPartisipatif'] == null)
+                                <span class="text-danger nilai-tooltip">-1
+                                    <div class="tooltip-box">Dosen belum melakukan penilaian</div>
+                                </span>
+                                @else
+                                {{ $row['nilaiPartisipatif'] }}
+                                @endif
+                            </td>
+                            
 
                             <td class="align-middle nilai-cell">
                                 @if ($row['nilaiAkhir'] == 0)
