@@ -347,7 +347,7 @@ return [
                             'icon' => 'fas fa-fw fa-table'
                         ],
                         [
-                            'text' => 'Bidang Peminatan Dosen',
+                            'text' => 'Peminatan Menjadi Penguji',
                             'icon' => 'fas fa-fw fa-window-restore',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',

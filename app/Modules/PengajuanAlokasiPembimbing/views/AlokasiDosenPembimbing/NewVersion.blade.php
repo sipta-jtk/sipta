@@ -147,12 +147,10 @@
                                                                                         class="col-sm p-0">
                                                                                         {{-- Pembimbing 1 --}}
                                                                                         <input type="text"
-                                                                                            value="{{ $pengajuan->alokasi->first()?->id_dosen ?? '' }}"
+                                                                                            value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 1)?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
-                                                                                            style="font-size: xx-large">
                                                                                             style="font-size: xx-large"
-                                                                                            value="JO"
                                                                                             onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
 
                                                                                     </div>
@@ -194,7 +192,7 @@
                                                                                         class="col-sm p-0">
                                                                                         {{-- Pembimbing 2 --}}
                                                                                         <input type="text"
-                                                                                            value="{{ $pengajuan->alokasi->get(1)?->id_dosen ?? '' }}"
+                                                                                            value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 2)?->id_dosen ?? '' }}"
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
@@ -241,7 +239,7 @@
             </div>
             <!-- punya gwejh -->
             <div class="col p-0 tabel-detail">
-                <div style="height: 75vh; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="d-flex flex-column" style="height: 75vh; overflow: hidden;">
 
                     <!-- HEADER -->
                     <div class="bg-dark text-white p-2">
@@ -255,7 +253,7 @@
                             title="Tampilkan Filter">
                             <i class="fas fa-filter"></i>
                         </button>
-                        <div id="dosenTable_filter" class="dataTables_filter m-0">
+                        <div id="dosenTable_filter" class="dataTables_filter flex-grow-1 m-0">
                             <input type="search" class="form-control form-control-sm" placeholder="Search"
                                 aria-controls="dosenTable">
                         </div>
@@ -270,24 +268,19 @@
                                 </h3>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="kuota" id="filterQuota" onchange="filter()">
-                                            <label class="form-check-label" for="filterQuota">
-                                                <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi
-                                                Kuota
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="filterOption"
-                                                value="belum" id="filterUnassigned" onchange="filter()">
-                                            <label class="form-check-label" for="filterUnassigned">
-                                                <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
-                                            </label>
-                                        </div>
-                                    </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="filterOption"
+                                        value="kuota" id="filterQuota" onchange="filter()">
+                                    <label class="form-check-label" for="filterQuota">
+                                        <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi Kuota
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="filterOption"
+                                        value="belum" id="filterUnassigned" onchange="filter()">
+                                    <label class="form-check-label" for="filterUnassigned">
+                                        <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
+                                    </label>
                                 </div>
                             </div>
                             <div class="card-footer text-right">
@@ -306,7 +299,7 @@
                     </div>
 
                     <!-- DATATABLE -->
-                    <div style="flex: 1;">
+                    <div class="flex-grow-1 overflow-auto">
                         <table id="dosenTable" class="table table-striped table-hover mb-0 p-3" style="width: 100%;">
                             <thead class="bg-dark text-white">
                                 <tr>
@@ -397,26 +390,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                            <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                        `).join('')}
+                                                                                                <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                            `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                            <td class="p-1">
-                                                                                                <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                    ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                </span>
-                                                                                            </td>
-                                                                                        `).join('')}
+                                                                                                <td class="p-1">
+                                                                                                    <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                        ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                    </span>
+                                                                                                </td>
+                                                                                            `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                            <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                        `).join('')}
+                                                                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                            `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
