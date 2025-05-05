@@ -30,7 +30,7 @@ class FormulirPenilaianController extends Controller {
             ->select(
                 'form_penilaian.kode_fta',
                 'form_penilaian.nama_fta',
-                'prodi.nama_prodi', // Ambil nama prodi
+                'prodi.nama_prodi',
                 'form_penilaian.jenis_form',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta'
@@ -293,14 +293,16 @@ class FormulirPenilaianController extends Controller {
     {
         // Ambil data berdasarkan id_fta
         $kategori = DB::table('form_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
-            ->first();
-
-        // Format tanggal menggunakan Carbon
-        if ($kategori) {
-            $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
-        }
+        ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+        ->where('form_penilaian.id_fta', $idFta)
+        ->select(
+            'form_penilaian.kode_fta',
+            'form_penilaian.nama_fta',
+            'prodi.nama_prodi',
+            'form_penilaian.tanggal_tenggat_pengisian',
+            'form_penilaian.waktu_tenggat_pengisian'
+        )
+        ->first();
         
             // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
         $rentangNilai = DB::table('rentang_nilai')
@@ -347,9 +349,16 @@ class FormulirPenilaianController extends Controller {
     {
         // Ambil data berdasarkan id_fta
         $kategori = DB::table('form_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
-            ->first();
+        ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+        ->where('form_penilaian.id_fta', $idFta)
+        ->select(
+            'form_penilaian.kode_fta',
+            'form_penilaian.nama_fta',
+            'prodi.nama_prodi',
+            'form_penilaian.tanggal_tenggat_pengisian',
+            'form_penilaian.waktu_tenggat_pengisian'
+        )
+        ->first();
         
         // Format tanggal menggunakan Carbon
         if ($kategori) {
@@ -371,11 +380,17 @@ class FormulirPenilaianController extends Controller {
     {
         // Ambil data berdasarkan id_fta
         $kategori = DB::table('form_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian') // Pastikan kode_fta juga diambil
-            ->first();
+        ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+        ->where('form_penilaian.id_fta', $idFta)
+        ->select(
+            'form_penilaian.kode_fta',
+            'form_penilaian.nama_fta',
+            'prodi.nama_prodi',
+            'form_penilaian.tanggal_tenggat_pengisian',
+            'form_penilaian.waktu_tenggat_pengisian'
+        )
+        ->first();
             
-
         // Format tanggal menggunakan Carbon
         if ($kategori) {
             $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
@@ -465,11 +480,19 @@ class FormulirPenilaianController extends Controller {
     public function tambahFormRubrik($idFta)
     {
         $data = DB::table('form_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian', 'id_fta', )
-            ->first();
+        ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+        ->where('form_penilaian.id_fta', $idFta)
+        ->select(
+            'form_penilaian.kode_fta',
+            'form_penilaian.nama_fta',
+            'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
+            'form_penilaian.tanggal_tenggat_pengisian',
+            'form_penilaian.id_fta'
+        )
+        ->first();
 
-            $rentangNilai = DB::table('rentang_nilai')
+        $rentangNilai = DB::table('rentang_nilai')
             ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
             ->select('id_nilai', 'batas_atas', 'batas_bawah')
             ->orderBy('batas_atas', 'desc')
@@ -490,8 +513,16 @@ class FormulirPenilaianController extends Controller {
     public function ubahFormRubrik($idFta)
     {
         $data = DB::table('form_penilaian')
-            ->where('id_fta', $idFta)
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian', 'id_fta')
+            ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+            ->where('form_penilaian.id_fta', $idFta)
+            ->select(
+                'form_penilaian.kode_fta',
+                'form_penilaian.nama_fta',
+                'prodi.nama_prodi', // Ambil nama prodi
+                'form_penilaian.jenis_form',
+                'form_penilaian.tanggal_tenggat_pengisian',
+                'form_penilaian.id_fta'
+            )
             ->first();
 
         $rentangNilai = DB::table('rentang_nilai')
@@ -533,8 +564,15 @@ class FormulirPenilaianController extends Controller {
     public function viewTabelRubrik(): View 
     {
         $data = DB::table('form_penilaian')
+            ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
             ->where('jenis_form', 'penilaian')
-            ->select('kode_fta', 'nama_fta', 'id_prodi', 'jenis_form', 'tanggal_tenggat_pengisian', 'id_fta')
+            ->select(
+                'form_penilaian.kode_fta',
+                'form_penilaian.nama_fta',
+                'prodi.nama_prodi',
+                'form_penilaian.jenis_form',
+                'form_penilaian.tanggal_tenggat_pengisian',
+                'form_penilaian.id_fta')
             ->get()
             ->map(function ($row) {
                 // Cek apakah ada data detail_rubrik_penilaian untuk id_fta tertentu

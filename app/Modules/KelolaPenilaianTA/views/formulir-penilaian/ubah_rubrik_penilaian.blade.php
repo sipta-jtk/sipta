@@ -26,20 +26,29 @@
 
             <div class="row">
                 <!-- Kode FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="nama_fta">Kode FTA</label>
+                        <label for="kode_fta">Kode FTA</label>
                         <input type="text" class="form-control" id="kode_fta" name="kode_fta"
                         value="{{ $data->kode_fta ?? '' }}" readonly>
                     </div>
                 </div>
 
                 <!-- Nama FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
                         <input type="text" class="form-control" id="nama_fta" name="nama_fta" 
                         value="{{ $data->nama_fta ?? '' }}"readonly>
+                    </div>
+                </div>
+
+                <!-- Program Studi -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nama_prodi">Program Studi</label>
+                        <input type="text" class="form-control" id="nama_prodi" name="nama_prodi" 
+                            value="{{ $data->nama_prodi ?? '' }}" readonly>
                     </div>
                 </div>
             </div>

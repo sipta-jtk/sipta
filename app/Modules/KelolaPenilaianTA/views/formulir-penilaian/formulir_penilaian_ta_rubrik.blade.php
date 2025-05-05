@@ -43,7 +43,7 @@
                             <td class="align-middle">{{ $index + 1 }}</td>
                             <td class="align-middle">{{ $row->kode_fta }}</td>
                             <td class="align-middle">{{ $row->nama_fta }}</td>
-                            <td class="align-middle">{{ $row->id_prodi }}</td>
+                            <td class="align-middle">{{ $row->nama_prodi }}</td>
                             <td class="align-middle">{{ $row->jenis_form }}</td>
                             <td class="align-middle">
                                 {{ \Carbon\Carbon::parse($row->tanggal_tenggat_pengisian)->translatedFormat('d F Y') }}
