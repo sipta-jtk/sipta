@@ -1,16 +1,37 @@
 @extends('adminlte::page')
 
-@section('title', 'MASUKAN SEMINAR II')
+@php
+    $title = match ($data['namaFta']) {
+        'seminar i' => 'MASUKAN SEMINAR I',
+        'seminar ii' => 'MASUKAN SEMINAR II',
+        'seminar iii' => 'MASUKAN SEMINAR III',
+        default => 'SIDANG AKHIR',
+    };
+@endphp
+
+@section('title', $title)
 
 @section('content_header')
     <div class="container-fluid p-3">
         <!-- Breadcrumb -->
-        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => route('pengisian.nilai', ['namaFta' => $data['namaFta'], 'idKota' => $data['id_kota'], 'idProdi' => $seminar['id_prodi']]), 'label' => 'Penilaian Seminar II'],
-                ['url' => '', 'label' => 'Masukan Seminar II']
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => route('pengisian.nilai', ['namaFta' => $data['namaFta'], 'idKota' => $data['id_kota'], 'idProdi' => $seminar['id_prodi']]), 
+                    'label' => match ($data['namaFta']) {
+                        'seminar i' => '',
+                        'seminar ii' => 'Penilaian Seminar II',
+                        'seminar iii' => 'Penilaian Seminar III',
+                        default => 'Penilaian Sidang Akhir'
+                    }
+                ],
+                ['url' => '', 'label' => match ($data['namaFta']) {
+                        'seminar i' => 'Masukan Seminar I',
+                        'seminar ii' => 'Masukan Seminar II',
+                        'seminar iii' => 'Masukan Seminar III',
+                        default => 'Masukan Sidang Akhir'
+                    }
+                ],
             ]
         ])
         @endcomponent
@@ -93,15 +114,16 @@
             </div>
         </div>
 
-        <!-- Tombol Preview -->
+        <!-- Tombol Preview Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen
+                <strong>Dokumen
                     {{ match ($data['namaFta']) {
                         'seminar i' => 'Seminar I',
-                        'seminar ii', 'Seminar II',
+                        'seminar ii' => 'Seminar II',
                         'seminar iii' => 'Seminar III',
-                        'default' => 'CATATAN PERBAIKAN LAPORAN'
+                        'sidang akhir' => 'Sidang Akhir',
+                        default => ''
                     } }}
                 </strong> <br>
                 <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('dokumen/a4xQcjsyixgnm6AOzkYOCnfVY7xgUB0j3LwgZ8Uf.pdf')">
@@ -132,7 +154,8 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- Judul Form -->      
         <h3 class="heading-spacing text-center">
             {{ match ($data['namaFta']) {
                 'seminar i' => 'EVALUASI',
@@ -266,5 +289,54 @@
             let match = url.match(/[-\w]{25,}/);
             return match ? match[0] : null;
         }
+
+        // $('.view-btn').on('click', function() {
+        function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
+            // console.log("Tes");
+            // var judul = $(this).data('judul');
+            // var deskripsi = $(this).data('deskripsi');
+            // var filePath = $(this).data('file');
+            // var kodeFta = $(this).data('kode-fta');
+
+            $('#view_judul').val(judul);
+            $('#view_deskripsi').val(deskripsi);
+            $('#username').val('{{ auth()->user()->username }}');
+
+            // Handle Kode FTA
+            // if (kodeFta) {
+            //     $('#field_kode_fta_view').show();
+            //     $('#view_kode_fta').val(kodeFta);
+            // } else {
+            //     $('#field_kode_fta_view').hide();
+            //     $('#view_kode_fta').val('');
+            // }
+
+            if (filePath && filePath.trim() !== '') {
+                var fullUrl = `/storage/${filePath}`;
+                var fileExtension = filePath.split('.').pop().toLowerCase();
+
+                // Buka di tab baru
+                $('#view_file_link').attr('href', fullUrl);
+
+                // Link download
+                $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+
+                // Preview file
+                if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
+                    $('#viewDocumentPreview').attr('src', fullUrl).show();
+                    $('#viewPreviewNotAvailable').hide();
+                } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                    var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
+                    $('#viewDocumentPreview').attr('src', viewerUrl).show();
+                    $('#viewPreviewNotAvailable').hide();
+                } else {
+                    $('#viewDocumentPreview').hide();
+                    $('#viewPreviewNotAvailable').show();
+                }
+            } else {
+                $('#viewDocumentPreview').hide();
+                $('#viewPreviewNotAvailable').show();
+            }
+        };
     </script>
 @stop

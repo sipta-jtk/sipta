@@ -18,6 +18,7 @@ use App\Models\AspekFeedback;
 use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
+use App\Models\Dokumen;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -110,6 +111,44 @@ class PemberianFeedbackController extends Controller
             return null;
         }
     }
+
+    // public function penilaianFta($idKota, $namaFtaSlug)
+    // {
+    //     $data = [];
+
+    //     // Konversi slug nama FTA ke format normal
+    //     $namaAgenda = $this->konversiNamaAgenda($namaFtaSlug);
+    //     $data['namaAgenda'] = $namaAgenda;
+
+    //     // Ambil data kota berdasarkan id
+    //     $kota = Kota::findOrFail($idKota);
+    //     $data['idKota'] = $kota->id_kota;
+
+    //     // Ambil ID FTA dari form_penilaian berdasarkan nama dan jenis_form = feedback
+    //     $idFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+    //         ->where('jenis_form', 'feedback')
+    //         ->value('id_fta');
+
+    //     $data['idFta'] = $idFta;
+
+    //     // Ambil file_path dokumen kategori 'laporan' dan status 'valid'
+    //     $laporan = Dokumen::where('kode_fta', $idFta)
+    //         ->where('kategori', 'laporan')
+    //         ->where('status_berkas', 'valid')
+    //         ->first();
+
+    //     // Ambil file_path dokumen kategori 'presentasi' dan status 'valid'
+    //     $presentasi = Dokumen::where('kode_fta', $idFta)
+    //         ->where('kategori', 'presentasi')
+    //         ->where('status_berkas', 'valid')
+    //         ->first();
+
+    //     // Simpan path ke dalam variabel data jika ada
+    //     $data['laporanPath'] = $laporan ? $laporan->file_path : null;
+    //     $data['presentasiPath'] = $presentasi ? $presentasi->file_path : null;
+
+    //     return view('fta.penilaian.index', compact('data'));
+    // }
 
     /**
      * Simpan feedback 
