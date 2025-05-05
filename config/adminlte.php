@@ -397,36 +397,7 @@ return [
             'text' => 'Perencanaan dan Pelaksanaan Seminar dan Sidang',
             'icon' => 'fas fa-fw fa-file',
             'submenu' => [
-                [
-                    'text' => 'Jadwal Seminar 3',
-                    'url' => $prefix . '/batal-jadwal-seminar',
-                    'can' => 'dosen',
-                    'icon' => 'fas fa-regular fa-calendar'
-                ],
-                [
-                    'text' => 'Jadwal Sidang',
-                    'url' => $prefix . '/batal-jadwal-sidang',
-                    'can' => 'dosen',
-                    'icon' => 'fas fa-regular fa-calendar'
-                ],
-                [
-                    'text' => 'Persetujuan Pembatalan Seminar 3',
-                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
-                    'can' => 'koordinator_ta',
-                    'icon' => 'fas fa-regular fa-calendar'
-                ],
-                [
-                    'text' => 'Persetujuan Pembatalan Sidang',
-                    'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
-                    'can' => 'koordinator_ta',
-                    'icon' => 'fas fa-regular fa-calendar'
-                ],
-                [
-                    'text' => 'Pengajuan',
-                    'url' => $prefix . '/pengajuan',
-                    'can' => 'all_mahasiswa',
-                    'icon' => 'fas fa-fw fa-file',
-                ],
+                // Sidebar POV Mahasiswa
                 [
                     'text' => 'Verifikasi Berkas Pengajuan Mahasiswa Seminar 3',
                     'url' => $prefix . '/verifikasi-berkas-3',
@@ -440,22 +411,10 @@ return [
                     'icon' => 'fas fa-fw fa-file',
                 ],
                 [
-                    'text' => 'Penilaian',
-                    'url' => $prefix . '/DosenTabelPenilaian',
-                    'can' => 'dosen',
-                    'icon' => 'fas fa-fw fa-award',
-                ],
-                [
-                    'text' => 'Rekapitulasi Berita Acara Seminar 3',
-                    'url' => $prefix . '/rekapitulasi-berita-acara-seminar-3',
-                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
-                    'can' => 'koordinator_ta',
-                ],
-                [
-                    'text' => 'Rekapitulasi Berita Acara Sidang TA',
-                    'url' => $prefix . '/rekapitulasi-berita-acara-sidang-ta',
-                    'icon' => 'fas fa-clipboard-list', // Icon list rekap cek menggambarkan rekap berita acara
-                    'can' => 'koordinator_ta',
+                    'text' => 'Pengajuan',
+                    'url' => $prefix . '/pengajuan',
+                    'can' => 'all_mahasiswa',
+                    'icon' => 'fas fa-fw fa-file',
                 ],
                 [
                     'text' => 'Berita Acara Seminar 3',
@@ -469,6 +428,8 @@ return [
                     'icon' => 'fas fa-calendar-check', // Icon Kalender cek menggambarkan isi berita acara
                     'can' => 'all_mahasiswa',
                 ],
+
+                // Sidebar POV Dosen dan Koor
                 [
                     'text' => 'Verifikasi Berkas Seminar 3',
                     'url' => $prefix . '/kelola-pengajuan-berkas/seminar-3',
@@ -482,24 +443,6 @@ return [
                     'can' => 'koordinator_ta',
                 ],
                 [
-                    'text' => 'Koordinator Kelola Pengajuan Jadwal',
-                    'icon' => 'fas fa-fw fa-file',
-                    'submenu' => [
-                        [
-                            'text' => 'Pengajuan Jadwal Seminar 3',
-                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
-                            'can' => 'koordinator_ta',
-                            'icon' => 'far fa-fw fa-file',
-                        ],
-                        [
-                            'text' => 'Pengajuan Jadwal Sidang Akhir',
-                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
-                            'can' => 'koordinator_ta',
-                            'icon' => 'far fa-fw fa-file',
-                        ],
-                    ],
-                ],
-                [
                     'text' => 'Dosen Kelola Pengajuan Jadwal',
                     'icon' => 'fas fa-fw fa-file',
                     'submenu' => [
@@ -510,13 +453,73 @@ return [
                             'icon' => 'far fa-fw fa-file',
                         ],
                         [
+                            'text' => 'Jadwal Seminar 3',
+                            'url' => $prefix . '/batal-jadwal-seminar',
+                            'can' => 'dosen',
+                            'icon' => 'fas fa-regular fa-calendar'
+                        ],
+                        [
                             'text' => 'Pengajuan Jadwal Sidang Akhir',
                             'url' => $prefix . '/kelola-pengajuan-jadwal-pembimbing/sidang-akhir',
                             'can' => 'akses-dosen-kelola-pengajuan-jadwal',
                             'icon' => 'far fa-fw fa-file',
                         ],
+                        [
+                            'text' => 'Jadwal Sidang',
+                            'url' => $prefix . '/batal-jadwal-sidang',
+                            'can' => 'dosen',
+                            'icon' => 'fas fa-regular fa-calendar'
+                        ],
                     ],
                 ],
+                [
+                    'text' => 'Koordinator Kelola Pengajuan Jadwal',
+                    'icon' => 'fas fa-fw fa-file',
+                    'submenu' => [
+                        [
+                            'text' => 'Pengajuan Jadwal Seminar 3',
+                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/seminar-3',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Persetujuan Pembatalan Seminar 3',
+                            'url' => $prefix . '/persetujuan-pembatalan-jadwal-seminar',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'fas fa-regular fa-calendar'
+                        ],
+                        [
+                            'text' => 'Pengajuan Jadwal Sidang Akhir',
+                            'url' => $prefix . '/koordinator-kelola-pengajuan-jadwal/sidang-akhir',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'far fa-fw fa-file',
+                        ],
+                        [
+                            'text' => 'Persetujuan Pembatalan Sidang',
+                            'url' => $prefix . '/persetujuan-pembatalan-jadwal-sidang',
+                            'can' => 'koordinator_ta',
+                            'icon' => 'fas fa-regular fa-calendar'
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Rekapitulasi Berita Acara Seminar 3',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-seminar-3',
+                    'icon' => 'fas fa-clipboard-list',
+                    'can' => 'koordinator_ta',
+                ],
+                [
+                    'text' => 'Rekapitulasi Berita Acara Sidang TA',
+                    'url' => $prefix . '/rekapitulasi-berita-acara-sidang-ta',
+                    'icon' => 'fas fa-clipboard-list',
+                    'can' => 'koordinator_ta',
+                ],    
+                [
+                    'text' => 'Penilaian',
+                    'url' => $prefix . '/DosenTabelPenilaian',
+                    'can' => 'dosen',
+                    'icon' => 'fas fa-fw fa-award',
+                ],            
             ]
         ],
         [
