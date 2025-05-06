@@ -9,6 +9,7 @@
 @stop
 
 @section('content')
+<div class="card p-4">
     <div class="p-4">
         <!-- Informasi Kategori -->
         <div class="row mb-4">
@@ -41,19 +42,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($aspekPenilaian as $kategori => $aspekList)
+                            @foreach ($aspekPenilaian as $data_aspek => $aspekList)
                                 <!-- Tampilkan Nama Kategori -->
                                 <tr class="bg-light">
                                     <td colspan="2" class="text-left">
-                                        <strong>{{ $kategori }}</strong>
+                                        <strong>{{ $data_aspek }}</strong>
                                     </td>
                                 </tr>
 
                                 <!-- Tampilkan Aspek Penilaian -->
                                 @foreach ($aspekList as $aspek)
                                     <tr class="bg-white">
-                                        <td class="text-left">{{ $aspek->nama }}</td>
-                                        <td class="text-center">{{ $aspek->bobot }}%</td>
+                                        <td class="text-left">{{ $aspek['nama'] }}</td>
+                                        <td class="text-center">{{ $aspek['bobot'] }}%</td>
                                     </tr>
                                 @endforeach
                             @endforeach
@@ -68,19 +69,20 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
-                    <input type="text" class="form-control" id="tanggalTenggat" name="tanggalTenggat"
-                        value="{{ $kategori->tanggal_tenggat_pengisian ?? '-' }}" readonly>
+                    <input type="text" class="form-control" id="tanggalTenggat" name="tanggalTenggat" 
+                    value="{{ $kategori->tanggal_tenggat_pengisian ?? '' }}" readonly>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="waktuTenggat">Waktu Tenggat</label>
-                    <input type="text" class="form-control" id="waktuTenggat" name="waktuTenggat"
-                        value="{{ $kategori->waktu_tenggat_pengisian ?? '-' }}" readonly>
+                    <input type="text" class="form-control" id="waktuTenggat" name="waktuTenggat" 
+                    value="{{ $kategori->waktu_tenggat_pengisian ?? '' }}" readonly>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @stop
 
 @section('css')
