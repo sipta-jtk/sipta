@@ -5,6 +5,8 @@ namespace App\Modules\NotificationAndReminder\Controllers;
 use Illuminate\Http\Request;
 use App\Services\NotifikasiService;
 use App\Models\User;
+use App\Models\Notifikasi;
+use App\Models\TemplateNotifikasi;
 use App\Http\Controllers\Controller;
 
 class PendaftaranController extends Controller
@@ -19,32 +21,60 @@ class PendaftaranController extends Controller
     public function daftarUser(Request $request)
     {
         try {
-            $userId = $request->input('user_id'); // Ambil user_id dari request
-            $templateId = $request->input('template_id'); // Ambil template_id dari request
+            // Validate required inputs
+            $userId = $request->input('username'); // Extract username (user_id) from request
+            $templateId = $request->input('template_id'); // Extract template_id from request
 
             if (!$userId || !$templateId) {
-                return response()->json(['error' => 'user_id dan template_id wajib diisi'], 400);
+                return response()->json(['error' => 'username dan template_id wajib diisi'], 400);
             }
 
-            // Ambil user dari database berdasarkan userId
+            // Retrieve the user from the database based on the username
             $user = User::find($userId);
-
             if (!$user) {
                 throw new \Exception('User tidak ditemukan');
             }
 
-            $this->notifikasiService->kirimEmail(
-                $templateId, 
-                $userId, 
-                [
-                    'name' => $user->name, 
-                    'task' => $request->input('task'), 
-                    'deadline' => $request->input('deadline')
-                ]
-            );            
+            // Fetch the notification template from the database
+            $template = TemplateNotifikasi::find($templateId);
+            if (!$template) {
+                throw new \Exception('Template notifikasi tidak ditemukan');
+            }
 
-            return response()->json(['message' => 'Pendaftaran berhasil, email dikirim']);
+            // Prepare email content by dynamically replacing placeholders
+            $isiInEmail = str_replace(
+                ['{nama}', '{Topik}', '{deadline}'],
+                [$user->nama, $request->input('Topik'), $request->input('deadline')],
+                $template->isi_in_email
+            );
+
+            // Save the notification data to the 'notifikasi' table
+            $notifikasi = Notifikasi::create([
+                'tipe_notifikasi' => $template->jenis_notifikasi,
+                'judul' => $template->judul_notifikasi,
+                'isi_notifikasi' => $isiInEmail, // Save the processed email content
+            ]);
+
+            // Send the pre-processed email content using NotifikasiService
+            $this->notifikasiService->kirimEmail(
+                $templateId,
+                $userId,
+                [
+                    'nama' => $user->nama,
+                    'Topik' => $request->input('Topik'),
+                    'deadline' => $request->input('deadline'),
+                    'email_content' => $isiInEmail // Pass the processed email content
+                ]
+            );
+
+            // Return a success response with the notification details
+            return response()->json([
+                'message' => 'Pendaftaran berhasil, email dikirim',
+                'notifikasi_id' => $notifikasi->id_notifikasi, // Include notification ID for reference
+                'email_content' => $isiInEmail, // Include email content in the response
+            ]);
         } catch (\Exception $e) {
+            // Return an error response in case of an exception
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
