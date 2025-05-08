@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb',
     ['links' => [
-    ['url' => route('beranda.get'), 'label' => 'Home'],
+    ['url' => route('beranda.get'), 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Rekapitulasi Nilai Sidang']]
     ])
     @endcomponent
@@ -30,8 +30,8 @@
             </div>
 
             {{-- Filter Section --}}
-            <div id="filterSection" class="mt-3" style="display: none;">
-                <div class="card mx-3 mt-3">
+            <div id="filterSection" class="mt-3 mb-3" style="display: none;">
+                <div class="card mt-3">
                     <div class="card-header">
                         <i class="fas fa-filter"></i> Filter Data
                     </div>
@@ -54,15 +54,15 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="card-footer text-right">
-                            <button id="applyFilter" class="btn btn-primary">Terapkan</button>
-                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button id="applyFilter" class="btn btn-primary">Terapkan</button>
                     </div>
                 </div>
             </div>
 
             {{-- DataTables Controls (Jumlah data & Search) --}}
-            <div class="d-flex justify-content-between mb-2 mt-3">
+            <div class="d-flex justify-content-between mb-3">
                 <div id="dataTableControls"></div> <!-- Placeholder untuk jumlah data -->
                 <div id="searchBox"></div> <!-- Placeholder untuk pencarian -->
             </div>
