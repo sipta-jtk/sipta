@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => route('beranda.get'), 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Tambah Aspek Penilaian']
         ]
@@ -182,12 +182,24 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
-                                <x-adminlte-input type="date" name="tanggalTenggat" id="tanggalTenggat" value="{{ old('tanggalTenggat') }}" required />
+                                <x-adminlte-input 
+                                    type="date" 
+                                    name="tanggalTenggat" 
+                                    id="tanggalTenggat" 
+                                    value="{{ old('tanggalTenggat', isset($formPenilaian) ? \Carbon\Carbon::parse($formPenilaian->tanggal_tenggat_pengisian)->format('Y-m-d') : '') }}" 
+                                    required 
+                                />
                             </div>
 
                             <div class="col-md-6">
                                 <label for="waktuTenggat">Waktu Tenggat</label>
-                                <x-adminlte-input type="time" name="waktuTenggat" id="waktuTenggat" value="{{ old('waktuTenggat') }}" required />
+                                <x-adminlte-input 
+                                    type="time" 
+                                    name="waktuTenggat" 
+                                    id="waktuTenggat" 
+                                    value="{{ old('waktuTenggat', isset($formPenilaian) ? \Carbon\Carbon::parse($formPenilaian->waktu_tenggat_pengisian)->format('H:i') : '') }}" 
+                                    required 
+                                />
                             </div>
                         </div>
                     </div>

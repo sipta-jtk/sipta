@@ -23,6 +23,11 @@ $(document).ready(function () {
     // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
 
+    // Panggil fungsi untuk menghitung total bobot saat halaman pertama kali dimuat
+    if ($("#jenisForm").val() === "penilaian") {
+        updateBobotSummary();
+    }
+
     // Update total bobot saat nilai bobot diubah
     $(document).on("input", "input[name='bobot_kriteria[]']", function () {
         if ($("#jenisForm").val() === "penilaian") {
