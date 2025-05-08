@@ -40,6 +40,13 @@ $(document).ready(function () {
         }
     });
 
+    // Tombol Edit
+    $('#edit-button').click(function () {
+        $('.bobot-input, .sumber-nilai').prop('disabled', false); // Aktifkan input
+        $('#submit-button').prop('disabled', false); // Aktifkan tombol Simpan
+        $(this).prop('disabled', true); // Nonaktifkan tombol Edit
+    });
+
     table
         .on("order.dt search.dt draw.dt", function () {
         table

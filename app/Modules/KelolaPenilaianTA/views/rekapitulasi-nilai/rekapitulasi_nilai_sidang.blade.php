@@ -3,7 +3,7 @@
 @section('title', 'Rekapitulasi Nilai Sidang')
 
 @section('content_header')
-<div class="container-fluid p-3">
+<div class="container-fluid">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Rekapitulasi Nilai Sidang</h1>
 
@@ -19,11 +19,11 @@
 @stop
 
 @section('content')
-<div class="p-2">
+<div class="container-fluid">
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body p-3">
             {{-- Filter Toggle Button --}}
-            <div class="d-flex justify-content-between px-3 pt-3">
+            <div class="d-flex justify-content-between mb-3">
                 <button id="toggleFilter" class="btn btn-primary btn-md">
                     <i class="fas fa-filter"></i>
                 </button>
@@ -69,10 +69,10 @@
 
             {{-- Tabel Scrollable --}}
             <div class="table-container">
-                <table id="nilaiTable" class="table table-striped table-bordered text-center" width="100%">
+                <table id="nilaiTable" class="table table-striped text-center" width="100%">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white text-center">
-                            <th rowspan="2" class="align-middle" style="width: 4%;">No</th>
+                            <th rowspan="2" class="align-middle" style="width: 4%">No</th>
                             <th rowspan="2" class="align-middle" style="width: 6%;">NIM</th>
                             <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
                             <th rowspan="2" class="align-middle" style="width: 6%;">Prodi</th>
