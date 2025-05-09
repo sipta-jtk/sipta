@@ -65,6 +65,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="jenisTA">Jenis TA</label>
+                                    <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                                        value="{{ $aspek->jenisTA ?? '' }}" readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Aspek Penilaian -->

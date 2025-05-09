@@ -3,48 +3,63 @@ $(document).ready(function () {
     let namaProdi = $('#namaProdi');
     let jenisTAContainer = $('#jenisTAContainer');
 
+    if (jenisTAContainer.length === 0) {
+        $('<div class="col-md-6" id="jenisTAContainer">\
+            <div class="form-group">\
+                <label for="jenisTA">Jenis TA</label>\
+                <select class="form-control" name="jenisTA" id="jenisTA" required>\
+                    <option value="" disabled selected>-- Pilih Jenis TA --</option>\
+                    <option value="Penelitian">Penelitian</option>\
+                    <option value="Pengembangan">Pengembangan</option>\
+                </select>\
+            </div>\
+        </div>').insertAfter($('#namaProdi').closest('.col-md-6'));
+        
+        jenisTAContainer = $('#jenisTAContainer');
+    }
+    
+    jenisTAContainer.hide();
+
     function toggleTables() {
         let jenis = jenisForm.val();
+        console.log("Jenis formulir diubah ke:", jenis);
+        
         $('#tablePenilaian').toggle(jenis === 'Penilaian');
         $('#tableFeedback').toggle(jenis === 'Feedback');
+        $(".bobot-summary").closest('tr').toggle(jenis === 'Penilaian');
+        $("#notification").addClass("d-none");
     }
 
     function toggleJenisTA() {
+        const selectedProdiId = namaProdi.val();
         const selectedProdiText = namaProdi.find('option:selected').text().trim();
-    
-        if (selectedProdiText === 'D4-Teknik Informatika') {
-            // Show Jenis TA dropdown
+        
+        if (selectedProdiText.includes('D4-Teknik Informatika') || selectedProdiId === '2') {
             jenisTAContainer.show();
             $('#jenisTA').prop('required', true);
-    
-            // Remove any existing hidden field for jenisTA
             $('input[name="jenisTA"][type="hidden"]').remove();
-        } else if (selectedProdiText === 'D3-Teknik Informatika') {
-            // Hide Jenis TA dropdown and set default value
+        } else if (selectedProdiText.includes('D3-Teknik Informatika') || selectedProdiId === '1') {
             jenisTAContainer.hide();
             $('#jenisTA').prop('required', false);
-    
-            // Remove existing hidden field if any
             $('input[name="jenisTA"][type="hidden"]').remove();
-    
-            // Add hidden field with default value
             $('<input type="hidden" name="jenisTA" value="Pengembangan">')
                 .insertAfter(namaProdi.closest('.form-group'));
         } else {
-            // For other programs, hide both
             jenisTAContainer.hide();
             $('#jenisTA').prop('required', false);
             $('input[name="jenisTA"][type="hidden"]').remove();
         }
     }
 
-    // Inisialisasi tampilan saat halaman dimuat
     toggleTables();
     toggleJenisTA();
 
-    // Event listener untuk perubahan pilihan
     jenisForm.change(toggleTables);
-    namaProdi.change(toggleJenisTA);
+    namaProdi.change(function() {
+        console.log("Prodi changed to:", $(this).val());
+        toggleJenisTA();
+    });
+
 
     function setMinDate() {
         const today = new Date();
@@ -56,7 +71,6 @@ $(document).ready(function () {
         $('#tanggalTenggat').attr('min', minDate);
     }
 
-    // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
 
     // Event listener untuk menambah baris
@@ -84,14 +98,16 @@ $(document).ready(function () {
                     </td>
                 </tr>
             `);
+            validateTotalBobot();
         }
-        validateTotalBobot();
     });
 
     // Event listener untuk menghapus baris
     $(document).on('click', '.remove-row', function () {
         $(this).closest('tr').remove();
-        validateTotalBobot(); 
+        if ($("#jenisForm").val() === "Penilaian") {
+            validateTotalBobot();
+        }
     });
 
     function initBobotInputs() {
@@ -133,27 +149,33 @@ $(document).ready(function () {
 
     // Event listener untuk value yang sudah ada saat halaman dimuat
     initBobotInputs();
-    validateTotalBobot();
+    if ($("#jenisForm").val() === "Penilaian") {
+        validateTotalBobot();
+    }
 
     $('#aspekFormulirForm').on('submit', function(e) {
-        let totalBobot = validateTotalBobot();
+        if ($("#jenisForm").val() === "Penilaian") {
+            let totalBobot = validateTotalBobot();
 
-        if (totalBobot !== 100) {
-            e.preventDefault();
-            $("#notification")
-                .removeClass("d-none")
-                .find("#notificationMessage")
-                .text("Total Bobot Harus 100%");
+            if (totalBobot !== 100) {
+                e.preventDefault();
+                $("#notification")
+                    .removeClass("d-none")
+                    .find("#notificationMessage")
+                    .text("Total Bobot Harus 100%");
 
-            setTimeout(function () {
-                $("#notification").addClass("d-none");
-            }, 3000);
+                setTimeout(function () {
+                    $("#notification").addClass("d-none");
+                }, 3000);
+                
+                return false;
+            }
         }
+        return true;
     });
 
-    // Memicu button submit
-    $('.btn-primary').on('click', function() {
-        console.log('Button clicked');
+    $('.btn-primary[type="submit"]').on('click', function() {
+        console.log('Submit button clicked');
         $('#aspekFormulirForm').submit();
     });
 });

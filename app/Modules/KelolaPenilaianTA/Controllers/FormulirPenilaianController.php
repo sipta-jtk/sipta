@@ -57,19 +57,8 @@ class FormulirPenilaianController extends Controller {
             'jenisForm' => 'required',
             'tanggalTenggat' => 'required|date',
             'waktuTenggat' => 'required',
+            'jenisTA' => 'required_if:namaProdi,2',
         ], $messages);
-
-        // Validasi untuk Kode FTA unik dalam jenis formulir yang sama
-        $validator->after(function ($validator) use ($request) {
-            $exists = FormPenilaian::where('kode_fta', $request->kodeFTA)
-                                ->where('jenis_form', $request->jenisForm)
-                                ->where('id_prodi', $request->namaProdi)
-                                ->exists();
-            
-            if ($exists) {
-                $validator->errors()->add('kodeFTA', 'Kode FTA sudah digunakan');
-            }
-        });
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -88,18 +77,17 @@ class FormulirPenilaianController extends Controller {
                 'jenis_form' => $request->jenisForm,
                 'tanggal_tenggat_pengisian' => $request->tanggalTenggat,
                 'waktu_tenggat_pengisian' => $request->waktuTenggat,
+                'jenis_ta' => $request->jenisTA ?? null,
             ]);
 
             $id_fta = $formPenilaian->id_fta;
 
-            // Proses berdasarkan jenis formulir (kode yang sudah ada)
             if ($request->jenisForm === 'Penilaian') {
-                // Kode untuk Penilaian (tetap sama seperti sebelumnya)
                 if ($request->has('nama_kriteria')) {
                     // Kalkulasi total bobot
                     $totalBobot = array_sum($request->bobot_kriteria);
 
-                    // Cek apakah total bobot adalah 100
+                    // Untuk mengecek apakah total bobot adalah 100
                     if ($totalBobot != 100) {
                         return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
                     }
@@ -114,7 +102,6 @@ class FormulirPenilaianController extends Controller {
                     }
                 }
             } else if ($request->jenisForm === 'Feedback') {
-                // Kode untuk Feedback (tetap sama seperti sebelumnya)
                 if ($request->has('nama_aspek_feedback')) {
                     foreach ($request->nama_aspek_feedback as $kriteria) {
                         AspekFeedback::create([
@@ -165,9 +152,9 @@ class FormulirPenilaianController extends Controller {
      */
     public function tambahRubrikPenilaian(): View
     {
-        $formPenilaianList = FormPenilaian::all(); // Ambil semua data Form Penilaian dari database
-        $kriteriaList = KriteriaPenilaian::all(); // Ambil semua data Kriteria Penilaian dari database
-        $rentangNilai = $this->rentangPenilaian(); // Ambil rentang nilai
+        $formPenilaianList = FormPenilaian::all();  // Ambil semua data Form Penilaian dari database
+        $kriteriaList = KriteriaPenilaian::all();   // Ambil semua data Kriteria Penilaian dari database
+        $rentangNilai = $this->rentangPenilaian();  // Ambil rentang nilai
 
         return view('KelolaPenilaianTA.views.formulir-penilaian.tambah_rubrik_penilaian', compact('formPenilaianList', 'kriteriaList', 'rentangNilai'));
     }
@@ -201,6 +188,7 @@ class FormulirPenilaianController extends Controller {
             'namaFTA' => $formPenilaian->nama_fta,
             'jenisForm' => $formPenilaian->jenis_form,
             'namaProdi' => $formPenilaian->prodi->nama_prodi,
+            'jenisTA' => $formPenilaian->jenis_ta,
             'tanggalTenggat' => $formPenilaian->tanggal_tenggat_pengisian,
             'waktuTenggat' => $formPenilaian->waktu_tenggat_pengisian,
             'penilaian' => $formPenilaian->kriteriaPenilaian,
@@ -216,14 +204,13 @@ class FormulirPenilaianController extends Controller {
      */
     public function updateAspek(Request $request, $id)
     {
-        // Validate the request
+        // Validasi request
         $request->validate([
             'tanggalTenggat' => 'required|date',
             'waktuTenggat' => 'required|date_format:H:i',
             'bobot_kriteria.*' => 'required|integer|min:0|max:100',
         ]);
 
-        // Find the form
         $formPenilaian = FormPenilaian::where('id_fta', $id)->firstOrFail();
         
         // Update tanggal dan waktu tenggat pengisian
@@ -241,10 +228,10 @@ class FormulirPenilaianController extends Controller {
                 return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
             }
             
-            // Delete existing criteria using id_fta
+            // Hapus kiteria menggunakan id_fta
             KriteriaPenilaian::where('id_fta', $id_fta)->delete();
             
-            // Add new criteria with both kode_fta and id_fta
+            // Tambah kriteria baru dengan kode_fta dan id_fta
             $namaKriteria = $request->nama_kriteria;
             $bobotKriteria = $request->bobot_kriteria;
             
@@ -299,12 +286,13 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
         )
         ->first();
         
-            // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
+        // Ambil rentang nilai hanya untuk A, AB, B, BC, C, dan CD
         $rentangNilai = DB::table('rentang_nilai')
             ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
             ->select('id_nilai', 'batas_atas', 'batas_bawah')
@@ -355,12 +343,12 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
         )
         ->first();
         
-        // Format tanggal menggunakan Carbon
         if ($kategori) {
             $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
         }
@@ -386,37 +374,32 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
         )
         ->first();
             
-        // Format tanggal menggunakan Carbon
         if ($kategori) {
             $kategori->tanggal_tenggat_pengisian = Carbon::parse($kategori->tanggal_tenggat_pengisian)->translatedFormat('d F Y');
         }
         
-        // Pastikan data formulir ditemukan
         if (!$kategori) {
             abort(404, 'Data formulir penilaian tidak ditemukan.');
         }
 
-        // Definisikan struktur kategori yang diharapkan
         $aspekPenilaian = [
             'A Luaran Tugas Akhir' => [],
             'B Proses Bimbingan' => []
         ];
 
-        // Ambil semua kriteria penilaian untuk form ini
         $kriteriaPenilaian = DB::table('kriteria_penilaian')
             ->where('id_fta', $idFta)
             ->select('nama_kriteria', 'bobot_kriteria')
             ->get();
 
 
-        // Mapping nama kriteria ke kategori yang sesuai
         foreach ($kriteriaPenilaian as $kriteria) {
-            // Masukkan kriteria ke kategori yang sesuai berdasarkan nama
             if ($kriteria->nama_kriteria == 'Dokumen' || $kriteria->nama_kriteria == 'Produk Perangkat Lunak/Hasil Penelitian') {
                 $aspekPenilaian['A Luaran Tugas Akhir'][] = [
                     'nama' => $kriteria->nama_kriteria,
@@ -434,45 +417,6 @@ class FormulirPenilaianController extends Controller {
 
         return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
     }
-
-    // public function viewDetailDosenPembimbing($idFta, $idProdi): View
-    // {
-    //     // Ambil data kategori berdasarkan id_fta
-    //     $kategori = DB::table('form_penilaian')
-    //         ->where('id_fta', $idFta)
-    //         ->select('kode_fta', 'nama_fta', 'tanggal_tenggat_pengisian', 'waktu_tenggat_pengisian')
-    //         ->first();
-
-    //     // Log data untuk memastikan query berhasil
-    //     \Log::info('Kategori:', (array) $kategori);
-
-    //     // Pastikan data kategori ditemukan
-    //     if (!$kategori) {
-    //         abort(404, 'Data formulir penilaian tidak ditemukan.');
-    //     }
-
-    //     // Ambil data aspek penilaian dari database
-    //     $aspekPenilaianDb = DB::table('kriteria_penilaian')
-    //         ->where('id_fta', $idFta)
-    //         ->select('nama_kriteria as nama', 'bobot_kriteria as bobot')
-    //         ->get();
-
-    //     // Definisikan pengelompokan kategori
-    //     $kategoriHardcoded = [
-    //         'A Luaran Tugas Akhir' => ['Dokumen', 'Produk Perangkat Lunak/Hasil Penelitian'],
-    //         'B Proses Bimbingan' => ['Softskill', 'Hardskill'],
-    //     ];
-
-    //     // Kelompokkan data dari database berdasarkan kategori yang telah ditentukan
-    //     $aspekPenilaian = [];
-    //     foreach ($kategoriHardcoded as $kategoriName => $aspekList) {
-    //         $aspekPenilaian[$kategoriName] = $aspekPenilaianDb->filter(function ($aspek) use ($aspekList) {
-    //             return in_array($aspek->nama, $aspekList);
-    //         })->values()->toArray();
-    //     }
-
-    //     return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
-    // }
 
     /**
      * Menampilkan halaman untuk menambahkan rubrik pada formulir penilaian.
@@ -518,7 +462,7 @@ class FormulirPenilaianController extends Controller {
             ->select(
                 'form_penilaian.kode_fta',
                 'form_penilaian.nama_fta',
-                'prodi.nama_prodi', // Ambil nama prodi
+                'prodi.nama_prodi', 
                 'form_penilaian.jenis_form',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta'
@@ -564,7 +508,7 @@ class FormulirPenilaianController extends Controller {
     public function viewTabelRubrik(): View 
     {
         $data = DB::table('form_penilaian')
-            ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi') // Join dengan tabel prodi
+            ->join('prodi', 'form_penilaian.id_prodi', '=', 'prodi.id_prodi')
             ->where('jenis_form', 'penilaian')
             ->select(
                 'form_penilaian.kode_fta',
@@ -575,7 +519,6 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.id_fta')
             ->get()
             ->map(function ($row) {
-                // Cek apakah ada data detail_rubrik_penilaian untuk id_fta tertentu
                 $hasRubrik = DB::table('detail_rubrik')
                     ->join('rubrik', 'detail_rubrik.id_rubrik', '=', 'rubrik.id_rubrik')
                     ->join('kriteria_penilaian', 'rubrik.id_kriteria', '=', 'kriteria_penilaian.id_kriteria')
@@ -597,27 +540,22 @@ class FormulirPenilaianController extends Controller {
         DB::beginTransaction();
 
         try {
-            // Get form data
             $kodeFta = $request->input('kode_fta');
             
-            // Ambil data kriteria dari request
             $kriterias = is_array($request->input('nama_kriteria')) 
                 ? $request->input('nama_kriteria') 
                 : [$request->input('nama_kriteria')];
                 
             $details = $request->input('detail');
             
-            // Perulangan untuk setiap baris input form
             foreach ($kriterias as $index => $idKriteria) {
                 $detail = $details[$index] ?? '';
                 
-                // Insert ke tabel rubrik menggunakan DB Query Builder
                 $idRubrik = DB::table('rubrik')->insertGetId([
                     'id_kriteria' => $idKriteria,
                     'nama_rubrik' => $detail
                 ]);
                 
-                // Simpan detail untuk setiap rentang nilai
                 $rentangNilai = DB::table('rentang_nilai')
                     ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
                     ->select('id_nilai')
@@ -629,7 +567,6 @@ class FormulirPenilaianController extends Controller {
                     $detailArray = $request->input($nilaiKey);
                     $detailNilai = $detailArray[$index] ?? '';
                     
-                    // Insert ke tabel detail_rubrik
                     DB::table('detail_rubrik')->insert([
                         'id_rubrik' => $idRubrik,
                         'id_nilai' => $nilai->id_nilai,
@@ -658,44 +595,36 @@ class FormulirPenilaianController extends Controller {
         DB::beginTransaction();
 
         try {
-            // Get form data
             $kodeFta = $request->input('kode_fta');
             
             // Ambil data kriteria dari request
             $kriterias = $request->input('nama_kriteria');
             $details = $request->input('detail');
             
-            // Ambil id_fta dari kode_fta
             $idFta = DB::table('form_penilaian')
                 ->where('kode_fta', $kodeFta)
                 ->value('id_fta');
                 
-            // Dapatkan semua id_kriteria yang ada untuk form ini
             $existingKriteriaIds = DB::table('kriteria_penilaian')
                 ->where('id_fta', $idFta)
                 ->pluck('id_kriteria')
                 ->toArray();
             
-            // Sebelum memproses data baru, hapus semua rubrik dan detail yang terkait dengan kriteria di form ini
-            // Langkah 1: Dapatkan semua id_rubrik yang terkait dengan kriteria
             $existingRubrikIds = DB::table('rubrik')
                 ->whereIn('id_kriteria', $existingKriteriaIds)
                 ->pluck('id_rubrik')
                 ->toArray();
                 
-            // Langkah 2: Hapus semua detail_rubrik terlebih dahulu (constraint foreign key)
             if (!empty($existingRubrikIds)) {
                 DB::table('detail_rubrik')
                     ->whereIn('id_rubrik', $existingRubrikIds)
                     ->delete();
                     
-                // Langkah 3: Hapus semua rubrik
                 DB::table('rubrik')
                     ->whereIn('id_rubrik', $existingRubrikIds)
                     ->delete();
             }
             
-            // Perulangan untuk setiap baris input form
             foreach ($kriterias as $index => $idKriteria) {
                 $detail = $details[$index] ?? '';
                 
@@ -705,7 +634,6 @@ class FormulirPenilaianController extends Controller {
                     'nama_rubrik' => $detail
                 ]);
                 
-                // Simpan detail untuk setiap rentang nilai
                 $rentangNilai = DB::table('rentang_nilai')
                     ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
                     ->select('id_nilai')
@@ -717,7 +645,6 @@ class FormulirPenilaianController extends Controller {
                     $detailArray = $request->input($nilaiKey);
                     $detailNilai = $detailArray[$index] ?? '';
                     
-                    // Insert ke tabel detail_rubrik
                     DB::table('detail_rubrik')->insert([
                         'id_rubrik' => $idRubrik,
                         'id_nilai' => $nilai->id_nilai,

@@ -77,7 +77,7 @@
                     <tbody id="rubrikPenilaianTable">
                         <tr>
                             <td>
-                                <select class="form-control id_kriteria" name="nama_kriteria" required>
+                                <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
                                     @foreach ($kriteriaList as $kriteriaPenilaian)
                                         <option value="{{ $kriteriaPenilaian->id_kriteria }}" 

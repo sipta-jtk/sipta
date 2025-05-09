@@ -43,6 +43,13 @@
                         value="{{ $kategori->nama_prodi ?? '' }}" readonly>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="jenisTA">Jenis TA</label>
+                    <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                        value="{{ $kategori->jenis_ta ?? '' }}" readonly>
+                </div>
+            </div>
         </div>        
 
         <h6><strong>Aspek Penilaian</strong></h6>

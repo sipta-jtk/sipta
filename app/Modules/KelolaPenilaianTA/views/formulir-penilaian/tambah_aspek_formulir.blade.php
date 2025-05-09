@@ -96,30 +96,19 @@
                                     </x-adminlte-select>
                                 </div>
                             </div>
-
-                            @php
-                                // Get selected prodi name
-                                $selectedProdiName = '';
-                                if (old('namaProdi')) {
-                                    $selectedProdi = $prodiList->firstWhere('id_prodi', old('namaProdi'));
-                                    $selectedProdiName = $selectedProdi ? $selectedProdi->nama_prodi : '';
-                                }
-                            @endphp
-
-                            @if($selectedProdiName === 'D4-Teknik Informatika')
-                                <div class="col-md-6" id="jenisTAContainer">
-                                    <div class="form-group">
-                                        <label for="jenisTA">Jenis TA</label>
-                                        <x-adminlte-select name="jenisTA" id="jenisTA" required>
-                                            <option value="" disabled {{ old('jenisTA') ? '' : 'selected' }}>-- Pilih Jenis TA --</option>
-                                            <option value="Penelitian" {{ old('jenisTA') == 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
-                                            <option value="Pengembangan" {{ old('jenisTA') == 'Pengembangan' ? 'selected' : '' }}>Pengembangan</option>
-                                        </x-adminlte-select>
-                                    </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6" id="jenisTAContainer" style="display: none;">
+                                <div class="form-group">
+                                    <label for="jenisTA">Jenis TA</label>
+                                    <x-adminlte-select name="jenisTA" id="jenisTA" required>
+                                        <option value="" disabled selected>-- Pilih Jenis TA --</option>
+                                        <option value="Penelitian">Penelitian</option>
+                                        <option value="Pengembangan">Pengembangan</option>
+                                    </x-adminlte-select>
                                 </div>
-                            @elseif($selectedProdiName === 'D3-Teknik Informatika')
-                                <input type="hidden" name="jenisTA" value="Pengembangan">
-                            @endif
+                            </div>
                         </div>
                     </div>
 
