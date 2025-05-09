@@ -13,6 +13,7 @@ class FormPenilaian extends Model
         'kode_fta',
         'nama_fta', 
         'id_prodi', 
+        'jenis_ta',
         'jenis_form', 
         'tanggal_tenggat_pengisian', 
         'waktu_tenggat_pengisian',
