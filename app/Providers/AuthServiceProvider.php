@@ -129,7 +129,7 @@ class AuthServiceProvider extends ServiceProvider
          * [Topik 6] - Fitur Repository TA
         *********************************************/
         Gate::define('akses-sidebar-repo-dosen', function ($user) {
-            return Gate::allows('dosen') || Gate::allows('admin') ;
+            return Gate::allows('dosen') || Gate::allows('admin');
         });
         Gate::define('akses-sidebar-repo-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
