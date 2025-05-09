@@ -132,7 +132,11 @@
                                                                     class="col-sm border-right border-dark p-0">
                                                                     <div class="row d-flex m-0 flex-row"
                                                                         style="height: 500px;">
-                                                                        <div class="col-4 p-0 bg-warning" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing1"
+                                                                        @php
+                                                                            $alok1 = $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 1);
+                                                                            $bg1 = $alok1?->status_alokasi === 'fix' ? 'bg-success' : 'bg-warning';
+                                                                        @endphp
+                                                                        <div class="col-4 p-0 {{ $bg1 }}" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing1"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
@@ -178,7 +182,11 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-4 p-0 bg-warning" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing2"
+                                                                        @php
+                                                                            $alok2 = $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 2);
+                                                                            $bg2 = $alok2?->status_alokasi === 'fix' ? 'bg-success' : 'bg-warning';
+                                                                        @endphp
+                                                                        <div class="col-4 p-0 {{ $bg2 }}" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing2"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
