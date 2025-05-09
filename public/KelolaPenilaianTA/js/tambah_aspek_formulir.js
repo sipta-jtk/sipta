@@ -1,5 +1,7 @@
 $(document).ready(function () {
     let jenisForm = $('#jenisForm');
+    let namaProdi = $('#namaProdi');
+    let jenisTAContainer = $('#jenisTAContainer');
 
     function toggleTables() {
         let jenis = jenisForm.val();
@@ -7,11 +9,42 @@ $(document).ready(function () {
         $('#tableFeedback').toggle(jenis === 'Feedback');
     }
 
+    function toggleJenisTA() {
+        const selectedProdiText = namaProdi.find('option:selected').text().trim();
+    
+        if (selectedProdiText === 'D4-Teknik Informatika') {
+            // Show Jenis TA dropdown
+            jenisTAContainer.show();
+            $('#jenisTA').prop('required', true);
+    
+            // Remove any existing hidden field for jenisTA
+            $('input[name="jenisTA"][type="hidden"]').remove();
+        } else if (selectedProdiText === 'D3-Teknik Informatika') {
+            // Hide Jenis TA dropdown and set default value
+            jenisTAContainer.hide();
+            $('#jenisTA').prop('required', false);
+    
+            // Remove existing hidden field if any
+            $('input[name="jenisTA"][type="hidden"]').remove();
+    
+            // Add hidden field with default value
+            $('<input type="hidden" name="jenisTA" value="Pengembangan">')
+                .insertAfter(namaProdi.closest('.form-group'));
+        } else {
+            // For other programs, hide both
+            jenisTAContainer.hide();
+            $('#jenisTA').prop('required', false);
+            $('input[name="jenisTA"][type="hidden"]').remove();
+        }
+    }
+
     // Inisialisasi tampilan saat halaman dimuat
     toggleTables();
+    toggleJenisTA();
 
     // Event listener untuk perubahan pilihan
     jenisForm.change(toggleTables);
+    namaProdi.change(toggleJenisTA);
 
     function setMinDate() {
         const today = new Date();
