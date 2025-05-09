@@ -196,6 +196,7 @@
 
                     <input type="hidden" name="feedback[{{ $index }}][id_fta]" value="{{ $data['kode_fta'] }}">
                     <input type="hidden" name="feedback[{{ $index }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
+                    <input type="hidden" name="feedback[{{ $index }}][id_feedback]" value="{{ $feedback->id_feedback }}">
 
                     @php
                         $existingFeedback = $data['detailFeedback']->get($feedback->id_feedback);
