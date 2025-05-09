@@ -56,7 +56,7 @@
             <div class="col tabel-pengajuan">
                 <!-- HEADER -->
                 <div class="card-header text-center">
-                    <h3 class="card-title w-100">Daftar Pengajuan Alokasi Pembimbing</h3>
+                    <h3 class="card-title w-100">Tabel Alokasi Pembimbing</h3>
                 </div>
                 <div class="d-flex justify-content-between align-items-center p-2">
                     <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
@@ -288,7 +288,7 @@
 
                     <!-- HEADER -->
                     <div class="card-header text-center">
-                        <h3 class="card-title w-100">Detail Dosen</h3>
+                        <h3 class="card-title w-100">Tabel Detail Dosen</h3>
                     </div>
 
                     <!-- WRAPPER UNTUK FILTER DAN SEARCH -->
