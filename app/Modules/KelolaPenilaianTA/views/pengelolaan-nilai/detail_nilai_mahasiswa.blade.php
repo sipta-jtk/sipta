@@ -66,110 +66,61 @@
                     @php
                         $no = 1;
                         $grouped = $detailNilaiMahasiswa->groupBy('id_kota');
-                        // Log::info('Grouped Data: '. json_encode($grouped, JSON_PRETTY_PRINT));
                     @endphp
                 
                     @foreach ($grouped as $idKota => $mahasiswaKelompok)
-                        {{ Log::info('Kelompok Mahasiswa: '. json_encode($mahasiswaKelompok, JSON_PRETTY_PRINT)); }}
-                        <tr>
-                            <td class="text-center align-middle">{{ $no++ }}</td>
-                            
-                            <td class="text-center align-middle d-flex flex-column p-0" style="height: 100%;">
-                                @foreach ($mahasiswaKelompok as $index => $data)
-                                    <div class="border-bottom w-100 flex-fill d-flex align-items-center justify-content-center">
-                                        {{ $data->user->nama }}
-                                    </div>
-                                @endforeach
-                            
-                                {{-- Tambahkan div kosong jika jumlah elemen kurang dari 3 --}}
-                                @for ($i = count($mahasiswaKelompok); $i < 3; $i++)
-                                    <div class="w-100 flex-fill d-flex align-items-center justify-content-center">
-                                        &nbsp; <!-- Kosong -->
-                                    </div>
-                                @endfor
-                            </td>
-                
-                            <td class="text-center align-middle">{{ $data->kota->nama_kota }}</td>
-                                                
-                            @php
-                                $pengujiList = $data->nilaiKategori->pluck('dosen.id_dosen')->toArray();
-                                while (count($pengujiList) < 3) {
-                                    $pengujiList[] = '-';
-                                }
-                            @endphp
+                        {{ Log::info('Mahasiswa kelompok'. json_encode($mahasiswaKelompok, JSON_PRETTY_PRINT)) }}
+                        @foreach ($mahasiswaKelompok as $mahasiswa)
+                            <tr>
+                                <td class="align-middle text-center">{{ $no++ }}</td>
+                                <td class="align-middle text-start">{{ $mahasiswa->user->nama }}</td>
+                                <td class="align-middle text-center">{{ $mahasiswa->kota->nama_kota }}</td>
+                                
+                                {{-- Penguji --}}
+                                @php
+                                    // Ambil daftar id_dosen dari nilai_kategori
+                                    $pengujiList = $mahasiswa->nilaiKategori->pluck('dosen.id_dosen')->toArray() ?? [];
+                                    // Pastikan selalu ada 3 elemen, isi dengan '-' jika kurang
+                                    $pengujiList = array_pad($pengujiList, 3, '-');
+                                @endphp
 
-                            {{-- Penguji --}}
-                            {{-- @foreach ($pengujiList as $penguji)
-                                    <td rowspan="{{ count($mahasiswaKelompok) }}" class="text-center align-middle"> {{ $penguji }}</td>
-                                @endif
-                            @endforeach --}}
-                               {{-- Penguji --}}
-                            @foreach ($pengujiList as $penguji)
-                                <td class="text-center align-middle"> 
-                                    {{ $penguji }}
-                                </td>
-                            @endforeach
-                
-                            {{-- Nilai --}}
-                            @php
-                                $nilaiList = $data->nilaiKategori->pluck('nilai')->toArray();
-                                while (count($nilaiList) < 3) {
-                                    $nilaiList[] = 0;
-                                }
-                            @endphp
-                            
-                            @foreach ($nilaiList as $nilai)
-                                <td class="text-center align-middle">
-                                    {{ $nilai }}
-                                </td>
-                            @endforeach
+                                {{-- Cetak Penguji 1, Penguji 2, Penguji 3 --}}
+                                <td class="align-middle text-center">{{ $pengujiList[0] }}</td>
+                                <td class="align-middle text-center">{{ $pengujiList[1] }}</td>
+                                <td class="align-middle text-center">{{ $pengujiList[2] }}</td>
 
-                            {{-- Feedback --}}
-                            @php
-                                $feedbackList = $data->kota->detailFeedback->pluck('feedback')->toArray();
-                                while (count($feedbackList) < 3) {
-                                    $feedbackList[] = '-';
-                                }
-                            @endphp
-                            @foreach ($feedbackList as $feedback)
-                                <td class="text-center align-middle">
+                                {{-- Nilai --}}
+                                @php
+                                    // Ambil daftar nilai dari nilai_kategori
+                                    $nilaiList = $mahasiswa->nilaiKategori->pluck('nilai')->toArray() ?? [];
+                                    // Pastikan selalu ada 3 elemen, isi dengan '-' jika kurang
+                                    $nilaiList = array_pad($nilaiList, 3, '-');
+                                @endphp
+                    
+                                {{-- Cetak Nilai Penguji 1, Penguji 2, Penguji 3 --}}
+                                <td class="align-middle text-center">{{ $nilaiList[0] }}</td>
+                                <td class="align-middle text-center">{{ $nilaiList[1] }}</td>
+                                <td class="align-middle text-center">{{ $nilaiList[2] }}</td>
+
+                                {{-- Feedback --}}
+                                <td class="align-middle text-center">
                                     <i class="far fa-check-square text-success"></i>
-                                    {{-- <i class="far fa-square text-muted"></i> Kotak kosong --}}
-                                    {{-- <i class="far fa-check-square text-success"></i> Centang hijau --}}
                                 </td>
-                            @endforeach
-
-                            @if ($index == 0 && in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))
-                                <td class="text-center align-middle">
-                                    @if ($data->kota->detailFeedback->first()?->status_penilaian_dosen ?? 'draft' == 'draft')
-                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                                    @else
-                                        <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                                    @endif
+                                <td class="align-middle text-center">
+                                    <i class="far fa-check-square text-success"></i>
                                 </td>
-                            @endif
-                            
-                            {{-- <td>
-                                <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                            </td> --}}
-
-                            <!-- <td class="d-flex flex-column gap-1">
-                                <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                                <a href="{{ route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Masukan</a>
-        
-                                @if (($data->nilaiKategori->first()?->status_penilaian_dosen ?? 'draft') == 'dipublikasikan')
-                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'unpublish']) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger w-100">Batal Publikasi</button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'action' => 'publish']) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-primary w-100">Publikasi</button>
-                                    </form>
-                                @endif
-                            </td> -->
-                        </tr>
+                                <td class="align-middle text-center">
+                                    <i class="far fa-check-square text-success"></i>
+                                </td>
+                                <td>
+                                    <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                        Nilai
+                                    </a>
+                                </td>
+                                    {{-- <i class="far fa-squere text-muted"></i> --}}
+                                    {{-- <i class="fas fa-check-square text-success"></i> --}}
+                            </tr>
+                        @endforeach
                     @endforeach
                 </tbody>                
             </table>

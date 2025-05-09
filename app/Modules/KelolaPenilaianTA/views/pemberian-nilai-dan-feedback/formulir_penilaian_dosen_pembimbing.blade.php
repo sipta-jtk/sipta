@@ -16,7 +16,6 @@
                 ]
                 ])
         @endcomponent
-        
     </div>
 @stop
 

@@ -107,8 +107,6 @@ class PengelolaanNilaiController extends Controller{
         //     }
         // ])
         // ->get();
-
-        // Log::info('Detail Nilai Mahasiswa'. json_encode($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
         
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', [
             'detailNilaiMahasiswa' => $detailNilaiMahasiswa,

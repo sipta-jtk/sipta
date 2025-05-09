@@ -76,7 +76,7 @@ class PemberianNilaiController extends Controller
                 'kriteriaPenilaian.rubrik' => function ($query) {
                     $query->with('detailRubrik.nilai'); 
                 }
-            , 'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                ,'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
                 $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                     $q->where('id_kota', $idKota);
                 });

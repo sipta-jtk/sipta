@@ -4,7 +4,6 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
-        <!-- Judul Halaman -->
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
         
         <!-- Breadcrumb -->
@@ -17,6 +16,7 @@
         ])
         @endcomponent
 
+        <!-- Judul Halaman -->
     </div>
 @stop
 
@@ -34,7 +34,7 @@
             <div class="col-md-2 mt-3">
                 <strong>Pada hari/tanggal</strong> <br>
                 {{-- TBD perbaiki tanggal --}}
-                <span>{{ $keteranganUmumPenilaian->first()?->tanggal }}</span>
+                <span>{{ $keteranganUmumPenilaian->tanggal }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
