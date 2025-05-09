@@ -31,6 +31,10 @@ class PengelolaanNilaiController extends Controller{
             $query->where('jenis_form', 'penilaian')
                   ->orWhere('nama_fta', 'Seminar I'); // Biarkan "Seminar I" tanpa filter jenis_form
         })
+        ->where(function ($query) {
+            $query->whereNot('jenis_ta', 'penelitian')
+                  ->orWhereNull('jenis_ta'); // Sertakan nilai NULL
+        })
         ->with('prodi', 'kategoriPenilaian')
         ->orderBy('id_prodi')
         ->orderBy('nama_fta')
@@ -58,23 +62,13 @@ class PengelolaanNilaiController extends Controller{
             ->orderBy('nama_fta')
             ->where('id_prodi', $idProdi)
             ->with('prodi')
-            ->first();
+            ->get();
         
-        $idFtaPenilaian = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->orderBy('nama_fta')
-            ->where('id_prodi', $idProdi)
-            ->where('jenis_form', 'penilaian')
-            ->with('prodi')
-            ->first()
-            ->id_fta;
+        $idFtaPenilaian = $detailInformasiFta->where('jenis_form', 'penilaian')
+            ->pluck('id_fta');
 
-        $idFtaFeedback = FormPenilaian::where('nama_fta', $namaFtaSlug)
-            ->orderBy('nama_fta')
-            ->where('id_prodi', $idProdi)
-            ->where('jenis_form', 'feedback')
-            ->with('prodi')
-            ->first()
-            ->id_fta;
+        $idFtaFeedback = $detailInformasiFta->where('jenis_form', 'feedback')
+            ->pluck('id_fta');
 
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
@@ -82,15 +76,28 @@ class PengelolaanNilaiController extends Controller{
             ->with([
                 'nilaiKategori' => function ($query) use ($idFtaPenilaian) {
                     $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaPenilaian) {
-                        $q->where('id_fta', $idFtaPenilaian);
+                        $q->whereIn('id_fta', $idFtaPenilaian);
                     });
                 },
                 'nilaiKategori.dosen',
                 'user',
+                // 'kota.detailFeedback' => function ($query) use ($idFtaFeedback) {
+                //     $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
+                //         $q->whereIn('id_fta', $idFtaFeedback);
+                //     });
+                // }
+                'kota.detailFeedback'
             ])
             ->get();
 
-        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', compact('detailNilaiMahasiswa', 'detailInformasiFta', 'namaFta', 'nip'));
+        Log::info('Detail Nilai Mahasiswa'. json_encode($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
+        
+        return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', [
+            'detailNilaiMahasiswa' => $detailNilaiMahasiswa,
+            'detailInformasiFta' => $detailInformasiFta->first(),
+            'namaFta' => $namaFta,
+            'nip' => $nip,
+        ]);
     }
 
     /**
@@ -149,17 +156,33 @@ class PengelolaanNilaiController extends Controller{
      */
     public function toggleKunciPenilaian($idKategori, $action)
     {
-        $kategoriPenilaian = kategoriPenilaian::find($idKategori);
-    
-        if ($kategoriPenilaian) {
-            $kategoriPenilaian->kunci_penilaian = $action === 'kunci' ? 1 : 0;
-            $kategoriPenilaian->save();
-    
-            $message = $action === 'kunci' ? 'Penilaian berhasil dikunci.' : 'Penilaian berhasil dibuka kuncinya.';
-            return back()->with('success', $message);
+        $kategoriPenilaian = kategoriPenilaian::where('id_kategori', $idKategori)
+            ->with('formulirPenilaian')
+            ->get()
+            ->first();
+        
+        $namaFta = $kategoriPenilaian->formulirPenilaian->nama_fta;
+        $idProdi = $kategoriPenilaian->formulirPenilaian->id_prodi;
+
+        $formPenilaian = FormPenilaian::where([
+            ['nama_fta', $namaFta],
+            ['id_prodi', $idProdi],
+            ['jenis_form', 'penilaian']
+        ])
+        ->with('kategoriPenilaian')
+        ->get();
+
+        if ($formPenilaian) {
+            $formPenilaian->each(function ($penilaian) use ($action) {
+                $penilaian->kategoriPenilaian->each(function ($kategori) use ($action) {
+                    $kategori->kunci_penilaian = $action === 'kunci' ? 1 : 0;
+                    $kategori->save();
+                });
+            });
+
+            return back()->with('success', 'Penilaian berhasil ' . ($action === 'kunci' ? 'dikunci.' : 'dibuka kunci.'));
         }
-    
-        return back()->with('error', 'Kategori penilaian tidak ditemukan.');
+
+        return back()->with('error', 'Gagal mengubah status kunci penilaian.');
     }
-    
 }
