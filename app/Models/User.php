@@ -27,7 +27,8 @@ class User extends Authenticatable
         'password',
         'role_user',
         'no_whatsapp',
-        'photo'
+        'photo',
+        'status_user'
     ];
 
     protected $hidden = [
@@ -77,7 +78,7 @@ class User extends Authenticatable
         }
 
         // Jika tidak ada foto profil, kembalikan gambar default
-        return asset('storage/photos/default-profile1.jpg');
+        return asset('storage/photos/default-profile.jpg');
     }
 
     public function adminlte_desc()

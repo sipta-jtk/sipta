@@ -8,6 +8,8 @@ use App\Modules\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+Carbon::setLocale('id');
 
 class PembatalanJadwalSeminarSidangController extends Controller
 {
@@ -20,9 +22,13 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         $jadwal = Penjadwalan::select()
         ->join('pembatalan', 'penjadwalan.id_penjadwalan', '=', 'pembatalan.id_penjadwalan')
+        ->where('pembatalan.status_pembatalan', '!=', '1')
         ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
         ->join('user', 'pembatalan.nip', '=', 'user.username')
-        ->where('agenda', '=', 'seminar_3')->get();
+        ->where('agenda', '=', 'seminar_3')->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalseminar', compact('jadwal'));
     }
@@ -38,6 +44,9 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan->status_pembatalan = $status;
         $pembatalan->save();
         $message = $status == '1' ? 'Pembatalan jadwal disetujui.' : 'Pembatalan jadwal ditolak';
+        if($status == '0'){
+            $pembatalan->delete();
+        }
 
         return redirect()->route('view.persetujuan.pembatalan.seminar')->with('success', $message);
     }
@@ -46,10 +55,14 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         $jadwal = Penjadwalan::select()
             ->join('pembatalan', 'penjadwalan.id_penjadwalan', '=', 'pembatalan.id_penjadwalan')
+            ->where('pembatalan.status_pembatalan', '!=', '1')
             ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
             ->join('user', 'pembatalan.nip', '=', 'user.username')
             ->where('agenda', '=', 'sidang')
-            ->get();
+            ->get()->map(function ($item) {
+                $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+                return $item;
+            });
         // dd($jadwal);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.pembatalan.persetujuanpembatalanjadwalsidang', compact('jadwal'));
     }
@@ -65,7 +78,9 @@ class PembatalanJadwalSeminarSidangController extends Controller
         $pembatalan->status_pembatalan = $status;
         $pembatalan->save();
         $message = $status == '1' ? 'Pembatalan jadwal disetujui.' : 'Pembatalan jadwal ditolak';
-
+        if($status == '0'){
+            $pembatalan->delete();
+        }
         return redirect()->route('view.persetujuan.pembatalan.sidang')->with('success', $message);
     }
 
@@ -80,7 +95,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'seminar_3')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'penguji')
-        ->where('alokasi_dosen.nip', '=',$user)->get();
+        ->where('alokasi_dosen.nip', '=',$user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_penguji);
         
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
@@ -91,7 +109,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'seminar_3')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-        ->where('alokasi_dosen.nip', $user)->get();
+        ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_pembimbing);
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.bataljadwalseminar', compact('jadwal_penguji', 'jadwal_pembimbing'));
     }
@@ -100,11 +121,18 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         // dd($request);
         $nip = Auth::user()->dosen->nip;
+        $pembatalan = Pembatalan::where('id_penjadwalan', $request->id)->first();
+        if($pembatalan){
+            if($pembatalan->status_pembatalan == '1'){
+                return redirect()->route('jadwal.seminar')->with('error', 'Pengajuan pembatalan jadwal seminar sudah disetujui.');
+            } else {
+                return redirect()->route('jadwal.seminar')->with('error', 'Pengajuan pembatalan jadwal seminar sudah diajukan.');
+            }
+        }
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,
-            'nip' => $nip,
-            'status_pembatalan' => null
+            'nip' => $nip
         ]);
 
 
@@ -122,7 +150,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'sidang')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'penguji')
-        ->where('alokasi_dosen.nip', '=',$user)->get();
+        ->where('alokasi_dosen.nip', '=',$user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         // dd($jadwal_penguji);
         
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
@@ -133,7 +164,10 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ->where('agenda', '=', 'sidang')
         ->where('alokasi_dosen.status_alokasi', 'fix')
         ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-        ->where('alokasi_dosen.nip', $user)->get();
+        ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
+            $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+            return $item;
+        });
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.jadwal.bataljadwalsidang', compact('jadwal_penguji', 'jadwal_pembimbing'));
     }
 
@@ -141,11 +175,18 @@ class PembatalanJadwalSeminarSidangController extends Controller
     {
         // dd($request);
         $nip = Auth::user()->dosen->nip;
+        $pembatalan = Pembatalan::where('id_penjadwalan', $request->id)->first();
+        if($pembatalan){
+            if($pembatalan->status_pembatalan == '1'){
+                return redirect()->route('jadwal.sidang')->with('error', 'Pengajuan pembatalan jadwal sidang sudah disetujui.');
+            } else {
+                return redirect()->route('jadwal.sidang')->with('error', 'Pengajuan pembatalan jadwal sidang sudah diajukan.');
+            }
+        }
         $pembatalan = Pembatalan::create([
             'id_penjadwalan' => $request->id,
             'alasan_pembatalan' => $request->alasan,
-            'nip' => $nip,
-            'status_pembatalan' => null
+            'nip' => $nip
         ]);
 
 

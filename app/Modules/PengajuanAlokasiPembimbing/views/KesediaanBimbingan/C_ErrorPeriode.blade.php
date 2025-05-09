@@ -5,7 +5,7 @@
             action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
             method="post" style="display: inline;">
             @csrf
-            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Ubah Kesediaan
+            <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Ubah Kesediaan
                 membimbing</button>
         </form>
     </div>
@@ -16,7 +16,7 @@
             action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
             method="post" style="display: inline;">
             @csrf
-            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Ubah Kesediaan
+            <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Ubah Kesediaan
                 membimbing</button>
         </form>
     </div>

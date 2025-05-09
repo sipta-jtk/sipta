@@ -17,6 +17,11 @@ Route::get('/cek-plagiarisme', function () {
     return view('CekPlagiarisme.views.DaftarDokumen');
 });
 
+
+Route::get('/cek-plagiarisme/cek-tugas-akhir', function () {
+    return view('CekPlagiarisme.views.PengecekanTugasAkhir');
+});
+
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/

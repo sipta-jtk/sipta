@@ -3,7 +3,8 @@
 @section('title', 'Monitoring Feedback')
 
 @section('content_header')
-    <div class="container-fluid p-3">
+    <h1 class="mb-0">Detail Feedback</h1>
+    <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
@@ -12,18 +13,15 @@
             ]
         ])
         @endcomponent
-
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Feedback</h1>
     </div>
 @stop
 
 @section('content')
     <div class="card">
-        <div class="card-header bg-blue p-0">
+        <div class="card-header p-0">
             <h3 class="card-title p-3">Detail Usulan Tugas Akhir</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body px-3 py-3">
           <table class="table table-borderless">
               <tbody>
                   <tr>

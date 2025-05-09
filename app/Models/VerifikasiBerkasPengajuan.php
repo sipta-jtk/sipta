@@ -17,7 +17,7 @@ class VerifikasiBerkasPengajuan extends Model
         'catatan',
         'tanggal_pengajuan',
         'tanggal_verifikasi',
-        'jenis_pangajuan',
+        'jenis_pengajuan',
         'id_kota'
     ];
 

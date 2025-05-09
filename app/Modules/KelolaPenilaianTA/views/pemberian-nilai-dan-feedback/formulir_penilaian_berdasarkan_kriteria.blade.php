@@ -4,16 +4,17 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        
         <!-- Breadcrumb -->
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
                 ['url' => '', 'label' => 'Penilaian Seminar II']
-            ]
-        ])
+                ]
+                ])
         @endcomponent
-
+        
         <!-- Judul Halaman -->
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
     </div>
@@ -122,7 +123,6 @@
             @else
                 @method('POST')
             @endif
-            <input type="hidden" id="formAction" name="form_action" value="draft">
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table class="table table-bordered">
@@ -169,16 +169,9 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <div class="row mt-0">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning" onclick="document.getElementById('formAction').value='draft'">
-                        Simpan draft
-                    </button>
-                    <button type="submit" class="btn btn-secondary" onclick="document.getElementById('formAction').value='next'">
-                        Selanjutnya
-                    </button>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-warning">
+                Simpan
+            </button>
         </form>
     </div>
 @stop

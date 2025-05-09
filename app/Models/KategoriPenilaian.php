@@ -13,7 +13,6 @@ class KategoriPenilaian extends Model
 
     protected $fillable = [
         'id_fta',
-        'nama_kategori',
         'kunci_penilaian'
     ];
 

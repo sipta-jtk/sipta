@@ -27,7 +27,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => null,
                 'nama_kota' => 'Kota 401',
                 'tahun_kota' => 2025,
-                'status_kota' => 'pra_kota'
+                'status_kota' => 'pra_kota',
+                'jenis_ta' => null
             ],
             [
                 'id_kota' => 2,
@@ -35,7 +36,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 6,
                 'nama_kota' => 'Kota 402',
                 'tahun_kota' => 2025,
-                'status_kota' => 'aktif'
+                'status_kota' => 'aktif',
+                'jenis_ta' => 'pengembangan'
             ],
             [
                 'id_kota' => 3,
@@ -43,7 +45,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 3,
                 'nama_kota' => 'Kota 403',
                 'tahun_kota' => 2024,
-                'status_kota' => 'lulus'
+                'status_kota' => 'lulus',
+                'jenis_ta' => 'penelitian'
             ],
             [
                 'id_kota' => 4,
@@ -51,7 +54,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 4,
                 'nama_kota' => 'Kota 501',
                 'tahun_kota' => 2025,
-                'status_kota' => 'bubar'
+                'status_kota' => 'bubar',
+                'jenis_ta' => 'pengembangan'
             ],
             [
                 'id_kota' => 5,
@@ -59,7 +63,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => null,
                 'nama_kota' => 'Kota 201',
                 'tahun_kota' => 2025,
-                'status_kota' => 'pra_kota'
+                'status_kota' => 'pra_kota',
+                'jenis_ta' => null
             ],
             [
                 'id_kota' => 6,
@@ -67,7 +72,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 3,
                 'nama_kota' => 'Kota 202',
                 'tahun_kota' => 2025,
-                'status_kota' => 'aktif'
+                'status_kota' => 'aktif',
+                'jenis_ta' => 'penelitian'
             ],
             [
                 'id_kota' => 7,
@@ -75,7 +81,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 5,
                 'nama_kota' => 'Kota 101',
                 'tahun_kota' => 2024,
-                'status_kota' => 'lulus'
+                'status_kota' => 'lulus',
+                'jenis_ta' => 'pengembangan'
             ],
             [
                 'id_kota' => 8,
@@ -83,7 +90,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => 6,
                 'nama_kota' => 'Kota 203',
                 'tahun_kota' => 2025,
-                'status_kota' => 'bubar'
+                'status_kota' => 'bubar',
+                'jenis_ta' => 'pengembangan'
             ],
             [
                 'id_kota' => 9,
@@ -91,7 +99,8 @@ class KotaSeeder extends Seeder
                 'id_bidang' => null,
                 'nama_kota' => 'Kota 204',
                 'tahun_kota' => 2025,
-                'status_kota' => 'pra_kota'
+                'status_kota' => 'pra_kota',
+                'jenis_ta' => null
             ],
         ];
 

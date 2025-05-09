@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Exports\RekapitulasiNilaiExport;
 use App\Exports\RekapitulasiNilaiAkhirExport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Mahasiswa;
 use App\Models\KategoriPenilaian;
 use App\Models\KomponenNilaiAkhir;
 use App\Models\SumberNilai;
@@ -16,8 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 
-class RekapitulasiNilaiController extends Controller{
-
+class RekapitulasiNilaiController extends Controller
+{
     /**
      * Menampilkan halaman rekapitulasi nilai
      */
@@ -41,17 +40,37 @@ class RekapitulasiNilaiController extends Controller{
      */
     private function generateRekapitulasiNilai(Request $request = null)
     {
-        $query = Mahasiswa::select('mahasiswa.nim', 'user.nama as nama', 'mahasiswa.kelas', 'prodi.nama_prodi as prodi', 'kota.nama_kota as kelompok')
+        $query = DB::table('mahasiswa')
+            ->select(
+                'mahasiswa.nim',
+                'user.nama as nama',
+                'mahasiswa.kelas',
+                'prodi.nama_prodi as prodi',
+                'kota.nama_kota as kelompok',
+                'nilai_kategori.id_kategori',
+                'nilai_kategori.nip',
+                'nilai_kategori.nilai',
+                'nilai_kategori.status_penilaian_dosen',
+                'kategori_penilaian.id_kategori as kategori_id',
+                'kategori_penilaian.id_fta',
+                'kategori_penilaian.kunci_penilaian'
+            )
             ->leftJoin('user', 'mahasiswa.nim', '=', 'user.username')
             ->leftJoin('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
             ->leftJoin('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
+            ->leftJoin('nilai_kategori', 'mahasiswa.nim', '=', 'nilai_kategori.nim')
+            ->leftJoin('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
-            ->whereNotNull('mahasiswa.id_kota')
-            ->with(['nilaiKategori.kategoriPenilaian', 'nilaiKategori.dosen']);
+            ->whereNotNull('mahasiswa.id_kota');
 
-        $daftarMahasiswa = $query->get();
-        
-        $data = $daftarMahasiswa->map(fn($mahasiswa) => $this->prosesMahasiswa($mahasiswa))->toArray();
+        $daftarNilai = $query->get();
+
+        // Kelompokkan per mahasiswa
+        $grouped = $daftarNilai->groupBy('nim');
+
+        $data = $grouped->map(function ($items) {
+            return $this->prosesMahasiswa($items);
+        })->values()->toArray();
 
         if ($request) {
             $data = collect($data)
@@ -64,34 +83,45 @@ class RekapitulasiNilaiController extends Controller{
         return $data;
     }
 
+
     /**
      * Memproses data mahasiswa
      */
-    private function prosesMahasiswa($mahasiswa)
+    private function prosesMahasiswa($records)
     {
-        $nilaiKategori = $this->aturNilaiKategori($mahasiswa);
-        
+        $first = $records->first();
+
+        $nilaiKategori = $this->aturNilaiKategori($records);
+
         return array_merge([
-            'nim' => $mahasiswa->nim,
-            'nama' => $mahasiswa->nama,
-            'prodi' => $mahasiswa->prodi,
-            'kelas' => $mahasiswa->kelas,
-            'kelompok' => $mahasiswa->kelompok
+            'nim' => $first->nim,
+            'nama' => $first->nama,
+            'prodi' => $first->prodi,
+            'kelas' => $first->kelas,
+            'kelompok' => $first->kelompok,
         ], $nilaiKategori);
     }
+
 
     /**
      * Mengatur nilai kategori berdasarkan penguji dan pembimbing
      */
-    private function aturNilaiKategori($mahasiswa)
+    private function aturNilaiKategori($records)
     {
         $kategori = [
-            'seminar2Penguji1', 'seminar2Penguji2', 'seminar2Penguji3',
-            'seminar3Penguji1', 'seminar3Penguji2', 'seminar3Penguji3',
-            'sidangPenguji1', 'sidangPenguji2', 'sidangPenguji3',
-            'pembimbing1', 'pembimbing2'
+            'seminar2Penguji1',
+            'seminar2Penguji2',
+            'seminar2Penguji3',
+            'seminar3Penguji1',
+            'seminar3Penguji2',
+            'seminar3Penguji3',
+            'sidangPenguji1',
+            'sidangPenguji2',
+            'sidangPenguji3',
+            'pembimbing1',
+            'pembimbing2'
         ];
-        
+
         $nilaiKategori = array_fill_keys($kategori, null);
 
         $mappingKategori = [
@@ -101,11 +131,11 @@ class RekapitulasiNilaiController extends Controller{
             5 => ['pembimbing1', 'pembimbing2']
         ];
 
-        foreach ($mahasiswa->nilaiKategori as $nilai) {
-            if (!$nilai->kategoriPenilaian || !$nilai->dosen) continue;
+        foreach ($records as $record) {
+            if (!$record->kategori_id || $record->status_penilaian_dosen !== 'dipublikasikan') continue;
 
-            $id = $nilai->kategoriPenilaian->id_kategori;
-            $value = number_format($nilai->nilai, 2);
+            $id = $record->kategori_id;
+            $value = number_format($record->nilai, 2);
 
             if (isset($mappingKategori[$id])) {
                 $this->assignNilai($nilaiKategori, $mappingKategori[$id], $value);
@@ -116,9 +146,10 @@ class RekapitulasiNilaiController extends Controller{
             $keys = array_filter(array_keys($nilaiKategori), fn($k) => str_starts_with($k, $kategori));
             $nilaiKategori["rata" . ucfirst($kategori)] = number_format($this->hitungRataRata(array_intersect_key($nilaiKategori, array_flip($keys))), 2);
         }
-        
+
         return $nilaiKategori;
     }
+
 
 
     /**
@@ -166,17 +197,37 @@ class RekapitulasiNilaiController extends Controller{
      */
     private function generateRekapitulasiNilaiAkhir(Request $request = null)
     {
-        $query = Mahasiswa::select('mahasiswa.nim', 'user.nama as nama', 'mahasiswa.kelas', 'prodi.nama_prodi as prodi', 'kota.nama_kota as kelompok')
+        $query = DB::table('mahasiswa')
+            ->select(
+                'mahasiswa.nim',
+                'user.nama as nama',
+                'mahasiswa.kelas',
+                'prodi.nama_prodi as prodi',
+                'kota.nama_kota as kelompok',
+                'nilai_kategori.id_kategori',
+                'nilai_kategori.nip',
+                'nilai_kategori.nilai',
+                'nilai_kategori.status_penilaian_dosen',
+                'kategori_penilaian.id_kategori as kategori_id',
+                'kategori_penilaian.id_fta',
+                'kategori_penilaian.kunci_penilaian'
+            )
             ->leftJoin('user', 'mahasiswa.nim', '=', 'user.username')
             ->leftJoin('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
             ->leftJoin('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
+            ->leftJoin('nilai_kategori', 'mahasiswa.nim', '=', 'nilai_kategori.nim')
+            ->leftJoin('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
-            ->whereNotNull('mahasiswa.id_kota')
-            ->with(['nilaiKategori.kategoriPenilaian', 'nilaiKategori.dosen']);
+            ->whereNotNull('mahasiswa.id_kota');
 
-        $daftarMahasiswa = $query->get();
-        
-        $data = $daftarMahasiswa->map(fn($mahasiswa) => $this->prosesMahasiswaAkhir($mahasiswa))->toArray();
+        $daftarNilai = $query->get();
+
+        // Kelompokkan per mahasiswa
+        $grouped = $daftarNilai->groupBy('nim');
+
+        $data = $grouped->map(function ($items) {
+            return $this->prosesMahasiswaAkhir($items);
+        })->values()->toArray();
 
         if ($request) {
             $data = collect($data)
@@ -194,40 +245,42 @@ class RekapitulasiNilaiController extends Controller{
      */
     private function prosesMahasiswaAkhir($mahasiswa)
     {
+        $first = $mahasiswa->first();
+
         $nilaiKategori = $this->aturNilaiKategori($mahasiswa);
-        
-        $nilai_asli = [
-            'uts' => $nilaiKategori['rataSeminar2'] ?? 0,
-            'uas' => $nilaiKategori['rataSeminar3'] ?? 0,
-            'lain-lain' => $nilaiKategori['rataSidang'] ?? 0,
-        ];
 
         // Dapatkan sumber nilai dan bobot uts, uas, dan lain-lain dari kategori penilaian apa
         $komponen_nilai_akhir = KomponenNilaiAkhir::select(
             'komponen_nilai_akhir.id_komponen',
             'komponen_nilai_akhir.bobot_komponen as bobot',
+            'komponen_nilai_akhir.nama_komponen',
             'sumber_nilai.sumber',
             'kategori_penilaian.id_kategori',
         )
-        ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
-        ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
-        ->get();
+            ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
+            ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
+            ->get();
 
         $nilai_komponen = $this->hitungNilaiKomponen($komponen_nilai_akhir, $nilaiKategori);
 
         // Hitung nilai akhir
-        $nilai_akhir = $nilai_komponen['uts'] + $nilai_komponen['uas'] + $nilai_komponen['lain-lain'];
+        $nilai_akhir = array_sum($nilai_komponen);
         $nilai_akhir_huruf = $this->konversiNilaiHuruf($nilai_akhir);
-        
+
         return array_merge([
-            'nim' => $mahasiswa->nim,
-            'nama' => $mahasiswa->nama,
-            'prodi' => $mahasiswa->prodi,
-            'kelas' => $mahasiswa->kelas,
-            'kelompok' => $mahasiswa->kelompok,
-            'nilaiUts' => number_format($nilai_asli['uts'], 2),
-            'nilaiUas' => number_format($nilai_asli['uas'], 2),
-            'nilaiLainLain' => number_format($nilai_asli['lain-lain'], 2),
+            'nim' => $first->nim,
+            'nama' => $first->nama,
+            'prodi' => $first->prodi,
+            'kelas' => $first->kelas,
+            'kelompok' => $first->kelompok,
+            'nilaiUtsTeori' => number_format($nilai_komponen['utsTeori'], 2),
+            'nilaiPraktikumETS' => number_format($nilai_komponen['praktikumETS'], 2),
+            'nilaiLainLainETS' => number_format($nilai_komponen['lainLainETS'], 2),
+            'nilaiUasTeori' => number_format($nilai_komponen['uasTeori'], 2),
+            'nilaiPraktikumEAS' => number_format($nilai_komponen['praktikumEAS'], 2),
+            'nilaiLainLainEAS' => number_format($nilai_komponen['lainLainEAS'], 2),
+            'nilaiPjBL' => number_format($nilai_komponen['pjbl'], 2),
+            'nilaiPartisipatif' => number_format($nilai_komponen['partisipatif'], 2),
             'nilaiAkhir' => number_format($nilai_akhir, 2),
             'predikat' => $nilai_akhir_huruf,
         ], $nilaiKategori);
@@ -239,22 +292,51 @@ class RekapitulasiNilaiController extends Controller{
     private function hitungNilaiKomponen($komponen_nilai_akhir, $nilaiKategori)
     {
         $nilai_komponen = [
-            'uts' => 0,
-            'uas' => 0,
-            'lain-lain' => 0,
+            'utsTeori' => 0,
+            'praktikumETS' => 0,
+            'lainLainETS' => 0,
+            'uasTeori' => 0,
+            'praktikumEAS' => 0,
+            'lainLainEAS' => 0,
+            'pjbl' => 0,
+            'partisipatif' => 0,
         ];
+
+        Log::info('Nilai Komponen:', $komponen_nilai_akhir->toArray());
+        Log::info('Nilai Kategori:', $nilaiKategori);
 
         foreach ($komponen_nilai_akhir as $komponen) {
             $nilai = $this->getNilaiPerKategori($komponen, $nilaiKategori);
 
-            if ($komponen->id_komponen == 1) {
-                $nilai_komponen['uts'] = $nilai['nilai'] * $komponen->bobot / 100;
-            } elseif ($komponen->id_komponen == 2) {
-                $nilai_komponen['uas'] = $nilai['nilai'] * $komponen->bobot / 100;
-            } else {
-                $nilai_komponen['lain-lain'] = $nilai['nilai'] * $komponen->bobot / 100;
+            switch ($komponen->nama_komponen) {
+                case 'UTS (Teori)':
+                    $nilai_komponen['utsTeori'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'Praktikum ETS':
+                    $nilai_komponen['praktikumETS'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'Lain - lain ETS':
+                    $nilai_komponen['lainLainETS'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'UAS (Teori)':
+                    $nilai_komponen['uasTeori'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'Praktikum EAS':
+                    $nilai_komponen['praktikumEAS'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'Lain - lain EAS':
+                    $nilai_komponen['lainLainEAS'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'PjBL':
+                    $nilai_komponen['pjbl'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
+                case 'Partisipatif':
+                    $nilai_komponen['partisipatif'] = $nilai['nilai'] * $komponen->bobot / 100;
+                    break;
             }
         }
+
+        Log::info('Nilai Komponen:', $nilai_komponen);
 
         return $nilai_komponen;
     }
@@ -294,10 +376,10 @@ class RekapitulasiNilaiController extends Controller{
     public function getPengaturanNilaiAkhir()
     {
         $data = KomponenNilaiAkhir::select(
-                'komponen_nilai_akhir.nama_komponen',
-                'komponen_nilai_akhir.bobot_komponen as bobot',
-                'kategori_penilaian.id_kategori'
-            )
+            'komponen_nilai_akhir.nama_komponen',
+            'komponen_nilai_akhir.bobot_komponen as bobot',
+            'kategori_penilaian.id_kategori'
+        )
             ->leftJoin('sumber_nilai', 'komponen_nilai_akhir.id_komponen', '=', 'sumber_nilai.id_komponen')
             ->leftJoin('kategori_penilaian', 'kategori_penilaian.id_kategori', '=', 'sumber_nilai.sumber')
             ->get()
@@ -327,7 +409,7 @@ class RekapitulasiNilaiController extends Controller{
 
             // Update bobot nilai
             $this->updateBobotNilai($validatedData['bobot']);
-            
+
             // Update sumber nilai
             $this->updateSumberNilai($validatedData['sumber_nilai']);
 
@@ -347,7 +429,6 @@ class RekapitulasiNilaiController extends Controller{
         foreach ($bobotData as $komponenName => $bobot) {
             $komponen = KomponenNilaiAkhir::where('nama_komponen', $komponenName)->first();
             if (!$komponen) {
-                Log::error("Komponen '$komponenName' tidak ditemukan di database.");
                 throw new \Exception("Komponen '$komponenName' tidak ditemukan.");
             }
             $komponen->bobot_komponen = $bobot;
@@ -371,8 +452,9 @@ class RekapitulasiNilaiController extends Controller{
         }
     }
 
-
-
+    /**
+     * Mengonversi nilai ke dalam huruf
+     */
     private function konversiNilaiHuruf($nilai)
     {
         $gradeRanges = [
@@ -385,14 +467,13 @@ class RekapitulasiNilaiController extends Controller{
             ['min' => 40, 'max' => 54.99, 'grade' => 'D'],
             ['min' => 0, 'max' => 39.99, 'grade' => 'E'],
         ];
-    
+
         foreach ($gradeRanges as $range) {
             if ($nilai >= $range['min'] && $nilai <= $range['max']) {
                 return $range['grade'];
             }
         }
-    
-        return 'T';  
+
+        return 'T';
     }
-    
 }

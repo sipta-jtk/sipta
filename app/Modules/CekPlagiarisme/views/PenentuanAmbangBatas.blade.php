@@ -3,77 +3,100 @@
 @section('title', 'Penentuan Ambang Batas')
 
 @section('content_header')
-<h1 class="text-center">PENENTUAN AMBANG BATAS</h1>
+<h1 class="mb-3">Penentuan Ambang Batas</h1>
+<div>
+    @php
+    $prefix = rtrim(config('adminlte.dashboard_url', 'sipta'), '/');
+    @endphp
+
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/' . $prefix), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Penentuan Ambang Batas']
+    ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
 <section class="content">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="search-box">
-                <input type="text" class="form-control" id="searchInput" placeholder="Cari disini...">
-            </div>
-            <div class="ml-auto d-flex align-items-center">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
-                    <i class="fas fa-plus mr-2"></i>
-                    TAMBAH AMBANG BATAS
-                </button>
-            </div>
+        <div class="d-flex justify-content-end px-3 pt-3">
+            <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#addAmbangBatasModal">
+                + Tambah
+            </button>
         </div>
         <div class="card-body">
-            <div id="jsGrid1"></div>
+            <table id="table" class="table table-striped" width="100%">
+                <thead class="sticky-header">
+                    <tr class="bg-dark text-white">
+                        <th style="width: 50">Nomor</th>
+                        <th style="width: 100">Ambang Batas</th>
+                        <th style="width: 150">Waktu Ditambahkan</th>
+                        <th style="width: 200">Nama Koordinator TA</th>
+                        <th style="width: 150">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
 
 <!-- Modal Tambah Ambang Batas -->
-<div class="modal fade" id="addAmbangBatasModal" tabindex="-1" aria-labelledby="addAmbangBatasModal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Ambang Batas</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="ambangBatasForm">
-                    <div class="mb-3">
-                        <label for="ambang_batas" class="form-label">Presentase Ambang Batas (%):</label>
-                        <input type="number" class="form-control" id="ambang_batas" name="ambang_batas" required min="1" max="100">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Tambah</button>
-                    </div>
-                </form>
-            </div>
+<x-adminlte-modal id="addAmbangBatasModal" title="Tambah Ambang Batas" theme="blue" size="lg">
+    <form id="ambangBatasForm" onsubmit="return false;">
+        <div class="mb-3">
+            <label for="ambang_batas" class="form-label">Presentase Ambang Batas (%)</label>
+            <input type="number" class="form-control" id="ambang_batas" name="ambang_batas" required min="1" max="100">
         </div>
-    </div>
-</div>
+        <div class="d-flex pt-3 justify-content-end">
+            <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
+            <x-adminlte-button theme="success" label="Simpan" type="submit" class="mx-1" />
+        </div>
+        <x-slot name="footerSlot"></x-slot>
+    </form>
+</x-adminlte-modal>
+@stop
+
+@section('css')
+{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+<link rel="stylesheet"
+    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="prefix-url"content="{{ env('PREFIX_URL', 'sipta-dev') }}">
+<meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
-<style>
-    #jsGrid1 .jsgrid-row,
-    #jsGrid1 .jsgrid-alt-row {
-        pointer-events: none;
-        cursor: default !important;
-        user-select: none;
-    }
-</style>
+<script
+    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script
+    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
     $(document).ready(function() {
-        console.log("DOM siap, inisialisasi jsGrid..."); // Debugging
+
+        var table = $('#table').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data ambang batas tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data ambang batas tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            }
+        });
 
         var originalData = []; // Variabel untuk menyimpan data asli
 
@@ -89,10 +112,20 @@
                 url: url,
                 dataType: "json",
                 success: function(response) {
-                    console.log("Data dari API:", response);
 
-                    // Sorting berdasarkan tanggal terbaru (descending)
+                    // Clear dulu sebelum isi
+                    table.clear();
+
+                    // Sorting berdasarkan status: "digunakan" paling atas
                     response.sort(function(a, b) {
+                        // Ubah status ke angka: digunakan = 0, tidak_digunakan = 1
+                        const statusOrder = (status) => status.toLowerCase() === 'digunakan' ? 0 : 1;
+
+                        // Urutkan dulu berdasarkan status, lalu berdasarkan tanggal update terbaru
+                        const statusCompare = statusOrder(a.status) - statusOrder(b.status);
+                        if (statusCompare !== 0) return statusCompare;
+
+                        // Jika status sama, urutkan berdasarkan tanggal terbaru
                         return new Date(b.tanggal) - new Date(a.tanggal);
                     });
 
@@ -105,52 +138,19 @@
                         status: item.status
                     }));
 
-                    // Simpan data asli ke dalam variabel global
-                    originalData = response;
-
-                    // Inisialisasi jsGrid
-                    $("#jsGrid1").jsGrid({
-                        width: "100%",
-                        height: "450px",
-                        noDataContent: "Ambang Batas tidak ditemukan",
-                        data: originalData, // Set data awal
-                        autoload: true, // Pastikan data dimuat otomatis
-                        fields: [{
-                                name: "nomor",
-                                type: "number",
-                                title: "Nomor",
-                                width: 50,
-                                align: "center"
-                            },
-                            {
-                                name: "ambang_batas",
-                                type: "text",
-                                title: "Ambang Batas",
-                                width: 100,
-                                align: "center"
-                            },
-                            {
-                                name: "tanggal",
-                                type: "text",
-                                width: 150,
-                                align: "center"
-                            },
-                            {
-                                name: "koordinator",
-                                type: "text",
-                                title: "Nama Koordinator TA",
-                                width: 200,
-                                align: "center"
-                            },
-                            {
-                                name: "status",
-                                type: "text",
-                                title: "Status",
-                                width: 150,
-                                align: "center"
-                            }
-                        ]
+                    // Tambahkan ke tabel
+                    response.forEach(function(item) {
+                        table.row.add([
+                            item.nomor,
+                            item.ambang_batas,
+                            item.tanggal,
+                            item.koordinator ?? '-',
+                            item.status ?? '-'
+                        ]);
                     });
+
+                    // Draw ulang tabel
+                    table.draw();
                 },
                 error: function(xhr, status, error) {
                     console.error("Gagal mengambil data dari API:", status, error);
@@ -212,7 +212,7 @@
             }).done(function(response) {
                 Swal.fire({
                     title: "Berhasil!",
-                    text: "Ambang Batas berhasil ditambahkan!",
+                    text: response.message,
                     icon: "success"
                 }).then(() => {
                     $("#addAmbangBatasModal").modal('hide');
@@ -220,12 +220,13 @@
                     loadData();
                 });
             }).fail(function(xhr) {
-                console.error(xhr.responseText); // debug errornya
                 Swal.fire({
                     title: "Gagal Menambahkan!",
                     text: xhr.responseJSON?.message ?? "Ambang Batas gagal ditambahkan!",
                     icon: "error"
                 });
+                $("#addAmbangBatasModal").modal('hide');
+                $("#ambangBatasForm")[0].reset();
             });
         });
     });

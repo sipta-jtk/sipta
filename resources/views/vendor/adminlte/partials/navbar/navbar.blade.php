@@ -4,27 +4,27 @@
     {{ config('adminlte.classes_topnav_nav', 'navbar-expand') }}
     {{ config('adminlte.classes_topnav', 'navbar-white navbar-light') }}">
 
-    {{-- Navbar left links --}}
+    {{-- Navbar left --}}
     <ul class="navbar-nav">
-        {{-- Left sidebar toggler link --}}
         @include('adminlte::partials.navbar.menu-item-left-sidebar-toggler')
-
-        {{-- Configured left links --}}
         @each('adminlte::partials.navbar.menu-item', $adminlte->menu('navbar-left'), 'item')
-
-        {{-- Custom left links --}}
         @yield('content_top_nav_left')
     </ul>
 
-    {{-- Navbar right links --}}
+    {{-- Navbar right --}}
     <ul class="navbar-nav ml-auto">
-        {{-- Custom right links --}}
         @yield('content_top_nav_right')
-
-        {{-- Configured right links --}}
         @each('adminlte::partials.navbar.menu-item', $adminlte->menu('navbar-right'), 'item')
 
-        {{-- User menu link --}}
+        {{-- Icon lonceng --}}
+        <li class="nav-item dropdown">
+            <a class="nav-link" href="#" id="notificationBell">
+                <i class="fas fa-bell"></i>
+                <span class="badge badge-danger navbar-badge" id="notificationCount"></span>
+            </a>
+        </li>
+
+        {{-- User Menu --}}
         @if(Auth::user())
             @if(config('adminlte.usermenu_enabled'))
                 @include('adminlte::partials.navbar.menu-item-dropdown-user-menu')
@@ -33,10 +33,14 @@
             @endif
         @endif
 
-        {{-- Right sidebar toggler link --}}
+        {{-- Right sidebar --}}
         @if($layoutHelper->isRightSidebarEnabled())
             @include('adminlte::partials.navbar.menu-item-right-sidebar-toggler')
         @endif
     </ul>
+
+    {{-- Modal Include --}}
+    @include('NotificationAndReminder.views.modals.log-modal')
+    @include('NotificationAndReminder.views.modals.preferences-modal')
 
 </nav>

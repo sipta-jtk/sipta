@@ -12,6 +12,8 @@ use App\Models\AlokasiDosen;
 use App\Models\PengajuanPembimbing;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
+use Carbon\Carbon;
+Carbon::setLocale('id');
 
 
 use Illuminate\Support\Facades\Auth;
@@ -46,13 +48,13 @@ class DosenTabelPenilaianController extends Controller
                 'id_penjadwalan' => $item->id_penjadwalan,
                 'sesi' => $item->sesi,
                 'agenda' => $item->agenda,
-                'tanggal' => $item->tanggal,
+                'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,
                 'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
                 'id_kota' => $item->kota->id_kota,
                 'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
                 'status_penilaian' => $statusPenilaian ?? 'Belum dinilai',
-                'id' => $item->agenda === 'seminar_3' ? 4 : ($item->agenda === 'sidang' ? 6 : null)
+                'id' => $item->agenda === 'seminar_3' ? 4 : ($item->agenda === 'sidang' ? 6 : 4)
             ];
         });
 
@@ -76,5 +78,10 @@ class DosenTabelPenilaianController extends Controller
 
         // Redirect kembali ke halaman dengan pesan sukses
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil dipublikasikan.');
+    }
+
+    public function getForm($id, $kota)
+    {
+        return redirect()->route('nilai.index');
     }
 }
