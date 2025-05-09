@@ -4,7 +4,9 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        <h1 class="mb-0">{{ $data['header'] ?? 'Kelola Penilaian' }}</h1>
         {{-- TBD perbaiki breadcumb --}}
+        
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
@@ -13,7 +15,6 @@
         ])
         @endcomponent
 
-        <h1 class="mb-0">{{ $data['header'] ?? 'Kelola Penilaian' }}</h1>
     </div>
 @stop
 
