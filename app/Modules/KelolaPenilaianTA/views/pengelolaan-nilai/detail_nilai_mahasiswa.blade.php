@@ -4,8 +4,10 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
-        {{-- TBD perbaiki breadcrumb --}}   
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
         
+        {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Beranda'],
@@ -15,8 +17,6 @@
                 ])
         @endcomponent
         
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
     </div>
 @stop
 
@@ -149,9 +149,9 @@
                                 </td>
                             @endif
                             
-                            <td>
+                            {{-- <td>
                                 <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
-                            </td>
+                            </td> --}}
 
                             <!-- <td class="d-flex flex-column gap-1">
                                 <a href="{{ route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $data->id_kota, 'idProdi' => $data->id_prodi]) }}" class="btn btn-primary w-100">Nilai</a>
