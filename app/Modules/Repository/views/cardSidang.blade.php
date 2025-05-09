@@ -731,7 +731,7 @@
                     </div>
 
                     <!-- Tombol Tambah -->
-                    <button id="btn-tambah-poster" onclick="TambahDokumen('btn-tambah-poster', '{{ $subkategoriSdd->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSdd->id_subkategori }}">
+                    <button id="btn-tambah-poster" onclick="TambahDokumen('btn-tambah-poster', '{{ $subkategoriPoster->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPoster->id_subkategori }}">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
                 </div>
