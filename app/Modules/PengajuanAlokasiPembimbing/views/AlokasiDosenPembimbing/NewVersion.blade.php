@@ -54,6 +54,35 @@
     <div class="card border mb-2 p-2 m-0 m-100" style="height: 80vh;">
         <div class="row">
             <div class="col tabel-pengajuan">
+                <div class="d-flex justify-content-between align-items-center p-2">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+                        data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
+                        title="Tampilkan Filter Prodi">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+                <!-- FILTER PRODI COLLAPSE -->
+                <div class="collapse" id="filterProdiMenu">
+                    <div class="card mx-2 mb-2">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-filter mr-2"></i>Filter Prodi
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <select id="filterProdi" class="form-control form-control-sm w-50" onchange="filterPengajuanByProdi()">
+                                <option value="">Semua</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                            </select>
+                        </div>
+                        <div class="card-footer text-right">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="clearFilterProdi()">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- TABEL --}}
                 <div class=" table-responsive" style="height: 75vh;">
                     <table class="table table-striped m-0 " id="alokasiTable" style="min-width: 850px; max-width: 75vw;">
 
@@ -69,6 +98,8 @@
                                 <tr>
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
+                                        <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
+                                        <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
@@ -366,6 +397,11 @@
                 toggleNav.trigger('click');
             }
         }
+        
+        function clearFilterProdi() {
+            $('#filterProdi').val('');
+            filterPengajuanByProdi();
+        }
 
         $(document).ready(function() {
             adjustSidebar();
@@ -461,6 +497,20 @@
                 responsive: true,
             });
         });
+
+        function filterPengajuanByProdi() {
+            const selected = $('#filterProdi').val();
+
+            $('#alokasiTable > tbody > tr').each(function () {
+                const kodeProdi = $(this).find('input.kodeProdi').val(); // pastikan cari langsung input
+
+                if (selected === '' || kodeProdi === selected) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
 
         $(window).resize(function() {
             setTimeout(() => {

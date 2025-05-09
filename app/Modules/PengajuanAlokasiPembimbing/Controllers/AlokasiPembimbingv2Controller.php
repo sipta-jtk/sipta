@@ -49,9 +49,11 @@ class AlokasiPembimbingv2Controller extends Controller
             if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
                 $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
                 $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
+                $data_pengajuan[$key]['kode_prodi'] = substr($firstMahasiswa->nama_prodi, 0, 2); // D3 / D4
             } else {
                 $data_pengajuan[$key]['prodi'] = null;
-            }
+                $data_pengajuan[$key]['kode_prodi'] = null;
+            }  
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
