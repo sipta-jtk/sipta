@@ -24,8 +24,6 @@ class PengelolaanNilaiController extends Controller{
      */
     public function kelolaNilai(): View
     {
-
-        // TBD Seminar I mungkin bisa dianggap penilaian saja
         $kategoriPenilaian = FormPenilaian::whereIn('nama_fta', ['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'])
         ->where(function ($query) {
             $query->where('jenis_form', 'penilaian')
@@ -90,7 +88,27 @@ class PengelolaanNilaiController extends Controller{
             ])
             ->get();
 
-        Log::info('Detail Nilai Mahasiswa'. json_encode($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
+        // $detailNilaiMahasiswa = Kota::with([
+        //     'mahasiswa' => function ($query) {
+        //         $query->where('mahasiswa.status_ta', 'mahasiswa_ta')
+        //               ->whereNotNull('mahasiswa.id_kota');
+        //     },
+        //     'mahasiswa.nilaiKategori' => function ($query) use ($idFtaPenilaian) {
+        //         $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaPenilaian) {
+        //             $q->whereIn('id_fta', $idFtaPenilaian);
+        //         });
+        //     },
+        //     'mahasiswa.nilaiKategori.dosen',
+        //     'mahasiswa.user',
+        //     'detailFeedback' => function ($query) use ($idFtaFeedback) {
+        //         $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
+        //             $q->whereIn('id_fta', $idFtaFeedback);
+        //         });
+        //     }
+        // ])
+        // ->get();
+
+        // Log::info('Detail Nilai Mahasiswa'. json_encode($detailNilaiMahasiswa, JSON_PRETTY_PRINT));
         
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', [
             'detailNilaiMahasiswa' => $detailNilaiMahasiswa,
