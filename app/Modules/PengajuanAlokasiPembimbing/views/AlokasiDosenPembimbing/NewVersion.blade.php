@@ -54,6 +54,10 @@
     <div class="card border mb-2 p-2 m-0 m-100" style="height: 80vh;">
         <div class="row">
             <div class="col tabel-pengajuan">
+                <!-- HEADER -->
+                <div class="card-header text-center">
+                    <h3 class="card-title w-100">Daftar Pengajuan Alokasi Pembimbing</h3>
+                </div>
                 <div class="d-flex justify-content-between align-items-center p-2">
                     <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
                         data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
@@ -283,8 +287,8 @@
                 <div class="d-flex flex-column" style="height: 75vh; overflow: hidden;">
 
                     <!-- HEADER -->
-                    <div class="bg-dark text-white p-2">
-                        Detail Dosen
+                    <div class="card-header text-center">
+                        <h3 class="card-title w-100">Detail Dosen</h3>
                     </div>
 
                     <!-- WRAPPER UNTUK FILTER DAN SEARCH -->
@@ -466,6 +470,17 @@
                         `;
                     }
                 }, ],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<", last: ">>", next: ">", previous: "<"
+                    }
+                },
             });
 
             setTimeout(() => {
@@ -495,6 +510,17 @@
 
             $('#alokasiTable').DataTable({
                 responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<", last: ">>", next: ">", previous: "<"
+                    }
+                }
             });
         });
 
