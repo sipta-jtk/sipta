@@ -46,6 +46,7 @@ class PemberianFeedbackController extends Controller
         // Ambil jadwal langsung filter di query
         $jadwal = Penjadwalan::where('id_kota', $idKota)
             ->where('agenda', $namaAgenda)
+            ->where('status', 'fix')
             ->select('tanggal', 'start', 'end', 'agenda')
             ->first();
        
@@ -64,9 +65,11 @@ class PemberianFeedbackController extends Controller
             ])
             ->get();
     
-        // Ambil aspek feedback berdasarkan id_fta
-        $aspekFeedback = AspekFeedback::whereHas('formPenilaian', function ($query) use ($namaFtaSlug) {
-            $query->where('nama_fta', $namaFtaSlug);
+        // Ambil aspek feedback berdasarkan nama FTA dan id_prodi
+        $aspekFeedback = AspekFeedback::whereHas('formPenilaian', function ($query) use ($namaFtaSlug, $idProdi) {
+            $query->where('nama_fta', $namaFtaSlug)
+                  ->where('id_prodi', $idProdi)
+                  ->where('jenis_form', 'feedback');
         })->get();
     
         // Siapkan data untuk dikirim ke view
@@ -212,8 +215,8 @@ class PemberianFeedbackController extends Controller
         DB::beginTransaction();
 
         try {
-            foreach ($feedbacks as $index => $feedback) {
-                $idFeedback = array_values($idFeedbacks)[$index] ?? null;
+            foreach ($feedbacks as $feedback) {
+                $idFeedback = $feedback['id_feedback'] ?? null;            
 
                 if (!$idFeedback) continue;
 
@@ -225,14 +228,14 @@ class PemberianFeedbackController extends Controller
                 if ($existingFeedback) {
                     $existingFeedback->update([
                         'isi_feedback' => $feedback['masukan'],
-                        'status_penilaian_dosen' => 'dipublikasikan',
+                        'status_penilaian_dosen' => in_array($namaFtaSlug, ['seminar i', 'seminar ii']) ? 'dipublikasikan' : 'draf',
                     ]);
                 } else {
                     DetailFeedback::create([
                         'id_feedback' => $idFeedback,
                         'id_kota' => $idKota,
                         'nip' => $nip,
-                        'status_penilaian_dosen' => 'dipublikasikan',
+                        'status_penilaian_dosen' => in_array($namaFtaSlug, ['seminar i', 'seminar ii']) ? 'dipublikasikan' : 'draf',
                         'isi_feedback' => $feedback['masukan'],
                     ]);
                 }

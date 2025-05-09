@@ -65,9 +65,12 @@ class PemberianNilaiController extends Controller
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
 
+        $jenisTa = $keteranganUmumPenilaian->jenis_ta;
+
         // TBD tambahkan where untuk membedakan mana research dan pengembangan
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->where('id_prodi', $idProdi)
+            ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
                 'kriteriaPenilaian.rubrik' => function ($query) {
@@ -79,12 +82,16 @@ class PemberianNilaiController extends Controller
                 });
             }])
             ->get();
+        
+        Log::info('Detail Informasi FTA: ' . json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
                 return $kriteria->rubrik;
             });
         })->first()->detailRubrik;
+
+        Log::info('Rubrik List: ' . json_encode($rubrikList, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_rubrik', [
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian,
