@@ -194,22 +194,26 @@ class AlokasiPembimbingv2Controller extends Controller
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
-            ->pluck('status_alokasi');
+            ->value('status_alokasi');
+
+        $newStatusAlokasi = ($statusAlokasi === 'fix') ? 'belum_fix' : 'fix';
 
         // Update alokasi dosen jadi FIX
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
             ->update([
-                'status_alokasi' => ($statusAlokasi == 'fix') ? 'belum_fix' : 'fix',
+                'status_alokasi' => $newStatusAlokasi,
                 'tipe_alokasi' => 'pembimbing',
             ]);
+
+        $newStatusPengajuan = ($newStatusAlokasi === 'fix') ? 'diterima' : 'diproses';
 
         // Update status pengajuan jadi DITERIMA
         DB::table('pengajuan_pembimbing')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->update([
-                'status_pengajuan' => 'diterima',
+                'status_pengajuan' => $newStatusPengajuan,
                 'updated_at' => now(),
             ]);
 
