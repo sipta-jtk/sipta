@@ -43,6 +43,7 @@ class PerekrutanAnggotaKoTAController extends Controller
 
             $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
                 ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
+                ->where('mahasiswa.id_prodi', '=', $mahasiswaAnggota1->id_prodi)
                 ->whereNull('mahasiswa.id_kota')
                 ->select('mahasiswa.*', 'user.nama')
                 ->get();
@@ -127,13 +128,18 @@ class PerekrutanAnggotaKoTAController extends Controller
         $anggota2Data = $request->input('anggota2') ? User::where('username', $request->input('anggota2'))->first() : null;
         $anggota3Data = $request->input('anggota3') ? User::where('username', $request->input('anggota3'))->first() : null;
 
+        // Ambil informasi prodi dan maksimal anggota
+        $prodi = Prodi::find($anggota1->id_prodi);
+        $maksimalAnggota = $prodi ? $prodi->maksimal_anggota_kota : 3;
+
         session([
             'anggota1' => $anggota1Data->nama . ' - ' . $anggota1Data->username,
             'anggota2' => $anggota2Data ? $anggota2Data->nama . ' - ' . $anggota2Data->username : 'Tidak Dipilih',
             'anggota3' => $anggota3Data ? $anggota3Data->nama . ' - ' . $anggota3Data->username : 'Tidak Dipilih',
             'nama_kota' => $namaKoTA,
             'tahun_kota' => $currentYear,
-            'id_kota' => $koTA->id_kota
+            'id_kota' => $koTA->id_kota,
+            'maksimal_anggota' => $maksimalAnggota
         ]);
 
         return redirect()->route('konfirmasi-kota');

@@ -25,20 +25,21 @@
             Kelompok TA berhasil dibuat dengan nama <strong>{{ session('nama_kota') }}</strong> untuk tahun ajaran <strong>{{ session('tahun_kota') }}</strong>.
         </div>
 
-        <div class="row">
-            <x-adminlte-input name="anggota1" label="Anggota 1 (Akun Anda)" value="{{ session('anggota1', 'Nama Anda') }}"
-                fgroup-class="col-md-6" readonly/>
-        </div>
+        @php
+            // Ambil maksimal anggota dari session
+            $maksimalAnggota = session('maksimal_anggota', 3);
+        @endphp
 
-        <div class="row">
-            <x-adminlte-input name="anggota2" label="Anggota 2" value="{{ session('anggota2', 'Tidak Dipilih') }}"
-                fgroup-class="col-md-6" readonly/>
-        </div>
-
-        <div class="row">
-            <x-adminlte-input name="anggota3" label="Anggota 3" value="{{ session('anggota3', 'Tidak Dipilih') }}"
-                fgroup-class="col-md-6" readonly/>
-        </div>
+        @for($i = 1; $i <= $maksimalAnggota; $i++)
+            <div class="row">
+                <x-adminlte-input 
+                    name="anggota{{ $i }}" 
+                    label="{{ $i == 1 ? 'Anggota 1 (Akun Anda)' : 'Anggota ' . $i }}" 
+                    value="{{ session('anggota' . $i, $i == 1 ? 'Nama Anda' : 'Tidak Dipilih') }}"
+                    fgroup-class="col-md-6" 
+                    readonly/>
+            </div>
+        @endfor
 
         <div class="d-flex pt-3 justify-content-end">
             <a href="{{ url(env('PREFIX_URL', 'sipta') . '/') }}" class="btn btn-secondary mx-1">Kembali ke Dashboard</a>

@@ -9,6 +9,7 @@ use App\Models\Kota;
 use App\Models\Mahasiswa;
 use App\Models\Bidang;
 use App\Models\PengajuanPembimbing;
+use App\Models\Prodi;
 // use App\Models\AlokasiPembimbing;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,16 @@ class DetailKoTAController extends Controller
 
             // Set ID menjadi ID KoTA mahasiswa
             $id = $mahasiswa->id_kota;
+        }
+
+        // Mendapatkan maksimal anggota dari prodi mahasiswa
+        $maksimalAnggota = 3; // Default jika tidak ada data prodi
+
+        // Ambil nilai maksimal anggota dari prodi mahasiswa
+        $prodi = Prodi::find($mahasiswa->id_prodi);
+        if ($prodi) 
+        {
+            $maksimalAnggota = $prodi->maksimal_anggota_kota;
         }
 
         // Ambil data KoTA berdasarkan ID
@@ -110,6 +121,6 @@ class DetailKoTAController extends Controller
             // Abaikan error dan gunakan default pembimbing
         }
 
-        return view('UserManagement.views.detail-kota', compact('kota', 'anggota', 'judulTA', 'bidangTA', 'pembimbing'));
+        return view('UserManagement.views.detail-kota', compact('kota', 'anggota', 'judulTA', 'bidangTA', 'pembimbing', 'maksimalAnggota'));
     }
 }
