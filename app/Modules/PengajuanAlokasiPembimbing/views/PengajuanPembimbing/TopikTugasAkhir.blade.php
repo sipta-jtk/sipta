@@ -38,12 +38,32 @@
         <div class="col">
             <div class="card p-4 bg-light">
                 <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
+                {{-- Form Topik TA--}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
                         <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
                     </div>
                 </div>
+                {{-- Form Jenis TA--}}
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Jenis Tugas Akhir</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="research" value="Research" style="accent-color: #17a2b8;">
+                            <label class="form-check-label" for="research">
+                                Research
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="pengembangan" value="Pengembangan" style="accent-color: #17a2b8;">
+                            <label class="form-check-label" for="pengembangan">
+                                Pengembangan
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {{-- Form Bidang TA --}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Bidang Tugas Akhir</label>
@@ -56,7 +76,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- ================== --}}
+                        {{-- Tabel Bidang --}}
                         <div class="container-fluid bg-white border rounded-bottom bg-opacity-25 pre-scrollable mb-4">
                             <div class="container">
                                 <div class="row d-flex flex-wrap pl-4 py-3">
@@ -104,6 +124,8 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $("textarea[name='topik']").prop("disabled", true); // Menonaktifkan input topik tugas akhir
+                    $("input[type='radio']").prop("disabled", true); // Menonaktifkan semua radio button
                     
                     if (response.Periode === false) {
                         $("#warningMessage").show(); 
