@@ -386,6 +386,12 @@ return [
                      'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
+                    'text' => 'Alokasi Dosen Penguji',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-penguji',
+                    'can' => ['koordinator_ta', 'dosen'],
+                     'icon' => 'fas fa-chalkboard-teacher'
+                ],
+                [
                     'text' => 'Jadwal Bimbingan Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/jadwal-dosen-membimbing',
                     'can' => 'mahasiswa_ta',

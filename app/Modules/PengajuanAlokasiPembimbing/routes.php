@@ -4,6 +4,7 @@ use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarKesediaanMembimbing
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\KesediaanBimbinganController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingv2Controller;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPengujiController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarPengajuanDosbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\MahasiswaMelihatJadwalController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengajuanPembimbing\PengajuanPembimbingController;
@@ -54,6 +55,21 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::post('/update-alokasi', [AlokasiPembimbingv2Controller::class, 'updateAlokasi'])->name('updateAlokasi');
         Route::post('/delete-alokasi', [AlokasiPembimbingv2Controller::class, 'deleteAlokasi'])->name('deleteAlokasi');
     });
+
+    Route::group([
+        'prefix' => 'alokasi-penguji',
+        'as' => 'alokasi-penguji.',
+        'middleware' => ['auth', 'can:dosen']
+    ], function () {
+        Route::get('/', [AlokasiPengujiController::class, 'index'])->name('index');
+        Route::get('/getDetailDosen', [AlokasiPengujiController::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPengujiController::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPengujiController::class, 'updateAlokasi'])->name('updateAlokasi');
+        Route::post('/delete-alokasi', [AlokasiPengujiController::class, 'deleteAlokasi'])->name('deleteAlokasi');
+    });
+
+    
+
 
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
