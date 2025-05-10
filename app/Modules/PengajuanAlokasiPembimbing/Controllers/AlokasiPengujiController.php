@@ -33,10 +33,9 @@ class AlokasiPengujiController extends Controller
                 ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
                 ->where('id_kota', $value->id_kota)->get();
 
-            $data_pengajuan[$key]['usulan_dosen'] =  PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
-                ->where('id_pengajuan', $value->id_pengajuan_pembimbing)
-                ->select('dosen.id_dosen', 'prioritas_pembimbing.urutan_prioritas')
-                ->orderBy('urutan_prioritas')
+            $data_pengajuan[$key]['usulan_dosen'] = PreferensiKota::join('dosen', 'preferensi_kota.nip', '=', 'dosen.nip')
+                ->where('preferensi_kota.id_kota', $value->id_kota)
+                ->select('dosen.id_dosen')
                 ->get();
 
             $data_pengajuan[$key]['alokasi'] = AlokasiDosen::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)

@@ -49,7 +49,7 @@
     </style>
 @stop
 
-@section('title', 'Alokasi Dosen Pembimbing')
+@section('title', 'Alokasi Dosen Penguji')
 
 @section('content')
     <h1 class="mb-3">Alokasi Dosen Penguji</h1>
@@ -72,21 +72,11 @@
                     <h3 class="card-title w-100">Tabel Alokasi Penguji</h3>
                 </div>
                 <div class="d-flex justify-content-between align-items-center p-2">
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
-                            data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
-                            title="Tampilkan Filter Prodi">
-                            <i class="fas fa-filter"></i>
-                        </button>
-                        
-                        <!-- NOTIF KEL REN REN -->
-                        @if ($isKoordinator)
-                            <button class="btn btn-sm btn-info ml-1" onclick="confirmSendNotification()"
-                                title="Kirim notifikasi ke Mahasiswa dan Dosen">
-                                <i class="fas fa-bell"></i>
-                            </button>
-                        @endif
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+                        data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
+                        title="Tampilkan Filter Prodi">
+                        <i class="fas fa-filter"></i>
+                    </button>
                 </div>
 
                 <!-- FILTER PRODI COLLAPSE -->
@@ -128,6 +118,10 @@
                                 <tr>
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
+                                        <input type="hidden" name="" class="totalMhs" value="{{ $pengajuan->mahasiswa->count() }}">
+                                        <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
+                                        <input type="hidden" name="" class="totalMhs" value="{{ $pengajuan->mahasiswa->count() }}">
+                                        <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
                                         <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
                                         <input type="hidden" name="id_pengajuan" value="{{ $pengajuan->id_pengajuan_pembimbing }}">
@@ -154,7 +148,7 @@
                                                                             class="col-sm p-0">
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
-                                                                                Dafta Penguji Berminat
+                                                                                Daftar Penguji Berminat
                                                                             </div>
                                                                             <div class="p-1 pl-3">
                                                                                 @foreach ($pengajuan->usulan_dosen as $usulan)
@@ -167,7 +161,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <!-- ini pembimbing -->
+                                                                <!-- ini penguji -->
                                                                 <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
                                                                     class="col-sm border-right border-dark p-0">
                                                                     <div class="row d-flex m-0 flex-row"
@@ -199,7 +193,7 @@
                                                                                         {{-- Penguji 1 --}}
                                                                                         <input type="text"
                                                                                             value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 1)?->id_dosen ?? '' }}"
-                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
+                                                                                            id="penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             @if (!$isKoordinator) readonly @endif
@@ -214,7 +208,7 @@
                                                                                             <button
                                                                                                 class="btn btn-sm btn-primary"
                                                                                                 onclick="
-                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val());
+                                                                                                goToDetailDosen($('#penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}').val());
                                                                                                 ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
@@ -223,7 +217,7 @@
                                                                                                 <button
                                                                                                     {{-- class="btn btn-sm btn-success" --}}
                                                                                                     class="btn btn-sm {{ $alok1?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
+                                                                                                    onclick="if ($('#penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok1?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
                                                                                                 </button>
@@ -260,7 +254,7 @@
                                                                                         {{-- Penguji 2 --}}
                                                                                         <input type="text"
                                                                                             value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 2)?->id_dosen ?? '' }}"
-                                                                                            id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
+                                                                                            id="penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             @if (!$isKoordinator) readonly @endif
@@ -274,7 +268,7 @@
                                                                                             <button
                                                                                                 class="btn btn-sm btn-primary"
                                                                                                 onclick="
-                                                                                                goToDetailDosen($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val());
+                                                                                                goToDetailDosen($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val());
                                                                                                 ">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
@@ -282,7 +276,7 @@
                                                                                             @if ($isKoordinator)
                                                                                                 <button
                                                                                                     class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
+                                                                                                    onclick="if ($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
 
@@ -753,56 +747,5 @@
         $('.alokasiInputText').on('change', function() {
             updateKuotaDosen();
         });
-
-        // REN REN
-        function confirmSendNotification() {
-            FireSweetAlert(
-                'question',
-                'Kirim Notifikasi?',
-                'Apakah Anda yakin ingin mengirim notifikasi ke mahasiswa dan dosen?',
-                'Ya, Kirim',
-                'Batal',
-                '#28a745',
-                '#6c757d',
-                true,
-                true,
-                function(confirmed) {
-                    if (confirmed) {
-                        window.mahasiswaNotified = [];
-                        window.dosenNotified = [];
-
-                        $('#alokasiTable > tbody > tr').each(function () {
-                            const pengajuanRow = $(this);
-                            const idPengajuan = pengajuanRow.find('input[name="id_pengajuan"]').val();
-
-                            ['1', '2'].forEach(function(urutan) {
-                                const pembimbingInput = pengajuanRow.find(`#bg-${idPengajuan}pembimbing${urutan}`);
-                                if (pembimbingInput.hasClass('bg-success')) {
-                                    const inputPembimbing = pengajuanRow.find('td input.alokasiInputText').eq(urutan - 1);
-                                    const idDosen = inputPembimbing.val();
-
-                                    if (idDosen && !window.dosenNotified.includes(idDosen)) {
-                                        window.dosenNotified.push(idDosen);
-                                    }
-
-                                    pengajuanRow.find('.badge.font-weight-normal.p-0').each(function () {
-                                        const nim = $(this).text().trim();
-                                        const nama = $(this).prev().text().trim();
-                                        if (nim && !window.mahasiswaNotified.some(m => m.nim === nim)) {
-                                            window.mahasiswaNotified.push({ nama, nim });
-                                        }
-                                    });
-                                }
-                            });
-                        });
-
-                        console.table(window.mahasiswaNotified);
-                        console.table(window.dosenNotified);
-
-                        toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
-                    }
-                }
-            );
-        }
     </script>
 @endsection
