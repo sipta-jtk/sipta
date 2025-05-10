@@ -21,10 +21,23 @@ class FormPisahKoTAController extends Controller
         // Ambil data KoTA dari mahasiswa (tanpa bikin pengajuan)
         if($mahasiswa->status_ta == "mahasiswa_ta"){
             $kota = $mahasiswa->kota ?? null;
+
+            if($mahasiswa->id_kota){
+                $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                    ->where('nim', '!=', $mahasiswa->nim)
+                    ->get();
+            }
         }
+
         $pengajuan = PengajuanPisahKota::where('nim', $mahasiswa->nim)->first();
+        
+        if ($pengajuan) {
+            $alasan = $pengajuan->alasan;
+        } else {
+            $alasan = '';
+        }
     
-        return view('UserManagement.views.form-pisah-kota', compact('mahasiswa', 'kota', 'pengajuan'));
+        return view('UserManagement.views.form-pisah-kota', compact('mahasiswa', 'kota', 'anggotaKelompok', 'pengajuan', 'alasan'));
     }
     
 
@@ -34,6 +47,7 @@ class FormPisahKoTAController extends Controller
         $mahasiswa = $user->mahasiswa;
     
         $request->validate([
+            'alasan' => 'string|max:512',
             'fta_20' => 'required|file|mimes:pdf|max:2048',
         ]);
 
@@ -45,12 +59,14 @@ class FormPisahKoTAController extends Controller
         if (!$existingPengajuan && $kotaAktif) {
             // Simpan file PDF ke folder storage/app/public/fta
             $filePath = $request->file('fta_20')->store('fta', 'public');
+            $alasan = $request->input('alasan');
 
             // Buat pengajuan baru kalau belum ada
             PengajuanPisahKota::create([
                 'nim' => $mahasiswa->nim,
                 'id_kota' => $mahasiswa->kota->id_kota,
                 'fta_20' => $filePath,
+                'alasan' => $alasan
             ]);
             return redirect()->back()->with('success', 'Pengajuan pisah berhasil!');
         }
