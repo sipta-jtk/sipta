@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
                 ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
                 ['url' => '', 'label' => 'Detail Formulir Penilaian']
             ]
@@ -19,6 +19,7 @@
 @stop
 
 @section('content')
+<div class="card p-4">
     <div class="p-4">
         <div class="row mb-4">
             <div class="col-md-6">
@@ -97,6 +98,7 @@
             </div>
         </div>
     </div>
+</div>
 @stop
 
 @section('css')

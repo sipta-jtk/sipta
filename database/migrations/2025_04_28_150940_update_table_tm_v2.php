@@ -24,7 +24,9 @@ return new class extends Migration
             
         });
 
-
+        Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
+            $table->dropForeign(['nip']); // Hapus foreign key constraint
+        });
     }
 
     /**
@@ -41,6 +43,10 @@ return new class extends Migration
         
         Schema::table('penjadwalan', function (Blueprint $table) {
             $table->dropColumn('nama_ruangan');
+        });
+
+        Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
+            $table->foreign('nip')->references('nip')->on('dosen');
         });
     }
 };
