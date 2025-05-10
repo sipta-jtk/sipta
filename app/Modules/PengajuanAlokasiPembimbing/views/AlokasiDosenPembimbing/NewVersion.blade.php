@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    $isKoordinator = auth()->user()->dosen->role_dosen === 'koordinator_ta';
+@endphp
+
 @section('css')
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -190,6 +194,7 @@
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
+                                                                                            @if(!$isKoordinator) readonly @endif
                                                                                             onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
 
                                                                                     </div>
@@ -206,12 +211,14 @@
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
+                                                                                            @if($isKoordinator)
                                                                                             <button
                                                                                                 class="btn btn-sm btn-success"
                                                                                                 onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-check"></i>
                                                                                             </button>
+                                                                                            @endif
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -240,6 +247,7 @@
                                                                                             id="{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2"
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
+                                                                                            @if(!$isKoordinator) readonly @endif
                                                                                             onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 2, 'belum_fix', 'pembimbing')">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
@@ -255,12 +263,14 @@
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
+                                                                                            @if($isKoordinator)
                                                                                             <button
                                                                                                 class="btn btn-sm btn-success"
                                                                                                 onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-check"></i>
                                                                                             </button>
+                                                                                            @endif
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
