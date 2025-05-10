@@ -73,6 +73,16 @@ $(document).ready(function () {
 
     setMinDate();
 
+    function updateRowStriping() {
+        $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff");
+            } else {
+                $(this).css("background-color", "#f8f9fa"); 
+            }
+        });
+    }
+
     // Event listener untuk menambah baris
     $("#addRow").click(function() {
         if ($("#jenisForm").val() === "Feedback") {
@@ -100,6 +110,7 @@ $(document).ready(function () {
             `);
             validateTotalBobot();
         }
+        updateRowStriping();
     });
 
     // Event listener untuk menghapus baris
@@ -108,7 +119,10 @@ $(document).ready(function () {
         if ($("#jenisForm").val() === "Penilaian") {
             validateTotalBobot();
         }
+        updateRowStriping();
     });
+
+    updateRowStriping();
 
     function initBobotInputs() {
         $('input[name="bobot_kriteria[]"]').addClass('bobot-kriteria');

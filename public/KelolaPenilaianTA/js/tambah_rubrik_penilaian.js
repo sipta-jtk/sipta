@@ -91,6 +91,16 @@ $(document).ready(function () {
         });
     }
 
+    function updateRowStriping() {
+        $("#rubrikPenilaianTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); 
+            } else {
+                $(this).css("background-color", "#f8f9fa"); 
+            }
+        });
+    }
+
     // Add new row to table
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
@@ -140,6 +150,7 @@ $(document).ready(function () {
         </tr>`;
 
         $("#rubrikPenilaianTable").append(newRow);
+        updateRowStriping();
     });
 
     // Handle kriteria selection change (works for both .kriteria and .id_kriteria)
@@ -150,7 +161,6 @@ $(document).ready(function () {
             .closest("tr")
             .find(".bobot")
             .text(bobot ? bobot + "%" : "-");
-        console.log("Selected criteria with bobot:", bobot);
     });
 
     // Remove row when remove button is clicked
@@ -158,10 +168,13 @@ $(document).ready(function () {
         // Make sure we keep at least one row
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
+            updateRowStriping();
         } else {
             alert("Tidak dapat menghapus baris terakhir.");
         }
     });
+
+    updateRowStriping();
 
     // If kode_fta already has a value on page load, load its kriteria
     const initialKodeFTA = $("#kode_fta").val();
