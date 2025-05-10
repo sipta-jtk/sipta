@@ -40,7 +40,7 @@
     </ul>
 
     {{-- Modal Include --}}
-    @include('NotificationAndReminder.views.modals.log-modal')
+    <!-- @include('NotificationAndReminder.views.modals.log-modal') -->
     @include('NotificationAndReminder.views.modals.preferences-modal')
 
 </nav>
