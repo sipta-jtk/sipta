@@ -117,6 +117,8 @@
         @php
             $isEdit = count($detailInformasiFta->first()?->kriteriaPenilaian->first()?->rubrik->first()?->nilaiRubrik ?? []) > 0;
             $action = $isEdit ? route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) : route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
+            Log::info($namaFta);
+            Log::info($idKota);
         @endphp
         <form action="{{ $action }}" method="POST">
             @csrf

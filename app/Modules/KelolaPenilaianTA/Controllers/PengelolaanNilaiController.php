@@ -68,6 +68,7 @@ class PengelolaanNilaiController extends Controller{
         $idFtaFeedback = $detailInformasiFta->where('jenis_form', 'feedback')
             ->pluck('id_fta');
 
+        //TBD yang ditampilkan di detail itu yang sudah di publish atau belum
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
             ->whereNotNull('mahasiswa.id_kota')
@@ -79,34 +80,14 @@ class PengelolaanNilaiController extends Controller{
                 },
                 'nilaiKategori.dosen',
                 'user',
-                // 'kota.detailFeedback' => function ($query) use ($idFtaFeedback) {
-                //     $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
-                //         $q->whereIn('id_fta', $idFtaFeedback);
-                //     });
-                // }
+                'kota.detailFeedback' => function ($query) use ($idFtaFeedback) {
+                    $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
+                        $q->whereIn('id_fta', $idFtaFeedback);
+                    });
+                },
                 'kota.detailFeedback'
             ])
             ->get();
-
-        // $detailNilaiMahasiswa = Kota::with([
-        //     'mahasiswa' => function ($query) {
-        //         $query->where('mahasiswa.status_ta', 'mahasiswa_ta')
-        //               ->whereNotNull('mahasiswa.id_kota');
-        //     },
-        //     'mahasiswa.nilaiKategori' => function ($query) use ($idFtaPenilaian) {
-        //         $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaPenilaian) {
-        //             $q->whereIn('id_fta', $idFtaPenilaian);
-        //         });
-        //     },
-        //     'mahasiswa.nilaiKategori.dosen',
-        //     'mahasiswa.user',
-        //     'detailFeedback' => function ($query) use ($idFtaFeedback) {
-        //         $query->whereHas('aspekFeedback', function ($q) use ($idFtaFeedback) {
-        //             $q->whereIn('id_fta', $idFtaFeedback);
-        //         });
-        //     }
-        // ])
-        // ->get();
         
         return view('KelolaPenilaianTA.views.pengelolaan-nilai.detail_nilai_mahasiswa', [
             'detailNilaiMahasiswa' => $detailNilaiMahasiswa,
@@ -129,9 +110,13 @@ class PengelolaanNilaiController extends Controller{
         $nip = auth()->user()->username;
         $namaFtaSlug = Str::slug($namaFta, ' ');
     
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->first();
-    
-        $idProdi = $mahasiswa->id_prodi;
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)
+            ->with('kota')
+            ->get();
+        
+        $nimList = $mahasiswa->pluck('nim')->toArray();
+        $jenisTa = $mahasiswa->first()->kota->jenis_ta;
+        $idProdi = $mahasiswa->first()->id_prodi;
     
         $formPenilaian = FormPenilaian::where([
                 ['nama_fta', $namaFtaSlug],
@@ -144,18 +129,29 @@ class PengelolaanNilaiController extends Controller{
         $aspekFeedback = $formPenilaian->aspekFeedback->pluck('id_feedback')->toArray();
         
         $status = $action === 'publish' ? 'dipublikasikan' : 'draf';
-        
-        DetailFeedback::where('id_kota', $idKota)
-            ->where('nip', $nip)
-            ->whereIn('id_feedback', $aspekFeedback)
-            ->update(['status_penilaian_dosen' => $status]);
 
-        NilaiKategori::where('nip', $nip)
+        $detailFeedback = DetailFeedback::where('id_kota', $idKota)
+            ->where('nip', $nip)
+            ->whereIn('id_feedback', $aspekFeedback);
+
+        $nilaiKategori = NilaiKategori::where('nip', $nip)
+            ->whereIn('nim', $nimList)
             ->whereHas('kategoriPenilaian.formulirPenilaian', function ($query) use ($namaFtaSlug, $idProdi) {
-                $query->where('nama_fta', $namaFtaSlug)
-                      ->where('id_prodi', $idProdi);
-            })
-            ->update(['status_penilaian_dosen' => $status]);
+            $query->where('nama_fta', $namaFtaSlug)
+                    ->where('jenis_form', 'penilaian')
+                    ->where('id_prodi', $idProdi);
+        });
+
+        if ($detailFeedback->get()->isEmpty() && $nilaiKategori->get()->isEmpty()) {
+            return back()->with('error', 'Belum memberikan feedback dan nilai untuk mahasiswa ini.');
+        } elseif ($detailFeedback->get()->isEmpty()) {
+            return back()->with('error', 'Belum memberikan feedback untuk mahasiswa ini.');
+        } else if ($nilaiKategori->get()->isEmpty()) {
+            return back()->with('error', 'Belum memberikan nilai untuk mahasiswa ini.');
+        }
+
+        $detailFeedback->update(['status_penilaian_dosen' => $status]);    
+        $nilaiKategori->update(['status_penilaian_dosen' => $status]);
         
         $message = $action === 'publish' ? 'Nilai berhasil dipublikasikan.' : 'Nilai berhasil diunpublikasikan.';
         

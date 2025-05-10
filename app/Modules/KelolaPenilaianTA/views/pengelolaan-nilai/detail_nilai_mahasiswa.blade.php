@@ -69,7 +69,6 @@
                     @endphp
                 
                     @foreach ($grouped as $idKota => $mahasiswaKelompok)
-                        {{ Log::info('Mahasiswa kelompok'. json_encode($mahasiswaKelompok, JSON_PRETTY_PRINT)) }}
                         @foreach ($mahasiswaKelompok as $mahasiswa)
                             <tr>
                                 <td class="align-middle text-center">{{ $no++ }}</td>
@@ -94,7 +93,7 @@
                                     // Ambil daftar nilai dari nilai_kategori
                                     $nilaiList = $mahasiswa->nilaiKategori->pluck('nilai')->toArray() ?? [];
                                     // Pastikan selalu ada 3 elemen, isi dengan '-' jika kurang
-                                    $nilaiList = array_pad($nilaiList, 3, '-');
+                                    $nilaiList = array_pad($nilaiList, 3, 0);
                                 @endphp
                     
                                 {{-- Cetak Nilai Penguji 1, Penguji 2, Penguji 3 --}}
@@ -103,20 +102,42 @@
                                 <td class="align-middle text-center">{{ $nilaiList[2] }}</td>
 
                                 {{-- Feedback --}}
-                                <td class="align-middle text-center">
-                                    <i class="far fa-check-square text-success"></i>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <i class="far fa-check-square text-success"></i>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <i class="far fa-check-square text-success"></i>
-                                </td>
-                                <td>
+                                @php
+                                    // Ambil daftar feedback dari mahasiswa dan kelompokkan berdasarkan nip
+                                    $feedbackGroupedByNip = collect($mahasiswa->kota->detailFeedback ?? [])->groupBy('nip');
+                                @endphp
+                                
+                                {{-- Iterasi untuk setiap nip --}}
+                                @foreach ($feedbackGroupedByNip as $nip => $feedbacks)
+                                    <td class="align-middle text-center">
+                                        <i class="fas fa-check-square text-success"></i> {{-- Centang hijau jika ada feedback untuk nip ini --}}
+                                    </td>
+                                @endforeach
+                                
+                                {{-- Jika jumlah nip kurang dari 3, tambahkan kolom kosong --}}
+                                @for ($i = $feedbackGroupedByNip->count(); $i < 3; $i++)
+                                    <td class="align-middle text-center">
+                                        <i class="far fa-square text-muted"></i> {{-- Centang kosong jika tidak ada feedback --}}
+                                    </td>
+                                @endfor
+
+                                {{-- <td>
                                     <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
                                         Nilai
                                     </a>
-                                </td>
+                                    <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                        Feedback
+                                    </a>
+                                    <div class="btn btn-primary btn-sm">
+                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'publish']) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="id_kota" value="{{ $mahasiswa->id_kota }}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                Publish
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td> --}}
                                     {{-- <i class="far fa-squere text-muted"></i> --}}
                                     {{-- <i class="fas fa-check-square text-success"></i> --}}
                             </tr>

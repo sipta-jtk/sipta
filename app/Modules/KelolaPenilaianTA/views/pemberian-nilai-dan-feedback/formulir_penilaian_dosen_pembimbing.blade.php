@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR II')
+@section('title', 'Penilaian Dosen Pembimbing')
 
 @section('content_header')
     <div class="container-fluid p-3">
@@ -8,7 +8,6 @@
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
         
         <!-- Breadcrumb -->
-        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Home'],
@@ -104,8 +103,6 @@
             </div>
         </div>
 
-
-        <!-- Form Penilaian -->
         <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
             <div class="row mt-4">
@@ -148,7 +145,7 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
                                         </td>
                                     @endforeach
                                 </tr>
@@ -160,7 +157,7 @@
                             </tr>
                             @foreach($secB as $i => $krit)
                                 <tr>
-                                    <td>{{ $i + i }}</td>
+                                    <td>{{ $i + 1 }}</td>
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
@@ -169,7 +166,7 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
                                         </td>
                                     @endforeach
                                 </tr>

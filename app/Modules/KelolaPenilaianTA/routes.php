@@ -92,14 +92,12 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/nilai/{namaFta}/{idKota}/{idProdi}', [PemberianNilaiController::class, 'pengisianNilaiSeminar'])->name('pengisian.nilai');
         Route::post('/nilai/{namaFta}/{idKota}/tambah', [PemberianNilaiController::class, 'simpanNilaiSeminar'])->name('pengisian.nilai.store');
         Route::patch('/nilai/{namaFta}/{idKota}/edit', [PemberianNilaiController::class, 'ubahNilaiSeminar'])->name('pengisian.nilai.edit');
-        Route::get('/nilai/dosbing/{idKota}', [PemberianNilaiController::class, 'pengisianNilaiDosenPembimbing'])->name('pengisian.nilai.dosbing');
-        Route::post('/nilai/dosbing/{idKota}/tambah', [PemberianNilaiController::class, 'simpanNilaiDosenPembimbing'])->name('pengisian.nilai.dosbing.store');
+        Route::get('/nilai/{namaFta}/{idKota}', [PemberianNilaiController::class, 'pengisianNilaiDosenPembimbing'])->name('pengisian.nilai.dosbing');
     });
 
     Route::prefix('nilai-sidang')->group(function () {
         Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir'])->name('pengisian.nilai-sidang-akhir');
         Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir'])->name('pengisian.masukan-sidang-akhir');
     });
-    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA'])->name('pengisian.nilai-tugas-akhir');
-    
+    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA'])->name('pengisian.nilai-tugas-akhir'); 
 });
