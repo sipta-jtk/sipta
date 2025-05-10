@@ -203,7 +203,7 @@
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             @if (!$isKoordinator) readonly @endif
-                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'pembimbing')">
+                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 1, 'belum_fix', 'penguji')">
 
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
@@ -264,7 +264,7 @@
                                                                                             class="w-100 h-100 bg-transparent border-0 font-weight-bold text-center alokasiInputText"
                                                                                             style="font-size: xx-large"
                                                                                             @if (!$isKoordinator) readonly @endif
-                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 2, 'belum_fix', 'pembimbing')">
+                                                                                            onchange="savePembimbing('{{ $pengajuan->id_pengajuan_pembimbing }}', this.value, 2, 'belum_fix', 'penguji')">
                                                                                     </div>
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 25%;"
                                                                                         class="col-sm p-0">
@@ -439,7 +439,7 @@
         $(document).ready(function() {
             adjustSidebar();
 
-            $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
+            $.get("{{ route('pengajuanalokasipembimbing.alokasi-penguji.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
                 updateKuotaDosen();
             });
@@ -665,7 +665,7 @@
             let dosen = kuotaDosen.find(d => d.id === kode_dosen);
             if (dosen) {
                 $.ajax({
-                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.updateAlokasi') }}",
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-penguji.updateAlokasi') }}",
                     type: "POST",
                     data: {
                         id_pengajuan_pembimbing: id_pengajuan,
@@ -688,7 +688,7 @@
                 });
             } else if (kode_dosen == '') {
                 $.ajax({
-                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.deleteAlokasi') }}",
+                    url: "{{ route('pengajuanalokasipembimbing.alokasi-penguji.deleteAlokasi') }}",
                     type: "POST",
                     data: {
                         id_pengajuan_pembimbing: id_pengajuan,
@@ -714,7 +714,7 @@
             var caller = event.target.closest('button');
 
             $.ajax({
-                url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
+                url: "{{ route('pengajuanalokasipembimbing.alokasi-penguji.fixAlokasi') }}",
                 type: "POST",
                 data: {
                     id_pengajuan_pembimbing: id_pengajuan,

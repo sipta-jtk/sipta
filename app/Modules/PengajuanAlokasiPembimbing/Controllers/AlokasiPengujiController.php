@@ -33,14 +33,14 @@ class AlokasiPengujiController extends Controller
                 ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
                 ->where('id_kota', $value->id_kota)->get();
 
-            $data_pengajuan[$key]['usulan_dosen'] = PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
+            $data_pengajuan[$key]['usulan_dosen'] =  PrioritasPembimbing::join('dosen', 'prioritas_pembimbing.nip', '=', 'dosen.nip')
                 ->where('id_pengajuan', $value->id_pengajuan_pembimbing)
                 ->select('dosen.id_dosen', 'prioritas_pembimbing.urutan_prioritas')
                 ->orderBy('urutan_prioritas')
                 ->get();
 
             $data_pengajuan[$key]['alokasi'] = AlokasiDosen::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
-                ->where('tipe_alokasi', 'pembimbing')
+                ->where('tipe_alokasi', 'penguji')
                 ->orderBy('urutan_prioritas_terpilih')
                 ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
                 ->select('dosen.id_dosen', 'alokasi_dosen.*')
@@ -212,7 +212,7 @@ class AlokasiPengujiController extends Controller
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
             ->update([
                 'status_alokasi' => $newStatusAlokasi,
-                'tipe_alokasi' => 'pembimbing',
+                'tipe_alokasi' => 'penguji ',
             ]);
 
         $newStatusPengajuan = ($newStatusAlokasi === 'fix') ? 'diterima' : 'diproses';
