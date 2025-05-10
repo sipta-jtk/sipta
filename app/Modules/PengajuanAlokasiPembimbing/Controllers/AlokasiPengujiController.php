@@ -136,25 +136,32 @@ class AlokasiPengujiController extends Controller
         } elseif ($urutan_prioritas == 2) {
             $otherUrutan = 1;
         }
+
         $currentDosenCounterPart = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $otherUrutan)
+            ->where('tipe_alokasi', $tipe_alokasi)
             ->first();
+
         if ($currentDosenCounterPart && $currentDosenCounterPart->nip == $nip) {
             DB::table('alokasi_dosen')
                 ->where('id_pengajuan_pembimbing', $id_pengajuan)
                 ->where('urutan_prioritas_terpilih', $otherUrutan)
+                ->where('tipe_alokasi', $tipe_alokasi)
                 ->delete();
         }
 
         $currentAllocation = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', $tipe_alokasi)
             ->count();
+
         if ($currentAllocation > 0) {
             DB::table('alokasi_dosen')
                 ->where('id_pengajuan_pembimbing', $id_pengajuan)
                 ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+                ->where('tipe_alokasi', $tipe_alokasi)
                 ->delete();
         }
 
@@ -192,6 +199,7 @@ class AlokasiPengujiController extends Controller
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', 'penguji')
             ->value('status_alokasi');
 
         $newStatusAlokasi = ($statusAlokasi === 'fix') ? 'belum_fix' : 'fix';
@@ -199,6 +207,7 @@ class AlokasiPengujiController extends Controller
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', 'penguji')
             ->update([
                 'status_alokasi' => $newStatusAlokasi,
                 'tipe_alokasi' => 'penguji',
