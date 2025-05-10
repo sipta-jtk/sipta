@@ -53,7 +53,7 @@ class AlokasiPembimbingv2Controller extends Controller
             } else {
                 $data_pengajuan[$key]['prodi'] = null;
                 $data_pengajuan[$key]['kode_prodi'] = null;
-            }  
+            }
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
@@ -142,7 +142,10 @@ class AlokasiPembimbingv2Controller extends Controller
             ->where('urutan_prioritas_terpilih', $otherUrutan)
             ->first();
         if ($currentDosenCounterPart && $currentDosenCounterPart->nip == $nip) {
-            return null;
+            DB::table('alokasi_dosen')
+                ->where('id_pengajuan_pembimbing', $id_pengajuan)
+                ->where('urutan_prioritas_terpilih', $otherUrutan)
+                ->delete();
         }
 
         $currentAllocation = DB::table('alokasi_dosen')
@@ -163,7 +166,10 @@ class AlokasiPembimbingv2Controller extends Controller
             'status_alokasi' => $status_alokasi,
             'tipe_alokasi' => $tipe_alokasi,
         ]);
-        return redirect()->back()->with('success', 'Alokasi berhasil diperbarui!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi berhasil diperbarui!'
+        ]);
     }
 
     public function deleteAlokasi(Request $request)
@@ -219,7 +225,7 @@ class AlokasiPembimbingv2Controller extends Controller
                 'updated_at' => now(),
             ]);
 
-   
+
         return null;
 
     }

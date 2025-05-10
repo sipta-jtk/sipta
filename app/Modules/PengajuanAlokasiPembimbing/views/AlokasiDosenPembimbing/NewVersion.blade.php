@@ -74,14 +74,16 @@
                             </h3>
                         </div>
                         <div class="card-body">
-                            <select id="filterProdi" class="form-control form-control-sm w-50" onchange="filterPengajuanByProdi()">
+                            <select id="filterProdi" class="form-control form-control-sm w-50"
+                                onchange="filterPengajuanByProdi()">
                                 <option value="">Semua</option>
                                 <option value="D3">D3</option>
                                 <option value="D4">D4</option>
                             </select>
                         </div>
                         <div class="card-footer text-right">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="clearFilterProdi()">Reset</button>
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                onclick="clearFilterProdi()">Reset</button>
                         </div>
                     </div>
                 </div>
@@ -103,7 +105,8 @@
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
-                                        <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
+                                        <input type="hidden" name="" class="kodeProdi"
+                                            value="{{ $pengajuan->kode_prodi }}">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
@@ -168,10 +171,17 @@
                                                                     <div class="row d-flex m-0 flex-row"
                                                                         style="height: 500px;">
                                                                         @php
-                                                                            $alok1 = $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 1);
-                                                                            $bg1 = $alok1?->status_alokasi === 'fix' ? 'bg-success' : 'bg-warning';
+                                                                            $alok1 = $pengajuan->alokasi->firstWhere(
+                                                                                'urutan_prioritas_terpilih',
+                                                                                1,
+                                                                            );
+                                                                            $bg1 =
+                                                                                $alok1?->status_alokasi === 'fix'
+                                                                                    ? 'bg-success'
+                                                                                    : 'bg-warning';
                                                                         @endphp
-                                                                        <div class="col-4 p-0 {{ $bg1 }}" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing1"
+                                                                        <div class="col-4 p-0 {{ $bg1 }}"
+                                                                            id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing1"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
@@ -206,11 +216,11 @@
                                                                                                 <i
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
-                                                                                            <button
-                                                                                                class="btn btn-sm btn-success"
-                                                                                                onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
+                                                                                            <button {{-- class="btn btn-sm btn-success" --}}
+                                                                                                class="btn btn-sm {{ $alok1?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
+                                                                                                onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
                                                                                                 <i
-                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                                    class="fa fs-fw {{ $alok1?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
                                                                                             </button>
                                                                                         </div>
                                                                                     </div>
@@ -218,10 +228,17 @@
                                                                             </div>
                                                                         </div>
                                                                         @php
-                                                                            $alok2 = $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 2);
-                                                                            $bg2 = $alok2?->status_alokasi === 'fix' ? 'bg-success' : 'bg-warning';
+                                                                            $alok2 = $pengajuan->alokasi->firstWhere(
+                                                                                'urutan_prioritas_terpilih',
+                                                                                2,
+                                                                            );
+                                                                            $bg2 =
+                                                                                $alok2?->status_alokasi === 'fix'
+                                                                                    ? 'bg-success'
+                                                                                    : 'bg-warning';
                                                                         @endphp
-                                                                        <div class="col-4 p-0 {{ $bg2 }}" id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing2"
+                                                                        <div class="col-4 p-0 {{ $bg2 }}"
+                                                                            id="bg-{{ $pengajuan->id_pengajuan_pembimbing }}pembimbing2"
                                                                             style="flex: 0 0 50%; max-width: 50%; height: 50%;">
                                                                             <div class="border border-dark p-0 h-100">
                                                                                 <div class="row d-flex flex-wrap m-0 p-2"
@@ -256,10 +273,11 @@
                                                                                                     class="fa fs-fw fa-eye"></i>
                                                                                             </button>
                                                                                             <button
-                                                                                                class="btn btn-sm btn-success"
-                                                                                                onclick="fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
+                                                                                                class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
+                                                                                                onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
                                                                                                 <i
-                                                                                                    class="fa fs-fw fa-check"></i>
+                                                                                                    class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
+
                                                                                             </button>
                                                                                         </div>
                                                                                     </div>
@@ -314,15 +332,15 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="filterOption"
-                                        value="kuota" id="filterQuota" onchange="filter()">
+                                    <input class="form-check-input" type="radio" name="filterOption" value="kuota"
+                                        id="filterQuota" onchange="filter()">
                                     <label class="form-check-label" for="filterQuota">
                                         <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Melebihi Kuota
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="filterOption"
-                                        value="belum" id="filterUnassigned" onchange="filter()">
+                                    <input class="form-check-input" type="radio" name="filterOption" value="belum"
+                                        id="filterUnassigned" onchange="filter()">
                                     <label class="form-check-label" for="filterUnassigned">
                                         <i class="fas fa-user-times mr-1 text-secondary"></i> Belum Terpilih
                                     </label>
@@ -401,7 +419,7 @@
                 toggleNav.trigger('click');
             }
         }
-        
+
         function clearFilterProdi() {
             $('#filterProdi').val('');
             filterPengajuanByProdi();
@@ -441,26 +459,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                            `).join('')}
+                                                                                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                <td class="p-1">
-                                                                                                    <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                        ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            `).join('')}
+                                                                                                                                                    <td class="p-1">
+                                                                                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                        </span>
+                                                                                                                                                    </td>
+                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                            `).join('')}
+                                                                                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -478,7 +496,10 @@
                     infoEmpty: "Tidak ada data tersedia",
                     infoFiltered: "(difilter dari total _MAX_ data)",
                     paginate: {
-                        first: "<<", last: ">>", next: ">", previous: "<"
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
                     }
                 },
             });
@@ -518,7 +539,10 @@
                     infoEmpty: "Tidak ada data tersedia",
                     infoFiltered: "(difilter dari total _MAX_ data)",
                     paginate: {
-                        first: "<<", last: ">>", next: ">", previous: "<"
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
                     }
                 }
             });
@@ -527,7 +551,7 @@
         function filterPengajuanByProdi() {
             const selected = $('#filterProdi').val();
 
-            $('#alokasiTable > tbody > tr').each(function () {
+            $('#alokasiTable > tbody > tr').each(function() {
                 const kodeProdi = $(this).find('input.kodeProdi').val(); // pastikan cari langsung input
 
                 if (selected === '' || kodeProdi === selected) {
@@ -642,6 +666,10 @@
                     },
                     success: function(response) {
                         console.log(response);
+                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
+                        let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                        pembimbing.removeClass("bg-success");
+                        pembimbing.addClass("bg-warning");
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -658,6 +686,10 @@
                     },
                     success: function(response) {
                         console.log(response);
+                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
+                        let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                        pembimbing.removeClass("bg-success");
+                        pembimbing.addClass("bg-warning");
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -667,34 +699,43 @@
         }
 
         function fixAlokasi(id_pengajuan, urutan) {
-                $.ajax({
-                    url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
-                    type: "POST",
-                    data: {
-                        id_pengajuan_pembimbing: id_pengajuan,
-                        urutan_prioritas_terpilih: urutan,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
-                        if (pembimbing.hasClass("bg-warning")) 
-                        {
-                            pembimbing.removeClass("bg-warning");
-                            pembimbing.addClass("bg-success");
-                        } else 
-                        {
-                            pembimbing.removeClass("bg-success");
-                            pembimbing.addClass("bg-warning");
-                        }
-                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
-                    },
-                    error: function(xhr, status, error) {
-                        // console.error(error);
-                        // print the error Detail
-                        console.log(xhr.responseText);
+
+            var caller = event.target.closest('button');
+
+            $.ajax({
+                url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
+                type: "POST",
+                data: {
+                    id_pengajuan_pembimbing: id_pengajuan,
+                    urutan_prioritas_terpilih: urutan,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    console.log(response);
+                    var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                    if (pembimbing.hasClass("bg-warning")) {
+                        pembimbing.removeClass("bg-warning");
+                        pembimbing.addClass("bg-success");
+                        $(caller).removeClass("btn-success");
+                        $(caller).addClass("btn-warning");
+                        $(caller).find('i').removeClass('fa-check').addClass('fa-undo');
+                    } else {
+                        pembimbing.removeClass("bg-success");
+                        pembimbing.addClass("bg-warning");
+
+                        $(caller).removeClass("btn-warning");
+                        $(caller).addClass("btn-success");
+                        $(caller).find('i').removeClass('fa-undo');
+                        $(caller).find('i').addClass('fa-check');
                     }
-                });
+
+
+                    toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
         }
 
         // onchange on .alokasiInputText
