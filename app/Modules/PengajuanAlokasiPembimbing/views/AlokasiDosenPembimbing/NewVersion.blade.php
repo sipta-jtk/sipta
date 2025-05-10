@@ -37,6 +37,15 @@
         #dosenTable_wrapper .dataTables_filter {
             display: none;
         }
+
+        .card {
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            overflow-y: auto;
+            max-height: calc(80vh - 120px); /* Adjusted to fit within the card wrapper */
+        }
     </style>
 @stop
 
