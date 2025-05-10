@@ -186,17 +186,8 @@ class AlokasiPengujiController extends Controller
 
     public function fixAlokasi(Request $request)
     {
-        // Update status pengajuan pembimbing jadi DITERIMA
         $id_pengajuan = $request->input('id_pengajuan_pembimbing');
         $urutan_prioritas = $request->input('urutan_prioritas_terpilih');
-
-        $pengajuan = DB::table('pengajuan_pembimbing')
-            ->where('id_pengajuan_pembimbing', $id_pengajuan)
-            ->first();
-
-        if (!$pengajuan) {
-            return redirect()->back()->with('error', 'Pengajuan tidak ditemukan!');
-        }
 
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
@@ -205,27 +196,17 @@ class AlokasiPengujiController extends Controller
 
         $newStatusAlokasi = ($statusAlokasi === 'fix') ? 'belum_fix' : 'fix';
 
-        // Update alokasi dosen jadi FIX
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
             ->update([
                 'status_alokasi' => $newStatusAlokasi,
-                'tipe_alokasi' => 'penguji ',
+                'tipe_alokasi' => 'penguji',
             ]);
 
-        $newStatusPengajuan = ($newStatusAlokasi === 'fix') ? 'diterima' : 'diproses';
-
-        // Update status pengajuan jadi DITERIMA
-        DB::table('pengajuan_pembimbing')
-            ->where('id_pengajuan_pembimbing', $id_pengajuan)
-            ->update([
-                'status_pengajuan' => $newStatusPengajuan,
-                'updated_at' => now(),
-            ]);
-
-
-        return null;
-
+        return response()->json([
+            'status' => 'success',
+            'new_status' => $newStatusAlokasi
+        ]);
     }
 }
