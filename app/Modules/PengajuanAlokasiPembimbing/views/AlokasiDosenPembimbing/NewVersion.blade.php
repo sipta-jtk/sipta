@@ -63,12 +63,23 @@
                     <h3 class="card-title w-100">Tabel Alokasi Pembimbing</h3>
                 </div>
                 <div class="d-flex justify-content-between align-items-center p-2">
-                    <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
-                        data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
-                        title="Tampilkan Filter Prodi">
-                        <i class="fas fa-filter"></i>
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+                            data-target="#filterProdiMenu" aria-expanded="false" aria-controls="filterProdiMenu"
+                            title="Tampilkan Filter Prodi">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        
+                        <!-- NOTIF KEL REN REN -->
+                        @if ($isKoordinator)
+                            <button class="btn btn-sm btn-info ml-1" onclick="confirmSendNotification()"
+                                title="Kirim notifikasi ke Mahasiswa dan Dosen">
+                                <i class="fas fa-bell"></i>
+                            </button>
+                        @endif
+                    </div>
                 </div>
+
                 <!-- FILTER PRODI COLLAPSE -->
                 <div class="collapse" id="filterProdiMenu">
                     <div class="card mx-2 mb-2">
@@ -109,8 +120,8 @@
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
-                                        <input type="hidden" name="" class="kodeProdi"
-                                            value="{{ $pengajuan->kode_prodi }}">
+                                        <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
+                                        <input type="hidden" name="id_pengajuan" value="{{ $pengajuan->id_pengajuan_pembimbing }}">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
@@ -404,6 +415,8 @@
 
     <script>
         var DetailDosenTable;
+        window.mahasiswaNotified = [];
+        window.dosenNotified = [];
 
         function updateDataTable() {
             if (DetailDosenTable) {
@@ -753,5 +766,56 @@
         $('.alokasiInputText').on('change', function() {
             updateKuotaDosen();
         });
+
+        // REN REN
+        function confirmSendNotification() {
+            FireSweetAlert(
+                'question',
+                'Kirim Notifikasi?',
+                'Apakah Anda yakin ingin mengirim notifikasi ke mahasiswa dan dosen?',
+                'Ya, Kirim',
+                'Batal',
+                '#28a745',
+                '#6c757d',
+                true,
+                true,
+                function(confirmed) {
+                    if (confirmed) {
+                        window.mahasiswaNotified = [];
+                        window.dosenNotified = [];
+
+                        $('#alokasiTable > tbody > tr').each(function () {
+                            const pengajuanRow = $(this);
+                            const idPengajuan = pengajuanRow.find('input[name="id_pengajuan"]').val();
+
+                            ['1', '2'].forEach(function(urutan) {
+                                const pembimbingInput = pengajuanRow.find(`#bg-${idPengajuan}pembimbing${urutan}`);
+                                if (pembimbingInput.hasClass('bg-success')) {
+                                    const inputPembimbing = pengajuanRow.find('td input.alokasiInputText').eq(urutan - 1);
+                                    const idDosen = inputPembimbing.val();
+
+                                    if (idDosen && !window.dosenNotified.includes(idDosen)) {
+                                        window.dosenNotified.push(idDosen);
+                                    }
+
+                                    pengajuanRow.find('.badge.font-weight-normal.p-0').each(function () {
+                                        const nim = $(this).text().trim();
+                                        const nama = $(this).prev().text().trim();
+                                        if (nim && !window.mahasiswaNotified.some(m => m.nim === nim)) {
+                                            window.mahasiswaNotified.push({ nama, nim });
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                        console.table(window.mahasiswaNotified);
+                        console.table(window.dosenNotified);
+
+                        toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
+                    }
+                }
+            );
+        }
     </script>
 @endsection
