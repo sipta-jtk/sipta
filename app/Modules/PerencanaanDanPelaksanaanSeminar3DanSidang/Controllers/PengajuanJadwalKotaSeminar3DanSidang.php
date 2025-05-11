@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Penjadwalan;
 use App\Models\PengajuanJadwalKota;
 use App\Models\VerifikasiBerkasPengajuan;
+use App\Services\Notifikasi;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
@@ -277,9 +278,17 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         // Tentukan waktu `start` dan `end` berdasarkan sesi
         $tanggal = Carbon::parse($request->input('tanggal_pengajuan'));
 
-        // 
+        // Decode JSON dari ruangan_pengajuan
+        $ruangan = json_decode($request->input('ruangan_pengajuan'));
+
+        if (!$ruangan) {
+            return redirect()->back()->with('error', 'Data ruangan tidak valid.');
+        }
+
+        $id_ruangan = $ruangan->id;
+        $nama_ruangan = $ruangan->nama;
+        
         $sesi = $request->input('sesi_pengajuan');
-        $id_ruangan = $request->input('ruangan_pengajuan');
 
         $start = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['start'])->format('Y-m-d H:i:s');
         $end = $tanggal->copy()->setTimeFromTimeString($this->jadwal_waktu[$sesi]['end'])->format('Y-m-d H:i:s');
@@ -330,7 +339,8 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         $penjadwalan = Penjadwalan::create([
             'sesi' => $sesi,
             'agenda' => $request->input('agenda'),
-            'id_ruangan' => $request->input('ruangan_pengajuan'),
+            'id_ruangan' => $id_ruangan,
+            'nama_ruangan' => $nama_ruangan,
             'tanggal' => $request->input('tanggal_pengajuan'),
             'id_kota' => $id_kota,   
             'start' => $start,
@@ -350,6 +360,18 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_dosen_penguji_2' => null,
             'status_koordinator_ta' => null,
         ]);
+        
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }

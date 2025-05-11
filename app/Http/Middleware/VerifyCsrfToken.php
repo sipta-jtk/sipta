@@ -13,8 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/api/ambang-batas',
-        '/kirim-email',
-        '/daftar-user'
         //
     ];
 }
