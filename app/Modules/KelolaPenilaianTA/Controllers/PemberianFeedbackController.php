@@ -76,8 +76,6 @@ class PemberianFeedbackController extends Controller
         $data = [
             'kode_fta' => $seminar->kode_fta ?? null,
             'namaFta' => $namaFtaSlug,
-            // 'tanggal' => $seminar->tanggal_tenggat_pengisian ?? ' - ',
-            // 'start' => $mahasiswa->first()->kota->penjadwalan[0]->start ?? null,
             'namaKota' => $mahasiswa->first()->kota->nama_kota ?? null,
             'id_kota' => $idKota,
             'aspekFeedback' => $aspekFeedback
@@ -93,8 +91,10 @@ class PemberianFeedbackController extends Controller
             ->keyBy('id_feedback'); // agar bisa diakses dengan mudah di Blade
 
         $data['detailFeedback'] = $detailFeedback;
+
+        $dokumen = $this->getLatestDokumenByKota($idKota, $namaFta);
     
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data', 'keteranganUmumPenilaian', 'keteranganUmumPenilaian', 'jadwal'));
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data', 'keteranganUmumPenilaian', 'keteranganUmumPenilaian', 'jadwal', 'detailFeedback', 'dokumen'));
     }
 
     // Fungsi untuk konversi nama agenda dari database ke format namaFta
@@ -115,43 +115,44 @@ class PemberianFeedbackController extends Controller
         }
     }
 
-    // public function penilaianFta($idKota, $namaFtaSlug)
-    // {
-    //     $data = [];
+    private function getLatestDokumenByKota($idKota, $kategori)
+    {
+        $kategori = strtolower($kategori);
 
-    //     // Konversi slug nama FTA ke format normal
-    //     $namaAgenda = $this->konversiNamaAgenda($namaFtaSlug);
-    //     $data['namaAgenda'] = $namaAgenda;
+        // Mapping manual supaya sesuai format database
+        $kategori = match ($kategori) {
+            'seminar-i' => 'seminar1',
+            'seminar-ii' => 'seminar2',
+            'seminar-iii' => 'seminar3',
+            'sidang-akhir' => 'sidang',
+            default => $kategori
+        };
 
-    //     // Ambil data kota berdasarkan id
-    //     $kota = Kota::findOrFail($idKota);
-    //     $data['idKota'] = $kota->id_kota;
+        $laporan = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 1) // Laporan
+            ->orderByDesc('versi')
+            ->first();
 
-    //     // Ambil ID FTA dari form_penilaian berdasarkan nama dan jenis_form = feedback
-    //     $idFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
-    //         ->where('jenis_form', 'feedback')
-    //         ->value('id_fta');
+        $powerpoint = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 3) // PowerPoint
+            ->orderByDesc('versi')
+            ->first();
+        
+        // LOG UNTUK DEBUG
+        Log::info('Preview Dokumen:', [
+            'id_kota' => $idKota,
+            'kategori' => $kategori,
+            'laporan_file_path' => optional($laporan)->file_path,
+            'powerpoint_file_path' => optional($powerpoint)->file_path,
+        ]);
 
-    //     $data['idFta'] = $idFta;
-
-    //     // Ambil file_path dokumen kategori 'laporan' dan status 'valid'
-    //     $laporan = Dokumen::where('kode_fta', $idFta)
-    //         ->where('kategori', 'laporan')
-    //         ->where('status_berkas', 'valid')
-    //         ->first();
-
-    //     // Ambil file_path dokumen kategori 'presentasi' dan status 'valid'
-    //     $presentasi = Dokumen::where('kode_fta', $idFta)
-    //         ->where('kategori', 'presentasi')
-    //         ->where('status_berkas', 'valid')
-    //         ->first();
-
-    //     // Simpan path ke dalam variabel data jika ada
-    //     $data['laporanPath'] = $laporan ? $laporan->file_path : null;
-    //     $data['presentasiPath'] = $presentasi ? $presentasi->file_path : null;
-
-    //     return view('fta.penilaian.index', compact('data'));
-    // }
+        return [
+            'laporan' => $laporan,
+            'powerpoint' => $powerpoint
+        ];
+    }
 
     /**
      * Simpan feedback 

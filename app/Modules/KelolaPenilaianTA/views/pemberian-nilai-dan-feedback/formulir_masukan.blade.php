@@ -126,17 +126,29 @@
                         default => ''
                     } }}
                 </strong> <br>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('dokumen/a4xQcjsyixgnm6AOzkYOCnfVY7xgUB0j3LwgZ8Uf.pdf')">
-                    Laporan
-                </button>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
-                </button>
+
+                <!-- Tombol Preview Laporan -->
+                @if ($dokumen['laporan'])
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen('{{ $dokumen['laporan']->file_path }}')"
+                        data-toggle="modal" data-target="#LihatDokumen">
+                        Laporan
+                    </button>
+                @endif
+
+                <!-- Tombol Preview PowerPoint -->
+                @if ($dokumen['powerpoint'])
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path }}')"
+                        data-toggle="modal" data-target="#LihatDokumen">
+                        PowerPoint
+                    </button>
+                @endif
             </div>
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <!-- <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -153,7 +165,26 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
+
+        <!-- MODAL LIHAT DOKUMEN -->
+        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
+                        <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal>
 
         <!-- Judul Form -->      
         <h3 class="heading-spacing text-center">
@@ -301,37 +332,11 @@
         }
 
         // $('.view-btn').on('click', function() {
-        function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
-            // console.log("Tes");
-            // var judul = $(this).data('judul');
-            // var deskripsi = $(this).data('deskripsi');
-            // var filePath = $(this).data('file');
-            // var kodeFta = $(this).data('kode-fta');
-
-            $('#view_judul').val(judul);
-            $('#view_deskripsi').val(deskripsi);
-            $('#username').val('{{ auth()->user()->username }}');
-
-            // Handle Kode FTA
-            // if (kodeFta) {
-            //     $('#field_kode_fta_view').show();
-            //     $('#view_kode_fta').val(kodeFta);
-            // } else {
-            //     $('#field_kode_fta_view').hide();
-            //     $('#view_kode_fta').val('');
-            // }
-
+        function LihatDokumen(filePath) {
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
+                var fullUrl = `${window.location.origin}/storage/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
-                // Buka di tab baru
-                $('#view_file_link').attr('href', fullUrl);
-
-                // Link download
-                $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
-
-                // Preview file
                 if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
                     $('#viewDocumentPreview').attr('src', fullUrl).show();
                     $('#viewPreviewNotAvailable').hide();
@@ -343,10 +348,14 @@
                     $('#viewDocumentPreview').hide();
                     $('#viewPreviewNotAvailable').show();
                 }
+
+                // Tampilkan modal
+                $('#LihatDokumen').modal('show');
             } else {
                 $('#viewDocumentPreview').hide();
                 $('#viewPreviewNotAvailable').show();
+                $('#LihatDokumen').modal('show');
             }
-        };
+        }
     </script>
 @stop
