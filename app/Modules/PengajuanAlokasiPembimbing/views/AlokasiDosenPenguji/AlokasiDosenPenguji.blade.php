@@ -44,7 +44,8 @@
 
         .table-responsive {
             overflow-y: auto;
-            max-height: calc(80vh - 120px); /* Adjusted to fit within the card wrapper */
+            max-height: calc(80vh - 120px);
+            /* Adjusted to fit within the card wrapper */
         }
     </style>
 @stop
@@ -56,10 +57,7 @@
 
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => '', 'label' => 'Alokasi Dosen Penguji'],
-            ],
+            'links' => [['url' => url('/sipta-dev/'), 'label' => 'Beranda'], ['url' => '', 'label' => 'Alokasi Dosen Penguji']],
         ])
         @endcomponent
     </div>
@@ -118,13 +116,17 @@
                                 <tr>
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
-                                        <input type="hidden" name="" class="totalMhs" value="{{ $pengajuan->mahasiswa->count() }}">
+                                        <input type="hidden" name="" class="totalMhs"
+                                            value="{{ $pengajuan->mahasiswa->count() }}">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
-                                        <input type="hidden" name="" class="totalMhs" value="{{ $pengajuan->mahasiswa->count() }}">
+                                        <input type="hidden" name="" class="totalMhs"
+                                            value="{{ $pengajuan->mahasiswa->count() }}">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
-                                        <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
-                                        <input type="hidden" name="id_pengajuan" value="{{ $pengajuan->id_pengajuan_pembimbing }}">
+                                        <input type="hidden" name="" class="kodeProdi"
+                                            value="{{ $pengajuan->kode_prodi }}">
+                                        <input type="hidden" name="id_pengajuan"
+                                            value="{{ $pengajuan->id_pengajuan_pembimbing }}">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
@@ -191,6 +193,14 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
                                                                                         {{-- Penguji 1 --}}
+                                                                                        <input type="hidden"
+                                                                                            name=""
+                                                                                            class="totalMhs"
+                                                                                            value="{{ $pengajuan->mahasiswa->count() }}">
+                                                                                        <input type="hidden"
+                                                                                            name="" class="prodi"
+                                                                                            value="{{ $pengajuan->prodi }}">
+
                                                                                         <input type="text"
                                                                                             value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 1)?->id_dosen ?? '' }}"
                                                                                             id="penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}"
@@ -252,6 +262,14 @@
                                                                                     <div style="flex: 0 0 100%; max-width: 100%; height: 50%;"
                                                                                         class="col-sm p-0">
                                                                                         {{-- Penguji 2 --}}
+                                                                                        <input type="hidden"
+                                                                                            name=""
+                                                                                            class="totalMhs"
+                                                                                            value="{{ $pengajuan->mahasiswa->count() }}">
+                                                                                        <input type="hidden"
+                                                                                            name="" class="prodi"
+                                                                                            value="{{ $pengajuan->prodi }}">
+
                                                                                         <input type="text"
                                                                                             value="{{ $pengajuan->alokasi->firstWhere('urutan_prioritas_terpilih', 2)?->id_dosen ?? '' }}"
                                                                                             id="penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}"
@@ -464,26 +482,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                                                                        <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                                                                `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                        <td class="p-1">
-                                                                                                                                                            <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                                                                                ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                                                                            </span>
-                                                                                                                                                        </td>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                                                    <td class="p-1">
+                                                                                                                                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                    </td>
+                                                                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                        <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -574,11 +592,12 @@
         });
 
         function updateKuotaDosen() {
+            console.log('updateKuotaDosen');
             for (let i = 0; i < kuotaDosen.length; i++) {
-                kuotaDosen[i].mhs.D3 = 0;
-                kuotaDosen[i].mhs.D4 = 0;
-                kuotaDosen[i].kelompok.D3 = 0;
-                kuotaDosen[i].kelompok.D4 = 0;
+                for (const key in kuotaDosen[i].mhs) {
+                    kuotaDosen[i].mhs[key] = 0;
+                    kuotaDosen[i].kelompok[key] = 0;
+                }
             }
 
             $('.alokasiInputText').each(function() {
@@ -607,6 +626,8 @@
 
                 updateDataTable();
             });
+
+            console.log(kuotaDosen);
         }
 
         function goToDetailDosen(id) {

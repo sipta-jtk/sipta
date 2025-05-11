@@ -603,10 +603,10 @@
 
         function updateKuotaDosen() {
             for (let i = 0; i < kuotaDosen.length; i++) {
-                kuotaDosen[i].mhs.D3 = 0;
-                kuotaDosen[i].mhs.D4 = 0;
-                kuotaDosen[i].kelompok.D3 = 0;
-                kuotaDosen[i].kelompok.D4 = 0;
+                for (const key in kuotaDosen[i].mhs) {
+                    kuotaDosen[i].mhs[key] = 0;
+                    kuotaDosen[i].kelompok[key] = 0;
+                }
             }
 
             $('.alokasiInputText').each(function() {
