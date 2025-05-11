@@ -592,7 +592,6 @@
         });
 
         function updateKuotaDosen() {
-            console.log('updateKuotaDosen');
             for (let i = 0; i < kuotaDosen.length; i++) {
                 for (const key in kuotaDosen[i].mhs) {
                     kuotaDosen[i].mhs[key] = 0;
@@ -626,8 +625,6 @@
 
                 updateDataTable();
             });
-
-            console.log(kuotaDosen);
         }
 
         function goToDetailDosen(id) {
