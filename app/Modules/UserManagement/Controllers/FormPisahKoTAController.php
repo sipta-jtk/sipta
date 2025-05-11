@@ -7,7 +7,7 @@ use App\Modules\Controller;
 use App\Models\User;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanPisahKota;
-use App\Models\KoTA;
+use App\Models\Kota;
 
 class FormPisahKoTAController extends Controller
 {
