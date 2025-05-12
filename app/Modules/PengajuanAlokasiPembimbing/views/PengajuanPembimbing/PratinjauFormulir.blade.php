@@ -74,17 +74,22 @@
 
                 <p class="text-secondary text-md border-bottom">Topik Tugas Akhir</p> 
                 <p id="preview-topik" style="font-weight: bold;">
-                    <span>Topik tugas akhir belum diisi</span>
+                    <span style='color: red;'>Topik tugas akhir belum diisi</span>
+                </p>
+
+                <p class="text-secondary text-md border-bottom">Jenis Tugas Akhir</p> 
+                <p id="preview-jenis" style="font-weight: bold;">
+                    <span style='color: red;'>Jenis tugas akhir belum dipilih</span>
                 </p>
 
                 <p class="text-secondary text-md border-bottom">Bidang Tugas Akhir</p> 
                 <p id="preview-bidang" style="font-weight: bold;">
-                    <span>Bidang tugas akhir belum dipilih</span>
+                    <span style='color: red;'>Bidang tugas akhir belum dipilih</span>
                 </p>
 
                 <p class="text-secondary text-md border-bottom">Prioritas Dosen Pembimbing</p> 
                 <p id="preview-prioritas" style="font-weight: bold;">
-                    <span>Prioritas dosen belum dipilih</span>
+                    <span style='color: red;'>Prioritas dosen belum dipilih</span>
                 </p>
 
                 <div class="d-flex justify-content-between mt-3">
@@ -131,8 +136,31 @@
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
+                        document.getElementById("preview-topik").textContent = response.topikTugasAkhir;
+                        document.getElementById("preview-bidang").textContent = response.bidangTugasAkhir;
+                        document.getElementById("preview-jenis").textContent = response.jenisTugasAkhir;
+
+                        let prioritasList = document.getElementById("preview-prioritas");
+                        prioritasList.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
+
+                        if (response.prioritasDosen && response.prioritasDosen.length > 0) {
+                            response.prioritasDosen.forEach(function(dosen, index) {
+                                if (index < 5) { // Maksimal 5 prioritas dosen
+                                    let listItem = `
+                                        <p>
+                                            ${dosen.priority}. ${dosen.name}
+                                        </p>
+                                    `;
+                                    prioritasList.innerHTML += listItem;
+                                }
+                            });
+                        } else {
+                            prioritasList.innerHTML = "<span style='color: red;'>Prioritas dosen belum dipilih</span>";
+                        }
+
                         $("#successMessage").show(); 
                         $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
+                        return;
                     }
                     if (response.hasExistingData && response.Periode === false) {
                         $("#successMessage").show(); 
@@ -146,6 +174,7 @@
 
             if (savedData) {
                 document.getElementById("preview-topik").textContent = savedData.topik || "<span style='color: red;'>Topik belum diisi</span>";
+                document.getElementById("preview-jenis").textContent = savedData.jenisTA || "<span style='color: red;'>Jenis tugas akhir belum dipilih</span>";
 
                 let namaBidang = document.getElementById("preview-bidang");
                 namaBidang.textContent = ""; // Kosongkan sebelumnya
@@ -195,6 +224,7 @@
                     let dataToSend = {
                         topik: savedData.topik,
                         bidang: savedData.bidang,
+                        jenisTA: savedData.jenisTA,
                         prioritas: JSON.stringify(prioritasDosen)
                     };
                     console.log(dataToSend);
@@ -222,6 +252,13 @@
                     topikInput.value = savedData.topik;
                     form.appendChild(topikInput);
 
+                    // Tambahkan data jenis tugas akhir ke dalam form
+                    let jenisTAInput = document.createElement('input');
+                    jenisTAInput.type = 'hidden';
+                    jenisTAInput.name = 'jenisTA';
+                    jenisTAInput.value = savedData.jenisTA;
+                    form.appendChild(jenisTAInput);
+                    
                     // Tambahkan data bidang ke dalam form
                     let bidangInput = document.createElement('input');
                     bidangInput.type = 'hidden';
