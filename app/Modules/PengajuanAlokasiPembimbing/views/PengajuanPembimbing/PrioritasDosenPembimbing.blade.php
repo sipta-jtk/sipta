@@ -153,20 +153,25 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $(".removeDosen, .addDosen").prop("disabled", true); // Menonaktifkan tombol remove dan add dosen
                     
                     if (response.Periode === false) {
                         $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        response.prioritas.forEach(function (dosen, index) {
-                            if (index < 5) { // Maksimal 5 prioritas
-                                let priorityNumber = index + 1;
-                                let listItem = $("#prioritasList li").eq(index);
-                                listItem.find(".priority-name").text(dosen.nama);
-                                listItem.find(".removeDosen").show(); // Tampilkan tombol hapus
-                            }
-                        });
+                        let prioritasList = $("#prioritasList li");
+                        prioritasList.find(".priority-name").text("-");  // Reset tampilan
+
+                        if (response.prioritasDosen && response.prioritasDosen.length > 0) {
+                            response.prioritasDosen.forEach(function (dosen, index) {
+                                if (index < 5) {  // Maksimal 5 prioritas
+                                    let listItem = prioritasList.eq(index);
+                                    listItem.find(".priority-name").text(dosen.name);
+                                    listItem.find(".removeDosen").hide();  // Sembunyikan tombol hapus karena sudah fix
+                                }
+                            });
+                        }
                         $("#successMessage").show(); 
                         $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
