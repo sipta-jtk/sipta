@@ -68,8 +68,18 @@ class DaftarPengajuanDosbingController extends Controller
             if ($index === false) continue;
             
             $idKota = $anggota->first()->id_kota;
+            $idProdi = $anggota->first()->id_prodi;
+
+            $dosenNip = auth()->user()->dosen->nip ?? null;
+            $statusPeminatan = 'none'; // Default status
+            if ($dosenNip) {
+                $preferensi = PreferensiKota::where('nip', $dosenNip)->where('id_kota', $idKota)->first();
+                if ($preferensi) {
+                    $statusPeminatan = 'accepted';
+                }
+            }
             
-            $kelompokData[] = [
+            $kelompokData['table'][] = [
                 'id' => $index + 1,
                 'kode' => $namaKota,
                 'bidang' => $bidangList[$index] ?? '-',
@@ -81,6 +91,11 @@ class DaftarPengajuanDosbingController extends Controller
             ];
         }
 
+        $kelompokData['prodiList'] = Prodi::orderBy('nama_prodi', 'asc')->get(['id_prodi', 'nama_prodi']);
+
+        // dd($prodiList->toArray());
+
+        // dd('SEBELUM RETURN VIEW DI CONTROLLER');
         return view('PengajuanAlokasiPembimbing.views.DaftarPengajuanDosbing.topik', compact('kelompokData'));
     }
 
@@ -96,7 +111,7 @@ class DaftarPengajuanDosbingController extends Controller
         $kota = Kota::where('id_kota', $id)->first();
     
         if (!$kota) {
-            return response()->json(['message' => 'Kota tidak ditemukan.'], 404);
+            return response()->json(['message' => 'Kota/Kelompok tidak ditemukan.'], 404);
         }
     
         if ($action === 'accept') {

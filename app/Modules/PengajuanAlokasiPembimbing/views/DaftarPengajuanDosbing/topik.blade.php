@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+{{-- @php
+dd($prodiList);
+@endphp --}}
+
 @section('title', 'PengajuanAlokasiPembimbing')
 
 @section('css')
