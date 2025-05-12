@@ -47,7 +47,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     Route::group([
         'prefix' => 'alokasi-pembimbing',
         'as' => 'alokasi-pembimbing.',
-        'middleware' => ['auth', 'can:dosen']
+        'middleware' => ['auth', 'can:akses-alokasi']
     ], function () {
         Route::get('/', [AlokasiPembimbingv2Controller::class, 'index'])->name('index');
         Route::get('/getDetailDosen', [AlokasiPembimbingv2Controller::class, 'getDetailDosen'])->name('getDetailDosen');
@@ -59,7 +59,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     Route::group([
         'prefix' => 'alokasi-penguji',
         'as' => 'alokasi-penguji.',
-        'middleware' => ['auth', 'can:dosen']
+        'middleware' => ['auth', 'can:akses-alokasi']
     ], function () {
         Route::get('/', [AlokasiPengujiController::class, 'index'])->name('index');
         Route::get('/getDetailDosen', [AlokasiPengujiController::class, 'getDetailDosen'])->name('getDetailDosen');

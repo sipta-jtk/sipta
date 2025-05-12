@@ -150,6 +150,17 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('mahasiswa_ta');
 
         });
+
+
+        /***
+         * [TOPIK 1] - Fitur Pengajuan dan Alokasi Pembimbing
+         */
+
+         //Akses Alokasi and another customize route that only allowed for dosen and koordinator_ta only 
+        Gate::define('akses-alokasi', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('koordinator_ta');
+        });
+
     }
 }
 

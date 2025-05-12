@@ -380,13 +380,13 @@ return [
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
-                    'can' => ['koordinator_ta', 'dosen'],
+                    'can' =>'akses-alokasi',
                      'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
                     'text' => 'Alokasi Dosen Penguji',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-penguji',
-                    'can' => ['koordinator_ta', 'dosen'],
+                    'can' =>'akses-alokasi',
                      'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [
