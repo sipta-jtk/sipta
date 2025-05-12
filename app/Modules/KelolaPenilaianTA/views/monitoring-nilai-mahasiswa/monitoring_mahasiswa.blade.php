@@ -108,7 +108,7 @@
                             <td style="vertical-align: middle; white-space: nowrap;">{{ $ftaNama }}</td>
                             <td class="text-center">
                                 @if ($ftaPenilaian)
-                                    <a href="{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
+                                    <a href="{{ route('monitoring.rubrik.mahasiswa', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
                                         class="btn btn-primary btn-md my-1 w-100 px-3">
                                         Lihat Rubrik
                                     </a>
