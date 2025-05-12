@@ -15,6 +15,8 @@ return new class extends Migration {
         DB::statement("ALTER TABLE verifikasi_berkas_pengajuan MODIFY COLUMN status_konfirmasi ENUM('pending', 'disetujui', 'tidak_disetujui') NOT NULL");
 
         Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
+            Schema::disableForeignKeyConstraints();
+            $table->dropForeign('konfirmasi_nip_foreign');
             $table->text('catatan')->nullable()->change();
             $table->foreign('nip')->nullable()->references('nip')->on('dosen')->change();
             $table->date('tanggal_verifikasi')->nullable()->change();

@@ -4,24 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
-            Schema::disableForeignKeyConstraints();
-            $table->dropForeign('konfirmasi_nip_foreign');
-            $table->string('nip')->nullable()->change();
-            $table->foreign('nip')->references('nip')->on('dosen');
-        });
+        // Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
+        //     Schema::disableForeignKeyConstraints();
+        //     $table->dropForeign('verifikasi_berkas_pengajuan_nip_foreign');
+        //     $table->string('nip')->nullable()->change();
+        //     $table->foreign('nip')->references('nip')->on('dosen');
+        // });
 
-        Schema::table('penjadwalan', function (Blueprint $table){
+        DB::statement("ALTER TABLE `verifikasi_berkas_pengajuan` CHANGE `nip` `nip` VARCHAR(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;");
+
+        Schema::table('penjadwalan', function (Blueprint $table) {
             $table->string('nama_ruangan', 24)->default('Belum Ditentukan');
             $table->enum('status', ['fix', 'batal', 'pending'])->default('pending');
-            
+
         });
 
         Schema::table('verifikasi_berkas_pengajuan', function (Blueprint $table) {
@@ -40,7 +41,7 @@ return new class extends Migration
             $table->string('nip')->nullable()->change();
             $table->foreign('nip')->references('nip')->on('dosen');
         });
-        
+
         Schema::table('penjadwalan', function (Blueprint $table) {
             $table->dropColumn('nama_ruangan');
         });
