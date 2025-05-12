@@ -37,7 +37,8 @@ dd($kelompokData['table']);
             @foreach ($kelompokData['table'] as $kelompok)
             <tr>
                 <td>
-                    <center>{{ $loop->iteration }}</center>
+                    {{-- <center>{{ $loop->iteration }}</center> --}}
+                    <center>{{ $kelompok['loop_no'] }}</center>
                 </td>
                 <td class="bidang-column">{{ $kelompok['bidang'] ?? '-' }}</td>
                 <td class="judul-column">{{ $kelompok['judul'] ?? '-' }}</td>
@@ -55,25 +56,26 @@ dd($kelompokData['table']);
                 </td>
                 <td>
                     @php
-                    $currentStatus = $kelompok['status'] ?? 'none';
+                    // status_peminatan_aktual dari controller: 'accepted' atau 'none'
+                    $currentPeminatanStatus = $kelompok['status_peminatan_aktual'] ?? 'none';
+
                     $buttonClass = 'btn-secondary';
                     $buttonIcon = 'fa-toggle-off';
-                    $buttonDisabled = false;
+                    $buttonText = 'Minati TA';
+                    $dataStatusForJs = 'none'; // Status untuk JS, menentukan aksi berikutnya
 
-                    if ($currentStatus === 'accepted') {
+                    if ($currentPeminatanStatus === 'accepted') {
                     $buttonClass = 'btn-success';
                     $buttonIcon = 'fa-check';
-                    $buttonDisabled = true;
-                    } elseif ($currentStatus === 'rejected') {
-
-                    $buttonClass = 'btn-danger';
-                    $buttonIcon = 'fa-times';
-                    $buttonDisabled = true;
+                    $buttonText = 'TA Diminati';
+                    $dataStatusForJs = 'accepted'; // Tombol ini mewakili status 'accepted'
                     }
+                    // Tombol tidak pernah 'disabled' di awal, selalu bisa diklik untuk accept/reject
                     @endphp
-                    <button class="btn {{ $buttonClass }} w-100 btn-toggle-status" data-id="{{ $kelompok['id'] }}" data-status="{{ $currentStatus }}" {{ $buttonDisabled ? 'disabled' : '' }}>
-                        <i class="fas {{ $buttonIcon }}"></i>
+                    <button class="btn {{ $buttonClass }} w-100 btn-toggle-status" data-id="{{ $kelompok['id_kota_real'] }}" {{-- Gunakan id_kota_real --}} data-status="{{ $dataStatusForJs }}"> {{-- status tombol saat ini --}}
+                        <i class="fas {{ $buttonIcon }}"></i> {{ $buttonText }}
                     </button>
+
                 </td>
             </tr>
             @endforeach

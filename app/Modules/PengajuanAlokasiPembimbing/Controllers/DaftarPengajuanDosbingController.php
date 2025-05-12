@@ -22,12 +22,17 @@ class DaftarPengajuanDosbingController extends Controller
 
     public function view_daftarPengajuanDosbing()
     {
+
         // dd(auth()->user()->username);
         // dd(auth()->user()->dosen->nip);
         $kotaList = Kota::pluck('nama_kota')->toArray();
+        $namaKota = Kota::pluck('nama_kota')->first();
         $bidangList = Bidang::pluck('bidang')->toArray();
         $judulList = Kota::pluck('judul_ta')->toArray();
         $tanggalPengajuanList = PengajuanPembimbing::pluck('created_at')->toArray();
+
+        $allKotaData = Kota::orderBy('nama_kota')->get()->keyBy('id_kota');
+        $allBidangData = Bidang::get()->keyBy('id_bidang');
 
         Carbon::setLocale('id');
         $formattedTanggalList = array_map(function($tanggal) {
@@ -53,42 +58,60 @@ class DaftarPengajuanDosbingController extends Controller
             ->get()
             ->pluck('id_prodi', 'id_kota');
 
-        $kelompokData = [];
-        $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
+        $dosenNip = auth()->user()->dosen->nip ?? null;
+        $preferredKotaIdsByDosen = [];
+        if ($dosenNip) {
+            $preferredKotaIdsByDosen = PreferensiKota::where('nip', $dosenNip)
+                                            ->pluck('id_kota')
+                                            ->all(); // Menghasilkan array [id_kota1, id_kota2, ...]
+        }
 
-        foreach ($mahasiswaGrouped as $namaKota => $anggota) {
-            $anggotaFormatted = $anggota->map(function ($mhs) {
+        $kelompokData = [];
+        // $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
+        $mahasiswaGroupedByIdKota = $mahasiswaList->groupBy('id_kota');
+
+
+        $loopIteration = 1;
+        foreach ($mahasiswaGroupedByIdKota as $idKota => $anggotaGrup) {
+            $kotaInfo = $allKotaData->get($idKota);
+            if (!$kotaInfo) continue;
+            $anggotaFormatted = $anggotaGrup->map(function ($mhs) {
                 return [
                     'nama' => $mhs->nama,
                     'nim' => $mhs->nim,
                 ];
             })->values()->toArray();
     
-            $index = array_search($namaKota, $kotaList);
-            if ($index === false) continue;
-            
-            $idKota = $anggota->first()->id_kota;
-            $idProdi = $anggota->first()->id_prodi;
-
-            $dosenNip = auth()->user()->dosen->nip ?? null;
-            $statusPeminatan = 'none'; // Default status
-            if ($dosenNip) {
-                $preferensi = PreferensiKota::where('nip', $dosenNip)->where('id_kota', $idKota)->first();
-                if ($preferensi) {
-                    $statusPeminatan = 'accepted';
-                }
+            $statusPeminatanUntukTAIni = 'none';
+            if (in_array($idKota, $preferredKotaIdsByDosen)) {
+                $statusPeminatanUntukTAIni = 'accepted';
             }
+
+            // $index = array_search($namaKota, $kotaList);
+            // if ($index === false) continue;
+            
+            // $idKota = $kelompokData['status_peminatan_aktual']->anggota->first()->id_kota ?? null;
+            // $idProdi = $anggota->first()->id_prodi;
+
+            // $dosenNip = auth()->user()->dosen->nip ?? null;
+            // $statusPeminatan = 'none'; // Default status
+            // if ($dosenNip) {
+            //     $preferensi = PreferensiKota::where('nip', $dosenNip)->where('id_kota', $idKota)->first();
+            //     if ($preferensi) {
+            //         $statusPeminatan = 'accepted';
+            //     }
+            // }
             
             $kelompokData['table'][] = [
-                'id' => $index + 1,
-                'kode' => $namaKota,
-                'bidang' => $bidangList[$index] ?? '-',
-                'judul' => $judulList[$index] ?? '-',
-                'tanggal' => $formattedTanggalList[$index % max(1, count($formattedTanggalList))] ?? date('H:i d F Y'),
-                'anggota' => $anggotaFormatted,
-                'status' => 'pending',
-                'id_prodi' => $anggota->first()->id_prodi ?? '-'
-            ];
+    'loop_no' => $loopIteration++,
+    'id_kota_real' => $idKota,
+    'anggota' => $anggotaFormatted,
+    'status_peminatan_aktual' => $statusPeminatanUntukTAIni,
+    'id_prodi' => $anggotaGrup->first()->id_prodi ?? null,
+    'bidang' => $kotaInfo->bidang->bidang ?? '-', // pastikan relasi `bidang` didefinisikan di model Kota
+    'judul' => $kotaInfo->judul_ta ?? '-',         // asumsinya judul_ta adalah kolom di tabel `kota`
+];
+
         }
 
         $kelompokData['prodiList'] = Prodi::orderBy('nama_prodi', 'asc')->get(['id_prodi', 'nama_prodi']);
@@ -99,13 +122,15 @@ class DaftarPengajuanDosbingController extends Controller
         return view('PengajuanAlokasiPembimbing.views.DaftarPengajuanDosbing.topik', compact('kelompokData'));
     }
 
-    public function handlePengajuan(Request $request, $id, $action)
+    public function handlePengajuan(Request $request, $id_kota, $action)
     {
         // return response()->json(auth()->user());
-        $dosen = Dosen::where('nip', auth()->user()->dosen->nip)->first();
-    
-        if (!$dosen) {
-            return response()->json(['message' => 'Dosen tidak ditemukan.'], 403);
+        // 
+        $dosenNip = null;
+        if (Auth::check() && Auth::user()->dosen) {
+            $dosenNip = Auth::user()->dosen->nip;
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'User tidak terautentikasi atau bukan dosen.'], 403);
         }
     
         $kota = Kota::where('id_kota', $id)->first();
@@ -116,8 +141,8 @@ class DaftarPengajuanDosbingController extends Controller
     
         if ($action === 'accept') {
             $existingPreferensi = PreferensiKota::where([
-                'nip' => $dosen->nip,
-                'id_kota' => $kota->id_kota
+                'nip' => $dosenNip,
+                'id_kota' => $kota->id_kota 
             ])->exists();
     
             if ($existingPreferensi) {
@@ -143,10 +168,11 @@ class DaftarPengajuanDosbingController extends Controller
     
             DB::beginTransaction();
             try {
-                PreferensiKota::updateOrCreate(
-                    ['nip' => $dosen->nip, 'id_kota' => $kota->id_kota],
-                    ['nip' => $dosen->nip, 'id_kota' => $kota->id_kota]
-                );
+                PreferensiKota::create([ // Cukup create, karena sudah dicek existingPreferensi
+                    'nip' => $dosenNip,
+                    'id_kota' => $kota->id_kota,
+                    // 'status' => 'diterima' // Jika ada kolom status di preferensi_kota
+                ]);
     
                 DB::commit();
                 return response()->json(['status' => 'success', 'message' => 'Peminatan diterima.'], 200);
@@ -161,7 +187,7 @@ class DaftarPengajuanDosbingController extends Controller
             DB::beginTransaction();
             try {
                 PreferensiKota::where([
-                    'nip' => $dosen->nip,
+                    'nip' => $dosenNip,
                     'id_kota' => $kota->id_kota,
                 ])->delete();
     
