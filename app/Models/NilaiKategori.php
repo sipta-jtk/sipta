@@ -14,7 +14,7 @@ class NilaiKategori extends Model
         'nim',
         'nip',
         'id_kategori',
-        'status_penilaian',
+        'status_penilaian_dosen',
         'nilai',
     ];
 

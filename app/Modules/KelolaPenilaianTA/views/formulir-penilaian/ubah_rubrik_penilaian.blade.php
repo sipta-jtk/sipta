@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Home'],
+            ['url' => route('beranda.get'), 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Rubrik Penilaian']
         ]
@@ -19,7 +19,8 @@
 @stop
 
 @section('content')
-<div class="p-4">
+<div class="card p-4">
+    <div class="p-4">
         <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
@@ -110,6 +111,7 @@
             </div>
         </form>
     </div>
+</div>
 @stop
 
 @section('css')
