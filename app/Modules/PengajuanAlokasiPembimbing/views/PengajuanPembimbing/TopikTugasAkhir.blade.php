@@ -50,9 +50,9 @@
                     <div class="col-md-12">
                         <label class="form-label">Jenis Tugas Akhir</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="research" value="Research" style="accent-color: #17a2b8;">
-                            <label class="form-check-label" for="research">
-                                Research
+                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="penelitian" value="Penelitian" style="accent-color: #17a2b8;">
+                            <label class="form-check-label" for="penelitian">
+                                Penelitian
                             </label>
                         </div>
                         <div class="form-check">
@@ -133,12 +133,18 @@
                     }
                     else {
                         $("textarea[name='topik']").val(response.topikTugasAkhir);
-                        $("input[type='radio']").each(function () {
+                        $("input[type='radio'][name='bidang']").each(function () {
                             let label = $(this).next("label").text().trim();
                             if (label === response.bidangTugasAkhir) {
-                                $(this).prop("checked", true); // Memilih bidang yang sudah ada
+                                $(this).prop("checked", true); 
                             }
                         });
+                        if (response.jenisTugasAkhir === "penelitian") {
+                            $("#penelitian").prop("checked", true); 
+                        } else if (response.jenisTugasAkhir === "pengembangan") {
+                            $("#pengembangan").prop("checked", true); 
+                        }
+
                         $("#successMessage").show(); 
                         $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
@@ -169,23 +175,30 @@
         // Fungsi untuk menyimpan data ke localStorage
         function saveDraftData() {
             let topikValue = $("textarea[name='topik']").val().trim();
-            let bidangChecked = $("input[type='radio']:checked");
+            let bidangChecked = $("input[type='radio'][name='bidang']:checked");
+            let jenisTAChecked = $("input[type='radio'][name='jenis_tugas_akhir']:checked");
 
             // Validasi: topik harus diisi
             if (topikValue === "") {
-                toast("error", "Topik harus diisi.");
+                toast("error", "Topik/judul tugas akhir harus diisi.");
                 return false; 
             }
 
             // Validasi: bidang harus dipilih
             if (bidangChecked.length === 0) {
-                toast("error", "Pilih salah satu bidang terlebih dahulu.");
+                toast("error", "Bidang tugas akhir harus dipilih.");
+                return false;
+            }
+
+            if (jenisTAChecked.length === 0) {
+                toast("error", "Jenis tugas akhir harus dipilih.");
                 return false;
             }
 
             let draftData = {
                 topik: topikValue,
-                bidang: bidangChecked.next("label").text().trim()
+                bidang: bidangChecked.next("label").text().trim(),
+                jenisTA: jenisTAChecked.val()
             };
 
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
@@ -199,21 +212,18 @@
             if (savedData) {
                 $("textarea[name='topik']").val(savedData.topik);
 
-                $("input[type='radio']").each(function () {
+                $("input[type='radio'][name='bidang']").each(function () {
                     let label = $(this).next("label").text().trim();
-                    // if (Array.isArray(savedData.bidang)) {
-                    //     // Jika bidang adalah array
-                    //     if (savedData.bidang.includes(label)) {
-                    //         $(this).prop("checked", true);
-                    //     }
-                    // } else {
-                    // Jika bidang adalah string, cukup periksa kesesuaian langsung
                     if (savedData.bidang === label) {
                         $(this).prop("checked", true);
                     }
-                
                 });
 
+                if (savedData.jenisTA === "Penelitian") {
+                    $("#penelitian").prop("checked", true);
+                } else if (savedData.jenisTA === "Pengembangan") {
+                    $("#pengembangan").prop("checked", true);
+                }
             }
         }
     });
