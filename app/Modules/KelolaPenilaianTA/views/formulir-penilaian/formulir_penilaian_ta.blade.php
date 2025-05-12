@@ -19,13 +19,6 @@
 <div class="container-fluid">
     <div class="card shadow-sm">
         <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Daftar Formulir Penilaian TA</h3>
-                <a href="{{ route('formulir-penilaian.tambah-aspek-formulir') }}" class="btn btn-primary btn-md my-1" title="Tambah Formulir Penilaian">
-                    Tambah <i class="mx-1 fas fa-plus"></i>
-                </a>
-            </div>
-
             {{-- Filter Toggle Button --}}
             <div class="d-flex justify-content-between mb-3">
                 <button id="toggleFilter" class="btn btn-primary btn-md">
@@ -74,6 +67,12 @@
                         <button id="applyFilter" class="btn btn-primary">Terapkan</button>
                     </div>
                 </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-3">
+                <a href="{{ route('formulir-penilaian.tambah-aspek-formulir') }}" class="btn btn-primary btn-md my-1" title="Tambah Formulir Penilaian">
+                    Tambah <i class="mx-1 fas fa-plus"></i>
+                </a>
             </div>
 
             {{-- DataTables Controls (Jumlah data & Search) --}}

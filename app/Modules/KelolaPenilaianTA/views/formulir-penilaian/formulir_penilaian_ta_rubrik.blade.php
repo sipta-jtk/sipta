@@ -21,10 +21,6 @@
 <div class="container-fluid">
     <div class="card shadow-sm">
         <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Daftar Rubrik Penilaian TA</h3>
-            </div>
-
             {{-- Filter Toggle Button --}}
             <div class="d-flex justify-content-between mb-3">
                 <button id="toggleFilter" class="btn btn-primary btn-md">

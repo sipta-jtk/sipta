@@ -103,9 +103,9 @@
                                 <div class="form-group">
                                     <label for="jenisTA">Jenis TA</label>
                                     <x-adminlte-select name="jenisTA" id="jenisTA" required>
-                                        <option value="" disabled selected>-- Pilih Jenis TA --</option>
-                                        <option value="Penelitian">Penelitian</option>
-                                        <option value="Pengembangan">Pengembangan</option>
+                                        <option value="" disabled {{ old('jenisTA') ? '' : 'selected' }}>-- Pilih Jenis TA --</option>
+                                        <option value="Penelitian" {{ old('jenisTA') == 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
+                                        <option value="Pengembangan" {{ old('jenisTA') == 'Pengembangan' ? 'selected' : '' }}>Pengembangan</option>
                                     </x-adminlte-select>
                                 </div>
                             </div>
@@ -157,7 +157,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-right">
-                                            <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                                            <div class="bobot-summary alert alert-warning">Total bobot harus 100%. Saat ini: 0%</div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -171,14 +171,27 @@
                                     </tr>
                                 </thead>
                                 <tbody id="aspekFeedbackTable">
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm remove-row">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    @if(old('nama_aspek_feedback'))
+                                        @foreach(old('nama_aspek_feedback') as $namaAspekFeedback)
+                                            <tr>
+                                                <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value="{{ $namaAspekFeedback }}" required></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                        <i class="fa-solid fa-minus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
