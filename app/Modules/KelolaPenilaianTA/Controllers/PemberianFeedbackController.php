@@ -27,10 +27,12 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 class PemberianFeedbackController extends Controller
 {
     /**
-     * Menampilkan halaman pengisian masukan seminar
+     * Tampilkan halaman pengisian masukan seminar
      * 
      * @param string $namaFta
      * @param int $idKota
+     * @param int $idProdi
+     * @return View
      */
     public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
@@ -97,7 +99,12 @@ class PemberianFeedbackController extends Controller
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact('seminar', 'mahasiswa', 'aspekFeedback', 'data', 'keteranganUmumPenilaian', 'keteranganUmumPenilaian', 'jadwal', 'detailFeedback', 'dokumen'));
     }
 
-    // Fungsi untuk konversi nama agenda dari database ke format namaFta
+    /**
+     * Konversi nama FTA ke format yang sesuai dengan database
+     * 
+     * @param string $namaFta
+     * @return string|null
+     */
     private function konversiNamaAgenda($namaFta)
     {
         $namaFtaLower = strtolower($namaFta);
@@ -115,6 +122,13 @@ class PemberianFeedbackController extends Controller
         }
     }
 
+    /**
+     * Ambil dokumen terbaru berdasarkan kota dan kategori
+     * 
+     * @param int $idKota
+     * @param string $kategori
+     * @return array
+     */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
         $kategori = strtolower($kategori);
@@ -155,8 +169,13 @@ class PemberianFeedbackController extends Controller
     }
 
     /**
-     * Simpan feedback 
-     */   
+     * Simpan masukan seminar
+     * 
+     * @param Request $request
+     * @param string $namaFta
+     * @param int $idKota
+     * @return \Illuminate\Http\RedirectResponse
+     */  
     public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');

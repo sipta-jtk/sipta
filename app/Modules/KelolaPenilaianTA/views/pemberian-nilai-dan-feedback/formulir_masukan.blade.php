@@ -5,7 +5,7 @@
         'seminar i' => 'MASUKAN SEMINAR I',
         'seminar ii' => 'MASUKAN SEMINAR II',
         'seminar iii' => 'MASUKAN SEMINAR III',
-        default => 'SIDANG AKHIR',
+        default => 'MASUKAN SIDANG AKHIR',
     };
 @endphp
 
@@ -17,14 +17,6 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Beranda'],
-                ['url' => route('pengisian.nilai', ['namaFta' => $data['namaFta'], 'idKota' => $data['id_kota'], 'idProdi' => $seminar['id_prodi']]), 
-                    'label' => match ($data['namaFta']) {
-                        'seminar i' => '',
-                        'seminar ii' => 'Penilaian Seminar II',
-                        'seminar iii' => 'Penilaian Seminar III',
-                        default => 'Penilaian Sidang Akhir'
-                    }
-                ],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',
@@ -54,7 +46,7 @@
                 <span>{{ $data['kode_fta'] }}</span>
             </div>
 
-            <!-- Tanggal, Waktu, ID KoTA -->
+            <!-- Tanggal, Waktu, KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada Hari/Tanggal</strong> <br>
                 <span>{{ $jadwal ? \Carbon\Carbon::parse($jadwal->tanggal)->translatedFormat('d F Y') : '-' }}</span>
@@ -114,7 +106,7 @@
             </div>
         </div>
 
-        <!-- Tombol Preview Dokumen -->
+        <!-- Tombol Lihat Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
@@ -128,46 +120,24 @@
                 </strong> <br>
 
                 <!-- Tombol Preview Laporan -->
-                @if ($dokumen['laporan'])
-                    <button type="button" class="btn btn-primary btn-prev"
-                        onclick="LihatDokumen('{{ $dokumen['laporan']->file_path }}')"
-                        data-toggle="modal" data-target="#LihatDokumen">
-                        Laporan
-                    </button>
-                @endif
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
+                    data-toggle="modal" data-target="#LihatDokumen"
+                    {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                    Laporan <i class="fa-solid fa-file"></i>
+                </button>
 
                 <!-- Tombol Preview PowerPoint -->
-                @if ($dokumen['powerpoint'])
-                    <button type="button" class="btn btn-primary btn-prev"
-                        onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path }}')"
-                        data-toggle="modal" data-target="#LihatDokumen">
-                        PowerPoint
-                    </button>
-                @endif
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
+                    data-toggle="modal" data-target="#LihatDokumen"
+                    {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                    PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Modal -->
-        <!-- <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- MODAL LIHAT DOKUMEN -->
+        <!-- Modal Lihat Dokumen -->
         <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
             <div class="row px-3">
                 <div class="col-md-12">
@@ -196,7 +166,7 @@
             } }}
         </h3>
 
-        <!-- Form Penilaian -->
+        <!-- Form Masukan -->
         @php
             // Cek apakah data masukan sudah ada
             $isEdit = isset($seminar) && $seminar->kategoriPenilaian->isNotEmpty();
@@ -243,7 +213,7 @@
             
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
-                    Simpan <i class="mx-1 my-1 fa-solid fa-floppy-disk me-1"></i>
+                    Simpan <i class="fa-solid fa-floppy-disk"></i>
                 </button>
             </div>
         </form>
@@ -256,106 +226,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">  
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
-
-    <style>
-        .text-danger {
-            color: red !important;
-            font-weight: bold;
-        }
-
-        .char-counter {
-            transition: color 0.3s ease;
-        }
-    </style>
 @stop
 
 @section('js')
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const editors = document.querySelectorAll('trix-editor');
-
-            editors.forEach((editor, index) => {
-                const counter = document.querySelector(`#char-count-${index}`);
-                const hiddenInput = document.querySelector(`#feedback-${index}`);
-
-                // Update hidden input dengan HTML + hitung karakter
-                const updateContent = () => {
-                    // 1. Simpan isi HTML ke hidden input
-                    const inputId = editor.getAttribute("input");
-                    const inputWithHtml = document.getElementById(inputId);
-                    if (inputWithHtml) {
-                        inputWithHtml.value = editor.innerHTML;
-                    }
-
-                    // 2. Hitung karakter dari plain text
-                    const plainText = editor.editor.getDocument().toString().trim();
-                    const charLength = plainText.length;
-
-                    // 3. Update counter tampilan
-                    counter.textContent = `${charLength}/100 karakter`;
-
-                    // 4. Tambah/hapus class untuk warna
-                    if (charLength < 15 || charLength > 100) {
-                        counter.classList.add("text-danger");
-                        counter.classList.remove("text-muted");
-                    } else {
-                        counter.classList.remove("text-danger");
-                        counter.classList.add("text-muted");
-                    }
-                };
-
-                // Event listener untuk setiap perubahan
-                editor.addEventListener("trix-change", updateContent);
-
-                // Inisialisasi awal
-                updateContent();
-            });
-        });
-
-        function loadPreview(url) {
-            let fileId = extractDriveFileId(url);
-            if (fileId) {
-                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                document.getElementById('previewFrame').src = embedUrl;
-            } else {
-                alert("Format link tidak valid!");
-            }
-        }
-
-        function extractDriveFileId(url) {
-            let match = url.match(/[-\w]{25,}/);
-            return match ? match[0] : null;
-        }
-
-        // $('.view-btn').on('click', function() {
-        function LihatDokumen(filePath) {
-            if (filePath && filePath.trim() !== '') {
-                var fullUrl = `${window.location.origin}/storage/${filePath}`;
-                var fileExtension = filePath.split('.').pop().toLowerCase();
-
-                if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
-                    $('#viewDocumentPreview').attr('src', fullUrl).show();
-                    $('#viewPreviewNotAvailable').hide();
-                } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
-                    var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
-                    $('#viewDocumentPreview').attr('src', viewerUrl).show();
-                    $('#viewPreviewNotAvailable').hide();
-                } else {
-                    $('#viewDocumentPreview').hide();
-                    $('#viewPreviewNotAvailable').show();
-                }
-
-                // Tampilkan modal
-                $('#LihatDokumen').modal('show');
-            } else {
-                $('#viewDocumentPreview').hide();
-                $('#viewPreviewNotAvailable').show();
-                $('#LihatDokumen').modal('show');
-            }
-        }
-    </script>
 @stop
