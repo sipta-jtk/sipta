@@ -60,15 +60,20 @@ dd($kelompokData['table']);
                     $currentPeminatanStatus = $kelompok['status_peminatan_aktual'] ?? 'none';
 
                     $buttonClass = 'btn-secondary';
-                    $buttonIcon = 'fa-toggle-off';
-                    $buttonText = 'Minati TA';
-                    $dataStatusForJs = 'none'; // Status untuk JS, menentukan aksi berikutnya
+                    $buttonIcon = '';
+                    $buttonText = 'Belum diminati';
+                    $dataStatusForJs = 'none';
 
                     if ($currentPeminatanStatus === 'accepted') {
                     $buttonClass = 'btn-success';
                     $buttonIcon = 'fa-check';
-                    $buttonText = 'TA Diminati';
-                    $dataStatusForJs = 'accepted'; // Tombol ini mewakili status 'accepted'
+                    $buttonText = '';
+                    $dataStatusForJs = 'accepted';
+                    } elseif ($currentPeminatanStatus === 'rejected') {
+                    $buttonClass = 'btn-danger';
+                    $buttonIcon = 'fa-times';
+                    $buttonText = '';
+                    $dataStatusForJs = 'rejected';
                     }
                     // Tombol tidak pernah 'disabled' di awal, selalu bisa diklik untuk accept/reject
                     @endphp
@@ -164,6 +169,7 @@ dd($kelompokData['table']);
                 , cancelButtonColor: "#6c757d"
                 , confirmButtonText: confirmButtonText
                 , cancelButtonText: "Tutup"
+                , reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -200,11 +206,11 @@ dd($kelompokData['table']);
                                     $btn.removeClass("btn-secondary btn-danger").addClass("btn-success")
                                         .html('<i class="fas fa-check"></i>')
                                         .data("status", "accepted")
-                                        .prop("disabled", true);
+                                        .prop("disabled", false);
                                 } else if (actionType === "reject") {
-                                    $btn.removeClass("btn-success btn-danger").addClass("btn-secondary")
-                                        .html('<i class="fas fa-toggle-off"></i>')
-                                        .data("status", "none") // Kembali ke status 'none'
+                                    $btn.removeClass("btn-success btn-danger").addClass("btn-danger")
+                                        .html('<i class="fas fa-times"></i>')
+                                        .data("status", "rejected") // Kembali ke status 'none'
                                         .prop("disabled", false); // Aktifkan kembali
                                 }
                             } else {
@@ -254,9 +260,13 @@ dd($kelompokData['table']);
         $(document).on("click", ".btn-toggle-status", function() {
             let $btn = $(this);
             let kelompokId = $btn.data("id");
-            let currentStatus = $btn.data("status"); // Ambil status dari tombol (none, accepted)
+            let currentStatus = $btn.data("status");
 
-            let nextAction = (currentStatus === "accepted") ? "reject" : "accept";
+            if (currentStatus === "accepted") {
+                nextAction = "reject";
+            } else {
+                nextAction = "accept";
+            }
 
             // Panggil fungsi handleAction
             handleAction(kelompokId, nextAction);

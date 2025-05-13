@@ -7,7 +7,6 @@ use App\Models\Kota;
 use App\Models\Dosen;
 use App\Models\PengajuanPembimbing;
 use App\Models\PreferensiKota;
-use App\Models\KuotaMembimbing;
 use App\Models\User;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
@@ -15,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DaftarPengajuanDosbingController extends Controller
 {
@@ -62,11 +62,11 @@ class DaftarPengajuanDosbingController extends Controller
         $preferredKotaIdsByDosen = [];
         if ($dosenNip) {
             $preferredKotaIdsByDosen = PreferensiKota::where('nip', $dosenNip)
-                                            ->pluck('id_kota')
+                                            ->pluck('status', 'id_kota')
                                             ->all(); // Menghasilkan array [id_kota1, id_kota2, ...]
         }
 
-        $kelompokData = [];
+        $kelompokData = ['table' => [], 'prodiList' => []];
         // $mahasiswaGrouped = $mahasiswaList->groupBy('nama_kota');
         $mahasiswaGroupedByIdKota = $mahasiswaList->groupBy('id_kota');
 
@@ -82,10 +82,15 @@ class DaftarPengajuanDosbingController extends Controller
                 ];
             })->values()->toArray();
     
-            $statusPeminatanUntukTAIni = 'none';
-            if (in_array($idKota, $preferredKotaIdsByDosen)) {
-                $statusPeminatanUntukTAIni = 'accepted';
+            $statusPeminatanDb = $preferredKotaIdsByDosen[$idKota] ?? null;
+            $statusPeminatanUntukTampilan = 'none';
+
+            if ($statusPeminatanDb === 1) {
+                $statusPeminatanUntukTampilan = 'accepted';
+            } elseif ($statusPeminatanDb === 0) {
+                $statusPeminatanUntukTampilan = 'rejected';
             }
+
 
             // $index = array_search($namaKota, $kotaList);
             // if ($index === false) continue;
@@ -103,14 +108,14 @@ class DaftarPengajuanDosbingController extends Controller
             // }
             
             $kelompokData['table'][] = [
-    'loop_no' => $loopIteration++,
-    'id_kota_real' => $idKota,
-    'anggota' => $anggotaFormatted,
-    'status_peminatan_aktual' => $statusPeminatanUntukTAIni,
-    'id_prodi' => $anggotaGrup->first()->id_prodi ?? null,
-    'bidang' => $kotaInfo->bidang->bidang ?? '-', // pastikan relasi `bidang` didefinisikan di model Kota
-    'judul' => $kotaInfo->judul_ta ?? '-',         // asumsinya judul_ta adalah kolom di tabel `kota`
-];
+                'loop_no' => $loopIteration++,
+                'id_kota_real' => $idKota,
+                'anggota' => $anggotaFormatted,
+                'status_peminatan_aktual' => $statusPeminatanUntukTampilan,
+                'id_prodi' => $anggotaGrup->first()->id_prodi ?? null,
+                'bidang' => $kotaInfo->bidang->bidang ?? '-', // pastikan relasi `bidang` didefinisikan di model Kota
+                'judul' => $kotaInfo->judul_ta ?? '-',         // asumsinya judul_ta adalah kolom di tabel `kota`
+            ];
 
         }
 
@@ -124,7 +129,6 @@ class DaftarPengajuanDosbingController extends Controller
 
     public function handlePengajuan(Request $request, $id_kota, $action)
     {
-        // return response()->json(auth()->user());
         // 
         $dosenNip = null;
         if (Auth::check() && Auth::user()->dosen) {
@@ -132,76 +136,119 @@ class DaftarPengajuanDosbingController extends Controller
         } else {
             return response()->json(['status' => 'error', 'message' => 'User tidak terautentikasi atau bukan dosen.'], 403);
         }
-    
-        $kota = Kota::where('id_kota', $id)->first();
-    
+        
+        $kota = Kota::where('id_kota', $id_kota)->first();
+        
         if (!$kota) {
             return response()->json(['message' => 'Kota/Kelompok tidak ditemukan.'], 404);
         }
-    
+        
+        
         if ($action === 'accept') {
-            $existingPreferensi = PreferensiKota::where([
+    DB::beginTransaction();
+    try {
+        $preferensi = PreferensiKota::where('nip', $dosenNip)
+            ->where('id_kota', $kota->id_kota)
+            ->first();
+
+        if (!$preferensi) {
+            // Belum ada preferensi, buat baru
+            PreferensiKota::create([
                 'nip' => $dosenNip,
-                'id_kota' => $kota->id_kota 
-            ])->exists();
-    
-            if ($existingPreferensi) {
+                'id_kota' => $kota->id_kota,
+                'status' => 1,
+            ]);
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Peminatan berhasil diterima.',
+                'new_status_peminatan' => 'accepted'
+            ], 200);
+        } elseif ($preferensi->status == 0) {
+            // Jika sebelumnya rejected, ubah ke accepted
+            $preferensi->status = 1;
+            $preferensi->save();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Peminatan berhasil diterima kembali.',
+                'new_status_peminatan' => 'accepted'
+            ], 200);
+        } else {
+            // Sudah accepted, tidak lakukan apa-apa
+            DB::rollBack();
+            return response()->json([
+                'status' => 'exists',
+                'message' => 'Anda sudah memilih minat ini sebelumnya.'
+            ], 200);
+        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Error toggling preferensi kota: ' . $e->getMessage(), [
+            'nip' => $dosenNip,
+            'id_kota' => $id_kota,
+            'trace' => $e->getTraceAsString()
+        ]);
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan pada server saat memproses permintaan.',
+        ], 500);
+    }
+    } elseif ($action === 'reject') {
+        DB::beginTransaction();
+        try {
+            $preferensi = PreferensiKota::where('nip', $dosenNip)
+            ->where('id_kota', $kota->id_kota)
+            ->first();
+            
+            $newStatusPeminatanView = '';
+            $message = '';
+            
+            if ($preferensi && $preferensi->status == 1) {
+                // Dari accepted ke rejected
+                $preferensi->status = 0;
+                $preferensi->save();
+
+                PreferensiKota::where('nip', $dosenNip)->where('id_kota', $kota->id_kota)->update(['status' => 0]);
+
+                $newStatusPeminatanView = 'rejected';
+                $message = 'Peminatan berhasil ditolak.';
+                // return response()->json($preferensi);
+            } elseif ($preferensi && $preferensi->status == 0) {
+                // Dari rejected ke accepted
+                $preferensi->status = 1;
+                $preferensi->save();
+                $newStatusPeminatanView = 'accepted';
+                $message = 'Peminatan berhasil diterima kembali.';
+            } else {
+                DB::rollBack();
                 return response()->json([
-                    'status' => 'exists',
-                    'message' => 'Anda sudah memilih minat ini sebelumnya. Silakan pilih minat lain.'
-                ], 200);
+                    'status' => 'error',
+                    'message' => 'Tidak ada preferensi yang bisa diubah statusnya.',
+                ], 400);
             }
 
-            // $kuotaMembimbing = KuotaMembimbing::where('nip', $dosen->nip)->first();
-            // if (!$kuotaMembimbing) {
-            //     return response()->json(['message' => 'Kuota membimbing tidak ditemukan.'], 404);
-            // }
-    
-            // $jumlahPengajuanDiterima = PreferensiKota::where('nip', $dosen->nip)->count();
-    
-            // if ($jumlahPengajuanDiterima >= $kuotaMembimbing->jumlah) {
-            //     return response()->json([
-            //         'message' => 'Kuota membimbing sudah penuh. Anda tidak dapat menerima pengajuan baru.'
-            //     ], 422);
-            // }
-            
-    
-            DB::beginTransaction();
-            try {
-                PreferensiKota::create([ // Cukup create, karena sudah dicek existingPreferensi
-                    'nip' => $dosenNip,
-                    'id_kota' => $kota->id_kota,
-                    // 'status' => 'diterima' // Jika ada kolom status di preferensi_kota
-                ]);
-    
-                DB::commit();
-                return response()->json(['status' => 'success', 'message' => 'Peminatan diterima.'], 200);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                    'message' => 'Terjadi kesalahan saat menyimpan data.',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-        } elseif ($action === 'reject') {
-            DB::beginTransaction();
-            try {
-                PreferensiKota::where([
-                    'nip' => $dosenNip,
-                    'id_kota' => $kota->id_kota,
-                ])->delete();
-    
-                DB::commit();
-                return response()->json(['message' => 'Peminatan ditolak.'], 200);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                    'message' => 'Terjadi kesalahan saat menghapus data.',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+                'new_status_peminatan' => $newStatusPeminatanView
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error toggling preferensi kota (reject): ' . $e->getMessage(), [
+                'nip' => $dosenNip,
+                'id_kota' => $id_kota,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan pada server saat memproses permintaan.',
+            ], 500);
         }
-    
-        return response()->json(['message' => 'Aksi tidak valid.'], 400);
+    } else {
+        return response()->json(['status' => 'error', 'message' => 'Aksi tidak dikenali.'], 400);
     }
+}
 }
