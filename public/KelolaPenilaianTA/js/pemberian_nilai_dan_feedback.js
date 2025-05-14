@@ -1,62 +1,55 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const tanggalInput = document.getElementById("tanggal_catatan");
-    const hariPerbaikan = document.getElementById("hari_perbaikan");
-    const tanggalPerbaikan = document.getElementById("tanggal_perbaikan");
+$(document).ready(function () {
+    const editors = document.querySelectorAll('trix-editor');
 
-    // Fungsi untuk mengubah tanggal menjadi format hari & tanggal
-    function formatTanggal(dateString) {
-        if (!dateString) return { hari: "________", tanggal: "________" };
+    editors.forEach((editor, index) => {
+        const counter = document.querySelector(`#char-count-${index}`);
 
-        const hariList = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const bulanList = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
+        const updateContent = () => {
+            const inputId = editor.getAttribute("input");
+            const inputWithHtml = document.getElementById(inputId);
+            if (inputWithHtml) {
+                inputWithHtml.value = editor.innerHTML;
+            }
 
-        let date = new Date(dateString);
-        let hari = hariList[date.getDay()];
-        let tanggal = date.getDate();
-        let bulan = bulanList[date.getMonth()];
-        let tahun = date.getFullYear();
+            const plainText = editor.editor.getDocument().toString().trim();
+            const charLength = plainText.length;
+            counter.textContent = `${charLength}/100 karakter`;
 
-        return { hari, tanggal: `${tanggal} ${bulan} ${tahun}` };
-    }
+            if (charLength < 15 || charLength > 100) {
+                counter.classList.add("text-danger");
+                counter.classList.remove("text-muted");
+            } else {
+                counter.classList.remove("text-danger");
+                counter.classList.add("text-muted");
+            }
+        };
 
-    // Event listener ketika user memilih tanggal
-    tanggalInput.addEventListener("change", function () {
-        let hasilFormat = formatTanggal(this.value);
-        hariPerbaikan.textContent = hasilFormat.hari;
-        tanggalPerbaikan.textContent = hasilFormat.tanggal;
+        editor.addEventListener("trix-change", updateContent);
+        updateContent();
     });
 
-    $(document).ready(function() {
-        // Menginisialisasi popover untuk elemen yang sudah ada
-        $('[data-toggle="popover"]').popover({
-            trigger: 'hover',
-            placement: 'top',
-            html: true
-        });
+    window.LihatDokumen = function (filePath) {
+        if (filePath && filePath.trim() !== '') {
+            var fullUrl = `${window.location.origin}/storage/${filePath}`;
+            var fileExtension = filePath.split('.').pop().toLowerCase();
 
-        // Event delegation untuk elemen dinamis
-        $(document).on('mouseenter', '[data-toggle="popover"]', function () {
-            $(this).popover('show');
-        }).on('mouseleave', '[data-toggle="popover"]', function () {
-            $(this).popover('hide');
-        });
-    });
+            if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
+                $('#viewDocumentPreview').attr('src', fullUrl).show();
+                $('#viewPreviewNotAvailable').hide();
+            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
+                $('#viewDocumentPreview').attr('src', viewerUrl).show();
+                $('#viewPreviewNotAvailable').hide();
+            } else {
+                $('#viewDocumentPreview').hide();
+                $('#viewPreviewNotAvailable').show();
+            }
 
-    function loadPreview(url) {
-        let fileId = extractDriveFileId(url);
-        if (fileId) {
-            let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-            document.getElementById('previewFrame').src = embedUrl;
+            $('#LihatDokumen').modal('show');
         } else {
-            alert("Format link tidak valid!");
+            $('#viewDocumentPreview').hide();
+            $('#viewPreviewNotAvailable').show();
+            $('#LihatDokumen').modal('show');
         }
-    }
-
-    function extractDriveFileId(url) {
-        let match = url.match(/[-\w]{25,}/);
-        return match ? match[0] : null;
-    }
+    };
 });
