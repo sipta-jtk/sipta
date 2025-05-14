@@ -532,7 +532,7 @@ return [
                     'icon' => 'fas fa-fw fa-table',
                     'submenu' => [
                         [
-                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang',
+                            'text' => 'Rekapitulasi Nilai Seminar dan Sidang DAFFA',
                             'url' => $prefix . '/kelola-penilaian-ta/rekapitulasi-nilai-sidang',
                             'can' => 'akses-penilaian-koordinator-ta',
                             'icon' => 'fas fa-fw fa-chalkboard-teacher',  
@@ -578,6 +578,11 @@ return [
                     'icon' => 'fas fa-fw fa-calculator',
                 ]
             ]
+        ],
+        [
+            'text' => 'Monitoring Bimbingan TA',
+            'url' => $prefix . '/timeline',
+            'icon' => 'fas fa-fw fa-calendar',
         ],
         [
             'text' => 'Timeline',
