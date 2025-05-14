@@ -14,7 +14,8 @@ class PengajuanPisahKota extends Model
     protected $fillable = [
         'nim',
         'id_kota',
-        'fta_20'
+        'fta_20',
+        'alasan'
     ];
 
     public function mahasiswa()

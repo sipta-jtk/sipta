@@ -13,5 +13,8 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
   php artisan migrate:fresh --seed --force
 fi
 
+# storage:link
+php artisan storage:link
+
 # Start supervisord
 exec /usr/bin/supervisord -c /etc/supervisord.conf

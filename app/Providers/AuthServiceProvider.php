@@ -54,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Dosen
         Gate::define('dosen', function ($user) {
-            return $user->role_user === 'dosen' && $user->dosen->status_dosen === 'aktif';
+            return $user->role_user === 'dosen' && $user->status_user === 'aktif';
         });
 
         //Kaprodi
@@ -129,7 +129,7 @@ class AuthServiceProvider extends ServiceProvider
          * [Topik 6] - Fitur Repository TA
         *********************************************/
         Gate::define('akses-sidebar-repo-dosen', function ($user) {
-            return Gate::allows('dosen') || Gate::allows('admin') ;
+            return Gate::allows('dosen') || Gate::allows('admin');
         });
         Gate::define('akses-sidebar-repo-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
