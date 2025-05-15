@@ -121,7 +121,7 @@
                                     </td>
                                 @endfor
 
-                                {{-- <td>
+                                <td>
                                     <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
                                         Nilai
                                     </a>
@@ -137,9 +137,7 @@
                                             </button>
                                         </form>
                                     </div>
-                                </td> --}}
-                                    {{-- <i class="far fa-squere text-muted"></i> --}}
-                                    {{-- <i class="fas fa-check-square text-success"></i> --}}
+                                </td>
                             </tr>
                         @endforeach
                     @endforeach

@@ -74,7 +74,16 @@ class PemberianNilaiController extends Controller
             ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
-                'kriteriaPenilaian.rubrik.nilaiRubrik' ])
+                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                    $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                        $q->where('id_kota', $idKota);
+                    });
+                },
+                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota) {
+                    $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                        $q->where('id_kota', $idKota);
+                    });
+                }])
             ->get();
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
@@ -83,6 +92,8 @@ class PemberianNilaiController extends Controller
             });
         })->first()->detailRubrik;
 
+        $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
+        
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_rubrik', [
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian,
             'detailInformasiFta' => $detailInformasiFta,
@@ -90,6 +101,7 @@ class PemberianNilaiController extends Controller
             'idKota' => $idKota,
             'namaFta' => $namaFtaSlug,
             'idProdi' => $idProdi,
+            'view' => $view,
         ]);
     }
 

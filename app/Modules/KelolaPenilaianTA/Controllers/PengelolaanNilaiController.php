@@ -143,11 +143,11 @@ class PengelolaanNilaiController extends Controller{
         });
 
         if ($detailFeedback->get()->isEmpty() && $nilaiKategori->get()->isEmpty()) {
-            return back()->with('error', 'Belum memberikan feedback dan nilai untuk mahasiswa ini.');
+            return back()->with('error', 'Feedback dan Nilai untuk Kelompok ini belum lengkap.');
         } elseif ($detailFeedback->get()->isEmpty()) {
-            return back()->with('error', 'Belum memberikan feedback untuk mahasiswa ini.');
+            return back()->with('error', 'Feedback untuk Kelompok ini belum lengkap.');
         } else if ($nilaiKategori->get()->isEmpty()) {
-            return back()->with('error', 'Belum memberikan nilai untuk mahasiswa ini.');
+            return back()->with('error', 'Nilai untuk Kelompok ini belum lengkap.');
         }
 
         $detailFeedback->update(['status_penilaian_dosen' => $status]);    

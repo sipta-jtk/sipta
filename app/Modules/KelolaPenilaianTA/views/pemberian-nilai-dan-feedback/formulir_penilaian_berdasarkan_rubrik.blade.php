@@ -24,7 +24,6 @@
     <div class="card p-4">
         <div class="row">
             <!-- Kode FTA -->
-            {{ Log::info(json_encode($detailInformasiFta->first())) }}
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
                 <span>{{ ($detailInformasiFta->first()?->nama_fta) }}</span>
@@ -117,8 +116,6 @@
         @php
             $isEdit = count($detailInformasiFta->first()?->kriteriaPenilaian->first()?->rubrik->first()?->nilaiRubrik ?? []) > 0;
             $action = $isEdit ? route('pengisian.nilai.edit', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) : route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]);
-            Log::info($namaFta);
-            Log::info($idKota);
         @endphp
         <form action="{{ $action }}" method="POST">
             @csrf
@@ -167,7 +164,7 @@
                                             @endphp
 
                                             <td>
-                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}" {{ $view ? '' : 'readonly' }} required>
                                             </td>
                                         @endforeach
                                     </tr>
@@ -178,13 +175,15 @@
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">
-                        Simpan
-                    </button>
+            @if ($view)
+                <div class="row mt-3">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-warning">
+                            Simpan
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
         </form>
     </div>
 @stop
