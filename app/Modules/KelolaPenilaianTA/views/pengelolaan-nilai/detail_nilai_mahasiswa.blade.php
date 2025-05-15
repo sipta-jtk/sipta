@@ -83,7 +83,6 @@
                                     $pengujiList = array_pad($pengujiList, 3, '-');
                                 @endphp
 
-                                {{-- Cetak Penguji 1, Penguji 2, Penguji 3 --}}
                                 <td class="align-middle text-center">{{ $pengujiList[0] }}</td>
                                 <td class="align-middle text-center">{{ $pengujiList[1] }}</td>
                                 <td class="align-middle text-center">{{ $pengujiList[2] }}</td>
@@ -96,7 +95,6 @@
                                     $nilaiList = array_pad($nilaiList, 3, 0);
                                 @endphp
                     
-                                {{-- Cetak Nilai Penguji 1, Penguji 2, Penguji 3 --}}
                                 <td class="align-middle text-center">{{ $nilaiList[0] }}</td>
                                 <td class="align-middle text-center">{{ $nilaiList[1] }}</td>
                                 <td class="align-middle text-center">{{ $nilaiList[2] }}</td>
@@ -121,23 +119,48 @@
                                     </td>
                                 @endfor
 
-                                <td>
-                                    <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                        Nilai
-                                    </a>
-                                    <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                        Feedback
-                                    </a>
-                                    <div class="btn btn-primary btn-sm">
-                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'publish']) }}" method="POST">
+                                @php
+                                    // Ambil data nilaiKategori untuk user yang sedang login
+                                    $nilaiKategoriUser = $mahasiswa->nilaiKategori
+                                        ->where('nip', auth()->user()->username)
+                                        ->first();
+                                @endphp
+                                
+                                @if (
+                                    !$nilaiKategoriUser || $nilaiKategoriUser->status_penilaian_dosen === 'draf'
+                                )
+                                    <td class="align-middle text-center d-flex flex-column gap-1">
+                                        <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                            Nilai
+                                        </a>
+                                        <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                            Masukan
+                                        </a>
+                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'publish']) }}" method="POST" class="w-100 mt-1">
                                             @csrf
                                             <input type="hidden" name="id_kota" value="{{ $mahasiswa->id_kota }}">
-                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                Publish
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                Publikasikan
                                             </button>
                                         </form>
-                                    </div>
-                                </td>
+                                    </td>
+                                @else
+                                    <td class="align-middle text-center d-flex flex-column gap-1">
+                                        <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                            Lihat Nilai
+                                        </a>
+                                        <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
+                                            Lihat Masukan
+                                        </a>
+                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'unpublish']) }}" method="POST" class="w-100 mt-1">
+                                            @csrf
+                                            <input type="hidden" name="id_kota" value="{{ $mahasiswa->id_kota }}">
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                Batalkan Publikasi
+                                            </button>
+                                        </form>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     @endforeach
