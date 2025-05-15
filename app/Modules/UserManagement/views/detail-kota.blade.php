@@ -77,6 +77,9 @@
             @endif
 
             @can('mahasiswa_kota', $kota->id_kota)
+                @if(count($anggota) < $maksimalAnggota)
+                    <a href="{{ route('tambah-anggota-kota', ['id' => $kota->id_kota]) }}" class="btn btn-success mx-1">Tambah Anggota</a>
+                @endif
                 <a href="{{route('form.pisah.kota')}}" class="btn btn-danger">Ajukan Pisah</a>
             @endcan
         </div>
