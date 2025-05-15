@@ -23,6 +23,16 @@ $(document).ready(function () {
     // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
 
+    function updateRowStriping() {
+        $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+            } else {
+                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+            }
+        });
+    }
+
     // Panggil fungsi untuk menghitung total bobot saat halaman pertama kali dimuat
     if ($("#jenisForm").val() === "penilaian") {
         updateBobotSummary();
@@ -68,6 +78,7 @@ $(document).ready(function () {
                 </td>
             </tr>`;
             $("#aspekPenilaianTable").append(newRow);
+            updateRowStriping();
         }
     });
 
@@ -83,6 +94,7 @@ $(document).ready(function () {
             </td>
         </tr>`;
         $("#aspekFeedbackTable").append(newFeedbackRow);
+        updateRowStriping();
     });
 
     // Hapus baris dari tabel Aspek Penilaian
@@ -91,10 +103,14 @@ $(document).ready(function () {
         if ($("#jenisForm").val() === "penilaian") {
             updateBobotSummary();
         }
+        updateRowStriping();
     });
 
     // Hapus baris dari tabel Aspek Feedback
     $(document).on("click", ".remove-feedback-row", function () {
         $(this).closest("tr").remove();
+        updateRowStriping();
     });
+
+    updateRowStriping();
 });

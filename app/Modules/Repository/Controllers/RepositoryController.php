@@ -85,6 +85,14 @@ class RepositoryController extends Controller
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'poster';
             });
 
+            $sbm = $allDokumen->filter(function ($doc) {
+                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'surat bebas masalah';
+            });
+
+            $toeic = $allDokumen->filter(function ($doc) {
+                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'hasil toeic';
+            });
+
             // Ambil subkategori spesifik (untuk tombol tambah dokumen)
             $subkategoriLaporan = Subkategori::where('nama_subkategori', 'Laporan')->first();
 
@@ -93,6 +101,8 @@ class RepositoryController extends Controller
             $subkategoriSrs = Subkategori::where('nama_subkategori', 'SRS')->first();
             $subkategoriSdd = Subkategori::where('nama_subkategori', 'SDD')->first();
             $subkategoriPoster = Subkategori::where('nama_subkategori', 'Poster')->first();
+            $subkategoriSbm = Subkategori::where('nama_subkategori', 'Surat Bebas Masalah')->first();
+            $subkategoriToeic = Subkategori::where('nama_subkategori', 'Hasil TOEIC')->first();
 
             // Ambil semua subkategori kalau kategori artefak
             $subkategoris = $kategori === 'artefak' ? Subkategori::all() : collect();
@@ -107,6 +117,8 @@ class RepositoryController extends Controller
                 'srs',
                 'sdd',
                 'poster',
+                'sbm',
+                'toeic',
                 'kategori',
                 'subkategoris',
                 'maxVersion',
@@ -118,6 +130,8 @@ class RepositoryController extends Controller
                 'subkategoriSrs',
                 'subkategoriSdd',
                 'subkategoriPoster',
+                'subkategoriSbm',
+                'subkategoriToeic',
             ));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data: ' . $e->getMessage());
@@ -263,7 +277,7 @@ class RepositoryController extends Controller
             $request->validate([
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
-                'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                'file' => 'nullable|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
             ]);
 
             $dokumen->judul = $request->judul;
@@ -395,30 +409,30 @@ class RepositoryController extends Controller
     }
 
     public function list_kelompok_ta(Request $request)
-{
-    try {
-        $query = Kota::with(['mahasiswa.user', 'mahasiswa.prodi']) // tambahkan prodi
-            ->whereHas('mahasiswa', function ($q) use ($request) {
-                // Jika ada filter prodi, tambahkan kondisi
-                if ($request->filled('prodi')) {
-                    $q->where('id_prodi', $request->prodi);
-                }
-            })
-            ->select('id_kota', 'judul_ta');
+    {
+        try {
+            $query = Kota::with(['mahasiswa.user', 'mahasiswa.prodi']) // tambahkan prodi
+                ->whereHas('mahasiswa', function ($q) use ($request) {
+                    // Jika ada filter prodi, tambahkan kondisi
+                    if ($request->filled('prodi')) {
+                        $q->where('id_prodi', $request->prodi);
+                    }
+                })
+                ->select('id_kota', 'judul_ta');
 
-        $kelompok = $query->get()
-            ->sortBy(function ($kota) {
-                return optional($kota->mahasiswa->first())->tahun_masuk;
-            });
+            $kelompok = $query->get()
+                ->sortBy(function ($kota) {
+                    return optional($kota->mahasiswa->first())->tahun_masuk;
+                });
 
-        return view('Repository.views.list_kelompok_ta', [
-            'kelompok' => $kelompok,
-            'prodiTerpilih' => $request->prodi,
-        ]);
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return view('Repository.views.list_kelompok_ta', [
+                'kelompok' => $kelompok,
+                'prodiTerpilih' => $request->prodi,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
-}
 
 
     // Saabiq Muhyiyuddin Aulawi

@@ -8,25 +8,25 @@
     scrollbar-width: thin;
     -ms-overflow-style: auto;
 }
+
 .table-container::-webkit-scrollbar {
     height: 12px;
 }
+
 .table-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 10px;
 }
+
 .table-container::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
 table {
     width: 100px;
     border-collapse: collapse;
 }
-th, td {
-    border: 1px solid #ccc !important;
-    padding: 5px;
-    text-align: center;
-}
+
 thead {
     position: sticky;
     top: 0;
@@ -34,6 +34,7 @@ thead {
     background: rgba(0, 0, 0, 0.9);
     color: white;
 }
+
 thead th {
     position: sticky;
     top: 0;
@@ -42,13 +43,23 @@ thead th {
     color: white;
     text-align: center;
     padding: 12px;
-    border-bottom: 2px solid #fff;
 }
+
 tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; 
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; 
 }
 
 tbody tr:hover {
-    background-color: #e2e6ea;
+    background-color: #e2e6ea; 
+}
+
+th, td {
+    border: none !important;
+    padding: 10px;
+    text-align: center;
 }
 

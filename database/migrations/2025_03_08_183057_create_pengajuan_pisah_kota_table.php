@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('id_pengajuan');
             $table->string('nim', 22);
             $table->unsignedBigInteger('id_kota');
+            $table->string('alasan', 512);
             
             $table->foreign('nim')->references('nim')->on('mahasiswa');
             $table->foreign('id_kota')->references('id_kota')->on('kota');

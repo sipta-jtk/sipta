@@ -54,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Dosen
         Gate::define('dosen', function ($user) {
-            return $user->role_user === 'dosen' && $user->dosen->status_dosen === 'aktif';
+            return $user->role_user === 'dosen' && $user->status_user === 'aktif';
         });
 
         //Kaprodi
@@ -145,10 +145,20 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('koordinator_ta');
         });
 
+        Gate::define('akses-feedback-dosen-pembimbing', function ($user) {
+            return $user->role_user === 'dosen' &&
+                    $user->dosen->bersedia_membimbing === 'bersedia' &&
+                    $user->dosen->alokasiDosen->contains(function ($alokasi) {
+                        return $alokasi->status_alokasi === 'fix' &&
+                                $alokasi->tipe_alokasi === 'pembimbing';
+       });
+
+
+        });
+
         //Contoh Akses Multirole
         Gate::define('akses-penilaian-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
-
         });
     }
 }
