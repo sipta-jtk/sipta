@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\View;
+use App\Services\NotifikasiService;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->singleton('notifikasi', function ($app) {
+            return new NotifikasiService();
+        });
     }
 
     /**
