@@ -142,7 +142,11 @@ class AuthServiceProvider extends ServiceProvider
          * [Topik 4] - Fitur Kelola Penilaian
         ***********************************/
         Gate::define('akses-penilaian-koordinator-ta', function ($user) {
-            return Gate::allows('koordinator_ta');
+            return Gate::allows('koordinator_ta') || Gate::allows('dosen');
+        });
+
+        Gate::define('akses-pemberian-nilai', function ($user) {
+            return Gate::allows('koordinator_ta') || Gate::allows('dosen');
         });
 
         Gate::define('akses-feedback-dosen-pembimbing', function ($user) {
