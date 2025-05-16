@@ -102,7 +102,7 @@
                         default => 'Topik Tugas Akhir'
                     } }}
                 </strong> <br>
-                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
 
