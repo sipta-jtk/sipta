@@ -181,6 +181,11 @@ class DashboardController extends Controller
 
         dd($data);
     }
+
+    public function index() 
+    {
+        return view('UserManagement.views.dashboard-mahasiswa');
+    } 
     
     /* =============================== Dosen =============================== */
     /*

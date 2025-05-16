@@ -201,3 +201,7 @@ Route::middleware(['can:mahasiswa_ta'])->group(function () {
     Route::get('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'showTambahAnggotaForm'])->name('tambah-anggota-kota');
     Route::post('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'tambahAnggota'])->name('tambah-anggota-kota.submit');
 });
+
+Route::get('/dashboard-mahasiswa', [DashboardController::class, 'index'])
+    ->name('dashboard.mahasiswa')
+    ->middleware(['auth', 'can:all_mahasiswa']);
