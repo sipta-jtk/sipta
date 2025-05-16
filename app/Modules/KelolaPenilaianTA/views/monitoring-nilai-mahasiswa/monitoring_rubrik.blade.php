@@ -13,7 +13,7 @@
             {{-- Jalur dari Mahasiswa --}}
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
                     ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                     ['url' => '', 'label' => 'Detail Rubrik']
                 ]
@@ -24,7 +24,7 @@
             {{-- Jalur dari Dosen Pembimbing --}}
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
                     ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                     ['url' => '', 'label' => 'Detail Rubrik']
                 ]
@@ -36,9 +36,9 @@
 
 
 @section('content')
-<div class="card">
+<div class="card mb-4">
     <!-- /.card-header -->
-    <div class="card-body p-0">
+    <div class="card-body p-4">
         <div class="table-container">
             <table class="table text-center">
                 <thead class="sticky-header">

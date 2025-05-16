@@ -1,0 +1,30 @@
+/* Tooltip hanya untuk halaman Monitoring Rubrik */
+.monitoring-dosen-pembimbing .tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.monitoring-dosen-pembimbing .tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    position: absolute;
+    width: 240px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130%;
+    z-index: 20;
+    text-align: center;
+}
+
+.monitoring-dosen-pembimbing .tooltip-wrapper:hover .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+}

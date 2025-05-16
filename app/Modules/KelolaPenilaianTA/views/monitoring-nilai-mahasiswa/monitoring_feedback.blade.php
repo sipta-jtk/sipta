@@ -12,7 +12,7 @@
         @if($routeName === 'monitoring.feedback')
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
                     ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                     ['url' => '', 'label' => 'Detail Feedback']
                 ]
@@ -21,7 +21,7 @@
         @elseif($routeName === 'monitoring.feedback.dosen')
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
                     ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                     ['url' => '', 'label' => 'Detail Feedback']
                 ]
