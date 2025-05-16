@@ -2,7 +2,6 @@
     max-height: 500px;
     overflow-y: auto;
     overflow-x: auto;
-    border: 1px solid #ddd;
     position: relative;
     scrollbar-width: thin;
     -ms-overflow-style: auto;
@@ -12,17 +11,15 @@
 }
 .table-container::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 10px;
 }
 .table-container::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 table {
     width: 100%;
-    border-collapse: collapse;
 }
 th, td {
-    border: 1px solid #ccc !important;
+    border: none !important;
     padding: 10px;
     text-align: start;
 }
@@ -42,7 +39,7 @@ thead th {
     color: white;
     text-align: center;
     padding: 12px;
-    border-bottom: 2px solid #fff;
+    border-bottom: none !important;
 }
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
