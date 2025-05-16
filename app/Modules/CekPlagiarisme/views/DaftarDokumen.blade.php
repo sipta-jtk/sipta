@@ -145,9 +145,9 @@
                 <button type="button" class="btn btn-success" id="openConfirmBtn">Lanjutkan</button>
             </div>
 
-        </div> <!-- Penutup modal-content -->
-    </div> <!-- Penutup modal-dialog -->
-</div> <!-- Penutup modal -->
+        </div> 
+    </div> 
+</div> 
 
 <!-- Modal Konfirmasi -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -534,7 +534,7 @@
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
-    let pdfFile, pdfDoc;
+    let pdfFile, docxFile;
 
     // Saat klik "Unggah" pertama
     $('#openConfirmBtn').click(function() {
@@ -542,7 +542,7 @@
         const judulInput = $('#judulDokumen').val().trim();
 
         if (!fileInput || !judulInput) {
-            Swal.fire('Peringatan', 'Silakan isi judul, dan pilih dokumen.', 'warning');
+            Swal.fire('Peringatan', 'Silakan isi judul dan pilih dokumen.', 'warning');
             return;
         }
 
@@ -557,39 +557,53 @@
             return;
         }
 
-        if (fileInput.type !== 'application/pdf') {
-            Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
-            return;
-        }
-
+        // Validasi file PDF dan DOCX
+    if (fileInput.type === 'application/pdf') {
+        // Pemrosesan file PDF
         pdfFile = fileInput;
-
         const reader = new FileReader();
         reader.onload = async function(e) {
             const typedarray = new Uint8Array(e.target.result);
-            pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-
-
-
-
+            const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
             let kataTotal = await countWords(pdfDoc);
             $('#jumlahKataPreview').val(kataTotal);
 
-            // Isi field preview
+            // Isi field preview untuk PDF
             $('#judulPreview').text(judulInput);
             $('#namaFilePreview').text(fileInput.name);
             $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
             $('#jumlahHalamanPreview').text(pdfDoc.numPages);
             $('#jumlahKataPreview').text(kataTotal);
-
+            
             renderThumbnail(pdfDoc);
-
-            // Munculkan modal konfirmasi
-            $('#uploadModal').modal('hide'); // Sembunyikan modal upload
-            $('#confirmModal').modal('show'); // Tampilkan modal konfirmasi
+            $('#uploadModal').modal('hide');
+            $('#confirmModal').modal('show');
         };
         reader.readAsArrayBuffer(fileInput);
-    });
+    } else if (fileInput.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        // Pemrosesan file DOCX
+        docxFile = fileInput;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let text = e.target.result;
+            let kataTotal = text.split(/\s+/).length;
+
+            $('#jumlahKataPreview').val(kataTotal);
+
+            // Isi field preview untuk DOCX
+            $('#judulPreview').text(judulInput);
+            $('#namaFilePreview').text(fileInput.name);
+            $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
+            $('#jumlahHalamanPreview').text('N/A');  // DOCX tidak ada jumlah halaman
+            $('#jumlahKataPreview').text(kataTotal);
+            $('#uploadModal').modal('hide');
+            $('#confirmModal').modal('show');
+        };
+        reader.readAsText(fileInput);
+    } else {
+        Swal.fire('Peringatan', 'Hanya file PDF atau DOCX yang diperbolehkan.', 'warning');
+    }
+});
 
 
     // Render thumbnail
