@@ -246,13 +246,126 @@
         </div>
         @endif
     @elseif($user->role_user === 'admin')
+        <div class="row pt-3" style="height: 400px;">
+            <!-- Profil User -->
+            <div class="col-md-4 d-flex">
+                <div class="card card-dark flex-fill">
+                    <div class="card-header"></div>
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ Auth::user()->adminlte_image() }}" class="img-circle shadow" width="120" height="120" alt="User Image">
+                            <div class="ml-4">
+                                <h4 class="md-4">Selamat Datang,</h3>
+                                <h3 class="md-4 text-bold">{{ $user->nama }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('profile') }}" class="d-flex border-top py-2 px-3 text-dark justify-content-end align-items-center card-hover">
+                        Edit Profil
+                        <i class="ml-1 fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Fitur -->
+            <div class="d-flex col-md-8 justify-content-end">
+                <div class="d-flex flex-column col-md-6">
+                    <!-- Mahasiswa -->
+                    <div class="h-100 mb-3 card card-primary">
+                        <div class="card-header"></div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center">
+                                <i class="fas fa-user-graduate fa-5x text-primary mr-2"></i>
+                                <div class="ml-4">
+                                    <h4 class="md-4 text-dark">Jumlah Mahasiswa</h3>
+                                    <h2 class="md-4 text-bold text-dark">{{ $mahasiswaCount }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ route('manage.mhs') }}" class="d-flex border-top py-2 px-3 text-dark justify-content-end align-items-center card-hover">
+                            Kelola Mahasiswa
+                            <i class="ml-1 fas fa-arrow-right ms-2"></i>
+                        </a>
+                        </div>
+                    
+                    <!-- Jurusan -->
+                    <div class="h-100 mb-3 card card-success">
+                        <div class="card-header"></div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center">
+                                <i class="fas fa-school fa-5x text-success mr-2"></i>
+                                <div class="ml-4">
+                                    <h4 class="md-4 text-dark mb-3">Pengelolaan Jurusan</h3>
+                                    <div class="d-flex">
+                                        <a href="{{ route('program-studi.index') }}" class="btn btn-success mr-2">Kelola Prodi <i class="ml-1 fas fa-arrow-right ms-2"></i></a>
+                                        <a href="{{ route('kelola-kbk') }}" class="btn btn-success">Kelola KBK <i class="ml-1 fas fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column col-md-6">
+                    <!-- Dosen -->
+                    <div class="h-100 mb-3 card card-info">
+                        <div class="card-header"></div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center">
+                                <i class="fas fa-user-tie fa-5x text-info mr-2"></i>
+                                <div class="ml-4">
+                                    <h4 class="md-4 text-dark">Jumlah Dosen</h3>
+                                    <h2 class="md-4 text-bold text-dark">{{ $dosenCount }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ route('manage.dosen') }}" class="d-flex border-top py-2 px-3 text-dark justify-content-end align-items-center card-hover">
+                            Kelola Dosen
+                            <i class="ml-1 fas fa-arrow-right ms-2"></i>
+                        </a>
+                        </div>
+                    <!-- Ruangan -->
+                    <div class="h-100 mb-3 card card-danger">
+                        <div class="card-header"></div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center">
+                                <i class="fas fa-door-open fa-5x text-danger mr-2"></i>
+                                <div class="ml-4">
+                                    <h4 class="md-4 text-dark mb-3">Pengelolaan Ruangan</h3>
+                                    <div class="d-flex">
+                                        <a href="{{ url('penjadwalan-ruangan/') }}" class="btn btn-danger">Lihat Jadwal <i class="ml-1 fas fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+<a href="{{ url('repository/dosen/kelompok-ta') }}" class="text-dark text-decoration-none">
+    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
+        <i class="mr-2 fas fa-users ms-2 text-primary fa-lg"></i> Artifak Kelompok TA
+    </div>
+</a>
+<a href="{{ url('repository/koor-ta/monitoring-penyimpanan') }}" class="text-dark text-decoration-none">
+    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover ">
+        <i class="mr-2 fas fa-database ms-2 text-info fa-lg"></i> Monitoring Penyimpanan
+    </div>
+</a>
+<a href="{{ url('notification/admin/settingawal') }}" class="text-dark text-decoration-none">
+    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
+        <i class="mr-2 fas fa-bell ms-2 text-warning fa-lg"></i> Pengaturan Notifikasi
+    </div>
+</a>
+
     @endif  
 @stop
 
 @section('css')
 <style>
     .card-hover:hover{
-        background-color: #F7F7F7;
+        background-color: #EDEBEB;
         cursor: pointer;
     }
 </style>
