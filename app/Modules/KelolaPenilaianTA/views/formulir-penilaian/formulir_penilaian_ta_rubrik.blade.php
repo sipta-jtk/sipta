@@ -44,17 +44,6 @@
                                     <option value="D4-Teknik Informatika">D4-Teknik Informatika</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="filterNamaForm"><i class="fas fa-file-alt"></i> Nama Formulir</label>
-                                <select id="filterNamaForm" class="form-control">
-                                    <option value="">Semua Nama Formulir</option>
-                                    <option value="Seminar I">Seminar I</option>
-                                    <option value="Seminar II">Seminar II</option>
-                                    <option value="Seminar III">Seminar III</option>
-                                    <option value="Sidang Akhir">Sidang Akhir</option>
-                                    <option value="Dosen Pembimbing">Dosen Pembimbing</option>
-                                </select>
-                            </div>
                         </div>
                     </div>
                     <div class="card-footer text-right">
