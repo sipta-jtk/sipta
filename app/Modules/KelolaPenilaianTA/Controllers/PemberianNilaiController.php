@@ -12,16 +12,49 @@ use App\Models\Mahasiswa;
 use App\Models\Dosen;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
+use  App\Models\AlokasiDosen;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Validator;
 
 class PemberianNilaiController extends Controller
 {
+    private function cekAksebilitasPenilaian($namaFtaSlug, $idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Ambil semua id_kota yang boleh diakses dosen ini
+        $kotaDibimbing = AlokasiDosen::where('nip', $nip)
+            ->with([
+                'pengajuanPembimbing.kota.penjadwalan',
+                'pengajuanPembimbing.kota.mahasiswa',
+            ])
+            ->get()
+            ->pluck('pengajuanPembimbing.kota')
+            ->flatten()
+            ->unique('id_kota');
+    
+        $bolehAkses = $kotaDibimbing->contains(function ($kota) use ($idKota) {
+            return $kota && $kota->id_kota == $idKota;
+        });
+    
+        if (!$bolehAkses) {
+            abort(403, 'Anda tidak memiliki akses untuk menilai kelompok ini');
+        }
+    }
 
+    /**
+     * Menampilkan halaman pengisian nilai seminar
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param int $idProdi
+     */
     public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
+        $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
         if ($namaFtaSlug == 'seminar ii') {
             return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
         } else {
