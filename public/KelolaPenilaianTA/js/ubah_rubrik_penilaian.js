@@ -10,6 +10,16 @@ $(document).ready(function () {
         console.log("Selected criteria with bobot:", bobot);
     });
 
+    function updateRowStriping() {
+        $("#rubrikPenilaianTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+            } else {
+                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+            }
+        });
+    }
+
     // Add new row to table
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
@@ -81,6 +91,7 @@ $(document).ready(function () {
         </tr>`;
 
         $("#rubrikPenilaianTable").append(newRow);
+        updateRowStriping();
     });
 
     // Remove row when remove button is clicked
@@ -88,10 +99,13 @@ $(document).ready(function () {
         // Make sure we keep at least one row
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
+            updateRowStriping();
         } else {
             alert("Tidak dapat menghapus baris terakhir.");
         }
     });
+
+    updateRowStriping();
 
     // Konfirmasi sebelum submit form
     $("form").on("submit", function (e) {

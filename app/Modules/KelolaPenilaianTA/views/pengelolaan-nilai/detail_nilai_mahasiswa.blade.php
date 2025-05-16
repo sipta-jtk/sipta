@@ -119,7 +119,7 @@
                                     </td>
                                 @endfor
 
-                                @php
+                                {{-- @php
                                     // Ambil data nilaiKategori untuk user yang sedang login
                                     $nilaiKategoriUser = $mahasiswa->nilaiKategori
                                         ->where('nip', auth()->user()->username)
@@ -160,7 +160,7 @@
                                             </button>
                                         </form>
                                     </td>
-                                @endif
+                                @endif --}}
                             </tr>
                         @endforeach
                     @endforeach

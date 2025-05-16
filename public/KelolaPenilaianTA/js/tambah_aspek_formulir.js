@@ -60,7 +60,6 @@ $(document).ready(function () {
         toggleJenisTA();
     });
 
-
     function setMinDate() {
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -72,6 +71,16 @@ $(document).ready(function () {
     }
 
     setMinDate();
+
+    function updateRowStriping() {
+        $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff");
+            } else {
+                $(this).css("background-color", "#f8f9fa"); 
+            }
+        });
+    }
 
     // Event listener untuk menambah baris
     $("#addRow").click(function() {
@@ -100,6 +109,7 @@ $(document).ready(function () {
             `);
             validateTotalBobot();
         }
+        updateRowStriping();
     });
 
     // Event listener untuk menghapus baris
@@ -108,42 +118,21 @@ $(document).ready(function () {
         if ($("#jenisForm").val() === "Penilaian") {
             validateTotalBobot();
         }
+        updateRowStriping();
     });
+
+    updateRowStriping();
 
     function initBobotInputs() {
         $('input[name="bobot_kriteria[]"]').addClass('bobot-kriteria');
     }
 
-    // Validasi total bobot
-    function validateTotalBobot() {
-        initBobotInputs();
-        
-        let totalBobot = 0;
-
-        // Hitung total bobot dari semua input
-        $(".bobot-kriteria").each(function () {
-            let value = parseFloat($(this).val());
-            if (!isNaN(value)) {
-                totalBobot += value;
-            }
-        });
-
-        // Menampilkan pesan error jika total bobot tidak 100
-        if (totalBobot !== 100) {
-            $("#bobotError")
-                .removeClass("d-none")
-                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
-        } else {
-            $("#bobotError").addClass("d-none").text("");
-        }
-
-        $(".bobot-summary").text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
-        
-        return totalBobot;
-    }
-
     // Event listener untuk memeriksa total bobot saat nilai diubah
     $(document).on('input', '.bobot-kriteria', function () {
+        validateTotalBobot();
+    });
+
+    $(document).ready(function () {
         validateTotalBobot();
     });
 
@@ -173,6 +162,47 @@ $(document).ready(function () {
         }
         return true;
     });
+
+    // Validasi total bobot
+    function validateTotalBobot() {
+        initBobotInputs();
+        
+        let totalBobot = 0;
+
+        // Hitung total bobot dari semua input
+        $(".bobot-kriteria").each(function () {
+            let value = parseFloat($(this).val());
+            if (!isNaN(value)) {
+                totalBobot += value;
+            }
+        });
+
+        const bobotSummary = $(".bobot-summary");
+        if (totalBobot === 100) {
+            bobotSummary
+                .removeClass("alert-warning")
+                .addClass("alert-info")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            bobotSummary
+                .removeClass("alert-info")
+                .addClass("alert-warning")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        }
+
+        // Menampilkan pesan error jika total bobot tidak 100
+        if (totalBobot !== 100) {
+            $("#bobotError")
+                .removeClass("d-none")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            $("#bobotError").addClass("d-none").text("");
+        }
+
+        $(".bobot-summary").text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        
+        return totalBobot;
+    }
 
     $('.btn-primary[type="submit"]').on('click', function() {
         console.log('Submit button clicked');
