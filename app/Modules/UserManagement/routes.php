@@ -200,3 +200,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/impersonate/{id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
     Route::get('/impersonate-leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });
+
+Route::get('/dashboard-mahasiswa', [DashboardController::class, 'index'])
+    ->name('dashboard.mahasiswa')
+    ->middleware(['auth', 'can:all_mahasiswa']);
