@@ -57,8 +57,8 @@ $(document).ready(function () {
         let jenisFormSet = new Set();
 
         $("#formulirTable tbody tr").each(function () {
-            let prodi = $(this).find("td:eq(3)").text().trim();
-            let jenisForm = $(this).find("td:eq(4)").text().trim();
+            let prodi = $(this).find("td:eq(3)").text().trim(); // Ambil nilai Program Studi di kolom ke-3
+            let jenisForm = $(this).find("td:eq(4)").text().trim(); // Ambil nilai Jenis Formulir di kolom ke-4
             if (prodi) prodiSet.add(prodi);
             if (jenisForm) jenisFormSet.add(jenisForm);
         });
@@ -66,23 +66,23 @@ $(document).ready(function () {
         let prodiDropdown = $("#filterProdi");
         prodiDropdown.empty().append('<option value="">Semua Program Studi</option>');
         prodiSet.forEach((prodi) => {
-            prodiDropdown.append(<option value="${prodi}">${prodi}</option>);
+            prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
         });
 
         let jenisFormDropdown = $("#filterJenisForm");
         jenisFormDropdown.empty().append('<option value="">Semua Jenis Formulir</option>');
         jenisFormSet.forEach((jenisForm) => {
-            jenisFormDropdown.append(<option value="${jenisForm}">${jenisForm}</option>);
+            jenisFormDropdown.append(`<option value="${jenisForm}">${jenisForm}</option>`);
         });
     }
-    
+
     updateFilterOptions();
 
     $("#applyFilter").click(function () {
         const selectedProdi = $("#filterProdi").val();
         const selectedJenisForm = $("#filterJenisForm").val();
 
-        table.columns(3).search(selectedProdi).draw(); 
+        table.columns(3).search(selectedProdi).draw();
         table.columns(4).search(selectedJenisForm).draw();
     });
 });
