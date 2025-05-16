@@ -4,6 +4,15 @@
 
 @section('content_header')
     <h1>Data Import Mahasiswa</h1>
+        <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+        ['url' => url('/sipta-dev/manajemen-akun-mahasiswa/'), 'label' => 'Manajemen Akun Mahasiswa'],
+        ['url' => url(), 'label' => 'Preview Data Mahasiswa']
+        ]])
+        @endcomponent
+        </div>
 @stop
 @section('content')
 <a href="{{route('manage.mhs')}}" class="btn btn-primary mb-3">

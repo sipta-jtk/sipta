@@ -4,6 +4,15 @@
 
 @section('content_header')
     <h1>Data Import Dosen</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+        ['url' => url('/sipta-dev/manajemen-akun-dosen/'), 'label' => 'Manajemen Akun Dosen'],
+        ['url' => url(), 'label' => 'Preview Data Dosen']
+        ]])
+        @endcomponent
+        </div>
 @stop
 @section('content')
 <a href="{{route('manage.dosen')}}" class="btn btn-primary mb-3">

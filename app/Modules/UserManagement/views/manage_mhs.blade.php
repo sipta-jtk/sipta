@@ -22,11 +22,9 @@
             <button class="btn btn-primary" data-toggle="modal" data-target="#uploadExcel">
                 <i class="fa fa-upload"></i> Unggah Excel
             </button>
-        
             <a href="{{ route('download.template-mhs') }}" class="btn btn-primary">
                 <i class="fa fa-download"></i> Unduh Format Excel
             </a>
-        
             <button class="btn btn-primary" data-toggle="modal" data-target="#addNewMhs">
                 <i class="fa fa-plus"></i> Tambah Mahasiswa
             </button>
