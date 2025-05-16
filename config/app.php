@@ -214,6 +214,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'Notifikasi' => App\Services\Notifikasi::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

@@ -775,7 +775,7 @@
 
             // Handle file preview
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
+                var fullUrl = `${prefix}/storage/${filePath}`;
 
                 // Deteksi file extension
                 var fileExtension = filePath.split('.').pop().toLowerCase();
@@ -844,7 +844,7 @@
             }
 
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
+                var fullUrl = `${prefix}/storage/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
                 // Buka di tab baru

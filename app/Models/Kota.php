@@ -16,7 +16,8 @@ class Kota extends Model
         'id_bidang',
         'nama_kota',
         'tahun_kota',
-        'status_kota'
+        'status_kota',
+        'jenis_ta'
     ];
 
     public function penjadwalan()

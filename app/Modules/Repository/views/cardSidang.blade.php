@@ -220,13 +220,12 @@
                                             <i class="fas fa-project-diagram mr-1"></i> Kode FTA
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option value="FTA-09">FTA-09 - Kehadiran Seminar II</option>
-                                            <option value="FTA-09a">FTA-09a - Lesson Learnt Seminar II</option>
-                                            <option value="FTA-10">FTA-10 - Bukti Bimbingan Seminar III</option>
-                                            <option value="FTA-10a">FTA-10a - Resume Bimbingan</option>
-                                            <option value="FTA-11">FTA-11 - Penilaian Seminar III</option>
-                                            <option value="FTA-12">FTA-12 - Masukan Seminar III</option>
-                                            <option value="FTA-23">FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir</option>
+                                            <option value="FTA-13">FTA-13 - Persetujuan pelaksanaan sidan tugas akhir</option>
+                                            <option value="FTA-14">FTA-14 - Bukti bimbingan sidang</option>
+                                            <option value="FTA-14a">FTA-14a - Resume bimbingan</option>
+                                            <option value="FTA-15">FTA-15 - Penilaian sidang d3</option>
+                                            <option value="FTA-16">FTA-16 - Berita acara pelaksanaan sidang</option>
+                                            <option value="FTA-17">FTA-17 - Penilaian pelaksanaan tugas akhir</option>
                                         </select>
                                     </div>
                                 </div>
@@ -732,7 +731,7 @@
                     </div>
 
                     <!-- Tombol Tambah -->
-                    <button id="btn-tambah-poster" onclick="TambahDokumen('btn-tambah-poster', '{{ $subkategoriSdd->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSdd->id_subkategori }}">
+                    <button id="btn-tambah-poster" onclick="TambahDokumen('btn-tambah-poster', '{{ $subkategoriPoster->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPoster->id_subkategori }}">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
                 </div>
@@ -868,13 +867,12 @@
 
                         @php
                         $ftaOptions = [
-                        ['value' => 'FTA-09', 'text' => 'FTA-09 - Kehadiran Seminar II'],
-                        ['value' => 'FTA-09a', 'text' => 'FTA-09a - Lesson Learnt Seminar II'],
-                        ['value' => 'FTA-10', 'text' => 'FTA-10 - Bukti Bimbingan Seminar III'],
-                        ['value' => 'FTA-10a', 'text' => 'FTA-10a - Resume Bimbingan'],
-                        ['value' => 'FTA-11', 'text' => 'FTA-11 - Penilaian Seminar III'],
-                        ['value' => 'FTA-12', 'text' => 'FTA-12 - Masukan Seminar III'],
-                        ['value' => 'FTA-23', 'text' => 'FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir'],
+                        ['value' => 'FTA-13', 'text' => 'FTA-13 - Persetujuan pelaksanaan sidan tugas akhir'],
+                        ['value' => 'FTA-14', 'text' => 'FTA-14 - Bukti bimbingan sidang'],
+                        ['value' => 'FTA-14a', 'text' => 'FTA-14a - Resume bimbingan'],
+                        ['value' => 'FTA-15', 'text' => 'FTA-15 - Penilaian sidang d3'],
+                        ['value' => 'FTA-16', 'text' => 'FTA-16 - Berita acara pelaksanaan sidang'],
+                        ['value' => 'FTA-17', 'text' => 'FTA-17 - Penilaian pelaksanaan tugas akhir'],
                         ];
                         @endphp
 
@@ -1187,11 +1185,9 @@
         $('#edit_id_dokumen').val(id);
         $('#edit_judul').val(judul);
         $('#edit_deskripsi').val(deskripsi);
-        $('#edit_username').val('{{ auth()->user()->username }}');
-
-        // Handle file preview
+        $('#edit_username').val('{{ auth()->user()->username }}'); // Handle file preview
         if (filePath && filePath.trim() !== '') {
-            var fullUrl = `/storage/${filePath}`;
+            var fullUrl = `${prefix}/storage/${filePath}`;
 
             // Deteksi file extension
             var fileExtension = filePath.split('.').pop().toLowerCase();
@@ -1258,9 +1254,8 @@
             $('#field_kode_fta_view').hide();
             $('#view_kode_fta').val('');
         }
-
         if (filePath && filePath.trim() !== '') {
-            var fullUrl = `/storage/${filePath}`;
+            var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
             // Buka di tab baru

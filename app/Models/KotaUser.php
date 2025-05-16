@@ -12,6 +12,7 @@ class KotaUser extends Model
     protected $fillable = [
         'id_kota',
         'username',
+        'jenis_ta'
     ];
 
     public function kota()
