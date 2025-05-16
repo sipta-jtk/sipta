@@ -72,8 +72,6 @@
                     <th>NIP</th>
                     <th>Nama</th>
                     <th>Email</th>
-                    <th>No WhatsApp</th>
-                    <th>Status</th>
                     <th>Peran</th>
                     <th>Aksi</th>
                 </tr>
@@ -94,8 +92,6 @@
                     <td>{{ $d->nip }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->email }}</td>
-                    <td>{{ $d->no_whatsapp }}</td>
-                    <td>{{ $d->status_user }}</td>
                     <td>
                         @if ($d->role_dosen == 'koordinator_ta')
                             Koordinator TA
