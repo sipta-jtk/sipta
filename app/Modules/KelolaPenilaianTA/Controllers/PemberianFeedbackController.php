@@ -243,14 +243,10 @@ class PemberianFeedbackController extends Controller
                 break;
             }
 
-            if (Str::length($plainText) < 15) {
-                $errorMessage = "Masukan minimal 15 karakter.";
-            }
-
-            if (Str::length($plainText) > 100) {
-                if (!$errorMessage) {
-                    $errorMessage = "Masukan maksimal 100 karakter.";
-                }
+            $wordCount = str_word_count($plainText);
+            if ($wordCount < 30) {
+                $errorMessage = "Masukan minimal 30 kata.";
+                break;
             }
         }
 

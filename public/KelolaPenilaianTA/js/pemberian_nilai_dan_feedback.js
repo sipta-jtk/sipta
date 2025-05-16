@@ -12,10 +12,10 @@ $(document).ready(function () {
             }
 
             const plainText = editor.editor.getDocument().toString().trim();
-            const charLength = plainText.length;
-            counter.textContent = `${charLength}/100 karakter`;
+            const wordCount = plainText.split(/\s+/).filter(word => word.length > 0).length;
+            counter.textContent = `${wordCount} kata`;
 
-            if (charLength < 15 || charLength > 100) {
+            if (wordCount < 30) {
                 counter.classList.add("text-danger");
                 counter.classList.remove("text-muted");
             } else {
