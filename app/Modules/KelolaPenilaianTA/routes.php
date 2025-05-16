@@ -56,7 +56,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         ->name('monitoring.rubrik.mahasiswa');
     });
 
-    Route::prefix('monitoring')->middleware('auth', 'can:akses-feedback-dosen-pembimbing')->group(function () {
+    Route::prefix('monitoring')->middleware('auth', 'can:akses-monitoring-dosen-pembimbing')->group(function () {
         Route::get('/dosen-pembimbing', [MonitoringNilaiMahasiswaController::class, 'monitoringDosenPembimbing'])
         ->name('monitoring.dosen.pembimbing');
          Route::get('dosen-pembimbing/rubrik/{kodeFta}/{idProdi}', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])
