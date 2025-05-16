@@ -184,7 +184,7 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
 

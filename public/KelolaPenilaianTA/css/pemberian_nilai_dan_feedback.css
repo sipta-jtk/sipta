@@ -1,7 +1,6 @@
 trix-editor {
     min-height: 150px;
     background: white;
-    border: 1px solid #ddd;
     border-radius: 5px;
     padding: 12px;
     font-size: 14px;
@@ -25,18 +24,17 @@ trix-editor {
     max-height: 600px;
     overflow-y: auto; /* overflow-y untuk mengaktifkan scroll vertikal jika konten melebihi tinggi maksimal */
     overflow-x: auto; /* overflow-x untuk mengaktifkan scroll horizontal*/
-    border: 1px solid #ddd;
     position: relative;
 }
+
 .table-container::-webkit-scrollbar {
     display: auto;
 }
 table {
     width: 100%;
-    border-collapse: collapse;
 }
 th, td {
-    border: 1px solid #ccc !important;
+    border: none !important;
     padding: 10px;
     text-align: left;
 }
@@ -56,7 +54,7 @@ thead th {
     background-color: rgba(0, 0, 0, 0.9);
     color: white;
     text-align: center;
-    border-bottom: 2px solid #fff;
+    border-bottom: none !important;
 }
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
