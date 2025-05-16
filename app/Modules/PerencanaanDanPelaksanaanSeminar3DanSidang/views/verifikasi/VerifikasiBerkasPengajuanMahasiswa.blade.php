@@ -82,7 +82,7 @@
                 <tbody>
                     @forelse ($data as $item)
                         <tr>
-                            <td>{{ $item['nama_artefak'] }}</td>
+                            <td>{{ $item['nama_dokumen'] }}</td>
                             <td>
                                 @if ($item['status'] === 'Sudah diunggah')
                                     <span class="badge bg-success">{{ $item['status'] }}</span>
