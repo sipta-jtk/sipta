@@ -68,10 +68,11 @@ class PengelolaanNilaiController extends Controller{
         $idFtaFeedback = $detailInformasiFta->where('jenis_form', 'feedback')
             ->pluck('id_fta');
 
-        //TBD yang ditampilkan di detail itu yang sudah di publish atau belum
         $detailNilaiMahasiswa = Mahasiswa::where('id_prodi', $idProdi)
             ->where('mahasiswa.status_ta', 'mahasiswa_ta')
-            ->whereNotNull('mahasiswa.id_kota')
+            ->whereHas('kota', function ($query) {
+                $query->where('status_kota', 'aktif');
+            })
             ->with([
                 'nilaiKategori' => function ($query) use ($idFtaPenilaian) {
                     $query->whereHas('kategoriPenilaian', function ($q) use ($idFtaPenilaian) {
