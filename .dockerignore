@@ -16,4 +16,3 @@ vendor
 !docker-entrypoint.sh
 !app.Dockerfile.dev
 docker/mysql/data
-plagiarism-checking

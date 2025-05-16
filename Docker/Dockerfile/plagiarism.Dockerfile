@@ -10,9 +10,6 @@ COPY plagiarism-checking/requirements.txt .
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install NLTK data (WordNet)
-RUN python -m nltk.downloader wordnet
-
 # Copy the application code into the container
 COPY plagiarism-checking/ .
 
@@ -23,4 +20,4 @@ EXPOSE 9001
 ENV PYTHONUNBUFFERED=1
 
 # Run database migrations and start the Django development server
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:9001"]
+CMD ["sh", "-c", "python stopWordRemove.py && python manage.py migrate && python manage.py runserver 0.0.0.0:9001"]

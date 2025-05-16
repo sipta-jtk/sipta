@@ -20,7 +20,9 @@ services:
       - sipta-dev
   
   plagiarism:
-    image: najibalimudin/plagiarism-checking:latest
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile/plagiarism.Dockerfile
     container_name: sipta-plagiarism-dev
     restart: unless-stopped
     env_file:
