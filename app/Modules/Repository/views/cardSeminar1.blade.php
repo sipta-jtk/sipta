@@ -846,7 +846,7 @@
             const assetStorageBase = "{{ asset('storage') }}";
 
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `${prefix}/${assetStorageBase}/${filePath}`;
+                var fullUrl = `${assetStorageBase}/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
                 // Buka di tab baru
