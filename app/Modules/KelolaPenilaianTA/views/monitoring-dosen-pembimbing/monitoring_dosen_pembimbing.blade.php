@@ -9,7 +9,7 @@
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
             ['url' => route('beranda.get'), 'label' => 'Beranda'],
-            ['url' => '', 'label' => 'Formulir Penilaian']
+            ['url' => '', 'label' => 'Monitoring Dosen Pembimbing']
         ]
     ])
     @endcomponent
@@ -18,14 +18,14 @@
 
 @section('content')
 @foreach ($formulirByProdi as $idProdi => $dataProdi)
-<div class="card p-4 mb-4">
+<div class="card mb-4">
     <div class="p-2">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Daftar Formulir Penilaian TA {{ $dataProdi['nama_prodi'] }}</h3>
+        <div class="card-header text-center">
+            <h3 class="card-title w-100">Daftar Formulir Penilaian TA {{ $dataProdi['nama_prodi'] }}</h3>
         </div>
 
         <div class="table-container">
-            <table class="table table-striped text-center">
+            <table id="table" class="table table-striped text-center" width="100%">
                 <thead class="sticky-header bg-dark text-white">
                     <tr>
                         <th style="width: 3%;">No</th>
@@ -44,17 +44,17 @@
                             <td>{{ $row->nama_fta }}</td>
                             <td class="align-middle">{{ $row->jenis_ta ?? '-' }}</td>
                             <td>{{ \Carbon\Carbon::parse($row->tanggal_tenggat_pengisian)->translatedFormat('d F Y') }}</td>
-                            {{-- <td>
-                                <button class="btn btn-info btn-md" title="Lihat Rubrik">
-                                    Lihat <i class="fas fa-eye mx-1"></i>
-                                </button>
-                            </td> --}}
                             <td>
                                 <a href="{{ route('monitoring.rubrik.dosen', ['kodeFta' => $row->id_fta, 'idProdi' => $row->id_prodi]) }}"
-                                class="btn btn-primary btn-md">
-                                    Lihat Rubrik
+                                class="btn btn-primary btn-md m-1 w-100">
+                                    Tinjau
+                                    <i class="mx-1 my-1 fas fa-arrow-circle-right"></i>
                                 </a>
                             </td>
+                            {{-- <a class="btn btn-primary btn-md my-1 w-100" href="" class="btn btn-smbtn-info">
+
+                            Tinjau<i class="mx-1 my-1 fas fa-arrow-circle-right"></i>
+                            </a> --}}
                         </tr>
                     @endforeach
                     @if (count($dataProdi['formulir']) === 0)
@@ -67,10 +67,10 @@
 </div>
 @endforeach
 
-<div class="card p-4 mb-4">
+<div class="card mb-4">
     <div class="p-2">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Daftar KoTA Bimbingan</h3>
+        <div class="card-header text-center">
+            <h3 class="card-title w-100">Daftar KoTA Bimbingan</h3>
         </div>
 
         <div class="table-container">
@@ -78,13 +78,14 @@
                 <thead class="sticky-header bg-dark text-white">
                     <tr>
                         <th style="width: 3%;">No</th>
-                        <th style="width: 12%;">Nama KoTA</th>
+                        <th style="width: 10%;">Nama KoTA</th>
                         <th style="width: 20%;">Judul Topik</th>
                         <th style="width: 15%;">Jenis TA</th>
-                        <th style="width: 12%;">Seminar I</th>
-                        <th style="width: 12%;">Seminar II</th>
-                        <th style="width: 12%;">Seminar III</th>
-                        <th style="width: 12%;">Sidang Akhir</th>
+                        <th style="width: 10%;">Seminar I</th>
+                        <th style="width: 10%;">Seminar II</th>
+                        <th style="width: 10%;">Seminar III</th>
+                        <th style="width: 10%;">Sidang Akhir</th>
+                        <th style="width: 10%;">Penilaian Pembimbing</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,8 +107,8 @@
                                             'id_fta' => $fta['id_fta'],
                                             'id_kota' => $fta['id_kota']
                                         ]) : '#' }}"
-                                        class="btn btn-sm btn-primary {{ $fta['available'] ? '' : 'disabled-link' }}">
-                                        Lihat
+                                        class="btn btn-md btn-primary m-1 {{ $fta['available'] ? '' : 'disabled-link' }}">
+                                            <i class="fas fa-eye m-1"></i>
                                         </a>
                                         @if (!$fta['available'])
                                             <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left">
@@ -120,6 +121,18 @@
                                 @endif
                             </td>
                         @endforeach
+
+                        {{-- <td>
+                            <a title="edit" class="btn btn-warning btn-md my-1" href="" class="btn btn-sm btn-info">
+                            <i class="mx-1 fas fa-edit"></i>
+                            </a>
+                        </td> --}}
+
+                        <td>
+                            <a title="Ubah" class="btn btn-warning btn-md m-1" href="#">
+                                <i class="fas fa-edit text-dark m-1"></i>
+                            </a>
+                        </td>
 
                     </tr>
                 @endforeach
@@ -137,6 +150,7 @@
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/formulir_penilaian.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/monitoring_nilai_mahasiswa.css') }}">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
@@ -145,4 +159,26 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/formulir_penilaian.js') }}"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/monitoring_mahasiswa.js') }}"></script>
+    <script
+    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script
+    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+    $('#example').DataTable({
+    language: {
+    search: "Cari:",
+    lengthMenu: "Tampilkan MENU data per halaman",
+    zeroRecords: "Data tidak ditemukan",
+    info: "Menampilkan START sampai END dari TOTAL data",
+    infoEmpty: "Tidak ada data tersedia",
+    infoFiltered: "(difilter dari total MAX data)",
+    paginate: {
+    first: "<<",
+    last: ">>",
+    next: ">",
+    previous: "<"
+    }
+    }
+    });
+    </script>
 @stop

@@ -5,14 +5,29 @@
 @section('content_header')
     <h1 class="mb-0">Detail Feedback</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
-                ['url' => '', 'label' => 'Detail Feedback']
-            ]
-        ])
-        @endcomponent
+        @php
+            $routeName = Route::currentRouteName();
+        @endphp
+
+        @if($routeName === 'monitoring.feedback')
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                    ['url' => '', 'label' => 'Detail Feedback']
+                ]
+            ])
+            @endcomponent
+        @elseif($routeName === 'monitoring.feedback.dosen')
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => route('beranda.get'), 'label' => 'Home'],
+                    ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
+                    ['url' => '', 'label' => 'Detail Feedback']
+                ]
+            ])
+            @endcomponent
+        @endif
     </div>
 @stop
 

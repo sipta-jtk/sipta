@@ -145,7 +145,7 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('koordinator_ta');
         });
 
-        Gate::define('akses-feedback-dosen-pembimbing', function ($user) {
+        Gate::define('akses-monitoring-dosen-pembimbing', function ($user) {
             return $user->role_user === 'dosen' &&
                     $user->dosen->bersedia_membimbing === 'bersedia' &&
                     $user->dosen->alokasiDosen->contains(function ($alokasi) {
