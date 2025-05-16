@@ -49,6 +49,8 @@ RUN composer update
 # Install dependency
 RUN composer install
 
+RUN php artisan storage:link
+
 # Expose port 9000
 EXPOSE 9000
 
