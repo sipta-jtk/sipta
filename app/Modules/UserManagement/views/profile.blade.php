@@ -4,7 +4,6 @@
 
 @section('content_header')
     <h1 class="mb-3">Profil Saya</h1>
-
     <div>
         @component('UserManagement.components.breadcrumb', [
             'links' => [
@@ -17,6 +16,15 @@
 @stop
 
 @section('content')
+    @if(session('impersonated_by'))
+        <div class="alert alert-warning">
+            <h5><i class="icon fas fa-exclamation-triangle"></i> Anda sedang login sebagai user lain!</h5>
+            <a href="{{ route('impersonate.leave') }}" class="btn btn-danger">
+                Kembali ke akun asli
+            </a>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -69,7 +77,7 @@
                         <p class="text-secondary text-md border-bottom">Kontak & Status</p>
 
                         <label>Nomor Telepon</label>
-                        <x-adminlte-input name="no_whatsapp" type="number" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" />
+                        <x-adminlte-input name="no_whatsapp" type="number" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" required minlength="10" maxlength="15" pattern="[0-9]*" title="Hanya angka yang diperbolehkan" />
 
                         <label>Email</label>
                         <x-adminlte-input name="email" value="{{ old('email', Auth::user()->email) }}" readonly />
@@ -86,8 +94,44 @@
                     </div>
                 </div>
 
-                <div class="mt-3 text-right">
-                    <button type="submit" class="btn btn-success ">Simpan</button>
+                <div class="mt-3">
+                    <div class="text-right mb-3">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
+
+                    @if(auth()->user()->role_user === 'admin')
+                        <div class="card mt-4">
+                            <div class="card-header bg-info">
+                                <h5 class="mb-0"><i class="fas fa-user-secret"></i> Mode Testing Impersonate</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Dosen:</h6>
+                                        @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
+                                            <div class="mb-2">
+                                                {{ $dosen->nama }}
+                                                <a href="{{ route('impersonate', $dosen->username) }}" class="btn btn-warning btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Mahasiswa:</h6>
+                                        @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
+                                            <div class="mb-2">
+                                                {{ $mahasiswa->nama }}
+                                                <a href="{{ route('impersonate', $mahasiswa->username) }}" class="btn btn-warning btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>

@@ -1,32 +1,34 @@
 <?php
 
-use App\Models\Mahasiswa;
 use App\Models\User;
+use App\Models\Mahasiswa;
 use App\Modules\UserManagement\Controllers\MahasiswaController;
-use Illuminate\Support\Facades\Gate;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;
-use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
-use Illuminate\Support\Facades\Route;
 use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
 use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
 use App\Modules\UserManagement\Controllers\DashboardController;
-
-
 use App\Modules\UserManagement\Controllers\PerekrutanAnggotaKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
+use App\Modules\UserManagement\Controllers\ImpersonateController;
+
+use FontLib\Table\Type\name;
+
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -191,4 +193,9 @@ Route::get('/test-dashboard', [DashboardController::class, 'showProfileAdmin']);
 Route::middleware(['can:mahasiswa_ta'])->group(function () {
     Route::get('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'showTambahAnggotaForm'])->name('tambah-anggota-kota');
     Route::post('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'tambahAnggota'])->name('tambah-anggota-kota.submit');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/impersonate/{id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+    Route::get('/impersonate-leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });

@@ -19,7 +19,7 @@ class ProfileController extends Controller
         $request->validate([
             'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
             'email' => 'required|email|unique:user,email,' . Auth::user()->username . ',username',
-            'no_whatsapp' => 'nullable|regex:/^[0-9]+$/|max:15',
+            'no_whatsapp' => 'nullable|regex:/^[0-9]+$/|min:10|max:15',
             'photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
