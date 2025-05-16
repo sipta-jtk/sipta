@@ -187,8 +187,9 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
 /* 
 
     Dashboard route
-*/
-Route::get('/test-dashboard', [DashboardController::class, 'showProfileAdmin']);
+==========================================*/
+Route::get('/test-dashboard', [DashboardController::class, 'showPengajuanSeminar3']);
+Route::get('/', [DashboardController::class, 'index']);
 
 
 Route::middleware(['can:mahasiswa_ta'])->group(function () {
@@ -200,7 +201,3 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/impersonate/{id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
     Route::get('/impersonate-leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });
-
-Route::get('/dashboard-mahasiswa', [DashboardController::class, 'index'])
-    ->name('dashboard.mahasiswa')
-    ->middleware(['auth', 'can:all_mahasiswa']);
