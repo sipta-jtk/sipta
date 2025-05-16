@@ -145,10 +145,20 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('koordinator_ta');
         });
 
+        Gate::define('akses-monitoring-dosen-pembimbing', function ($user) {
+            return $user->role_user === 'dosen' &&
+                    $user->dosen->bersedia_membimbing === 'bersedia' &&
+                    $user->dosen->alokasiDosen->contains(function ($alokasi) {
+                        return $alokasi->status_alokasi === 'fix' &&
+                                $alokasi->tipe_alokasi === 'pembimbing';
+       });
+
+
+        });
+
         //Contoh Akses Multirole
         Gate::define('akses-penilaian-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
-
         });
     }
 }

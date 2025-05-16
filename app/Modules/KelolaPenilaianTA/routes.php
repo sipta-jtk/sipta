@@ -53,7 +53,16 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::get('/feedback/{id_fta}/{id_kota}', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])
         ->name('monitoring.feedback');
         Route::get('/rubrik/{kodeFta}/{idProdi}', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])
-        ->name('monitoring.rubrik');
+        ->name('monitoring.rubrik.mahasiswa');
+    });
+
+    Route::prefix('monitoring')->middleware('auth', 'can:akses-monitoring-dosen-pembimbing')->group(function () {
+        Route::get('/dosen-pembimbing', [MonitoringNilaiMahasiswaController::class, 'monitoringDosenPembimbing'])
+        ->name('monitoring.dosen.pembimbing');
+         Route::get('dosen-pembimbing/rubrik/{kodeFta}/{idProdi}', [MonitoringNilaiMahasiswaController::class, 'monitoringRubrik'])
+        ->name('monitoring.rubrik.dosen');
+        Route::get('dosen-pembimbing/feedback/{id_fta}/{id_kota}', [MonitoringNilaiMahasiswaController::class, 'monitoringFeedback'])
+        ->name('monitoring.feedback.dosen');
     });
 
    // ================= PENGELOLAAN NILAI =================
