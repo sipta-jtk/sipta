@@ -24,7 +24,7 @@
 
                 <!-- Foto Profil -->
                 <div class="text-center mb-4">
-                    <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('storage/photos/default-profile1.jpg') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
+                    <img src="{{ Auth::user()->adminlte_image() }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
                     <input type="file" name="photo" class="form-control mt-2">
                     <small>Ukuran maksimum 2MB, dengan format PNG atau JPG</small>
                 </div>
@@ -36,7 +36,7 @@
                         <p class="text-secondary text-md border-bottom">Identitas</p>
 
                         <label>Nama</label>
-                        <x-adminlte-input name="nama" value="{{ old('nama', Auth::user()->nama) }}" required />
+                        <x-adminlte-input name="nama" type="text" value="{{ old('nama', Auth::user()->nama) }}" required pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi diperbolehkan" />
 
                         @if(Auth::user()->role_user === 'mahasiswa' && Auth::user()->mahasiswa)
                             <label>NIM</label>
@@ -69,7 +69,7 @@
                         <p class="text-secondary text-md border-bottom">Kontak & Status</p>
 
                         <label>Nomor Telepon</label>
-                        <x-adminlte-input name="no_whatsapp" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" />
+                        <x-adminlte-input name="no_whatsapp" type="number" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" />
 
                         <label>Email</label>
                         <x-adminlte-input name="email" value="{{ old('email', Auth::user()->email) }}" readonly />

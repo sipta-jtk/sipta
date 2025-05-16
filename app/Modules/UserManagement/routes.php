@@ -48,9 +48,7 @@ Route::get('/register', function () {
 })->name('register');
 
 // Route untuk menampilkan form reset password
-Route::get('/reset-password/{token}', function ($token) {
-    return view('UserManagement.views.auth.reset-password', ['token' => $token]);
-})->name('password.reset');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
 // Route untuk memproses form reset password
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
@@ -106,35 +104,27 @@ Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manag
 
 Route::post('/addNewMhs', [MahasiswaController::class, 'addNewMhs'])->name('mahasiswa.addNewMhs');
 Route::post('/updateMhs', [MahasiswaController::class, 'updateMhs'])->name('mahasiswa.updateMhs');
-
-
-Route::get('/download-template-mhs', function () {
-    $filePath = 'public/templateExcel/template-registrasi-mahasiswa.xlsx';
-    if (!Storage::exists($filePath)) {
-        abort(404, 'File tidak ditemukan');
-    }
-
-    return Storage::download($filePath, 'template-registrasi-mahasiswa.xlsx');
-})->name('download.template-mhs');
-
 Route::get('/previewDataMhs', [MahasiswaController::class, 'previewDataMhs'])->name('previewDataMhs');
 Route::post('/inputBulkMhs', [MahasiswaController::class, 'inputBulk'])->name('inputBulkMhs');
-
-
 Route::get('/download-template-dosen', function () {
-    $filePath = 'public/templateExcel/template-registrasi-dosen.xlsx';
-    if (!Storage::exists($filePath)) {
-        abort(404, 'File tidak ditemukan');
-    }
-
-    return Storage::download($filePath, 'template-registrasi-dosen.xlsx');
+    $file = public_path('UserManagement/template-registrasi-dosen.xlsx');
+    return Response::download($file, 'template-registrasi-dosen.xlsx');
 })->name('download.template-dosen');
+
+Route::get('/download-template-mahasiswa', function () {
+    $file = public_path('UserManagement/template-registrasi-mahasiswa.xlsx');
+    return Response::download($file, 'template-registrasi-mahasiswa.xlsx');
+})->name('download.template-mhs');
+
 
 Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import-mhs');
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
 Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
+Route::post('/nonaktif-dosen', [DosenController::class, 'nonaktifkanAkun'])->name('nonaktif-dosen');
+Route::post('/aktif-dosen', [DosenController::class, 'aktifkanAkun'])->name('aktif-dosen');
+Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
 
 
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {

@@ -11,29 +11,45 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class MahasiswaController extends Controller
 {
-
     public function addNewMhs(Request $request){
         $request->validate([
-            'nim' => 'required|unique:mahasiswa,nim',
-            'email' => 'required|email|unique:user,email',
+            'nim' => 'required|unique:user,username',
+            'email' => [
+                'required',
+                'email',
+                'unique:user,email',
+                'regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/'
+            ],            
             'nama' => 'required|string|',
             'id_prodi' => 'required',
             'tahun_masuk' => 'required',
             'kelas' => 'required',
-            'no_wa' => 'required',
+            'no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/']
+        ],[
+            'nim.unique' => 'NIM sudah terdaftar, silahkan masukkan NIM yang lain',
+            'email.unique' => 'Email sudah terdaftar, silahkan masukkan email yang lain',
+            'no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+            'no_wa.digits_between' => 'Nomor WhatsApp maksimal sampai 15 digit.',
+            'no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka / -.',
+            'id_prodi.required' => 'Program Studi tidak terpilih, Harus dipilih.',
+            'tahun_masuk.required' => 'Tahun Masuk tidak terpilih, Harus dipilih.',
+            'kelas.required' => 'Kelas tidak terpilih, Harus dipilih.',
+            'nama.required' => 'Nama tidak boleh kosong.',
+            'email.required' => 'Email tidak boleh kosong.',
+            'nim.required' => 'NIM tidak boleh kosong.',
+            'email.email' => 'Format email tidak valid.',
+            'nim.string' => 'NIM harus berupa string.',
+            'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
         ]);
 
-        
-        
-        
-
-
-        $randomCode = "password123";
+        $password = Str::random(6);
+        DB::beginTransaction();
+        try {
         $user = User::create([
             'username' => $request->nim,
             'email' => $request->email,
@@ -41,12 +57,8 @@ class MahasiswaController extends Controller
             'no_whatsapp' => $request->no_wa,
             'photo' => 'default.jpg',
             'role_user' => 'mahasiswa',
-            'password' => Hash::make($randomCode) // Default password, bisa diubah nanti
+            'password' => Hash::make($password) 
         ]);
-
-        
-
-        // 2. Simpan data ke tabel `dosen`
         Mahasiswa::create([
             'nim' => $request->nim,
             'tahun_masuk' => $request->tahun_masuk,
@@ -54,30 +66,49 @@ class MahasiswaController extends Controller
             'id_prodi' => $request->id_prodi,
             'status_ta' => 'mahasiswa_non_ta',
         ]);
-        $email = $request->email;
-        $nama = $request->nama;
 
-        // Commit transaksi jika semua berhasil
-        return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan! Password: $randomCode");
-        
-
+        DB::commit();
+        return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.mhs')->with('error', 'Gagal menambah mahasiswa: ' . $e->getMessage());
+    }
 }
 public function updateMhs(Request $request)
 {
+    $user_updated = User::where('username', $request->nim)->first();
     $request->validate([
-        'nim' => 'required',
-        'email' => 'required|email',
+        'nim' => [
+            'required',
+            Rule::unique('user', 'username')->ignore($user_updated->username,'username'),
+            ],
+        'email' => [
+           'required',
+            'email',
+            'regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/',
+            Rule::unique('user', 'email')->ignore($user_updated->username,'username'),
+            ],
         'nama' => 'required|string|',
         'kelas' => 'required',
-        'no_wa' => 'required',
+        'no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
         'tahun_masuk' => 'required',
         'id_prodi' => 'required',
+    ],[
+        'nim.required' => 'NIM tidak boleh kosong.',
+        'email.required' => 'Email tidak boleh kosong.',
+        'email.email' => 'Format email tidak valid.',
+        'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
+        'nim.unique' => 'NIM sudah terdaftar, silahkan masukkan NIM yang lain',
+        'email.unique' => 'Email sudah terdaftar, silahkan masukkan email yang lain',
+        'no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+        'no_wa.digits_between' => 'Nomor WhatsApp maksimal sampai 15 digit.',
+        'no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka / -.'
     ]); 
 
 
     $nim = $request->nim;
-   
-
+    DB::beginTransaction();
+    try {
     $user = User::where('username', $nim)->first();
     $user->update([
         'nama' => $request->nama,
@@ -90,7 +121,12 @@ public function updateMhs(Request $request)
         'id_prodi' => $request->id_prodi,
     ]);
 
-    return redirect()->route('manage.mhs')->with('success', 'Data Mahasiswa berhasil diupdate!');                    
+    DB::commit();
+    return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diubah!');           
+} catch (\Exception $e) {
+    DB::rollBack();
+    return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
+}
 }
 
 
@@ -143,14 +179,24 @@ public function import(Request $request)
 
     public function inputBulk(Request $request){
         $validatedData = $request->validate([
-            'data.*.username' => 'required|string|unique:user,username',
+            'data.*.username' => 'required|string|unique:user,username|max:22',
             'data.*.nama' => 'required|string',
-            'data.*.email' => 'required|email|unique:user,email',
+            'data.*.email' => 'required|email|unique:user,email|regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/',
             'data.*.tahun_masuk' => 'required|integer',
             'data.*.kelas' => 'required|string',
-            'data.*.no_wa' => 'required|string',
+            'data.*.no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
             'data.*.id_prodi' => 'required|integer',
         ], [
+            'data.*.username.required' => 'NIM tidak boleh kosong.',
+            'data.*.username.max' => 'NIM melebihi batas maksimum.',
+            'data.*.email.required' => 'Email tidak boleh kosong.',
+            'data.*.email.email' => 'Format email tidak valid.',
+            'data.*.email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
+            'data.*.username.unique' => 'NIM sudah terdaftar, silahkan masukkan NIM yang lain',
+            'data.*.email.unique' => 'Email sudah terdaftar, silahkan masukkan email yang lain',
+            'data.*.no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+            'data.*.no_wa.digits_between' => 'Nomor WhatsApp maksimal sampai 15 digit.',
+            'data.*.no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka / -.',
             'data.*.id_prodi.required' => 'Silakan pilih program studi.',
         ]);
         $usernames = array_column($validatedData['data'], 'username');
@@ -166,10 +212,10 @@ public function import(Request $request)
 
         $users = [];
         $mahasiswa = [];
-    
+        DB::beginTransaction();
+        try {
         foreach ($validatedData['data'] as $userData) {
-            $randomCode = "password123"; // Atau gunakan default password
-    
+            $password = Str::random(6);    
             $users[] = [
                 'username' => $userData['username'],
                 'email' => $userData['email'],
@@ -177,7 +223,7 @@ public function import(Request $request)
                 'no_whatsapp' => $userData['no_wa'],
                 'photo' => 'default.jpg',
                 'role_user' => 'mahasiswa',
-                'password' => Hash::make($randomCode)
+                'password' => Hash::make($password)
             ];
     
             $mahasiswa[] = [
@@ -187,20 +233,21 @@ public function import(Request $request)
                 'id_prodi' => $userData['id_prodi'],
                 'status_ta' => 'mahasiswa_non_ta'
             ];
-
         $email = $userData['email'];
-        $nama = $userData['nama'];
- 
-
+        $nama = $userData['nama']; 
         }
     
         // 3. Bulk Insert
         User::insert($users);
         Mahasiswa::insert($mahasiswa);
-    
+        DB::commit();   
         return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
-
+    }
+    catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
     }
 
 }
 
+}

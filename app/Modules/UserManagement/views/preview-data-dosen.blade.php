@@ -50,7 +50,7 @@
                                 <input type="text" name="data[{{ $index }}][no_wa]" value="{{ $row['no_wa'] }}" class="form-control" required>
                             </td>
                             <td>
-                                <x-adminlte-select2 name="data[{{ $index }}][id_kbk]" fgroup-class="col-md-8"  >
+                                <x-adminlte-select2 name="data[{{ $index }}][id_kbk]" fgroup-class="col-md-8" required>
                                     <option selected disabled>Pilih KBK ....</option>
                                     @foreach($kbk as $k)
                                     <option value="{{$k->id_kbk}}">{{ $k->kbk }}</option>
