@@ -30,7 +30,7 @@
             </select>
         </div>
         
-        <table class="table table-bordered text-center">
+        <table class="table table-bordered text-center table-striped">
             <thead class="bg-brown text-white">
                 <tr>
                     <th class="bg-dark">Kategori</th>

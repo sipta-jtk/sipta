@@ -22,7 +22,7 @@ table {
     border-collapse: collapse;
 }
 th, td {
-    border: 1px solid #ccc !important;
+    border: none !important;
     padding: 10px;
     text-align: start;
 }
@@ -44,9 +44,11 @@ thead th {
     padding: 12px;
     border-bottom: 2px solid #fff;
 }
+
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
 }
+
 tbody tr:hover {
     background-color: #e2e6ea;
 }
