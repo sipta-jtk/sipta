@@ -580,9 +580,10 @@ return [
             ]
         ],
         [
-            'text' => 'Monitoring Bimbingan TA',
-            'url' => $prefix . '/timeline',
-            'icon' => 'fas fa-fw fa-calendar',
+            'text' => 'KoTA Bimbingan',
+            'url' => $prefix . '/kelola-penilaian-ta/monitoring/dosen-pembimbing',
+            'can' => 'akses-monitoring-dosen-pembimbing',
+            'icon' => 'fas fa-fw fa-user-check',
         ],
         [
             'text' => 'Timeline',
