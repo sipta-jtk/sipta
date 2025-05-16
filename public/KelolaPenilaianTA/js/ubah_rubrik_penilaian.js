@@ -107,11 +107,10 @@ $(document).ready(function () {
 
     updateRowStriping();
 
-    // Konfirmasi sebelum submit form
-    $("form").on("submit", function (e) {
-        // Validasi form sebelum submit
+    $("#showKonfirmasiModal").on("click", function () {
+        // Validasi Form
         let valid = true;
-        $("input[required], select[required]").each(function () {
+        $("input[required], select[required], textarea[required]").each(function () {
             if (!$(this).val()) {
                 valid = false;
                 $(this).addClass("is-invalid");
@@ -121,16 +120,29 @@ $(document).ready(function () {
         });
 
         if (!valid) {
-            e.preventDefault();
-            alert("Mohon isi semua field yang diperlukan.");
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Mohon isi semua field yang diperlukan.",
+            });
             return false;
         }
 
-        // Konfirmasi update
-        if (!confirm("Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?")) {
-            e.preventDefault();
-            return false;
-        }
+        Swal.fire({
+            title: "Konfirmasi Simpan",
+            text: "Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Simpan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#rubrikPenilaianForm").submit();
+            }
+        });
     });
 
     // Inisialisasi: periksa bobot pada semua baris yang sudah ada

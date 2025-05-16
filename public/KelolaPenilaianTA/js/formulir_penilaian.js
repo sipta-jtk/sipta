@@ -38,7 +38,7 @@ $(document).ready(function () {
     });
 
     $("#toggleFilter").click(function () {
-        $("#filterSection").slideToggle(); // Efek animasi buka/tutup
+        $("#filterSection").slideToggle();
     });
 
     table
@@ -52,43 +52,66 @@ $(document).ready(function () {
         })
         .draw();
 
-    // Mengambil data program studi dan jenis formulir unik dari tabel
-    function updateFilterOptions() {
-        let prodiSet = new Set();
-        let jenisFormSet = new Set();
-
-        $("#formulirTable tbody tr").each(function () {
-            let prodi = $(this).find("td:eq(3)").text().trim(); // Ambil nilai Program Studi di kolom ke-3
-            let jenisForm = $(this).find("td:eq(4)").text().trim(); // Ambil nilai Jenis Formulir di kolom ke-4
-            if (prodi) prodiSet.add(prodi);
-            if (jenisForm) jenisFormSet.add(jenisForm);
+    const namaFormulirOptions = [
+        "Seminar I",
+        "Seminar II", 
+        "Seminar III", 
+        "Sidang Akhir", 
+        "Dosen Pembimbing"
+    ];
+    
+    const prodiOptions = [
+        "D3-Teknik Informatika",
+        "D4-Teknik Informatika"
+    ];
+    
+    const jenisFormulirOptions = [
+        "penilaian",
+        "feedback"
+    ];
+    
+    function setFilterOptions() {
+        let namaFormDropdown = $("#filterNamaForm");
+        namaFormDropdown.empty().append('<option value="">Semua Nama Formulir</option>');
+        namaFormulirOptions.forEach((namaForm) => {
+            namaFormDropdown.append(`<option value="${namaForm}">${namaForm}</option>`);
         });
-
-        // Update dropdown filter program studi
+        
         let prodiDropdown = $("#filterProdi");
         prodiDropdown.empty().append('<option value="">Semua Program Studi</option>');
-        prodiSet.forEach((prodi) => {
+        prodiOptions.forEach((prodi) => {
             prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
         });
-
-        // Update dropdown filter jenis formulir
+        
         let jenisFormDropdown = $("#filterJenisForm");
         jenisFormDropdown.empty().append('<option value="">Semua Jenis Formulir</option>');
-        jenisFormSet.forEach((jenisForm) => {
+        jenisFormulirOptions.forEach((jenisForm) => {
             jenisFormDropdown.append(`<option value="${jenisForm}">${jenisForm}</option>`);
         });
     }
+    
+    setFilterOptions();
 
-    // Jalankan fungsi update filter setelah tabel dimuat
-    updateFilterOptions();
-
-    $("#applyFilter").click(function () {
-        const selectedProdi = $("#filterProdi").val();
-        const selectedNamaForm = $("#filterNamaForm").val();
-        const selectedJenisForm = $("#filterJenisForm").val();
-
-        table.columns(3).search(selectedProdi).draw();
-        table.columns(4).search(selectedJenisForm).draw();
-        table.columns(2).search(selectedNamaForm).draw();
+    $('#applyFilter').click(function() {
+        let prodiFilter = $('#filterProdi').val();
+        let namaFormFilter = $('#filterNamaForm').val();
+        let jenisFormFilter = $('#filterJenisForm').val();
+        
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                let prodi = data[3].trim();
+                let namaForm = data[2].trim();
+                let jenisForm = data[4].trim();
+                
+                let matchProdi = prodiFilter === "" || prodi === prodiFilter;
+                let matchNamaForm = namaFormFilter === "" || namaForm === namaFormFilter;
+                let matchJenisForm = jenisFormFilter === "" || jenisForm === jenisFormFilter;
+                
+                return matchProdi && matchNamaForm && matchJenisForm;
+            }
+        );
+        
+        table.draw();
+        $.fn.dataTable.ext.search.pop();
     });
 });

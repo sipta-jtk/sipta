@@ -85,7 +85,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="namaProdi">Nama Prodi</label>
+                                    <label for="namaProdi">Program Studi</label>
                                     <x-adminlte-select name="namaProdi" id="namaProdi" required>
                                         <option value="" disabled {{ old('namaProdi') ? '' : 'selected' }}>-- Pilih Nama Prodi --</option>
                                         @foreach ($prodiList as $prodi)
@@ -250,5 +250,6 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_aspek_formulir.js') }}"></script>
 @stop
