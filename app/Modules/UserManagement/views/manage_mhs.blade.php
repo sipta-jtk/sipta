@@ -108,7 +108,7 @@
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" id="nama-update" label="Nama" placeholder="Nama Lengkap"
                                     fgroup-class="" disable-feedback required/>
 
                                     <x-adminlte-input name="nim" id="nim-update" label="NIM" placeholder="NIM"
@@ -154,7 +154,7 @@
                             <form action="{{route('mahasiswa.addNewMhs')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" label="Nama" placeholder="Nama Lengkap"
                                         fgroup-class="" disable-feedback required/>
                                 
                                     <x-adminlte-input name="nim" label="NIM" placeholder="NIM"

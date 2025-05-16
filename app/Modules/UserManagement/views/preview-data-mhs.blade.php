@@ -44,7 +44,7 @@
                                 <input type="text" name="data[{{ $index }}][username]" value="{{ $row['username'] }}" class="form-control" required>
                             </td>
                             <td>
-                                <input type="text" name="data[{{ $index }}][nama]" value="{{ $row['nama'] }}" class="form-control" required>
+                                <input type="text" name="data[{{ $index }}][nama]" pattern="[A-Za-z\s.,]+"value="{{ $row['nama'] }}" class="form-control" required>
                             </td>
                             <td>
                                 <input type="email" name="data[{{ $index }}][email]" value="{{ $row['email'] }}" class="form-control" required>

@@ -154,7 +154,7 @@
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" id="nama-update" label="Nama" placeholder="Nama Lengkap"
                                         fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" id="nip-update" label="NIP" placeholder="NIP"
@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama</label>
-                                    <input type="text" name="nama" class="form-control" id="nama-input" placeholder="Nama" readonly>
+                                    <input type="text" name="nama" pattern="[A-Za-z\s.,]+" class="form-control" id="nama-input" placeholder="Nama" readonly>
                                 </div>
 
                                 <div class="mb-3">
@@ -224,7 +224,7 @@
                             <form action="{{route('dosen.add_new_dosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" label="Nama" placeholder="Nama Lengkap"
                                     fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
