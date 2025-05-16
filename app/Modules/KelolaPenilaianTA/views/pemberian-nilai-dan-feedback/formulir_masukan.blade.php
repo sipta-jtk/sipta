@@ -107,7 +107,7 @@
         </div>
 
         <!-- Tombol Lihat Dokumen -->
-        <div class="row mt-4">
+        <!-- <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
                     {{ match ($data['namaFta']) {
@@ -117,28 +117,28 @@
                         'sidang akhir' => 'Sidang Akhir',
                         default => ''
                     } }}
-                </strong> <br>
+                </strong> <br> -->
 
                 <!-- Tombol Preview Laporan -->
-                <button type="button" class="btn btn-primary btn-prev"
+                <!-- <button type="button" class="btn btn-primary btn-prev"
                     onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['laporan'] ? '' : 'disabled' }}>
                     Laporan <i class="fa-solid fa-file"></i>
-                </button>
+                </button> -->
 
                 <!-- Tombol Preview PowerPoint -->
-                <button type="button" class="btn btn-primary btn-prev"
+                <!-- <button type="button" class="btn btn-primary btn-prev"
                     onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
                     PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
 
         <!-- Modal Lihat Dokumen -->
-        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+        <!-- <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
             <div class="row px-3">
                 <div class="col-md-12">
                     <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
@@ -154,7 +154,7 @@
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
             </x-slot>
-        </x-adminlte-modal>
+        </x-adminlte-modal> -->
 
         <!-- Judul Form -->      
         <h3 class="heading-spacing text-center">
