@@ -1053,7 +1053,7 @@
         $('#edit_deskripsi').val(deskripsi);
         $('#edit_username').val('{{ auth()->user()->username }}'); // Handle file preview
         if (filePath && filePath.trim() !== '') {
-            var fullUrl = `${prefix}/storage/${filePath}`;
+            var fullUrl = `${prefix}/public/storage/${filePath}`;
 
             // Deteksi file extension
             var fileExtension = filePath.split('.').pop().toLowerCase();
