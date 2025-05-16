@@ -60,7 +60,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="namaProdi">Nama Prodi</label>
+                                    <label for="namaProdi">Program Studi</label>
                                     <input type="text" class="form-control" id="namaProdi" name="namaProdi" value="{{ $aspek->namaProdi }}" readonly>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-right">
-                                                <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                                                <div class="bobot-summary alert alert-warning">Total bobot harus 100%. Saat ini: 0%</div>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -224,5 +224,6 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/ubah_aspek_formulir.js') }}"></script>
 @stop

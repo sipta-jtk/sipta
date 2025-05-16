@@ -148,15 +148,16 @@ $(document).ready(function () {
 
             if (totalBobot !== 100) {
                 e.preventDefault();
-                $("#notification")
-                    .removeClass("d-none")
-                    .find("#notificationMessage")
-                    .text("Total Bobot Harus 100%");
 
-                setTimeout(function () {
-                    $("#notification").addClass("d-none");
-                }, 3000);
-                
+                Swal.fire({
+                    icon: "error",
+                    title: "Total Bobot Tidak Valid",
+                    text: `Total bobot harus 100%`,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+
                 return false;
             }
         }
