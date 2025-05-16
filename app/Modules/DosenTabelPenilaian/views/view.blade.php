@@ -99,11 +99,11 @@
         $('#penjadwalanTable').DataTable({
             language: {
                 search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                lengthMenu: "Tampilkan MENU data per halaman",
                 zeroRecords: "Data tidak ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                info: "Menampilkan START sampai END dari TOTAL data",
                 infoEmpty: "Tidak ada data tersedia",
-                infoFiltered: "(difilter dari total _MAX_ data)",
+                infoFiltered: "(difilter dari total MAX data)",
                 paginate: {
                     first: "<<",
                     last: ">>",

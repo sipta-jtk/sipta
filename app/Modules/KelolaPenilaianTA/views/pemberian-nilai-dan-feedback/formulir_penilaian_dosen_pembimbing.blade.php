@@ -178,8 +178,8 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <button type="submit" class="btn btn-warning">
-                Simpan
+            <button type="submit" class="btn btn-primary btn-prev btn-md my-1">
+                    Simpan <i class="fa-solid fa-floppy-disk"></i>
             </button>
         </form>
     </div>

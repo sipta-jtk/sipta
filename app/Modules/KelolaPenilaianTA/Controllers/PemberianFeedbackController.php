@@ -294,7 +294,7 @@ class PemberianFeedbackController extends Controller
 
             // Commit transaksi jika berhasil
             DB::commit();
-            return redirect()->route('kelola.penilaian')->with('success', 'Masukan berhasil disimpan.');
+            return redirect()->route('nilai.index')->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
