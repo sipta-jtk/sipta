@@ -100,6 +100,7 @@
                             <td>
                                 @php
                                     $fta = $row['fta'][$namaFta];
+                                    // Log::info(json_encode($fta, JSON_PRETTY_PRINT));
                                 @endphp
                                 @if ($fta)
                                     <div class="tooltip-wrapper position-relative">
@@ -122,14 +123,9 @@
                             </td>
                         @endforeach
 
-                        {{-- <td>
-                            <a title="edit" class="btn btn-warning btn-md my-1" href="" class="btn btn-sm btn-info">
-                            <i class="mx-1 fas fa-edit"></i>
-                            </a>
-                        </td> --}}
-
                         <td>
-                            <a title="Ubah" class="btn btn-warning btn-md m-1" href="#">
+                            <a title="Ubah" class="btn btn-warning btn-md m-1"
+                               href="{{ route('pengisian.nilai.dosbing', ['namaFta' => 'dosen-pembimbing', $row['fta'][$namaFta]['id_kota']]) }}">
                                 <i class="fas fa-edit text-dark m-1"></i>
                             </a>
                         </td>
