@@ -106,7 +106,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <!-- <div class="col-md-6">
                                         <h6>Dosen:</h6>
                                         @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
                                             <div class="mb-2">
@@ -116,8 +116,29 @@
                                                 </a>
                                             </div>
                                         @endforeach
-                                    </div>
+                                    </div> -->
+
+                                    <!-- DOSEN DROPDOWN -->
                                     <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dosenSelect"><h6>Dosen:</h6></label>
+                                            <div class="input-group">
+                                                <select class="form-control" id="dosenSelect">
+                                                    <option value="">Pilih Dosen</option>
+                                                    @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
+                                                        <option value="{{ $dosen->username }}">{{ $dosen->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateDosenBtn">
+                                                        Login sebagai
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-6">
                                         <h6>Mahasiswa:</h6>
                                         @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
                                             <div class="mb-2">
@@ -127,10 +148,50 @@
                                                 </a>
                                             </div>
                                         @endforeach
+                                    </div> -->
+
+                                    <!-- MAHASISWA DROPDOWN -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="mahasiswaSelect"><h6>Mahasiswa:</h6></label>
+                                            <div class="input-group">
+                                                <select class="form-control" id="mahasiswaSelect">
+                                                    <option value="">Pilih Mahasiswa</option>
+                                                    @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
+                                                        <option value="{{ $mahasiswa->username }}">{{ $mahasiswa->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateMahasiswaBtn">
+                                                        Login sebagai
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Handler untuk dropdown dosen
+                                document.getElementById('impersonateDosenBtn').addEventListener('click', function() {
+                                    const username = document.getElementById('dosenSelect').value;
+                                    if (username) {
+                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                    }
+                                });
+                                
+                                // Handler untuk dropdown mahasiswa
+                                document.getElementById('impersonateMahasiswaBtn').addEventListener('click', function() {
+                                    const username = document.getElementById('mahasiswaSelect').value;
+                                    if (username) {
+                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                    }
+                                });
+                            });
+                        </script>
                     @endif
                 </div>
             </form>
