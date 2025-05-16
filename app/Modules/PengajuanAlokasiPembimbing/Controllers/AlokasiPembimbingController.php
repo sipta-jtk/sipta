@@ -18,6 +18,7 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
+use App\Services\Notifikasi;
 
 class AlokasiPembimbingController extends Controller
 {
@@ -180,6 +181,16 @@ class AlokasiPembimbingController extends Controller
                 );
             }
 
+            Notifikasi::kirim(
+                '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+                $nip_dosen_1, // Ganti dengan username admin, atau log system
+                [
+                    'nama' => Dosen::where('id_dosen', $pembimbing1)->value('kode_dosen'),
+                    'Topik' => 'Dosen Pembimbing telah ditetapkan',
+                    'deadline' => now()->format('d-m-Y H:i')
+                ]
+            );
+            
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
                     ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2],
@@ -191,7 +202,17 @@ class AlokasiPembimbingController extends Controller
                     ]
                 );
             }
-
+                
+            Notifikasi::kirim(
+                '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+                $nip_dosen_2, // Ganti dengan username admin, atau log system
+                [
+                    'nama' => Dosen::where('id_dosen', $pembimbing2)->value('kode_dosen'),
+                    'Topik' => 'Dosen Pembimbing telah ditetapkan',
+                    'deadline' => now()->format('d-m-Y H:i')
+                ]
+            );
+                
             // === SIMPAN PENGUJI ===
             foreach ([[1, $nip_penguji_1], [2, $nip_penguji_2], [3, $nip_penguji_3]] as [$urutan, $nip]) {
                 if ($nip) {

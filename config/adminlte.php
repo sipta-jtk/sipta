@@ -302,13 +302,11 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'text' => '',  // Hapus teks "Notifications"
-            'url' => '#',
-            'icon' => 'fas fa-bell',  // Ikon lonceng
-            'topnav_right' => true,  // Menampilkan di navbar kanan
-            'label' => 1,  // Menampilkan jumlah notifikasi (badge)
-            'label_color' => 'danger',
+            'text' => '',
+            'icon' => 'fas fa-bell',
+            'topnav_right' => true,
             'id' => 'notificationBell',
+            'classes' => 'nav-link',
         ],
         [
             'type' => 'navbar-search',
@@ -585,6 +583,9 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
+
+            // 'label' => 4,
+            // 'label_color' => 'success',
             // 'label' => 4,
             // 'label_color' => 'success',
         ],
@@ -718,16 +719,19 @@ return [
         ],
         [
             'text' => 'Notifikasi dan Reminder',
-            // 'url' => 'admin/pages',
-            'icon' => 'fas fa-fw fa-file',
+            'icon' => 'fas fa-bell',
             'submenu' => [
                 [
-                    'text' => 'Edit Template Notifikasi',
-                    'url' => '/notification/admin/settingawal',
+                    'text' => 'Pengaturan Notifikasi',
+                    'url' => $prefix . '/notification/admin/settingawal',
+                    'icon' => 'fas fa-pen',
+                    'can' => 'admin',
                 ],
                 [
                     'text' => 'Log Notifikasi Admin',
-                    'url' => '/admin/log-admin',
+                    'url' => $prefix . '/api/logAdmin',
+                    'icon' => 'fas fa-clipboard-list',
+                    'can' => 'admin',
                 ],
             ]
             // 'label' => 4,

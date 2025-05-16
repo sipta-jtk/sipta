@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Penjadwalan;
 use App\Models\PengajuanJadwalKota;
 use App\Models\VerifikasiBerkasPengajuan;
+use App\Services\Notifikasi;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
@@ -359,6 +360,18 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_dosen_penguji_2' => null,
             'status_koordinator_ta' => null,
         ]);
+        
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }

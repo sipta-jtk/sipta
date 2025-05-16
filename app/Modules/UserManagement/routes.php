@@ -13,6 +13,7 @@ use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
 use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
+use App\Modules\UserManagement\Controllers\DashboardController;
 
 
 use App\Modules\UserManagement\Controllers\PerekrutanAnggotaKoTAController;
@@ -189,6 +190,12 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
     Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
 });
+
+/* 
+
+    Dashboard route
+*/
+Route::get('/test-dashboard', [DashboardController::class, 'showProfileAdmin']);
 
 Route::middleware(['can:mahasiswa_ta'])->group(function () {
     Route::get('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'showTambahAnggotaForm'])->name('tambah-anggota-kota');

@@ -43,7 +43,6 @@
 
         <div class="d-flex pt-3 justify-content-end">
             <a href="{{ url(env('PREFIX_URL', 'sipta') . '/') }}" class="btn btn-secondary mx-1">Kembali ke Dashboard</a>
-            <a href="#" class="btn btn-danger mx-1">Tinggalkan Pra-KoTA</a>
         </div>
     </div>
 </div>
