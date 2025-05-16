@@ -47,7 +47,7 @@ class MahasiswaController extends Controller
             'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
         ]);
 
-        $password = Str::random(6);
+        $password = Str::random(8);
         DB::beginTransaction();
         try {
         $user = User::create([
@@ -215,7 +215,7 @@ public function import(Request $request)
         DB::beginTransaction();
         try {
         foreach ($validatedData['data'] as $userData) {
-            $password = Str::random(6);    
+            $password = Str::random(8);    
             $users[] = [
                 'username' => $userData['username'],
                 'email' => $userData['email'],
@@ -249,5 +249,37 @@ public function import(Request $request)
     }
 
 }
+
+public function aktifkanAkun(Request $request)
+    {
+        $request->validate([
+            'nim' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            User::where('username', $request->nim)->update(['status_user' => 'aktif']);
+            DB::commit();
+            return redirect()->route('manage.mhs')->with('success', 'Mahasiswa berhasil diaktifkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.mhs')->with('error', 'Gagal mengaktifkan Mahasiswa: ' . $e->getMessage());
+        }
+    }
+    public function nonAktifkanAkun(Request $request)
+    {
+        $request->validate([
+            'nim' => 'required',
+        ]);
+        DB::beginTransaction();
+        try {
+            User::where('username', $request->nim)->update(['status_user' => 'nonaktif']);
+            DB::commit();
+            return redirect()->route('manage.mhs')->with('success', 'Mahasiswa berhasil dinonaktifkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.mhs')->with('error', 'Gagal menonaktifkan Mahasiswa: ' . $e->getMessage());
+        }
+    }
 
 }

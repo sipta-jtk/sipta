@@ -18,7 +18,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th style="width: 10%">Username</th>
+                        <th style="width: 10%">NIP</th>
                         <th  style="width: 20%">Nama</th>
                         <th style="width: 15%">Email</th>
                         <th style="width: 10%">ID </th>
