@@ -51,9 +51,9 @@
                     <th>No</th>
                     <th>NIM</th>
                     <th>Nama</th>
-                    <th>Tahun Masuk</th>
                     <th>Prodi</th>
                     <th>Kelas</th>
+                    <th>Tahun Masuk</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -66,9 +66,9 @@
                     <td>{{$no}}</td>
                     <td>{{ $mhs->nim }}</td>
                     <td>{{ $mhs->nama }}</td>
-                    <td>{{ $mhs->tahun_masuk }}</td>
                     <td>{{ $mhs->nama_prodi }}</td>
                     <td>{{ $mhs->kelas}}</td>
+                    <td>{{ $mhs->tahun_masuk }}</td>
                     <td>    
                     @php
                     $no++; 
@@ -217,7 +217,7 @@
                                     <x-slot name="footerSlot"></x-slot>
                             </form>
                     </x-adminlte-modal>
-                    <x-adminlte-modal id="aktifMhs" title="Aktifkan Mahasiswa" theme="blue" size='lg'>
+                    <x-adminlte-modal id="AktifMhs" title="Aktifkan Mahasiswa" theme="blue" size='lg'>
                             <form action="{{route('aktif-mhs')}}" method="POST" >
                                 @csrf
                                 <h4 id="konfirmasi-pesan-aktif">Yakin ingin mengaktifkan Mahasiswa ?</h4>
@@ -230,8 +230,6 @@
                             </form>
                     </x-adminlte-modal>  
             </div>
-
-
             </div>
 
 
@@ -243,27 +241,13 @@
 @stop
 
 @section('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 
 <script>
-    $('#datatable').DataTable({
-        language: {
-            search: "Cari:",
-            lengthMenu: "Tampilkan _MENU_ data per halaman",
-            zeroRecords: "Data tidak ditemukan",
-            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data tersedia",
-            infoFiltered: "(difilter dari total _MAX_ data)",
-            paginate: {
-                first: "<<",
-                last: ">>",
-                next: ">",
-                previous: "<"
-            }
-        }
-    });
+  
 
     document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.querySelector('input[type="file"]');
