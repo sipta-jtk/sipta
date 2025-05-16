@@ -22,19 +22,22 @@ class DosenTabelPenilaianController extends Controller
 {
     public function index()
     {
-        $nip = Auth::user()->dosen->nip; // Asumsi NIP dosen disimpan di kolom `username` pada tabel `users`
+        $nip = Auth::user()->dosen->nip;
 
-        // Cari kota yang dibimbing atau diuji oleh dosen tersebut
+        // Ambil hanya penjadwalan yang status-nya 'fix'
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
-            ->with(['pengajuanPembimbing.kota.penjadwalan', 
+            ->with([
+                'pengajuanPembimbing.kota.penjadwalan' => function ($query) {
+                    $query->where('status', 'fix');
+                },
                 'pengajuanPembimbing.kota.mahasiswa',
-                ])
+            ])
             ->get()
             ->pluck('pengajuanPembimbing.kota.penjadwalan')
             ->flatten()
-            ->unique('id_penjadwalan'); // Pastikan tidak ada duplikasi penjadwalan
+            ->unique('id_penjadwalan')
+            ->filter(); // filter() untuk menghilangkan null jika tidak ada penjadwalan yang fix
 
-        // Format data penjadwalan
         $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip) {
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
             $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip) {
@@ -52,7 +55,7 @@ class DosenTabelPenilaianController extends Controller
                 },
                 'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,
-                'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
+                'kota' => $item->kota->nama_kota,
                 'id_kota' => $item->kota->id_kota,
                 'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
                 'status_penilaian' => $statusPenilaian,
@@ -64,7 +67,6 @@ class DosenTabelPenilaianController extends Controller
             ];
         });
 
-        // Kembalikan response JSON
         return view('DosenTabelPenilaian.views.view', compact('penjadwalan'));
     }
 }
