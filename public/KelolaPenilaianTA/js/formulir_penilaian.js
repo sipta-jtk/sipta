@@ -58,10 +58,8 @@ $(document).ready(function () {
 
         $("#formulirTable tbody tr").each(function () {
             let prodi = $(this).find("td:eq(3)").text().trim();
-            let namaForm = $(this).find("td:eq(2)").text().trim();
             let jenisForm = $(this).find("td:eq(4)").text().trim();
             if (prodi) prodiSet.add(prodi);
-            if (namaForm) namaFormSet.add(namaForm);
             if (jenisForm) jenisFormSet.add(jenisForm);
         });
 
