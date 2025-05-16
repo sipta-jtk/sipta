@@ -1,14 +1,32 @@
 $(document).ready(function () {
-    function updateBobotSummary() {
+    function validateTotalBobot() {
         let totalBobot = 0;
+
+        // Hitung total bobot dari semua input
         $("input[name='bobot_kriteria[]']").each(function () {
-            let bobot = parseFloat($(this).val()) || 0;
-            totalBobot += bobot;
+            let value = parseFloat($(this).val());
+            if (!isNaN(value)) {
+                totalBobot += value;
+            }
         });
 
-        $(".bobot-summary").text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        const bobotSummary = $(".bobot-summary");
+        if (totalBobot === 100) {
+            bobotSummary
+                .removeClass("alert-warning")
+                .addClass("alert-info")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            bobotSummary
+                .removeClass("alert-info")
+                .addClass("alert-warning")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        }
+
         return totalBobot;
     }
+
+    validateTotalBobot();
 
     function setMinDate() {
         const today = new Date();
@@ -35,31 +53,71 @@ $(document).ready(function () {
 
     // Panggil fungsi untuk menghitung total bobot saat halaman pertama kali dimuat
     if ($("#jenisForm").val() === "penilaian") {
-        updateBobotSummary();
+        validateTotalBobot();
     }
 
     // Update total bobot saat nilai bobot diubah
     $(document).on("input", "input[name='bobot_kriteria[]']", function () {
         if ($("#jenisForm").val() === "penilaian") {
-            updateBobotSummary();
+            validateTotalBobot();
         }
     });
 
-    // Form tidak bisa dikirim jika total bobot tidak 100% (hanya untuk penilaian)
+    // Validasi Form sebelum submit
     $('#aspekForm').on('submit', function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        $("input[required], select[required], textarea[required]").each(function () {
+            if (!$(this).val()) {
+                valid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!valid) {
+            Swal.fire({
+                icon: "error",
+                title: "Terdapat Field Kosong",
+                text: "Mohon isi semua field yang diperlukan.",
+            });
+            return false;
+        }
+
         const jenisForm = $("#jenisForm").val();
         if (jenisForm === "penilaian") {
-            let totalBobot = updateBobotSummary();
+            let totalBobot = validateTotalBobot();
             if (totalBobot !== 100) {
-                e.preventDefault();
-                $("#notificationMessage").text("Total bobot harus 100%");
-                $("#notification").removeClass("d-none");
-
-                setTimeout(function () {
-                    $("#notification").addClass("d-none");
-                }, 3000);
+                Swal.fire({
+                    icon: "error",
+                    title: "Total Bobot Tidak Valid",
+                    text: `Total bobot harus 100%`,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+                return false;
             }
         }
+
+        Swal.fire({
+            title: "Konfirmasi Simpan",
+            text: "Apakah Anda yakin ingin menyimpan perubahan aspek penilaian ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Simpan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#aspekForm')[0].submit();
+            }
+        });
     });
 
     // Menambahkan baris baru di tabel Aspek Penilaian
@@ -101,7 +159,7 @@ $(document).ready(function () {
     $(document).on("click", ".remove-row", function () {
         $(this).closest("tr").remove();
         if ($("#jenisForm").val() === "penilaian") {
-            updateBobotSummary();
+            validateTotalBobot();
         }
         updateRowStriping();
     });

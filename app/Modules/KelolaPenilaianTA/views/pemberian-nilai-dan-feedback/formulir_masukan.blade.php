@@ -20,6 +20,7 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',
@@ -71,7 +72,7 @@
         <div class="row mt-4">
             <div class="col-md-6">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-striped table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>

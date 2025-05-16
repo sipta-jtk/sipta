@@ -19,9 +19,9 @@
 @stop
 
 @section('content')
-<div class="card p-4">
+<div class="card p-4" style="min-height: 80vh;">
     <div class="p-4">
-        <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
+        <form id="rubrikPenilaianForm" action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
             <div class="row">
@@ -51,6 +51,15 @@
                             value="{{ $data->nama_prodi ?? '' }}" readonly>
                     </div>
                 </div>
+
+                <!-- Jenis TA -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="jenisTA">Jenis TA</label>
+                        <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                            value="{{ $data->jenis_ta ?? '' }}" readonly>
+                    </div>
+                </div>
             </div>
 
             <!-- Aspek Penilaian -->
@@ -61,7 +70,7 @@
                 </button>
             </div>
 
-            <div class="table-container mb-3">
+            <div class="table-container mb-3" style="min-height: 50vh;">
                 <table class="table text-center">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
@@ -114,13 +123,14 @@
 
             <!-- Tombol Submit -->
             <div class="d-flex justify-content-end px-3">
-                <button type="submit" class="btn btn-primary btn-md my-1">
+                <button type="button" class="btn btn-primary btn-md my-1" id="showKonfirmasiModal">
                     Simpan <i class="fa-solid fa-floppy-disk"></i>
                 </button>
             </div>
         </form>
     </div>
 </div>
+
 @stop
 
 @section('css')
@@ -131,6 +141,7 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/ubah_rubrik_penilaian.js') }}"></script>
     <script>
         const rentangNilai = @json($rentangNilai);

@@ -34,7 +34,7 @@
         @endif
         {{-- Tabel Scrollable --}}
         <div>
-            <table id="alokasiTable" class="table text-center table-stripped table-bordered table-hover">
+            <table id="alokasiTable" class="table text-center table-stripped table-hover">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th rowspan="2" class="align-middle" style="width: 3%;">No</th>

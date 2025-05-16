@@ -47,7 +47,7 @@ thead th {
     color: white;
     text-align: center;
     padding: 12px;
-    border-bottom: 2px solid #fff;
+    border-bottom: none !important;
 }
 
 tbody tr:nth-child(even) {

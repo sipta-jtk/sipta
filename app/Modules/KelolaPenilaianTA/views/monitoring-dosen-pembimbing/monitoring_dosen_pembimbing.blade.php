@@ -51,10 +51,6 @@
                                     <i class="mx-1 my-1 fas fa-arrow-circle-right"></i>
                                 </a>
                             </td>
-                            {{-- <a class="btn btn-primary btn-md my-1 w-100" href="" class="btn btn-smbtn-info">
-
-                            Tinjau<i class="mx-1 my-1 fas fa-arrow-circle-right"></i>
-                            </a> --}}
                         </tr>
                     @endforeach
                     @if (count($dataProdi['formulir']) === 0)
@@ -100,34 +96,52 @@
                             <td>
                                 @php
                                     $fta = $row['fta'][$namaFta];
-                                    // Log::info(json_encode($fta, JSON_PRETTY_PRINT));
+                                    // dump($fta);
                                 @endphp
                                 @if ($fta)
                                     <div class="tooltip-wrapper position-relative">
-                                        <a href="{{ $fta['available'] ? route('monitoring.feedback.dosen', [
-                                            'id_fta' => $fta['id_fta'],
-                                            'id_kota' => $fta['id_kota']
-                                        ]) : '#' }}"
-                                        class="btn btn-md btn-primary m-1 {{ $fta['available'] ? '' : 'disabled-link' }}">
-                                            <i class="fas fa-eye m-1"></i>
-                                        </a>
-                                        @if (!$fta['available'])
-                                            <div class="tooltip-box position-absolute bg-white border p-2 shadow rounded text-left">
-                                                <strong>Masukkan belum tersedia!</strong>
-                                            </div>
-                                        @endif
+                                        <div class="position-relative d-inline-block">
+                                            <a href="{{ $fta['available'] ? route('monitoring.feedback.dosen', [
+                                                'id_fta' => $fta['id_fta'],
+                                                'id_kota' => $fta['id_kota']
+                                            ]) : '#' }}"
+                                            class="{{ $fta['available'] ? 'btn btn-md btn-primary m-1' : 'btn btn-md btn-primary m-1 disabled-link' }}">
+                                                <i class="fas fa-eye m-1"></i>
+                                            </a>
+                                            @if (!$fta['available'])
+                                                <div class="tooltip-box">
+                                                    <strong>Masukkan belum tersedia!</strong>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
                         @endforeach
-
                         <td>
-                            <a title="Ubah" class="btn btn-warning btn-md m-1"
-                               href="{{ route('pengisian.nilai.dosbing', ['namaFta' => 'dosen-pembimbing', $row['fta'][$namaFta]['id_kota']]) }}">
-                                <i class="fas fa-edit text-dark m-1"></i>
-                            </a>
+                            @php
+                                $sidangAkhir = $row['fta']['Sidang Akhir'] ?? null;
+                                $isSidangAkhirAvailable = $sidangAkhir && $sidangAkhir['available'];
+                            @endphp
+                            <div class="tooltip-wrapper position-relative">
+                                <div class="position-relative d-inline-block">
+                                    <a title="Ubah" 
+                                    class="btn btn-warning btn-md m-1 {{ $isSidangAkhirAvailable ? '' : 'disabled-link' }}"
+                                    href="{{ $isSidangAkhirAvailable ? route('pengisian.nilai.dosbing', ['namaFta' => 'dosen-pembimbing', $sidangAkhir['id_kota']]) : '#' }}">
+                                        <i class="fas fa-edit text-dark m-1"></i>
+                                    </a>
+                                    @if (!$isSidangAkhirAvailable)
+                                        <div class="tooltip-box">
+                                            <strong>Penilaian belum bisa dilakukan, karena penilaian sidang akhir belum dilaksanakan!</strong>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            
+
+                            
                         </td>
 
                     </tr>
@@ -143,7 +157,6 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/formulir_penilaian.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/monitoring_nilai_mahasiswa.css') }}">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
@@ -155,26 +168,4 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/formulir_penilaian.js') }}"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/monitoring_mahasiswa.js') }}"></script>
-    <script
-    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script
-    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-    <script>
-    $('#example').DataTable({
-    language: {
-    search: "Cari:",
-    lengthMenu: "Tampilkan MENU data per halaman",
-    zeroRecords: "Data tidak ditemukan",
-    info: "Menampilkan START sampai END dari TOTAL data",
-    infoEmpty: "Tidak ada data tersedia",
-    infoFiltered: "(difilter dari total MAX data)",
-    paginate: {
-    first: "<<",
-    last: ">>",
-    next: ">",
-    previous: "<"
-    }
-    }
-    });
-    </script>
 @stop

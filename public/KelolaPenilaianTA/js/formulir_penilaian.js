@@ -38,7 +38,7 @@ $(document).ready(function () {
     });
 
     $("#toggleFilter").click(function () {
-        $("#filterSection").slideToggle(); // Efek animasi buka/tutup
+        $("#filterSection").slideToggle();
     });
 
     table
@@ -52,7 +52,6 @@ $(document).ready(function () {
         })
         .draw();
 
-    // Mengambil data program studi dan jenis formulir unik dari tabel
     function updateFilterOptions() {
         let prodiSet = new Set();
         let jenisFormSet = new Set();
@@ -64,14 +63,12 @@ $(document).ready(function () {
             if (jenisForm) jenisFormSet.add(jenisForm);
         });
 
-        // Update dropdown filter program studi
         let prodiDropdown = $("#filterProdi");
         prodiDropdown.empty().append('<option value="">Semua Program Studi</option>');
         prodiSet.forEach((prodi) => {
             prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
         });
 
-        // Update dropdown filter jenis formulir
         let jenisFormDropdown = $("#filterJenisForm");
         jenisFormDropdown.empty().append('<option value="">Semua Jenis Formulir</option>');
         jenisFormSet.forEach((jenisForm) => {
@@ -79,16 +76,13 @@ $(document).ready(function () {
         });
     }
 
-    // Jalankan fungsi update filter setelah tabel dimuat
     updateFilterOptions();
 
     $("#applyFilter").click(function () {
         const selectedProdi = $("#filterProdi").val();
-        const selectedNamaForm = $("#filterNamaForm").val();
         const selectedJenisForm = $("#filterJenisForm").val();
 
         table.columns(3).search(selectedProdi).draw();
         table.columns(4).search(selectedJenisForm).draw();
-        table.columns(2).search(selectedNamaForm).draw();
     });
 });
