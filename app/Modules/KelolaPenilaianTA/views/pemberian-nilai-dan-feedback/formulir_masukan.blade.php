@@ -13,6 +13,9 @@
 
 @section('content_header')
     <div class="container-fluid p-3">
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">MASUKAN {{ strtoupper($data['namaFta']) }}</h1>
+
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
@@ -27,9 +30,6 @@
             ]
         ])
         @endcomponent
-
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">MASUKAN {{ strtoupper($data['namaFta']) }}</h1>
     </div>
 @stop
 
