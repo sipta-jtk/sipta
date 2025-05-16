@@ -52,66 +52,39 @@ $(document).ready(function () {
         })
         .draw();
 
-    const namaFormulirOptions = [
-        "Seminar I",
-        "Seminar II", 
-        "Seminar III", 
-        "Sidang Akhir", 
-        "Dosen Pembimbing"
-    ];
-    
-    const prodiOptions = [
-        "D3-Teknik Informatika",
-        "D4-Teknik Informatika"
-    ];
-    
-    const jenisFormulirOptions = [
-        "penilaian",
-        "feedback"
-    ];
-    
-    function setFilterOptions() {
-        let namaFormDropdown = $("#filterNamaForm");
-        namaFormDropdown.empty().append('<option value="">Semua Nama Formulir</option>');
-        namaFormulirOptions.forEach((namaForm) => {
-            namaFormDropdown.append(`<option value="${namaForm}">${namaForm}</option>`);
+    function updateFilterOptions() {
+        let prodiSet = new Set();
+        let jenisFormSet = new Set();
+
+        $("#formulirTable tbody tr").each(function () {
+            let prodi = $(this).find("td:eq(3)").text().trim();
+            let namaForm = $(this).find("td:eq(2)").text().trim();
+            let jenisForm = $(this).find("td:eq(4)").text().trim();
+            if (prodi) prodiSet.add(prodi);
+            if (namaForm) namaFormSet.add(namaForm);
+            if (jenisForm) jenisFormSet.add(jenisForm);
         });
-        
+
         let prodiDropdown = $("#filterProdi");
         prodiDropdown.empty().append('<option value="">Semua Program Studi</option>');
-        prodiOptions.forEach((prodi) => {
-            prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
+        prodiSet.forEach((prodi) => {
+            prodiDropdown.append(<option value="${prodi}">${prodi}</option>);
         });
-        
+
         let jenisFormDropdown = $("#filterJenisForm");
         jenisFormDropdown.empty().append('<option value="">Semua Jenis Formulir</option>');
-        jenisFormulirOptions.forEach((jenisForm) => {
-            jenisFormDropdown.append(`<option value="${jenisForm}">${jenisForm}</option>`);
+        jenisFormSet.forEach((jenisForm) => {
+            jenisFormDropdown.append(<option value="${jenisForm}">${jenisForm}</option>);
         });
     }
     
-    setFilterOptions();
+    updateFilterOptions();
 
-    $('#applyFilter').click(function() {
-        let prodiFilter = $('#filterProdi').val();
-        let namaFormFilter = $('#filterNamaForm').val();
-        let jenisFormFilter = $('#filterJenisForm').val();
-        
-        $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex) {
-                let prodi = data[3].trim();
-                let namaForm = data[2].trim();
-                let jenisForm = data[4].trim();
-                
-                let matchProdi = prodiFilter === "" || prodi === prodiFilter;
-                let matchNamaForm = namaFormFilter === "" || namaForm === namaFormFilter;
-                let matchJenisForm = jenisFormFilter === "" || jenisForm === jenisFormFilter;
-                
-                return matchProdi && matchNamaForm && matchJenisForm;
-            }
-        );
-        
-        table.draw();
-        $.fn.dataTable.ext.search.pop();
+    $("#applyFilter").click(function () {
+        const selectedProdi = $("#filterProdi").val();
+        const selectedJenisForm = $("#filterJenisForm").val();
+
+        table.columns(3).search(selectedProdi).draw(); 
+        table.columns(4).search(selectedJenisForm).draw();
     });
 });
