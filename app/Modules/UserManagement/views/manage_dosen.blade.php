@@ -154,7 +154,7 @@
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" id="nama-update" label="Nama" placeholder="Nama Lengkap"
                                         fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" id="nip-update" label="NIP" placeholder="NIP"
@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama</label>
-                                    <input type="text" name="nama" class="form-control" id="nama-input" placeholder="Nama" readonly>
+                                    <input type="text" name="nama" pattern="[A-Za-z\s.,]+" class="form-control" id="nama-input" placeholder="Nama" readonly>
                                 </div>
 
                                 <div class="mb-3">
@@ -224,7 +224,7 @@
                             <form action="{{route('dosen.add_new_dosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" label="Nama" placeholder="Nama Lengkap"
                                     fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
@@ -281,15 +281,8 @@
                         <x-adminlte-modal id="nonAktifDosen" title="Menonaktifkan Dosen" theme="blue" size='lg'>
                             <form action="{{route('nonaktif-dosen')}}" method="POST">
                                 @csrf
-                                <h3>Yakin ingin menonaktifkan Dosen ?</h3>
-                                <div class="mb-3">
-                                    <label for="nip" class="form-label">NIP</label>
-                                    <input type="text" name="nip" class="form-control" id="nip-input-nonaktif" placeholder="NIP" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nip" class="form-label">Nama</label>
-                                    <input type="text" name="nama" class="form-control" id="nama-input-nonaktif" placeholder="Nama" readonly>
-                                </div>
+                                <h4 id="konfirmasi-pesan-nonaktif">Yakin ingin menonaktifkan Dosen ?</h4>
+                                <input type="hidden" name="nip" class="form-control" id="nip-input-nonaktif">
                                 <div class="d-flex justify-content-end">
                                     <x-adminlte-button theme="success" label="Nonaktifkan"
                                      class="mx-1" type="submit"/>
@@ -300,15 +293,8 @@
                     <x-adminlte-modal id="aktifDosen" title="Aktifkan Dosen" theme="blue" size='lg'>
                             <form action="{{route('aktif-dosen')}}" method="POST" >
                                 @csrf
-                                <h3>Yakin ingin mengaktifkan Dosen ?</h3>
-                                <div class="mb-3">
-                                    <label for="nip" class="form-label">NIP</label>
-                                    <input type="text" name="nip" class="form-control" id="nip-input-aktif" placeholder="NIP" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nip" class="form-label">Nama</label>
-                                    <input type="text" name="nama" class="form-control" id="nama-input-aktif" placeholder="Nama" readonly>
-                                </div>
+                                <h4 id="konfirmasi-pesan-aktif">Yakin ingin mengaktifkan Dosen ?</h4>
+                                <input type="hidden" name="nip" class="form-control" id="nip-input-aktif">
                                 <div class="d-flex justify-content-end">
                                     <x-adminlte-button theme="success" label="Aktifkan"
                                      class="mx-1" type="submit"/>
@@ -511,15 +497,18 @@ document.addEventListener("DOMContentLoaded", function () {
             var nip = $(this).data("nip");
             var nama = $(this).data("nama");
             document.getElementById("nip-input-nonaktif").value = nip;
-            document.getElementById("nama-input-nonaktif").value = nama;
-        });
+            document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
+            "Apakah Anda yakin ingin menonaktifkan dosen " + nama + "?";
     });
+        });
+
      $(document).ready(function () {
         $(".btn-aktif-dosen").click(function () {
             var nip = $(this).data("nip");
             var nama = $(this).data("nama");
             document.getElementById("nip-input-aktif").value = nip;
-            document.getElementById("nama-input-aktif").value = nama;
+            document.getElementById("konfirmasi-pesan-aktif").textContent = 
+            "Apakah Anda yakin ingin mengaktifkan dosen " + nama + "?";
         });
     });
     

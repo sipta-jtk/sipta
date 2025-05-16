@@ -109,7 +109,7 @@ class DosenController extends Controller
 
         DB::beginTransaction();
         try {
-            $randomCode = "password123";
+            $password = Str::random(8);
             $user = User::create([
                 'username' => $request->nip,
                 'email' => $request->email,
@@ -117,7 +117,7 @@ class DosenController extends Controller
                 'no_whatsapp' => $request->no_wa,
                 'photo' => 'default.jpg',
                 'role_user' => 'dosen',
-                'password' => Hash::make($randomCode)
+                'password' => Hash::make($password)
             ]);
 
             Dosen::create([
@@ -322,7 +322,7 @@ class DosenController extends Controller
         DB::beginTransaction();
         try {
             foreach ($validatedData['data'] as $userData) {
-            $randomCode = "password123";
+            $password = Str::random(8);
 
             $users[] = [
                 'username' => $userData['username'],
@@ -331,7 +331,7 @@ class DosenController extends Controller
                 'no_whatsapp' => $userData['no_wa'],
                 'photo' => 'default.jpg',
                 'role_user' => 'dosen',
-                'password' => Hash::make($randomCode)
+                'password' => Hash::make($password)
             ];
 
             $dosen[] = [

@@ -108,6 +108,7 @@ Route::post('/addNewMhs', [MahasiswaController::class, 'addNewMhs'])->name('maha
 Route::post('/updateMhs', [MahasiswaController::class, 'updateMhs'])->name('mahasiswa.updateMhs');
 Route::get('/previewDataMhs', [MahasiswaController::class, 'previewDataMhs'])->name('previewDataMhs');
 Route::post('/inputBulkMhs', [MahasiswaController::class, 'inputBulk'])->name('inputBulkMhs');
+
 Route::get('/download-template-dosen', function () {
     $file = public_path('UserManagement/template-registrasi-dosen.xlsx');
     return Response::download($file, 'template-registrasi-dosen.xlsx');
@@ -118,14 +119,18 @@ Route::get('/download-template-mahasiswa', function () {
     return Response::download($file, 'template-registrasi-mahasiswa.xlsx');
 })->name('download.template-mhs');
 
+// Route untuk aktifkan atau non-aktifkan akun
+Route::post('/nonaktif-dosen', [DosenController::class, 'nonaktifkanAkun'])->name('nonaktif-dosen');
+Route::post('/aktif-dosen', [DosenController::class, 'aktifkanAkun'])->name('aktif-dosen');
+
+Route::post('/nonaktif-mhs', [MahasiswaController::class, 'nonaktifkanAkun'])->name('nonaktif-mhs');
+Route::post('/aktif-mhs', [MahasiswaController::class, 'aktifkanAkun'])->name('aktif-mhs');
 
 Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import-mhs');
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
 Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
-Route::post('/nonaktif-dosen', [DosenController::class, 'nonaktifkanAkun'])->name('nonaktif-dosen');
-Route::post('/aktif-dosen', [DosenController::class, 'aktifkanAkun'])->name('aktif-dosen');
 Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
 
 
