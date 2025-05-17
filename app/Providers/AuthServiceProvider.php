@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Models\AlokasiDosen;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,14 +24,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        
+
         /**********************************************************
         ! Restricted    
-            * Role Access v.1
-            * Base role.
-            * Role dasar dari pengguna.
-            * Perubahan base role dilakukan oleh tim User Management.
-        ***********************************************************/
+         * Role Access v.1
+         * Base role.
+         * Role dasar dari pengguna.
+         * Perubahan base role dilakukan oleh tim User Management.
+         ***********************************************************/
 
         //Admin
         Gate::define('admin', function ($user) {
@@ -41,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('koordinator_ta', function ($user) {
             return $user->role_user === 'dosen' && $user->dosen->role_dosen === 'koordinator_ta';
         });
+
 
         //Mahasiswa TA
         Gate::define('mahasiswa_ta', function ($user) {
@@ -69,15 +71,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         /***************************************************************
-            * CUSTOM GATE
-            * Silahkan definisikan gate untuk keperluan anda disini.
-            * Supaya readable, silahkan beri comment sebagai pembatas dari tiap fitur
-            * Format: [Topik n] - Fitur ...
-        ******************************************************************/
+         * CUSTOM GATE
+         * Silahkan definisikan gate untuk keperluan anda disini.
+         * Supaya readable, silahkan beri comment sebagai pembatas dari tiap fitur
+         * Format: [Topik n] - Fitur ...
+         ******************************************************************/
 
         /**********************************
          * [Topik 7] - Fitur Kelola Jurusan
-        ***********************************/
+         ***********************************/
 
         //Contoh Akses Multirole
         Gate::define('akses-form-pisah-kota', function ($user) {
@@ -91,28 +93,28 @@ class AuthServiceProvider extends ServiceProvider
 
         /**********************************
          * [Topik 2] - Fitur Pengajuan Seminar 3 & Sidang
-        ***********************************/
+         ***********************************/
         //All Mahasiswa 
         Gate::define('all_mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('mahasiswa_non_ta');
         });
-        
+
         Gate::define('akses-dosen-kelola-pengajuan-jadwal', function ($user) {
             return Gate::allows('dosen') || Gate::allows('kooordinator_ta');
         });
-      
+
         /**********************************
          * [Topik 2] - Fitur Pengajuan Seminar 3 & Sidang
-        ***********************************/
+         ***********************************/
         //All Mahasiswa 
         Gate::define('all_mahasiswa', function ($user) {
-            return $user->role_user === 'mahasiswa' && 
-                   ($user->mahasiswa->status_ta === 'mahasiswa_ta' || 
+            return $user->role_user === 'mahasiswa' &&
+                ($user->mahasiswa->status_ta === 'mahasiswa_ta' ||
                     $user->mahasiswa->status_ta === 'mahasiswa_non_ta');
         });
         /********************************************
          * [Topik 7] - Fitur Perekrutan Anggota KoTA
-        *********************************************/
+         *********************************************/
 
         // Akses Form Perekrutan Anggota KoTA
         Gate::define('akses-form-perekrutan-anggota-kota', function ($user) {
@@ -127,20 +129,45 @@ class AuthServiceProvider extends ServiceProvider
 
         /********************************************
          * [Topik 6] - Fitur Repository TA
-        *********************************************/
+         *********************************************/
         Gate::define('akses-sidebar-repo-dosen', function ($user) {
             return Gate::allows('dosen') || Gate::allows('admin');
+        });
+        Gate::define('akses-koordinator-admin', function ($user) {
+            return Gate::allows('koordinator_ta') || Gate::allows('admin');
         });
         Gate::define('akses-sidebar-repo-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
         });
         Gate::define('akses-sidebar-repo', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('dosen') || Gate::allows('admin');
-        });  
-      
+        });
+
+        Gate::define('penguji', function ($user) {
+            if ($user->role_user !== 'dosen') return false;
+
+            $nip = $user->dosen->nip ?? null;
+            if (!$nip) return false;
+
+            return AlokasiDosen::where('nip', $nip)
+                ->where('tipe_alokasi', 'penguji')
+                ->exists();
+        });
+
+        Gate::define('pembimbing', function ($user) {
+            if ($user->role_user !== 'dosen') return false;
+
+            $nip = $user->dosen->nip ?? null;
+            if (!$nip) return false;
+
+            return AlokasiDosen::where('nip', $nip)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->exists();
+        });
+
         /**********************************
          * [Topik 4] - Fitur Kelola Penilaian
-        ***********************************/
+         ***********************************/
         Gate::define('akses-penilaian-koordinator-ta', function ($user) {
             return Gate::allows('koordinator_ta');
         });
@@ -148,8 +175,6 @@ class AuthServiceProvider extends ServiceProvider
         //Contoh Akses Multirole
         Gate::define('akses-penilaian-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
-
         });
     }
 }
-
