@@ -10,6 +10,16 @@ $(document).ready(function () {
         console.log("Selected criteria with bobot:", bobot);
     });
 
+    function updateRowStriping() {
+        $("#rubrikPenilaianTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+            } else {
+                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+            }
+        });
+    }
+
     // Add new row to table
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
@@ -81,6 +91,7 @@ $(document).ready(function () {
         </tr>`;
 
         $("#rubrikPenilaianTable").append(newRow);
+        updateRowStriping();
     });
 
     // Remove row when remove button is clicked
@@ -88,16 +99,18 @@ $(document).ready(function () {
         // Make sure we keep at least one row
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
+            updateRowStriping();
         } else {
             alert("Tidak dapat menghapus baris terakhir.");
         }
     });
 
-    // Konfirmasi sebelum submit form
-    $("form").on("submit", function (e) {
-        // Validasi form sebelum submit
+    updateRowStriping();
+
+    $("#showKonfirmasiModal").on("click", function () {
+        // Validasi Form
         let valid = true;
-        $("input[required], select[required]").each(function () {
+        $("input[required], select[required], textarea[required]").each(function () {
             if (!$(this).val()) {
                 valid = false;
                 $(this).addClass("is-invalid");
@@ -107,16 +120,29 @@ $(document).ready(function () {
         });
 
         if (!valid) {
-            e.preventDefault();
-            alert("Mohon isi semua field yang diperlukan.");
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Mohon isi semua field yang diperlukan.",
+            });
             return false;
         }
 
-        // Konfirmasi update
-        if (!confirm("Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?")) {
-            e.preventDefault();
-            return false;
-        }
+        Swal.fire({
+            title: "Konfirmasi Simpan",
+            text: "Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Simpan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#rubrikPenilaianForm").submit();
+            }
+        });
     });
 
     // Inisialisasi: periksa bobot pada semua baris yang sudah ada

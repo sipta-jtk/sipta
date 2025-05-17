@@ -163,16 +163,16 @@
             $('#seminarUjiTable').DataTable({
                 language: {
                     search: "Cari:",
-                    lengthMenu: "Tampilkan MENU data per halaman",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan",
-                    info: "Menampilkan START sampai END dari TOTAL data",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
                     infoEmpty: "Tidak ada data tersedia",
-                    infoFiltered: "(difilter dari total MAX data)",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
                     paginate: {
-                    first: "<<",
-                    last: ">>",
-                    next: ">",
-                    previous: "<"
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
                     }
                 }
             });
@@ -181,16 +181,16 @@
             $('#seminarBimTable').DataTable({
                 language: {
                     search: "Cari:",
-                    lengthMenu: "Tampilkan MENU data per halaman",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan",
-                    info: "Menampilkan START sampai END dari TOTAL data",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
                     infoEmpty: "Tidak ada data tersedia",
-                    infoFiltered: "(difilter dari total MAX data)",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
                     paginate: {
-                    first: "<<",
-                    last: ">>",
-                    next: ">",
-                    previous: "<"
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
                     }
                 }
             });

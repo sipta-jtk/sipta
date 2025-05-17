@@ -14,25 +14,23 @@
 @stop
 
 @section('content')
-<div class="card">
-    <div class="container-fluid">
-        <!-- Tabel daftar pengajuan -->
-        <div class="container-fluid ">
-            <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
-                <thead class="sticky-header">
-                    <tr class="bg-dark text-white"> 
-                        <th>No</th>
-                        <th>Kelompok TA</th>
-                        <th>Agenda</th>
-                        <th>Tanggal Kegiatan</th>
-                        <th>Ruangan</th>
-                        <th>Sesi</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+<!-- Tabel daftar pengajuan -->
+<div class="card mx-3 mt-3">
+<div class="card-body">
+    <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
+        <thead class="sticky-header">
+            <tr class="bg-dark text-white"> 
+                <th>No</th>
+                <th>Kelompok TA</th>
+                <th>Agenda</th>
+                <th>Tanggal Kegiatan</th>
+                <th>Ruangan</th> 
+                <th>Sesi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
     </div>
 </div>
 
