@@ -1,23 +1,48 @@
+/* Container untuk tabel dengan scrollbar */
 .table-container {
     max-height: 800px;
+    overflow-x: auto;
     overflow-y: auto;
-    border: 1px solid #ddd;
     position: relative;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+
+    /* Scrollbar untuk Firefox */
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
 }
+
+/* Scrollbar untuk Webkit (Chrome, Safari) */
 .table-container::-webkit-scrollbar {
-    display: none;
+    width: 8px;
+    height: 8px;
+    background: transparent;
 }
+
+.table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Tabel */
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 0;
 }
+
 th, td {
-    border: 1px solid #ccc !important;
-    padding: 10px;
+    border: none !important;
+    padding: 8px 12px;
     text-align: center;
+    font-size: 14px;
 }
+
+/* Header tabel */
 thead {
     position: sticky;
     top: 0;
@@ -25,6 +50,7 @@ thead {
     background: rgba(0, 0, 0, 0.9);
     color: white;
 }
+
 thead th {
     position: sticky;
     top: 0;
@@ -35,9 +61,86 @@ thead th {
     padding: 12px;
     border-bottom: 2px solid #fff;
 }
+
+/* Baris tabel */
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
 }
+
 tbody tr:hover {
     background-color: #e2e6ea;
+}
+
+/* DataTables Controls */
+.dataTables_length label,
+.dataTables_filter label {
+    font-weight: normal !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+/* Dropdown untuk jumlah data */
+.dataTables_length select {
+    width: auto !important;
+    min-width: 70px;
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 30px;
+}
+
+/* Kotak pencarian */
+.dataTables_filter input {
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px !important;
+    max-width: 100%;
+    transition: width 0.3s;
+}
+
+/* Perlebar kotak pencarian saat fokus */
+.dataTables_filter input:focus {
+    width: 200px !important;
+}
+
+/* Tombol */
+.btn {
+    margin: 0;
+    padding: 8px 16px;
+}
+
+/* Tooltip */
+.nilai-tooltip {
+    position: relative;
+    cursor: pointer;
+    font-weight: bold;
+    color: red;
+}
+
+.tooltip-box {
+    display: none;
+    position: absolute;
+    width: 280px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130%;
+    z-index: 10;
+    text-align: center;
+}
+
+.nilai-tooltip:hover .tooltip-box {
+    display: block;
 }

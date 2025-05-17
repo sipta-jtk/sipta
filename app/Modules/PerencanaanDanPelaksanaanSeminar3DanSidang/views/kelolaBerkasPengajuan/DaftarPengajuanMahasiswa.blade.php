@@ -16,7 +16,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex mb-3">
+    <div class="d-flex mb-3 mx-3">
         <ul class="nav nav-tabs">
             @php
                 $tipe = request()->route('tipe'); // Ambil tipe dari parameter route (seminar atau sidang)
@@ -45,7 +45,8 @@
 
 
     <!-- Tabel daftar pengajuan -->
-    <div class="container-fluid card">
+    <div class="card mx-3 mt-3">
+    <div class="card-body">
         <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
             <thead class="sticky-header">
                 <tr class="bg-dark text-white">
@@ -58,6 +59,7 @@
             </thead>
             <tbody></tbody>
         </table>
+        </div>
     </div>
 </div>
 @stop
@@ -117,7 +119,7 @@
                     { 
                         data: null,
                         render: function(data, type, row) {
-                            let detailLink = detailUrl.replace('__ID__', row.id_pengajuan);
+                            let detailLink = detailUrl.replace('__ID__', row.id_kota);
                             return `<a href="${detailLink}" class="btn btn-primary btn-sm text-center">Proses</a>`;
                         }
                     }
