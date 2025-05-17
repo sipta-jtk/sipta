@@ -1,31 +1,34 @@
 <?php
 
-use App\Models\Mahasiswa;
 use App\Models\User;
+use App\Models\Mahasiswa;
 use App\Modules\UserManagement\Controllers\MahasiswaController;
-use Illuminate\Support\Facades\Gate;
 use App\Modules\UserManagement\Controllers\UserManagementController;
 use App\Modules\UserManagement\Controllers\DosenController;
-use FontLib\Table\Type\name;
 use App\Modules\UserManagement\Controllers\ForgotPasswordController;
-use Illuminate\Support\Facades\Route;
 use App\Modules\UserManagement\Controllers\PengajuanPisahKoTAController;
 use App\Modules\UserManagement\Controllers\FormPisahKoTAController;
 use App\Modules\UserManagement\Controllers\KBKController;
 use App\Modules\UserManagement\Controllers\ProgramStudiController;
-
-
+use App\Modules\UserManagement\Controllers\DashboardController;
 use App\Modules\UserManagement\Controllers\PerekrutanAnggotaKoTAController;
 use App\Modules\UserManagement\Controllers\KonfirmasiKoTAController;
 use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
+use App\Modules\UserManagement\Controllers\ImpersonateController;
+
+use FontLib\Table\Type\name;
+
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -47,9 +50,7 @@ Route::get('/register', function () {
 })->name('register');
 
 // Route untuk menampilkan form reset password
-Route::get('/reset-password/{token}', function ($token) {
-    return view('UserManagement.views.auth.reset-password', ['token' => $token]);
-})->name('password.reset');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
 // Route untuk memproses form reset password
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
@@ -105,35 +106,32 @@ Route::get('/manajemen-akun-mahasiswa', [UserManagementController::class, 'manag
 
 Route::post('/addNewMhs', [MahasiswaController::class, 'addNewMhs'])->name('mahasiswa.addNewMhs');
 Route::post('/updateMhs', [MahasiswaController::class, 'updateMhs'])->name('mahasiswa.updateMhs');
-
-
-Route::get('/download-template-mhs', function () {
-    $filePath = 'public/templateExcel/template-registrasi-mahasiswa.xlsx';
-    if (!Storage::exists($filePath)) {
-        abort(404, 'File tidak ditemukan');
-    }
-
-    return Storage::download($filePath, 'template-registrasi-mahasiswa.xlsx');
-})->name('download.template-mhs');
-
 Route::get('/previewDataMhs', [MahasiswaController::class, 'previewDataMhs'])->name('previewDataMhs');
 Route::post('/inputBulkMhs', [MahasiswaController::class, 'inputBulk'])->name('inputBulkMhs');
 
-
 Route::get('/download-template-dosen', function () {
-    $filePath = 'public/templateExcel/template-registrasi-dosen.xlsx';
-    if (!Storage::exists($filePath)) {
-        abort(404, 'File tidak ditemukan');
-    }
-
-    return Storage::download($filePath, 'template-registrasi-dosen.xlsx');
+    $file = public_path('UserManagement/template-registrasi-dosen.xlsx');
+    return Response::download($file, 'template-registrasi-dosen.xlsx');
 })->name('download.template-dosen');
+
+Route::get('/download-template-mahasiswa', function () {
+    $file = public_path('UserManagement/template-registrasi-mahasiswa.xlsx');
+    return Response::download($file, 'template-registrasi-mahasiswa.xlsx');
+})->name('download.template-mhs');
+
+// Route untuk aktifkan atau non-aktifkan akun
+Route::post('/nonaktif-dosen', [DosenController::class, 'nonaktifkanAkun'])->name('nonaktif-dosen');
+Route::post('/aktif-dosen', [DosenController::class, 'aktifkanAkun'])->name('aktif-dosen');
+
+Route::post('/nonaktif-mhs', [MahasiswaController::class, 'nonaktifkanAkun'])->name('nonaktif-mhs');
+Route::post('/aktif-mhs', [MahasiswaController::class, 'aktifkanAkun'])->name('aktif-mhs');
 
 Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import-mhs');
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
 Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
+Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
 
 
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
@@ -169,6 +167,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
     Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
     Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
+    Route::put('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
 
     // route untuk kelola program studi
     Route::get('/program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
@@ -188,4 +187,22 @@ Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redi
 Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
     Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
     Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+});
+
+/* 
+
+    Dashboard route
+==========================================*/
+Route::get('/test-dashboard', [DashboardController::class, 'showPengajuanSeminar3']);
+Route::get('/', [DashboardController::class, 'index']);
+
+
+Route::middleware(['can:mahasiswa_ta'])->group(function () {
+    Route::get('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'showTambahAnggotaForm'])->name('tambah-anggota-kota');
+    Route::post('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'tambahAnggota'])->name('tambah-anggota-kota.submit');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/impersonate/{id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+    Route::get('/impersonate-leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });

@@ -4,7 +4,6 @@
 
 @section('content_header')
     <h1 class="mb-3">Profil Saya</h1>
-
     <div>
         @component('UserManagement.components.breadcrumb', [
             'links' => [
@@ -17,6 +16,15 @@
 @stop
 
 @section('content')
+    @if(session('impersonated_by'))
+        <div class="alert alert-warning">
+            <h5><i class="icon fas fa-exclamation-triangle"></i> Anda sedang login sebagai user lain!</h5>
+            <a href="{{ route('impersonate.leave') }}" class="btn btn-danger">
+                Kembali ke akun asli
+            </a>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -24,7 +32,7 @@
 
                 <!-- Foto Profil -->
                 <div class="text-center mb-4">
-                    <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('storage/photos/default-profile1.jpg') }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
+                    <img src="{{ Auth::user()->adminlte_image() }}" class="rounded-circle" width="250" height="250" alt="Profile Image">
                     <input type="file" name="photo" class="form-control mt-2">
                     <small>Ukuran maksimum 2MB, dengan format PNG atau JPG</small>
                 </div>
@@ -36,7 +44,7 @@
                         <p class="text-secondary text-md border-bottom">Identitas</p>
 
                         <label>Nama</label>
-                        <x-adminlte-input name="nama" value="{{ old('nama', Auth::user()->nama) }}" required />
+                        <x-adminlte-input name="nama" type="text" value="{{ old('nama', Auth::user()->nama) }}" required pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi diperbolehkan" />
 
                         @if(Auth::user()->role_user === 'mahasiswa' && Auth::user()->mahasiswa)
                             <label>NIM</label>
@@ -69,7 +77,7 @@
                         <p class="text-secondary text-md border-bottom">Kontak & Status</p>
 
                         <label>Nomor Telepon</label>
-                        <x-adminlte-input name="no_whatsapp" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" />
+                        <x-adminlte-input name="no_whatsapp" type="number" value="{{ old('no_whatsapp', Auth::user()->no_whatsapp) }}" required minlength="10" maxlength="15" pattern="[0-9]*" title="Hanya angka yang diperbolehkan" />
 
                         <label>Email</label>
                         <x-adminlte-input name="email" value="{{ old('email', Auth::user()->email) }}" readonly />
@@ -86,8 +94,105 @@
                     </div>
                 </div>
 
-                <div class="mt-3 text-right">
-                    <button type="submit" class="btn btn-success ">Simpan</button>
+                <div class="mt-3">
+                    <div class="text-right mb-3">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
+
+                    @if(auth()->user()->role_user === 'admin')
+                        <div class="card mt-4">
+                            <div class="card-header bg-info">
+                                <h5 class="mb-0"><i class="fas fa-user-secret"></i> Mode Testing Impersonate</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- <div class="col-md-6">
+                                        <h6>Dosen:</h6>
+                                        @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
+                                            <div class="mb-2">
+                                                {{ $dosen->nama }}
+                                                <a href="{{ route('impersonate', $dosen->username) }}" class="btn btn-warning btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div> -->
+
+                                    <!-- DOSEN DROPDOWN -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dosenSelect"><h6>Dosen:</h6></label>
+                                            <div class="input-group">
+                                                <select class="form-control" id="dosenSelect">
+                                                    <option value="">Pilih Dosen</option>
+                                                    @foreach(\App\Models\User::where('role_user', 'dosen')->get() as $dosen)
+                                                        <option value="{{ $dosen->username }}">{{ $dosen->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateDosenBtn">
+                                                        Login sebagai
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-6">
+                                        <h6>Mahasiswa:</h6>
+                                        @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
+                                            <div class="mb-2">
+                                                {{ $mahasiswa->nama }}
+                                                <a href="{{ route('impersonate', $mahasiswa->username) }}" class="btn btn-warning btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div> -->
+
+                                    <!-- MAHASISWA DROPDOWN -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="mahasiswaSelect"><h6>Mahasiswa:</h6></label>
+                                            <div class="input-group">
+                                                <select class="form-control" id="mahasiswaSelect">
+                                                    <option value="">Pilih Mahasiswa</option>
+                                                    @foreach(\App\Models\User::where('role_user', 'mahasiswa')->get() as $mahasiswa)
+                                                        <option value="{{ $mahasiswa->username }}">{{ $mahasiswa->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateMahasiswaBtn">
+                                                        Login sebagai
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Handler untuk dropdown dosen
+                                document.getElementById('impersonateDosenBtn').addEventListener('click', function() {
+                                    const username = document.getElementById('dosenSelect').value;
+                                    if (username) {
+                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                    }
+                                });
+                                
+                                // Handler untuk dropdown mahasiswa
+                                document.getElementById('impersonateMahasiswaBtn').addEventListener('click', function() {
+                                    const username = document.getElementById('mahasiswaSelect').value;
+                                    if (username) {
+                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                    }
+                                });
+                            });
+                        </script>
+                    @endif
                 </div>
             </form>
         </div>

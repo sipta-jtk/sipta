@@ -328,7 +328,7 @@ return [
             'url' => $prefix . '/admin/blog',
             'can' => 'manage-blog',
         ],
-        ['header' => 'Layanan Tugas Akhir'],
+        ['header' => 'Layanan Tugas Akhir', 'can' => 'user'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
             'icon' => 'fas fa-home',
@@ -644,6 +644,7 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
+            'can' => 'user'
 
             // 'label' => 4,
             // 'label_color' => 'success',
@@ -658,7 +659,19 @@ return [
                     'text' => 'List mahasiswa TA',
                     'url'  => $prefix . '/repository/dosen/kelompok-ta',
                     'icon' => 'fas fa-user-friends',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
+                ],
+                [
+                    'text' => 'List mahasiswa bimbingan',
+                    'url'  => $prefix . '/repository/dosen/kelompok-ta-bimbingan',
+                    'icon' => 'fas fa-user-friends',
+                    'can' => 'pembimbing'
+                ],
+                [
+                    'text' => 'List mahasiswa uji',
+                    'url'  => $prefix . '/repository/dosen/kelompok-ta-uji',
+                    'icon' => 'fas fa-user-friends',
+                    'can' => 'penguji'
                 ],
                 [
                     'text' => 'Repository Mahasiswa',
@@ -669,27 +682,27 @@ return [
                     'text' => 'Log Aktivitas',
                     'url'  => $prefix . '/repository/koor-ta/log-aktivitas',
                     'icon' => 'fas fa-clock',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
                 ],
                 [
                     'text' => 'Monitoring Penyimpanan',
                     'url'  => $prefix . '/repository/koor-ta/monitoring-penyimpanan',
                     'icon' => 'fas fa-database',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
                 ],
             ]
         ],
-        [
-            'text' => 'Artefak',
-            'url' => $prefix . '/#',
-            'icon' => 'fas fa-fw fa-folder',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Dokumen dan FTA',
-                    'url' => $prefix . '/artefak',
-                ],
-            ]
-        ],
+        // [
+        //     'text' => 'Artefak',
+        //     'url' => $prefix . '/#',
+        //     'icon' => 'fas fa-fw fa-folder',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'Kelola Dokumen dan FTA',
+        //             'url' => $prefix . '/artefak',
+        //         ],
+        //     ]
+        // ],
         [
             'text' => 'Kelola Ruangan',
             'url' => $prefix . '/ruangan-service/ruangan',
@@ -700,10 +713,12 @@ return [
             'text' => 'Kalender Penjadwalan Ruangan',
             'url' => $prefix . '/ruangan-service/kalender',
             'icon' => 'fas fa-fw fa-calendar',
+            'can' => 'user',
         ],
         [
             'text' => 'Cek Plagiarisme',
             'icon' => 'fas fa-fw fa-file',
+            'can' => 'user',
             'submenu' => [
                 [
                     'text' => 'Cek Plagiarisme',
@@ -718,7 +733,7 @@ return [
                 ],
             ]
         ],
-        ['header' => 'Pengaturan Pengguna'],
+        ['header' => 'Pengaturan Pengguna', 'can' => 'user'],
         [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
