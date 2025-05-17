@@ -68,7 +68,7 @@
                             <i class="ml-1 fas fa-arrow-right ms-2"></i>
                         </a>
                         @elseif($kota->status_kota === 'pra_kota')
-                        <a href="{{ url('PengajuanAlokasiPembimbing/pengajuan-pembimbing/data-kelompok') }}" class="d-flex border-top py-3 px-3 text-dark justify-content-end align-items-center card-hover">
+                        <a href="{{ route('data-kelompok') }}" class="d-flex border-top py-3 px-3 text-dark justify-content-end align-items-center card-hover">
                             Ajukan Dosen Pembimbing
                             <i class="ml-1 fas fa-arrow-right ms-2"></i>
                         </a>
@@ -208,12 +208,12 @@
                         </div>
                     @endif
                 </div>
-                <a href="{{ url('PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang') }}" class="d-flex border-top py-3 px-3 text-dark justify-content-end align-items-center card-hover">
-                    Formulir Kesediaan Membimbing
-                    <i class="ml-1 fas fa-arrow-right ms-2"></i>
-                </a>
             </div>
             </div>
+            <a href="{{ ( env('PREFIX_URL') . '/PengajuanAlokasiPembimbing/kesediaan-membimbing/minat-bidang') }}" class="d-flex border-top py-3 px-3 text-dark justify-content-end align-items-center card-hover">
+                Formulir Kesediaan Membimbing
+                <i class="ml-1 fas fa-arrow-right ms-2"></i>
+            </a>
         </div>
 
         @if($dosen->bersedia_membimbing === 'bersedia')
@@ -334,7 +334,7 @@
                                 <div class="ml-4">
                                     <h4 class="md-4 text-dark mb-3">Pengelolaan Ruangan</h3>
                                     <div class="d-flex">
-                                        <a href="{{ url('penjadwalan-ruangan/') }}" class="btn btn-danger">Lihat Jadwal <i class="ml-1 fas fa-arrow-right ms-2"></i></a>
+                                        <a href="{{ url('/penjadwalan-ruangan') }}" class="btn btn-danger">Lihat Jadwal <i class="ml-1 fas fa-arrow-right ms-2"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -344,17 +344,17 @@
             </div>
         </div>
         
-        <a href="{{ url('repository/dosen/kelompok-ta') }}" class="text-dark text-decoration-none">
+        <a href="{{ route('Repository.list_kelompok_ta') }}" class="text-dark text-decoration-none">
             <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
                 <i class="mr-2 fas fa-users ms-2 text-primary fa-lg"></i> Artifak Kelompok TA
             </div>
         </a>
-        <a href="{{ url('repository/koor-ta/monitoring-penyimpanan') }}" class="text-dark text-decoration-none">
+        <a href="{{ route('Repository.monitoring-penyimpanan') }}" class="text-dark text-decoration-none">
             <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover ">
                 <i class="mr-2 fas fa-database ms-2 text-info fa-lg"></i> Monitoring Penyimpanan
             </div>
         </a>
-        <a href="{{ url('notification/admin/settingawal') }}" class="text-dark text-decoration-none">
+        <a href="{{ route('notification_reminder.admin.notifikasi') }}" class="text-dark text-decoration-none">
             <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
                 <i class="mr-2 fas fa-bell ms-2 text-warning fa-lg"></i> Pengaturan Notifikasi
             </div>
