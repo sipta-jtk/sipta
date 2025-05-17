@@ -21,9 +21,8 @@
 
 @section('content')
 
-    {{-- <p>Data Kelompok > <a href="www">Topik Tugas Akhir</a> > <a href="www">Prioritas Dosen Pembimbing</a> > <a href="www">Pratinjau</a></p> --}}
-
     <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
 
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -114,16 +113,18 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
+                    
                     if (response.Periode === false) {
+                        $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
                     if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
                     }
                 }
             });

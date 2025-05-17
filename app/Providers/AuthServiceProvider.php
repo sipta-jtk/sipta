@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Models\AlokasiDosen;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,13 +27,11 @@ class AuthServiceProvider extends ServiceProvider
 
         /**********************************************************
         ! Restricted    
-
             * Role Access v.2
             * Base role.
             * Role dasar dari pengguna.
             * Perubahan base role dilakukan oleh tim User Management.
         ***********************************************************/
-
 
         /* v2 update
             Tambah gate user
@@ -51,6 +50,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('koordinator_ta', function ($user) {
             return $user->role_user === 'dosen' && $user->dosen->role_dosen === 'koordinator_ta';
         });
+
 
         //Mahasiswa TA
         Gate::define('mahasiswa_ta', function ($user) {
@@ -141,11 +141,36 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('akses-sidebar-repo-dosen', function ($user) {
             return Gate::allows('dosen') || Gate::allows('admin');
         });
+        Gate::define('akses-koordinator-admin', function ($user) {
+            return Gate::allows('koordinator_ta') || Gate::allows('admin');
+        });
         Gate::define('akses-sidebar-repo-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
         });
         Gate::define('akses-sidebar-repo', function ($user) {
             return Gate::allows('mahasiswa_ta') || Gate::allows('dosen') || Gate::allows('admin');
+        });
+
+        Gate::define('penguji', function ($user) {
+            if ($user->role_user !== 'dosen') return false;
+
+            $nip = $user->dosen->nip ?? null;
+            if (!$nip) return false;
+
+            return AlokasiDosen::where('nip', $nip)
+                ->where('tipe_alokasi', 'penguji')
+                ->exists();
+        });
+
+        Gate::define('pembimbing', function ($user) {
+            if ($user->role_user !== 'dosen') return false;
+
+            $nip = $user->dosen->nip ?? null;
+            if (!$nip) return false;
+
+            return AlokasiDosen::where('nip', $nip)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->exists();
         });
 
         /**********************************
@@ -175,5 +200,16 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('akses-penilaian-mahasiswa', function ($user) {
             return Gate::allows('mahasiswa_ta');
         });
+
+
+        /***
+         * [TOPIK 1] - Fitur Pengajuan dan Alokasi Pembimbing
+         */
+
+         //Akses Alokasi and another customize route that only allowed for dosen and koordinator_ta only 
+        Gate::define('akses-alokasi', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('koordinator_ta');
+        });
+
     }
 }

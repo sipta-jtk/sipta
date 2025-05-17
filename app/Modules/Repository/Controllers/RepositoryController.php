@@ -7,12 +7,14 @@ use App\Models\Dokumen;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\Subkategori;
+use App\Models\AlokasiDosen;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -32,6 +34,20 @@ class RepositoryController extends Controller
             // Ambil status_ta jika mahasiswa
             $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
             $status_ta = $mahasiswa?->status_ta;
+            $nipDosen = auth()->user()->dosen->nip ?? null;
+
+            // if (!$nipDosen) {
+            //     abort(403, 'NIP dosen tidak ditemukan');
+            // }
+
+            // Cek tipe alokasi dosen: apakah pembimbing dan/atau penguji
+            $isPembimbing = AlokasiDosen::where('nip', $nipDosen)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->exists();
+
+            $isPenguji = AlokasiDosen::where('nip', $nipDosen)
+                ->where('tipe_alokasi', 'penguji')
+                ->exists();
 
             // Base query dokumen
             $baseQuery = Dokumen::with('subkategori')->where('kategori', $kategori);
@@ -123,6 +139,8 @@ class RepositoryController extends Controller
                 'subkategoris',
                 'maxVersion',
                 'status_ta',
+                'isPembimbing',
+                'isPenguji',
                 'kota',
                 'subkategoriLaporan',
                 'subkategoriFta',
@@ -219,6 +237,7 @@ class RepositoryController extends Controller
                 'id_kota' => $id_kota,
                 'id_subkategori' => $request->id_subkategori,
                 'status_berkas' => 'valid',
+                'notes' => $request->notes ?? null,
                 'username' => $username,
             ];
 
@@ -408,6 +427,104 @@ class RepositoryController extends Controller
         }
     }
 
+    public function list_kelompok_dosen_penguji(Request $request)
+    {
+        try {
+            // Ambil nip dosen dari user login atau query param
+            $nipDosen = auth()->user()->dosen->nip ?? null;
+
+            if (!$nipDosen) {
+                return redirect()->back()->with('error', 'NIP dosen tidak ditemukan');
+            }
+
+            // Ambil semua id_pengajuan_pembimbing yang dialokasikan ke dosen ini sebagai penguji
+            $alokasiPengajuanIds = \App\Models\AlokasiDosen::where('nip', $nipDosen)
+                ->where('tipe_alokasi', 'penguji') // filter alokasi tipe penguji
+                ->pluck('id_pengajuan_pembimbing')
+                ->toArray();
+
+            // Ambil id_kota dari pengajuan pembimbing yang sesuai
+            $idKotaList = \App\Models\PengajuanPembimbing::whereIn('id_pengajuan_pembimbing', $alokasiPengajuanIds)
+                ->pluck('id_kota')
+                ->unique()
+                ->toArray();
+
+            // Query Kota berdasarkan id_kota tersebut
+            $query = \App\Models\Kota::with(['mahasiswa.user', 'mahasiswa.prodi'])
+                ->whereIn('id_kota', $idKotaList)
+                ->whereHas('mahasiswa', function ($q) use ($request) {
+                    // Jika ada filter prodi, tambahkan kondisi
+                    if ($request->filled('prodi')) {
+                        $q->where('id_prodi', $request->prodi);
+                    }
+                })
+                ->select('id_kota', 'judul_ta');
+
+            $kelompok = $query->get()
+                ->sortBy(function ($kota) {
+                    return optional($kota->mahasiswa->first())->tahun_masuk;
+                });
+
+            return view('Repository.views.list_kelompok_dosen_penguji', [
+                'kelompok' => $kelompok,
+                'prodiTerpilih' => $request->prodi,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+
+    public function list_kelompok_dosen_pembimbing(Request $request)
+    {
+        try {
+            // Ambil nip dosen dari user login atau query param
+            $nipDosen = auth()->user()->dosen->nip ?? null;
+
+            if (!$nipDosen) {
+                return redirect()->back()->with('error', 'NIP dosen tidak ditemukan');
+            }
+
+
+            // Ambil semua id_pengajuan_pembimbing yang dialokasikan ke dosen ini
+            $alokasiPengajuanIds = \App\Models\AlokasiDosen::where('nip', $nipDosen)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->pluck('id_pengajuan_pembimbing')
+                ->toArray();
+
+            // Ambil id_kota dari pengajuan pembimbing yang sesuai
+            $idKotaList = \App\Models\PengajuanPembimbing::whereIn('id_pengajuan_pembimbing', $alokasiPengajuanIds)
+                ->pluck('id_kota')
+                ->unique()
+                ->toArray();
+
+            // Query Kota berdasarkan id_kota tersebut
+            $query = \App\Models\Kota::with(['mahasiswa.user', 'mahasiswa.prodi'])
+                ->whereIn('id_kota', $idKotaList)
+                ->whereHas('mahasiswa', function ($q) use ($request) {
+                    // Jika ada filter prodi, tambahkan kondisi
+                    if ($request->filled('prodi')) {
+                        $q->where('id_prodi', $request->prodi);
+                    }
+                })
+                ->select('id_kota', 'judul_ta');
+
+            $kelompok = $query->get()
+                ->sortBy(function ($kota) {
+                    return optional($kota->mahasiswa->first())->tahun_masuk;
+                });
+
+            return view('Repository.views.list_kelompok_dosen_pembimbing', [
+                'kelompok' => $kelompok,
+                'prodiTerpilih' => $request->prodi,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+
+    // Fungsi untuk menampilkan daftar kelompok TA
     public function list_kelompok_ta(Request $request)
     {
         try {
@@ -534,6 +651,32 @@ class RepositoryController extends Controller
             return view('Repository.views.aksesP0');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat halaman: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Save notes to a document (for advisors)
+     */
+    public function saveNotes(Request $request, $id)
+    {
+        try {
+            // Validate request
+            $request->validate([
+                'input_notes' => 'required|string',
+                'id_dokumen' => 'required|exists:dokumen,id_dokumen'
+            ]);
+
+            // Find the document
+            $dokumen = Dokumen::findOrFail($request->id_dokumen);
+
+            // Update notes
+            $dokumen->notes = $request->input_notes;
+            $dokumen->save();
+
+            // Redirect back with success message
+            return redirect()->back()->with('success', 'Catatan berhasil disimpan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan catatan: ' . $e->getMessage());
         }
     }
 }
