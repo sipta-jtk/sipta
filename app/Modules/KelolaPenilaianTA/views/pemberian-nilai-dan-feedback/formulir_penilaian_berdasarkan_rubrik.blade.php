@@ -10,7 +10,8 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
@@ -24,25 +25,28 @@
     <div class="card p-4">
         <div class="row">
             <!-- Kode FTA -->
-            {{ Log::info(json_encode($detailInformasiFta->first())) }}
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
                 <span>{{ ($detailInformasiFta->first()?->nama_fta) }}</span>
             </div>
 
-            <!-- Tanggal, Waktu, ID KoTA -->
             <div class="col-md-2 mt-3">
-                <strong>Pada hari/tanggal</strong> <br>
-                {{-- TBD perbaiki tanggal --}}
-                <span>{{ $keteranganUmumPenilaian->first()?->tanggal }}</span>
+                <strong>Pada Hari/Tanggal</strong> <br>
+                <span>{{ $keteranganUmumPenilaian ? \Carbon\Carbon::parse($keteranganUmumPenilaian->tanggal)->translatedFormat('d F Y') : '-' }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
-                <span>{{ $keteranganUmumPenilaian->first()?->start . ' - ' . $keteranganUmumPenilaian->first()?->end}}</span>
+                <span>
+                    @if($keteranganUmumPenilaian)
+                        {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->start)->format('H:i') }} - {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->end)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>KoTA</strong> <br>
-               <span> {{ $keteranganUmumPenilaian->first()?->nama_kota }}</span>
+               <span> {{ $keteranganUmumPenilaian->nama_kota }}</span>
             </div>
         </div>
 
@@ -76,20 +80,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $keteranganUmumPenilaian->first()?->judul_ta ?? "Belum terdapat judul" }}</span>
-            </div>
-        </div>
-
-        <!-- Tombol Preview -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar III</strong> <br>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Laporan
-                </button>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
-                </button>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ?? "Belum terdapat judul" }}</span>
             </div>
         </div>
 
@@ -165,7 +156,7 @@
                                             @endphp
 
                                             <td>
-                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}">
+                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}" {{ $view ? '' : 'readonly' }} required>
                                             </td>
                                         @endforeach
                                     </tr>
@@ -176,13 +167,16 @@
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-warning">
-                        Simpan
-                    </button>
+
+            @if ($view)
+                <div class="row mt-3">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary btn-prev btn-md my-1">
+                            Simpan <i class="fa-solid fa-floppy-disk"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
         </form>
     </div>
 @stop

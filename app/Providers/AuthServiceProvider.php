@@ -27,11 +27,19 @@ class AuthServiceProvider extends ServiceProvider
 
         /**********************************************************
         ! Restricted    
-         * Role Access v.1
-         * Base role.
-         * Role dasar dari pengguna.
-         * Perubahan base role dilakukan oleh tim User Management.
-         ***********************************************************/
+            * Role Access v.2
+            * Base role.
+            * Role dasar dari pengguna.
+            * Perubahan base role dilakukan oleh tim User Management.
+        ***********************************************************/
+
+        /* v2 update
+            Tambah gate user
+        */
+        //User
+        Gate::define('user', function($user){
+            return $user !== null;
+        });
 
         //Admin
         Gate::define('admin', function ($user) {
@@ -170,6 +178,22 @@ class AuthServiceProvider extends ServiceProvider
          ***********************************/
         Gate::define('akses-penilaian-koordinator-ta', function ($user) {
             return Gate::allows('koordinator_ta');
+        });
+
+        Gate::define('akses-pemberian-nilai', function ($user) {
+            return Gate::allows('koordinator_ta') || Gate::allows('dosen');
+        });
+
+        Gate::define('dosen-pembimbing', function ($user) {
+            return $user->role_user === 'dosen' &&
+                $user->dosen->bersedia_membimbing === 'bersedia' &&
+                $user->dosen->alokasiDosen->contains(function ($alokasi) {
+                    return $alokasi->tipe_alokasi === 'pembimbing';
+                });
+        });
+
+        Gate::define('akses-monitoring-dosen-pembimbing', function ($user) {
+            return Gate::allows('dosen-pembimbing');
         });
 
         //Contoh Akses Multirole

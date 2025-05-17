@@ -40,6 +40,13 @@ $(document).ready(function () {
         }
     });
 
+    // Tombol Edit
+    $('#edit-button').click(function () {
+        $('.bobot-input, .sumber-nilai').prop('disabled', false); // Aktifkan input
+        $('#submit-button').prop('disabled', false); // Aktifkan tombol Simpan
+        $(this).prop('disabled', true); // Nonaktifkan tombol Edit
+    });
+
     table
         .on("order.dt search.dt draw.dt", function () {
         table
@@ -146,12 +153,15 @@ $(document).ready(function () {
             // If there are warnings but no errors, confirm before submitting
             e.preventDefault();
             Swal.fire({
+                title: 'Konfirmasi Simpan',
+                text: 'Apakah Anda yakin ingin menyimpan perubahan ini? Terdapat beberapa peringatan yang perlu diperhatikan.',
                 icon: 'warning',
-                title: 'Perhatian!',
-                html: $('#warning-list').html(),
                 showCancelButton: true,
-                cancelButtonText: 'Batal',
-                confirmButtonText: 'Lanjutkan'
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Simpan",
+                cancelButtonText: "Batal",
+                reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#nilaiAkhirForm').off('submit').submit();
