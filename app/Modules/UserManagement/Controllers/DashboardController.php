@@ -28,95 +28,100 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $role = $user->role_user;
 
-        /* MAHASISWA */
-        if ($role === 'mahasiswa') {
-            $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
-            $prodi = Prodi::find($mahasiswa->id_prodi);
-            $kota = $mahasiswa->kota ?? null;
-            $anggotaKelompok = $mahasiswa->id_kota 
-                ? Mahasiswa::where('id_kota', $mahasiswa->id_kota)->where('nim', '!=', $mahasiswa->nim)->get()
-                : collect([]);
+        if($user !== null){
+            $role = $user->role_user;
 
-            $pembimbing = [
-                (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Pembimbing 1 belum ditentukan', 'nip' => '-'],
-                (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Pembimbing 2 Belum ditentukan', 'nip' => '-']
-            ];
+            /* MAHASISWA */
+            if ($role === 'mahasiswa') {
+                $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
+                $prodi = Prodi::find($mahasiswa->id_prodi);
+                $kota = $mahasiswa->kota ?? null;
+                $anggotaKelompok = $mahasiswa->id_kota 
+                    ? Mahasiswa::where('id_kota', $mahasiswa->id_kota)->where('nim', '!=', $mahasiswa->nim)->get()
+                    : collect([]);
 
-            try {
-                if (Schema::hasTable('alokasi_dosen')) {
-                    $dosenPembimbing = DB::table('pengajuan_pembimbing')
-                        ->join('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
-                        ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
-                        ->join('user', 'dosen.nip', '=', 'user.username')
-                        ->where('pengajuan_pembimbing.id_kota', $kota->id_kota ?? null)
-                        ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-                        ->where('alokasi_dosen.status_alokasi', 'fix')
-                        ->orderBy('alokasi_dosen.urutan_prioritas_terpilih', 'asc')
-                        ->select('alokasi_dosen.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
-                        ->get();
+                $pembimbing = [
+                    (object)['urutan_prioritas_terpilih' => 1, 'nama' => 'Pembimbing 1 belum ditentukan', 'nip' => '-'],
+                    (object)['urutan_prioritas_terpilih' => 2, 'nama' => 'Pembimbing 2 Belum ditentukan', 'nip' => '-']
+                ];
 
-                    if ($dosenPembimbing->isNotEmpty()) {
-                        $pembimbing = $dosenPembimbing;
+                try {
+                    if (Schema::hasTable('alokasi_dosen')) {
+                        $dosenPembimbing = DB::table('pengajuan_pembimbing')
+                            ->join('alokasi_dosen', 'pengajuan_pembimbing.id_pengajuan_pembimbing', '=', 'alokasi_dosen.id_pengajuan_pembimbing')
+                            ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
+                            ->join('user', 'dosen.nip', '=', 'user.username')
+                            ->where('pengajuan_pembimbing.id_kota', $kota->id_kota ?? null)
+                            ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+                            ->where('alokasi_dosen.status_alokasi', 'fix')
+                            ->orderBy('alokasi_dosen.urutan_prioritas_terpilih', 'asc')
+                            ->select('alokasi_dosen.urutan_prioritas_terpilih', 'user.nama', 'dosen.nip')
+                            ->get();
+
+                        if ($dosenPembimbing->isNotEmpty()) {
+                            $pembimbing = $dosenPembimbing;
+                        }
                     }
+                } catch (\Exception $e) {}
+
+                // Berkas Seminar 3
+                $idKota = $mahasiswa->id_kota;
+                $pengajuanSeminar = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
+                if($pengajuanSeminar) {
+                    $pengajuanSeminar->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSeminar->tanggal_pengajuan)->translatedFormat('d F Y H:i');
                 }
-            } catch (\Exception $e) {}
 
-            // Berkas Seminar 3
-            $idKota = $mahasiswa->id_kota;
-            $pengajuanSeminar = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
-            if($pengajuanSeminar) {
-                $pengajuanSeminar->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSeminar->tanggal_pengajuan)->translatedFormat('d F Y H:i');
+                $namaArtefakSeminar = ['FTA 10', 'FTA 10a', 'Proposal Tugas Akhir', 'Presentasi'];
+                $artefakSeminar = $this->cekArtefak($namaArtefakSeminar, $idKota);
+
+                // Berkas Sidang
+                $pengajuanSidang = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
+                    ->where('jenis_pengajuan', 'sidang_akhir')
+                    ->first();
+                if($pengajuanSidang) {
+                    $pengajuanSidang->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSidang->tanggal_pengajuan)->translatedFormat('d F Y H:i');
+                }
+
+                $namaArtefakSidang = ['FTA 14', 'FTA 14a', 'Laporan Tugas Akhir', 'Presentasi'];
+                $artefakSidang = $this->cekArtefak($namaArtefakSidang, $idKota);
+
+                return view('welcome', compact(
+                    'user', 'mahasiswa', 'prodi',
+                    'kota', 'anggotaKelompok', 'pembimbing',
+                    'pengajuanSeminar', 'artefakSeminar',
+                    'pengajuanSidang', 'artefakSidang'
+                ));
             }
 
-            $namaArtefakSeminar = ['FTA 10', 'FTA 10a', 'Proposal Tugas Akhir', 'Presentasi'];
-            $artefakSeminar = $this->cekArtefak($namaArtefakSeminar, $idKota);
+            /* DOSEN */
+            elseif ($role === 'dosen'){
+                $dosen = Dosen::with('ketertarikanBidang.bidang')->where('nip', $user->username)->first();
+                $idKota = DB::table('alokasi_dosen')
+                    ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+                    ->where('alokasi_dosen.nip', $user->username)
+                    ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+                    ->where('alokasi_dosen.status_alokasi', 'fix')
+                    ->pluck('pengajuan_pembimbing.id_kota')
+                    ->unique()
+                    ->values();
 
-            // Berkas Sidang
-            $pengajuanSidang = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
-                ->where('jenis_pengajuan', 'sidang_akhir')
-                ->first();
-            if($pengajuanSidang) {
-                $pengajuanSidang->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSidang->tanggal_pengajuan)->translatedFormat('d F Y H:i');
+                $kota = Kota::whereIn('id_kota', $idKota)->get();
+
+                return view('welcome', compact('user', 'dosen', 'kota'));
             }
 
-            $namaArtefakSidang = ['FTA 14', 'FTA 14a', 'Laporan Tugas Akhir', 'Presentasi'];
-            $artefakSidang = $this->cekArtefak($namaArtefakSidang, $idKota);
+            /* ADMIN */
+            elseif ($role === 'admin') {
+                $dosenCount = Dosen::count();
+                $mahasiswaCount = Mahasiswa::count();
 
-            return view('welcome', compact(
-                'user', 'mahasiswa', 'prodi',
-                'kota', 'anggotaKelompok', 'pembimbing',
-                'pengajuanSeminar', 'artefakSeminar',
-                'pengajuanSidang', 'artefakSidang'
-            ));
+                return view('welcome', compact('user', 'dosenCount', 'mahasiswaCount'));
+            } 
+        } else{
+            $role = null;
+            return view('welcome', compact('user'));
         }
-        
-        /* DOSEN */
-        elseif ($role === 'dosen'){
-            $dosen = Dosen::with('ketertarikanBidang.bidang')->where('nip', $user->username)->first();
-            $idKota = DB::table('alokasi_dosen')
-                ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
-                ->where('alokasi_dosen.nip', $user->username)
-                ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
-                ->where('alokasi_dosen.status_alokasi', 'fix')
-                ->pluck('pengajuan_pembimbing.id_kota')
-                ->unique()
-                ->values();
-            
-            $kota = Kota::whereIn('id_kota', $idKota)->get();
-            
-            return view('welcome', compact('user', 'dosen', 'kota'));
-        }
-
-        /* ADMIN */
-        elseif ($role === 'admin') {
-            $dosenCount = Dosen::count();
-            $mahasiswaCount = Mahasiswa::count();
-            
-            return view('welcome', compact('user', 'dosenCount', 'mahasiswaCount'));
-        }
-
     }
 
     private function cekArtefak(array $namaArtefak, $idKota)

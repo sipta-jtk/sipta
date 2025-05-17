@@ -5,6 +5,7 @@
 
 
 @section('content')
+@auth
     @if($user->role_user === 'mahasiswa')
         <div class="row pt-3">
             <!-- Profil Mahasiswa -->
@@ -343,23 +344,33 @@
             </div>
         </div>
         
-<a href="{{ url('repository/dosen/kelompok-ta') }}" class="text-dark text-decoration-none">
-    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
-        <i class="mr-2 fas fa-users ms-2 text-primary fa-lg"></i> Artifak Kelompok TA
-    </div>
-</a>
-<a href="{{ url('repository/koor-ta/monitoring-penyimpanan') }}" class="text-dark text-decoration-none">
-    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover ">
-        <i class="mr-2 fas fa-database ms-2 text-info fa-lg"></i> Monitoring Penyimpanan
-    </div>
-</a>
-<a href="{{ url('notification/admin/settingawal') }}" class="text-dark text-decoration-none">
-    <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
-        <i class="mr-2 fas fa-bell ms-2 text-warning fa-lg"></i> Pengaturan Notifikasi
-    </div>
-</a>
+        <a href="{{ url('repository/dosen/kelompok-ta') }}" class="text-dark text-decoration-none">
+            <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
+                <i class="mr-2 fas fa-users ms-2 text-primary fa-lg"></i> Artifak Kelompok TA
+            </div>
+        </a>
+        <a href="{{ url('repository/koor-ta/monitoring-penyimpanan') }}" class="text-dark text-decoration-none">
+            <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover ">
+                <i class="mr-2 fas fa-database ms-2 text-info fa-lg"></i> Monitoring Penyimpanan
+            </div>
+        </a>
+        <a href="{{ url('notification/admin/settingawal') }}" class="text-dark text-decoration-none">
+            <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
+                <i class="mr-2 fas fa-bell ms-2 text-warning fa-lg"></i> Pengaturan Notifikasi
+            </div>
+        </a>
 
-    @endif  
+    @endif 
+@endauth
+
+@guest
+<div class="d-flex justify-content-center align-items-center pt-3">
+    <div class="text-center">
+        <h2>Selamat Datang di Sistem Pemantauan Tugas Akhir JTK Polban</h2>
+        <a class="btn btn-primary mt-2" href="{{ route('login') }}">Login</a>
+    </div>
+</div>
+@endguest
 @stop
 
 @section('css')

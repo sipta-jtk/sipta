@@ -125,7 +125,7 @@
                                             <div class="input-group">
                                                 <select class="form-control" id="dosenSelect">
                                                     <option value="">Pilih Dosen</option>
-                                                    @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
+                                                    @foreach(\App\Models\User::where('role_user', 'dosen')->get() as $dosen)
                                                         <option value="{{ $dosen->username }}">{{ $dosen->nama }}</option>
                                                     @endforeach
                                                 </select>
@@ -157,7 +157,7 @@
                                             <div class="input-group">
                                                 <select class="form-control" id="mahasiswaSelect">
                                                     <option value="">Pilih Mahasiswa</option>
-                                                    @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
+                                                    @foreach(\App\Models\User::where('role_user', 'mahasiswa')->get() as $mahasiswa)
                                                         <option value="{{ $mahasiswa->username }}">{{ $mahasiswa->nama }}</option>
                                                     @endforeach
                                                 </select>
