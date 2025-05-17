@@ -156,7 +156,7 @@
                                 document.getElementById('impersonateDosenBtn').addEventListener('click', function() {
                                     const username = document.getElementById('dosenSelect').value;
                                     if (username) {
-                                        window.location.href = "{{ url(config('app.url') . '/' . env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
+                                        window.location.href = "{{ url(env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
                                     }
                                 });
                                 
@@ -164,7 +164,7 @@
                                 document.getElementById('impersonateMahasiswaBtn').addEventListener('click', function() {
                                     const username = document.getElementById('mahasiswaSelect').value;
                                     if (username) {
-                                        window.location.href = "{{ url(config('app.url') . '/' . env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
+                                        window.location.href = "{{ url(env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
                                     }
                                 });
                             });
