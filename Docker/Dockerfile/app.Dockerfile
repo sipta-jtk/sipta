@@ -43,6 +43,11 @@ COPY --chown=www-data:www-data . /var/www/
 RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /var/log/supervisor
 
+#akses storage
+RUN chmod -R 755 storage bootstrap/cache \
+ && find storage/app/public -type d -exec chmod 755 {} \; \
+ && find storage/app/public -type f -exec chmod 644 {} \;
+
 # Update composer.lock
 RUN composer update
 

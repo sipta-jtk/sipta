@@ -1,17 +1,64 @@
 $(document).ready(function () {
     let jenisForm = $('#jenisForm');
+    let namaProdi = $('#namaProdi');
+    let jenisTAContainer = $('#jenisTAContainer');
+
+    if (jenisTAContainer.length === 0) {
+        $('<div class="col-md-6" id="jenisTAContainer">\
+            <div class="form-group">\
+                <label for="jenisTA">Jenis TA</label>\
+                <select class="form-control" name="jenisTA" id="jenisTA" required>\
+                    <option value="" disabled selected>-- Pilih Jenis TA --</option>\
+                    <option value="Penelitian">Penelitian</option>\
+                    <option value="Pengembangan">Pengembangan</option>\
+                </select>\
+            </div>\
+        </div>').insertAfter($('#namaProdi').closest('.col-md-6'));
+        
+        jenisTAContainer = $('#jenisTAContainer');
+    }
+    
+    jenisTAContainer.hide();
 
     function toggleTables() {
         let jenis = jenisForm.val();
+        console.log("Jenis formulir diubah ke:", jenis);
+        
         $('#tablePenilaian').toggle(jenis === 'Penilaian');
         $('#tableFeedback').toggle(jenis === 'Feedback');
+        $(".bobot-summary").closest('tr').toggle(jenis === 'Penilaian');
+        $("#notification").addClass("d-none");
     }
 
-    // Inisialisasi tampilan saat halaman dimuat
-    toggleTables();
+    function toggleJenisTA() {
+        const selectedProdiId = namaProdi.val();
+        const selectedProdiText = namaProdi.find('option:selected').text().trim();
+        
+        if (selectedProdiText.includes('D4-Teknik Informatika') || selectedProdiId === '2') {
+            jenisTAContainer.show();
+            $('#jenisTA').prop('required', true);
+            $('input[name="jenisTA"][type="hidden"]').remove();
+        } else if (selectedProdiText.includes('D3-Teknik Informatika') || selectedProdiId === '1') {
+            jenisTAContainer.hide();
+            $('#jenisTA').prop('required', false);
+            $('input[name="jenisTA"][type="hidden"]').remove();
+            $('<input type="hidden" name="jenisTA" value="Pengembangan">')
+                .insertAfter(namaProdi.closest('.form-group'));
+        } else {
+            jenisTAContainer.hide();
+            $('#jenisTA').prop('required', false);
+            $('input[name="jenisTA"][type="hidden"]').remove();
+        }
+    }
 
-    // Event listener untuk perubahan pilihan
+    toggleTables();
+    toggleJenisTA();
+
     jenisForm.change(toggleTables);
+    namaProdi.change(function() {
+        console.log("Prodi changed to:", $(this).val());
+        toggleJenisTA();
+    });
 
     function setMinDate() {
         const today = new Date();
@@ -23,8 +70,17 @@ $(document).ready(function () {
         $('#tanggalTenggat').attr('min', minDate);
     }
 
-    // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
+
+    function updateRowStriping() {
+        $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff");
+            } else {
+                $(this).css("background-color", "#f8f9fa"); 
+            }
+        });
+    }
 
     // Event listener untuk menambah baris
     $("#addRow").click(function() {
@@ -51,19 +107,62 @@ $(document).ready(function () {
                     </td>
                 </tr>
             `);
+            validateTotalBobot();
         }
-        validateTotalBobot();
+        updateRowStriping();
     });
 
     // Event listener untuk menghapus baris
     $(document).on('click', '.remove-row', function () {
         $(this).closest('tr').remove();
-        validateTotalBobot(); 
+        if ($("#jenisForm").val() === "Penilaian") {
+            validateTotalBobot();
+        }
+        updateRowStriping();
     });
+
+    updateRowStriping();
 
     function initBobotInputs() {
         $('input[name="bobot_kriteria[]"]').addClass('bobot-kriteria');
     }
+
+    // Event listener untuk memeriksa total bobot saat nilai diubah
+    $(document).on('input', '.bobot-kriteria', function () {
+        validateTotalBobot();
+    });
+
+    $(document).ready(function () {
+        validateTotalBobot();
+    });
+
+    // Event listener untuk value yang sudah ada saat halaman dimuat
+    initBobotInputs();
+    if ($("#jenisForm").val() === "Penilaian") {
+        validateTotalBobot();
+    }
+
+    $('#aspekFormulirForm').on('submit', function(e) {
+        if ($("#jenisForm").val() === "Penilaian") {
+            let totalBobot = validateTotalBobot();
+
+            if (totalBobot !== 100) {
+                e.preventDefault();
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Total Bobot Tidak Valid",
+                    text: `Total bobot harus 100%`,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+
+                return false;
+            }
+        }
+        return true;
+    });
 
     // Validasi total bobot
     function validateTotalBobot() {
@@ -79,6 +178,19 @@ $(document).ready(function () {
             }
         });
 
+        const bobotSummary = $(".bobot-summary");
+        if (totalBobot === 100) {
+            bobotSummary
+                .removeClass("alert-warning")
+                .addClass("alert-info")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            bobotSummary
+                .removeClass("alert-info")
+                .addClass("alert-warning")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        }
+
         // Menampilkan pesan error jika total bobot tidak 100
         if (totalBobot !== 100) {
             $("#bobotError")
@@ -93,34 +205,8 @@ $(document).ready(function () {
         return totalBobot;
     }
 
-    // Event listener untuk memeriksa total bobot saat nilai diubah
-    $(document).on('input', '.bobot-kriteria', function () {
-        validateTotalBobot();
-    });
-
-    // Event listener untuk value yang sudah ada saat halaman dimuat
-    initBobotInputs();
-    validateTotalBobot();
-
-    $('#aspekFormulirForm').on('submit', function(e) {
-        let totalBobot = validateTotalBobot();
-
-        if (totalBobot !== 100) {
-            e.preventDefault();
-            $("#notification")
-                .removeClass("d-none")
-                .find("#notificationMessage")
-                .text("Total Bobot Harus 100%");
-
-            setTimeout(function () {
-                $("#notification").addClass("d-none");
-            }, 3000);
-        }
-    });
-
-    // Memicu button submit
-    $('.btn-primary').on('click', function() {
-        console.log('Button clicked');
+    $('.btn-primary[type="submit"]').on('click', function() {
+        console.log('Submit button clicked');
         $('#aspekFormulirForm').submit();
     });
 });
