@@ -1185,11 +1185,9 @@
         $('#edit_id_dokumen').val(id);
         $('#edit_judul').val(judul);
         $('#edit_deskripsi').val(deskripsi);
-        $('#edit_username').val('{{ auth()->user()->username }}');
-
-        // Handle file preview
+        $('#edit_username').val('{{ auth()->user()->username }}'); // Handle file preview
         if (filePath && filePath.trim() !== '') {
-            var fullUrl = `/storage/${filePath}`;
+            var fullUrl = `${prefix}/storage/${filePath}`;
 
             // Deteksi file extension
             var fileExtension = filePath.split('.').pop().toLowerCase();
@@ -1256,9 +1254,8 @@
             $('#field_kode_fta_view').hide();
             $('#view_kode_fta').val('');
         }
-
         if (filePath && filePath.trim() !== '') {
-            var fullUrl = `/storage/${filePath}`;
+            var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
             // Buka di tab baru

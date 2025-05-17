@@ -1,22 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR II')
+@section('title', 'Penilaian Dosen Pembimbing')
 
 @section('content_header')
     <div class="container-fluid p-3">
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
         
         <!-- Breadcrumb -->
-        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                 ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]
                 ])
         @endcomponent
-        
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
     </div>
 @stop
 
@@ -38,9 +37,9 @@
 
         <!-- Data Mahasiswa dalam Tabel -->
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-striped table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -70,7 +69,7 @@
             </div>
         </div>
 
-        <!-- Tombol Preview -->
+        <!-- Tombol Preview
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Preview File Dokumen Seminar II</strong> <br>
@@ -85,7 +84,6 @@
             </div>
         </div>
 
-        <!-- Modal -->
         <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -103,10 +101,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-
-        <!-- Form Penilaian -->
         <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
             <div class="row mt-4">
@@ -118,7 +114,7 @@
                         $mhs   = $keteranganUmumPenilaian->mahasiswa;
                     @endphp
 
-                    <table class="table table-bordered text-center">
+                    <table class="table table-bordered table-striped text-center">
                         <thead class="thead-dark align-middle">
                             <tr>
                                 <th rowspan="3">No</th>
@@ -149,7 +145,7 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
                                         </td>
                                     @endforeach
                                 </tr>
@@ -161,7 +157,7 @@
                             </tr>
                             @foreach($secB as $i => $krit)
                                 <tr>
-                                    <td>{{ $i + i }}</td>
+                                    <td>{{ $i + 1 }}</td>
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
@@ -170,7 +166,7 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
                                         </td>
                                     @endforeach
                                 </tr>
@@ -182,9 +178,11 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <button type="submit" class="btn btn-warning">
-                Simpan
-            </button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-prev btn-md my-1">
+                    Simpan <i class="fa-solid fa-floppy-disk"></i>
+                </button>
+            </div>
         </form>
     </div>
 @stop

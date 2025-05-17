@@ -775,7 +775,7 @@
 
             // Handle file preview
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
+                var fullUrl = `${prefix}/storage/${filePath}`;
 
                 // Deteksi file extension
                 var fileExtension = filePath.split('.').pop().toLowerCase();
@@ -843,8 +843,10 @@
                 $('#view_kode_fta').val('');
             }
 
+            const assetStorageBase = "{{ asset('storage') }}";
+
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
+                var fullUrl = `${assetStorageBase}/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
                 // Buka di tab baru
