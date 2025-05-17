@@ -293,6 +293,15 @@
                             <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
                                 @if ($status_ta === 'mahasiswa_ta')
+                                <!-- Delete button -->
+                                <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
+                                    data-id="{{ $doc->id_dokumen }}"
+                                    data-judul="{{ $doc->judul }}"
+                                    data-toggle="modal" data-target="#HapusDokumen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
                                 <!-- Edit button -->
                                 <button class="btn btn-sm btn-outline-primary edit-btn"
                                     onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
@@ -303,14 +312,6 @@
                                     data-file="{{ $doc->file_path }}"
                                     data-toggle="modal" data-target="#UbahDokumen">
                                     <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
                                 </button>
 
                                 <!-- View button -->
