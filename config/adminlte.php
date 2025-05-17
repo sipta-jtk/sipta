@@ -653,7 +653,19 @@ return [
                     'text' => 'List mahasiswa TA',
                     'url'  => $prefix . '/repository/dosen/kelompok-ta',
                     'icon' => 'fas fa-user-friends',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
+                ],
+                [
+                    'text' => 'List mahasiswa bimbingan',
+                    'url'  => $prefix . '/repository/dosen/kelompok-ta-bimbingan',
+                    'icon' => 'fas fa-user-friends',
+                    'can' => 'pembimbing'
+                ],
+                [
+                    'text' => 'List mahasiswa uji',
+                    'url'  => $prefix . '/repository/dosen/kelompok-ta-uji',
+                    'icon' => 'fas fa-user-friends',
+                    'can' => 'penguji'
                 ],
                 [
                     'text' => 'Repository Mahasiswa',
@@ -664,13 +676,13 @@ return [
                     'text' => 'Log Aktivitas',
                     'url'  => $prefix . '/repository/koor-ta/log-aktivitas',
                     'icon' => 'fas fa-clock',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
                 ],
                 [
                     'text' => 'Monitoring Penyimpanan',
                     'url'  => $prefix . '/repository/koor-ta/monitoring-penyimpanan',
                     'icon' => 'fas fa-database',
-                    'can' => 'akses-sidebar-repo-dosen'
+                    'can' => 'akses-koordinator-admin'
                 ],
             ]
         ],
