@@ -336,7 +336,7 @@ return [
                 [
                     'text' => 'Daftar Kesediaan dan Pengajuan',
                     'url' => $prefix . '/#',
-                    'icon' => 'fa-solid fa-rectangle-list',
+                    'icon' => 'fas fa-user-tag',
                     'submenu' => [
                         [
                             'text' => 'Daftar Kesediaan Membimbing',
@@ -345,8 +345,8 @@ return [
                             'icon' => 'fas fa-fw fa-table'
                         ],
                         [
-                            'text' => 'Daftar Pengajuan Dosen Pembimbing',
-                            'icon' => 'fas fa-fw fa-list-ol',
+                            'text' => 'Peminatan Menjadi Penguji',
+                            'icon' => 'fas fa-fw fa-window-restore',
                             'url' => $prefix . '/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/',
                             'can' => 'dosen',
                         ],
@@ -380,7 +380,13 @@ return [
                 [
                     'text' => 'Alokasi Dosen Pembimbing',
                     'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-pembimbing',
-                    'can' => 'koordinator_ta',
+                    'can' =>'akses-alokasi',
+                     'icon' => 'fas fa-chalkboard-teacher'
+                ],
+                [
+                    'text' => 'Alokasi Dosen Penguji',
+                    'url' => $prefix . '/PengajuanAlokasiPembimbing/alokasi-penguji',
+                    'can' =>'akses-alokasi',
                      'icon' => 'fas fa-chalkboard-teacher'
                 ],
                 [

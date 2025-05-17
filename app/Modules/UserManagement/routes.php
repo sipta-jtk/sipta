@@ -29,6 +29,7 @@ use App\Modules\UserManagement\Controllers\ImpersonateController;
 
 use FontLib\Table\Type\name;
 
+$prefix = env('PREFIX_URL', '');
 
 // Route untuk login
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -195,7 +196,9 @@ Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
 ==========================================*/
 Route::get('/test-dashboard', [DashboardController::class, 'showPengajuanSeminar3']);
 Route::get('/', [DashboardController::class, 'index']);
-
+Route::prefix($prefix)->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 Route::middleware(['can:mahasiswa_ta'])->group(function () {
     Route::get('/tambah-anggota-kota/{id}', [PerekrutanAnggotaKoTAController::class, 'showTambahAnggotaForm'])->name('tambah-anggota-kota');
