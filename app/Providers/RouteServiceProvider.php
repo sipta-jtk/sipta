@@ -43,9 +43,6 @@ class RouteServiceProvider extends ServiceProvider
             // Ensure Fortify routes are loaded
             Route::middleware('web')
                 ->group(base_path('vendor/laravel/fortify/routes/routes.php'));
-
-            Route::middleware('web')
-                ->group(base_path('app/Modules/UserManagement/routes.php'));
         });
     }
 

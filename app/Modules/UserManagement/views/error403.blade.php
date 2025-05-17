@@ -10,12 +10,12 @@
 <div class="error-page text-center mt-5">
     <h2 class="headline text-warning"> 403</h2>
     <div class="error-content">
-        <h3><i class="fas fa-exclamation-triangle text-warning"></i> Akses Dilarang</h3>
+        <h3><i class="fas fa-exclamation-triangle text-warning"></i> Access Forbidden</h3>
         <p>
             Anda tidak memiliki izin untuk mengakses halaman ini.<br>
             Silakan kembali ke <a href="/sipta">halaman utama</a> atau hubungi administrator.
         </p>
-                <img src="{{ asset('error-image/error-403.png') }}" alt="Error 403" class="img-fluid mt-3" style="max-width: 400px;">
+                <img src="{{ url('storage/image/error-403.png') }}" alt="Error 403" class="img-fluid mt-3" style="max-width: 400px;">
 
     </div>
 </div>

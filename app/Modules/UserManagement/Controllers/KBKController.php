@@ -4,7 +4,6 @@ namespace App\Modules\UserManagement\Controllers;
 
 use App\Modules\Controller;
 use App\Models\Kbk; 
-use App\Models\Dosen;
 use Illuminate\Http\Request;
 
 class KBKController extends Controller
@@ -19,13 +18,12 @@ class KBKController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input dan cek duplikasi
+        // Validasi input
         $request->validate([
-            'kbk' => 'required|string|max:100|unique:kbk,kbk'
-        ], [
-            'kbk.unique' => 'KBK sudah ada.'
+            'kbk' => 'required|string|max:100'
         ]);
 
+     
         Kbk::create([
             'kbk' => $request->kbk
         ]);
@@ -35,13 +33,12 @@ class KBKController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validasi input dan cek duplikasi, kecuali yang sedang diedit
+        // Validasi input
         $request->validate([
-            'kbk' => 'required|string|max:100|unique:kbk,kbk,' . $id . ',id_kbk'
-        ], [
-            'kbk.unique' => 'Nama KBK sudah ada.'
+            'kbk' => 'required|string|max:100'
         ]);
 
+        // Update data KBK
         Kbk::where('id_kbk', $id)->update([
             'kbk' => $request->kbk
         ]);
@@ -51,14 +48,7 @@ class KBKController extends Controller
 
     public function destroy($id)
     {
-        // Cek apakah ada dosen yang menggunakan id_kbk ini
-        $jumlahDosen = Dosen::where('id_kbk', $id)->count();
-
-        if ($jumlahDosen > 0) {
-            return redirect()->route('kelola-kbk')->with('error', 'Tidak dapat menghapus KBK karena masih digunakan ');
-        }
-
-        // Lanjutkan penghapusan jika tidak digunakan
+        // Hapus KBK berdasarkan ID
         Kbk::where('id_kbk', $id)->delete();
 
         return redirect()->route('kelola-kbk')->with('success', 'KBK berhasil dihapus!');

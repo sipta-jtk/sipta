@@ -9,7 +9,6 @@ use App\Models\Kota;
 use App\Models\Mahasiswa;
 use App\Models\Bidang;
 use App\Models\PengajuanPembimbing;
-use App\Models\Prodi;
 // use App\Models\AlokasiPembimbing;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,10 +29,6 @@ class DetailKoTAController extends Controller
      */
     public function index($id = null)
     {
-        // Initialisasi mahasiswa variable
-        $mahasiswa = null;
-        $maksimalAnggota = 3; // Default value jika tidak ada data prodi
-
         // Jika ID tidak diberikan, ambil ID KoTA dari user yang login
         if ($id === null)
         {
@@ -55,16 +50,6 @@ class DetailKoTAController extends Controller
             // Set ID menjadi ID KoTA mahasiswa
             $id = $mahasiswa->id_kota;
         }
-        else {
-            // Coba mengambil anggota KoTA untuk mendapatkan id_prodi
-            $kotaAnggota = Mahasiswa::where('id_kota', $id)->first();
-            if ($kotaAnggota) {
-                $prodi = Prodi::find($kotaAnggota->id_prodi);
-                if ($prodi) {
-                    $maksimalAnggota = $prodi->maksimal_anggota_kota;
-                }
-            }
-        }
 
         // Ambil data KoTA berdasarkan ID
         $kota = Kota::find($id);
@@ -72,16 +57,6 @@ class DetailKoTAController extends Controller
         if (!$kota)
         {
             return redirect()->back()->with('error',  'Kelompok TA tidak ditemukan.');
-        }
-
-        // Jika memiliki data mahasiswa (untuk akses via sidebar 'Detail KoTA Saya')
-        if ($mahasiswa) {
-             // Ambil nilai maksimal anggota dari prodi mahasiswa
-            $prodi = Prodi::find($mahasiswa->id_prodi);
-            if ($prodi) 
-            {
-                $maksimalAnggota = $prodi->maksimal_anggota_kota;
-            }   
         }
 
         // Ambil data anggota kelompok TA
@@ -135,6 +110,6 @@ class DetailKoTAController extends Controller
             // Abaikan error dan gunakan default pembimbing
         }
 
-        return view('UserManagement.views.detail-kota', compact('kota', 'anggota', 'judulTA', 'bidangTA', 'pembimbing', 'maksimalAnggota'));
+        return view('UserManagement.views.detail-kota', compact('kota', 'anggota', 'judulTA', 'bidangTA', 'pembimbing'));
     }
 }

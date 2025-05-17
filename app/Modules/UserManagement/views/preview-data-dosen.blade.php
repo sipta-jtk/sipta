@@ -4,15 +4,6 @@
 
 @section('content_header')
     <h1>Data Import Dosen</h1>
-    <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-        'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url('/sipta-dev/manajemen-akun-dosen/'), 'label' => 'Manajemen Akun Dosen'],
-        ['url' => url(), 'label' => 'Preview Data Dosen']
-        ]])
-        @endcomponent
-        </div>
 @stop
 @section('content')
 <a href="{{route('manage.dosen')}}" class="btn btn-primary mb-3">
@@ -27,7 +18,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th style="width: 10%">NIP</th>
+                        <th style="width: 10%">Username</th>
                         <th  style="width: 20%">Nama</th>
                         <th style="width: 15%">Email</th>
                         <th style="width: 10%">ID </th>
@@ -44,7 +35,7 @@
                                 <input type="text" name="data[{{ $index }}][username]" value="{{ $row['username'] }}" class="form-control" required>
                             </td>
                             <td>
-                                <input type="text" name="data[{{ $index }}][nama]" pattern="[A-Za-z\s.,]+" value="{{ $row['nama'] }}" class="form-control" required>
+                                <input type="text" name="data[{{ $index }}][nama]" value="{{ $row['nama'] }}" class="form-control" required>
                             </td>
                             <td>
                                 <input type="email" name="data[{{ $index }}][email]" value="{{ $row['email'] }}" class="form-control" required>
@@ -59,7 +50,7 @@
                                 <input type="text" name="data[{{ $index }}][no_wa]" value="{{ $row['no_wa'] }}" class="form-control" required>
                             </td>
                             <td>
-                                <x-adminlte-select2 name="data[{{ $index }}][id_kbk]" fgroup-class="col-md-8" required>
+                                <x-adminlte-select2 name="data[{{ $index }}][id_kbk]" fgroup-class="col-md-8"  >
                                     <option selected disabled>Pilih KBK ....</option>
                                     @foreach($kbk as $k)
                                     <option value="{{$k->id_kbk}}">{{ $k->kbk }}</option>

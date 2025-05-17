@@ -63,10 +63,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         //reset
         Fortify::resetPasswordView(function ($request) {
-            return view('UserManagement.views.auth.reset-password', [
-                'token' => $request->route('token'),
-                'email' => $request->email,
-            ]);
+            return view('UserManagement.views.auth.reset-password', ['request' => $request]);
         });
 
         // Mengatur redirect setelah login

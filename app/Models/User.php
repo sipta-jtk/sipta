@@ -6,13 +6,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Storage;
-use Lab404\Impersonate\Models\Impersonate;
-
 
 class User extends Authenticatable
 {     
-    use Notifiable, HasRoles, HasApiTokens, Impersonate;
+    use Notifiable, HasRoles;
+
+    use HasApiTokens;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -35,16 +34,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
-
-    public function getRememberToken()
-    {
-        return null; // Jangan kembalikan apapun
-    }
-
-    public function setRememberToken($value)
-    {
-        // Tidak perlu melakukan apapun
-    }
 
     public function dosen()
     {
@@ -83,10 +72,12 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        if ($this->photo && Storage::disk('public')->exists($this->photo)) {
-            return asset('storage/' . $this->photo);
+        // Cek apakah user memiliki foto profil
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);  // Path gambar profil
         }
 
+        // Jika tidak ada foto profil, kembalikan gambar default
         return asset('storage/photos/default-profile.jpg');
     }
 
@@ -98,15 +89,5 @@ class User extends Authenticatable
     public function adminlte_profile_url()
     {
         return 'profile';
-    }
-
-        public function canImpersonate(): bool
-    {
-        return $this->role_user === 'admin';
-    }
-
-    public function canBeImpersonated(): bool
-    {
-        return $this->role_user !== 'admin';
     }
 }

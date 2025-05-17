@@ -22,25 +22,14 @@
             <button class="btn btn-primary" data-toggle="modal" data-target="#uploadExcel">
                 <i class="fa fa-upload"></i> Unggah Excel
             </button>
+        
             <a href="{{ route('download.template-mhs') }}" class="btn btn-primary">
                 <i class="fa fa-download"></i> Unduh Format Excel
             </a>
+        
             <button class="btn btn-primary" data-toggle="modal" data-target="#addNewMhs">
                 <i class="fa fa-plus"></i> Tambah Mahasiswa
             </button>
-        </div>
-        <div id="role_section" style="display: none;">
-            <div class="mb-3">
-                <label for="new_role">Pilih Peran Baru:</label>
-                <select id="new_role" class="form-control">
-                    <option value="">-- Pilih Peran --</option>
-                    <option value="dosen">Dosen</option>
-                    <option value="koordinator_ta">Koordinator TA</option>
-                </select>
-            </div>
-            <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
-            <button id="updateRoleButton" class="btn btn-success">Ubah Peran</button>
-            </div>
         </div>
         
         <table id="datatable" class="table table-striped">
@@ -49,9 +38,9 @@
                     <th>No</th>
                     <th>NIM</th>
                     <th>Nama</th>
+                    <th>Tahun Masuk</th>
                     <th>Prodi</th>
                     <th>Kelas</th>
-                    <th>Tahun Masuk</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -61,30 +50,19 @@
                     @endphp
                 @foreach ($mahasiswa as $mhs)
                 <tr>
+                    
                     <td>{{$no}}</td>
                     <td>{{ $mhs->nim }}</td>
                     <td>{{ $mhs->nama }}</td>
+                    <td>{{ $mhs->tahun_masuk }}</td>
                     <td>{{ $mhs->nama_prodi }}</td>
                     <td>{{ $mhs->kelas}}</td>
-                    <td>{{ $mhs->tahun_masuk }}</td>
                     <td>    
                     @php
                     $no++; 
                     @endphp
-                    @if($mhs->status_user != 'nonaktif')
-                        <button class="btn btn-danger btn-xs shadow btn-nonaktif-mhs" title="Nonaktifkan Mahasiswa" data-toggle="modal" data-target="#nonAktifMhs" 
-                        data-nim="{{ $mhs->nim }}"
-                        data-nama="{{ $mhs->nama }}">
-                        <i class="fas fa-power-off m-1"></i>
-                    </button>
-                    @else
-                    <button class="btn btn-success btn-xs shadow btn-aktif-mhs" title="Aktifkan Mahasiswa" data-toggle="modal" data-target="#AktifMhs" 
-                        data-nim="{{ $mhs->nim }}"
-                        data-nama="{{ $mhs->nama }}">
-                        <i class="fas fa-power-off m-1"></i> 
-                    </button>
-                    @endif
-                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-mhs" title="Edit" data-toggle="modal" data-target="#updateMhs"
+                        {{-- Edit Button --}}
+                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-mhs" title="Edit" data-toggle="modal" data-target="#updateMhs" class="bg-purple"
                             data-nim="{{ $mhs->nim }}"
                             data-nama="{{ $mhs->nama }}"
                             data-email="{{ $mhs->email }}"
@@ -93,22 +71,34 @@
                             data-id_prodi="{{ $mhs->id_prodi }}"
                             data-tahun_masuk="{{ $mhs->tahun_masuk }}"
                             >
+                            {{-- data-maks_bimbingan_d4="{{ $mhs->maks_bimbingan_d4 }}"
+                            data-maks_bimbingan_d3="{{ $mhs->maks_bimbingan_d3 }}"> --}}
+                            
                                 <i class="fas fa-edit"></i>
                             </button>
-                            
+                        
+        
+                
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-                        
+                        {{-- <x-adminlte-modal id="deleteDosen" title="Menghapus Dosen" theme="purple" icon="fa fa-trash" size='lg' >
+                            <form action="{{route('dosen.deleteDosen')}}" method="POST">
+                                @csrf
+                                <input type="hidden" name="nip" class="form-control" id="nip-hapus">
+                                <h5>Yakin ingin menghapus dosen atas nama <b> '<span id="nama-dosen"></span>'</b></h5>
+                                <button class="btn btn-danger" type="submit" >Delete</button>
+                            </form>
+                        </x-adminlte-modal> --}}
         
                         <x-adminlte-modal id="updateMhs" title="Mengubah Data Mahasiswa" theme="blue" size='lg' >
                             <form action="{{route('mahasiswa.updateMhs')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
                                     fgroup-class="" disable-feedback required/>
 
                                     <x-adminlte-input name="nim" id="nim-update" label="NIM" placeholder="NIM"
@@ -154,7 +144,7 @@
                             <form action="{{route('mahasiswa.addNewMhs')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
                                         fgroup-class="" disable-feedback required/>
                                 
                                     <x-adminlte-input name="nim" label="NIM" placeholder="NIM"
@@ -179,17 +169,24 @@
                                         <x-adminlte-input name="email" label="Email" placeholder="Email"
                                         fgroup-class="" disable-feedback  required  />
 
+
+                                
                             <div class="d-flex pt-3 justify-content-end">
                                 <x-adminlte-button theme="danger" label="Tutup"
                                 data-dismiss="modal" class="mx-1"/>
                                 <x-adminlte-button theme="success" label="Simpan"
                                  class="mx-1" type="submit"/>
                                 </div>
-                                   <x-slot name="footerSlot"></x-slot>
+                                <x-slot name="footerSlot"></x-slot>
                         </form>
                         </x-adminlte-modal>
+
+                  
+
+
                   
                 <x-adminlte-modal id="uploadExcel" title="Tambah Akun Melalui Excel" theme="blue" size='lg' >
+
                         <form action="{{route('import-mhs')}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Pilih file excel ..."  fgroup-class="" disable-feedback required accept=".xls,.xlsx,.csv"/>
@@ -201,74 +198,29 @@
                                 </div>
                                 <x-slot name="footerSlot"></x-slot>
                         </form>
-                </x-adminlte-modal>
+                        </x-adminlte-modal>
 
-                <x-adminlte-modal id="nonAktifMhs" title="Menonaktifkan Mahasiswa" theme="blue" size='lg'>
-                            <form action="{{route('nonaktif-mhs')}}" method="POST">
-                                @csrf
-                                <h4 id="konfirmasi-pesan-nonaktif">Yakin ingin menonaktifkan Mahasiswa ?</h4>
-                                <input type="hidden" name="nim" class="form-control" id="nim-input-nonaktif">
-                                <div class="d-flex justify-content-end">
-                                    <x-adminlte-button theme="success" label="Nonaktifkan"
-                                     class="mx-1" type="submit"/>
-                                    </div>
-                                    <x-slot name="footerSlot"></x-slot>
-                            </form>
-                    </x-adminlte-modal>
-                    <x-adminlte-modal id="AktifMhs" title="Aktifkan Mahasiswa" theme="blue" size='lg'>
-                            <form action="{{route('aktif-mhs')}}" method="POST" >
-                                @csrf
-                                <h4 id="konfirmasi-pesan-aktif">Yakin ingin mengaktifkan Mahasiswa ?</h4>
-                                <input type="hidden" name="nim" class="form-control" id="nim-input-aktif">
-                                <div class="d-flex justify-content-end">
-                                    <x-adminlte-button theme="success" label="Aktifkan"
-                                     class="mx-1" type="submit"/>
-                                    </div>
-                                    <x-slot name="footerSlot"></x-slot>
-                            </form>
-                    </x-adminlte-modal>  
-            </div>
-            </div>
-
-
-@stop
-
-@section('css')
-<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-
+    
+    
+                    </div>
+</div>
 @stop
 
 @section('js')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-  
-
-    document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.querySelector('input[type="file"]');
-    if (!fileInput) return;
-
-    const allowedExtensions = ['xls', 'xlsx', 'csv'];
-
-    fileInput.addEventListener('change', function () {
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        const allowedExtensions = ['xls', 'xlsx', 'csv'];
         const file = this.files[0];
-        if (!file) return;
-
         const fileExtension = file.name.split('.').pop().toLowerCase();
+
         if (!allowedExtensions.includes(fileExtension)) {
             alert("File harus berformat .xls, .xlsx, atau .csv!");
             this.value = ''; // Reset input file
         }
-
-        const label = fileInput.closest('.input-group')?.querySelector('.custom-file-label');
-        if (label) {
-            label.textContent = file.name;
-        }
     });
-});
     document.addEventListener("DOMContentLoaded", function () {
         const fileInput = document.querySelector('input[type="file"]');
         const label = fileInput.closest('.input-group').querySelector('.custom-file-label');
@@ -289,6 +241,7 @@
 
      $(document).ready(function () {
          $(".btn-update-mhs").click(function () {
+ 
              var nim = $(this).data("nim");
              var nama = $(this).data("nama");
              var email = $(this).data("email");
@@ -296,6 +249,8 @@
              var id_prodi = $(this).data("id_prodi");
              var kelas = $(this).data("kelas");
              var tahun_masuk = $(this).data("tahun_masuk");
+
+
 
              document.getElementById("nim-update").value = nim;
              document.getElementById("nama-update").value = nama;
@@ -305,29 +260,10 @@
              document.getElementById("kelas-update").value = kelas;
              document.getElementById("tahun_masuk-update").value = tahun_masuk;
 
-             console.log(nim);
  
          });
      });
 
-     $(document).ready(function () {
-        $(".btn-nonaktif-mhs").click(function () {
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            document.getElementById("nim-input-nonaktif").value = nim;
-            document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
-            "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
-    });
-        });
-
-     $(document).ready(function () {
-        $(".btn-aktif-mhs").click(function () {
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            document.getElementById("nim-input-aktif").value = nim;
-            document.getElementById("konfirmasi-pesan-aktif").textContent = 
-            "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
-        });
-    });
+ 
 </script>
 @stop

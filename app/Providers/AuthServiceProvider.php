@@ -26,21 +26,11 @@ class AuthServiceProvider extends ServiceProvider
 
         /**********************************************************
         ! Restricted    
-
-            * Role Access v.2
-            * Base role.
-            * Role dasar dari pengguna.
-            * Perubahan base role dilakukan oleh tim User Management.
-        ***********************************************************/
-
-
-        /* v2 update
-            Tambah gate user
-        */
-        //User
-        Gate::define('user', function($user){
-            return $user !== null;
-        });
+         * Role Access v.1
+         * Base role.
+         * Role dasar dari pengguna.
+         * Perubahan base role dilakukan oleh tim User Management.
+         ***********************************************************/
 
         //Admin
         Gate::define('admin', function ($user) {

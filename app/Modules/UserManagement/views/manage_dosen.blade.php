@@ -29,13 +29,8 @@
     {{-- <div class="card-header d-flex justify-content-between align-items-left">
     </div> --}}
     <div class="card-body">
-        <div class="d-flex justify-content-between">
-            <div>
-                <button class="btn btn-primary mb-3 updateRoleBulk">
-                    <i class="fa fa-check"></i> Tampilkan Centang
-                </button>
-              </div>
-        <div style="gap: 0.5rem;">
+        <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
+
             <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#uploadExcel">
                 <i class="fa fa-upload"></i> Unggah Excel
             </button>
@@ -48,8 +43,7 @@
                 <i class="fa fa-plus"></i> Tambah Dosen
             </button>
         </div>
-              
-            </div>
+
         <div id="role_section" style="display: none;">
             <div class="mb-3">
                 <label for="new_role">Pilih Peran Baru:</label>
@@ -67,31 +61,35 @@
         <table id="datatable" class="table table-striped">
             <thead class="bg-dark text-white">
                 <tr>
-                    <th class="first_column"><input type="checkbox" id="select_all"></th>
+                    <th><input type="checkbox" id="select_all"></th>
                     <th>No</th>
                     <th>NIP</th>
                     <th>Nama</th>
                     <th>Email</th>
+                    <th>No WhatsApp</th>
+                    <th>Status</th>
                     <th>Peran</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $no = 1;
+                 $no = 1   
                 @endphp
                 @foreach ($dosen as $d)
                 <tr>
-                    <td class="first_column">
+                    <td>
                     @if ($d->role_dosen != 'kajur')
                         <input type="checkbox" class="user_checkbox" value="{{ $d->nip }}">
                     @endif
                     
                     </td>
-                    <td>{{$no++}}</td>
+                    <td>{{$no}}</td>
                     <td>{{ $d->nip }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->email }}</td>
+                    <td>{{ $d->no_whatsapp }}</td>
+                    <td>{{ $d->status_dosen }}</td>
                     <td>
                         @if ($d->role_dosen == 'koordinator_ta')
                             Koordinator TA
@@ -101,9 +99,12 @@
                             Dosen
                         @endif
                     </td>
-                   
+                    @php
+                     $no++;   
+                    @endphp
+
                     <td>    
-                        @if($d->status_user != 'nonaktif')
+                        @if($d->status_dosen != 'nonaktif')
                         <button class="btn btn-danger btn-xs shadow btn-nonaktif-dosen" title="Nonaktifkan Dosen" data-toggle="modal" data-target="#nonAktifDosen" 
                         data-nip="{{ $d->nip }}"
                         data-nama="{{ $d->nama }}">
@@ -119,7 +120,7 @@
     
 
                         {{-- Edit Button --}}
-                        <button class="btn btn-warning btn-xs me-2 shadow btn-update-dosen" title="Edit Data" data-toggle="modal" data-target="#updateDosen" class="bg-purple"
+                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-dosen" title="Edit Data" data-toggle="modal" data-target="#updateDosen" class="bg-purple"
                             data-nip="{{ $d->nip }}"
                             data-nama="{{ $d->nama }}"
                             data-role="{{ $d->role_dosen }}"
@@ -127,6 +128,7 @@
                             data-email="{{ $d->email }}"
                             data-no_whatsapp="{{ $d->no_whatsapp }}"
                             data-kode_dosen="{{ $d->kode_dosen }}"
+                            data-status_dosen="{{ $d->status_dosen }}"
                             data-id_kbk="{{ $d->id_kbk }}">
 
                               <i class="fas fa-edit m-1"></i>
@@ -140,17 +142,23 @@
                             <i class="fas fa-user-cog m-1"></i> 
                         </button>
                         @endif
+                       
+                
                     </td>
                 </tr>
                 @endforeach
+
+                
+
             </tbody>
         </table>
+        
                         <x-adminlte-modal id="updateDosen" title="Mengubah Data Dosen" theme="blue" size='lg' >
                             <form action="{{route('dosen.updateDosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
 
-                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" id="nama-update" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" id="nama-update" label="Nama" placeholder="Nama Lengkap"
                                         fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" id="nip-update" label="NIP" placeholder="NIP"
@@ -169,6 +177,13 @@
                                     @endforeach
                                 </x-adminlte-select2>
 
+                                {{-- <x-adminlte-select2 name="status_dosen" label="Status" id="status_dosen-update" fgroup-class="col-md" required>
+                                    <option selected disabled>Pilih Status ....</option>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non Aktif</option>
+
+                            </x-adminlte-select2> --}}
+
                                 <p class="text-secondary text-md border-bottom">Kontak</p>
                                     <x-adminlte-input name="no_wa" id="no_whatsapp-update" label="Nomor Whatsapp" placeholder="Nomor Whatsapp"
                                                fgroup-class="col-md" disable-feedback  required  />
@@ -185,6 +200,7 @@
                                     <x-slot name="footerSlot"></x-slot>
                             </form>
                         </x-adminlte-modal>
+
                         <x-adminlte-modal id="changeRole" title="Manajemen Peran Dosen" theme="blue" size='lg'>
                             
                             <form action="{{route('dosen.update_role')}}" method="POST">
@@ -195,7 +211,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama</label>
-                                    <input type="text" name="nama" pattern="[A-Za-z\s.,]+" class="form-control" id="nama-input" placeholder="Nama" readonly>
+                                    <input type="text" name="nama" class="form-control" id="nama-input" placeholder="Nama" readonly>
                                 </div>
 
                                 <div class="mb-3">
@@ -220,7 +236,7 @@
                             <form action="{{route('dosen.add_new_dosen')}}" method="POST">
                                 @csrf
                                 <p class="text-secondary text-md border-bottom">Identitas Pribadi</p>
-                                    <x-adminlte-input name="nama" pattern="[A-Za-z\s.,]+" label="Nama" placeholder="Nama Lengkap"
+                                    <x-adminlte-input name="nama" label="Nama" placeholder="Nama Lengkap"
                                     fgroup-class="col-md" disable-feedback required/>
 
                                         <x-adminlte-input name="nip" label="NIP" placeholder="NIP"
@@ -260,118 +276,53 @@
                         </form>
                         </x-adminlte-modal>
 
-                        <x-adminlte-modal id="uploadExcel" title="Tambah Akun Melalui Excel" theme="blue" size='lg' >
-                                <form action="{{route('import-dosen')}}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Pilih file excel ..." fgroup-class="col-md" disable-feedback required accept=".xls,.xlsx,.csv"/>
-                                    <div class="d-flex justify-content-end">
-                                    <x-adminlte-button theme="danger" label="Tutup"
-                                    data-dismiss="modal" class="mx-1"/>
-                                    <x-adminlte-button theme="success" label="Pratinjau"
-                                     class="mx-1" type="submit"/>
-                                    </div>
-                                    <x-slot name="footerSlot"></x-slot>
-                                </form>
-                        </x-adminlte-modal>
+                        <x-adminlte-modal id="uploadExcel" title="Tambah Akun Melalui Excel" theme="blue"
+                        icon="fa fa-plus" size='lg' >
 
-                        <x-adminlte-modal id="nonAktifDosen" title="Menonaktifkan Dosen" theme="blue" size='lg'>
-                            <form action="{{route('nonaktif-dosen')}}" method="POST">
-                                @csrf
-                                <h4 id="konfirmasi-pesan-nonaktif">Yakin ingin menonaktifkan Dosen ?</h4>
-                                <input type="hidden" name="nip" class="form-control" id="nip-input-nonaktif">
-                                <div class="d-flex justify-content-end">
-                                    <x-adminlte-button theme="success" label="Nonaktifkan"
-                                     class="mx-1" type="submit"/>
-                                    </div>
-                                    <x-slot name="footerSlot"></x-slot>
-                            </form>
+                        <form action="{{route('import-dosen')}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <x-adminlte-input-file name="file" label="Upload Excel" placeholder="Pilih file excel ..." fgroup-class="col-md" disable-feedback required accept=".xls,.xlsx,.csv"/>
+                        <div class="d-flex pt-3 justify-content-end">
+                            <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1"/>
+                            <x-adminlte-button theme="success" label="Simpan" class="mx-1" type="submit"/>
+                            </div>
+                            <x-slot name="footerSlot"></x-slot>
+                    </form>
+                        
                     </x-adminlte-modal>
-                    <x-adminlte-modal id="aktifDosen" title="Aktifkan Dosen" theme="blue" size='lg'>
-                            <form action="{{route('aktif-dosen')}}" method="POST" >
-                                @csrf
-                                <h4 id="konfirmasi-pesan-aktif">Yakin ingin mengaktifkan Dosen ?</h4>
-                                <input type="hidden" name="nip" class="form-control" id="nip-input-aktif">
-                                <div class="d-flex justify-content-end">
-                                    <x-adminlte-button theme="success" label="Aktifkan"
-                                     class="mx-1" type="submit"/>
-                                    </div>
-                                    <x-slot name="footerSlot"></x-slot>
-                            </form>
-                    </x-adminlte-modal>                     
+
+                  
+
+
+               
     </div>
 </div>
-@stop
-
-@section('css')
-<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-<style>
-    .first_column {
-        display: none;
-    }
-    
-</style>
 @stop
 
 @section('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $('#datatable').DataTable({
-        order : [[1, 'asc']],
-        paging: false,
-        searching: true,
-        language: {
-            search: "Cari:",
-            lengthMenu: "Tampilkan MENU data per halaman",
-            zeroRecords: "Data tidak ditemukan",
-            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data tersedia",
-            infoFiltered: "(difilter dari total _MAX_ data)",
-        },
-        columnDefs: [
-        { orderable: false, targets: [0, -1] } // checkbox dan aksi tidak bisa sort
-    ]
-});
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const button = document.querySelector('.updateRoleBulk');
-        const columns = document.querySelectorAll('.first_column');
-
-        button.addEventListener('click', function() {
-
-            if (columns[0].style.display === 'none' || columns[0].style.display === '') {
-                document.querySelectorAll('.first_column').forEach(el => {
-                el.style.display = 'table-cell'; // Tampilkan kolom
-                button.classList.remove('btn-primary');
-                button.classList.add('btn-danger');
-                button.innerHTML = '<i class="fa fa-times"></i> Sembunyikan Centang';
-                $('#role_section').show();
-            });
-            } else {
-                document.querySelectorAll('.first_column').forEach(el => {
-                el.style.display = 'none'; 
-                button.classList.remove('btn-danger');
-                button.classList.add('btn-primary');
-                button.innerHTML = '<i class="fa fa-check"></i> Tampilkan Centang';
-                $('#role_section').hide();
-                
-            });
-            }
-
-            columns.forEach(el => {
-                el.style.display = isHidden ? 'table-cell' : 'none';
-            });
-
-            
-    });
-});
     $(document).ready(function () {
+    function toggleRoleSection() {
+        var selectedCount = $('.user_checkbox:checked').length;
+        if (selectedCount >= 1) {
+            $('#role_section').show();
+        } else {
+            $('#role_section').hide();
+        }
+    }
 
+    // Saat checkbox user diubah
+    $('.user_checkbox').on('change', function () {
+        toggleRoleSection();
+    });
+
+    // Checkbox utama (select all)
     $('#select_all').on('change', function () {
         $('.user_checkbox').prop('checked', this.checked);
+        toggleRoleSection();
     });
 
     // Event klik tombol update
@@ -387,6 +338,7 @@
             return;
         }
 
+        // Kirim data ke server dengan AJAX
         $.ajax({
             url: "{{ route('updateBulkRole') }}",
             type: "POST",
@@ -413,46 +365,31 @@
 });
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.querySelector('input[type="file"]');
-    if (!fileInput) return;
-
-    const allowedExtensions = ['xls', 'xlsx', 'csv'];
-
-    fileInput.addEventListener('change', function () {
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        const allowedExtensions = ['xls', 'xlsx', 'csv'];
         const file = this.files[0];
-        if (!file) return;
-
         const fileExtension = file.name.split('.').pop().toLowerCase();
+
         if (!allowedExtensions.includes(fileExtension)) {
             alert("File harus berformat .xls, .xlsx, atau .csv!");
             this.value = ''; // Reset input file
         }
-
-        const label = fileInput.closest('.input-group')?.querySelector('.custom-file-label');
-        if (label) {
-            label.textContent = file.name;
-        }
     });
-});
-
     document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.querySelector('input[type="file"]'); 
-    if (!fileInput) return;
+        const fileInput = document.querySelector('input[type="file"]');
+        const label = fileInput.closest('.input-group').querySelector('.custom-file-label');
 
-    const label = fileInput.closest('.input-group')?.querySelector('.custom-file-label');
-    if (!label) return;
-
-    fileInput.addEventListener('change', function () {
-        if (this.files.length > 0) {
-            label.textContent = this.files[0].name;
-        } else {
-            label.textContent = "Choose a file...";
-        }
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                label.textContent = this.files[0].name;
+            } else {
+                label.textContent = "Choose a file...";
+            }
+        });
     });
-});
- 
-    
+    $(document).ready(function () {
+        $("#dosenTable").DataTable();
+    });
 
     $(document).ready(function () {
         $(".btn-change-role").click(function () {
@@ -465,7 +402,16 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("role-input").value = role;
         });
     });
-    
+    $(document).ready(function () {
+         $(".btn-delete-dosen").click(function () {
+             var nip = $(this).data("nip");
+             var nama = $(this).data("nama");
+ 
+             document.getElementById("nip-hapus").value = nip;
+             $("#nama-dosen").text(nama);
+         });
+     });
+ 
      $(document).ready(function () {
          $(".btn-update-dosen").click(function () {
  
@@ -475,6 +421,7 @@ document.addEventListener("DOMContentLoaded", function () {
              var no_whatsapp = $(this).data("no_whatsapp");
              var id_dosen = $(this).data("id_dosen");
              var kode_dosen = $(this).data("kode_dosen");
+             var status_dosen = $(this).data("status_dosen");
              var id_kbk = $(this).data("id_kbk");
 
              document.getElementById("nip-update").value = nip;
@@ -483,32 +430,13 @@ document.addEventListener("DOMContentLoaded", function () {
              document.getElementById("no_whatsapp-update").value = no_whatsapp;
              document.getElementById("id_dosen-update").value = id_dosen;
              document.getElementById("kode_dosen-update").value = kode_dosen;
+             document.getElementById("status_dosen-update").value = status_dosen;
              document.getElementById("kbk-update").value = id_kbk;
-             console.log(id_kbk);
+
  
          });
      });
-       $(document).ready(function () {
-        $(".btn-nonaktif-dosen").click(function () {
-            var nip = $(this).data("nip");
-            var nama = $(this).data("nama");
-            document.getElementById("nip-input-nonaktif").value = nip;
-            document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
-            "Apakah Anda yakin ingin menonaktifkan dosen " + nama + "?";
-    });
-        });
-
-     $(document).ready(function () {
-        $(".btn-aktif-dosen").click(function () {
-            var nip = $(this).data("nip");
-            var nama = $(this).data("nama");
-            document.getElementById("nip-input-aktif").value = nip;
-            document.getElementById("konfirmasi-pesan-aktif").textContent = 
-            "Apakah Anda yakin ingin mengaktifkan dosen " + nama + "?";
-        });
-    });
-    
-    
 
  
 </script>
+@stop

@@ -328,7 +328,7 @@ return [
             'url' => $prefix . '/admin/blog',
             'can' => 'manage-blog',
         ],
-        ['header' => 'Layanan Tugas Akhir', 'can' => 'user'],
+        ['header' => 'Layanan Tugas Akhir'],
         [
             'text' => 'Pengajuan dan Alokasi Pembimbing',
             'icon' => 'fas fa-home',
@@ -644,7 +644,6 @@ return [
             'text' => 'Timeline',
             'url' => $prefix . '/timeline',
             'icon' => 'fas fa-fw fa-calendar',
-            'can' => 'user'
 
             // 'label' => 4,
             // 'label_color' => 'success',
@@ -680,17 +679,17 @@ return [
                 ],
             ]
         ],
-        // [
-        //     'text' => 'Artefak',
-        //     'url' => $prefix . '/#',
-        //     'icon' => 'fas fa-fw fa-folder',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'Kelola Dokumen dan FTA',
-        //             'url' => $prefix . '/artefak',
-        //         ],
-        //     ]
-        // ],
+        [
+            'text' => 'Artefak',
+            'url' => $prefix . '/#',
+            'icon' => 'fas fa-fw fa-folder',
+            'submenu' => [
+                [
+                    'text' => 'Kelola Dokumen dan FTA',
+                    'url' => $prefix . '/artefak',
+                ],
+            ]
+        ],
         [
             'text' => 'Kelola Ruangan',
             'url' => $prefix . '/ruangan-service/ruangan',
@@ -701,12 +700,10 @@ return [
             'text' => 'Kalender Penjadwalan Ruangan',
             'url' => $prefix . '/ruangan-service/kalender',
             'icon' => 'fas fa-fw fa-calendar',
-            'can' => 'user',
         ],
         [
             'text' => 'Cek Plagiarisme',
             'icon' => 'fas fa-fw fa-file',
-            'can' => 'user',
             'submenu' => [
                 [
                     'text' => 'Cek Plagiarisme',
@@ -721,7 +718,7 @@ return [
                 ],
             ]
         ],
-        ['header' => 'Pengaturan Pengguna', 'can' => 'user'],
+        ['header' => 'Pengaturan Pengguna'],
         [
             'text' => 'User Management',
             'icon' => 'fas fa-user',
