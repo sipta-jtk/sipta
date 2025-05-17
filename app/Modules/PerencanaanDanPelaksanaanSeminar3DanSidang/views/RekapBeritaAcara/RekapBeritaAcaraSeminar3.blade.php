@@ -47,7 +47,7 @@
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->nama_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')

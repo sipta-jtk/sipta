@@ -19,7 +19,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+                <table id="BeritaAcaraSeminar3" class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
                             <th style="width: 8%;">KoTA</th>
@@ -39,7 +39,7 @@
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->nama_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
@@ -133,6 +133,31 @@
 @stop
 
 @section('js')
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $('#BeritaAcaraSeminar3').DataTable({
+                "searching": false,
+                "lengthMenu": false,
+                "infoFiltered": false,
+                "paginate": false,
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    "infoEmpty": "Tidak ada data tersedia",
+                    "infoFiltered": "(difilter dari total _MAX_ data)",
+                    "paginate": {
+                        "first": "<<",
+                        "last": ">>",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                }
+            });
+    </script>    
+
     <script>
     // Fungsi untuk semua file input
     function handleFileInput() {
