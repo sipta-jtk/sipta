@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 /**
  * Class DosenController
@@ -80,19 +81,35 @@ class DosenController extends Controller
     public function add_new_dosen(Request $request)
     {
         $request->validate([
-            'nip' => 'required|unique:dosen,nip',
-            'email' => 'required|email|unique:user,email',
+            'nip' => 'required|unique:user,username',
+            'email' => 'required|email|unique:user,email|regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/',
             'nama' => 'required|string',
-            'id' => 'required|string',
-            'kode' => 'required|string',
-            'no_wa' => 'required',
+            'id' => 'required|string|unique:dosen,id_dosen',
+            'kode' => 'required|string|unique:dosen,kode_dosen',
+            'no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
             'status_dosen' => 'required',
             'id_kbk' => 'required',
+        ],[
+            'nip.unique' => 'NIP sudah digunakan, gunakan NIP yang lain',
+            'nip.required' => 'NIP wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
+            'nama.required' => 'Nama wajib diisi.',
+            'id.required' => 'ID Dosen wajib diisi.',
+            'kode.required' => 'Kode Dosen wajib diisi.',
+            'id_kbk.required' => 'ID KBK wajib diisi.',
+            'email.unique' => 'Email sudah terdaftar, gunakan email yang lain',
+            'id.unique' => 'ID Dosen sudah terdaftar, gunakan ID yang lain',
+            'kode.unique' => 'Kode Dosen sudah terdaftar, gunakan kode yang lain',
+            'no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+            'no_wa.between' => 'Nomor WhatsApp maksimal sampai 15 digit. ',
+            'no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka.'
         ]);
 
         DB::beginTransaction();
         try {
-            $randomCode = "password123";
+            $password = Str::random(8);
             $user = User::create([
                 'username' => $request->nip,
                 'email' => $request->email,
@@ -100,7 +117,7 @@ class DosenController extends Controller
                 'no_whatsapp' => $request->no_wa,
                 'photo' => 'default.jpg',
                 'role_user' => 'dosen',
-                'password' => Hash::make($randomCode)
+                'password' => Hash::make($password)
             ]);
 
             Dosen::create([
@@ -120,25 +137,7 @@ class DosenController extends Controller
         }
     }
 
-    /**
-     * Menghapus dosen berdasarkan NIP.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function deleteDosen(Request $request)
-    {
-        $request->validate([
-            'nip' => 'required'
-        ]);
 
-        $nip = $request->nip;
-        AlokasiPembimbing::where('nip', $nip)->delete();
-        Dosen::where('nip', $nip)->delete();
-        User::where('username', $nip)->delete();
-
-        return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil dihapus!');
-    }
 
     /**
      * Memperbarui data dosen.
@@ -148,19 +147,52 @@ class DosenController extends Controller
      */
     public function updateDosen(Request $request)
     {
+        $dosen = Dosen::where('nip', $request->nip)->first();
+        $user = User::where('username', $request->nip)->first();
         $request->validate([
-            'nip' => 'required',
-            'email' => 'required',
+            'nip' => [
+                'required',
+                Rule::unique('user', 'username')->ignore($user->username,'username'),
+            ],
+            'email' => [
+                'required','email','regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/',
+                Rule::unique('user', 'email')->ignore($user->username,'username'),
+            ],
             'nama' => 'required|string',
-            'id' => 'required|string',
-            'kode' => 'required|string',
-            'no_wa' => 'required',
-            'status_dosen'=> 'required',
+            'id' => [
+                'required',
+                'string',
+                Rule::unique('dosen', 'id_dosen')->ignore($dosen->nip,'nip'),
+            ],
+            'kode' => [
+                'required',
+                'string',
+                Rule::unique('dosen', 'kode_dosen')->ignore($dosen->nip,'nip'),
+            ],
+            'no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
             'id_kbk' => 'required',
+        ], [
+            'nip.unique' => 'NIP sudah digunakan, gunakan NIP yang lain',
+            'email.unique' => 'Email sudah terdaftar, gunakan email yang lain',
+            'id.unique' => 'ID Dosen sudah terdaftar, gunakan ID yang lain',
+            'kode.unique' => 'Kode Dosen sudah terdaftar, gunakan kode yang lain',
+            'no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+            'no_wa.between' => 'Nomor WhatsApp maksimal sampai 15 digit. ',
+            'no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka.',
+            'nip.required' => 'NIP wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
+            'nama.required' => 'Nama wajib diisi.',
+            'id.required' => 'ID Dosen wajib diisi.',
+            'kode.required' => 'Kode Dosen wajib diisi.',
+            'id_kbk.required' => 'KBK wajib diisi.',
         ]);
 
         $nip = $request->nip;
 
+        DB::beginTransaction();
+        try {
         $user = User::where('username', $nip)->first();
         $user->update([
             'username' => $request->nip,
@@ -173,13 +205,14 @@ class DosenController extends Controller
         $dosen->update([
             'id_dosen' => $request->id,
             'kode_dosen' => $request->kode,
-            'status_dosen' => $request->status_dosen,
             'id_kbk' => $request->id_kbk,
         ]);
-
-        // Commit transaksi jika semua berhasil
-        return redirect()->route('manage.dosen')->with('success', "Dosen berhasil ditambahkan! Password: $randomCode");
-
+        DB::commit();
+        return redirect()->route('manage.dosen')->with('success', "Dosen berhasil diubah!");
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.dosen')->with('error', 'Gagal merubah dosen: ' . $e->getMessage());
+    }
   
     }
 
@@ -248,12 +281,29 @@ class DosenController extends Controller
         $validatedData = $request->validate([
             'data.*.username' => 'required|string|unique:user,username',
             'data.*.nama' => 'required|string',
-            'data.*.email' => 'required|email|unique:user,email',
+            'data.*.email' => 'required|email|unique:user,email|regex:/^[a-zA-Z0-9._%+-]+@polban\.ac\.id$/',
             'data.*.id_dosen' => 'required|unique:dosen,id_dosen',
             'data.*.kode_dosen' => 'required|unique:dosen,kode_dosen',
-            'data.*.no_wa' => 'required|string',
+            'data.*.no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
             'data.*.id_kbk' => 'required',
+        ],[
+            'data.*.username.unique' => 'Terdapat NIP yang sudah digunakan, gunakan NIP yang lain',
+            'data.*.email.unique' => 'Terdapat Email yang sudah terdaftar, gunakan email yang lain',
+            'data.*.id_dosen.unique' => 'Terdapat ID Dosen yang sudah terdaftar, gunakan ID yang lain',
+            'data.*.kode_dosen.unique' => 'Terdapat Kode Dosen yang sudah terdaftar, gunakan kode yang lain',
+            'data.*.no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+            'data.*.no_wa.between' => 'Nomor WhatsApp maksimal sampai 15 digit. ',
+            'data.*.no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka.',
+            'data.*.id_kbk.required' => 'Silakan pilih KBK.',
+            'data.*.username.required' => 'NIP wajib diisi.',
+            'data.*.email.required' => 'Email wajib diisi.',
+            'data.*.email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
+            'data.*.email.email' => 'Format email tidak valid.',
+            'data.*.nama.required' => 'Nama wajib diisi.',
+            'data.*.id_dosen.required' => 'ID Dosen wajib diisi.',
+            'data.*.kode_dosen.required' => 'Kode Dosen wajib diisi.',
         ]);
+
 
         $usernames = array_column($validatedData['data'], 'username');
         $emails = array_column($validatedData['data'], 'email');
@@ -269,9 +319,10 @@ class DosenController extends Controller
 
         $users = [];
         $dosen = [];
-
-        foreach ($validatedData['data'] as $userData) {
-            $randomCode = "password123";
+        DB::beginTransaction();
+        try {
+            foreach ($validatedData['data'] as $userData) {
+            $password = Str::random(8);
 
             $users[] = [
                 'username' => $userData['username'],
@@ -280,7 +331,7 @@ class DosenController extends Controller
                 'no_whatsapp' => $userData['no_wa'],
                 'photo' => 'default.jpg',
                 'role_user' => 'dosen',
-                'password' => Hash::make($randomCode)
+                'password' => Hash::make($password)
             ];
 
             $dosen[] = [
@@ -293,8 +344,12 @@ class DosenController extends Controller
 
         User::insert($users);
         Dosen::insert($dosen);
-
-        return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil diimport!');
+        DB::commit();
+        return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil dimasukkan dan diimport!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Data dosen gagal dimasukkan: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -309,9 +364,38 @@ class DosenController extends Controller
             'nip' => 'required|array',
             'role_dosen' => 'required|string',
         ]);
-
         Dosen::whereIn('nip', $request->nip)->update(['role_dosen' => $request->role_dosen]);
-
         return redirect()->route('manage.dosen')->with('success', 'Role dosen berhasil diperbarui!');
+    }
+    public function aktifkanAkun(Request $request)
+    {
+        $request->validate([
+            'nip' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            User::where('username', $request->nip)->update(['status_user' => 'aktif']);
+            DB::commit();
+            return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil diaktifkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Gagal mengaktifkan dosen: ' . $e->getMessage());
+        }
+    }
+    public function nonAktifkanAkun(Request $request)
+    {
+        $request->validate([
+            'nip' => 'required',
+        ]);
+        DB::beginTransaction();
+        try {
+            User::where('username', $request->nip)->update(['status_user' => 'nonaktif']);
+            DB::commit();
+            return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil dinonaktifkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Gagal menonaktifkan dosen: ' . $e->getMessage());
+        }
     }
 }

@@ -24,8 +24,10 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
 {
     public function create()
     {
+
         $user = Auth::user();
         $idKota = $user->mahasiswa->id_kota;
+
 
         // Ambil pengajuan berdasarkan id_kota
         $pengajuan = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
