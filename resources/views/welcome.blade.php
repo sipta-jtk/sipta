@@ -80,22 +80,22 @@
 
         @if($mahasiswa->status_ta === 'mahasiswa_ta')
         <!-- Berkas Pengajuan Seminar 3 -->
-        <div class="card card-warning mt-2">
+        <div class="card mt-2">
             <div class="card-header">
                 Berkas Pengajuan Seminar 3
             </div>
             <div class="card-body">
-                <table id="artefakTable" class="table table-striped" width="100%">
+                <table id="dokumenTable" class="table table-striped" width="100%">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
-                            <th style="width: 80%">Nama Artefak</th>
+                            <th style="width: 80%">Nama Dokumen</th>
                             <th style="width: 20%">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($artefakSeminar as $item)
+                        @forelse ($dokumenSeminar as $item)
                             <tr>
-                                <td>{{ $item['nama_artefak'] }}</td>
+                                <td>{{ $item['nama_dokumen'] }}</td>
                                 <td>
                                     @if ($item['status'] === 'Sudah diunggah')
                                         <span class="badge bg-success">{{ $item['status'] }}</span>
@@ -106,7 +106,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="text-center">Tidak ada data artefak.</td>
+                                <td colspan="2" class="text-center">Tidak ada data dokumen.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -115,22 +115,22 @@
         </div>
 
         <!-- Berkas Pengajuan Sidang Akhir -->
-        <div class="card card-danger mt-4 mb-4">
+        <div class="card mt-4 mb-4">
             <div class="card-header">
                 Berkas Pengajuan Sidang Akhir
             </div>
             <div class="card-body">
-                <table id="artefakTable" class="table table-striped" width="100%">
+                <table id="dokumenTable" class="table table-striped" width="100%">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
-                            <th style="width: 80%">Nama Artefak</th>
+                            <th style="width: 80%">Nama Dokumen</th>
                             <th style="width: 20%">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($artefakSidang as $item)
+                        @forelse ($dokumenSidang as $item)
                             <tr>
-                                <td>{{ $item['nama_artefak'] }}</td>
+                                <td>{{ $item['nama_dokumen'] }}</td>
                                 <td>
                                     @if ($item['status'] === 'Sudah diunggah')
                                         <span class="badge bg-success">{{ $item['status'] }}</span>
@@ -141,7 +141,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="text-center">Tidak ada data artefak.</td>
+                                <td colspan="2" class="text-center">Tidak ada data dokumen.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -223,7 +223,7 @@
                 Daftar KoTA Bimbingan
             </div>
             <div class="card-body">
-                <table id="artefakTable" class="table table-striped" width="100%">
+                <table id="dokumenTable" class="table table-striped" width="100%">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
                             <th style="width: 20%">KoTA</th>

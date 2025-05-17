@@ -49,6 +49,10 @@ Route::prefix($prefix)->group(function () {
         Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
     });
 
+    Route::middleware(['auth', 'redirect.after.logout'])->group(function(){
+        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    });
+
 
     /**
      * ========== User Management ==========
