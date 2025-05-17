@@ -106,17 +106,6 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <!-- <div class="col-md-6">
-                                        <h6>Dosen:</h6>
-                                        @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
-                                            <div class="mb-2">
-                                                {{ $dosen->nama }}
-                                                <a href="{{ route('impersonate', $dosen->username) }}" class="btn btn-warning btn-sm">
-                                                    Login sebagai
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div> -->
 
                                     <!-- DOSEN DROPDOWN -->
                                     <div class="col-md-6">
@@ -130,25 +119,13 @@
                                                     @endforeach
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateDosenBtn">
+                                                    <button class="btn btn-info ml-2" type="button" id="impersonateDosenBtn">
                                                         Login sebagai
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- <div class="col-md-6">
-                                        <h6>Mahasiswa:</h6>
-                                        @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
-                                            <div class="mb-2">
-                                                {{ $mahasiswa->nama }}
-                                                <a href="{{ route('impersonate', $mahasiswa->username) }}" class="btn btn-warning btn-sm">
-                                                    Login sebagai
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div> -->
 
                                     <!-- MAHASISWA DROPDOWN -->
                                     <div class="col-md-6">
@@ -162,7 +139,7 @@
                                                     @endforeach
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-warning ml-2" type="button" id="impersonateMahasiswaBtn">
+                                                    <button class="btn btn-info ml-2" type="button" id="impersonateMahasiswaBtn">
                                                         Login sebagai
                                                     </button>
                                                 </div>
@@ -179,7 +156,7 @@
                                 document.getElementById('impersonateDosenBtn').addEventListener('click', function() {
                                     const username = document.getElementById('dosenSelect').value;
                                     if (username) {
-                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                        window.location.href = "{{ url(env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
                                     }
                                 });
                                 
@@ -187,7 +164,7 @@
                                 document.getElementById('impersonateMahasiswaBtn').addEventListener('click', function() {
                                     const username = document.getElementById('mahasiswaSelect').value;
                                     if (username) {
-                                        window.location.href = "{{ url('/impersonate') }}/" + username;
+                                        window.location.href = "{{ url(env('PREFIX_URL', 'sipta') . '/impersonate') }}/" + username;
                                     }
                                 });
                             });
