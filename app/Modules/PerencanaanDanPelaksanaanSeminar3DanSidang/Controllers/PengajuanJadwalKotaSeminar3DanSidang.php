@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Constraint\IsFalse;
+use Illuminate\Validation\ValidationException;
 
 class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 {
@@ -174,17 +175,26 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->get();
 
         // mengambil data ruangan dari API Topik 3
-        $response = Http::withoutVerifying()->get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
-    
-        if ($response->successful()) {
-            $ruangan = collect($response->json())->map(function ($item) {
-                return [
-                    'id_ruangan' => $item['id_ruangan'],
-                    'nama_ruangan' => $item['nama_ruangan']
-                ];
-            });
-        } else {
-            $ruangan = collect([]); // Handle jika API gagal
+        try {
+            $response = Http::timeout(10)->withoutVerifying()->get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
+        
+            if ($response->successful()) {
+                $ruangan = collect($response->json())->map(function ($item) {
+                    return [
+                        'id_ruangan' => $item['id_ruangan'],
+                        'nama_ruangan' => $item['nama_ruangan']
+                    ];
+                });
+            } else {
+                // Jika response tidak sukses, tetap gunakan data kosong
+                $ruangan = collect([]);
+            }
+        } catch (\Exception $e) {
+            // Jika request gagal karena timeout, koneksi gagal, dll
+            // Gunakan data kosong supaya program tetap jalan
+            $ruangan = collect([]);
+            // Optional: log error untuk debugging
+            \Log::error('Gagal ambil data ruangan dari API: ' . $e->getMessage());
         }
 
         // Filter hanya ruangan yang tersedia
@@ -234,17 +244,26 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         ->get();
 
         // mengambil data ruangan dari API Topik 3
-        $response = Http::get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
-
-        if ($response->successful()) {
-            $ruangan = collect($response->json())->map(function ($item) {
-                return [
-                    'id_ruangan' => $item['id_ruangan'],
-                    'nama_ruangan' => $item['nama_ruangan']
-                ];
-            });
-        } else {
-            $ruangan = collect([]); // Handle jika API gagal
+        try {
+            $response = Http::timeout(10)->withoutVerifying()->get('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/rooms/names');
+        
+            if ($response->successful()) {
+                $ruangan = collect($response->json())->map(function ($item) {
+                    return [
+                        'id_ruangan' => $item['id_ruangan'],
+                        'nama_ruangan' => $item['nama_ruangan']
+                    ];
+                });
+            } else {
+                // Jika response tidak sukses, tetap gunakan data kosong
+                $ruangan = collect([]);
+            }
+        } catch (\Exception $e) {
+            // Jika request gagal karena timeout, koneksi gagal, dll
+            // Gunakan data kosong supaya program tetap jalan
+            $ruangan = collect([]);
+            // Optional: log error untuk debugging
+            \Log::error('Gagal ambil data ruangan dari API: ' . $e->getMessage());
         }
 
         // Filter hanya ruangan yang tersedia
@@ -262,12 +281,20 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
     public function tambahPengajuanPenjadwalan(Request $request, $id_kota)
     {
         // Validasi input
-        $request->validate([
-            'tanggal_pengajuan' => 'required|date',
-            'sesi_pengajuan' => 'required|integer',
-            'ruangan_pengajuan' => 'required|string|max:255',
-            'agenda' => 'required|in:seminar_1,seminar_2,seminar_3,sidang',
-        ]);
+        try {
+            $request->validate([
+                'tanggal_pengajuan' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
+                'sesi_pengajuan' => 'required|integer',
+                'ruangan_pengajuan' => 'required|string|max:255',
+                'agenda' => 'required|in:seminar_1,seminar_2,seminar_3,sidang',
+            ], [
+                'tanggal_pengajuan.after_or_equal' => 'Tanggal pengajuan harus hari ini atau setelahnya.',
+            ]);
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->with('error', $e->validator->errors()->first())
+                ->withInput();
+        }
 
         // Cek apakah kota dengan id_kota ada
         $kota = Kota::find($id_kota);
@@ -361,17 +388,17 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_koordinator_ta' => null,
         ]);
         
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+        // Notifikasi::kirim(
+        //     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+        //     Auth::User()->username, // Ganti dengan username admin, atau log system
+        //     [
+        //         'nama' => Auth::User()->name,
+        //         'topik' => 'User membuka halaman log',
+        //         'nama_ruangan' => $item['nama_ruangan'],
+        //         'tanggal' => $item['tanggal'],
+        //         'deadline' => now()->format('d-m-Y H:i')
+        //     ]
+        // );
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }
