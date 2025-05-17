@@ -11,6 +11,7 @@ use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 Carbon::setLocale('id');
 
@@ -131,4 +132,31 @@ class CekPlagiarismeDetailController extends Controller
             'catatan' => $catatan,
         ]);
     }
+
+    public function download($id)
+    {
+        $dokumen = Dokumen::find($id);
+    
+        if (!$dokumen || !$dokumen->file_path) {
+            abort(404, 'Dokumen tidak ditemukan atau tidak memiliki file');
+        }
+    
+        $filePath = $dokumen->file_path;
+    
+        // Jika file disimpan via Storage (default: storage/app/public)
+        if (Storage::disk('public')->exists($filePath)) {
+            $filename = 'Dokumen_' . $dokumen->id_dokumen . '.pdf';
+            return Storage::disk('public')->download($filePath, $filename);
+        }
+    
+        // Jika file disimpan langsung di folder public (misal: public/dokumen/xxx.pdf)
+        $fullPath = public_path($filePath);
+        if (file_exists($fullPath)) {
+            $filename = 'Dokumen_' . $dokumen->id_dokumen . '.pdf';
+            return response()->download($fullPath, $filename);
+        }
+    
+        abort(404, 'File tidak ditemukan di server');
+    }
+
 }

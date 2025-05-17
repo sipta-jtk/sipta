@@ -49,5 +49,6 @@ def searchWeb(text, output, c):
         print(text)
         print(e)
         print('error')
+        print("Using API KEY:", searchEngine_API)
         return output, c, 1
     return output, c, 0

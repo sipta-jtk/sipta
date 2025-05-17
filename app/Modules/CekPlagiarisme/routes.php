@@ -41,3 +41,5 @@ Route::group(['prefix' => 'cek-plagiarisme', 'as' => 'cek-plagiarisme.', 'middle
     Route::put('catatan-store/{id_dokumen}/{id}', [CekPlagiarismeDetailController::class, 'updateCatatan'])->name('catatan.put');
     Route::delete('catatan-store/{id_dokumen}/{id}', [CekPlagiarismeDetailController::class, 'deleteCatatan'])->name('catatan.delete');
 });
+
+Route::get('/dokumen/{id}/download', [CekPlagiarismeDetailController::class, 'download'])->name('dokumen.download');

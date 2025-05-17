@@ -158,15 +158,33 @@ $prefix = env('PREFIX_URL', '');
                             <h5>Unduh Dokumen</h5>
                         </div>
                         <div class="card-body">
-                            <button title="Unduh Dokumen Hasil Pengecekan" class="btn btn-primary w-100">
+
+                            {{-- Tombol aktif: Unduh Dokumen Hasil Pengecekan --}}
+                            <a 
+                                href="{{ route('dokumen.download', ['id' => $dokumen->id_dokumen]) }}" 
+                                class="btn btn-primary w-100"
+                                title="Unduh dokumen yang telah dicek plagiarisme">
                                 <i class="fas fa-file-download me-1"></i> Unduh Dokumen Hasil Pengecekan
-                            </button>
-                            <button title="Unduh Bukti Penerimaan Digital" class="btn btn-primary w-100 mt-2">
+                            </a>
+
+                            {{-- Tombol nonaktif: Unduh Bukti Penerimaan Digital --}}
+                            <button 
+                                type="button" 
+                                class="btn btn-secondary w-100 mt-2" 
+                                title="Fitur belum tersedia" 
+                                disabled>
                                 <i class="fas fa-receipt me-1"></i> Unduh Bukti Penerimaan Digital
                             </button>
-                            <button title="Unduh Dokumen Asli" class="btn btn-primary w-100 mt-2">
+
+                            {{-- Tombol nonaktif: Unduh Dokumen Asli --}}
+                            <button 
+                                type="button" 
+                                class="btn btn-secondary w-100 mt-2" 
+                                title="Fitur belum tersedia" 
+                                disabled>
                                 <i class="fas fa-file-alt me-1"></i> Unduh Dokumen Asli
                             </button>
+
                         </div>
                     </div>
                 </div>
