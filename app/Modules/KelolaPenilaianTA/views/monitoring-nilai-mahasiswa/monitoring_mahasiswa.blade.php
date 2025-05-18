@@ -7,7 +7,7 @@
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => route('beranda.get'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
         ])c
@@ -41,7 +41,7 @@
             <h3 class="card-title w-100">Data Mahasiswa</h3>
         </div>
         <div class="card-body px-3 py-3">
-            <table class="table table-bordered w-50">
+            <table class="table table-striped table-bordered w-50">
                 <thead>
                     <tr class="bg-dark text-white" style="text-align: center;">
                         <th class="bg-dark align-middle text-center w-25">NIM</th>
@@ -65,7 +65,7 @@
             <h3 class="card-title w-100">Data Dosen Pembimbing</h3>
         </div>
         <div class="card-body px-3 py-3">
-            <table class="table table-bordered w-50">
+            <table class="table table-striped table-bordered w-50">
                 <thead>
                     <tr class="bg-dark text-white" style="text-align: center;">
                         <th class="bg-dark align-middle text-center w-25">NIP</th>
@@ -89,7 +89,7 @@
             <h3 class="card-title w-100">Daftar Evaluasi</h3>
         </div>
         <div class="card-body px-3 py-3">
-            <table class="table table-bordered">
+            <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th class="bg-dark">Nama FTA</th>
@@ -108,7 +108,7 @@
                             <td style="vertical-align: middle; white-space: nowrap;">{{ $ftaNama }}</td>
                             <td class="text-center">
                                 @if ($ftaPenilaian)
-                                    <a href="{{ route('monitoring.rubrik', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
+                                    <a href="{{ route('monitoring.rubrik.mahasiswa', ['kodeFta' => $ftaPenilaian->id_fta, 'idProdi' => $idProdi]) }}" 
                                         class="btn btn-primary btn-md my-1 w-100 px-3">
                                         Lihat Rubrik
                                     </a>

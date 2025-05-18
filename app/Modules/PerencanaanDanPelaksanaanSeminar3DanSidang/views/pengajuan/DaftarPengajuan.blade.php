@@ -25,7 +25,7 @@
 
 @if (is_null($verifikasi->kota ?? null))
     <div class="p-4 bg-light text-center">
-        <h3 class="flex-grow-1 p-5">Anda belum memiliki KoTA.</h3>
+        <h3 class="flex-grow-1 p-5">Anda belum memiliki Kelompok TA.</h3>
     </div>
 @elseif (is_null($verifikasi->dosen ?? null))
     <div class="p-4 bg-light text-center">

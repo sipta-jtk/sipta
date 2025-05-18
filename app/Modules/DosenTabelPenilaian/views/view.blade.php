@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'DosenTabelPenilaian')
+@section('title', 'Tabel Penilaian & Masukan')
 
 @section('content_header')
-    <h1>Tabel Penilaian & Masukan</h1>
+    <h1 class="m-0 text-dark">Tabel Penilaian & Masukan</h1>
     <div>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
@@ -42,28 +42,39 @@
                 <td>{{ $item['judul'] }}</td>
                 <td>{{ $item['kota'] }}</td>
                 <td>
-                    @if ($item['status'] === 'Sudah dinilai')
-                        @if ($item['status_penilaian'] === 'dipublikasikan')
-                            <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                                class="btn btn-primary btn-md">Lihat Nilai</a>
-                        @elseif ($item['status_penilaian'] === 'draf')
-                            <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                                class="btn btn-warning btn-md">Edit Nilai</a>
-                            <a href="#" 
-                                class="btn btn-warning btn-md"
-                                onclick="event.preventDefault(); document.getElementById('publikasikan-form-{{ $item['id_penjadwalan'] }}').submit();">
-                                Publikasikan
-                            </a>
-                            <form id="publikasikan-form-{{ $item['id_penjadwalan'] }}" 
-                                  action="{{ route('nilai.publikasikan', ['id_penjadwalan' => $item['id_penjadwalan']]) }}" 
-                                  method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        @endif
-                    @else
-                        <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                            class="btn btn-warning btn-md">Isi Nilai</a>
-                    @endif
+                    @if ($item['status_penilaian'] === 'draf' || $item['status'] === 'Belum dinilai')
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Nilai</a>
+                    </div>
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Masukan</a>
+                    </div>
+                    <div class="mb-2">
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100">Publikasi</button>
+                        </form>
+                    </div>
+                    @elseif ($item['status_penilaian'] === 'dipublikasikan')
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Lihat Nilai</a>
+                    </div>
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Lihat Masukan</a>
+                    </div>
+                    <div class="mb-2">
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'unpublish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100">Batal Publikasi</button>
+                        </form>
+                    </div>
+                @endif
                 </td>
             </tr>
         @endforeach

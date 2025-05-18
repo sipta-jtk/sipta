@@ -83,11 +83,11 @@
                                         </x-adminlte-select>
                                     </div>
                                     <div class="col-12 mb-2">
-                                        <label>Maksimal Anggota Kota</label>
+                                        <label>Maksimal Anggota Kota dari Prodi</label>
                                         <x-adminlte-input type="number" name="maksimal_anggota_kota" value="{{ $prodi->maksimal_anggota_kota }}" min="1" required />
                                     </div>
                                     <div class="col-12 mb-2">
-                                        <label>Maksimal Mahasiswa Bimbingan</label>
+                                        <label>Maksimal Mahasiswa Bimbingan dari Prodi</label>
                                         <x-adminlte-input type="number" name="maksimal_mahasiswa_bimbingan" value="{{ $prodi->maksimal_mahasiswa_bimbingan }}" min="1" required />
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                     <x-adminlte-input type="number" name="maksimal_anggota_kota" required min="1" />
                 </div>
                 <div class="col-12 mb-2">
-                    <label>Maksimal Mahasiswa Bimbingan</label>
+                    <label>Maksimal Mahasiswa Bimbingan dari Prodi</label>
                     <x-adminlte-input type="number" name="maksimal_mahasiswa_bimbingan" required min="1" />
                 </div>
             </div>

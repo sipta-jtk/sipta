@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\VerifikasiBerkasPengajuan;
 use App\Models\Kota;
+use App\Models\Dokumen;
 use Carbon\Carbon;
 Carbon::setLocale('id');
 
@@ -27,6 +28,7 @@ class VerifikasiBerkasController extends Controller
                 return $item;
             });
 
+        
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanMahasiswa', compact('dataKota', 'tipe'));        
     }
 
@@ -68,29 +70,79 @@ class VerifikasiBerkasController extends Controller
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DaftarPengajuanDiterima', compact('dataKota', 'tipe'));
     }
 
-    public function show(String $tipe, $idPengajuan): View
+    public function show(String $tipe, $idKota): View
     {
+        // Jika tipe adalah seminar-3, kategori menjadi seminar3, jika tipe adalah sidang, kategori menjadi sidang
+        $kategori = ($tipe === 'seminar-3') ? 'seminar3' : 'sidang';
+
+        // Informasi Kota
         $dataKota = VerifikasiBerkasPengajuan::with('kota')
-            ->where('id_pengajuan', $idPengajuan)
-            ->first(); // Ganti dari get() ke first()
-
+            ->where('id_Kota', $idKota)
+            ->where('status_konfirmasi', 'pending')
+            ->first();
+        
+        // Transformasi Data
         if ($dataKota) {
-            $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
-            $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
+                $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
+                $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
 
-            // jika agenda = seminar 3
-            if ($dataKota->jenis_pengajuan === 'seminar_3') {
-                $dataKota->jenis_pengajuan = 'Seminar 3';
-            } elseif ($dataKota->jenis_pengajuan === 'sidang_akhir') {
-                $dataKota->jenis_pengajuan = 'Sidang Akhir';
-            } else {
-                $dataKota->jenis_pengajuan = '-';
+                if ($dataKota->jenis_pengajuan === 'seminar_3') {
+                    $dataKota->jenis_pengajuan = 'Seminar 3';
+                } elseif ($dataKota->jenis_pengajuan === 'sidang_akhir') {
+                    $dataKota->jenis_pengajuan = 'Sidang Akhir';
+                } else {
+                    $dataKota->jenis_pengajuan = '-';
+                }
             }
-            
+
+        // Dokumen Persyaratan yang akan ditampilkan dengan versi terakhir
+        $fileTA = Dokumen::where('id_kota', $idKota)
+        ->where('kategori', $kategori)
+        ->where('id_subkategori', 1)
+        ->orderByDesc('versi')
+        ->first();
+    
+        $filePresentasi = Dokumen::where('id_kota', $idKota)
+        ->where('kategori', $kategori)
+        ->where('id_subkategori', 2)
+        ->orderByDesc('versi')
+        ->first();   
+
+        if ($kategori === 'seminar3') {
+            $ftaSatu = Dokumen::where('id_kota', $idKota)
+                ->where('kategori', $kategori)
+                ->where('id_subkategori', 2)
+                ->where('kode_fta', 'FTA-10')
+                ->orderByDesc('versi')
+                ->first();
+
+            $ftaDua = Dokumen::where('id_kota', $idKota)
+                ->where('kategori', $kategori)
+                ->where('id_subkategori', 2)
+                ->where('kode_fta', 'FTA-10a')
+                ->orderByDesc('versi')
+                ->first();
         }
 
+        if ($kategori === 'sidang') {
+            $ftaSatu = Dokumen::where('id_kota', $idKota)
+                ->where('kategori', $kategori)
+                ->where('id_subkategori', 2)
+                ->where('kode_fta', 'FTA-14')
+                ->orderByDesc('versi')
+                ->first();
 
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'tipe'));
+            $ftaDua = Dokumen::where('id_kota', $idKota)
+                ->where('kategori', $kategori)
+                ->where('id_subkategori', 2)
+                ->where('kode_fta', 'FTA-14a')
+                ->orderByDesc('versi')
+                ->first();
+        }
+
+        $daftarDokumen = collect([$fileTA, $filePresentasi, $ftaSatu, $ftaDua])->filter(); // hindari null
+
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'daftarDokumen','tipe', 'kategori'));
     }
 
     public function verifikasi(Request $request, String $tipe, int $id)

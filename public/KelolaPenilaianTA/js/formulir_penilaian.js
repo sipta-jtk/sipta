@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // Inisialisasi DataTable dan simpan hasilnya dalam variabel table
     var table = $('#formulirTable').DataTable({
         columnDefs: [
             {
@@ -27,12 +26,21 @@ $(document).ready(function () {
                 first: "<<",
                 last: ">>",
                 next: ">",
-                previous: "<"
-            }
-        }
+                previous: "<",
+            },
+        },
+        initComplete: function () {
+            $("#infoControls").html($(".dataTables_info"));
+            $("#paginationControls").html($(".dataTables_paginate"));
+            $("#dataTableControls").html($(".dataTables_length"));
+            $("#searchBox").html($(".dataTables_filter"));
+        },
     });
 
-    // Gunakan variabel table untuk menambahkan nomor urut
+    $("#toggleFilter").click(function () {
+        $("#filterSection").slideToggle();
+    });
+
     table
         .on("order.dt search.dt draw.dt", function () {
             table
@@ -43,4 +51,38 @@ $(document).ready(function () {
                 });
         })
         .draw();
+
+    function updateFilterOptions() {
+        let prodiSet = new Set();
+        let jenisFormSet = new Set();
+
+        $("#formulirTable tbody tr").each(function () {
+            let prodi = $(this).find("td:eq(3)").text().trim(); // Ambil nilai Program Studi di kolom ke-3
+            let jenisForm = $(this).find("td:eq(4)").text().trim(); // Ambil nilai Jenis Formulir di kolom ke-4
+            if (prodi) prodiSet.add(prodi);
+            if (jenisForm) jenisFormSet.add(jenisForm);
+        });
+
+        let prodiDropdown = $("#filterProdi");
+        prodiDropdown.empty().append('<option value="">Semua Program Studi</option>');
+        prodiSet.forEach((prodi) => {
+            prodiDropdown.append(`<option value="${prodi}">${prodi}</option>`);
+        });
+
+        let jenisFormDropdown = $("#filterJenisForm");
+        jenisFormDropdown.empty().append('<option value="">Semua Jenis Formulir</option>');
+        jenisFormSet.forEach((jenisForm) => {
+            jenisFormDropdown.append(`<option value="${jenisForm}">${jenisForm}</option>`);
+        });
+    }
+
+    updateFilterOptions();
+
+    $("#applyFilter").click(function () {
+        const selectedProdi = $("#filterProdi").val();
+        const selectedJenisForm = $("#filterJenisForm").val();
+
+        table.columns(3).search(selectedProdi).draw();
+        table.columns(4).search(selectedJenisForm).draw();
+    });
 });

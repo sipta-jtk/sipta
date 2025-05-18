@@ -22,11 +22,7 @@
         </div>
 
         <!-- Berkas Pengajuan -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Berkas Pengajuan</h3>
-            </div>
-        </div>
+        <div id="container-dokumen" class="container-scroll mt-3"></div>
 
         <!-- Form Verifikasi -->
         <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->id_pengajuan]) }}" method="POST">
@@ -79,13 +75,17 @@
 
 @section('js')
     <script>
+        
         $(document).ready(function() {
             let keputusan = ""; // Menyimpan keputusan user
+
+            LihatDokumen();
 
             // Event ketika tombol "Tolak" diklik
             $('#btnTolak').on('click', function() {
                 keputusan = 'tidak_disetujui';
-                $('#keputusan').val(keputusan);
+                keputusan2 = 'ditolak';
+                $('#keputusan').val(ditolak);
                 $('#containerCatatan').slideDown(); // Menampilkan container catatan
                 $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
                 $(this).addClass('active-btn').removeClass('disabled-btn');
@@ -109,5 +109,58 @@
                 }
             });
         });
+
+        const prefix = "/{{ env('PREFIX_URL') }}";
+        const kategori = '{{ $kategori }}';
+
+        function LihatDokumen() {
+            const daftarDokumen = @json($daftarDokumen);
+            const container = $('#container-dokumen');
+            container.empty();
+
+            daftarDokumen.forEach(doc => {
+                const filePath = doc.file_path?.trim();
+                const fileUrl = filePath ? `${prefix}/storage/${filePath}` : '';
+                const fileExtension = filePath?.split('.').pop().toLowerCase();
+                const viewerUrl = filePath ? `https://docs.google.com/gview?url=${location.origin}${fileUrl}&embedded=true` : '';
+                const downloadUrl = `${prefix}/repository/mahasiswa/${kategori}/${doc.id_dokumen}/download`;
+
+                let previewHTML = '';
+                let previewAvailable = true;
+
+                if (filePath && filePath !== '') {
+                    if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
+                        previewHTML = `<iframe id="viewDocumentPreview" src="${fileUrl}" width="100%" height="1000px"></iframe>`;
+                    } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                        previewHTML = `<iframe id="viewDocumentPreview" src="${viewerUrl}" width="100%" height="1000px"></iframe>`;
+                    } else {
+                        previewAvailable = false;
+                        previewHTML = `<div id="viewPreviewNotAvailable"><p>Preview tidak tersedia untuk file .${fileExtension}</p></div>`;
+                    }
+                } else {
+                    previewAvailable = false;
+                    previewHTML = `<div id="viewPreviewNotAvailable"><p>File tidak tersedia.</p></div>`;
+                }
+
+                const cardHTML = `
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Berkas Pengajuan</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Nama Dokumen:</strong> ${doc.judul}</p>
+                            ${previewHTML}
+                            ${previewAvailable ? `
+                                <a id="view_file_link" href="${fileUrl}" target="_blank" class="btn btn-primary mt-2">Lihat File</a>
+                                <a id="view_file_download" href="${downloadUrl}" class="btn btn-success mt-2">Download</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                container.append(cardHTML);
+            });
+        }
+
     </script>
 @stop

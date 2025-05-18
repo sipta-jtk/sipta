@@ -38,7 +38,7 @@
                     fgroup-class="col-md-6" readonly/>
             @endforeach
 
-            @for($i = count($anggota); $i < 3; $i++)
+            @for($i = count($anggota); $i < $maksimalAnggota; $i++)
                 <x-adminlte-input name="anggota{{ $i + 1 }}" 
                     label="Anggota {{ $i + 1 }}" 
                     value="Tidak Ada"
@@ -77,6 +77,9 @@
             @endif
 
             @can('mahasiswa_kota', $kota->id_kota)
+                @if(count($anggota) < $maksimalAnggota)
+                    <a href="{{ route('tambah-anggota-kota', ['id' => $kota->id_kota]) }}" class="btn btn-success mx-1">Tambah Anggota</a>
+                @endif
                 <a href="{{route('form.pisah.kota')}}" class="btn btn-danger">Ajukan Pisah</a>
             @endcan
         </div>
