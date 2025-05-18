@@ -46,7 +46,7 @@ class AlokasiPembimbingController extends Controller
 
             $data_pengajuan[$key]['mahasiswa'] = $listMahasiswaOnKelompok;
             $data_pengajuan[$key]['usulan_dosen'] = $listUsulanDosen;
-            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
+            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen;
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
@@ -54,7 +54,7 @@ class AlokasiPembimbingController extends Controller
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
             ->get();
 
-        return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
+        return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
             'dosenList' => $dosenList
         ]);
@@ -70,9 +70,9 @@ class AlokasiPembimbingController extends Controller
             ->select('username', 'nama')
             ->first();
 
-    if (!$dosen) {
-        return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
-    }
+        if (!$dosen) {
+            return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
+        }
 
         $pembimbing1_KoTA = AlokasiDosen::where('nip', $dosen->dosen->nip)
             ->where('urutan_prioritas_terpilih', '1')
@@ -88,15 +88,15 @@ class AlokasiPembimbingController extends Controller
 
 
         $pembimbing1_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '1')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '1')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $pembimbing2_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '2')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '2')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $jumlahMahasiswa = $pembimbing1_Mhs + $pembimbing2_Mhs;

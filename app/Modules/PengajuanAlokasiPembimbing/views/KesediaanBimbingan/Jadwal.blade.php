@@ -77,10 +77,10 @@
                 </div>
                 {{-- ================== --}}
                 <div class="container-fluid d-flex justify-content-end p-3 p-md-0 mt-2">
-                    <button type="button" onclick="previousPage()" class="btn btn-info">Sebelumnya <i
+                    <button type="button" onclick="previousPage()" class="btn btn-info"><i
                             class="fas fa-chevron-left pl-1"></i></button>
                     <button type="button" onclick="saveJadwal()" class="btn btn-primary ml-3" id="saveJadwalBtn"
-                        {{ $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' ? 'disabled' : '' }}>Simpan <i
+                        {{ $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' ? 'disabled' : '' }}><i
                             class="fas fa-save pl-1"></i></button>
                 </div>
             </div>

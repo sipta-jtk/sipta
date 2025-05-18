@@ -38,6 +38,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui');
+        $prefix = env('PREFIX_URL', 'sipta');
+        return redirect($prefix . '/profile')->with('success', 'Profil berhasil diperbarui');
     }
 }
