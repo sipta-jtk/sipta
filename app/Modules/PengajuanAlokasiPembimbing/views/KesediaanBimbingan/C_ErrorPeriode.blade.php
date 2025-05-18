@@ -2,7 +2,7 @@
     <div class="alert alert-warning" role="alert">
         Anda tidak bersedia untuk menjadi pembimbing tugas akhir, formulir ini <strong>tidak perlu</strong> diisi.
         <form
-            action="{{ route('PengajuanAlokasiPembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
+            action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
             method="post" style="display: inline;">
             @csrf
             <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Ubah Kesediaan
@@ -13,7 +13,7 @@
     <div class="alert alert-success" role="alert">
         Anda telah bersedia untuk menjadi pembimbing tugas akhir, formulir ini <strong>wajib</strong> diisi.
         <form
-            action="{{ route('PengajuanAlokasiPembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
+            action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.konfirmasi-kesediaan', 'belum_konfirmasi') }}"
             method="post" style="display: inline;">
             @csrf
             <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Ubah Kesediaan
@@ -23,7 +23,7 @@
 @endif
 @if (
     !$savedInformation['Periode'] &&
-        route('PengajuanAlokasiPembimbing.kesediaan-membimbing.jadwal.index') != url()->current())
+        route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index') != url()->current())
     <div class="alert alert-danger" role="alert">
         Periode Pengisian FTA1 (Formulir kesediaan membimbing) belum dibuka.
     </div>
