@@ -843,8 +843,10 @@
                 $('#view_kode_fta').val('');
             }
 
+            const assetStorageBase = "{{ asset('storage') }}";
+
             if (filePath && filePath.trim() !== '') {
-                var fullUrl = `${prefix}/storage/${filePath}`;
+                var fullUrl = `${assetStorageBase}/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
                 // Buka di tab baru
