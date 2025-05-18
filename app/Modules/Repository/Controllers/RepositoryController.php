@@ -266,7 +266,7 @@ class RepositoryController extends Controller
             
             //Template Harus Diganti
             Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            'Dosen Telah Memberikan Review untuk Dokumen Anda!', // Judul template notifikasi
             $nipDosen, // Ganti dengan username admin, atau log system
             []
             );
@@ -678,8 +678,6 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
-            // Query anggota berdasarkan dokumen
-            // Asumsi: dokumen milik mahasiswa, dan mahasiswa punya relasi ke pembimbing & penguji
             $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
             $pengajuan = $mahasiswa ? $mahasiswa->pengajuanPembimbing()->latest()->first() : null;
             $Anggota1 = $pengajuan?->pembimbing1?->user?->username ?? null;
@@ -696,7 +694,7 @@ class RepositoryController extends Controller
                 Notifikasi::kirim(
                     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
                     $Anggota1,
-                    ['catatan' => 'input_notes']
+                    ['catatan' => $request->input_notes]
                 );
             }
             // Notifikasi untuk Anggota2
@@ -704,7 +702,7 @@ class RepositoryController extends Controller
                 Notifikasi::kirim(
                     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
                     $Anggota2,
-                    []
+                    ['catatan' => $request->input_notes]
                 );
             }
             // Notifikasi untuk Anggota3
@@ -712,7 +710,7 @@ class RepositoryController extends Controller
                 Notifikasi::kirim(
                     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
                     $Anggota3,
-                    []
+                    ['catatan' => $request->input_notes]
                 );
             }
 
