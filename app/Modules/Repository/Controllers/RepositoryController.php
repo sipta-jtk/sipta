@@ -14,7 +14,7 @@ use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Services\Notifikasi;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -262,7 +262,13 @@ class RepositoryController extends Controller
 
             Dokumen::create($data);
 
-            
+            $nipDosen = '221524051';
+
+            Notifikasi::kirim(
+                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                $nipDosen,
+                []
+            );
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
