@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Smalot\PdfParser\Parser as PdfParser;
 use ZipArchive;
+use App\Services\Notifikasi;
 
 use Carbon\Carbon;
 
@@ -155,17 +156,49 @@ class CekPlagiarismeController extends Controller
         ]);
 
         //Notifikasi Cek Plagiarisme Selesai
+        // Kirim ke mahasiswa pengirim
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+            $nim,
+            []
         );
+        // Kirim ke dosen pembimbing dan 2 anggota kelompok TA lainnya jika ada
+        $mahasiswa = \App\Models\Mahasiswa::where('nim', $nim)->first();
+        if ($mahasiswa) {
+            // Asumsi ada relasi pengajuanPembimbing dan anggotaKelompok pada model Mahasiswa
+            $pengajuan = $mahasiswa->pengajuanPembimbing()->latest()->first();
+            $pembimbing = $pengajuan?->pembimbing1?->user?->username;
+            if ($pembimbing) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $pembimbing,
+                    []
+                );
+            }
+            // Anggota kelompok TA lain (selain pengirim)
+            $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
+                ->where('nim', '!=', $nim)
+                ->limit(2)
+                ->pluck('nim');
+            if ($anggotaKelompok->count() > 0) {
+                $anggota2 = $anggotaKelompok[0] ?? null;
+                if ($anggota2) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                        $anggota2,
+                        []
+                    );
+                }
+                $anggota3 = $anggotaKelompok[1] ?? null;
+                if ($anggota3) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                        $anggota3,
+                        []
+                    );
+                }
+            }
+        }
 
         // Tampilkan hasil ke view PengecekanTugasAkhir
         return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
