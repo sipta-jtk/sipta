@@ -38,7 +38,7 @@
                     <td>
                     @switch($kelompok->status_kota)
                             @case('pra_kota')
-                                <span class="badge badge-warning text-md w-100">Pra-KoTA</span>
+                                <span class="badge badge-warning text-md w-100">Belum Ada Judul</span>
                                 @break
                             @case('aktif')
                                 <span class="badge badge-success text-md w-100">Aktif</span>

@@ -59,9 +59,6 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-warning mr-1"
-                                        onclick="openModal('edit', {{ $periode }})">
-                                        <i class="fas fa-edit"></i></button>
                                     <form
                                         action="{{ route('pengajuanalokasipembimbing.pengelolaan-periode.delete', ['id' => $periode->id_periode_pengajuan]) }}"
                                         method="POST" style="display:inline;">
@@ -73,6 +70,9 @@
                                 }})"><i
                                                 class="fas fa-trash-alt"></i></button>
                                     </form>
+                                    <button type="button" class="btn btn-warning ml-1"
+                                        onclick="openModal('edit', {{ $periode }})">
+                                        <i class="fas fa-edit"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -195,10 +195,10 @@
                     "width": "5%",
                     "targets": 0
                 }, {
-                    "width": "100%",
+                    "width": "50%",
                     "targets": 1
                 }, {
-                    "width": "15%",
+                    "width": "55%",
                     "targets": 2
                 }, {
                     "width": "20%",
