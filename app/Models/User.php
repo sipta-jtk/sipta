@@ -83,7 +83,7 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        if ($this->photo && Storage::disk('public')->exists($this->photo)) {
+        if ($this->photo && Storage::exists($this->photo)) {
             return asset('storage/' . $this->photo);
         }
 
