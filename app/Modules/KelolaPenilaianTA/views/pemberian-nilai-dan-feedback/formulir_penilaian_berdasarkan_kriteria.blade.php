@@ -38,7 +38,7 @@
 
         <!-- Data Mahasiswa dalam Tabel -->
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
@@ -67,21 +67,6 @@
             <div class="col-md-12">
                 <strong>Topik Tugas Akhir</strong> <br>
                 <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
-            </div>
-        </div>
-
-        <!-- Tombol Preview -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Laporan
-                </button>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
-                </button>
             </div>
         </div>
 

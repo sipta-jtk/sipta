@@ -36,7 +36,7 @@
 
         <!-- Data Mahasiswa dalam Tabel -->
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
