@@ -71,9 +71,9 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
         }
-        // Harus Ganti Template
+        // Template Telah diganti (Belum Ada)
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+            '[Pemberitahuan] Role Berhasil Diperbarui',
             $nip, // Kirim notifikasi ke NIP dosen yang diupdate
             []
         );
@@ -142,9 +142,9 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
         }
-        // Harus Ganti Template
+        // Template Telah diganti (Belum Ada)
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+            '[Pemberitahuan] Akun Berhasil Dibuat',
             $request->nip, // Kirim notifikasi ke NIP dosen yang baru dibuat
             []
         );
@@ -359,11 +359,11 @@ class DosenController extends Controller
         Dosen::insert($dosen);
         DB::commit();
 
-        // Harus Ganti Template
+        // Template Telah diganti (Belum Ada)
         if (!empty($users)) {
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
                     $user['username'], // Kirim notifikasi ke username akun yang dibuat
                     []
                 );
