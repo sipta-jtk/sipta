@@ -84,7 +84,8 @@
             // Event ketika tombol "Tolak" diklik
             $('#btnTolak').on('click', function() {
                 keputusan = 'tidak_disetujui';
-                $('#keputusan').val(keputusan);
+                keputusan2 = 'ditolak';
+                $('#keputusan').val(ditolak);
                 $('#containerCatatan').slideDown(); // Menampilkan container catatan
                 $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
                 $(this).addClass('active-btn').removeClass('disabled-btn');
