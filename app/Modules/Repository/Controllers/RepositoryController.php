@@ -14,6 +14,7 @@ use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 
 
 Carbon::setlocale(LC_TIME, 'id');
