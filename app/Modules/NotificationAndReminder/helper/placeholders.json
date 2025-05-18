@@ -5,5 +5,17 @@
     "nama_ruangan": "Ruangan Default",
     "tanggal": "2025-05-18",
     "deadline": "2025-05-20 10:00"
-  }
+  },
+  "[Pemberitahuan] Ambang Batas Baru": {},
+  "[Pemberitahuan] Hasil Cek Plagiarisme Tugas Akhir Kepada Dosen!": {},
+  "[Pemberitahuan] Mahasiswa Telah Melakukan Cek Plagiarisme!": {},
+  "[Pemberitahuan] Dosen Telah Menambahkan Catatan": {},
+  "[Pemberitahuan] Dosen Telah Memperbarui Catatan": {},
+  "[Pemberitahuan] Pemberitahuan Lulus Sidang": {},
+  "[Pemberitahuan] Pembatalan Penjadwalan Seminar": {},
+  "[Pemberitahuan] Pembatalan Penjadwalan Sidang": {},
+  "Mahasiswa Telah Mengirimkan Dokumen": {},
+  "Dosen Telah Memberikan Review untuk Dokumen Anda!": {},
+  "[Pemberitahuan] Role Berhasil Diperbarui": {},
+  "[Pemberitahuan] Akun Berhasil Dibuat": {}
 }
