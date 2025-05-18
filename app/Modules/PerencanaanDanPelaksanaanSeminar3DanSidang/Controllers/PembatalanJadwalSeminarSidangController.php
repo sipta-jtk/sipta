@@ -7,6 +7,7 @@ use App\Models\Penjadwalan;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Services\Notifikasi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 Carbon::setLocale('id');

@@ -11,6 +11,7 @@ use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 
 Carbon::setLocale('id');
 

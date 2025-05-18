@@ -6,6 +6,7 @@ use App\Modules\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Kehadiran;
 Carbon::setLocale('id');
