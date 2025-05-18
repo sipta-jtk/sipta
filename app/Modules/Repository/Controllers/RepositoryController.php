@@ -264,9 +264,9 @@ class RepositoryController extends Controller
 
             Dokumen::create($data);
             
-            //Template Harus Diganti
+            //Template Telah Diganti (Belum ada)
             Notifikasi::kirim(
-            'Dosen Telah Memberikan Review untuk Dokumen Anda!', // Judul template notifikasi
+            'Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
             $nipDosen, // Ganti dengan username admin, atau log system
             []
             );
@@ -688,7 +688,7 @@ class RepositoryController extends Controller
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
 
-// Template Harus Diganti
+// Template Sudah Diganti (Sudah ada)
             // Notifikasi untuk Anggota1
             if ($Anggota1) {
                 Notifikasi::kirim(
