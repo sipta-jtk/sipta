@@ -24,11 +24,14 @@ if (is_dir($modulesPath)) {
         $routesFile = "{$modulesPath}/{$module}/routes.php";
 
         if (is_file($routesFile)) {
-            Route::prefix($prefix)->group($routesFile);
-            require $routesFile; 
+            require $routesFile;
         }
     }
 }
+
+Route::get($prefix.'/', function () {
+    return redirect($prefix);
+})->name('beranda.get');
 
 Route::get('/', function () {
     return view('welcome');
