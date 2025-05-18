@@ -134,19 +134,15 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'alasan_pembatalan' => $request->alasan,
             'nip' => $nip
         ]);
-            //Notifikasi Pembatalan Penjadawalan Seminar oleh mahasiswa
-            Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
-
+        // Notifikasi Pembatalan Penjadwalan Seminar oleh mahasiswa
+        // Not So Sure About This
+        //  Notifikasi::kirim(
+        //     '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+        //     $nip, // Kirim ke dosen pembimbing (nip)
+        //     [
+        //         'Alasan' => $request->alasan
+        //     ]
+        // );
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal seminar berhasil dikirimkan.');
     }
 
@@ -200,18 +196,15 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'nip' => $nip
         ]);
 
-        //Notifikasi Pembatalan Penjadawalan Seminar oleh mahasiswa
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+        // Not So Sure About This
+        //Notifikasi Pembatalan Penjadawalan Sidang oleh mahasiswa
+        // Notifikasi::kirim(
+        //     '[Pemberitahuan] Pembatalan Jadwal Sidang', // Judul template notifikasi
+        //     $nip, // Ganti dengan username admin, atau log system
+        //     [
+        //        'Alasan' => $request->alasan
+        //     ]
+        // );
 
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal sidang berhasil dikirimkan.');
     }
