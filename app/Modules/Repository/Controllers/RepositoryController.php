@@ -692,7 +692,7 @@ class RepositoryController extends Controller
             // Notifikasi untuk Anggota1
             if ($Anggota1) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    'Dosen Telah Memberikan Review untuk Dokumen Anda!',
                     $Anggota1,
                     ['catatan' => $request->input_notes]
                 );
@@ -700,7 +700,7 @@ class RepositoryController extends Controller
             // Notifikasi untuk Anggota2
             if ($Anggota2) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    'Dosen Telah Memberikan Review untuk Dokumen Anda!',
                     $Anggota2,
                     ['catatan' => $request->input_notes]
                 );
@@ -708,7 +708,7 @@ class RepositoryController extends Controller
             // Notifikasi untuk Anggota3
             if ($Anggota3) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    'Dosen Telah Memberikan Review untuk Dokumen Anda!',
                     $Anggota3,
                     ['catatan' => $request->input_notes]
                 );
