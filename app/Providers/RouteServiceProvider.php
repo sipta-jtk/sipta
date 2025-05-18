@@ -45,8 +45,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('vendor/laravel/fortify/routes/routes.php'));
 
             // Feature Routes Register
-            // Route::middleware('web')
-            //     ->group(base_path('app/Modules/UserManagement/routes.php'));
+            Route::middleware('web')
+                ->group(base_path('app/Modules/UserManagement/routes.php'));
 
             // Route::middleware('web')
             //     ->group(base_path('app/Modules/Repository/routes.php'));
