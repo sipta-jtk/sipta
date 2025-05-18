@@ -117,10 +117,10 @@
 
             daftarDokumen.forEach(doc => {
                 const filePath = doc.file_path?.trim();
-                const fileUrl = filePath ? `/storage/${filePath}` : '';
+                const fileUrl = filePath ? `${prefix}/storage/${filePath}` : '';
                 const fileExtension = filePath?.split('.').pop().toLowerCase();
                 const viewerUrl = filePath ? `https://docs.google.com/gview?url=${location.origin}${fileUrl}&embedded=true` : '';
-                const downloadUrl = `/download/${doc.id_dokumen}`;
+                const downloadUrl = `${prefix}/repository/mahasiswa/${kategori}/${doc.id_dokumen}/download`;
 
                 let previewHTML = '';
                 let previewAvailable = true;
