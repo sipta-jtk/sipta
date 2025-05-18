@@ -74,9 +74,9 @@ class MahasiswaController extends Controller
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal menambah mahasiswa: ' . $e->getMessage());
     }
-    // Harus Ganti Template
+    // Template Telah Diganti(Belum ada) 
     Notifikasi::kirim(
-        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+        '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
         $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
         []
     );
@@ -254,11 +254,11 @@ public function import(Request $request)
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
     }
-    //Harus Ganti Template
+    //Template Telah Diganti(Belum ada)
         if (!empty($users)) {
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
                     $user['username'], // Kirim notifikasi ke username akun yang dibuat
                     []
                 );
