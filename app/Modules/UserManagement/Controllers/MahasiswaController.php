@@ -73,18 +73,12 @@ class MahasiswaController extends Controller
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal menambah mahasiswa: ' . $e->getMessage());
     }
-    //Notifikasi Masuk Satu
+    // Harus Ganti Template
     Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+        $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
+        []
+    );
 }
 public function updateMhs(Request $request)
 {
@@ -259,18 +253,16 @@ public function import(Request $request)
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
     }
-    //Notifikasi Masuk Banyak
-    Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+    //Harus Ganti Template
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $user['username'], // Kirim notifikasi ke username akun yang dibuat
+                    []
+                );
+            }
+        }
 
 }
 

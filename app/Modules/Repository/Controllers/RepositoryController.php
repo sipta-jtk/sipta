@@ -258,9 +258,17 @@ class RepositoryController extends Controller
             if (strtolower($subkategoriName) == 'fta') {
                 $data['kode_fta'] = $request->kode_fta;
             }
-
+            
+            $nipDosen = auth()->user()->dosen->nip ?? null;
 
             Dokumen::create($data);
+            
+            //Template Harus Diganti
+            Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            $nipDosen, // Ganti dengan username admin, atau log system
+            []
+            );
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
@@ -669,9 +677,43 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
+            // Query anggota berdasarkan dokumen
+            // Asumsi: dokumen milik mahasiswa, dan mahasiswa punya relasi ke pembimbing & penguji
+            $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
+            $pengajuan = $mahasiswa ? $mahasiswa->pengajuanPembimbing()->latest()->first() : null;
+            $Anggota1 = $pengajuan?->pembimbing1?->user?->username ?? null;
+            $Anggota2 = $pengajuan?->penguji1?->user?->username ?? null;
+            $Anggota3 = $pengajuan?->penguji2?->user?->username ?? null;
+
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
+
+// Template Harus Diganti
+            // Notifikasi untuk Anggota1
+            if ($Anggota1) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $Anggota1,
+                    ['catatan' => 'input_notes']
+                );
+            }
+            // Notifikasi untuk Anggota2
+            if ($Anggota2) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $Anggota2,
+                    []
+                );
+            }
+            // Notifikasi untuk Anggota3
+            if ($Anggota3) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $Anggota3,
+                    []
+                );
+            }
 
             // Redirect back with success message
             return redirect()->back()->with('success', 'Catatan berhasil disimpan.');

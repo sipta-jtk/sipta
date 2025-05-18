@@ -68,10 +68,6 @@
                             <i class="ml-1 fas fa-arrow-right ms-2"></i>
                         </a>
                         @elseif($kota->status_kota === 'pra_kota')
-                        <a href="{{ route('data-kelompok') }}" class="d-flex border-top py-3 px-3 text-dark justify-content-end align-items-center card-hover">
-                            Ajukan Dosen Pembimbing
-                            <i class="ml-1 fas fa-arrow-right ms-2"></i>
-                        </a>
                         @endif
                     @endif
                 </div>
