@@ -151,18 +151,6 @@ class VerifikasiBerkasController extends Controller
         $catatan = $request->input('catatan', '');
         $nip = auth()->user()->username;
 
-        if ($keputusan === 'tidak_disetujui') {
-            // Ambil data berkas berdasarkan ID
-            $dataKota = Kota::where('id_kota', $id)->first(); 
-
-            // Hapus berkas (jika ada)
-            if ($dataKota && isset($dataKota->berkas)) {
-                foreach (json_decode($dataKota->berkas) as $berkas) {
-                    Storage::delete("public/berkas/{$berkas->file}");
-                }
-            }
-        }
-
         VerifikasiBerkasPengajuan::where('id_pengajuan', $id)
             ->update([
                 'nip' => $nip,
@@ -170,6 +158,10 @@ class VerifikasiBerkasController extends Controller
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
+
+        if ($keputusan === 'tidak_disetujui') {
+            $keputusan = 'ditolak';
+        }
     
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
