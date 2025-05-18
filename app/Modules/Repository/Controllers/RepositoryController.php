@@ -262,6 +262,8 @@ class RepositoryController extends Controller
 
             Dokumen::create($data);
 
+            
+
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
                 'kategori' => $kategori
