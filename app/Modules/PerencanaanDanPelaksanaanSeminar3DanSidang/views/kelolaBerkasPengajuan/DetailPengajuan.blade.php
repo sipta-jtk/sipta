@@ -110,6 +110,9 @@
             });
         });
 
+        const prefix = "/{{ env('PREFIX_URL') }}";
+        const kategori = '{{ $kategori }}';
+
         function LihatDokumen() {
             const daftarDokumen = @json($daftarDokumen);
             const container = $('#container-dokumen');
