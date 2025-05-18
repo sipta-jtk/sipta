@@ -54,7 +54,6 @@
                         @csrf
                         <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>
                     </form>
-                    @endif
                 </td>
             </tr>
         @endforeach
