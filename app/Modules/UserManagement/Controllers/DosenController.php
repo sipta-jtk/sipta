@@ -70,6 +70,18 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
         }
+        //Notifikasi Untuk Role Diperbarui
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
     }
 
     /**
@@ -135,6 +147,18 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
         }
+        // Notifikasi Masukin Satu
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
     }
 
 
@@ -350,6 +374,18 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Data dosen gagal dimasukkan: ' . $e->getMessage());
         }
+        //Notifikasi Masukin Banyak
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
     }
 
     /**
