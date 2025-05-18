@@ -158,9 +158,10 @@ class CekPlagiarismeController extends Controller
         //Notifikasi Cek Plagiarisme Selesai
         // Kirim ke mahasiswa pengirim
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+            '[Pemberitahuan] Hasil Cek Plagiarisme Tugas Akhir Kepada Dosen!',
             $nim,
-            []
+            ['result'=> $statusPlagiarisme,
+            'persentase' => $percentage]
         );
         // Kirim ke dosen pembimbing dan 2 anggota kelompok TA lainnya jika ada
         $mahasiswa = \App\Models\Mahasiswa::where('nim', $nim)->first();
@@ -168,9 +169,10 @@ class CekPlagiarismeController extends Controller
             // Asumsi ada relasi pengajuanPembimbing dan anggotaKelompok pada model Mahasiswa
             $pengajuan = $mahasiswa->pengajuanPembimbing()->latest()->first();
             $pembimbing = $pengajuan?->pembimbing1?->user?->username;
+            // Notifikasi Telah Diganti (Belum ada)
             if ($pembimbing) {
                 Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    '[Pemberitahuan] Mahasiswa Telah Melakukan Cek Plagiarisme!',
                     $pembimbing,
                     []
                 );
@@ -184,7 +186,7 @@ class CekPlagiarismeController extends Controller
                 $anggota2 = $anggotaKelompok[0] ?? null;
                 if ($anggota2) {
                     Notifikasi::kirim(
-                        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                        '[Pemberitahuan] Mahasiswa Telah Melakukan Cek Plagiarisme!',
                         $anggota2,
                         []
                     );
@@ -192,7 +194,7 @@ class CekPlagiarismeController extends Controller
                 $anggota3 = $anggotaKelompok[1] ?? null;
                 if ($anggota3) {
                     Notifikasi::kirim(
-                        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                        '[Pemberitahuan] Mahasiswa Telah Melakukan Cek Plagiarisme!',
                         $anggota3,
                         []
                     );

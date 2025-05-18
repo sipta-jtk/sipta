@@ -77,17 +77,45 @@ class CekPlagiarismeDetailController extends Controller
         ]);
 
         // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+        $nimPemilik = $dokumen->username;
+        // Kirim ke pemilik dokumen
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
+            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+            $nimPemilik,
             [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
+                'catatan' => $catatan->review
             ]
         );
+        // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+        $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
+        if ($mahasiswa) {
+            $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
+                ->where('nim', '!=', $nimPemilik)
+                ->limit(2)
+                ->pluck('nim');
+            if ($anggotaKelompok->count() > 0) {
+                $anggota2 = $anggotaKelompok[0] ?? null;
+                if ($anggota2) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                        $anggota2,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+                $anggota3 = $anggotaKelompok[1] ?? null;
+                if ($anggota3) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                        $anggota3,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+            }
+        }
     }
 
     public function deleteCatatan($id_dokumen, $id_catatan)
@@ -145,16 +173,44 @@ class CekPlagiarismeDetailController extends Controller
         ]);
 
         // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memperbarui Catatan
+        $nimPemilik = $dokumen->username;
+        // Kirim ke pemilik dokumen
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
+            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+            $nimPemilik,
             [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
+                'catatan' => $catatan->review
             ]
         );
+        // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+        $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
+        if ($mahasiswa) {
+            $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
+                ->where('nim', '!=', $nimPemilik)
+                ->limit(2)
+                ->pluck('nim');
+            if ($anggotaKelompok->count() > 0) {
+                $anggota2 = $anggotaKelompok[0] ?? null;
+                if ($anggota2) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                        $anggota2,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+                $anggota3 = $anggotaKelompok[1] ?? null;
+                if ($anggota3) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                        $anggota3,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+            }
+        }
     }
 }

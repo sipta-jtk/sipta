@@ -100,12 +100,12 @@ class AmbangBatasController extends Controller
         }
 
 
-        // Harus Ganti Template
+        // Template Telah Diganti (Belum Ada)
         foreach ($allUsers as $username) {
             Notifikasi::kirim(
-                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                '[Pemberitahuan] Ambang Batas Baru',
                 $username,
-                []
+                ['AmbangBatas' => $request->ambang_batas],
             );
         }
     }
