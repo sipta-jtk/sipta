@@ -101,6 +101,9 @@ Route::prefix($prefix)->group(function () {
         Route::get('/program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
         Route::put('/program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
         Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+        // Log Aktivitas
+        Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
     });
 
 
