@@ -24,7 +24,6 @@ if (is_dir($modulesPath)) {
         $routesFile = "{$modulesPath}/{$module}/routes.php";
 
         if (is_file($routesFile)) {
-            Route::prefix($prefix)->group($routesFile);
             require $routesFile;
         }
     }
