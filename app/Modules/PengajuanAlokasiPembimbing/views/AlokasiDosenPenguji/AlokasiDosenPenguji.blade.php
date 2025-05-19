@@ -146,27 +146,7 @@
 
                                                                     <div class="row d-flex flex-wrap m-0"
                                                                         style="height: 250px;">
-                                                                        <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
-                                                                            class="col-sm border-right border-dark p-0">
-                                                                            <div
-                                                                                class="border-bottom border-dark m-0 p-1 pl-3">
-                                                                                Dosen pembimbing
-                                                                            </div>
-                                                                            <div class="p-1 pl-3">
-                                                                                {{-- @foreach ($pengajuan->mahasiswa as $mh)
-                                                                                    {{ $mh->nama }}<br>
-                                                                                    <span
-                                                                                        class="badge font-weight-normal p-0">{{ $mh->nim }}</span><br>
-                                                                                @endforeach --}}
-                                                                                @foreach ($pengajuan->pembimbing as $usulan)
-                                                                                    <span
-                                                                                        class="badge bg-primary">{{ $loop->iteration }}</span>
-                                                                                    <span
-                                                                                        class="text-muted">({{ $usulan->id_dosen }})</span><br>
-                                                                                @endforeach
-                                                                            </div>
-                                                                        </div>
-                                                                        <div style="flex: 0 0 50%; max-width: 50%; height: 100%;"
+                                                                        <div style="flex: 0 0 100%; max-width: 100%; height: 100%;"
                                                                             class="col-sm p-0">
                                                                             <div
                                                                                 class="border-bottom border-dark m-0 p-1 pl-3">
