@@ -10,7 +10,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                 ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]

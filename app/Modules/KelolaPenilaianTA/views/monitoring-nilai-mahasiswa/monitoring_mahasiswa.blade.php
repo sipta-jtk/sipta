@@ -7,7 +7,7 @@
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
         ])c

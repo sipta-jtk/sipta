@@ -7,7 +7,7 @@
         <h1 class="mb-2">Pengaturan Bobot Nilai Akhir</h1>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Pengaturan Nilai Akhir']
             ]
         ])

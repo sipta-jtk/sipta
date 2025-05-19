@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
                 ['url' => '', 'label' => 'Detail Formulir Penilaian']
             ]

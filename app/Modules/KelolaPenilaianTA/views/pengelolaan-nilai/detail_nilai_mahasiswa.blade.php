@@ -10,7 +10,7 @@
         {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
                 ]
@@ -106,6 +106,7 @@
                                 @endphp
                                 
                                 {{-- Iterasi untuk setiap nip --}}
+                                {{-- Belum ada filter kalau yang masuk kesana itu yang sudah di publish --}}
                                 @foreach ($feedbackGroupedByNip as $nip => $feedbacks)
                                     <td class="align-middle text-center">
                                         <i class="fas fa-check-square text-success"></i> {{-- Centang hijau jika ada feedback untuk nip ini --}}
