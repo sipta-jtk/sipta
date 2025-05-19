@@ -3,31 +3,67 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
 @section('content')
 
-    {{-- <p>Data Kelompok > <a href="www">Topik Tugas Akhir</a> > <a href="www">Prioritas Dosen Pembimbing</a> > <a href="www">Pratinjau</a></p> --}}
-
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
+    
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
             <x-pengajuan-alokasi-pembimbing.components.pengajuan-pembimbing.form-stepper step="4" currentStep="2"
                 activeColor="primary" inactiveColor="secondary" 
-                :hrefs="['data-kelompok', 'topik-tugas-akhir', 'prioritas-dosen-pembimbing', 'pratinjau-formulir']" />
+                :hrefs="[
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index'),
+                    route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index')]"/>
         </div>
             <!-- Form Pengajuan -->
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Topik Tugas Akhir</h5>
+                <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
+                {{-- Form Topik TA--}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
-                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul" required></textarea>
+                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
                     </div>
                 </div>
+                {{-- Form Jenis TA--}}
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Jenis Tugas Akhir</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="penelitian" value="Penelitian" style="accent-color: #17a2b8;">
+                            <label class="form-check-label" for="penelitian">
+                                Penelitian
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="pengembangan" value="Pengembangan" style="accent-color: #17a2b8;">
+                            <label class="form-check-label" for="pengembangan">
+                                Pengembangan
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {{-- Form Bidang TA --}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Bidang Tugas Akhir</label>
@@ -40,13 +76,13 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- ================== --}}
+                        {{-- Tabel Bidang --}}
                         <div class="container-fluid bg-white border rounded-bottom bg-opacity-25 pre-scrollable mb-4">
                             <div class="container">
                                 <div class="row d-flex flex-wrap pl-4 py-3">
                                     @foreach ($namaBidang as $bidang)
                                         <div class="col-md-6 d-flex align-items-center mb-2">
-                                            <input type="checkbox" id="bidang-{{$loop->index}}" class="form-check-input" style="accent-color: #17a2b8;">
+                                            <input type="radio" id="bidang-{{$loop->index}}" name="bidang" class="form-check-input" style="accent-color: #17a2b8;">
                                             <label for="bidang-{{$loop->index}}" class="m-0 flex-grow-1" style="word-break: break-word; white-space: normal; font-weight: normal;">
                                                 {{$bidang->bidang}}
                                             </label>
@@ -60,8 +96,8 @@
 
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
-                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info ml-3">Sebelumnya</a>
-                    <button type="button" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
+                    <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info mr-3">Sebelumnya</a>
+                    <button type="submit" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
@@ -79,35 +115,94 @@
 @stop
 
 @section ('js')
+@include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+
 <script>
     $(document).ready(function () {
+        // Mengecek apakah mahasiswa sudah memiliki pengajuan
+        $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    $("textarea[name='topik']").prop("disabled", true); // Menonaktifkan input topik tugas akhir
+                    $("input[type='radio']").prop("disabled", true); // Menonaktifkan semua radio button
+                    
+                    if (response.Periode === false) {
+                        $("#warningMessage").show(); 
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        $("textarea[name='topik']").val(response.topikTugasAkhir);
+                        $("input[type='radio'][name='bidang']").each(function () {
+                            let label = $(this).next("label").text().trim();
+                            if (label === response.bidangTugasAkhir) {
+                                $(this).prop("checked", true); 
+                            }
+                        });
+                        if (response.jenisTugasAkhir === "penelitian") {
+                            $("#penelitian").prop("checked", true); 
+                        } else if (response.jenisTugasAkhir === "pengembangan") {
+                            $("#pengembangan").prop("checked", true); 
+                        }
+
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+
+                    
+                }
+            });
+
         // Load data dari localStorage jika ada
         loadDraftData();
 
         // Fungsi untuk menyimpan draft saat tombol "Simpan Draft" diklik
         $("#saveDraft").click(function () {
-            saveDraftData();
-            alert("Draft berhasil disimpan!");
+            if (saveDraftData()) {
+                toast("success", "Draft berhasil disimpan!");
+            }
         });
 
-        // Simpan data secara otomatis saat input berubah
-        $("textarea, input[type='checkbox']").on("input change", function () {
-            saveDraftData();
-        });
+        // // Simpan data secara otomatis saat input berubah
+        // $("textarea, input[type='radio']").on("input change", function () {
+        //     saveDraftData();
+        // });
 
         // Fungsi untuk menyimpan data ke localStorage
         function saveDraftData() {
+            let topikValue = $("textarea[name='topik']").val().trim();
+            let bidangChecked = $("input[type='radio'][name='bidang']:checked");
+            let jenisTAChecked = $("input[type='radio'][name='jenis_tugas_akhir']:checked");
+
+            // Validasi: topik harus diisi
+            if (topikValue === "") {
+                toast("error", "Topik/judul tugas akhir harus diisi.");
+                return false; 
+            }
+
+            // Validasi: bidang harus dipilih
+            if (bidangChecked.length === 0) {
+                toast("error", "Bidang tugas akhir harus dipilih.");
+                return false;
+            }
+
+            if (jenisTAChecked.length === 0) {
+                toast("error", "Jenis tugas akhir harus dipilih.");
+                return false;
+            }
+
             let draftData = {
-                topik: $("textarea[name='topik']").val(),
-                bidang: []
+                topik: topikValue,
+                bidang: bidangChecked.next("label").text().trim(),
+                jenisTA: jenisTAChecked.val()
             };
 
-            // Simpan checkbox yang dicentang
-            $("input[type='checkbox']:checked").each(function () {
-                draftData.bidang.push($(this).next("label").text().trim());
-            });
-
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
+            return true;
         }
 
         // Fungsi untuk memuat draft dari localStorage
@@ -117,12 +212,18 @@
             if (savedData) {
                 $("textarea[name='topik']").val(savedData.topik);
 
-                $("input[type='checkbox']").each(function () {
+                $("input[type='radio'][name='bidang']").each(function () {
                     let label = $(this).next("label").text().trim();
-                    if (savedData.bidang.includes(label)) {
+                    if (savedData.bidang === label) {
                         $(this).prop("checked", true);
                     }
                 });
+
+                if (savedData.jenisTA === "Penelitian") {
+                    $("#penelitian").prop("checked", true);
+                } else if (savedData.jenisTA === "Pengembangan") {
+                    $("#pengembangan").prop("checked", true);
+                }
             }
         }
     });

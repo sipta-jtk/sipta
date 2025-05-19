@@ -25,22 +25,29 @@ class AmbangBatasSeeder extends Seeder
 
         $data = [
             [
-                'ambang_batas' => 50.0,
-                'status_ambang_batas' => 'digunakan', 
-                'nip' => '197312271999031003', 
+                'ambang_batas' => 15.0,
+                'status_ambang_batas' => 'tidak_digunakan', 
+                'nip' => '198502102015042001', 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'ambang_batas' => 70.0,
-                'status_ambang_batas' => 'tidak_digunakan',
-                'nip' => '198502102015042001',
+                'ambang_batas' => 20.0,
+                'status_ambang_batas' => 'digunakan',
+                'nip' => '197604182001121004',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'ambang_batas' => 25.0,
+                'status_ambang_batas' => 'tidak_digunakan',
+                'nip' => '198012122008122001',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
         ];
 
-        foreach ($data as $item)
         foreach ($data as $item)
         {
             AmbangBatas::create($item);

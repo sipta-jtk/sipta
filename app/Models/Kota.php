@@ -16,7 +16,8 @@ class Kota extends Model
         'id_bidang',
         'nama_kota',
         'tahun_kota',
-        'status_kota'
+        'status_kota',
+        'jenis_ta'
     ];
 
     public function penjadwalan()
@@ -67,5 +68,10 @@ class Kota extends Model
     public function logAktivitas()
     {
         return $this->hasMany(LogAktivitas::class, 'id_kota', 'id_kota');
+    }
+
+    public function verifikasiBerkasPengajuan()
+    {
+        return $this->hasMany(VerifikasiBerkasPengajuan::class, 'id_kota', 'id_kota');
     }
 }

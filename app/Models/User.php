@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
+use Lab404\Impersonate\Models\Impersonate;
+
 
 class User extends Authenticatable
 {     
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, HasApiTokens, Impersonate;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -24,12 +28,23 @@ class User extends Authenticatable
         'password',
         'role_user',
         'no_whatsapp',
-        'photo'
+        'photo',
+        'status_user'
     ];
 
     protected $hidden = [
         'password'
     ];
+
+    public function getRememberToken()
+    {
+        return null; // Jangan kembalikan apapun
+    }
+
+    public function setRememberToken($value)
+    {
+        // Tidak perlu melakukan apapun
+    }
 
     public function dosen()
     {
@@ -68,16 +83,35 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        return 'https://picsum.photos/300/300';
+        if ($this->photo && Storage::disk('public')->exists($this->photo)) {
+            $prefix = app()->environment('PREFIX_URL');
+            if ($prefix) {
+                return $prefix . '/' . Storage::url($this->photo);
+            }else{
+                return Storage::url($this->photo);
+            }
+        }
+
+        return asset('default/default-profile.jpg');
     }
 
     public function adminlte_desc()
     {
-        return 'I\'m a nice guy';
+        return $this->nama . ' - ' . ucfirst($this->role_user);
     }
 
     public function adminlte_profile_url()
     {
         return 'profile';
+    }
+
+        public function canImpersonate(): bool
+    {
+        return $this->role_user === 'admin';
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        return $this->role_user !== 'admin';
     }
 }

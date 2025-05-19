@@ -15,6 +15,7 @@ class DaftarKesediaanMembimbingController extends Controller
     }
     public function view_daftarKesediaanMembimbing(): View
     {
+
         $prodiList = collect(DB::table('prodi')->pluck('nama_prodi')->toArray());
     
         $caseStatements = $prodiList->map(function ($prodi) {
@@ -50,7 +51,6 @@ class DaftarKesediaanMembimbingController extends Controller
         LEFT JOIN ketertarikan_bidang kb ON d.nip = kb.nip
         LEFT JOIN bidang b ON kb.id_bidang = b.id_bidang
         LEFT JOIN (
-      
             SELECT km.nip, p.nama_prodi, SUM(km.jumlah) AS total_jumlah
             FROM kuota_membimbing km
             JOIN prodi p ON km.id_prodi = p.id_prodi

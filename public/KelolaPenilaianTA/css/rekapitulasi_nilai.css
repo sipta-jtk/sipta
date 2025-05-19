@@ -1,0 +1,153 @@
+.table-container {
+    max-height: 800px;
+    overflow-x: auto; 
+    overflow-y: auto;
+    position: relative;
+    margin-bottom: 1rem;
+    
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: thin; /* Make scrollbar visible but thin */
+    -ms-overflow-style: auto; /* IE and Edge */
+}
+
+/* Customize vertical scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 8px;  /* Width of vertical scrollbar */
+    height: 8px; /* Height of horizontal scrollbar */
+    background: transparent; /* Optional: make scrollbar background transparent */
+}
+
+/* Vertical scrollbar thumb */
+.table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+/* Vertical scrollbar on hover */
+.table-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+table {
+    width: 100%;
+    margin: 0;
+}
+
+th, td {
+    border: none !important; 
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 14px;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-bottom: none !important;
+}
+
+tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.nilai-tooltip {
+    position: relative;
+    cursor: pointer;
+    font-weight: bold;
+    color: red;
+}
+
+.tooltip-box {
+    display: none;
+    position: absolute;
+    width: 280px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130%;
+    z-index: 10;
+    text-align: center;
+}
+
+.nilai-tooltip:hover .tooltip-box {
+    display: block;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+/* Form controls */
+.form-control {
+    padding: 6px 12px;
+    height: auto;
+}
+
+/* Alert spacing */
+.alert {
+    margin: 0.5rem 0;
+    padding: 0.75rem 1.25rem;
+}
+
+/* Button spacing */
+.btn {
+    margin: 0;
+    padding: 8px 16px;
+}
+
+/* DataTables controls */
+.dataTables_length label,
+.dataTables_filter label {
+    font-weight: normal !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+/* DataTables Search Box - Lebih kecil */
+.dataTables_filter input {
+    padding: 4px 8px;       
+    font-size: 13px;        
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px !important; 
+    max-width: 100%;
+    transition: width 0.3s; 
+}
+
+/* Perlebar saat focus */
+.dataTables_filter input:focus {
+    width: 200px !important;
+}
+
+/* DataTables Length Menu - juga diperkecil */
+.dataTables_length select {
+    width: auto !important;
+    min-width: 70px;       
+    padding: 4px 8px;      
+    font-size: 13px;       
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 30px;          
+}

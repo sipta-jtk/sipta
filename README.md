@@ -24,7 +24,7 @@ Database migration and seeding are automatically performed when you run the appl
 
 If you encounter an error, do this:
 1. Run the command ```docker exec -it sipta-app-dev php artisan db:wipe --force``` (This will drop the current database.)
-2. Run the command ```docker exec -it sipta-app-dev php artisan artisan:migrate --seed --force``` (This will run the migrations and seed the database.)
+2. Run the command ```docker exec -it sipta-app-dev php artisan:migrate --seed --force``` (This will run the migrations and seed the database.)
 
 <br>
 <br>

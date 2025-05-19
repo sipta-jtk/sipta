@@ -10,19 +10,29 @@ use App\Models\Kota;
 use App\Models\KuotaMembimbing;
 use App\Models\PeriodePengajuan;
 use App\Models\Prodi;
+use App\Models\User;
 use App\Modules\Controller;
+use Illuminate\Support\Facades\Auth;
 use DB;
 use Illuminate\View\View;
 use Validator;
 
 class KesediaanBimbinganController extends Controller
 {
+    private $USER_ID;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->USER_ID = Auth::user()->username;
+            return $next($request);
+        });
     }
 
-    private $USER_ID = '197312271999031003';
+    public function __call($method, $parameters)
+    {
+        return call_user_func_array([$this, $method], $parameters);
+    }
 
     public function get_info(): array
     {
@@ -37,6 +47,7 @@ class KesediaanBimbinganController extends Controller
             ->toArray();
 
         return [
+            'Name' => User::where('username', $this->USER_ID)->value('nama'),
             'BidangInterestTotal' => KetertarikanBidang::where('nip', $this->USER_ID)->count() ?: 0,
             'MaxBimbingan' => $MaxBimbingan,
             'JadwalTotal' => [
@@ -68,6 +79,19 @@ class KesediaanBimbinganController extends Controller
         Dosen::where('nip', $data['nip'])->update([
             'bersedia_membimbing' => $data['bersedia_membimbing']
         ]);
+
+        $jadwalCount = JadwalDosenPembimbing::where('nip', $data['nip'])->count();
+        if ($jadwalCount == 0 && $data['bersedia_membimbing'] == 'bersedia') {
+            $days = ['senin', 'selasa', 'rabu', 'kamis', 'jumat'];
+            foreach ($days as $day) {
+                JadwalDosenPembimbing::create([
+                    'nip' => $data['nip'],
+                    'hari' => $day,
+                    'jam_mulai' => '08:00',
+                    'jam_selesai' => '16:00'
+                ]);
+            }
+        }
 
         session()->flash('success', 'Status kesediaan membimbing berhasil diubah');
 

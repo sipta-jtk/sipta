@@ -1,0 +1,96 @@
+trix-editor {
+    min-height: 150px;
+    background: white;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 14px;
+}
+.trix-button-group {
+    background: white;
+}
+
+.heading-spacing {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.date-small {
+    width: 50%;
+    max-width: 250px;
+}
+
+.table-container {
+    max-height: 600px;
+    overflow-y: auto; /* overflow-y untuk mengaktifkan scroll vertikal jika konten melebihi tinggi maksimal */
+    overflow-x: auto; /* overflow-x untuk mengaktifkan scroll horizontal*/
+    position: relative;
+}
+
+.table-container::-webkit-scrollbar {
+    display: auto;
+}
+table {
+    width: 100%;
+}
+th, td {
+    border: none !important;
+    padding: 10px;
+    text-align: left;
+}
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+}
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    border-bottom: none !important;
+}
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+tbody tr:hover {
+    background-color: #e2e6ea;
+}
+
+.btn-prev {
+    width: 150px; /* Ukuran tombol tetap */
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    color: #fff; /* Warna teks putih */
+    background-color: #007bff; /* Warna biru Bootstrap */
+    border: 2px solid #007bff; /* Border sesuai warna */
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-prev:hover {
+    background-color: #0056b3; /* Warna biru lebih gelap saat hover */
+    border-color: #0056b3;
+}
+
+.text-danger {
+    color: red !important;
+    font-weight: bold;
+}
+
+.char-counter {
+    transition: color 0.3s ease;
+}

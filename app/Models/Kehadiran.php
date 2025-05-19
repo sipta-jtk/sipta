@@ -6,23 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kehadiran extends Model
 {
-        protected $table = 'kehadiran';
-        
-        public $timestamps = false;
+    protected $table = 'kehadiran';
+    protected $primaryKey = 'id_kehadiran';
 
-        protected $fillable = [
-            'id_penjadwalan',
-            'username',
-            'status_hadir'
-        ];
+    public $timestamps = false;
 
-        public function penjadwalan()
-        {
-            return $this->belongsTo(Penjadwalan::class, 'id_penjadwalan', 'id_penjadwalan');
-        }
+    protected $fillable = [
+        'status_kelulusan',
+        'batas_revisi',
+        'foto_sidang',
+        'id_penjadwalan',
+        'username',
+        'status_hadir'
+    ];
 
-        public function user()
-        {
-            return $this->belongsTo(User::class, 'username', 'username');
-        }
+    public function penjadwalan()
+    {
+        return $this->belongsTo(Penjadwalan::class, 'id_penjadwalan', 'id_penjadwalan');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'username', 'username');
+    }
 }

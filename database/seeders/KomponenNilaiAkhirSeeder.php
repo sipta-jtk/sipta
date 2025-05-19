@@ -24,20 +24,50 @@ class KomponenNilaiAkhirSeeder extends Seeder
 
         $data = [
             [
-                'nama_komponen' => 'uts',
-                'bobot_komponen' => 30,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nama_komponen' => 'uas',
+                'nama_komponen' => 'UTS (Teori)',
                 'bobot_komponen' => 40,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'nama_komponen' => 'lain_lain',
-                'bobot_komponen' => 30,
+                'nama_komponen' => 'Praktikum ETS',
+                'bobot_komponen' => 40,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'Lain - lain ETS',
+                'bobot_komponen' => 20,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'UAS (Teori)',
+                'bobot_komponen' => 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'Praktikum EAS',
+                'bobot_komponen' => 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'Lain - lain EAS',
+                'bobot_komponen' => 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'PjBL',
+                'bobot_komponen' => 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nama_komponen' => 'Partisipatif',
+                'bobot_komponen' => 0,
                 'created_at' => now(),
                 'updated_at' => now()
             ],

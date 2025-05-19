@@ -3,7 +3,8 @@
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarKesediaanMembimbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\KesediaanBimbinganController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingController;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingv2Controller;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPengujiController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarPengajuanDosbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\MahasiswaMelihatJadwalController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengajuanPembimbing\PengajuanPembimbingController;
@@ -13,7 +14,7 @@ use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengelolaanPeriodeControl
 
 Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokasipembimbing.'], function () {
 
-    Route::group(['prefix' => 'kesediaan-membimbing', 'as' => 'kesediaan-membimbing.'], function () {
+    Route::group(['prefix' => 'kesediaan-membimbing', 'as' => 'kesediaan-membimbing.', 'middleware' => ['auth', 'can:dosen']], function () {
 
         Route::post('/konfirmasi-kesediaan/{value}', [KesediaanBimbinganController::class, 'konfirmasi_kesediaan'])->name('konfirmasi-kesediaan');
 
@@ -34,23 +35,46 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    //add routes for daftar kesediaan membimbing
-    Route::group(['prefix' => 'daftar-kesediaan-membimbing'], function () {
+
+    Route::group(['prefix' => 'daftar-kesediaan-membimbing', 'middleware' => ['auth', 'can:koordinator_ta'] ], function () {
         Route::get('/', [DaftarKesediaanMembimbingController::class, 'view_daftarKesediaanMembimbing']);
     });
 
-    Route::group(['prefix' => 'jadwal-dosen-membimbing'], function () {
+    Route::group(['prefix' => 'jadwal-dosen-membimbing', 'middleware' => ['auth', 'can:mahasiswa_ta']], function () {
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
+
+    Route::group([
+        'prefix' => 'alokasi-pembimbing',
+        'as' => 'alokasi-pembimbing.',
+        'middleware' => ['auth', 'can:akses-alokasi']
+    ], function () {
+        Route::get('/', [AlokasiPembimbingv2Controller::class, 'index'])->name('index');
+        Route::get('/getDetailDosen', [AlokasiPembimbingv2Controller::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPembimbingv2Controller::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPembimbingv2Controller::class, 'updateAlokasi'])->name('updateAlokasi');
+        Route::post('/delete-alokasi', [AlokasiPembimbingv2Controller::class, 'deleteAlokasi'])->name('deleteAlokasi');
+    });
+
+    Route::group([
+        'prefix' => 'alokasi-penguji',
+        'as' => 'alokasi-penguji.',
+        'middleware' => ['auth', 'can:akses-alokasi']
+    ], function () {
+        Route::get('/', [AlokasiPengujiController::class, 'index'])->name('index');
+        Route::get('/getDetailDosen', [AlokasiPengujiController::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPengujiController::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPengujiController::class, 'updateAlokasi'])->name('updateAlokasi');
+        Route::post('/delete-alokasi', [AlokasiPengujiController::class, 'deleteAlokasi'])->name('deleteAlokasi');
+    });
+
     
 
-    Route::get('/alokasi-pembimbing', [AlokasiPembimbingController::class, 'index'])->name('alokasi-pembimbing.index');
-    Route::post('/alokasi-pembimbing/submit', [AlokasiPembimbingController::class, 'submit'])->name('alokasi-pembimbing.submit');
-    Route::post('/alokasi-pembimbing/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('alokasi-pembimbing.simpan');
 
-    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.'], function () {
-        Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok']) -> name('data-kelompok');
-        Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir']) -> name('topik-tugas-akhir');
+    Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
+        Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
+        Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir'])->name('topik-tugas-akhir');
+        Route::get('/check-existing-data', [PengajuanPembimbingController::class, 'checkExistingData'])->name('checkExistingData');
 
         Route::group(['prefix' => 'prioritas-dosen-pembimbing', 'as' => 'prioritas-dosen-pembimbing.'], function () {
             Route::get('/', [PengajuanPembimbingController::class, 'view_prioritasDosenPembimbing'])->name('index');
@@ -63,13 +87,14 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         });
     });
 
-    Route::group(['prefix' => 'DaftarPengajuanDosbing'], function () {
-        Route::get('/', [DaftarPengajuanDosbingController::class, 'view_daftarPengajuanDosbing']);
-        Route::post('/pengajuan/{id}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan']);
+    Route::group(['prefix' => 'daftar-pengajuan-dosbing', 'as' => 'daftar-pengajuan-dosbing.', 'middleware' => ['auth', 'can:dosen']], function () {
+        Route::get('/', [DaftarPengajuanDosbingController::class, 'view_daftarPengajuanDosbing'])->name('index');
+        Route::post('/pengajuan/{id}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan'])->name('handlePengajuan');
     });
     
 
-    Route::group(['prefix' => 'pengelolaan-periode', 'as' => 'pengelolaan-periode.'], function () {
+
+    Route::group(['prefix' => 'pengelolaan-periode', 'as' => 'pengelolaan-periode.','middleware' => ['auth', 'can:koordinator_ta']], function () {
         Route::get('/', [PengelolaanPeriodeController::class, 'view_PengelolaanPeriode'])->name('index');
         Route::post('/{mode}', [PengelolaanPeriodeController::class, 'save_PengelolaanPeriode'])->name('store');
         Route::delete('/{id}', [PengelolaanPeriodeController::class, 'delete_PengelolaanPeriode'])->name('delete');

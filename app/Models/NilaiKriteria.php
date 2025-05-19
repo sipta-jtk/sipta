@@ -13,7 +13,6 @@ class NilaiKriteria extends Model
         'nip',
         'id_kriteria',
         'nilai_kriteria',
-        'status_penilaian',
         'created_at',
         'updated_at'
     ];

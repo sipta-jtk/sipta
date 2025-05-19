@@ -43,8 +43,18 @@ COPY --chown=www-data:www-data . /var/www/
 RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /var/log/supervisor
 
+#akses storage
+RUN chmod -R 755 storage bootstrap/cache \
+ && find storage/app/public -type d -exec chmod 755 {} \; \
+ && find storage/app/public -type f -exec chmod 644 {} \;
+
+# Update composer.lock
+RUN composer update
+
 # Install dependency
 RUN composer install
+
+# RUN php artisan storage:link
 
 # Expose port 9000
 EXPOSE 9000
@@ -52,7 +62,16 @@ EXPOSE 9000
 # Tambahkan konfigurasi supervisor
 COPY Docker/supervisor/ /etc/
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# Set max upload file size
+RUN echo "upload_max_filesize=50M" > $PHP_INI_DIR/conf.d/uploads.ini && \
+    echo "post_max_size=50M" >> $PHP_INI_DIR/conf.d/uploads.ini
+
+# Copy entrypoint script
+COPY prod-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Ganti user ke www-data
 USER www-data

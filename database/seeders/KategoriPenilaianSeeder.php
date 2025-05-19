@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -7,40 +8,28 @@ use App\Models\KategoriPenilaian;
 
 class KategoriPenilaianSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Menonaktifkan foreign key checks sementara
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
-        // Truncate tabel kategori_penilaian
-        // Menonaktifkan foreign key checks sementara
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
-        // Truncate tabel kategori_penilaian
         DB::table('kategori_penilaian')->truncate();
-
-        // Mengaktifkan kembali foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Menambahkan data ke tabel kategori_penilaian
         $data = [
-            ['kode_fta' => 1, 'nama_kategori' => 'Kualitas Proposal'],
-            ['kode_fta' => 2, 'nama_kategori' => 'Metodologi'],
-            ['kode_fta' => 3, 'nama_kategori' => 'Tinjauan Pustaka'],
-            ['kode_fta' => 1, 'nama_kategori' => 'Presentasi'],
-            ['kode_fta' => 2, 'nama_kategori' => 'Penguasaan Materi'],
-            ['kode_fta' => 3, 'nama_kategori' => 'Hasil Implementasi'],
-            ['kode_fta' => 1, 'nama_kategori' => 'Analisis'],
-            ['kode_fta' => 2, 'nama_kategori' => 'Kualitas Penulisan'],
-            ['kode_fta' => 3, 'nama_kategori' => 'Presentasi Hasil']
+            ['id_kategori' => 1, 'id_fta' => 2, 'kunci_penilaian' => false],
+            ['id_kategori' => 2, 'id_fta' => 4, 'kunci_penilaian' => false],
+            ['id_kategori' => 3, 'id_fta' => 6, 'kunci_penilaian' => false],
+            ['id_kategori' => 4, 'id_fta' => 8, 'kunci_penilaian' => false],
+            ['id_kategori' => 5, 'id_fta' => 10, 'kunci_penilaian' => false],
+            ['id_kategori' => 6, 'id_fta' => 11, 'kunci_penilaian' => false],
+            ['id_kategori' => 7, 'id_fta' => 13, 'kunci_penilaian' => false],
+            ['id_kategori' => 8, 'id_fta' => 14, 'kunci_penilaian' => false],
+            ['id_kategori' => 9, 'id_fta' => 16, 'kunci_penilaian' => false],
+            ['id_kategori' => 10, 'id_fta' => 17, 'kunci_penilaian' => false],
+            ['id_kategori' => 11, 'id_fta' => 19, 'kunci_penilaian' => false],
         ];
 
         foreach ($data as $item) {
             KategoriPenilaian::create($item);
         }
-
     }
 }

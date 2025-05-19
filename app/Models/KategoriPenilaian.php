@@ -12,18 +12,18 @@ class KategoriPenilaian extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'kode_fta',
-        'nama_kategori',
+        'id_fta',
+        'kunci_penilaian'
     ];
 
     public function sumberNilai()
     {
         return $this->hasMany(SumberNilai::class, 'sumber', 'id_kategori');
     }
-
-    public function kategoriPenilaian()
+    
+    public function formulirPenilaian()
     {
-        return $this->belongsTo(KategoriPenilaian::class, 'kode_fta', 'kode_fta');
+        return $this->belongsTo(FormPenilaian::class, 'id_fta', 'id_fta');
     }
 
     public function nilaiKategori()

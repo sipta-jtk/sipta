@@ -25,12 +25,42 @@ class SumberNilaiSeeder extends Seeder
 
         SumberNilai::create([
             'id_komponen' => 1,
-            'sumber' => 1
+            'sumber' => 2
         ]);
 
         SumberNilai::create([
             'id_komponen' => 2,
             'sumber' => 2
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 3,
+            'sumber' => 2
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 4,
+            'sumber' => 3
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 5,
+            'sumber' => 3
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 6,
+            'sumber' => 5
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 7,
+            'sumber' => 4
+        ]);
+
+        SumberNilai::create([
+            'id_komponen' => 8,
+            'sumber' => 5
         ]);
     }
 }

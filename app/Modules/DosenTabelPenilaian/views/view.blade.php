@@ -1,88 +1,116 @@
 @extends('adminlte::page')
 
-@section('title', 'DosenTabelPenilaian')
+@section('title', 'Tabel Penilaian & Masukan')
 
 @section('content_header')
-    <h1>Tabel Penilaian & Feedback</h1>
+    <h1 class="m-0 text-dark">Tabel Penilaian & Masukan</h1>
+    <div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Tabel Penilaian & Masukan']
+    ]
+    ])
+    @endcomponent
+    </div>
 @stop
 
 @section('content')
-    <div class="container">
-    <h2>Penilaian & Feedback</h2>
-    <table id="seminarTable" class="table table-bordered" width="100%">
-        <thead>
-            <th>No</th>
-            <th>Seminar/Sidang</th>
-            <th>KoTA</th>
-            <th>Judul</th>
-            <th>Tanggal</th>
-            <th>Sesi</th>
-            <th>Penilaian & Feedback</th>
-        </thead>
-        <tbody>
-            @foreach($seminars as $index => $seminar)
+    <div class="card">
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+        <table id="penjadwalanTable" class="table table-striped w-100">
+    <thead class="sticky-header">
+        <tr class="bg-dark text-white">
+            <th style="width: 5%">No</th>
+            <th style="width: 10%">Sesi</th>
+            <th style="width: 15%">Agenda</th>
+            <th style="width: 15%">Tanggal</th>
+            <th style="width: 20%">Judul</th>
+            <th style="width: 15%">Kota</th>
+            <th style="width: 20%">Penilaian</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($penjadwalan as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>@if($seminar->agenda == 'seminar_3')
-                    Seminar 3
-                    @elseif($seminar->agenda == 'sidang')
-                    Sidang
-                    @endif
+                <td>{{ $item['sesi'] }}</td>
+                <td>{{ $item['agenda'] }}</td>
+                <td>{{ $item['tanggal'] }}</td>
+                <td>{{ $item['judul'] }}</td>
+                <td>{{ $item['kota'] }}</td>
+                <td>
+                    @if ($item['status_penilaian'] === 'draf' || $item['status'] === 'Belum dinilai')
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Nilai</a>
+                    </div>
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Masukan</a>
+                    </div>
+                    <div class="mb-2">
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100">Publikasi</button>
+                        </form>
+                    </div>
+                    @elseif ($item['status_penilaian'] === 'dipublikasikan')
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Lihat Nilai</a>
+                    </div>
+                    <div class="mb-2">
+                        <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                            class="btn btn-primary w-100">Lihat Masukan</a>
+                    </div>
+                    <div class="mb-2">
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'unpublish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100">Batal Publikasi</button>
+                        </form>
+                    </div>
+                @endif
                 </td>
-                <td>{{ $seminar->id_kota }}</td>
-                <td>{{ $seminar->kota_judul}}</td>
-                <td>{{ $seminar->tanggal }}</td>
-                <td>{{ $seminar->sesi }}</td>
             </tr>
-            @endforeach
-            <!-- <tr>
-                <td>1</td>
-                <td>Seminar 3</td>
-                <td>KoTA-001</td>
-                <td>Penelitian Singkong Keju</td>
-                <td>22 Februari 2025</td>
-                <td>1</td>
-                <td><button class="btn btn-danger">Beri Penilaian</button></td>
-                <td><button class="btn btn-danger">Beri Feedback</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Seminar 3</td>
-                <td>KoTA-002</td>
-                <td>Penelitian Pisang Keju</td>
-                <td>23 Februari 2025</td>
-                <td>2</td>
-                <td><button class="btn btn-success">Lihat Penilaian</button></td>
-                <td><button class="btn btn-success">Lihat Feedback</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Seminar 3</td>
-                <td>KoTA-003</td>
-                <td>Penelitian Martabak Keju</td>
-                <td>24 Februari 2025</td>
-                <td>3</td>
-                <td><button class="btn btn-warning">Lanjut Penilaian</button></td>
-                <td><button class="btn btn-warning">Lanjut Feedback</button></td>
-            </tr> -->
-        </tbody>
-    </table>
-</div>
+        @endforeach
+    </tbody>
+</table>
+        </div>
+    </div>
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js">
+    <!-- CDN untuk DataTables CSS -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
+    <!-- CDN untuk jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- CDN untuk DataTables JS -->
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#seminarTable').DataTable();
+        $('#penjadwalanTable').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            }
         });
     </script>
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 @stop
