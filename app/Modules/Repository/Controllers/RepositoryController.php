@@ -670,11 +670,10 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document
+            // Find the document    
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             // Update notes
