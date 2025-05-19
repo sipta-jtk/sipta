@@ -75,6 +75,19 @@ class CekPlagiarismeDetailController extends Controller
             'message' => 'Catatan berhasil ditambahkan!',
             'catatan' => $catatan,
         ]);
+
+        // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
     }
 
     public function deleteCatatan($id_dokumen, $id_catatan)
@@ -130,5 +143,18 @@ class CekPlagiarismeDetailController extends Controller
             'message' => 'Catatan berhasil diperbarui!',
             'catatan' => $catatan,
         ]);
+
+        // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memperbarui Catatan
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
+            Auth::User()->username, // Ganti dengan username admin, atau log system
+            [
+                'nama' => Auth::User()->name,
+                'topik' => 'User membuka halaman log',
+                'nama_ruangan' => $item['nama_ruangan'],
+                'tanggal' => $item['tanggal'],
+                'deadline' => now()->format('d-m-Y H:i')
+            ]
+        );
     }
 }

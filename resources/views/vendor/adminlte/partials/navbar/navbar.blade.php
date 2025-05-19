@@ -28,6 +28,7 @@
         @if(Auth::user())
             @if(config('adminlte.usermenu_enabled'))
                 @include('adminlte::partials.navbar.menu-item-dropdown-user-menu')
+                @include('NotificationAndReminder.views.modals.log-modal')
             @else
                 @include('adminlte::partials.navbar.menu-item-logout-link')
             @endif
@@ -40,7 +41,7 @@
     </ul>
 
     {{-- Modal Include --}}
-    <!-- @include('NotificationAndReminder.views.modals.log-modal') -->
+    @include('NotificationAndReminder.views.modals.log-modal')
     @include('NotificationAndReminder.views.modals.preferences-modal')
 
 </nav>

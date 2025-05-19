@@ -14,7 +14,7 @@ use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Services\Notifikasi;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -261,6 +261,14 @@ class RepositoryController extends Controller
 
 
             Dokumen::create($data);
+
+            $nipDosen = '221524051';
+
+            Notifikasi::kirim(
+                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                $nipDosen,
+                []
+            );
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
@@ -662,11 +670,10 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document
+            // Find the document    
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             // Update notes
