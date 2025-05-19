@@ -24,7 +24,6 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
-use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
 
 // Route untuk login
@@ -185,7 +184,46 @@ Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 
 Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
 
-Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
-    Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
-    Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+    Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
+        Route::get('/pengajuan-pisah-kota', [PengajuanPisahKoTAController::class, 'index'])->name('pengajuan.pisah.kota');
+        Route::get('/pengajuan-pisah-kota/{id}', [PengajuanPisahKoTAController::class, 'show'])->name('pengajuan.pisah.kota.show');
+        Route::patch('/pengajuan-pisah-kota/{id}/terima', [PengajuanPisahKoTAController::class, 'terima'])->name('pengajuan.pisah.kota.terima');
+        Route::patch('/pengajuan-pisah-kota/{id}/tolak', [PengajuanPisahKoTAController::class, 'tolak'])->name('pengajuan.pisah.kota.tolak');
+
+        Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+        Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+    });
+
+
+    /**
+     * ========== Mahasiswa (All) ==========
+     */
+    Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
+        Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
+        Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
+
+        Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
+        Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
+    });
+
+
+    /**
+     * ========== Profile & Dashboard ==========
+     */
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+        Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/impersonate/{id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+        Route::get('/impersonate-leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
+    });
+
+    Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
+    Route::get('/test-dashboard', [DashboardController::class, 'showPengajuanSeminar3']);
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    /**
+     * ========== Misc ==========
+     */
+    Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 });
