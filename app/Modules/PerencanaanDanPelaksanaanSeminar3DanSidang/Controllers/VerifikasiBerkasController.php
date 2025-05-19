@@ -142,7 +142,7 @@ class VerifikasiBerkasController extends Controller
 
         $daftarDokumen = collect([$fileTA, $filePresentasi, $ftaSatu, $ftaDua])->filter(); // hindari null
 
-        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'daftarDokumen','tipe'));
+        return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'daftarDokumen','tipe', 'kategori'));
     }
 
     public function verifikasi(Request $request, String $tipe, int $id)
