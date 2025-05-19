@@ -29,14 +29,6 @@ jobs:
 
   build-push-web-server:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.modified, 'Docker/web_server.Dockerfile') ||
-      contains(github.event.head_commit.modified, 'Docker/nginx/prod-default.conf') ||
-      contains(github.event.head_commit.added, 'Docker/web_server.Dockerfile') ||
-      contains(github.event.head_commit.added, 'Docker/nginx/prod-default.conf') ||
-      contains(github.event.head_commit.removed, 'Docker/web_server.Dockerfile') ||
-      contains(github.event.head_commit.removed, 'Docker/nginx/prod-default.conf')
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
