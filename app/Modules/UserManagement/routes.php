@@ -161,3 +161,4 @@ Route::prefix($prefix)->group(function () {
     Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
     Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 });
+
