@@ -25,16 +25,15 @@ if (is_dir($modulesPath)) {
 
         if (is_file($routesFile)) {
             Route::prefix($prefix)->group($routesFile);
-            require $routesFile; 
+            require $routesFile;
         }
     }
 }
 
+Route::get($prefix.'/', function () {
+    return redirect($prefix);
+})->name('beranda.get');
+
 Route::get('/', function () {
     return view('welcome');
 })->middleware('auth'); // Hanya user login yang bisa akses
-
-Route::post('/logout', function () {
-    auth()->logout();
-    return redirect('/login');
-})->name('logout');

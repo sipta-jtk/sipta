@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Modules\Repository\Controllers\RepositoryController;
 use App\Modules\Repository\Controllers\SubkategoriController;
@@ -35,14 +36,13 @@ Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:akses-sidebar-r
     Route::get('/{kategori}/{id}/edit', [RepositoryController::class, 'edit'])->name('Repository.edit');
     Route::put('/{kategori}/{id}', [RepositoryController::class, 'update'])->name('Repository.update');
     Route::delete('/{kategori}/{id}', [RepositoryController::class, 'destroy'])->name('Repository.destroy');
+    Route::post('/save-notes/{id}', [RepositoryController::class, 'saveNotes'])->name('Repository.saveNotes');
     Route::get('/{kategori}/{id}/download', [RepositoryController::class, 'download'])->name('Repository.download');
 
     Route::get('/{kategori}/subkategori', [SubkategoriController::class, 'index'])->name('Subkategori.index');
     Route::post('/{kategori}/subkategori', [SubkategoriController::class, 'store'])->name('Subkategori.store');
     Route::delete('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'destroy'])->name('Subkategori.destroy');
     Route::put('/{kategori}/subkategori/{id}', [SubkategoriController::class, 'update'])->name('Subkategori.update');
-
-
 });
 
 // ============================
@@ -51,8 +51,18 @@ Route::prefix('/repository/mahasiswa')->middleware(['auth', 'can:akses-sidebar-r
 
 // List KoTA (kelompok TA)
 Route::get('/repository/dosen/kelompok-ta', [RepositoryController::class, 'list_kelompok_ta'])
-    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->middleware(['auth', 'can:akses-koordinator-admin'])
     ->name('Repository.list_kelompok_ta');
+
+// List KoTA Bimbingan (kelompok TA)
+Route::get('/repository/dosen/kelompok-ta-bimbingan', [RepositoryController::class, 'list_kelompok_dosen_pembimbing'])
+    ->middleware(['auth', 'can:pembimbing'])
+    ->name('Repository.list_kelompok_dosen_pembimbing');
+
+// List KoTA Yang Di Uji (kelompok TA)
+Route::get('/repository/dosen/kelompok-ta-uji', [RepositoryController::class, 'list_kelompok_dosen_penguji'])
+    ->middleware(['auth', 'can:penguji'])
+    ->name('Repository.list_kelompok_dosen_penguji');
 
 // Dashboard Repository TA berdasarkan id_kota (Dosen)
 Route::get('/repository/dosen/kota/{id_kota}', [RepositoryController::class, 'dashboard'])
