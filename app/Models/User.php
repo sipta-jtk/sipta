@@ -84,10 +84,15 @@ class User extends Authenticatable
     public function adminlte_image()
     {
         if ($this->photo && Storage::disk('public')->exists($this->photo)) {
-            return asset('storage/' . $this->photo);
+            $prefix = app()->environment('PREFIX_URL');
+            if ($prefix) {
+                return $prefix . '/' . Storage::url($this->photo);
+            }else{
+                return Storage::url($this->photo);
+            }
         }
 
-        return asset('storage/photos/default-profile.jpg');
+        return asset('default/default-profile.jpg');
     }
 
     public function adminlte_desc()
