@@ -85,7 +85,7 @@ class User extends Authenticatable
     {
         if ($this->photo && Storage::disk('public')->exists($this->photo)) {
             $prefix = env('PREFIX_URL');
-            return $prefix . '/' . Storage::url($this->photo);
+            return $prefix . Storage::url($this->photo);
         }
 
         return asset('default/default-profile.jpg');
