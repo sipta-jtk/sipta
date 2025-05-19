@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Aspek Penilaian']
         ]

@@ -11,7 +11,7 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Penilaian Seminar II']
                 ]
                 ])

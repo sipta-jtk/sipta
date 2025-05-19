@@ -10,7 +10,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                 ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]
@@ -64,44 +64,65 @@
         <!-- Topik Tugas Akhir -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
+                <strong>
+                    {{ match ($data['namaFta']) {
+                        'seminar i' => 'Usulan Topik Tugas Akhir',
+                        default => 'Topik Tugas Akhir'
+                    } }}
+                </strong> <br>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
 
-        <!-- Tombol Preview
+        <!-- Tombol Lihat Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Laporan
+                <strong>Dokumen
+                    {{ match ($data['namaFta']) {
+                        'seminar i' => 'Seminar I',
+                        'seminar ii' => 'Seminar II',
+                        'seminar iii' => 'Seminar III',
+                        'sidang akhir' => 'Sidang Akhir',
+                        default => ''
+                    } }}
+                </strong> <br>
+
+                <!-- Tombol Preview Laporan -->
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
+                    data-toggle="modal" data-target="#LihatDokumen"
+                    {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                    Laporan <i class="fa-solid fa-file"></i>
                 </button>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
+
+                <!-- Tombol Preview PowerPoint -->
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
+                    data-toggle="modal" data-target="#LihatDokumen"
+                    {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                    PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
                 </button>
             </div>
         </div>
 
-        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- Modal Lihat Dokumen -->
+        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
+                        <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> -->
+
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal>
 
         <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
