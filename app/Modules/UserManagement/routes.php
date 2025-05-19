@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
 use App\Modules\UserManagement\Controllers\ImpersonateController;
 
@@ -158,6 +157,5 @@ Route::prefix($prefix)->group(function () {
     /**
      * ========== Misc ==========
      */
-    Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
     Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 });
