@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "bnbwebexpertise/laravel-impersonate": "^1.2",
         "doctrine/dbal": "^3.9",
         "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
