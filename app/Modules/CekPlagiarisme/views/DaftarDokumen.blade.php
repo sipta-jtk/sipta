@@ -44,7 +44,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="form-group text-secondary">
                                 <label>
                                     <i class="fas fa-user mr-1"> KoTa</i> 
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-right">
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" id="terapkanFilterBtn" class="btn btn-primary">
                         Terapkan
                     </button>
                 </div>
@@ -291,20 +291,46 @@
 
 
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
+    
+    // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
+    function createApiUrl(endpoint) {
+        // Periksa apakah url sudah berisi domain name atau dimulai dengan http
+        if (endpoint.includes('://') || endpoint.startsWith('http')) {
+            return endpoint;
+        }
+        
+        // Hapus slash di awal endpoint jika ada
+        if (endpoint.startsWith('/')) {
+            endpoint = endpoint.substring(1);
+        }
+        
+        // Hapus slash di akhir prefixUrl jika ada
+        let prefix = prefixUrl;
+        if (prefix.endsWith('/')) {
+            prefix = prefix.substring(0, prefix.length - 1);
+        }
+        
+        // Gabungkan dengan slash di tengah
+        return '/' + prefix + '/' + endpoint;
+    }
+    
+    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
+    
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
 
-        // Ambil prefix URL dari meta tag yang ada di halaman
-        var urlKota = `${prefixUrl}/api/kotas`;
+        // Membuat URL untuk API kota
+        var urlKota = '/api/kotas';
 
         if (roleUser === 'dosen') {
             // Mengambil data kota dari API
             $.ajax({
                 type: "GET",
-                url: urlKota,
+                url: createApiUrl(urlKota),
                 dataType: "json",
                 success: function(response) {
+                    console.log("URL Kota:", createApiUrl(urlKota)); // Log URL yang digunakan
                     console.log("Data Kota:", response); // Periksa data yang diterima
 
                     var kelompokOptions;
@@ -333,8 +359,8 @@
 
 
     $(document).ready(function() {
-        // Ambil prefix URL dari meta tag yang ada di halaman
-        var urlDokumen = `${prefixUrl}/api/cek-plagiarisme`;
+        // Buat URL untuk API dokumen
+        var urlDokumen = '/api/cek-plagiarisme';
 
         var table = $('#table').DataTable({
             language: {
@@ -351,11 +377,18 @@
                     previous: "<"
                 }
             },
-            columnDefs: [{
-                targets: [0],
-                visible: false,
-                searchable: false
-            }],
+            columnDefs: [
+                {
+                    targets: [0],
+                    visible: false,
+                    searchable: false
+                },
+                {
+                    targets: [8], // id_kota column (hidden)
+                    visible: false,
+                    searchable: true
+                }
+            ],
             responsive: true,
             autoWidth: false
         });
@@ -364,16 +397,17 @@
             var data = table.row(this).data();
             if (data) {
                 var idDokumen = data[0]; // ambil id_dokumen dari kolom tersembunyi
-                window.location.href = prefixUrl + "/cek-plagiarisme/" + idDokumen + "/detail-dokumen";
+                window.location.href = createApiUrl("/cek-plagiarisme/" + idDokumen + "/detail-dokumen");
             }
         });
 
 
         $.ajax({
             type: "GET",
-            url: urlDokumen,
+            url: createApiUrl(urlDokumen),
             dataType: "json",
             success: function(response) {
+                console.log("URL Dokumen:", createApiUrl(urlDokumen)); // Log URL yang digunakan
 
                 // Clear dulu sebelum isi
                 table.clear();
@@ -413,52 +447,47 @@
                 // Draw ulang tabel
                 table.draw();
 
-                // Fungsi untuk memperbarui jsGrid setelah filter
-                function updateJsGrid(filteredData) {
-                    // Update nomor urut setelah filter
-                    filteredData = filteredData.map((item, index) => ({
-                        ...item,
-                        nomor: index + 1 // Reset nomor urut
-                    }));
-
-                    // Update data di jsGrid
-                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+                // Fungsi untuk filter DataTable
+                function applyFilters() {
+                    var selectedKota = $("#kelompokSelect").val();
+                    
+                    // Clear table filter first
+                    table.search('').columns().search('').draw();
+                    
+                    // Custom filtering function for DataTables
+                    $.fn.dataTable.ext.search.push(
+                        function(settings, data, dataIndex) {
+                            var rowData = response[dataIndex];
+                            
+                            // Filter by kota if selected
+                            var kotaMatch = !selectedKota || 
+                                (rowData && rowData.id_kota != null && rowData.id_kota.toString() == selectedKota);
+                            
+                            return kotaMatch;
+                        }
+                    );
+                    
+                    // Log filter details for debugging
+                    console.log("Applying filters:");
+                    console.log("- Selected KoTa ID:", selectedKota);
+                    console.log("- Total rows before filter:", response.length);
+                    console.log("- Available KoTa values:", response.map(item => item.id_kota).filter((value, index, self) => self.indexOf(value) === index));
+                    
+                    // Redraw the table to apply filters
+                    table.draw();
+                    
+                    // Remove the custom filter function after drawing
+                    $.fn.dataTable.ext.search.pop();
+                    
+                    // Count visible rows after filtering
+                    var visibleRowCount = table.rows({search:'applied'}).count();
+                    console.log("- Total rows after filter:", visibleRowCount);
                 }
-
-                // Filter berdasarkan kelompok (id_kota) yang dipilih
-                $("#kelompokSelect").on("change", function() {
-                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
-
-                    // Filter berdasarkan id_kota dan search input
-                    filterData(selectedKota, $("#searchInput").val());
+                
+                // Handle the "Terapkan" button click
+                $("#terapkanFilterBtn").on("click", function() {
+                    applyFilters();
                 });
-
-                // Filter berdasarkan pencarian (search input)
-                $("#searchInput").on("keyup", function() {
-                    var searchValue = $(this).val().toLowerCase();
-
-                    // Filter berdasarkan id_kota yang dipilih dan search input
-                    filterData($("#kelompokSelect").val(), searchValue);
-                });
-
-                // Fungsi untuk melakukan filter berdasarkan id_kota dan search
-                function filterData(selectedKota, searchValue) {
-                    var filteredData = response.filter(item => {
-                        // Filter berdasarkan id_kota
-                        var kotaFilter = selectedKota ? item.id_kota == selectedKota : true;
-
-                        // Filter berdasarkan pencarian (search)
-                        var searchFilter = Object.values(item).some(value =>
-                            String(value).toLowerCase().includes(searchValue)
-                        );
-
-                        // Kembalikan true jika data memenuhi kedua kondisi (id_kota dan search)
-                        return kotaFilter && searchFilter;
-                    });
-
-                    // Update data di jsGrid
-                    updateJsGrid(filteredData);
-                }
             },
             error: function(xhr, status, error) {
                 console.error("Gagal mengambil data dari API:", status, error);
@@ -640,7 +669,7 @@
         });
 
         $.ajax({
-            url: `${prefixUrl}/cekplagiarisme/process`,
+            url: createApiUrl('/cekplagiarisme/process'),
             method: 'POST',
             data: formData,
             contentType: false,

@@ -5,24 +5,16 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
-use App\Modules\CekPlagiarisme\Services\PlagiarismChecker;
 use App\Models\Dokumen;
 use App\Models\AmbangBatas;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Kota;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Smalot\PdfParser\Parser as PdfParser;
-use ZipArchive;
+
 
 use Carbon\Carbon;
 
 Carbon::setLocale('id');
-
-// console::info
-// import this console::info
-use Illuminate\Support\Facades\Log as console;
 
 class CekPlagiarismeController extends Controller
 {
@@ -34,6 +26,10 @@ class CekPlagiarismeController extends Controller
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
                 ->where('kategori', 'plagiarisme')
                 ->where('id_kota', $idKota)
+                ->get();
+        } else if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+            $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
+                ->where('kategori', 'plagiarisme')
                 ->get();
         } else {
             $idKota = auth()->user()
@@ -293,16 +289,26 @@ class CekPlagiarismeController extends Controller
     public function getKota()
     {
         // Mengambil id_kota dan nama_kota dari relasi preferensiKota -> kota
-        $kotas = auth()->user()
-            ->dosen
-            ->preferensiKota
-            ->map(function ($preferensiKota) {
+
+        if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+            $kotas = Kota::all()->map(function ($kota) {
                 // Mengembalikan id_kota dan nama_kota
                 return [
-                    'id_kota' => $preferensiKota->id_kota,
-                    'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                    'id_kota' => $kota->id_kota,
+                    'nama_kota' => $kota->nama_kota, // Pastikan relasi dengan model Kota
                 ];
             });
+        } else
+            $kotas = auth()->user()
+                ->dosen
+                ->preferensiKota
+                ->map(function ($preferensiKota) {
+                    // Mengembalikan id_kota dan nama_kota
+                    return [
+                        'id_kota' => $preferensiKota->id_kota,
+                        'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                    ];
+                });
 
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);
