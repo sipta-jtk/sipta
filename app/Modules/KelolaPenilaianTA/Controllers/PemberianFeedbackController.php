@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Mahasiswa;
 use App\Models\Kota;
@@ -300,6 +301,27 @@ class PemberianFeedbackController extends Controller
             DB::rollBack();
             Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
+        }
+    }
+
+    /**
+     * Mengunduh dokumen.
+     */
+    public function download($kategori, $id)
+    {
+        try {
+            $dokumen = Dokumen::where('id_dokumen', $id)->where('kategori', $kategori)->firstOrFail();
+
+            if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
+            }
+
+            $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
+            $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
+
+            return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
     }
 }
