@@ -34,7 +34,7 @@ $prefix = env('PREFIX_URL', '');
                 </div>
                 <div class="card-body text-center">
                     @if(isset($dokumen->file_path))
-                    <iframe src="{{ asset('storage/' . $dokumen->file_path) }}" width="100%" height="600px"></iframe>
+                    <iframe src="{{ asset( '/storage/' . $dokumen->file_path) }}" width="100%" height="600px"></iframe>
                     @else
                     <pre class="p-3 bg-light border rounded"
                         style="height: 500px; overflow-y: auto;">{{ $dokumen->isi ?? 'Isi dokumen tidak tersedia' }}</pre>
@@ -133,18 +133,7 @@ $prefix = env('PREFIX_URL', '');
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tbody>
-                                    @foreach($sumberPlagiarisme as $item)
-                                    <tr>
-                                        <td>{{ $item->listJurnalPlagiarisme->judul ?? 'Judul Jurnal Tidak Tersedia' }}</td>
-                                        <td>
-                                            @if(fmod($item->listJurnalPlagiarisme->persentase_kemunculan, 1) == 0)
-                                            {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 0) }}%
-                                            @else
-                                            {{ number_format($item->listJurnalPlagiarisme->persentase_kemunculan, 1) }}%
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
+                                   
                                 </tbody>
                             </table>
                         </div>

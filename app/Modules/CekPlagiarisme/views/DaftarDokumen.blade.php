@@ -675,6 +675,9 @@
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });
+                $('#confirmModal').modal('hide'); // Tutup modal konfirmasi
+                $('#uploadModal').modal('hide'); // Tutup modal upload
+                resetUploadForm(); // Reset form upload
             },
             error: function(xhr) {
                 console.error(xhr.responseText);

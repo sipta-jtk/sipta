@@ -152,7 +152,7 @@ class CekPlagiarismeController extends Controller
         ]);
 
         // Tampilkan hasil ke view PengecekanTugasAkhir
-        return view('CekPlagiarisme.views.PengecekanTugasAkhir');
+        return  response()->json($request);
     }
 
 
