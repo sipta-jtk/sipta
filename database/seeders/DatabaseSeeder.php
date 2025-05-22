@@ -67,6 +67,7 @@ class DatabaseSeeder extends Seeder
         // Sixth batch: Document related
         $this->call(DokumenSeeder::class); // depends on Kota, SubKategori, User
         $this->call(ListJurnalPlagiarismeSeeder::class); // no dependencies
+        // $this->call(ListKalimatPlagiarismeSeeder::class); // depends on Dokumen, ListJurnalPlagiarisme
         $this->call(ReviewDosenPembimbingSeeder::class); // depends on Dokumen, Dosen
 
         // Seventh batch: Scheduling related
