@@ -65,18 +65,17 @@ class DosenController extends Controller
         ]);
 
         DB::commit();
-
-        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
-        }
         // Template Telah diganti (Belum Ada)
         Notifikasi::kirim(
             '[Pemberitahuan] Role Berhasil Diperbarui',
             $nip, // Kirim notifikasi ke NIP dosen yang diupdate
             []
         );
+        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -137,17 +136,18 @@ class DosenController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
-        }
         // Template Telah diganti (Belum Ada)
         Notifikasi::kirim(
             '[Pemberitahuan] Akun Berhasil Dibuat',
             $request->nip, // Kirim notifikasi ke NIP dosen yang baru dibuat
             []
         );
+        
+            return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
+        }
     }
 
 
