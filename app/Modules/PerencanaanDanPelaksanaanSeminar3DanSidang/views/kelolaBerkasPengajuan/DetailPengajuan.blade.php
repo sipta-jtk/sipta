@@ -178,16 +178,18 @@
                 }
 
                 const cardHTML = `
-                    <div class="card mt-3">
+                    <div class="card my-5"> <!-- Tambah my-5 untuk jarak vertikal yang besar -->
                         <div class="card-header">
                             <h3 class="card-title">Berkas Pengajuan</h3>
                         </div>
                         <div class="card-body">
-                            <p><strong>Nama Dokumen:</strong> ${displayName}</p>
+                            <p class="text-center fs-4 fw-bold mb-4"><strong>Nama Dokumen:</strong> ${displayName}</p>
                             ${previewHTML}
                             ${previewAvailable ? `
-                                <a id="view_file_link" href="${fileUrl}" target="_blank" class="btn btn-primary mt-2">Lihat File</a>
-                                <a id="view_file_download" href="${downloadUrl}" class="btn btn-success mt-2">Download</a>
+                                <div class="d-flex gap-2 mt-3">
+                                    <a id="view_file_link" href="${fileUrl}" target="_blank" class="btn btn-primary">Lihat File</a>
+                                    <a id="view_file_download" href="${downloadUrl}" class="btn btn-success">Download</a>
+                                </div>
                             ` : ''}
                         </div>
                     </div>
