@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('keyword', function (Blueprint $table) {
             $table->id('id_keyword');
             $table->string('keyword', 255);
-            $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen');
         });
         
         Schema::enableForeignKeyConstraints();
