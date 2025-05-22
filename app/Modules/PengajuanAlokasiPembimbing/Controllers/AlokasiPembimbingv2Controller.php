@@ -18,6 +18,7 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
+use App\Services\Notifikasi;
 
 class AlokasiPembimbingv2Controller extends Controller
 {
@@ -237,5 +238,50 @@ class AlokasiPembimbingv2Controller extends Controller
 
         return null;
 
+    }
+    public function kirimNotifikasiBatch(Request $request)
+    {
+        $mahasiswaList = $request->mahasiswa ?? [];
+        $dosenList = $request->dosen ?? [];
+
+        $koordinatorName = auth()->user()->name;
+        $waktu = now()->format('d-m-Y H:i');
+
+        foreach ($mahasiswaList as $mhs) {
+            $user = User::where('nim', $mhs['nim'])->first();
+            if ($user) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
+                    $user->id,
+                    [
+                        'nama_koordinator' => $koordinatorName,
+                        'topik' => 'Alokasi Bimbingan Disetujui',
+                        'nama_mahasiswa' => $mhs['nama'],
+                        'nim' => $mhs['nim'],
+                        'tanggal' => $waktu,
+                    ]
+                );
+            }
+        }
+
+        foreach ($dosenList as $idDosen) {
+            $user = User::find($idDosen);
+            if ($user) {
+                Notifikasi::kirim(
+                    '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
+                    $user->id,
+                    [
+                        'nama_koordinator' => $koordinatorName,
+                        'topik' => 'Alokasi Bimbingan Disetujui',
+                        'nama_dosen' => $user->name,
+                        'tanggal' => $waktu,
+                    ]
+                );
+            }
+        }
+
+        return response()->json([
+            'message' => 'Notifikasi berhasil dikirim ke ' . count($mahasiswaList) . ' mahasiswa dan ' . count($dosenList) . ' dosen.'
+        ]);
     }
 }
