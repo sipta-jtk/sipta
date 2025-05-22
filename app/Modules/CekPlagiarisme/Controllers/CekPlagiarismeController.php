@@ -104,44 +104,45 @@ class CekPlagiarismeController extends Controller
         $filePath = $file->store('dokumen', 'public');
 
         // Kirim file ke server Django untuk pengecekan plagiarisme
-        $plagiarismUrl = config('app.plagiarism_url', env('PLAGIARISM_URL'));
-        try {
-            $client = new Client();
-            $response = $client->post("{$plagiarismUrl}/filetest/", [
-                'multipart' => [
-                    [
-                        'name'     => 'docfile',
-                        'contents' => fopen($file->getPathname(), 'r'),
-                        'filename' => $file->getClientOriginalName(),
-                    ],
-                ],
-            ]);
+        // $plagiarismUrl = config('app.plagiarism_url', env('PLAGIARISM_URL'));
+        // try {
+        //     $client = new Client();
+        //     $response = $client->post("{$plagiarismUrl}/filetest/", [
+        //         'multipart' => [
+        //             [
+        //                 'name'     => 'docfile',
+        //                 'contents' => fopen($file->getPathname(), 'r'),
+        //                 'filename' => $file->getClientOriginalName(),
+        //             ],
+        //         ],
+        //     ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
-            $percentage = isset($data['percent']) ? number_format($data['percent'], 2) : null;
-            $link = $data['link'] ?? null;
-            // console::info("RESPONSE DARI DJANGO: ", $data);
-            dump($data);
-        } catch (RequestException $e) {
-            return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
-        }
+        //     $data = json_decode($response->getBody()->getContents(), true);
+        //     $percentage = isset($data['percent']) ? number_format($data['percent'], 2) : null;
+        //     $link = $data['link'] ?? null;
+        //     // console::info("RESPONSE DARI DJANGO: ", $data);
+        //     dump($data);
+        // } catch (RequestException $e) {
+        //     return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
+        // }
 
         // Simpan informasi file ke database
         $fileSizeInKB = round($file->getSize() / 1024, 2);
         $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
         $nim = auth()->user()->username;
-        $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
+        // $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
 
         Dokumen::create([
             'judul' => $request->judul,
             'file_path' => $filePath,
             'user_id' => auth()->id(),
             'username' => $nim,
-            'status_plagiarisme' => $statusPlagiarisme,
-            'persentase_plagiarisme' => $percentage,
+            // 'status_plagiarisme' => $statusPlagiarisme,
+            // 'persentase_plagiarisme' => $percentage,
             'versi' => 1,
             'ukuran_file' => $fileSizeInKB,
             'kategori' => 'plagiarisme',
+            'deskripsi' => $request->deskripsi,
             'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
             'highlight_dokumen' => 0,
             'status_berkas' => 'valid',
@@ -151,7 +152,7 @@ class CekPlagiarismeController extends Controller
         ]);
 
         // Tampilkan hasil ke view PengecekanTugasAkhir
-        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
+        return view('CekPlagiarisme.views.PengecekanTugasAkhir');
     }
 
 
