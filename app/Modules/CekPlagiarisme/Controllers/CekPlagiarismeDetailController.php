@@ -70,14 +70,7 @@ class CekPlagiarismeDetailController extends Controller
             'updated_at' => Carbon::now(),
         ]);
 
-        // Mengembalikan respons JSON
-        return response()->json([
-            'success' => true,
-            'message' => 'Catatan berhasil ditambahkan!',
-            'catatan' => $catatan,
-        ]);
-
-        // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+                // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
         $nimPemilik = $dokumen->username;
         // Kirim ke pemilik dokumen
         Notifikasi::kirim(
@@ -117,6 +110,14 @@ class CekPlagiarismeDetailController extends Controller
                 }
             }
         }
+        
+        // Mengembalikan respons JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Catatan berhasil ditambahkan!',
+            'catatan' => $catatan,
+        ]);
+
     }
 
     public function deleteCatatan($id_dokumen, $id_catatan)
@@ -167,12 +168,7 @@ class CekPlagiarismeDetailController extends Controller
             'nip' => $nip,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Catatan berhasil diperbarui!',
-            'catatan' => $catatan,
-        ]);
-
+        
         // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memperbarui Catatan
         $nimPemilik = $dokumen->username;
         // Kirim ke pemilik dokumen
@@ -213,5 +209,12 @@ class CekPlagiarismeDetailController extends Controller
                 }
             }
         }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Catatan berhasil diperbarui!',
+            'catatan' => $catatan,
+        ]);
+
     }
 }

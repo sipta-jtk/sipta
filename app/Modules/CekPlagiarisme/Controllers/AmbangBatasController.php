@@ -90,6 +90,15 @@ class AmbangBatasController extends Controller
                 }
             });
 
+                // Template Telah Diganti (Belum Ada)
+        foreach ($allUsers as $username) {
+            Notifikasi::kirim(
+                '[Pemberitahuan] Ambang Batas Baru',
+                $username,
+                ['AmbangBatas' => $request->ambang_batas],
+            );
+        }
+            
             return response()->json($response);
         } catch (\Exception $e) {
             return response()->json([
@@ -99,14 +108,5 @@ class AmbangBatasController extends Controller
             ], 500);
         }
 
-
-        // Template Telah Diganti (Belum Ada)
-        foreach ($allUsers as $username) {
-            Notifikasi::kirim(
-                '[Pemberitahuan] Ambang Batas Baru',
-                $username,
-                ['AmbangBatas' => $request->ambang_batas],
-            );
-        }
     }
 }
