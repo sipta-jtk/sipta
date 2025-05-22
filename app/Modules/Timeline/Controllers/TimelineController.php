@@ -55,6 +55,21 @@ class TimelineController extends Controller
         // Simpan data timeline
         $timeline = Timeline::create($request->only(['nama_kegiatan', 'tanggal_mulai', 'tanggal_selesai', 'deskripsi']));
 
+        // Kirim notifikasi ke semua user (contoh: mahasiswa dan dosen)
+        $users = \App\Models\User::all();
+        foreach ($users as $user) {
+            \App\Services\Notifikasi::kirim(
+                'Kegiatan Timeline Baru Ditambahkan',
+                $user->id,
+                [
+                    'nama_kegiatan' => $timeline->nama_kegiatan,
+                    'tanggal_mulai' => $timeline->tanggal_mulai,
+                    'tanggal_selesai' => $timeline->tanggal_selesai,
+                    'deskripsi' => $timeline->deskripsi
+                ]
+            );
+        }
+
         // Simpan data ke timeline_has_artefak
         foreach ($request->id_kategori_artefak as $id_artefak) {
             TimelineArtefak::create([
