@@ -96,12 +96,63 @@ class CekPlagiarismeController extends Controller
                     }
                 }
             ],
-            'dokumen' => 'required|file|mimes:pdf,docx,txt|max:15360',
+            'dokumen' => 'required|file|mimes:pdf,docx|max:15360',
+            'digital_receipt' => 'required|file|mimes:pdf,docx|max:15360',
         ]);
 
-        // Simpan file yang diunggah ke storage
-        $file = $request->file('dokumen');
-        $filePath = $file->store('dokumen', 'public');
+        // Simpan file utama (hasil plagiarisme)
+        $fileDokumen = $request->file('dokumen');
+        $filePathDokumen = $fileDokumen->store('dokumen', 'public');
+        $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
+
+        // Simpan file digital receipt
+        $fileReceipt = $request->file('digital_receipt');
+        $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
+        $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
+
+        $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
+        $nim = auth()->user()->username;
+        $idKota = auth()->user()->mahasiswa->id_kota ?? null;
+
+        // Simpan dokumen hasil plagiarisme
+        Dokumen::create([
+            'judul' => $request->judul,
+            'file_path' => $filePathDokumen,
+            'user_id' => auth()->id(),
+            'username' => $nim,
+            'versi' => 1,
+            'ukuran_file' => $fileSizeDokumen,
+            'kategori' => 'plagiarisme',
+            'deskripsi' => $request->deskripsi,
+            'id_kota' => $idKota,
+            'highlight_dokumen' => 0,
+            'status_berkas' => 'valid',
+            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+            'id_subkategori' => 3,
+            'kode_fta' => null,
+        ]);
+
+        // Simpan dokumen digital receipt
+        Dokumen::create([
+            'judul' => $request->judul . ' - Digital Receipt',
+            'file_path' => $filePathReceipt,
+            'user_id' => auth()->id(),
+            'username' => $nim,
+            'versi' => 1,
+            'ukuran_file' => $fileSizeReceipt,
+            'kategori' => 'digital_receipt',
+            'deskripsi' => $request->deskripsi,
+            'id_kota' => $idKota,
+            'highlight_dokumen' => 0,
+            'status_berkas' => 'valid',
+            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+            'id_subkategori' => 3,
+            'kode_fta' => null,
+        ]);
+
+        return view('CekPlagiarisme.views.DaftarDokumen');
+    }
+
 
         // Kirim file ke server Django untuk pengecekan plagiarisme
         // $plagiarismUrl = config('app.plagiarism_url', env('PLAGIARISM_URL'));
@@ -125,35 +176,6 @@ class CekPlagiarismeController extends Controller
         // } catch (RequestException $e) {
         //     return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
         // }
-
-        // Simpan informasi file ke database
-        $fileSizeInKB = round($file->getSize() / 1024, 2);
-        $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-        $nim = auth()->user()->username;
-        // $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
-
-        Dokumen::create([
-            'judul' => $request->judul,
-            'file_path' => $filePath,
-            'user_id' => auth()->id(),
-            'username' => $nim,
-            // 'status_plagiarisme' => $statusPlagiarisme,
-            // 'persentase_plagiarisme' => $percentage,
-            'versi' => 1,
-            'ukuran_file' => $fileSizeInKB,
-            'kategori' => 'plagiarisme',
-            'deskripsi' => $request->deskripsi,
-            'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
-            'highlight_dokumen' => 0,
-            'status_berkas' => 'valid',
-            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
-            'id_subkategori' => 3,
-            'kode_fta' => null,
-        ]);
-
-        // Tampilkan hasil ke view PengecekanTugasAkhir
-        return view('CekPlagiarisme.views.PengecekanTugasAkhir');
-    }
 
 
     // ! Aplikasi berbayar

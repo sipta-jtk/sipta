@@ -120,15 +120,27 @@
 
                     <!-- Pilih Dokumen -->
                     <div class="form-group">
-                        <label>Pilih Dokumen</label>
+                        <label>Pilih Dokumen Hasil Check Plagiarism</label>
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label>Pilih Dokumen Digital Receipt</label>
+                        <div class="d-flex align-items-center">
+                            <label class="btn btn-outline-secondary btn-sm mb-0">
+                                Pilih dokumen dari komputer ini
+                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf, .docx" style="display: none;" required>
+                            </label>
+                            <span id="namaFileTerpilih2" class="ml-2">Tidak ada file</span>
+                        </div>
+                    </div>
+
 
                     <!-- Info Batasan Unggah -->
                     <div class="form-group">
@@ -470,7 +482,8 @@
     function resetUploadForm() {
         $('#judulDokumen').val('');
         $('#abstrakDokumen').val('');
-        $('#dokumenFile').val('');
+        $('#dokumenFileHasilCheckPlagiarisme').val('');
+        $('#dokumenFileHasilDigitalReceipt').val('');
         $('#namaFileTerpilih').text('Tidak ada file');
         $('#judulCounter').text('0/20 kata');
         $('#abstrakCounter').text('0/250 kata');
@@ -549,16 +562,22 @@
         validateForm();
     });
 
-    $('#dokumenFile').on('change', function() {
+    $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
-    let pdfFile, pdfDoc;
+    $('#dokumenFileDigitalReceipt').on('change', function() {
+        var fileName2 = $(this).val().split('\\').pop();
+        $('#namaFileTerpilih2').text(fileName2 ? fileName2 : 'Tidak ada file');
+    });
+
+    let pdfFile, pdfDoc, pdfFile2;
 
     // Saat klik "Unggah" pertama
     $('#openConfirmBtn').click(function() {
-        const fileInput = $('#dokumenFile')[0].files[0];
+        const fileInput = $('#dokumenFileHasilCheckPlagiarisme')[0].files[0];
+        const fileInput2 = $('#dokumenFileDigitalReceipt')[0].files[0];
         const judulInput = $('#judulDokumen').val().trim();
         const abstrakInput = $('#abstrakDokumen').val().trim();
         
@@ -587,6 +606,7 @@
         }
 
         pdfFile = fileInput;
+        pdfFile2 = fileInput2;
 
         const reader = new FileReader();
         reader.onload = async function(e) {
@@ -655,6 +675,7 @@
         formData.append('judul', $('#judulDokumen').val());
         formData.append('deskripsi', $('#abstrakDokumen').val()); // Mengubah 'abstrak' menjadi 'deskripsi' sesuai dengan field di database
         formData.append('dokumen', pdfFile);
+        formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
         Swal.fire({
