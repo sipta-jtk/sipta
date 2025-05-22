@@ -20,6 +20,16 @@ class CekPlagiarismeDetailController extends Controller
     {
         $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
 
+        // Mengambil digital receipt yang terkait (memiliki kategori 'digital_receipt' dan username yang sama)
+        $digital_receipt = null;
+        if ($dokumen) {
+            $digital_receipt = Dokumen::where('username', $dokumen->username)
+                ->where('kategori', 'digital_receipt')
+                ->where('judul', 'like', $dokumen->judul . '%')
+                ->latest()
+                ->first();
+        }
+
         // Mengambil semua review (catatan) yang terkait dengan dokumen
         $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
 
@@ -32,7 +42,7 @@ class CekPlagiarismeDetailController extends Controller
         $alokasiDosen = AlokasiDosen::all();
 
         // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
     }
 
 
