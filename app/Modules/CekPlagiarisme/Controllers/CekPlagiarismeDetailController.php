@@ -24,15 +24,15 @@ class CekPlagiarismeDetailController extends Controller
         $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
 
         // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
-        $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
-            ->where('id_dokumen', $id)
-            ->get();
+        // $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
+        //     ->where('id_dokumen', $id)
+        //     ->get();
 
         // Mengambil data alokasi dosen yang statusnya 'fix' dan mengirimkan ke view
         $alokasiDosen = AlokasiDosen::all();
 
         // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'sumberPlagiarisme', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
     }
 
 

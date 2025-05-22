@@ -210,8 +210,8 @@
 
 @section('css')
 {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-<link rel="stylesheet"
-    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
 <style>
     #table tbody tr {
@@ -233,10 +233,12 @@
     }
 </style>
 
-<script
-    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script
-    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<!-- jQuery (ensure it's loaded first) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables (after jQuery) -->
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 
@@ -273,7 +275,6 @@
         return '/' + prefix + '/' + endpoint;
     }
     
-    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
     
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
@@ -289,8 +290,6 @@
                 url: createApiUrl(urlKota),
                 dataType: "json",
                 success: function(response) {
-                    console.log("URL Kota:", createApiUrl(urlKota)); // Log URL yang digunakan
-                    console.log("Data Kota:", response); // Periksa data yang diterima
 
                     var kelompokOptions;
 
@@ -308,7 +307,6 @@
                     $("#kelompokSelect").append(kelompokOptions);
                 },
                 error: function(xhr, status, error) {
-                    console.error("Gagal mengambil data kota:", status, error);
                 }
             });
         } else {
@@ -317,25 +315,27 @@
     });
 
 
-    $(document).ready(function() {
+    $(document).ready(function() {        
         // Buat URL untuk API dokumen
         var urlDokumen = '/api/cek-plagiarisme';
 
-        var table = $('#table').DataTable({
-            language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
-                zeroRecords: "Dokumen tidak ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                infoEmpty: "Tidak ada dokumen tersedia",
-                infoFiltered: "(difilter dari total _MAX_ data)",
-                paginate: {
-                    first: "<<",
-                    last: ">>",
-                    next: ">",
-                    previous: "<"
-                }
-            },
+        // Inisialisasi DataTable dengan try-catch untuk menangkap error
+        try {
+            var table = $('#table').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Dokumen tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada dokumen tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
+                    }
+                },
             columnDefs: [
                 {
                     targets: [0],
@@ -351,6 +351,7 @@
             responsive: true,
             autoWidth: false
         });
+        
 
         $('#table tbody').on('click', 'tr', function() {
             var data = table.row(this).data();
@@ -366,12 +367,9 @@
             url: createApiUrl(urlDokumen),
             dataType: "json",
             success: function(response) {
-                console.log("URL Dokumen:", createApiUrl(urlDokumen)); // Log URL yang digunakan
 
                 // Clear dulu sebelum isi
                 table.clear();
-
-                console.log("Data dari API:", response);
 
                 // Sorting berdasarkan waktu secara descending
                 response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
@@ -426,12 +424,6 @@
                         }
                     );
                     
-                    // Log filter details for debugging
-                    console.log("Applying filters:");
-                    console.log("- Selected KoTa ID:", selectedKota);
-                    console.log("- Total rows before filter:", response.length);
-                    console.log("- Available KoTa values:", response.map(item => item.id_kota).filter((value, index, self) => self.indexOf(value) === index));
-                    
                     // Redraw the table to apply filters
                     table.draw();
                     
@@ -440,7 +432,6 @@
                     
                     // Count visible rows after filtering
                     var visibleRowCount = table.rows({search:'applied'}).count();
-                    console.log("- Total rows after filter:", visibleRowCount);
                 }
                 
                 // Handle the "Terapkan" button click
@@ -449,9 +440,11 @@
                 });
             },
             error: function(xhr, status, error) {
-                console.error("Gagal mengambil data dari API:", status, error);
             }
         });
+    } catch (err) {
+        alert("Terjadi kesalahan saat memuat tabel data. Silakan refresh halaman.");
+    }
     });
 
     // Fungsi untuk menampilkan modal upload
@@ -696,9 +689,11 @@
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });
+                $('#confirmModal').modal('hide'); // Tutup modal konfirmasi
+                $('#uploadModal').modal('hide'); // Tutup modal upload
+                resetUploadForm(); // Reset form upload
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
                 Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
             }
         });
