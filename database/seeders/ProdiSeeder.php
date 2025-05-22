@@ -25,7 +25,7 @@ class ProdiSeeder extends Seeder
         ]);
 
         Prodi::create([
-            'nama_prodi' => 'D4-Tekinik Informatika',
+            'nama_prodi' => 'D4-Teknik Informatika',
             'maksimal_anggota_kota' => 2,
             'maksimal_mahasiswa_bimbingan' => 8
         ]);
