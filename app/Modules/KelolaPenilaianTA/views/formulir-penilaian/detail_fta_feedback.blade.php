@@ -22,18 +22,32 @@
 <div class="card p-4">
     <div class="p-4">
         <div class="row mb-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="kodeFTA">Kode FTA</label>
                     <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" 
                            value="{{ $kategori->kode_fta ?? '' }}" readonly>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="namaFTA">Nama FTA</label>
                     <input type="text" class="form-control" id="namaFTA" name="namaFTA" 
                            value="{{ $kategori->nama_fta ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="namaProdi">Program Studi</label>
+                    <input type="text" class="form-control" id="namaProdi" name="namaProdi" 
+                        value="{{ $kategori->nama_prodi ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="jenisTA">Jenis TA</label>
+                    <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                        value="{{ $kategori->jenis_ta ?? '' }}" readonly>
                 </div>
             </div>
         </div>  
@@ -54,7 +68,7 @@
         </div>
 
         <div class="row mt-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="tanggalTenggat">Tanggal Tenggat Pengisian</label>
                     <input type="text" class="form-control" id="tanggalTenggat" name="tanggalTenggat" 

@@ -11,6 +11,7 @@
         "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
         "jeroennoten/laravel-adminlte": "^3.14",
+        "lab404/laravel-impersonate": "^1.7",
         "laravel/fortify": "^1.25",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.3",

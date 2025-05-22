@@ -23,6 +23,15 @@ class ForgotPasswordController extends Controller
                     : back()->withErrors(['email' => __($status)]);
     }
 
+    public function showResetForm(Request $request, $token)
+    {
+
+        return view('UserManagement.views.auth.reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+        ]);
+    }
+
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -31,12 +40,20 @@ class ForgotPasswordController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
+        if ($request->password !== $request->password_confirmation) {
+            // Jika tidak cocok, kembalikan error dengan pesan custom
+            return back()->withErrors([
+                'password' => 'Password dan konfirmasi password tidak cocok.',
+            ]);
+        }
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
+                    DB::transaction(function () use ($user, $password) {
+                    $user->password = Hash::make($password);
+                    $user->save();
+                });
             }
         );
 

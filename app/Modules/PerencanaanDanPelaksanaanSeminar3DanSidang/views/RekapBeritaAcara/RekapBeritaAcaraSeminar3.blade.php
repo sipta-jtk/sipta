@@ -47,7 +47,7 @@
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->nama_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
@@ -67,9 +67,7 @@
                                             </a>
                                         </div>
                                     @else
-                                        <div class="alert alert-warning p-1" style="font-size: 0.7rem;">
-                                            Dokumentasi belum diupload.
-                                        </div>
+                                        <span style="font-size: 1 rem;"> Belum diupload</span>
                                     @endif
                                 </td>
                             </tr>
