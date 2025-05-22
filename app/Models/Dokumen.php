@@ -68,6 +68,6 @@ class Dokumen extends Model
     // Relationship dengan keyword (many-to-many)
     public function keywords()
     {
-        return $this->belongsToMany(Keyword::class, 'keyword_dokumen', 'id_dokumen', 'id_keyword');
+        return $this->belongsToMany(Keyword::class, 'dokumen_keyword', 'id_dokumen', 'id_keyword');
     }
 }

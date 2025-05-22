@@ -124,6 +124,18 @@ $prefix = env('PREFIX_URL', '');
                                             <td>{{ $dokumen->judul }}</td> <!-- Data judul dari database -->
                                         </tr>
                                         <tr>
+                                            <th>Keywords</th>
+                                            <td>
+                                                @if($dokumen->keywords && $dokumen->keywords->count() > 0)
+                                                    @foreach($dokumen->keywords as $keyword)
+                                                        <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
+                                                    @endforeach
+                                                @else
+                                                    <span class="text-muted">Tidak ada keyword</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>Tanggal Unggah</th>
                                             <td>{{ \Carbon\Carbon::parse($dokumen->created_at)->format('d F Y') }}</td> <!-- Format tanggal -->
                                         </tr>

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Modules\CekPlagiarisme\Controllers;
 
 use App\Modules\Controller;
@@ -18,7 +17,7 @@ class CekPlagiarismeDetailController extends Controller
 {
     public function show($id)
     {
-        $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
+        $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
         // Mengambil digital receipt yang terkait (memiliki kategori 'digital_receipt' dan username yang sama)
         $digital_receipt = null;
