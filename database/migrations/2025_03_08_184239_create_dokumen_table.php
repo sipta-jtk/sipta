@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('highlight_dokumen');
             $table->enum('status_plagiarisme', ['plagiarisme', 'tidak_plagiarisme']);
             $table->text('review');
-            $table->enum('kategori', ['yudisium', 'sidang', 'seminar3', 'seminar2', 'seminar1', 'plagiarisme']);
+            $table->enum('kategori', ['yudisium', 'sidang', 'seminar3', 'seminar2', 'seminar1', 'plagiarisme', 'digital_receipt']);
             $table->text('deskripsi')->nullable();
             $table->integer('versi');
             $table->float('ukuran_file');

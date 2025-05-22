@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('list_kalimat_plagiarisme', function (Blueprint $table) {
-            $table->id('id_kalimat');
-            $table->unsignedBigInteger('id_dokumen');
-            $table->unsignedBigInteger('id_jurnal');
-            $table->text('kalimat_plagiat');
-            
+        Schema::create('keyword', function (Blueprint $table) {
+            $table->id('id_keyword');
+            $table->string('keyword', 255);
             $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen');
-            $table->foreign('id_jurnal')->references('id_jurnal')->on('list_jurnal_plagiarisme');
         });
         
         Schema::enableForeignKeyConstraints();
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('list_kalimat_plagiarisme');
+        Schema::dropIfExists('keyword');
     }
 };
