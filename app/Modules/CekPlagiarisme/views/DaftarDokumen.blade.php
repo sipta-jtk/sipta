@@ -109,6 +109,13 @@
                         <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
                         <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
                     </div>
+
+                    <!-- Keyword -->
+                    <div class="form-group">
+                        <label for="keywords">Keyword</label>
+                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
+                        <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
+                    </div>
                     
                     <!-- Abstrak -->
                     <div class="form-group">
@@ -183,6 +190,7 @@
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
@@ -475,6 +483,7 @@
 
     function resetUploadForm() {
         $('#judulDokumen').val('');
+        $('#keywordsInput').val('');
         $('#abstrakDokumen').val('');
         $('#dokumenFileHasilCheckPlagiarisme').val('');
         $('#dokumenFileHasilDigitalReceipt').val('');
@@ -484,6 +493,7 @@
         $('#abstrakError').addClass('d-none');
         $('#judulError').addClass('d-none');
         $('#judulDokumen').removeClass('is-invalid');
+        $('#keywordsPreview').text('');
         $('#abstrakDokumen').removeClass('is-invalid');
     }
 
@@ -492,9 +502,11 @@
     function validateForm() {
         var judulValid = validateJudul();
         var abstrakValid = validateAbstrak();
+        var keywordValid = validateKeyword();
+        
         
         // Tombol lanjutkan hanya aktif jika judul dan abstrak valid
-        $('#openConfirmBtn').prop('disabled', !(judulValid && abstrakValid));
+        $('#openConfirmBtn').prop('disabled', !(judulValid && abstrakValid && keywordValid));
         
         return judulValid && abstrakValid;
     }
@@ -523,6 +535,27 @@
             return true;
         }
     }
+
+    function validateKeyword() {
+        var keywordVal = $('#keywordsInput').val().trim();
+
+        if (keywordVal.length === 0) {
+            $('#keywordsInput').addClass('is-invalid');
+            return false;
+        }
+
+        // Capitalize setiap kata di setiap keyword yang dipisahkan koma
+        var capitalized = keywordVal.split(',').map(keyword => {
+            return keyword.trim().split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        }).filter(Boolean).join(', ');
+
+        $('#keywordsInput').val(capitalized);
+        $('#keywordsInput').removeClass('is-invalid');
+        return true;
+    }
+
     
     // Validasi real-time untuk abstrak
     function validateAbstrak() {
@@ -574,6 +607,7 @@
         const fileInput2 = $('#dokumenFileDigitalReceipt')[0].files[0];
         const judulInput = $('#judulDokumen').val().trim();
         const abstrakInput = $('#abstrakDokumen').val().trim();
+        const keywordsInput = $('#keywordsInput').val().trim();
         
         // Validasi sekali lagi sebelum melanjutkan
         const isValid = validateForm();
@@ -615,6 +649,7 @@
 
             // Isi field preview
             $('#judulPreview').text(judulInput);
+            $('#keywordsPreview').text(keywordsInput);
             $('#abstrakPreview').text(abstrakInput);
             $('#namaFilePreview').text(fileInput.name);
             $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
@@ -667,6 +702,7 @@
     $('#finalUploadBtn').click(function() {
         let formData = new FormData();
         formData.append('judul', $('#judulDokumen').val());
+        formData.append('keywords', $('#keywordsInput').val());
         formData.append('deskripsi', $('#abstrakDokumen').val()); // Mengubah 'abstrak' menjadi 'deskripsi' sesuai dengan field di database
         formData.append('dokumen', pdfFile);
         formData.append('digital_receipt', pdfFile2);

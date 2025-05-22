@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use App\Models\Dokumen;
+use App\Models\Keyword;
 use App\Models\AmbangBatas;
 use App\Models\Kota;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\DB;
 
 
 use Carbon\Carbon;
@@ -81,7 +83,7 @@ class CekPlagiarismeController extends Controller
         ]);
     }
 
-    // ! Aplikasi dari open source
+
     public function process(Request $request)
     {
         // Validasi input
@@ -98,59 +100,84 @@ class CekPlagiarismeController extends Controller
             ],
             'dokumen' => 'required|file|mimes:pdf,docx|max:15360',
             'digital_receipt' => 'required|file|mimes:pdf,docx|max:15360',
+            'keywords' => 'required|string|min:1',
         ]);
 
-        // Simpan file utama (hasil plagiarisme)
-        $fileDokumen = $request->file('dokumen');
-        $filePathDokumen = $fileDokumen->store('dokumen', 'public');
-        $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
+        DB::beginTransaction();
 
-        // Simpan file digital receipt
-        $fileReceipt = $request->file('digital_receipt');
-        $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
-        $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
+        try {
+            // Simpan file utama (hasil plagiarisme)
+            $fileDokumen = $request->file('dokumen');
+            $filePathDokumen = $fileDokumen->store('dokumen', 'public');
+            $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
 
-        $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-        $nim = auth()->user()->username;
-        $idKota = auth()->user()->mahasiswa->id_kota ?? null;
+            // Simpan file digital receipt
+            $fileReceipt = $request->file('digital_receipt');
+            $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
+            $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
 
-        // Simpan dokumen hasil plagiarisme
-        Dokumen::create([
-            'judul' => $request->judul,
-            'file_path' => $filePathDokumen,
-            'user_id' => auth()->id(),
-            'username' => $nim,
-            'versi' => 1,
-            'ukuran_file' => $fileSizeDokumen,
-            'kategori' => 'plagiarisme',
-            'deskripsi' => $request->deskripsi,
-            'id_kota' => $idKota,
-            'highlight_dokumen' => 0,
-            'status_berkas' => 'valid',
-            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
-            'id_subkategori' => 3,
-            'kode_fta' => null,
-        ]);
+            $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
+            $nim = auth()->user()->username;
+            $idKota = auth()->user()->mahasiswa->id_kota ?? null;
 
-        // Simpan dokumen digital receipt
-        Dokumen::create([
-            'judul' => $request->judul . ' - Digital Receipt',
-            'file_path' => $filePathReceipt,
-            'user_id' => auth()->id(),
-            'username' => $nim,
-            'versi' => 1,
-            'ukuran_file' => $fileSizeReceipt,
-            'kategori' => 'digital_receipt',
-            'deskripsi' => $request->deskripsi,
-            'id_kota' => $idKota,
-            'highlight_dokumen' => 0,
-            'status_berkas' => 'valid',
-            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
-            'id_subkategori' => 3,
-            'kode_fta' => null,
-        ]);
+            // Simpan dokumen hasil plagiarisme
+            $dokumen = Dokumen::create([
+                'judul' => $request->judul,
+                'file_path' => $filePathDokumen,
+                'user_id' => auth()->id(),
+                'username' => $nim,
+                'versi' => 1,
+                'ukuran_file' => $fileSizeDokumen,
+                'kategori' => 'plagiarisme',
+                'deskripsi' => $request->deskripsi,
+                'id_kota' => $idKota,
+                'highlight_dokumen' => 0,
+                'status_berkas' => 'valid',
+                'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+                'id_subkategori' => 3,
+                'kode_fta' => null,
+            ]);
 
-        return view('CekPlagiarisme.views.DaftarDokumen');
+            // Simpan dokumen digital receipt
+            Dokumen::create([
+                'judul' => $request->judul . ' - Digital Receipt',
+                'file_path' => $filePathReceipt,
+                'user_id' => auth()->id(),
+                'username' => $nim,
+                'versi' => 1,
+                'ukuran_file' => $fileSizeReceipt,
+                'kategori' => 'digital_receipt',
+                'deskripsi' => $request->deskripsi,
+                'id_kota' => $idKota,
+                'highlight_dokumen' => 0,
+                'status_berkas' => 'valid',
+                'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+                'id_subkategori' => 3,
+                'kode_fta' => null,
+            ]);
+
+            // Tangani keywords (dipisahkan koma)
+            $keywordsInput = explode(',', $request->keywords);
+            $keywordIds = [];
+
+            foreach ($keywordsInput as $keyword) {
+                $normalized = ucwords(strtolower(trim($keyword))); // Capitalize setiap kata
+                if (empty($normalized)) continue;
+
+                $existing = Keyword::firstOrCreate(['nama_keyword' => $normalized]);
+                $keywordIds[] = $existing->id_keyword;
+            }
+
+            // Attach ke dokumen
+            $dokumen->keywords()->sync($keywordIds);
+
+            DB::commit();
+
+            return view('CekPlagiarisme.views.DaftarDokumen');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan dokumen dan keyword: ' . $e->getMessage()]);
+        }
     }
 
 
