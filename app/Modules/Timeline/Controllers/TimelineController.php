@@ -9,6 +9,8 @@ use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Services\Notifikasi;
 
 class TimelineController extends Controller
 {
@@ -56,9 +58,9 @@ class TimelineController extends Controller
         $timeline = Timeline::create($request->only(['nama_kegiatan', 'tanggal_mulai', 'tanggal_selesai', 'deskripsi']));
 
         // Kirim notifikasi ke semua user (contoh: mahasiswa dan dosen)
-        $users = \App\Models\User::all();
+        $users = User::all();
         foreach ($users as $user) {
-            \App\Services\Notifikasi::kirim(
+            Notifikasi::kirim(
                 'Kegiatan Timeline Baru Ditambahkan',
                 $user->id,
                 [
