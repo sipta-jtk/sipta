@@ -69,17 +69,17 @@ class MahasiswaController extends Controller
         ]);
 
         DB::commit();
-        return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->route('manage.mhs')->with('error', 'Gagal menambah mahasiswa: ' . $e->getMessage());
-    }
     // Template Telah Diganti(Belum ada) 
     Notifikasi::kirim(
         '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
         $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
         []
     );
+        return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.mhs')->with('error', 'Gagal menambah mahasiswa: ' . $e->getMessage());
+    }
 }
 public function updateMhs(Request $request)
 {
@@ -247,14 +247,8 @@ public function import(Request $request)
         // 3. Bulk Insert
         User::insert($users);
         Mahasiswa::insert($mahasiswa);
-        DB::commit();   
-        return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
-    }
-    catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
-    }
-    //Template Telah Diganti(Belum ada)
+        DB::commit();  
+            //Template Telah Diganti(Belum ada)
         if (!empty($users)) {
             foreach ($users as $user) {
                 Notifikasi::kirim(
@@ -263,8 +257,13 @@ public function import(Request $request)
                     []
                 );
             }
-        }
-
+        } 
+        return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
+    }
+    catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
+    }
 }
 
 public function aktifkanAkun(Request $request)
