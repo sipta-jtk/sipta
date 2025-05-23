@@ -68,8 +68,12 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
    // ================= PENGELOLAAN NILAI =================
     Route::prefix('pengelolaan-nilai')->middleware(['auth', 'can:akses-penilaian-koordinator-ta'])->group(function () {
         Route::get('/', [PengelolaanNilaiController::class, 'kelolaNilai'])->name('kelola.penilaian');
+        Route::get('/{namaFta}/{idProdi}/preview-data-nilai', [PengelolaanNilaiController::class, 'previewDataNilai'])->name('previewDataNilai');
         Route::get('/{namaFta}/{idProdi}', [PengelolaanNilaiController::class, 'detailNilaiMahasiswa'])->name('kelola.penilaian.detail');
         Route::post('/{idKategori}/{action}/toggle-kunci', [PengelolaanNilaiController::class, 'toggleKunciPenilaian'])->name('kelola.penilaian.toggle-kunci');
+        Route::get('/download-template-nilai', fn () => Response::download(public_path('KelolaPenilaianTA/template-nilai-seminar-1-dan-2.xlsx'), 'template-nilai-seminar-1-dan-2.xlsx'))->name('download.template-nilai');
+        Route::post('/{namaFta}/{idProdi}/import-nilai', [PengelolaanNilaiController::class, 'import'])->name('import-nilai');
+        Route::post('/{namaFta}/{idProdi}/input-bulk-nilai', [PengelolaanNilaiController::class, 'inputBulk'])->name('inputBulkNilai');
     });
 
     Route::prefix('pengelolaan-nilai')->middleware(['auth', 'can:akses-pemberian-nilai'])->group(function () {
