@@ -61,14 +61,14 @@ return new class extends Migration
             $table->string('kode_fta', 255)->nullable();
         });
         
-        // 5. Modify foreign key for list_kalimat_plagiarisme
-        Schema::table('list_kalimat_plagiarisme', function (Blueprint $table) {
-            $table->dropForeign(['id_dokumen']);
-            $table->foreign('id_dokumen')
-                  ->references('id_dokumen')
-                  ->on('dokumen')
-                  ->onDelete('cascade');
-        });
+        // // 5. Modify foreign key for list_kalimat_plagiarisme
+        // Schema::table('list_kalimat_plagiarisme', function (Blueprint $table) {
+        //     $table->dropForeign(['id_dokumen']);
+        //     $table->foreign('id_dokumen')
+        //           ->references('id_dokumen')
+        //           ->on('dokumen')
+        //           ->onDelete('cascade');
+        // });
         
         // === Ambasing ===
         // 6. Make id_kota nullable in mahasiswa table
