@@ -20,6 +20,7 @@ use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
 use App\Models\Dokumen;
+use App\Models\SubkategoriDokumen;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -97,6 +98,16 @@ class PemberianFeedbackController extends Controller
             }) ? false : true;
 
 
+        
+        // Cek apakah feedback sudah dipublikasikan
+        $isPublished = false;
+        foreach ($detailFeedback as $feedbackItem) {
+            if ($feedbackItem->status_penilaian_dosen === 'dipublikasikan') {
+                $isPublished = true;
+                break;
+            }
+        }
+
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFta);
 
@@ -112,15 +123,15 @@ class PemberianFeedbackController extends Controller
 
         // Render view dengan data yang sudah disiapkan
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact(
-            'seminar',
-            'mahasiswa',
-            'aspekFeedback',
-            'data',
-            'keteranganUmumPenilaian',
-            'jadwal',
-            'detailFeedback',
+            'seminar', 
+            'mahasiswa', 
+            'aspekFeedback', 
+            'data', 
+            'keteranganUmumPenilaian', 
+            'jadwal', 
+            'detailFeedback', 
             'dokumen',
-            'view'
+            'isPublished'
         ));
     }
 
