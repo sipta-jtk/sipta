@@ -97,15 +97,18 @@ class PemberianFeedbackController extends Controller
                 return $item->status_penilaian_dosen === 'dipublikasikan';
             }) ? false : true;
 
-
-        
-        // Cek apakah feedback sudah dipublikasikan
-        $isPublished = false;
-        foreach ($detailFeedback as $feedbackItem) {
-            if ($feedbackItem->status_penilaian_dosen === 'dipublikasikan') {
-                $isPublished = true;
-                break;
+        // Cek apakah semua feedback dosen untuk FTA ini sudah dipublikasikan
+        $isPublished = true; // Asumsikan sudah dipublikasikan di awal
+        if ($detailFeedback->isNotEmpty()) {
+            foreach ($detailFeedback as $feedbackItem) {
+                if ($feedbackItem->status_penilaian_dosen !== 'dipublikasikan') {
+                    $isPublished = false;
+                    break;
+                }
             }
+        } else {
+            // Jika belum ada feedback, berarti belum dipublikasikan
+            $isPublished = false;
         }
 
         // Ambil dokumen terbaru berdasarkan kota dan kategori

@@ -216,7 +216,7 @@
                         <label for="{{ Str::slug($feedback->nama_aspek_feedback) }}" class="mb-1">
                             Masukan untuk {{ $feedback->nama_aspek_feedback }}
                         </label>
-                        <div class="text-muted char-counter" id="char-count-{{ $index }}" style="{{ $isPublished ? 'display: none;' : '' }}">0 kata</div>
+                        <div class="text-muted char-counter" id="char-count-{{ $index }}">0 kata</div>
                     </div>
 
                     <input type="hidden" name="feedback[{{ $index }}][id_fta]" value="{{ $data['kode_fta'] }}">
@@ -231,8 +231,7 @@
                     <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="{{ $oldValue }}">
                     <trix-editor
                         input="feedback-{{ $index }}"
-                        {{ $isPublished ? 'readonly' : '' }}
-                        data-is-published="{{ $isPublished ? 'true' : 'false' }}">
+                        {{ $isPublished ? 'readonly contenteditable=false' : '' }}>
                     </trix-editor>
                     <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 30 kata.</span>
                 </div>
