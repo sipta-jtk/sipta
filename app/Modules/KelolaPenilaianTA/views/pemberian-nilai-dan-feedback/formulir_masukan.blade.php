@@ -122,7 +122,11 @@
 
                 <!-- Tombol Preview Laporan -->
                 <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
+                    onclick="LihatDokumen(
+                        '{{ $dokumen['laporan']->file_path ?? '' }}',
+                        '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                        '{{ $dokumen['laporan']->kategori ?? '' }}'
+                    )"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['laporan'] ? '' : 'disabled' }}>
                     Laporan <i class="fa-solid fa-file"></i>
@@ -130,7 +134,11 @@
 
                 <!-- Tombol Preview PowerPoint -->
                 <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
+                    onclick="LihatDokumen(
+                        '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                        '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                        '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                    )"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
                     PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
@@ -141,7 +149,22 @@
         <!-- Modal Lihat Dokumen -->
         <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
             <div class="row px-3">
-                <div class="col-md-12">
+                <div class="col-md-3 mb-2">
+                    <label class="mt-2">Aksi File</label>
+                    <div class="d-flex flex-column">
+                        <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#"
+                        class="btn btn-success"
+                        id="view_file_download"
+                        data-url-template="{{ route('dokumen.download', ['kategori' => '__kategori__', 'id' => '__id__']) }}">
+                            <i class="fas fa-download"></i> Unduh
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-9 mb-2">
+                    <label class="form-label">Pratinjau Dokumen</label>
                     <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
                         <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
                         <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">

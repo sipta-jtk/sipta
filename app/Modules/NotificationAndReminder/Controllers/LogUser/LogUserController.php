@@ -5,6 +5,7 @@ namespace App\Modules\NotificationAndReminder\Controllers\LogUser;
 use App\Http\Controllers\Controller;
 use App\Models\NotifikasiKirim;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -16,6 +17,12 @@ public function getLogUserNotifications()
 
     $username = Auth::user()->username; // Ambil username user yang login
     // dd(Auth::user()->nama);
+
+    Notifikasi::kirim(
+    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+    Auth::user()->username, []
+    );
+
 
     $logUserNotifikasi = NotifikasiKirim::with('user')
         ->join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')

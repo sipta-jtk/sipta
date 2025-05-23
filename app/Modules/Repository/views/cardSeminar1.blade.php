@@ -136,7 +136,9 @@
                                         data-toggle="modal" data-target="#UbahDokumen">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endif
 
+                                    @if($status_ta === 'mahasiswa_ta' || $isPenguji)
                                     <!-- View button -->
                                     <button class="btn btn-sm btn-outline-success"
                                         onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
@@ -151,24 +153,8 @@
                                     </button>
                                     @endif
 
+                                    <!-- View button -->
                                     @if ($isPembimbing)
-                                    <!-- View button -->
-                                    <div class="d-flex flex-row justify-content-center">
-                                        <button class="btn btn-sm btn-outline-success"
-                                            onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                            data-id="{{ $doc->id_dokumen }}"
-                                            data-judul="{{ $doc->judul }}"
-                                            data-file="{{ $doc->file_path }}"
-                                            data-deskripsi="{{ $doc->deskripsi }}"
-                                            data-notes="{{ $doc->notes }}"
-                                            data-toggle="modal"
-                                            data-target="#LihatDokumen">
-                                            <i class="fas fa-edit mr-1"></i> Catatan
-                                        </button>
-                                    </div>
-                                    @endif
-                                    @if($isPenguji)
-                                    <!-- View button -->
                                     <button class="btn btn-sm btn-outline-success"
                                         onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
                                         data-id="{{ $doc->id_dokumen }}"
@@ -178,7 +164,7 @@
                                         data-notes="{{ $doc->notes }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-edit mr-1"></i> Catatan
                                     </button>
                                     @endif
                                 </td>
@@ -965,7 +951,7 @@
                 if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
                     $('#viewDocumentPreview').attr('src', fullUrl).show();
                     $('#viewPreviewNotAvailable').hide();
-                } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                     var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                     $('#viewDocumentPreview').attr('src', viewerUrl).show();
                     $('#viewPreviewNotAvailable').hide();

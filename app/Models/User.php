@@ -7,12 +7,10 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Storage;
-use Lab404\Impersonate\Models\Impersonate;
-
 
 class User extends Authenticatable
 {     
-    use Notifiable, HasRoles, HasApiTokens, Impersonate;
+    use Notifiable, HasRoles, HasApiTokens;
 
     protected $table = 'user';
     protected $primaryKey = 'username';
@@ -99,15 +97,5 @@ class User extends Authenticatable
     public function adminlte_profile_url()
     {
         return 'profile';
-    }
-
-        public function canImpersonate(): bool
-    {
-        return $this->role_user === 'admin';
-    }
-
-    public function canBeImpersonated(): bool
-    {
-        return $this->role_user !== 'admin';
     }
 }
