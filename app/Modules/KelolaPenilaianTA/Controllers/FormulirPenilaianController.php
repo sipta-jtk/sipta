@@ -68,6 +68,7 @@ class FormulirPenilaianController extends Controller {
 
         $exists = FormPenilaian::where('id_prodi', $request->namaProdi)
             ->where('jenis_form', $request->jenisForm)
+            ->where('kode_fta', $request->kodeFTA)
             ->when(in_array($request->namaProdi, [1, 2]), function ($query) use ($request) {
                 // Cek jenis_ta jika prodi adalah D3 (id = 1) atau D4 (id = 2)
                 $query->where('jenis_ta', $request->jenisTA);
@@ -245,16 +246,41 @@ class FormulirPenilaianController extends Controller {
             
             $namaKriteria = $request->nama_kriteria;
             $bobotKriteria = $request->bobot_kriteria;
-            
-            if ($namaKriteria) {
-                foreach ($kriteriaPenilaian as $index => $kriteria) {
 
-                    KriteriaPenilaian::where('id_kriteria', $kriteria)->update([
-                        'nama_kriteria' => $namaKriteria[$index] ?? '',
+            $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian->pluck('id_kriteria')->toArray();
+            
+            foreach ($kriteriaPenilaian as $index => $idKriteria) {
+                if (isset($namaKriteria[$index])) {
+                    KriteriaPenilaian::where('id_kriteria', $idKriteria)->update([
+                        'nama_kriteria' => $namaKriteria[$index],
                         'bobot_kriteria' => $bobotKriteria[$index] ?? 0,
                     ]);
-                    
                 }
+            }
+
+            // Jika ada kriteria baru (input lebih banyak dari data lama), insert sisanya
+            for ($i = count($kriteriaPenilaian); $i < count($namaKriteria); $i++) {
+                if (!empty($namaKriteria[$i])) {
+                    KriteriaPenilaian::create([
+                        'kode_fta' => $kodeFTA,
+                        'id_fta' => $id_fta,
+                        'nama_kriteria' => $namaKriteria[$i],
+                        'bobot_kriteria' => $bobotKriteria[$i] ?? 0,
+                    ]);
+                }
+            }
+
+            // Jika ada kriteria lama yang dihapus di form, hapus dari DB
+            if (count($namaKriteria) < count($kriteriaPenilaian)) {
+                $idToKeep = [];
+                for ($i = 0; $i < count($namaKriteria); $i++) {
+                    if (!empty($namaKriteria[$i])) {
+                        $idToKeep[] = $kriteriaPenilaian[$i];
+                    }
+                }
+                KriteriaPenilaian::where('id_fta', $id_fta)
+                    ->whereNotIn('id_kriteria', $idToKeep)
+                    ->delete();
             }
         } else {
             AspekFeedback::where('id_fta', $id_fta)->delete();
