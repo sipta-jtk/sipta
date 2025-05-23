@@ -20,6 +20,10 @@ Carbon::setLocale('id');
 
 class CekPlagiarismeController extends Controller
 {
+    public function getOverallSimilarity() {
+
+    }
+    
     public function getData()
     {
         // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
