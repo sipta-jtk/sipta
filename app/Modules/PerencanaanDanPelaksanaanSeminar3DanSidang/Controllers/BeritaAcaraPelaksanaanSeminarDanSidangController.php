@@ -192,7 +192,16 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Validasi request
         $request->validate([
             'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
-            'batas_revisi' => 'required|date',
+            'batas_revisi' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $today = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+                    if ($value < $today) {
+                        $fail('Tanggal batas revisi tidak boleh sebelum hari ini.');
+                    }
+                },
+            ],
         ]);
 
         // Update batas revisi di database
