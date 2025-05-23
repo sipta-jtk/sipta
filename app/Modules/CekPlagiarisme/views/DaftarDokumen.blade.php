@@ -109,6 +109,13 @@
                         <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
                         <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
                     </div>
+
+                    <!-- Keyword -->
+                    <div class="form-group">
+                        <label for="keywords">Keyword</label>
+                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
+                        <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
+                    </div>
                     
                     <!-- Abstrak -->
                     <div class="form-group">
@@ -120,15 +127,27 @@
 
                     <!-- Pilih Dokumen -->
                     <div class="form-group">
-                        <label>Pilih Dokumen</label>
+                        <label>Pilih Dokumen Hasil Check Plagiarism</label>
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label>Pilih Dokumen Digital Receipt</label>
+                        <div class="d-flex align-items-center">
+                            <label class="btn btn-outline-secondary btn-sm mb-0">
+                                Pilih dokumen dari komputer ini
+                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf, .docx" style="display: none;" required>
+                            </label>
+                            <span id="namaFileTerpilih2" class="ml-2">Tidak ada file</span>
+                        </div>
+                    </div>
+
 
                     <!-- Info Batasan Unggah -->
                     <div class="form-group">
@@ -171,6 +190,7 @@
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
@@ -198,8 +218,8 @@
 
 @section('css')
 {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-<link rel="stylesheet"
-    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
 <style>
     #table tbody tr {
@@ -221,10 +241,13 @@
     }
 </style>
 
-<script
-    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script
-    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<!-- jQuery (ensure it's loaded first) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables (after jQuery) -->
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 
@@ -261,7 +284,6 @@
         return '/' + prefix + '/' + endpoint;
     }
     
-    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
     
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
@@ -277,8 +299,6 @@
                 url: createApiUrl(urlKota),
                 dataType: "json",
                 success: function(response) {
-                    console.log("URL Kota:", createApiUrl(urlKota)); // Log URL yang digunakan
-                    console.log("Data Kota:", response); // Periksa data yang diterima
 
                     var kelompokOptions;
 
@@ -296,7 +316,6 @@
                     $("#kelompokSelect").append(kelompokOptions);
                 },
                 error: function(xhr, status, error) {
-                    console.error("Gagal mengambil data kota:", status, error);
                 }
             });
         } else {
@@ -305,25 +324,27 @@
     });
 
 
-    $(document).ready(function() {
+    $(document).ready(function() {        
         // Buat URL untuk API dokumen
         var urlDokumen = '/api/cek-plagiarisme';
 
-        var table = $('#table').DataTable({
-            language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
-                zeroRecords: "Dokumen tidak ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                infoEmpty: "Tidak ada dokumen tersedia",
-                infoFiltered: "(difilter dari total _MAX_ data)",
-                paginate: {
-                    first: "<<",
-                    last: ">>",
-                    next: ">",
-                    previous: "<"
-                }
-            },
+        // Inisialisasi DataTable dengan try-catch untuk menangkap error
+        try {
+            var table = $('#table').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Dokumen tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada dokumen tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
+                    }
+                },
             columnDefs: [
                 {
                     targets: [0],
@@ -339,6 +360,7 @@
             responsive: true,
             autoWidth: false
         });
+        
 
         $('#table tbody').on('click', 'tr', function() {
             var data = table.row(this).data();
@@ -354,12 +376,9 @@
             url: createApiUrl(urlDokumen),
             dataType: "json",
             success: function(response) {
-                console.log("URL Dokumen:", createApiUrl(urlDokumen)); // Log URL yang digunakan
 
                 // Clear dulu sebelum isi
                 table.clear();
-
-                console.log("Data dari API:", response);
 
                 // Sorting berdasarkan waktu secara descending
                 response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
@@ -414,12 +433,6 @@
                         }
                     );
                     
-                    // Log filter details for debugging
-                    console.log("Applying filters:");
-                    console.log("- Selected KoTa ID:", selectedKota);
-                    console.log("- Total rows before filter:", response.length);
-                    console.log("- Available KoTa values:", response.map(item => item.id_kota).filter((value, index, self) => self.indexOf(value) === index));
-                    
                     // Redraw the table to apply filters
                     table.draw();
                     
@@ -428,7 +441,6 @@
                     
                     // Count visible rows after filtering
                     var visibleRowCount = table.rows({search:'applied'}).count();
-                    console.log("- Total rows after filter:", visibleRowCount);
                 }
                 
                 // Handle the "Terapkan" button click
@@ -437,9 +449,11 @@
                 });
             },
             error: function(xhr, status, error) {
-                console.error("Gagal mengambil data dari API:", status, error);
             }
         });
+    } catch (err) {
+        alert("Terjadi kesalahan saat memuat tabel data. Silakan refresh halaman.");
+    }
     });
 
     // Fungsi untuk menampilkan modal upload
@@ -469,14 +483,17 @@
 
     function resetUploadForm() {
         $('#judulDokumen').val('');
+        $('#keywordsInput').val('');
         $('#abstrakDokumen').val('');
-        $('#dokumenFile').val('');
+        $('#dokumenFileHasilCheckPlagiarisme').val('');
+        $('#dokumenFileHasilDigitalReceipt').val('');
         $('#namaFileTerpilih').text('Tidak ada file');
         $('#judulCounter').text('0/20 kata');
         $('#abstrakCounter').text('0/250 kata');
         $('#abstrakError').addClass('d-none');
         $('#judulError').addClass('d-none');
         $('#judulDokumen').removeClass('is-invalid');
+        $('#keywordsPreview').text('');
         $('#abstrakDokumen').removeClass('is-invalid');
     }
 
@@ -485,9 +502,11 @@
     function validateForm() {
         var judulValid = validateJudul();
         var abstrakValid = validateAbstrak();
+        var keywordValid = validateKeyword();
+        
         
         // Tombol lanjutkan hanya aktif jika judul dan abstrak valid
-        $('#openConfirmBtn').prop('disabled', !(judulValid && abstrakValid));
+        $('#openConfirmBtn').prop('disabled', !(judulValid && abstrakValid && keywordValid));
         
         return judulValid && abstrakValid;
     }
@@ -516,6 +535,27 @@
             return true;
         }
     }
+
+    function validateKeyword() {
+        var keywordVal = $('#keywordsInput').val().trim();
+
+        if (keywordVal.length === 0) {
+            $('#keywordsInput').addClass('is-invalid');
+            return false;
+        }
+
+        // Capitalize setiap kata di setiap keyword yang dipisahkan koma
+        var capitalized = keywordVal.split(',').map(keyword => {
+            return keyword.trim().split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        }).filter(Boolean).join(', ');
+
+        $('#keywordsInput').val(capitalized);
+        $('#keywordsInput').removeClass('is-invalid');
+        return true;
+    }
+
     
     // Validasi real-time untuk abstrak
     function validateAbstrak() {
@@ -549,18 +589,25 @@
         validateForm();
     });
 
-    $('#dokumenFile').on('change', function() {
+    $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
-    let pdfFile, pdfDoc;
+    $('#dokumenFileDigitalReceipt').on('change', function() {
+        var fileName2 = $(this).val().split('\\').pop();
+        $('#namaFileTerpilih2').text(fileName2 ? fileName2 : 'Tidak ada file');
+    });
+
+    let pdfFile, pdfDoc, pdfFile2;
 
     // Saat klik "Unggah" pertama
     $('#openConfirmBtn').click(function() {
-        const fileInput = $('#dokumenFile')[0].files[0];
+        const fileInput = $('#dokumenFileHasilCheckPlagiarisme')[0].files[0];
+        const fileInput2 = $('#dokumenFileDigitalReceipt')[0].files[0];
         const judulInput = $('#judulDokumen').val().trim();
         const abstrakInput = $('#abstrakDokumen').val().trim();
+        const keywordsInput = $('#keywordsInput').val().trim();
         
         // Validasi sekali lagi sebelum melanjutkan
         const isValid = validateForm();
@@ -587,6 +634,7 @@
         }
 
         pdfFile = fileInput;
+        pdfFile2 = fileInput2;
 
         const reader = new FileReader();
         reader.onload = async function(e) {
@@ -601,6 +649,7 @@
 
             // Isi field preview
             $('#judulPreview').text(judulInput);
+            $('#keywordsPreview').text(keywordsInput);
             $('#abstrakPreview').text(abstrakInput);
             $('#namaFilePreview').text(fileInput.name);
             $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
@@ -653,8 +702,10 @@
     $('#finalUploadBtn').click(function() {
         let formData = new FormData();
         formData.append('judul', $('#judulDokumen').val());
+        formData.append('keywords', $('#keywordsInput').val());
         formData.append('deskripsi', $('#abstrakDokumen').val()); // Mengubah 'abstrak' menjadi 'deskripsi' sesuai dengan field di database
         formData.append('dokumen', pdfFile);
+        formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
         Swal.fire({
@@ -675,9 +726,11 @@
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });
+                $('#confirmModal').modal('hide'); // Tutup modal konfirmasi
+                $('#uploadModal').modal('hide'); // Tutup modal upload
+                resetUploadForm(); // Reset form upload
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
                 Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
             }
         });

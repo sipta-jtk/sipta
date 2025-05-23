@@ -25,21 +25,21 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+
 
         $this->configureRateLimiting();
-    
+
         $this->routes(function () {
             $prefix = env('PREFIX_URL', 'sipta');
 
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
-    
+
             Route::middleware('web')
                 ->prefix($prefix) // Use the prefix from env
                 ->group(base_path('routes/web.php'));
-    
+
             // Ensure Fortify routes are loaded
             Route::middleware('web')
                 ->group(base_path('vendor/laravel/fortify/routes/routes.php'));
@@ -57,7 +57,7 @@ class RouteServiceProvider extends ServiceProvider
             // Route::middleware('web')
             //     ->group(base_path('app/Modules/PengajuanAlokasiPembimbing/routes.php'));
 
-            
+
         });
     }
 
