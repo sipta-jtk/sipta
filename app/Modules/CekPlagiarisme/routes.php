@@ -9,17 +9,16 @@ Route::middleware(['auth', 'can:dosen'])->get(
     '/api/kotas',
     [CekPlagiarismeController::class, 'getKota']
 );
-Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
-Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
 
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});
-
-
-Route::get('/cek-plagiarisme/cek-tugas-akhir', function () {
-    return view('CekPlagiarisme.views.PengecekanTugasAkhir');
+Route::middleware(['auth', 'can:user'])->group(function () {
+   
+    Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
+    Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
+    Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
+    
+    Route::get('/cek-plagiarisme', function () {
+        return view('CekPlagiarisme.views.DaftarDokumen');
+    });
 });
 
 /**********************************
