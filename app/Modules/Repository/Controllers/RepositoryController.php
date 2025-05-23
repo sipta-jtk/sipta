@@ -723,7 +723,7 @@ class RepositoryController extends Controller
 }
 
 
-// Buat Saabiq
+// Buat Saabiq Notifikasi
 // $adminUsers = User::where('role_user', 'admin')->get();
 //                 foreach ($adminUsers as $admin) {
 //                     Notifikasi::kirim(
