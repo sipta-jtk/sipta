@@ -50,10 +50,10 @@ class Dokumen extends Model
         return $this->belongsTo(User::class, 'username', 'username');
     }
 
-    public function listKalimatPlagiarisme()
-    {
-        return $this->hasMany(ListKalimatPlagiarisme::class, 'id_dokumen', 'id_dokumen');
-    }
+    // public function listKalimatPlagiarisme()
+    // {
+    //     return $this->hasMany(ListKalimatPlagiarisme::class, 'id_dokumen', 'id_dokumen');
+    // }
     
     public function reviewDosenPembimbing()
     {
@@ -63,5 +63,11 @@ class Dokumen extends Model
     public function logAktivitas()
     {
         return $this->hasMany(LogAktivitas::class, 'id_dokumen', 'id_dokumen');
+    }
+
+    // Relationship dengan keyword (many-to-many)
+    public function keywords()
+    {
+        return $this->belongsToMany(Keyword::class, 'dokumen_keyword', 'id_dokumen', 'id_keyword');
     }
 }
