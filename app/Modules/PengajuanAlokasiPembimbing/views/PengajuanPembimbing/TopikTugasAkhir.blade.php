@@ -39,6 +39,13 @@
             <div class="card p-4 bg-light">
                 <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
                 {{-- Form Topik TA--}}
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Topik/Judul Tugas Akhir</label>
+                        <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
+                    </div>
+                </div>
+                {{-- Form Jenis TA--}}
                 @php
                     $id_prodi_user = $sessionUser->id_prodi;
                 @endphp
@@ -232,12 +239,5 @@
             }
         }
     });
-    
-    // var id_prodi_user = {{ $id_prodi_user ?? 'null' }};
-    // $(document).ready(function () {
-    //     if(id_prodi_user === 1){
-    //         $("#pengembangan").prop("checked", true);
-    //     }
-    // })
 </script>
 @stop
