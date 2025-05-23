@@ -27,7 +27,7 @@ class TimelineReminderJob implements ShouldQueue
             $users = User::all();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Kegiatan Timeline Selesai Hari Ini',
+                    '[Pemberitahuan] Kegiatan Timeline Selesai Hari Ini',
                     $user->id,
                     [
                         'nama_kegiatan' => $timeline->nama_kegiatan,
@@ -37,14 +37,14 @@ class TimelineReminderJob implements ShouldQueue
                 );
             }
         }
-
+        
         // Notifikasi untuk timeline yang selesai H-3
         $timelinesHMinus3 = Timeline::whereDate('tanggal_selesai', $hMinus3)->get();
         foreach ($timelinesHMinus3 as $timeline) {
             $users = User::all();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Pengingat: 3 Hari Menuju Selesai Kegiatan Timeline',
+                    '[Reminder] 3 Hari Menuju Selesai Kegiatan Timeline',
                     $user->id,
                     [
                         'nama_kegiatan' => $timeline->nama_kegiatan,

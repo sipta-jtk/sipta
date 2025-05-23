@@ -61,7 +61,7 @@ class TimelineController extends Controller
         $users = User::all();
         foreach ($users as $user) {
             Notifikasi::kirim(
-                'Kegiatan Timeline Baru Ditambahkan',
+                '[Pemberitahuan] Kegiatan Timeline Baru Ditambahkan',
                 $user->id,
                 [
                     'nama_kegiatan' => $timeline->nama_kegiatan,

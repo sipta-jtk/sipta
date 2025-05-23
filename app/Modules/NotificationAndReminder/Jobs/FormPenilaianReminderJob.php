@@ -29,7 +29,7 @@ class FormPenilaianReminderJob implements ShouldQueue
             $users = User::where('role_user', 'dosen')->get();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Deadline Form Penilaian Hari Ini',
+                    '[Pemberitahuan] Deadline Form Penilaian Hari Ini',
                     $user->id,
                     [
                         'nama_form' => $form->nama_fta,
@@ -46,7 +46,7 @@ class FormPenilaianReminderJob implements ShouldQueue
             $users = User::where('role_user', 'dosen')->get();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Pengingat: 1 Hari Menuju Deadline Form Penilaian',
+                    '[Reminder] 1 Hari Menuju Deadline Form Penilaian',
                     $user->id,
                     [
                         'nama_form' => $form->nama_fta,
@@ -63,7 +63,7 @@ class FormPenilaianReminderJob implements ShouldQueue
             $users = User::where('role_user', 'dosen')->get();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Pengingat: 3 Hari Menuju Deadline Form Penilaian',
+                    '[Reminder] 3 Hari Menuju Deadline Form Penilaian',
                     $user->id,
                     [
                         'nama_form' => $form->nama_fta,
@@ -80,7 +80,7 @@ class FormPenilaianReminderJob implements ShouldQueue
             $users = User::where('role_user', 'dosen')->get();
             foreach ($users as $user) {
                 Notifikasi::kirim(
-                    'Pengingat: 7 Hari Menuju Deadline Form Penilaian',
+                    '[Reminder] 7 Hari Menuju Deadline Form Penilaian',
                     $user->id,
                     [
                         'nama_form' => $form->nama_fta,
