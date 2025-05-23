@@ -235,11 +235,13 @@
             @endforeach
             @endif
             
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
-                    Simpan <i class="fa-solid fa-floppy-disk"></i>
-                </button>
-            </div>
+            @if ($view)
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
+                        Simpan <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
 @stop

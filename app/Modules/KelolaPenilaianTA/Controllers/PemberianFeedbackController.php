@@ -38,7 +38,7 @@ class PemberianFeedbackController extends Controller
     public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
         // Mengubah nama FTA menjadi slug
-        $namaFtaSlug = Str::slug($namaFta, ' '); 
+        $namaFtaSlug = Str::slug($namaFta, ' ');
 
         // Konversi nama FTA ke format yang sesuai dengan database
         $namaAgenda = $this->konversiNamaAgenda($namaFta);
@@ -92,6 +92,11 @@ class PemberianFeedbackController extends Controller
             ->get()
             ->keyBy('id_feedback');
 
+        $view = $detailFeedback->every(function ($item) {
+                return $item->status_penilaian_dosen === 'dipublikasikan';
+            }) ? false : true;
+
+
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFta);
 
@@ -107,14 +112,15 @@ class PemberianFeedbackController extends Controller
 
         // Render view dengan data yang sudah disiapkan
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact(
-            'seminar', 
-            'mahasiswa', 
-            'aspekFeedback', 
-            'data', 
-            'keteranganUmumPenilaian', 
-            'jadwal', 
-            'detailFeedback', 
-            'dokumen'
+            'seminar',
+            'mahasiswa',
+            'aspekFeedback',
+            'data',
+            'keteranganUmumPenilaian',
+            'jadwal',
+            'detailFeedback',
+            'dokumen',
+            'view'
         ));
     }
 
@@ -127,7 +133,7 @@ class PemberianFeedbackController extends Controller
     private function konversiNamaAgenda($namaFta)
     {
         // Mengubah nama FTA menjadi huruf kecil
-        $namaFtaLower = strtolower($namaFta); 
+        $namaFtaLower = strtolower($namaFta);
 
         // Mapping manual supaya sesuai format database
         if ($namaFtaLower === 'seminar-i') {
@@ -177,14 +183,6 @@ class PemberianFeedbackController extends Controller
             ->where('id_subkategori', 3) // Subkategori 3: PowerPoint
             ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
             ->first();
-        
-        // Log informasi dokumen untuk keperluan debugging
-        // Log::info('Preview Dokumen:', [
-        //     'id_kota' => $idKota,
-        //     'kategori' => $kategori,
-        //     'laporan_file_path' => optional($laporan)->file_path, // Path file laporan
-        //     'powerpoint_file_path' => optional($powerpoint)->file_path, // Path file PowerPoint
-        // ]);
 
         // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
         return [
@@ -200,7 +198,7 @@ class PemberianFeedbackController extends Controller
      * @param string $namaFta
      * @param int $idKota
      * @return \Illuminate\Http\RedirectResponse
-     */  
+     */ 
     public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
     {
         // Ubah nama FTA menjadi slug
