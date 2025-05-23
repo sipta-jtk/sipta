@@ -37,7 +37,7 @@ class TimelineReminderJob implements ShouldQueue
                 );
             }
         }
-        
+
         // Notifikasi untuk timeline yang selesai H-3
         $timelinesHMinus3 = Timeline::whereDate('tanggal_selesai', $hMinus3)->get();
         foreach ($timelinesHMinus3 as $timeline) {

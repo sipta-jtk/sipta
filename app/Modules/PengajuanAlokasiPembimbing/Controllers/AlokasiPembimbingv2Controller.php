@@ -139,6 +139,20 @@ class AlokasiPembimbingv2Controller extends Controller
             $otherUrutan = 1;
         }
 
+        // check penguji
+        $currentDosen = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'penguji')
+            ->where('nip', $nip)
+            ->first();
+        if ($currentDosen) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dosen sudah teralokasi sebagai penguji!'
+            ]);
+        }
+        // - check penguji
+
         $currentDosenCounterPart = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $otherUrutan)

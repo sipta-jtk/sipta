@@ -44,7 +44,8 @@
 
         .table-responsive {
             overflow-y: auto;
-            max-height: calc(80vh - 120px); /* Adjusted to fit within the card wrapper */
+            max-height: calc(80vh - 120px);
+            /* Adjusted to fit within the card wrapper */
         }
     </style>
 @stop
@@ -78,7 +79,7 @@
                             title="Tampilkan Filter Prodi">
                             <i class="fas fa-filter"></i>
                         </button>
-                        
+
                         <!-- NOTIF KEL REN REN -->
                         <meta name="csrf-token" content="{{ csrf_token() }}">
                         @if ($isKoordinator)
@@ -130,8 +131,10 @@
                                     <td class="p-0 text-center" style="width: 10px">{{ $index + 1 }}</td>
                                     <td class="p-0">
                                         <input type="hidden" name="" class="prodi" value="{{ $pengajuan->prodi }}">
-                                        <input type="hidden" name="" class="kodeProdi" value="{{ $pengajuan->kode_prodi }}">
-                                        <input type="hidden" name="id_pengajuan" value="{{ $pengajuan->id_pengajuan_pembimbing }}">
+                                        <input type="hidden" name="" class="kodeProdi"
+                                            value="{{ $pengajuan->kode_prodi }}">
+                                        <input type="hidden" name="id_pengajuan"
+                                            value="{{ $pengajuan->id_pengajuan_pembimbing }}">
                                         <table class="m-0 table table-striped table-bordered">
                                             <thead class="font-weight-normal">
                                                 <tr>
@@ -493,26 +496,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                                                                        <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                            `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                        <td class="p-1">
-                                                                                                                                                            <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                                                                                ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                                                                            </span>
-                                                                                                                                                        </td>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                <td class="p-1">
+                                                                                                                                                                    <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                                        ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                                    </span>
+                                                                                                                                                                </td>
+                                                                                                                                                            `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                        <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                                                                                    `).join('')}
+                                                                                                                                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                            `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -611,9 +614,9 @@
             }
 
             $('.alokasiInputText').each(function() {
-                let id_dosen = $(this).val();
+                let id_dosen = $(this).val().toUpperCase();
 
-                let index = kuotaDosen.findIndex(dosen => dosen.id === id_dosen);
+                let index = kuotaDosen.findIndex(dosen => dosen.id.toUpperCase() === id_dosen.toUpperCase());
 
                 let prodi = $(this).closest('tr').find('.prodi').val();
                 let prodiSplit = prodi.split('-');
@@ -639,7 +642,8 @@
         }
 
         function goToDetailDosen(id) {
-            let dosen = kuotaDosen.find(d => d.id === id);
+            id = id.toUpperCase();
+            let dosen = kuotaDosen.find(d => d.id.toUpperCase() === id.toUpperCase());
             if (dosen) {
                 let searchInput = $('#dosenTable_filter input');
                 searchInput.val(dosen.dosenName);
@@ -685,7 +689,8 @@
         }
 
         function savePembimbing(id_pengajuan, kode_dosen, urutan, status, tipe) {
-            let dosen = kuotaDosen.find(d => d.id === kode_dosen);
+            kode_dosen = kode_dosen.toUpperCase();
+            let dosen = kuotaDosen.find(d => d.id.toUpperCase() === kode_dosen.toUpperCase());
             if (dosen) {
                 $.ajax({
                     url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.updateAlokasi') }}",
@@ -699,11 +704,14 @@
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        console.log(response);
-                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
-                        let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
-                        pembimbing.removeClass("bg-success");
-                        pembimbing.addClass("bg-warning");
+                        if (response.status == 'success') {
+                            toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
+                            let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                            pembimbing.removeClass("bg-success");
+                            pembimbing.addClass("bg-warning");
+                        } else {
+                            toast(response.status, 'Gagal', response.message);
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -719,11 +727,14 @@
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        console.log(response);
-                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
-                        let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
-                        pembimbing.removeClass("bg-success");
-                        pembimbing.addClass("bg-warning");
+                        if (response.status == 'success') {
+                            toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
+                            let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                            pembimbing.removeClass("bg-success");
+                            pembimbing.addClass("bg-warning");
+                        } else {
+                            toast(response.status, 'Gagal', response.message);
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -794,25 +805,31 @@
                         window.mahasiswaNotified = [];
                         window.dosenNotified = [];
 
-                        $('#alokasiTable > tbody > tr').each(function () {
+                        $('#alokasiTable > tbody > tr').each(function() {
                             const pengajuanRow = $(this);
                             const idPengajuan = pengajuanRow.find('input[name="id_pengajuan"]').val();
 
                             ['1', '2'].forEach(function(urutan) {
-                                const pembimbingInput = pengajuanRow.find(`#bg-${idPengajuan}pembimbing${urutan}`);
+                                const pembimbingInput = pengajuanRow.find(
+                                    `#bg-${idPengajuan}pembimbing${urutan}`);
                                 if (pembimbingInput.hasClass('bg-success')) {
-                                    const inputPembimbing = pengajuanRow.find('td input.alokasiInputText').eq(urutan - 1);
+                                    const inputPembimbing = pengajuanRow.find(
+                                        'td input.alokasiInputText').eq(urutan - 1);
                                     const idDosen = inputPembimbing.val();
 
                                     if (idDosen && !window.dosenNotified.includes(idDosen)) {
                                         window.dosenNotified.push(idDosen);
                                     }
 
-                                    pengajuanRow.find('.badge.font-weight-normal.p-0').each(function () {
+                                    pengajuanRow.find('.badge.font-weight-normal.p-0').each(function() {
                                         const nim = $(this).text().trim();
                                         const nama = $(this).prev().text().trim();
-                                        if (nim && !window.mahasiswaNotified.some(m => m.nim === nim)) {
-                                            window.mahasiswaNotified.push({ nama, nim });
+                                        if (nim && !window.mahasiswaNotified.some(m => m.nim ===
+                                                nim)) {
+                                            window.mahasiswaNotified.push({
+                                                nama,
+                                                nim
+                                            });
                                         }
                                     });
                                 }
@@ -822,6 +839,7 @@
                         console.table(window.mahasiswaNotified);
                         console.table(window.dosenNotified);
 
+<<<<<<< HEAD
                         fetch('/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch', {
                             method: 'POST',
                             headers: {
@@ -843,6 +861,11 @@
                         });
 
                         // toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
+=======
+                        toast('success', 'Terkirim',
+                            `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`
+                        );
+>>>>>>> 0e91a9c95bc8189c0f1a5345befcdf280113ea6f
                     }
                 }
             );
