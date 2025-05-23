@@ -225,7 +225,8 @@ class FormulirPenilaianController extends Controller {
             'bobot_kriteria.*' => 'required|integer|min:0|max:100',
         ]);
 
-        $formPenilaian = FormPenilaian::where('id_fta', $id)->firstOrFail();
+        $formPenilaian = FormPenilaian::where('id_fta', $id)->with('kriteriaPenilaian')->firstOrFail();
+        $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian->pluck('id_kriteria')->toArray();
         
         // Update tanggal dan waktu tenggat pengisian
         $formPenilaian->tanggal_tenggat_pengisian = $request->tanggalTenggat;
@@ -242,25 +243,17 @@ class FormulirPenilaianController extends Controller {
                 return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
             }
             
-            // Hapus kiteria menggunakan id_fta
-            KriteriaPenilaian::where('id_fta', $id_fta)->delete();
-            
-            // Tambah kriteria baru dengan kode_fta dan id_fta
             $namaKriteria = $request->nama_kriteria;
             $bobotKriteria = $request->bobot_kriteria;
             
             if ($namaKriteria) {
-                foreach ($namaKriteria as $index => $nama) {
-                    if (empty($nama)) {
-                        continue;
-                    }
-                    
-                    KriteriaPenilaian::create([
-                        'kode_fta' => $kodeFTA,
-                        'id_fta' => $id_fta,
-                        'nama_kriteria' => $nama,
+                foreach ($kriteriaPenilaian as $index => $kriteria) {
+
+                    KriteriaPenilaian::where('id_kriteria', $kriteria)->update([
+                        'nama_kriteria' => $namaKriteria[$index] ?? '',
                         'bobot_kriteria' => $bobotKriteria[$index] ?? 0,
                     ]);
+                    
                 }
             }
         } else {
