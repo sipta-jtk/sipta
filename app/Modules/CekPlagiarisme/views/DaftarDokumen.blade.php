@@ -639,14 +639,18 @@
         const reader = new FileReader();
         reader.onload = async function(e) {
             const typedarray = new Uint8Array(e.target.result);
-            pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-
+            try {
+                pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+            } catch (err) {
+                console.error("Gagal memuat PDF:", err);
+                Swal.fire('Gagal', 'PDF tidak dapat dibaca, silakan gunakan file lain.', 'error');
+                return;
+            }
 
 
 
             let kataTotal = await countWords(pdfDoc);
             $('#jumlahKataPreview').val(kataTotal);
-
             // Isi field preview
             $('#judulPreview').text(judulInput);
             $('#keywordsPreview').text(keywordsInput);

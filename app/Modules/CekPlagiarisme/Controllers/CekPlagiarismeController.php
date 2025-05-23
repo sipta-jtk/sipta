@@ -90,6 +90,21 @@ class CekPlagiarismeController extends Controller
 
     public function process(Request $request)
     {
+
+        // if (!$request->hasFile('dokumen') || !$request->file('dokumen')->isValid()) {
+        //     return response()->json(['error' => 'File dokumen tidak valid atau tidak terkirim.'], 422);
+        // }
+
+        // if (!$request->hasFile('digital_receipt') || !$request->file('digital_receipt')->isValid()) {
+        //     return response()->json(['error' => 'File digital receipt tidak valid atau tidak terkirim.'], 422);
+        // }
+
+        \Log::info('Cek keberadaan file', [
+            'ada_dokumen' => $request->hasFile('dokumen'),
+            'valid_dokumen' => $request->file('dokumen')?->isValid(),
+            'dokumen_path' => $request->file('dokumen')?->getPathname()
+        ]);
+
         // Validasi input
         $request->validate([
             'judul' => [
@@ -102,13 +117,15 @@ class CekPlagiarismeController extends Controller
                     }
                 }
             ],
-            'dokumen' => 'required|file|mimes:pdf,docx|max:15360',
-            'digital_receipt' => 'required|file|mimes:pdf,docx|max:15360',
+            'dokumen' => 'required|file|max:51200', // 50MB (hilangkan 'mimes:pdf')
+            'digital_receipt' => 'required|file|mimes:pdf|max:51200', // 50MB
             'keywords' => 'required|string|min:1',
         ]);
 
+        dd($request->all());
+
         // Debug: Log input data
-        \Log::info('Processing document upload request', [
+        \Log::info('Processing document upload request 2', [
             'judul' => $request->judul,
             'dokumen_name' => $request->file('dokumen')->getClientOriginalName(),
             'digital_receipt_name' => $request->file('digital_receipt')->getClientOriginalName(),
