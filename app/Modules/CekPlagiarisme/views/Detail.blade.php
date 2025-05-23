@@ -145,7 +145,7 @@ $prefix = env('PREFIX_URL', '');
                                         </tr>
                                         <tr>
                                             <th>Jumlah Kata</th>
-                                            <td>{{ $dokumen->jumlah_halaman ?? 'Tidak Tersedia' }}</td> <!-- Data halaman -->
+                                            <td>{{ $dokumen->jumlah_kata ?? 'Tidak Tersedia' }}</td> <!-- Data kata -->
                                         </tr>
                                         <tr>
                                             <th>Ukuran Dokumen</th>
