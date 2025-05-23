@@ -839,7 +839,6 @@
                         console.table(window.mahasiswaNotified);
                         console.table(window.dosenNotified);
 
-<<<<<<< HEAD
                         fetch('/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch', {
                             method: 'POST',
                             headers: {
@@ -861,11 +860,9 @@
                         });
 
                         // toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
-=======
                         toast('success', 'Terkirim',
                             `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`
                         );
->>>>>>> 0e91a9c95bc8189c0f1a5345befcdf280113ea6f
                     }
                 }
             );
