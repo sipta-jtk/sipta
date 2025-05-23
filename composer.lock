@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4f5cf781472a98305f98df491c418fc",
+    "content-hash": "902e03057571ac10f74d7800fb317c8d",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -179,6 +179,69 @@
                 }
             ],
             "time": "2024-04-25T13:16:04+00:00"
+        },
+        {
+            "name": "bnbwebexpertise/laravel-impersonate",
+            "version": "1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bnbwebexpertise/laravel-impersonate.git",
+                "reference": "16b7204f9efde1275897a9d58931f9e6d1be36f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bnbwebexpertise/laravel-impersonate/zipball/16b7204f9efde1275897a9d58931f9e6d1be36f5",
+                "reference": "16b7204f9efde1275897a9d58931f9e6d1be36f5",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=5.5",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "orchestra/database": "~3.4.0",
+                "orchestra/testbench": "~3.4.0",
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Lab404\\Impersonate\\ImpersonateServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Lab404\\Impersonate\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "404lab",
+                    "email": "web@404lab.fr"
+                }
+            ],
+            "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
+            "keywords": [
+                "auth",
+                "impersonate",
+                "impersonation",
+                "laravel",
+                "laravel-package",
+                "laravel-plugin",
+                "package",
+                "plugin",
+                "user"
+            ],
+            "support": {
+                "source": "https://github.com/bnbwebexpertise/laravel-impersonate/tree/1.2.3"
+            },
+            "time": "2018-09-03T13:05:19+00:00"
         },
         {
             "name": "brick/math",

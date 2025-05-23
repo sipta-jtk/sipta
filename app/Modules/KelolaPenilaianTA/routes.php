@@ -4,7 +4,6 @@ use App\Modules\KelolaPenilaianTA\Controllers\FormulirPenilaianController;
 use App\Modules\KelolaPenilaianTA\Controllers\KelolaPenilaianTAController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\KelolaPenilaianTA\Controllers\MonitoringNilaiMahasiswaController;
-use App\Modules\KelolaPenilaianTA\Controllers\PemberianNilaiDanFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PemberianFeedbackController;
 use App\Modules\KelolaPenilaianTA\Controllers\PengelolaanNilaiController;
 use App\Modules\KelolaPenilaianTA\Controllers\RekapitulasiNilaiController;
@@ -109,10 +108,4 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
         Route::patch('/nilai/{namaFta}/{idKota}/edit', [PemberianNilaiController::class, 'ubahNilaiSeminar'])->name('pengisian.nilai.edit');
         Route::get('/nilai/{namaFta}/{idKota}', [PemberianNilaiController::class, 'pengisianNilaiDosenPembimbing'])->name('pengisian.nilai.dosbing');
     });
-
-    Route::prefix('nilai-sidang')->group(function () {
-        Route::get('/akhir/nilai', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiSidangAkhir'])->name('pengisian.nilai-sidang-akhir');
-        Route::get('/akhir/masukan', [PemberianNilaiDanFeedbackController::class, 'pengisianMasukanSidangAkhir'])->name('pengisian.masukan-sidang-akhir');
-    });
-    Route::get('/nilai-tugas-akhir', [PemberianNilaiDanFeedbackController::class, 'pengisianNilaiTA'])->name('pengisian.nilai-tugas-akhir'); 
 });
