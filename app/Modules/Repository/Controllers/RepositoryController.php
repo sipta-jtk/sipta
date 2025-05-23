@@ -721,3 +721,14 @@ class RepositoryController extends Controller
         }
     }
 }
+
+
+// Buat Saabiq
+// $adminUsers = User::where('role_user', 'admin')->get();
+//                 foreach ($adminUsers as $admin) {
+//                     Notifikasi::kirim(
+//                         '[Pemberitahuan] Penyimpanan Hampir Penuh',
+//                         $admin->username,
+//                         ['catatan' => $request->input_notes]
+//                     );
+//                 }
