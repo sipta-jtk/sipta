@@ -52,7 +52,13 @@ class PengajuanPembimbingController extends Controller
             ->orderBy('bidang', 'asc')
             ->get();
         
-        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('namaBidang'));
+        $sessionUser = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota', 'mahasiswa.id_prodi')
+            ->where('mahasiswa.nim', auth()->user()->username)
+            ->first(); 
+        
+        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('sessionUser', 'namaBidang'));
     }
 
     public function view_prioritasDosenPembimbing(): View
