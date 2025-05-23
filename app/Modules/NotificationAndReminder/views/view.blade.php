@@ -3,11 +3,11 @@
 @section('title', 'NotificationAndReminder')
 
 @section('content_header')
-    <h1>Notification And Reminder</h1>
+    <h1>NotificationAndReminder</h1>
 @stop
 
 @section('content')
-    <p>Selamat Datang.</p>
+    <p>Welcome to NotificationAndReminder Page.</p>
 @stop
 
 @section('css')

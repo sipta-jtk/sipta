@@ -18,7 +18,6 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
-use App\Services\Notifikasi;
 
 class AlokasiPembimbingv2Controller extends Controller
 {
@@ -252,54 +251,5 @@ class AlokasiPembimbingv2Controller extends Controller
 
         return null;
 
-    }
-    public function kirimNotifikasiBatch(Request $request)
-    {
-        $mahasiswaList = $request->mahasiswa ?? [];
-        $dosenList = $request->dosen ?? [];
-
-        $koordinatorName = auth()->user()->nama;
-        $waktu = now()->format('d-m-Y H:i');
-
-        // Kirim notifikasi ke mahasiswa
-        foreach ($mahasiswaList as $mhs) {
-            // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
-            $user = User::where('username', $mhs['nim'])->first();
-            if ($user) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
-                    $user->id,
-                    [
-                        'nama_koordinator' => $koordinatorName,
-                        'topik' => 'Alokasi Bimbingan Disetujui',
-                        'nama_mahasiswa' => $mhs['nama'],
-                        'nim' => $mhs['nim'],
-                        'tanggal' => $waktu,
-                    ]
-                );
-            }
-        }
-
-        // Kirim notifikasi ke dosen
-        foreach ($dosenList as $nip) {
-            // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
-            $user = User::where('username', $nip)->first();
-            if ($user) {
-                Notifikasi::kirim(
-                    '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
-                    $user->id,
-                    [
-                        'nama_koordinator' => $koordinatorName,
-                        'topik' => 'Alokasi Bimbingan Disetujui',
-                        'nama_dosen' => $user->nama,
-                        'tanggal' => $waktu,
-                    ]
-                );
-            }
-        }
-
-        return response()->json([
-            'message' => 'Notifikasi berhasil dikirim ke ' . count($mahasiswaList) . ' mahasiswa dan ' . count($dosenList) . ' dosen.'
-        ]);
     }
 }

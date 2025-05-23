@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use App\Services\Notifikasi;
 
 /**
  * Class DosenController
@@ -71,12 +70,6 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
         }
-        // Template Telah diganti (Belum Ada)
-        Notifikasi::kirim(
-            '[Pemberitahuan] Role Berhasil Diperbarui',
-            $nip, // Kirim notifikasi ke NIP dosen yang diupdate
-            []
-        );
     }
 
     /**
@@ -137,12 +130,6 @@ class DosenController extends Controller
             ]);
 
             DB::commit();
-        // Template Telah diganti (Belum Ada)
-        Notifikasi::kirim(
-            '[Pemberitahuan] Akun Berhasil Dibuat',
-            $request->nip, // Kirim notifikasi ke NIP dosen yang baru dibuat
-            []
-        );
             return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -358,17 +345,6 @@ class DosenController extends Controller
         User::insert($users);
         Dosen::insert($dosen);
         DB::commit();
-
-        // Template Telah diganti (Belum Ada)
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Akun Berhasil Dibuat',
-                    $user['username'], // Kirim notifikasi ke username akun yang dibuat
-                    []
-                );
-            }
-        }
         return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil dimasukkan dan diimport!');
         } catch (\Exception $e) {
             DB::rollBack();

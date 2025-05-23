@@ -19,29 +19,27 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <table id="log-table" class="table table-striped" width="100%">
+            <table id="table-log" class="table table-striped" width="100%">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th style="width: 5%">No</th>
                         <th style="width: 20%">Tanggal & Waktu</th>
                         <th style="width: 25%">Judul Notifikasi</th>
                         <th>Isi Notifikasi</th>
-                        <th style="width: 15%">Penerima</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($logUserNotifikasi as $notif)
+                    @foreach($logUserNotifikasi as $index => $notif)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $notif->waktu_kirim }}</td>
                             <td>{{ $notif->judul }}</td>
                             <td>{{ $notif->isi_notifikasi }}</td>
-                            <td>{{ auth()->user()->nama ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-
+            <!-- Tambahkan paginasi -->
             <div class="mt-3">
                 {{ $logUserNotifikasi->links() }}
             </div>
@@ -50,16 +48,16 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            $('#log-table').DataTable({
+            $('#table-log').DataTable({
                 language: {
                     search: "Cari:",
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -74,6 +72,7 @@
                         previous: "<"
                     }
                 },
+                // Nonaktifkan fitur yang sudah ditangani oleh Laravel pagination
                 paging: false,
                 serverSide: false
             });

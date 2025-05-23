@@ -81,7 +81,6 @@
                         </button>
 
                         <!-- NOTIF KEL REN REN -->
-                        <meta name="csrf-token" content="{{ csrf_token() }}">
                         @if ($isKoordinator)
                             <button class="btn btn-sm btn-info ml-1" onclick="confirmSendNotification()"
                                 title="Kirim notifikasi ke Mahasiswa dan Dosen">
@@ -839,27 +838,6 @@
                         console.table(window.mahasiswaNotified);
                         console.table(window.dosenNotified);
 
-                        fetch('/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                mahasiswa: window.mahasiswaNotified,
-                                dosen: window.dosenNotified,
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            toast('success', 'Sukses', data.message);
-                        })
-                        .catch(error => {
-                            console.error('Gagal kirim notifikasi:', error);
-                            toast('error', 'Gagal', 'Terjadi kesalahan saat mengirim notifikasi.');
-                        });
-
-                        // toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
                         toast('success', 'Terkirim',
                             `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`
                         );

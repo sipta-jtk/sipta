@@ -16,7 +16,7 @@ public function getLogUserNotifications()
 
     $username = Auth::user()->username; // Ambil username user yang login
     // dd(Auth::user()->nama);
-    
+
     $logUserNotifikasi = NotifikasiKirim::with('user')
         ->join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
         ->where('notifikasi_kirim.username', $username) // Filter berdasarkan user login

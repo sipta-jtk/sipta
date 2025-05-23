@@ -8,7 +8,7 @@
 
     <div id="notification-list"></div>
 
-    <a href="{{ url('logUser') }}" class="btn btn-secondary w-100 mt-3">
+    <a href="{{ url('sipta/logUser') }}" class="btn btn-secondary w-100 mt-3">
         See All Notifications
     </a>
 
