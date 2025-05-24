@@ -19,6 +19,10 @@
                 <button class="btn btn-primary btn-md" type="button" data-toggle="collapse" data-target="#filterMenu">
                     <i class="fas fa-filter"></i> Filter
                 </button>
+                <div class="form-group text-secondary">
+                    <label><i class="fas fa-database mr-1"></i> Kategori</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari Kategori...">
+                </div>
             </div>
 
             <div class="collapse" id="filterMenu">
@@ -30,12 +34,46 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group text-secondary">
-                                    <label><i class="fas fa-database mr-1"></i> Kategori</label>
-                                    <input type="text" id="searchInput" class="form-control"
-                                        placeholder="Cari Kategori...">
+                                    <label><i class="fas fa-folder mr-1"></i> Kategori</label>
+                                    <select id="kategoriFilter" class="form-control">
+                                        <option value="">Semua Kategori</option>
+                                        <option value="seminar1">Seminar 1</option>
+                                        <option value="seminar2">Seminar 2</option>
+                                        <option value="seminar3">Seminar 3</option>
+                                        <option value="sidang">Sidang Akhir</option>
+                                        <option value="yudisium">Yudisium</option>
+                                        <option value="plagiarisme">Plagiarisme</option>
+                                    </select>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group text-secondary">
+                                    <label><i class="fas fa-file-alt mr-1"></i> Subkategori</label>
+                                    <select id="subkategoriFilter" class="form-control">
+                                        <option value="">Semua Subkategori</option>
+                                        <option value="Laporan">Laporan</option>
+                                        <option value="FTA">FTA</option>
+                                        <option value="PowerPoint">PowerPoint</option>
+                                        <option value="SRS">SRS</option>
+                                        <option value="SDD">SDD</option>
+                                        <option value="Poster">Poster</option>
+                                        <option value="Surat Bebas Masalah">Surat Bebas Masalah</option>
+                                        <option value="Hasil TOEIC">Hasil TOEIC</option>
+                                        <option value="Surat Keaktifan">Surat Keaktifan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button id="applyFilter" class="btn btn-primary btn-sm float-right">
+                                    <i class="fas fa-check mr-1"></i> Terapkan Filter
+                                </button>
+                                <button id="resetFilter" class="btn btn-secondary btn-sm float-right mr-2">
+                                    <i class="fas fa-redo mr-1"></i> Reset
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -132,6 +170,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script>
         $(document).ready(function() {
+            // Initialize DataTable
             var table = $('#penyimpananTable').DataTable({
                 language: {
                     search: "Cari:",
@@ -149,6 +188,7 @@
                 }
             });
 
+            // Existing search input functionality
             $('#searchInput').on('keyup', function() {
                 table.column(1).search(this.value).draw();
             });
@@ -159,113 +199,197 @@
             // Data untuk pie chart dari controller
             const subkategoriData = @json($penyimpananBySubkategori);
 
-            // Persiapan data untuk chart
-            const labels = [];
-            const chartData = [];
-            const backgroundColors = [
-                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
-                '#5a5c69', '#6f42c1', '#fd7e14', '#20c997', '#6c757d'
-            ];
+            // Variable to store pie chart instance
+            let myPieChart;
 
-            // Format data untuk chart
-            subkategoriData.forEach(function(item, index) {
-                if (item.subkategori) {
-                    const subkategoriName = item.subkategori.nama_subkategori;
-                    labels.push(subkategoriName);
-                    chartData.push(parseFloat(item.total_ukuran));
-                    console.log("Added to chart:", subkategoriName, parseFloat(item.total_ukuran));
+            // Function to initialize the chart with filtered data
+            function initializeChart(filteredData) {
+                // Persiapan data untuk chart
+                const labels = [];
+                const chartData = [];
+                const backgroundColors = [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                    '#5a5c69', '#6f42c1', '#fd7e14', '#20c997', '#6c757d'
+                ];
+
+                // Format data untuk chart
+                filteredData.forEach(function(item, index) {
+                    if (item.subkategori) {
+                        const subkategoriName = item.subkategori.nama_subkategori;
+                        labels.push(subkategoriName);
+                        chartData.push(parseFloat(item.total_ukuran));
+                        console.log("Added to chart:", subkategoriName, parseFloat(item.total_ukuran));
+                    }
+                });
+
+                // Sort data berdasarkan ukuran file (opsional)
+                const sortedIndices = chartData.map((value, index) => ({
+                        value,
+                        index
+                    }))
+                    .sort((a, b) => b.value - a.value)
+                    .map(data => data.index);
+
+                const sortedLabels = sortedIndices.map(index => labels[index]);
+                const sortedData = sortedIndices.map(index => chartData[index]);
+                const sortedColors = sortedIndices.map(index => backgroundColors[index % backgroundColors.length]);
+
+                console.log("Chart labels:", sortedLabels);
+                console.log("Chart data:", sortedData);
+
+                // Destroy existing chart if it exists
+                if (myPieChart) {
+                    myPieChart.destroy();
                 }
-            });
 
-            // Sort data berdasarkan ukuran file (opsional)
-            const sortedIndices = chartData.map((value, index) => ({
-                    value,
-                    index
-                }))
-                .sort((a, b) => b.value - a.value)
-                .map(data => data.index);
-
-            const sortedLabels = sortedIndices.map(index => labels[index]);
-            const sortedData = sortedIndices.map(index => chartData[index]);
-            const sortedColors = sortedIndices.map(index => backgroundColors[index % backgroundColors.length]);
-
-            console.log("Chart labels:", sortedLabels);
-            console.log("Chart data:", sortedData);
-
-            // Buat chart
-            const ctx = document.getElementById('storage-pie-chart');
-            if (ctx) {
-                console.log("Canvas element found");
-                // Register ChartDataLabels plugin
-                Chart.register(ChartDataLabels);
-                const myPieChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: sortedLabels,
-                        datasets: [{
-                            data: sortedData,
-                            backgroundColor: sortedColors,
-                            hoverBackgroundColor: sortedColors,
-                            hoverBorderColor: "rgba(234, 236, 244, 1)",
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        layout: {
-                            padding: {
-                                left: 10,
-                                right: 25,
-                                top: 0,
-                                bottom: 0
-                            }
+                // Buat chart
+                const ctx = document.getElementById('storage-pie-chart');
+                if (ctx) {
+                    console.log("Canvas element found");
+                    // Register ChartDataLabels plugin
+                    Chart.register(ChartDataLabels);
+                    myPieChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: sortedLabels,
+                            datasets: [{
+                                data: sortedData,
+                                backgroundColor: sortedColors,
+                                hoverBackgroundColor: sortedColors,
+                                hoverBorderColor: "rgba(234, 236, 244, 1)",
+                            }]
                         },
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                                display: true,
-                                labels: {
-                                    color: '#333',
-                                    usePointStyle: true,
-                                    boxWidth: 10,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            layout: {
+                                padding: {
+                                    left: 10,
+                                    right: 25,
+                                    top: 0,
+                                    bottom: 0
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    display: true,
+                                    labels: {
+                                        color: '#333',
+                                        usePointStyle: true,
+                                        boxWidth: 10,
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const mbValue = (value / 1024).toFixed(2);
+                                            // Hitung persentase
+                                            const total = context.chart.data.datasets[0].data.reduce((a,
+                                                b) => a + b, 0);
+                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            return label + ': ' + mbValue + ' MB (' + percentage + '%)';
+                                        }
+                                    }
+                                },
+                                datalabels: {
+                                    formatter: (value, ctx) => {
+                                        const total = ctx.chart.data.datasets[0].data.reduce((a, b) =>
+                                            a +
+                                            b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return percentage + '%';
+                                    },
+                                    color: '#fff',
                                     font: {
+                                        weight: 'bold',
                                         size: 11
                                     }
                                 }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.raw || 0;
-                                        const mbValue = (value / 1024).toFixed(2);
-                                        // Hitung persentase
-                                        const total = context.chart.data.datasets[0].data.reduce((a,
-                                            b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return label + ': ' + mbValue + ' MB (' + percentage + '%)';
-                                    }
-                                }
-                            },
-                            datalabels: {
-                                formatter: (value, ctx) => {
-                                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a +
-                                        b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return percentage + '%';
-                                },
-                                color: '#fff',
-                                font: {
-                                    weight: 'bold',
-                                    size: 11
-                                }
                             }
                         }
-                    }
-                });
-            } else {
-                console.error("Canvas element not found");
+                    });
+                } else {
+                    console.error("Canvas element not found");
+                }
             }
+
+            // Function to apply filters
+            function applyFilters() {
+                const kategoriValue = $('#kategoriFilter').val();
+                const subkategoriValue = $('#subkategoriFilter').val();
+
+                console.log("Filter values:", kategoriValue, subkategoriValue);
+
+                // Filter table data
+                table
+                    .column(1).search(kategoriValue, true, false)
+                    .column(2).search(subkategoriValue, true, false)
+                    .draw();
+
+                // Filter chart data
+                let filteredChartData = [...subkategoriData];
+
+                // Filter by kategori (using original data from server)
+                if (kategoriValue) {
+                    // For chart data we need to fetch kategori-filtered data since chartData only has subkategori
+                    // Use AJAX to get updated data based on kategori
+                    $.ajax({
+                        url: "{{ url('/repository/koor-ta/get-filtered-data') }}",
+                        type: "GET",
+                        data: {
+                            kategori: kategoriValue,
+                            subkategori: subkategoriValue
+                        },
+                        success: function(response) {
+                            console.log("Filtered data from server:", response);
+                            initializeChart(response.data);
+                        },
+                        error: function(error) {
+                            console.error("Error fetching filtered data:", error);
+                        }
+                    });
+                }
+                // If only subkategori is filtered, we can do it client-side
+                else if (subkategoriValue) {
+                    filteredChartData = filteredChartData.filter(item =>
+                        item.subkategori && item.subkategori.nama_subkategori === subkategoriValue
+                    );
+                    initializeChart(filteredChartData);
+                }
+                // No filters, use all data
+                else {
+                    initializeChart(filteredChartData);
+                }
+            }
+
+            // Apply Filter button click
+            $('#applyFilter').on('click', function() {
+                applyFilters();
+            });
+
+            // Reset Filter button click
+            $('#resetFilter').on('click', function() {
+                $('#kategoriFilter').val('');
+                $('#subkategoriFilter').val('');
+
+                // Reset DataTable search
+                table
+                    .column(1).search('')
+                    .column(2).search('')
+                    .draw();
+
+                // Reset chart to original data
+                initializeChart(subkategoriData);
+            });
+
+            // Initialize chart with all data on page load
+            initializeChart(subkategoriData);
         });
     </script>
 @stop

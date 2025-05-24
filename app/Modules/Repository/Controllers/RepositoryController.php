@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 
+
 Carbon::setlocale(LC_TIME, 'id');
 
 class RepositoryController extends Controller
@@ -265,17 +266,9 @@ class RepositoryController extends Controller
 
             //Template Telah Diganti (Belum ada)
             Notifikasi::kirim(
-                '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
-                $nipDosen, // Ganti dengan username admin, atau log system
-                []
-            );
-
-            $nipDosen = '221524051';
-
-            Notifikasi::kirim(
-                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                $nipDosen,
-                []
+            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
+            $nipDosen, // Ganti dengan username admin, atau log system
+            []
             );
 
             return redirect()->route('Repository.index.kota', [
@@ -596,52 +589,48 @@ class RepositoryController extends Controller
 
     public function logAktivitas(Request $request)
     {
-        // Query dasar dengan eager loading relasi user dan kota
+        // Start with a base query
         $query = LogAktivitas::with('user', 'kota');
 
-        // Filter pencarian kata kunci di nama user dan action
+        // Apply filters if provided
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->whereHas('user', function ($userQuery) use ($request) {
                     $userQuery->where('nama', 'like', '%' . $request->search . '%');
-                })->orWhere('action', 'like', '%' . $request->search . '%');
+                })
+                    ->orWhere('action', 'like', '%' . $request->search . '%');
             });
         }
 
-        // Filter berdasarkan username, bukan user_id
-        if ($request->filled('username')) {
-            $query->where('username', $request->username);
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
 
-        // Filter berdasarkan id_kota, bukan kota_id
-        if ($request->filled('id_kota')) {
-            $query->where('id_kota', $request->id_kota);
+        if ($request->filled('kota_id')) {
+            $query->where('kota_id', $request->kota_id);
         }
 
-        // Filter berdasarkan jenis aktivitas (action)
         if ($request->filled('action')) {
             $query->where('action', $request->action);
         }
 
-        // Filter berdasarkan tanggal mulai
         if ($request->filled('date_from')) {
             $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
         }
 
-        // Filter berdasarkan tanggal akhir
         if ($request->filled('date_to')) {
             $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
         }
 
-        // Ambil hasil dengan urutan terbaru dan paginasi
+        // Get filtered results
         $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
 
-        // Ambil data dropdown filter
+        // Get data for filter dropdowns
         $users = User::orderBy('nama')->get();
-        $kotas = Kota::orderBy('nama_kota')->get();
-        $actions = LogAktivitas::select('action')->distinct()->pluck('action');
+        $kotas = KoTA::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::distinct('action')->pluck('action');
 
-        // Kirim data ke view
+        // Return view with all needed data
         return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
     }
 
@@ -694,10 +683,11 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
+                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document    
+            // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
@@ -710,7 +700,7 @@ class RepositoryController extends Controller
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
 
-            // Template Sudah Diganti (Sudah ada)
+// Template Sudah Diganti (Sudah ada)
             // Notifikasi untuk Anggota1
             if ($Anggota1) {
                 Notifikasi::kirim(
@@ -741,6 +731,41 @@ class RepositoryController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan catatan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get filtered storage data for AJAX requests
+     */
+    public function getFilteredStorageData(Request $request)
+    {
+        $kategori = $request->input('kategori');
+        $subkategori = $request->input('subkategori');
+
+        // Start with base query
+        $query = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori');
+
+        // Apply kategori filter if provided
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        // Get filtered data
+        $filteredData = $query->get();
+
+        // Apply subkategori filter in PHP (if needed)
+        if ($subkategori) {
+            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+                return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
+            });
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $filteredData
+        ]);
     }
 }
 
