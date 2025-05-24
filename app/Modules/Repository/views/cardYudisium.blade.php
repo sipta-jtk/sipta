@@ -1494,7 +1494,7 @@
                 // File gambar dan PDF langsung tampil
                 $('#documentPreview').attr('src', fullUrl).show();
                 $('#previewNotAvailable').hide();
-            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+            } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                 // File Word atau PowerPoint pakai Google Docs Viewer
                 var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                 $('#documentPreview').attr('src', viewerUrl).show();

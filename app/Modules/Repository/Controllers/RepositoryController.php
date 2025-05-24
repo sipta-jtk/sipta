@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 
-
 Carbon::setlocale(LC_TIME, 'id');
 
 class RepositoryController extends Controller
@@ -268,6 +267,14 @@ class RepositoryController extends Controller
             Notifikasi::kirim(
                 '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
                 $nipDosen, // Ganti dengan username admin, atau log system
+                []
+            );
+
+            $nipDosen = '221524051';
+
+            Notifikasi::kirim(
+                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                $nipDosen,
                 []
             );
 
@@ -560,56 +567,6 @@ class RepositoryController extends Controller
         }
     }
 
-
-    // Saabiq Muhyiyuddin Aulawi
-    public function logAktivitas(Request $request)
-    {
-        // Start with a base query
-        $query = LogAktivitas::with('user', 'kota');
-
-        // Apply filters if provided
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->whereHas('user', function ($userQuery) use ($request) {
-                    $userQuery->where('nama', 'like', '%' . $request->search . '%');
-                })
-                    ->orWhere('action', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-
-        if ($request->filled('kota_id')) {
-            $query->where('kota_id', $request->kota_id);
-        }
-
-        if ($request->filled('action')) {
-            $query->where('action', $request->action);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
-        }
-
-        // Get filtered results
-        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
-
-        // Get data for filter dropdowns
-        $users = User::orderBy('nama')->get();
-        $kotas = KoTA::orderBy('nama_kota')->get();
-        $actions = LogAktivitas::distinct('action')->pluck('action');
-
-        // Return view with all needed data
-        return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
-    }
-
-
     // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
     public function monitoringPenyimpanan()
     {
@@ -635,6 +592,59 @@ class RepositoryController extends Controller
         // Kirim data penyimpanan ke view
         return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan', 'penyimpananBySubkategori', 'totalPenyimpanan', 'kapasitasMaksimum'));
     }
+
+
+    public function logAktivitas(Request $request)
+    {
+        // Query dasar dengan eager loading relasi user dan kota
+        $query = LogAktivitas::with('user', 'kota');
+
+        // Filter pencarian kata kunci di nama user dan action
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('user', function ($userQuery) use ($request) {
+                    $userQuery->where('nama', 'like', '%' . $request->search . '%');
+                })->orWhere('action', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter berdasarkan username, bukan user_id
+        if ($request->filled('username')) {
+            $query->where('username', $request->username);
+        }
+
+        // Filter berdasarkan id_kota, bukan kota_id
+        if ($request->filled('id_kota')) {
+            $query->where('id_kota', $request->id_kota);
+        }
+
+        // Filter berdasarkan jenis aktivitas (action)
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+
+        // Filter berdasarkan tanggal mulai
+        if ($request->filled('date_from')) {
+            $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
+        }
+
+        // Filter berdasarkan tanggal akhir
+        if ($request->filled('date_to')) {
+            $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
+        }
+
+        // Ambil hasil dengan urutan terbaru dan paginasi
+        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
+
+        // Ambil data dropdown filter
+        $users = User::orderBy('nama')->get();
+        $kotas = Kota::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::select('action')->distinct()->pluck('action');
+
+        // Kirim data ke view
+        return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
+    }
+
 
 
     // Muhammad Fahrizal Alzaelani
@@ -684,11 +694,10 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document
+            // Find the document    
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
