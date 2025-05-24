@@ -79,6 +79,31 @@
 
 <script>
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
+    
+    // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
+    function createApiUrl(endpoint) {
+        // Periksa apakah url sudah berisi domain name atau dimulai dengan http
+        if (endpoint.includes('://') || endpoint.startsWith('http')) {
+            return endpoint;
+        }
+        
+        // Hapus slash di awal endpoint jika ada
+        if (endpoint.startsWith('/')) {
+            endpoint = endpoint.substring(1);
+        }
+        
+        // Hapus slash di akhir prefixUrl jika ada
+        let prefix = prefixUrl;
+        if (prefix.endsWith('/')) {
+            prefix = prefix.substring(0, prefix.length - 1);
+        }
+        
+        // Gabungkan dengan slash di tengah
+        return '/' + prefix + '/' + endpoint;
+    }
+    
+    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
+    
     $(document).ready(function() {
 
         var table = $('#table').DataTable({
@@ -101,7 +126,9 @@
         var originalData = []; // Variabel untuk menyimpan data asli
 
         // Ambil prefix URL dari meta tag yang ada di halaman
-        var url = `${prefixUrl}/api/ambang-batas`;
+        var urlEndpoint = 'api/ambang-batas';
+        var url = createApiUrl(urlEndpoint);
+        console.log("URL for ambang-batas:", url); // Debugging URL
 
         /**
          * Fungsi ini digunakan untuk mengambil data ambang batas dari API
@@ -206,7 +233,7 @@
 
             $.ajax({
                 type: "POST",
-                url: `${prefixUrl}/api/ambang-batas`,
+                url: createApiUrl('api/ambang-batas'),
                 data: formData,
                 dataType: "json"
             }).done(function(response) {

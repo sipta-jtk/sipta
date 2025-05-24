@@ -6,6 +6,7 @@ use App\Modules\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Kehadiran;
 Carbon::setLocale('id');
@@ -216,19 +217,30 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $kehadiran->status_kelulusan = $request->input('status_kelulusan');
         $kehadiran->save();
     
+
+                // Not So Sure About This
+        $nimKelompok = $kehadiran->user->nim ?? $kehadiran->user->username ?? null;
+        if ($nimKelompok) {
+            $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimKelompok)->first();
+            if ($mahasiswa) {
+                // Ambil semua anggota kelompok (termasuk pemilik)
+                $anggotaKelompok = $mahasiswa->anggotaKelompokTA()->pluck('nim');
+                // Jika tidak ada relasi, minimal kirim ke pemilik
+                if ($anggotaKelompok->isEmpty()) {
+                    $anggotaKelompok = collect([$nimKelompok]);
+                }
+                foreach ($anggotaKelompok as $nimAnggota) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Pemberitahuan Lulus Sidang',
+                        $nimAnggota,
+                        []
+                    );
+                }
+            }
+        }
+
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
 
-        //Notifikasi Status Lulus Ke Mahasiswa
-            Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+
     }
 }

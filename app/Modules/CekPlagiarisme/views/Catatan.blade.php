@@ -207,10 +207,31 @@
         const prefixUrl = document.querySelector("meta[name='prefix-url']") ?
             document.querySelector("meta[name='prefix-url']").getAttribute("content") :
             'sipta-dev';
+            
+        // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
+        function createApiUrl(endpoint) {
+            // Periksa apakah url sudah berisi domain name atau dimulai dengan http
+            if (endpoint.includes('://') || endpoint.startsWith('http')) {
+                return endpoint;
+            }
+            
+            // Hapus slash di awal endpoint jika ada
+            if (endpoint.startsWith('/')) {
+                endpoint = endpoint.substring(1);
+            }
+            
+            // Hapus slash di akhir prefixUrl jika ada
+            let prefix = prefixUrl;
+            if (prefix.endsWith('/')) {
+                prefix = prefix.substring(0, prefix.length - 1);
+            }
+            
+            // Gabungkan dengan slash di tengah
+            return '/' + prefix + '/' + endpoint;
+        }
 
         // Ambil ID dokumen dari atribut data-dokumen-id
         const dokumenId = form.getAttribute('data-dokumen-id');
-
 
         // Event listener untuk submit form
         form.addEventListener('submit', function(e) {
@@ -219,8 +240,10 @@
             const commentText = document.getElementById('comment-input').value.trim();
             const dokumenId = form.getAttribute('data-dokumen-id'); // ID dokumen dari form
 
-            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}`;
+            const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}`);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            console.log("URL for POST request:", url); // Debugging URL
 
 
             fetch(url, {
@@ -421,9 +444,9 @@
                 'sipta-dev';
             let id = $("#editCommentId").attr("data-id");
             let review = $("#editCommentText").val();
-            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${id}`;
+            const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}/${id}`);
 
-            console.log(url)
+            console.log("Edit URL:", url) // Debugging URL
             $.ajax({
                 url: url,
                 type: "PUT",
@@ -476,7 +499,8 @@
         // Saat tombol "Hapus" di modal diklik
         $("#confirmDeleteBtn").click(function() {
             if (deleteId) {
-                const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`;
+                const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`);
+                console.log("Delete URL:", url); // Debugging URL
 
                 $.ajax({
                     headers: {

@@ -22,6 +22,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Models\User;
 use App\Models\Dosen;
 use Illuminate\Support\Facades\DB;
+use App\Services\Notifikasi;
 
 class PengelolaanNilaiController extends Controller
 {
@@ -362,7 +363,18 @@ class PengelolaanNilaiController extends Controller
             return back()->with('error', 'Nilai untuk Kelompok ini belum lengkap.');
         }
 
-        $detailFeedback->update(['status_penilaian_dosen' => $status]);
+        // Kirim notifikasi
+        foreach ($mahasiswa as $mhs) {
+            Notifikasi::kirim(
+                'Nilai sudah di publikasikan', // template notifikasi
+                $mhs->user->username, // id user/mahasiswa tujuan
+                [
+                    'nama_dosen' => auth()->user()->nama, // dosen pengirim
+                ]
+            );
+        }
+
+        $detailFeedback->update(['status_penilaian_dosen' => $status]);    
         $nilaiKategori->update(['status_penilaian_dosen' => $status]);
 
         $message = $action === 'publish' ? 'Nilai berhasil dipublikasikan.' : 'Nilai berhasil diunpublikasikan.';
