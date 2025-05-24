@@ -4,7 +4,7 @@ $(document).ready(function () {
         return text.charAt(0).toUpperCase() + text.slice(1);
     }
 
-    $("#formulirTable tbody tr").each(function () {
+   $("#formulirTable tbody tr").each(function () {
         let jenisFormCell = $(this).find("td:eq(4)");
         let jenisFormText = jenisFormCell.text().trim();
         if (jenisFormText) {
@@ -18,10 +18,20 @@ $(document).ready(function () {
         }
     });
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+            var namaFormulir = data[2] || '';
+            if (namaFormulir.trim() === 'Dosen Pembimbing') {
+                return false;
+            }
+            return true;
+        }
+    );
+
     var table = $('#formulirTable').DataTable({
         columnDefs: [
             {
-                targets: 0, // Kolom pertama (No)
+                targets: 0,         // Kolom pertama (No)
                 searchable: false,
                 orderable: false,
             },
@@ -76,10 +86,10 @@ $(document).ready(function () {
         let jenisFormSet = new Set();
         let jenisTASet = new Set();
 
-        $("#formulirTable tbody tr").each(function () {
-            let prodi = $(this).find("td:eq(3)").text().trim();         // Ambil nilai Program Studi di kolom ke-3
-            let jenisForm = $(this).find("td:eq(4)").text().trim();     // Ambil nilai Jenis Formulir di kolom ke-4
-            let jenisTA = $(this).find("td:eq(5)").text().trim();       // Ambil nilai Jenis TA di kolom ke-5
+        table.rows({ search: 'applied' }).data().each(function(rowData) {
+            let prodi = rowData[3] ? rowData[3].trim() : '';        // Program Studi
+            let jenisForm = rowData[4] ? rowData[4].trim() : '';    // Jenis Formulir
+            let jenisTA = rowData[5] ? rowData[5].trim() : '';      // Jenis TA
             if (prodi) prodiSet.add(prodi);
             if (jenisForm) jenisFormSet.add(jenisForm);
             if (jenisTA && jenisTA !== "-") jenisTASet.add(jenisTA);
@@ -98,7 +108,7 @@ $(document).ready(function () {
         });
 
         let jenisTADropdown = $("#filterJenisTA");
-        jenisTADropdown.empty().append('<option value="">Semua Jenis TA</option>');
+        jenisTADropdown.empty().append('<option value="">Semua Jenis TA</option>'); 
         jenisTASet.forEach((jenisTA) => {
             jenisTADropdown.append(`<option value="${jenisTA}">${jenisTA}</option>`);
         });
