@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use App\Models\AmbangBatas;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 
 Carbon::setLocale('id');
 
@@ -89,6 +90,15 @@ class AmbangBatasController extends Controller
                 }
             });
 
+                // Template Telah Diganti (Belum Ada)
+        foreach ($allUsers as $username) {
+            Notifikasi::kirim(
+                '[Pemberitahuan] Ambang Batas Baru',
+                $username,
+                ['AmbangBatas' => $request->ambang_batas],
+            );
+        }
+            
             return response()->json($response);
         } catch (\Exception $e) {
             return response()->json([
@@ -97,19 +107,6 @@ class AmbangBatasController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
-        // Kirim Notifikasi Ke Semua Orang Mengenai Pembaruan Ambang Batas
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
 
     }
 }
