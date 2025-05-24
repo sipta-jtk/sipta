@@ -177,11 +177,18 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Ambil id_kehadiran dari request
         $idKehadiran = $request->input('id_kehadiran');
 
+        // Ambil data kehadiran dari database
+        $kehadiran = Kehadiran::find($idKehadiran);
+
+        // Hapus file lama jika ada
+        if ($kehadiran->foto_sidang) {
+            Storage::disk('public')->delete($kehadiran->foto_sidang);
+        }
+
         // Simpan file baru ke storage
         $dokumentasiPath = $request->file('dokumentasi')->store('dokumentasi', 'public');
 
         // Update path file di database
-        $kehadiran = Kehadiran::find($idKehadiran);
         $kehadiran->foto_sidang = $dokumentasiPath;
         $kehadiran->save();
 
