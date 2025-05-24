@@ -264,31 +264,31 @@ class RepositoryController extends Controller
             // $nipDosen = auth()->user()->dosen->nip ?? null;
 
             // Ambil data mahasiswa berdasarkan username
-            $mahasiswa = Mahasiswa::where('nim', $username)->first();
-            $pengajuan = null;
-            $pembimbing1 = null;
-            if ($mahasiswa && $mahasiswa->id_kota) {
-                $pengajuan = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
-                    ->orderByDesc('created_at')
-                    ->first();
-                if ($pengajuan) {
-                    $pembimbing1 = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuan->id_pengajuan_pembimbing)
-                        ->where('tipe_alokasi', 'pembimbing')
-                        ->where('urutan_prioritas_terpilih', 1)
-                        ->value('nip');
-                }
-            }
+            // $mahasiswa = Mahasiswa::where('nim', $username)->first();
+            // $pengajuan = null;
+            // $pembimbing1 = null;
+            // if ($mahasiswa && $mahasiswa->id_kota) {
+            //     $pengajuan = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
+            //         ->orderByDesc('created_at')
+            //         ->first();
+            //     if ($pengajuan) {
+            //         $pembimbing1 = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuan->id_pengajuan_pembimbing)
+            //             ->where('tipe_alokasi', 'pembimbing')
+            //             ->where('urutan_prioritas_terpilih', 1)
+            //             ->value('nip');
+            //     }
+            // }
 
-            $judulNotif = '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen';
-            $payload = [
-                'kategori' => $kategori,
-                'judul' => $request->judul,
-                'nim' => $username,
-            ];
-            // Kirim notifikasi ke pembimbing1 jika ada
-            if ($pembimbing1) {
-                Notifikasi::kirim($judulNotif, $pembimbing1, $payload);
-            }
+            // $judulNotif = '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen';
+            // $payload = [
+            //     'kategori' => $kategori,
+            //     'judul' => $request->judul,
+            //     'nim' => $username,
+            // ];
+            // // Kirim notifikasi ke pembimbing1 jika ada
+            // if ($pembimbing1) {
+            //     Notifikasi::kirim($judulNotif, $pembimbing1, $payload);
+            // }
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
@@ -702,7 +702,6 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
