@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mahasiswa;
-use App\Models\kategoriPenilaian;
+use App\Models\KategoriPenilaian;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
 use App\Models\DetailFeedback;
