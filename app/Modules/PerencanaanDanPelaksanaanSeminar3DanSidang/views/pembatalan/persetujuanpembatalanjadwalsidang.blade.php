@@ -42,20 +42,6 @@
                 <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>
-                    @if ($s->status_pembatalan == 1 || $s->status_pembatalan == 0)
-                    <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
-                        method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-md w-100 my-1" disabled>Setuju</button>
-                    </form>
-                    <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
-                        method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-md w-100 my-1" disabled>Tolak</button>
-                    </form>
-                    @else
                     <form
                         action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
@@ -68,7 +54,6 @@
                         @csrf
                         <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>
                     </form>
-                    @endif
                 </td>
             </tr>
         @endforeach

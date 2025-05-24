@@ -45,6 +45,13 @@ class AlokasiPengujiController extends Controller
                 ->select('dosen.id_dosen', 'alokasi_dosen.*')
                 ->get();
 
+            $data_pengajuan[$key]['pembimbing'] = AlokasiDosen::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->where('tipe_alokasi', 'pembimbing')
+                ->orderBy('urutan_prioritas_terpilih')
+                ->join('dosen', 'alokasi_dosen.nip', '=', 'dosen.nip')
+                ->select('dosen.id_dosen', 'alokasi_dosen.*')
+                ->get();
+
             if ($data_pengajuan[$key]['mahasiswa']->isNotEmpty()) {
                 $firstMahasiswa = $data_pengajuan[$key]['mahasiswa']->first();
                 $data_pengajuan[$key]['prodi'] = $firstMahasiswa->nama_prodi;
@@ -57,6 +64,7 @@ class AlokasiPengujiController extends Controller
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama')
+            ->where('user.status_user', 'aktif')
             ->get();
 
         $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
@@ -77,6 +85,7 @@ class AlokasiPengujiController extends Controller
         $dosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
+            ->where('user.status_user', 'aktif')
             ->select('user.nama', 'dosen.nip', 'dosen.id_dosen')
             ->orderBy('user.nama', 'asc')
             ->get();
@@ -136,6 +145,21 @@ class AlokasiPengujiController extends Controller
         } elseif ($urutan_prioritas == 2) {
             $otherUrutan = 1;
         }
+
+        // check pembimbingan
+        $currentDosen = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'pembimbing')
+            ->where('nip', $nip)
+            ->first();
+        if ($currentDosen) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dosen sudah teralokasi sebagai pembimbing!'
+            ]);
+        }
+
+        // - check pembimbingan
 
         $currentDosenCounterPart = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)

@@ -42,6 +42,7 @@
                 <div class="card-body">
                     <label for="catatan" class="form-label">Catatan</label>
                     <textarea class="form-control" id="catatan" rows="3"></textarea>
+                    <small id="charCount" class="text-muted">0 / 500 karakter</small>
                 </div>
             </div>
 
@@ -79,13 +80,24 @@
         $(document).ready(function() {
             let keputusan = ""; // Menyimpan keputusan user
 
+            $('#catatan').on('input', function() {
+                const val = $(this).val();
+                const max = 500;
+                $('#charCount').text(`${val.length} / ${max} karakter`);
+                if (val.length > max) {
+                    $(this).val(val.substring(0, max));
+                    $('#charCount').text(`${max} / ${max} karakter`);
+                }
+            });
+
+
             LihatDokumen();
 
             // Event ketika tombol "Tolak" diklik
             $('#btnTolak').on('click', function() {
                 keputusan = 'tidak_disetujui';
                 keputusan2 = 'ditolak';
-                $('#keputusan').val(ditolak);
+                $('#keputusan').val(keputusan);
                 $('#containerCatatan').slideDown(); // Menampilkan container catatan
                 $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
                 $(this).addClass('active-btn').removeClass('disabled-btn');
@@ -118,6 +130,22 @@
             const container = $('#container-dokumen');
             container.empty();
 
+            // Mapping nama view hanya untuk kategori seminar3 dan sidang
+            const displayNameMap = {
+                seminar3: [
+                    "File Tugas Akhir",
+                    "File Presentasi",
+                    "FTA 10",
+                    "FTA 10a"
+                ],
+                sidang: [
+                    "File Tugas Akhir",
+                    "File Presentasi",
+                    "FTA 14",
+                    "FTA 14a"
+                ]
+            };
+
             daftarDokumen.forEach(doc => {
                 const filePath = doc.file_path?.trim();
                 const fileUrl = filePath ? `${prefix}/storage/${filePath}` : '';
@@ -142,17 +170,26 @@
                     previewHTML = `<div id="viewPreviewNotAvailable"><p>File tidak tersedia.</p></div>`;
                 }
 
+                // Gunakan display name jika kategori adalah seminar3 atau sidang
+                let displayName = doc.judul;
+
+                if (displayNameMap[kategori]) {
+                    displayName = displayNameMap[kategori][index] ?? doc.judul;
+                }
+
                 const cardHTML = `
-                    <div class="card mt-3">
+                    <div class="card my-5"> <!-- Tambah my-5 untuk jarak vertikal yang besar -->
                         <div class="card-header">
                             <h3 class="card-title">Berkas Pengajuan</h3>
                         </div>
                         <div class="card-body">
-                            <p><strong>Nama Dokumen:</strong> ${doc.judul}</p>
+                            <p class="text-center fs-4 fw-bold mb-4"><strong>Nama Dokumen:</strong> ${displayName}</p>
                             ${previewHTML}
                             ${previewAvailable ? `
-                                <a id="view_file_link" href="${fileUrl}" target="_blank" class="btn btn-primary mt-2">Lihat File</a>
-                                <a id="view_file_download" href="${downloadUrl}" class="btn btn-success mt-2">Download</a>
+                                <div class="d-flex gap-2 mt-3">
+                                    <a id="view_file_link" href="${fileUrl}" target="_blank" class="btn btn-primary">Lihat File</a>
+                                    <a id="view_file_download" href="${downloadUrl}" class="btn btn-success">Download</a>
+                                </div>
                             ` : ''}
                         </div>
                     </div>

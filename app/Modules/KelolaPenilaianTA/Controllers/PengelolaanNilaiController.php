@@ -16,6 +16,7 @@ use App\Models\FormPenilaian;
 use App\Models\Kota;
 use App\Models\DetailFeedback;
 use App\Models\NilaiKategori;
+use App\Services\Notifikasi;
 use App\Models\Prodi;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -360,6 +361,17 @@ class PengelolaanNilaiController extends Controller
             return back()->with('error', 'Feedback untuk Kelompok ini belum lengkap.');
         } else if ($nilaiKategori->get()->isEmpty()) {
             return back()->with('error', 'Nilai untuk Kelompok ini belum lengkap.');
+        }
+
+        // Kirim notifikasi
+        foreach ($mahasiswa as $mhs) {
+            Notifikasi::kirim(
+                'Nilai sudah di publikasikan', // template notifikasi
+                $mhs->user->username, // id user/mahasiswa tujuan
+                [
+                    'nama_dosen' => auth()->user()->nama, // dosen pengirim
+                ]
+            );
         }
 
         $detailFeedback->update(['status_penilaian_dosen' => $status]);

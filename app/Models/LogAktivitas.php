@@ -26,8 +26,8 @@ class LogAktivitas extends Model
 
     public function dokumen()
     {
-        return $this->belongsTo(Dokumen::class, 'id
-        _dokumen', 'id_dokumen');
+        // Perbaiki typo spasi di 'id_dokumen'
+        return $this->belongsTo(Dokumen::class, 'id_dokumen', 'id_dokumen');
     }
 
     public function user()
