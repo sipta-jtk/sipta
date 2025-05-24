@@ -57,6 +57,7 @@ class AlokasiPembimbingv2Controller extends Controller
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
+            ->where('user.status_user', 'aktif')
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama')
             ->get();
 
@@ -78,6 +79,7 @@ class AlokasiPembimbingv2Controller extends Controller
         $dosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
+            ->where('user.status_user', 'aktif')
             ->select('user.nama', 'dosen.nip', 'dosen.id_dosen')
             ->orderBy('user.nama', 'asc')
             ->get();
