@@ -19,10 +19,6 @@
                 <button class="btn btn-primary btn-md" type="button" data-toggle="collapse" data-target="#filterMenu">
                     <i class="fas fa-filter"></i> Filter
                 </button>
-                <div>
-                    <a href="{{ url('/log-aktivitas') }}" class="btn btn-secondary">Log Aktivitas</a>
-                    <a href="{{ url('/repository') }}" class="btn btn-secondary">Akses Dokumen</a>
-                </div>
             </div>
 
             <div class="collapse" id="filterMenu">
@@ -107,16 +103,6 @@
                         @endforeach
                     </tbody>
                 </table>
-
-                <div class="mt-4">
-                    <p>
-                        Penyimpanan Tersedia:
-                        {{ number_format($kapasitasMaksimum / 1024 / 1024 - $totalPenyimpanan / 1024 / 1024, 2) }} GB
-                    </p>
-                    <p>
-                        Penyimpanan Terpakai: {{ number_format($totalPenyimpanan / 1024, 2) }} MB
-                    </p>
-                </div>
             </div>
         </div>
     </div>
@@ -143,6 +129,7 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script>
         $(document).ready(function() {
             var table = $('#penyimpananTable').DataTable({
@@ -209,6 +196,8 @@
             const ctx = document.getElementById('storage-pie-chart');
             if (ctx) {
                 console.log("Canvas element found");
+                // Register ChartDataLabels plugin
+                Chart.register(ChartDataLabels);
                 const myPieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
@@ -250,8 +239,25 @@
                                         const label = context.label || '';
                                         const value = context.raw || 0;
                                         const mbValue = (value / 1024).toFixed(2);
-                                        return label + ': ' + mbValue + ' MB';
+                                        // Hitung persentase
+                                        const total = context.chart.data.datasets[0].data.reduce((a,
+                                            b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return label + ': ' + mbValue + ' MB (' + percentage + '%)';
                                     }
+                                }
+                            },
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a +
+                                        b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return percentage + '%';
+                                },
+                                color: '#fff',
+                                font: {
+                                    weight: 'bold',
+                                    size: 11
                                 }
                             }
                         }
