@@ -259,16 +259,16 @@ class RepositoryController extends Controller
             if (strtolower($subkategoriName) == 'fta') {
                 $data['kode_fta'] = $request->kode_fta;
             }
-            
+
             $nipDosen = auth()->user()->dosen->nip ?? null;
 
             Dokumen::create($data);
-            
+
             //Template Telah Diganti (Belum ada)
             Notifikasi::kirim(
-            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
-            $nipDosen, // Ganti dengan username admin, atau log system
-            []
+                '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
+                $nipDosen, // Ganti dengan username admin, atau log system
+                []
             );
 
             return redirect()->route('Repository.index.kota', [
@@ -619,8 +619,21 @@ class RepositoryController extends Controller
             ->with('subkategori')  // Pastikan mengambil relasi subkategori
             ->get();
 
+        // Data untuk pie chart berdasarkan subkategori
+        $penyimpananBySubkategori = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori')
+            ->get();
+
+        // Total penyimpanan yang digunakan
+        $totalPenyimpanan = $penyimpanan->sum('total_ukuran');
+
+        // Kapasitas maksimum penyimpanan (100 GB dalam KB)
+        $kapasitasMaksimum = 100 * 1024 * 1024; // 100 GB dalam KB
+
         // Kirim data penyimpanan ke view
-        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
+        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan', 'penyimpananBySubkategori', 'totalPenyimpanan', 'kapasitasMaksimum'));
     }
 
 
@@ -688,7 +701,7 @@ class RepositoryController extends Controller
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
 
-// Template Sudah Diganti (Sudah ada)
+            // Template Sudah Diganti (Sudah ada)
             // Notifikasi untuk Anggota1
             if ($Anggota1) {
                 Notifikasi::kirim(
