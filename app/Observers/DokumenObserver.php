@@ -25,6 +25,10 @@ class DokumenObserver
 
     protected function log(string $action, Dokumen $dokumen)
     {
+        // Skip logging jika tidak ada user yang login
+        if (!Auth::check()) {
+            return;
+        }
         LogAktivitas::create([
             'username' => Auth::user()->username ?? 'system', // pastikan user login
             'id_kota' => $dokumen->id_kota,
