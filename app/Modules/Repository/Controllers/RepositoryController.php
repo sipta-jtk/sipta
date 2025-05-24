@@ -15,6 +15,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
+use App\Models\PengajuanPembimbing;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -259,24 +260,34 @@ class RepositoryController extends Controller
                 $data['kode_fta'] = $request->kode_fta;
             }
 
-            $nipDosen = auth()->user()->dosen->nip ?? null;
+            // $nipDosen = auth()->user()->dosen->nip ?? null;
 
-            Dokumen::create($data);
+            // Ambil data mahasiswa berdasarkan username
+            $mahasiswa = Mahasiswa::where('nim', $username)->first();
+            $pengajuan = null;
+            $pembimbing1 = null;
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                $pengajuan = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
+                    ->orderByDesc('created_at')
+                    ->first();
+                if ($pengajuan) {
+                    $pembimbing1 = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuan->id_pengajuan_pembimbing)
+                        ->where('tipe_alokasi', 'pembimbing')
+                        ->where('urutan_prioritas_terpilih', 1)
+                        ->value('nip');
+                }
+            }
 
-            //Template Telah Diganti (Belum ada)
-            Notifikasi::kirim(
-                '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
-                $nipDosen, // Ganti dengan username admin, atau log system
-                []
-            );
-
-            $nipDosen = '221524051';
-
-            Notifikasi::kirim(
-                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                $nipDosen,
-                []
-            );
+            $judulNotif = '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen';
+            $payload = [
+                'kategori' => $kategori,
+                'judul' => $request->judul,
+                'nim' => $username,
+            ];
+            // Kirim notifikasi ke pembimbing1 jika ada
+            if ($pembimbing1) {
+                Notifikasi::kirim($judulNotif, $pembimbing1, $payload);
+            }
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
