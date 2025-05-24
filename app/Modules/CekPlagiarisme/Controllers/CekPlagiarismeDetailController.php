@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Modules\CekPlagiarisme\Controllers;
 
 use App\Modules\Controller;
@@ -11,6 +10,7 @@ use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 
 Carbon::setLocale('id');
 
@@ -18,21 +18,31 @@ class CekPlagiarismeDetailController extends Controller
 {
     public function show($id)
     {
-        $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
+        $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
+
+        // Mengambil digital receipt yang terkait (memiliki kategori 'digital_receipt' dan username yang sama)
+        $digital_receipt = null;
+        if ($dokumen) {
+            $digital_receipt = Dokumen::where('username', $dokumen->username)
+                ->where('kategori', 'digital_receipt')
+                ->where('judul', 'like', $dokumen->judul . '%')
+                ->latest()
+                ->first();
+        }
 
         // Mengambil semua review (catatan) yang terkait dengan dokumen
         $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
 
         // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
-        $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
-            ->where('id_dokumen', $id)
-            ->get();
+        // $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
+        //     ->where('id_dokumen', $id)
+        //     ->get();
 
         // Mengambil data alokasi dosen yang statusnya 'fix' dan mengirimkan ke view
         $alokasiDosen = AlokasiDosen::all();
 
         // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'sumberPlagiarisme', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
     }
 
 
@@ -69,12 +79,54 @@ class CekPlagiarismeDetailController extends Controller
             'updated_at' => Carbon::now(),
         ]);
 
+                // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+        $nimPemilik = $dokumen->username;
+        // Kirim ke pemilik dokumen
+        Notifikasi::kirim(
+            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+            $nimPemilik,
+            [
+                'catatan' => $catatan->review
+            ]
+        );
+        // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+        $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
+        if ($mahasiswa) {
+            $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
+                ->where('nim', '!=', $nimPemilik)
+                ->limit(2)
+                ->pluck('nim');
+            if ($anggotaKelompok->count() > 0) {
+                $anggota2 = $anggotaKelompok[0] ?? null;
+                if ($anggota2) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                        $anggota2,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+                $anggota3 = $anggotaKelompok[1] ?? null;
+                if ($anggota3) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                        $anggota3,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+            }
+        }
+        
         // Mengembalikan respons JSON
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil ditambahkan!',
             'catatan' => $catatan,
         ]);
+
     }
 
     public function deleteCatatan($id_dokumen, $id_catatan)
@@ -125,10 +177,53 @@ class CekPlagiarismeDetailController extends Controller
             'nip' => $nip,
         ]);
 
+        
+        // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memperbarui Catatan
+        $nimPemilik = $dokumen->username;
+        // Kirim ke pemilik dokumen
+        Notifikasi::kirim(
+            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+            $nimPemilik,
+            [
+                'catatan' => $catatan->review
+            ]
+        );
+        // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+        $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
+        if ($mahasiswa) {
+            $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
+                ->where('nim', '!=', $nimPemilik)
+                ->limit(2)
+                ->pluck('nim');
+            if ($anggotaKelompok->count() > 0) {
+                $anggota2 = $anggotaKelompok[0] ?? null;
+                if ($anggota2) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                        $anggota2,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+                $anggota3 = $anggotaKelompok[1] ?? null;
+                if ($anggota3) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                        $anggota3,
+                        [
+                            'catatan' => $catatan->review
+                        ]
+                    );
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil diperbarui!',
             'catatan' => $catatan,
         ]);
+
     }
 }

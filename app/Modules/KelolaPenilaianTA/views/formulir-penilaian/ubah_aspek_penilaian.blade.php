@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Aspek Penilaian']
         ]
@@ -156,7 +156,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="2" class="text-center">Tidak ada data pertanyaan feedback.</td>
+                                                <td colspan="2" class="text-center">Tidak ada data feedback.</td>
                                             </tr>
                                         @endforelse
                                         

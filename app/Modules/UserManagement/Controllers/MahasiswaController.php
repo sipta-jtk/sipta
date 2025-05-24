@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Services\Notifikasi;
 
 class MahasiswaController extends Controller
 {
@@ -68,6 +69,12 @@ class MahasiswaController extends Controller
         ]);
 
         DB::commit();
+    // Template Telah Diganti(Belum ada) 
+    Notifikasi::kirim(
+        '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
+        $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
+        []
+    );
         return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
     } catch (\Exception $e) {
         DB::rollBack();
@@ -240,14 +247,23 @@ public function import(Request $request)
         // 3. Bulk Insert
         User::insert($users);
         Mahasiswa::insert($mahasiswa);
-        DB::commit();   
+        DB::commit();  
+            //Template Telah Diganti(Belum ada)
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
+                    $user['username'], // Kirim notifikasi ke username akun yang dibuat
+                    []
+                );
+            }
+        } 
         return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
     }
     catch (\Exception $e) {
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
     }
-
 }
 
 public function aktifkanAkun(Request $request)

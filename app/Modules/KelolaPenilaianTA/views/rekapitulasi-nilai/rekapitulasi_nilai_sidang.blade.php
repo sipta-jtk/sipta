@@ -9,7 +9,7 @@
 
     @component('KelolaPenilaianTA.views.components.breadcrumb',
     ['links' => [
-    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Rekapitulasi Nilai Sidang']]
     ])
     @endcomponent
@@ -27,7 +27,17 @@
                 <button id="toggleFilter" class="btn btn-primary btn-md">
                     <i class="fas fa-filter"></i>
                 </button>
+                <button id="exportExcel" type="button" class="btn btn-primary"
+                    data-url="{{ route('rekapitulasi.export') }}">
+                    <i class="fas fa-file-excel"></i> Ekspor ke Excel
+                </button>
             </div>
+
+            <!-- Button Export Excel -->
+            <form id="exportForm" action="{{ route('rekapitulasi-nilai.export') }}" method="POST" style="display: none;">
+                @csrf
+                <input type="hidden" name="data" id="exportData">
+            </form>
 
             {{-- Filter Section --}}
             <div id="filterSection" class="mt-3 mb-3" style="display: none;">
@@ -78,13 +88,18 @@
                             <th rowspan="2" class="align-middle" style="width: 6%;">Prodi</th>
                             <th rowspan="2" class="align-middle" style="width: 4%;">Kelas</th>
                             <th rowspan="2" class="align-middle" style="width: 6%;">Kelompok</th>
-                            <th colspan="4" style="width: 12%;">Seminar 2</th>
-                            <th colspan="4" style="width: 12%;">Seminar 3</th>
-                            <th colspan="4" style="width: 12%;">Sidang Akhir</th>
-                            <th colspan="3" style="width: 10%;">Dosen Pembimbing</th>
+                            <th colspan="4" class="align-middle" style="width: 12%;">Seminar 1</th>
+                            <th colspan="4" class="align-middle" style="width: 12%;">Seminar 2</th>
+                            <th colspan="4" class="align-middle" style="width: 12%;">Seminar 3</th>
+                            <th colspan="4" class="align-middle" style="width: 12%;">Sidang Akhir</th>
+                            <th colspan="3" class="align-middle" style="width: 10%;">Dosen Pembimbing</th>
 
                         </tr>
                         <tr class="bg-dark text-white">
+                            <th style="width: 3%;">P1</th>
+                            <th style="width: 3%;">P2</th>
+                            <th style="width: 3%;">P3</th>
+                            <th style="width: 3%;">Rata-rata</th>
                             <th style="width: 3%;">P1</th>
                             <th style="width: 3%;">P2</th>
                             <th style="width: 3%;">P3</th>
@@ -111,6 +126,10 @@
                             <td class="align-middle">{{ $row['prodi'] }}</td>
                             <td class="align-middle">{{ $row['kelas'] }}</td>
                             <td class="align-middle">{{ $row['kelompok'] }}</td>
+                            <td class="align-middle">{{ $row['seminar1Penguji1'] }}</td>
+                            <td class="align-middle">{{ $row['seminar1Penguji2'] }}</td>
+                            <td class="align-middle">{{ $row['seminar1Penguji3'] }}</td>
+                            <td class="align-middle">{{ $row['rataSeminar1'] }}</td>
                             <td class="align-middle">{{ $row['seminar2Penguji1'] }}</td>
                             <td class="align-middle">{{ $row['seminar2Penguji2'] }}</td>
                             <td class="align-middle">{{ $row['seminar2Penguji3'] }}</td>
@@ -138,18 +157,6 @@
                 <div id="paginationControls"></div> <!-- Placeholder untuk pagination -->
             </div>
 
-
-            <form id="exportForm" action="{{ route('rekapitulasi-nilai.export') }}" method="POST" style="display: none;">
-                @csrf
-                <input type="hidden" name="data" id="exportData">
-            </form>
-
-            <div class="d-flex justify-content-end mt-3">
-                <button id="exportExcel" type="button" class="btn btn-success"
-                    data-url="{{ route('rekapitulasi.export') }}">
-                    <i class="fas fa-file-excel"></i> Export to Excel
-                </button>
-            </div>
         </div>
     </div>
 </div>

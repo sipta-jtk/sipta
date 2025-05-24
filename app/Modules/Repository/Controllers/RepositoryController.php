@@ -14,7 +14,7 @@ use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Services\Notifikasi;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -258,9 +258,25 @@ class RepositoryController extends Controller
             if (strtolower($subkategoriName) == 'fta') {
                 $data['kode_fta'] = $request->kode_fta;
             }
-
+            
+            $nipDosen = auth()->user()->dosen->nip ?? null;
 
             Dokumen::create($data);
+            
+            //Template Telah Diganti (Belum ada)
+            Notifikasi::kirim(
+            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
+            $nipDosen, // Ganti dengan username admin, atau log system
+            []
+            );
+
+            $nipDosen = '221524051';
+
+            Notifikasi::kirim(
+                '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                $nipDosen,
+                []
+            );
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
@@ -552,67 +568,57 @@ class RepositoryController extends Controller
     }
 
 
-    // Saabiq Muhyiyuddin Aulawi
     public function logAktivitas(Request $request)
     {
-        // Start with a base query
+        // Query dasar dengan eager loading relasi user dan kota
         $query = LogAktivitas::with('user', 'kota');
 
-        // Apply filters if provided
+        // Filter pencarian kata kunci di nama user dan action
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->whereHas('user', function ($userQuery) use ($request) {
                     $userQuery->where('nama', 'like', '%' . $request->search . '%');
-                })
-                    ->orWhere('action', 'like', '%' . $request->search . '%');
+                })->orWhere('action', 'like', '%' . $request->search . '%');
             });
         }
 
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
+        // Filter berdasarkan username, bukan user_id
+        if ($request->filled('username')) {
+            $query->where('username', $request->username);
         }
 
-        if ($request->filled('kota_id')) {
-            $query->where('kota_id', $request->kota_id);
+        // Filter berdasarkan id_kota, bukan kota_id
+        if ($request->filled('id_kota')) {
+            $query->where('id_kota', $request->id_kota);
         }
 
+        // Filter berdasarkan jenis aktivitas (action)
         if ($request->filled('action')) {
             $query->where('action', $request->action);
         }
 
+        // Filter berdasarkan tanggal mulai
         if ($request->filled('date_from')) {
             $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
         }
 
+        // Filter berdasarkan tanggal akhir
         if ($request->filled('date_to')) {
             $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
         }
 
-        // Get filtered results
+        // Ambil hasil dengan urutan terbaru dan paginasi
         $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
 
-        // Get data for filter dropdowns
+        // Ambil data dropdown filter
         $users = User::orderBy('nama')->get();
-        $kotas = KoTA::orderBy('nama_kota')->get();
-        $actions = LogAktivitas::distinct('action')->pluck('action');
+        $kotas = Kota::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::select('action')->distinct()->pluck('action');
 
-        // Return view with all needed data
+        // Kirim data ke view
         return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
     }
 
-
-    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
-    public function monitoringPenyimpanan()
-    {
-        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
-        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
-            ->groupBy('kategori', 'id_subkategori')
-            ->with('subkategori')  // Pastikan mengambil relasi subkategori
-            ->get();
-
-        // Kirim data penyimpanan ke view
-        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
-    }
 
 
     // Muhammad Fahrizal Alzaelani
@@ -662,16 +668,47 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document
+            // Find the document    
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
+
+            $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
+            $pengajuan = $mahasiswa ? $mahasiswa->pengajuanPembimbing()->latest()->first() : null;
+            $Anggota1 = $pengajuan?->pembimbing1?->user?->username ?? null;
+            $Anggota2 = $pengajuan?->penguji1?->user?->username ?? null;
+            $Anggota3 = $pengajuan?->penguji2?->user?->username ?? null;
 
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
+
+// Template Sudah Diganti (Sudah ada)
+            // Notifikasi untuk Anggota1
+            if ($Anggota1) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota1,
+                    ['catatan' => $request->input_notes]
+                );
+            }
+            // Notifikasi untuk Anggota2
+            if ($Anggota2) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota2,
+                    ['catatan' => $request->input_notes]
+                );
+            }
+            // Notifikasi untuk Anggota3
+            if ($Anggota3) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota3,
+                    ['catatan' => $request->input_notes]
+                );
+            }
 
             // Redirect back with success message
             return redirect()->back()->with('success', 'Catatan berhasil disimpan.');
@@ -680,3 +717,14 @@ class RepositoryController extends Controller
         }
     }
 }
+
+
+// Buat Saabiq Notifikasi
+// $adminUsers = User::where('role_user', 'admin')->get();
+//                 foreach ($adminUsers as $admin) {
+//                     Notifikasi::kirim(
+//                         '[Pemberitahuan] Penyimpanan Hampir Penuh',
+//                         $admin->username,
+//                         ['catatan' => $request->input_notes]
+//                     );
+//                 }

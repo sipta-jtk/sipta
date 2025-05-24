@@ -8,6 +8,7 @@ use App\Modules\Controller;
 use Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Services\Notifikasi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 Carbon::setLocale('id');
@@ -216,8 +217,15 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'alasan_pembatalan' => $request->alasan,
             'nip' => $nip
         ]);
-
-
+        // Notifikasi Pembatalan Penjadwalan Seminar oleh mahasiswa
+        // Not So Sure About This
+         Notifikasi::kirim(
+            '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+            $nip, // Kirim ke dosen pembimbing (nip)
+            [
+                'Alasan' => $request->alasan
+            ]
+        );
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal seminar berhasil dikirimkan.');
     }
 
@@ -271,6 +279,15 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'nip' => $nip
         ]);
 
+        // Not So Sure About This
+        //Notifikasi Pembatalan Penjadawalan Sidang oleh mahasiswa
+        Notifikasi::kirim(
+            '[Pemberitahuan] Pembatalan Jadwal Sidang', // Judul template notifikasi
+            $nip, // Ganti dengan username admin, atau log system
+            [
+               'Alasan' => $request->alasan
+            ]
+        );
 
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal sidang berhasil dikirimkan.');
     }

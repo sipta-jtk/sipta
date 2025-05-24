@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Mahasiswa;
 use App\Models\Kota;
@@ -19,6 +20,7 @@ use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
 use App\Models\Dokumen;
+use App\Models\SubkategoriDokumen;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,7 +39,7 @@ class PemberianFeedbackController extends Controller
     public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
         // Mengubah nama FTA menjadi slug
-        $namaFtaSlug = Str::slug($namaFta, ' '); 
+        $namaFtaSlug = Str::slug($namaFta, ' ');
 
         // Konversi nama FTA ke format yang sesuai dengan database
         $namaAgenda = $this->konversiNamaAgenda($namaFta);
@@ -91,6 +93,24 @@ class PemberianFeedbackController extends Controller
             ->get()
             ->keyBy('id_feedback');
 
+        $view = $detailFeedback->every(function ($item) {
+                return $item->status_penilaian_dosen === 'dipublikasikan';
+            }) ? false : true;
+
+        // Cek apakah semua feedback dosen untuk FTA ini sudah dipublikasikan
+        $isPublished = true; // Asumsikan sudah dipublikasikan di awal
+        if ($detailFeedback->isNotEmpty()) {
+            foreach ($detailFeedback as $feedbackItem) {
+                if ($feedbackItem->status_penilaian_dosen !== 'dipublikasikan') {
+                    $isPublished = false;
+                    break;
+                }
+            }
+        } else {
+            // Jika belum ada feedback, berarti belum dipublikasikan
+            $isPublished = false;
+        }
+
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFta);
 
@@ -113,7 +133,8 @@ class PemberianFeedbackController extends Controller
             'keteranganUmumPenilaian', 
             'jadwal', 
             'detailFeedback', 
-            'dokumen'
+            'dokumen',
+            'isPublished'
         ));
     }
 
@@ -126,7 +147,7 @@ class PemberianFeedbackController extends Controller
     private function konversiNamaAgenda($namaFta)
     {
         // Mengubah nama FTA menjadi huruf kecil
-        $namaFtaLower = strtolower($namaFta); 
+        $namaFtaLower = strtolower($namaFta);
 
         // Mapping manual supaya sesuai format database
         if ($namaFtaLower === 'seminar-i') {
@@ -176,14 +197,6 @@ class PemberianFeedbackController extends Controller
             ->where('id_subkategori', 3) // Subkategori 3: PowerPoint
             ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
             ->first();
-        
-        // Log informasi dokumen untuk keperluan debugging
-        // Log::info('Preview Dokumen:', [
-        //     'id_kota' => $idKota,
-        //     'kategori' => $kategori,
-        //     'laporan_file_path' => optional($laporan)->file_path, // Path file laporan
-        //     'powerpoint_file_path' => optional($powerpoint)->file_path, // Path file PowerPoint
-        // ]);
 
         // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
         return [
@@ -199,7 +212,7 @@ class PemberianFeedbackController extends Controller
      * @param string $namaFta
      * @param int $idKota
      * @return \Illuminate\Http\RedirectResponse
-     */  
+     */ 
     public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
     {
         // Ubah nama FTA menjadi slug
@@ -300,6 +313,27 @@ class PemberianFeedbackController extends Controller
             DB::rollBack();
             Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
+        }
+    }
+
+    /**
+     * Mengunduh dokumen.
+     */
+    public function download($kategori, $id)
+    {
+        try {
+            $dokumen = Dokumen::where('id_dokumen', $id)->where('kategori', $kategori)->firstOrFail();
+
+            if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
+            }
+
+            $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
+            $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
+
+            return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
     }
 }
