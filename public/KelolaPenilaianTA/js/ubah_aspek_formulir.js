@@ -1,4 +1,25 @@
 $(document).ready(function () {
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisFormField = $("#jenisForm");
+    if (jenisFormField.length) {
+        let jenisFormValue = jenisFormField.val().trim();
+        if (jenisFormValue) {
+            jenisFormField.val(capitalizeFirstLetter(jenisFormValue));
+        }
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+
     function validateTotalBobot() {
         let totalBobot = 0;
 
