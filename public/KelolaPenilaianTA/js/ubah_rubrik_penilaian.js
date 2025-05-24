@@ -1,5 +1,17 @@
 $(document).ready(function () {
-    // Handle change of kriteria dropdown
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+    
     $(document).on("change", ".id_kriteria", function () {
         var selectedOption = $(this).find(":selected");
         var bobot = selectedOption.data("bobot");
