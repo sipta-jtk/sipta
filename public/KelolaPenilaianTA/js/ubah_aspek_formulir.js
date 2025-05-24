@@ -20,11 +20,16 @@ $(document).ready(function () {
         }
     }
 
-    function validateTotalBobot() {
-        let totalBobot = 0;
+    function initBobotInputs() {
+        $("input[name='bobot_kriteria[]']").addClass('bobot-kriteria');
+    }
 
-        // Hitung total bobot dari semua input
-        $("input[name='bobot_kriteria[]']").each(function () {
+    // Validasi total bobot
+    function validateTotalBobot() {
+        initBobotInputs();
+
+        let totalBobot = 0;
+        $(".bobot-kriteria").each(function () {
             let value = parseFloat($(this).val());
             if (!isNaN(value)) {
                 totalBobot += value;
@@ -59,30 +64,78 @@ $(document).ready(function () {
         $('#tanggalTenggat').attr('min', minDate);
     }
 
-    // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
 
     function updateRowStriping() {
         $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
             if (index % 2 === 0) {
-                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+                $(this).css("background-color", "#ffffff");
             } else {
-                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+                $(this).css("background-color", "#f8f9fa");
             }
         });
     }
 
-    // Panggil fungsi untuk menghitung total bobot saat halaman pertama kali dimuat
-    if ($("#jenisForm").val() === "penilaian") {
-        validateTotalBobot();
-    }
-
-    // Update total bobot saat nilai bobot diubah
-    $(document).on("input", "input[name='bobot_kriteria[]']", function () {
-        if ($("#jenisForm").val() === "penilaian") {
+    $(document).on("input", ".bobot-kriteria", function () {
+        if ($("#jenisForm").val().toLowerCase() === "penilaian") {
             validateTotalBobot();
         }
     });
+
+    // Menambahkan baris baru di tabel Aspek Penilaian
+    $("#addRow").on("click", function () {
+        const newRow = `
+            <tr>
+                <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
+                <td><input type="number" class="form-control bobot-kriteria" name="bobot_kriteria[]" required></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </td>
+            </tr>`;
+        $("#aspekPenilaianTable").append(newRow);
+        validateTotalBobot();
+        updateRowStriping();
+    });
+
+    // Menambahkan baris baru di tabel Aspek Feedback
+    $("#addFeedbackRow").on("click", function () {
+        const newFeedbackRow = `
+        <tr>
+            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+            </td>
+        </tr>`;
+        $("#aspekFeedbackTable").append(newFeedbackRow);
+        updateRowStriping();
+    });
+
+    // Hapus baris dari tabel Aspek Penilaian
+    $(document).on("click", ".remove-row", function () {
+        $(this).closest("tr").remove();
+        if ($("#jenisForm").val().toLowerCase() === "penilaian") {
+            validateTotalBobot();
+        }
+        updateRowStriping();
+        if ($("#aspekPenilaianTable tr").length === 0) {
+            $("#aspekPenilaianTable").append('<tr><td colspan="3" class="text-center">Tidak ada data kriteria penilaian.</td></tr>');
+        }
+    });
+
+    // Hapus baris dari tabel Aspek Feedback
+    $(document).on("click", ".remove-feedback-row", function () {
+        $(this).closest("tr").remove();
+        updateRowStriping();
+        if ($("#aspekFeedbackTable tr").length === 0) {
+            $("#aspekFeedbackTable").append('<tr><td colspan="2" class="text-center">Tidak ada data feedback.</td></tr>');
+        }
+    });
+
+    updateRowStriping();
 
     // Validasi Form sebelum submit
     $('#aspekForm').on('submit', function (e) {
@@ -108,7 +161,7 @@ $(document).ready(function () {
             return false;
         }
 
-        const jenisForm = $("#jenisForm").val();
+        const jenisForm = $("#jenisForm").val().toLowerCase();
         if (jenisForm === "penilaian") {
             let totalBobot = validateTotalBobot();
             if (totalBobot !== 100) {
@@ -141,55 +194,9 @@ $(document).ready(function () {
         });
     });
 
-    // Menambahkan baris baru di tabel Aspek Penilaian
-    $("#addRow").on("click", function () {
-        const jenisForm = $("#jenisForm").val();
-
-        if (jenisForm === "penilaian") {
-            const newRow = `
-            <tr>
-                <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
-                <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm remove-row">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                </td>
-            </tr>`;
-            $("#aspekPenilaianTable").append(newRow);
-            updateRowStriping();
-        }
-    });
-
-    // Tambah baris baru di tabel Aspek Feedback
-    $("#addFeedbackRow").on("click", function () {
-        const newFeedbackRow = `
-        <tr>
-            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm remove-feedback-row">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-            </td>
-        </tr>`;
-        $("#aspekFeedbackTable").append(newFeedbackRow);
-        updateRowStriping();
-    });
-
-    // Hapus baris dari tabel Aspek Penilaian
-    $(document).on("click", ".remove-row", function () {
-        $(this).closest("tr").remove();
-        if ($("#jenisForm").val() === "penilaian") {
-            validateTotalBobot();
-        }
-        updateRowStriping();
-    });
-
-    // Hapus baris dari tabel Aspek Feedback
-    $(document).on("click", ".remove-feedback-row", function () {
-        $(this).closest("tr").remove();
-        updateRowStriping();
-    });
-
     updateRowStriping();
+    initBobotInputs();
+    if ($("#jenisForm").val().toLowerCase() === "penilaian") {
+        validateTotalBobot();
+    }
 });
