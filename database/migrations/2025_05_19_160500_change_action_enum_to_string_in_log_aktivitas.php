@@ -33,7 +33,7 @@ class ChangeActionEnumToStringInLogAktivitas extends Migration
             $table->enum('action_temp', ['upload','edit','delete','download','review'])->nullable();
         });
 
-        \DB::statement('UPDATE log_aktivitas SET action_temp = action');
+        DB::statement('UPDATE log_aktivitas SET action_temp = action');
 
         Schema::table('log_aktivitas', function (Blueprint $table) {
             $table->dropColumn('action');

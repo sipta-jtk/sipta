@@ -559,6 +559,19 @@ class RepositoryController extends Controller
         }
     }
 
+    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
+    public function monitoringPenyimpanan()
+    {
+        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
+        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->groupBy('kategori', 'id_subkategori')
+            ->with('subkategori')  // Pastikan mengambil relasi subkategori
+            ->get();
+
+        // Kirim data penyimpanan ke view
+        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
+    }
+
 
     public function logAktivitas(Request $request)
     {
