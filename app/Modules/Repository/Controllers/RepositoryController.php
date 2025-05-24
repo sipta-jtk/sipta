@@ -258,9 +258,17 @@ class RepositoryController extends Controller
             if (strtolower($subkategoriName) == 'fta') {
                 $data['kode_fta'] = $request->kode_fta;
             }
-
+            
+            $nipDosen = auth()->user()->dosen->nip ?? null;
 
             Dokumen::create($data);
+            
+            //Template Telah Diganti (Belum ada)
+            Notifikasi::kirim(
+            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen', // Judul template notifikasi
+            $nipDosen, // Ganti dengan username admin, atau log system
+            []
+            );
 
             $nipDosen = '221524051';
 
@@ -679,9 +687,41 @@ class RepositoryController extends Controller
             // Find the document    
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
+            $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
+            $pengajuan = $mahasiswa ? $mahasiswa->pengajuanPembimbing()->latest()->first() : null;
+            $Anggota1 = $pengajuan?->pembimbing1?->user?->username ?? null;
+            $Anggota2 = $pengajuan?->penguji1?->user?->username ?? null;
+            $Anggota3 = $pengajuan?->penguji2?->user?->username ?? null;
+
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
+
+// Template Sudah Diganti (Sudah ada)
+            // Notifikasi untuk Anggota1
+            if ($Anggota1) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota1,
+                    ['catatan' => $request->input_notes]
+                );
+            }
+            // Notifikasi untuk Anggota2
+            if ($Anggota2) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota2,
+                    ['catatan' => $request->input_notes]
+                );
+            }
+            // Notifikasi untuk Anggota3
+            if ($Anggota3) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                    $Anggota3,
+                    ['catatan' => $request->input_notes]
+                );
+            }
 
             // Redirect back with success message
             return redirect()->back()->with('success', 'Catatan berhasil disimpan.');
@@ -690,3 +730,14 @@ class RepositoryController extends Controller
         }
     }
 }
+
+
+// Buat Saabiq Notifikasi
+// $adminUsers = User::where('role_user', 'admin')->get();
+//                 foreach ($adminUsers as $admin) {
+//                     Notifikasi::kirim(
+//                         '[Pemberitahuan] Penyimpanan Hampir Penuh',
+//                         $admin->username,
+//                         ['catatan' => $request->input_notes]
+//                     );
+//                 }

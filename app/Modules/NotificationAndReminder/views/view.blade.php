@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <p>Welcome to Notification And Reminder Page.</p>
+    <p>Selamat Datang.</p>
 @stop
 
 @section('css')
