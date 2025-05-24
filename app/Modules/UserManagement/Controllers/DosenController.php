@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Services\Notifikasi;
 
 /**
  * Class DosenController
@@ -70,17 +71,11 @@ class DosenController extends Controller
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
         }
-        //Notifikasi Untuk Role Diperbarui
+        // Template Telah diganti (Belum Ada)
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
+            '[Pemberitahuan] Role Berhasil Diperbarui',
+            $nip, // Kirim notifikasi ke NIP dosen yang diupdate
+            []
         );
     }
 
@@ -142,23 +137,17 @@ class DosenController extends Controller
             ]);
 
             DB::commit();
+        // Template Telah diganti (Belum Ada)
+        Notifikasi::kirim(
+            '[Pemberitahuan] Akun Berhasil Dibuat',
+            $request->nip, // Kirim notifikasi ke NIP dosen yang baru dibuat
+            []
+        );
             return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Gagal menambahkan dosen: ' . $e->getMessage());
         }
-        // Notifikasi Masukin Satu
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
     }
 
 
@@ -369,23 +358,22 @@ class DosenController extends Controller
         User::insert($users);
         Dosen::insert($dosen);
         DB::commit();
+
+        // Template Telah diganti (Belum Ada)
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
+                    $user['username'], // Kirim notifikasi ke username akun yang dibuat
+                    []
+                );
+            }
+        }
         return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil dimasukkan dan diimport!');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('manage.dosen')->with('error', 'Data dosen gagal dimasukkan: ' . $e->getMessage());
         }
-        //Notifikasi Masukin Banyak
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
     }
 
     /**

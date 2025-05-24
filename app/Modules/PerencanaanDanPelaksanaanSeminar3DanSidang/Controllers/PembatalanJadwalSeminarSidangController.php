@@ -7,6 +7,7 @@ use App\Models\Penjadwalan;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Services\Notifikasi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 Carbon::setLocale('id');
@@ -134,19 +135,15 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'alasan_pembatalan' => $request->alasan,
             'nip' => $nip
         ]);
-            //Notifikasi Pembatalan Penjadawalan Seminar oleh mahasiswa
-            Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
+        // Notifikasi Pembatalan Penjadwalan Seminar oleh mahasiswa
+        // Not So Sure About This
+         Notifikasi::kirim(
+            '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+            $nip, // Kirim ke dosen pembimbing (nip)
             [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
+                'Alasan' => $request->alasan
             ]
         );
-
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal seminar berhasil dikirimkan.');
     }
 
@@ -200,16 +197,13 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'nip' => $nip
         ]);
 
-        //Notifikasi Pembatalan Penjadawalan Seminar oleh mahasiswa
+        // Not So Sure About This
+        //Notifikasi Pembatalan Penjadawalan Sidang oleh mahasiswa
         Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
+            '[Pemberitahuan] Pembatalan Jadwal Sidang', // Judul template notifikasi
+            $nip, // Ganti dengan username admin, atau log system
             [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
+               'Alasan' => $request->alasan
             ]
         );
 
