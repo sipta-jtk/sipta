@@ -1,5 +1,17 @@
 $(document).ready(function () {
-    // Handle change of FTA code dropdown
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+
     $("#kode_fta").change(function () {
         validateKodeFTA();
         const selectedKodeFTA = $(this).val();
@@ -109,24 +121,18 @@ $(document).ready(function () {
             return;
         }
 
-        // Get rentangNilai from the page
         let nilaiColumns = '';
-        // Check if rentangNilai is defined globally
         if (typeof rentangNilai !== 'undefined') {
             rentangNilai.forEach(function (nilai) {
-                // Using textarea instead of input
                 nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea></td>`;
             });
         } else {
-            // Fallback: get values from existing table headers
             $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
                 if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
-                    // Extract id_nilai from header text using regex
                     const headerText = $(this).text();
                     const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
                     if (match && match[1]) {
                         const id_nilai = match[1];
-                        // Using textarea instead of input
                         nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea></td>`;
                     }
                 }
@@ -165,7 +171,6 @@ $(document).ready(function () {
 
     // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
-        // Make sure we keep at least one row
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
             updateRowStriping();
@@ -176,7 +181,6 @@ $(document).ready(function () {
 
     updateRowStriping();
 
-    // If kode_fta already has a value on page load, load its kriteria
     const initialKodeFTA = $("#kode_fta").val();
     if (initialKodeFTA) {
         loadKriteria(initialKodeFTA);

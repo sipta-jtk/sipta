@@ -6,7 +6,7 @@
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
                 ['url' => '', 'label' => 'Detail Formulir Penilaian']
             ]
@@ -45,6 +45,13 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
+                    <label for="jenisFormulir">Jenis Formulir</label>
+                    <input type="text" class="form-control" id="jenisFormulir" name="jenisFormulir" 
+                        value="{{ $kategori->jenis_form ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
                     <label for="jenisTA">Jenis TA</label>
                     <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
                         value="{{ $kategori->jenis_ta ?? '' }}" readonly>
@@ -72,14 +79,14 @@
                         </thead>                
                         <tbody>
                             @foreach ($namaKriteria as $index => $kriteria)
-                                <!-- Tampilkan Nama Kriteria -->
+                                <!-- Nama Kriteria -->
                                 <tr>
                                     <td colspan="{{ count($rentangNilai) + 1 }}" class="bg-light text-left">
                                         <strong>{{ $index + 1 }}. {{ $kriteria->nama_kriteria }} ({{ $kriteria->bobot_kriteria }}%)</strong>
                                     </td>
                                 </tr>
                         
-                                <!-- Tampilkan Nama Rubrik -->
+                                <!-- Nama Rubrik -->
                                 @foreach ($kriteria->rubrik as $rubrik)
                                     <tr>
                                         <td class="text-left">{{ $rubrik->nama_rubrik }}</td>
@@ -123,4 +130,5 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/detail_fta.js') }}"></script>
 @stop
