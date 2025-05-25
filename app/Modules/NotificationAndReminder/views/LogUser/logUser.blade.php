@@ -1,120 +1,81 @@
 @extends('adminlte::page')
 
-@section('title', 'Log Notifikasi Mahasiswa')
+@section('title', 'Log Notifikasi User')
 
 @section('content_header')
-    <h1>Log Notifikasi Mahasiswa</h1>
-    @include('NotificationAndReminder::modals.log-modal')
-    @include('NotificationAndReminder::modals.preferences-modal')
+    <h1 class="mb-3">Log Notifikasi User</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Notifikasi dan Reminder'],
+                ['url' => '', 'label' => 'Log Notifikasi User']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
-
-    {{-- Daftar Log Notifikasi --}}
     <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Daftar Log Notifikasi Mahasiswa</h3>
-        </div>
-        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal & Waktu</th>
-                        <th>Judul Notifikasi</th>
-                        <th>Sumber</th>
-                        <th>Aksi</th>
+        <div class="card-body">
+            <table id="log-table" class="table table-striped" width="100%">
+                <thead class="sticky-header">
+                    <tr class="bg-dark text-white">
+                        <th style="width: 5%">No</th>
+                        <th style="width: 20%">Tanggal & Waktu</th>
+                        <th style="width: 25%">Judul Notifikasi</th>
+                        <th>Isi Notifikasi</th>
+                        <th style="width: 15%">Penerima</th>
                     </tr>
                 </thead>
-                <tbody id="notifications-table-body">
-                    {{-- Data Log Notifikasi akan dimuat dengan jQuery --}}
+                <tbody>
+                    @foreach($logUserNotifikasi as $notif)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $notif->waktu_kirim }}</td>
+                            <td>{{ $notif->judul }}</td>
+                            <td>{{ $notif->isi_notifikasi }}</td>
+                            <td>{{ auth()->user()->nama ?? '-' }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
-        </div>
-    </div>
 
-    <!-- Modal untuk Detail Notifikasi -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="detailModalLabel"></h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Tanggal:</strong> <span id="modalDate"></span></p>
-                    <p><strong>Sumber:</strong> <span id="modalSource"></span></p>
-                    <p><strong>Isi Notifikasi:</strong></p>
-                    <p id="modalContent"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                </div>
+            <div class="mt-3">
+                {{ $logUserNotifikasi->links() }}
             </div>
         </div>
     </div>
+@stop
 
+@section('css')
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
     <script>
         $(document).ready(function() {
-            // Memuat data notifikasi dari API
-            $.get('/api/notifications', function(data) {
-                const $tbody = $('#notifications-table-body');
-                $tbody.empty();
-
-                // Jika data kosong, tampilkan pesan
-                if (!Array.isArray(data) || data.length === 0) {
-                    $tbody.append('<tr><td colspan="5" class="text-center">Tidak ada notifikasi.</td></tr>');
-                    return;
-                }
-
-                // Iterasi data dan menambahkan ke tabel
-                data.forEach(function(notif, index) {
-                    let row = `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${notif.created_at}</td>
-                            <td>${notif.judul}</td>
-                            <td>${notif.sumber_notifikasi}</td>
-                            <td>
-                                <button class="btn btn-info btn-sm btn-detail"
-                                    data-title="${encodeURIComponent(notif.judul)}"
-                                    data-content="${encodeURIComponent(notif.isi_notifikasi)}"
-                                    data-date="${notif.created_at}"
-                                    data-source="${notif.sumber_notifikasi}">
-                                    Detail
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $tbody.append(row);
-                });
-            });
-
-            // Menangani klik pada ikon lonceng
-            $('#notificationBell').on('click', function() {
-                // Menampilkan modal myModal saat ikon lonceng diklik
-                $('#myModal').modal('show');
-            });
-
-            // Delegasi event untuk tombol "Detail"
-            $(document).on('click', '.btn-detail', function() {
-                let title = decodeURIComponent($(this).data('title'));
-                let content = decodeURIComponent($(this).data('content'));
-                let date = $(this).data('date');
-                let source = $(this).data('source');
-
-                $('#myModalLabel').text(title);
-                $('#modalDate').text(date);
-                $('#modalSource').text(source);
-                $('#modalContent').text(content);
-
-                $('#myModal').modal('show');
+            $('#log-table').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
+                    }
+                },
+                paging: false,
+                serverSide: false
             });
         });
     </script>

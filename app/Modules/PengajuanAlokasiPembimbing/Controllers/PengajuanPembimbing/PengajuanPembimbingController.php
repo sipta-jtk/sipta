@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\PengajuanPembimbing;
 use App\Models\PrioritasPembimbing;
+use App\Models\PeriodePengajuan;
 use App\Models\Dosen;
 use App\Modules\Controller;
 use Illuminate\Http\Request;
@@ -46,13 +47,19 @@ class PengajuanPembimbingController extends Controller
 
     public function view_topikTugasAkhir(): View
     {
-        
-
         $namaBidang = DB::table('bidang')
             ->select('bidang')
             ->orderBy('bidang', 'asc')
             ->get();
-        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('namaBidang'));
+        
+        $sessionUser = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('user.status_user', 'aktif')
+            ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota', 'mahasiswa.id_prodi')
+            ->where('mahasiswa.nim', auth()->user()->username)
+            ->first(); 
+        
+        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('sessionUser', 'namaBidang'));
     }
 
     public function view_prioritasDosenPembimbing(): View
@@ -60,6 +67,7 @@ class PengajuanPembimbingController extends Controller
         $listDosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
+            ->where('user.status_user', 'aktif')
             ->select('user.nama', 'dosen.nip')
             ->orderBy('user.nama', 'asc')
             ->get();
@@ -91,6 +99,7 @@ class PengajuanPembimbingController extends Controller
         // Ambil data mahasiswa yang sedang login
         $sessionUser = DB::table('mahasiswa')
         ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->where('user.status_user', 'aktif')
         ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
         ->where('mahasiswa.nim', auth()->user()->username)
         ->first(); 
@@ -119,13 +128,13 @@ class PengajuanPembimbingController extends Controller
         $validator = Validator::make($request->all(), [
             'topik' => 'required|string|max:255',
             'bidang' => 'required|min:1',
-            'bidang.*' => 'string',
-            // 'prioritas_dosen' => 'required|min:1|max:5',
-            // 'prioritas_dosen.*' => 'string', // Validasi NIP dosen
+            'jenisTA' => 'required',
+            // 'prioritas_dosen.*' => 'required|min:1|max:5',
         ],
         [
             'topik.required' => 'Topik tugas akhir harus diisi',
             'bidang.required' => 'Bidang tugas akhir harus dipilih',
+            'jenisTA.required' => 'Jenis tugas akhir harus dipilih',
             // 'prioritas_dosen.required' => 'Prioritas dosen pembimbing harus diisi minimal 1 dan maksimal 5',
         ]);
 
@@ -138,11 +147,13 @@ class PengajuanPembimbingController extends Controller
         $topik = $request->input('topik');
         $bidang = $request->input('bidang');
         $prioritas = json_decode($request->input('prioritas'), true);
+        $jenisTA = $request->input('jenisTA');
         
         
         // Ambil data mahasiswa yang sedang login
         $sessionUser = DB::table('mahasiswa')
         ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->where('user.status_user', 'aktif')
         ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
         ->where('mahasiswa.nim', auth()->user()->username)
         ->first(); 
@@ -152,6 +163,14 @@ class PengajuanPembimbingController extends Controller
             $nim_user = $sessionUser->nim;
         }
 
+        $existingPengajuan = DB::table('pengajuan_pembimbing')
+        ->where('id_kota', $id_kota_user)
+        ->exists();
+    
+        if ($existingPengajuan) {
+            return back()->withErrors(['duplicate' => 'Anda sudah pernah mengajukan dosen pembimbing.']);
+        }
+        
         // Mencari ID berdasarkan nama bidang
         $bidangId = DB::table('bidang')->where('bidang', $bidang)->value('id_bidang');
 
@@ -161,6 +180,10 @@ class PengajuanPembimbingController extends Controller
             'status_pengajuan' => 'diproses', 
             'created_at' => now(),
             'updated_at' => now(),
+        ]);
+
+        DB::table('kota')->where('id_kota', $id_kota_user)->update([
+            'jenis_ta' => $jenisTA === 'Penelitian' ? 'penelitian' : ($jenisTA === 'Pengembangan' ? 'pengembangan' : null),
         ]);
 
         // Insert data ke tabel kota (judul_ta) dan bidang (id_bidang)
@@ -200,5 +223,56 @@ class PengajuanPembimbingController extends Controller
         session()->flash('success', 'Pengajuan dosen pembimbing sudah direkap. Silahkan menunggu status pengajuan diterima.');
 
         return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.pratinjau-formulir.index');
+        // return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok'); // Redirect ke halaman utama SIPTA
     }
+
+    public function checkExistingData()
+    {
+        $currentdate = date('Y-m-d');
+
+        // Cek apakah mahasiswa sudah memiliki topik tugas akhir atau pembimbing
+        $sessionUser = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('mahasiswa.nim', auth()->user()->username)
+            ->first(); 
+
+        $existingData = DB::table('pengajuan_pembimbing')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->exists(); // Memeriksa apakah ada pengajuan pembimbing sebelumnya
+
+        $topikTugasAkhir = DB::table('kota')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->value('judul_ta');
+        
+        $bidangTugasAkhir = DB::table('kota')
+            ->join('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
+            ->where('kota.id_kota', $sessionUser->id_kota)
+            ->value('bidang.bidang');
+        
+        $jenisTugasAkhir = DB::table('kota')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->value('jenis_ta');
+
+        $idPengajuanPembimbing = DB::table('pengajuan_pembimbing')
+            ->where('id_kota', $sessionUser->id_kota)
+            ->value('id_pengajuan_pembimbing');
+
+        $prioritasDosen = DB::table('prioritas_pembimbing')
+            ->join('user', 'prioritas_pembimbing.nip', '=', 'user.username') 
+            ->where('prioritas_pembimbing.id_pengajuan', $idPengajuanPembimbing) 
+            ->select('user.nama as name', 'prioritas_pembimbing.urutan_prioritas as priority') 
+            ->orderBy('prioritas_pembimbing.urutan_prioritas', 'asc') 
+            ->get();
+
+        return response()->json([
+            'hasExistingData' => $existingData,
+            'Periode' => PeriodePengajuan::where('periode_mulai', '<=', $currentdate)->where('periode_akhir', '>=', $currentdate)->exists(),
+            'topikTugasAkhir' => $topikTugasAkhir,
+            'bidangTugasAkhir' => $bidangTugasAkhir,
+            'jenisTugasAkhir' => $jenisTugasAkhir,
+            'prioritasDosen' => $prioritasDosen,
+        ]);
+    }
+
+    
 }

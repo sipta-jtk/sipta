@@ -3,27 +3,40 @@
 @section('title', 'Monitoring Feedback')
 
 @section('content_header')
-    <div class="container-fluid p-3">
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('kelola-penilaian-ta/monitoring/mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
-                ['url' => '', 'label' => 'Detail Feedback']
-            ]
-        ])
-        @endcomponent
+    <h1 class="mb-0">Detail Feedback</h1>
+    <div>
+        @php
+            $routeName = Route::currentRouteName();
+        @endphp
 
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Feedback</h1>
+        @if($routeName === 'monitoring.feedback')
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                    ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                    ['url' => '', 'label' => 'Detail Feedback']
+                ]
+            ])
+            @endcomponent
+        @elseif($routeName === 'monitoring.feedback.dosen')
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                    ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
+                    ['url' => '', 'label' => 'Detail Feedback']
+                ]
+            ])
+            @endcomponent
+        @endif
     </div>
 @stop
 
 @section('content')
     <div class="card">
-        <div class="card-header bg-blue p-0">
+        <div class="card-header p-0">
             <h3 class="card-title p-3">Detail Usulan Tugas Akhir</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body px-3 py-3">
           <table class="table table-borderless">
               <tbody>
                   <tr>
@@ -99,10 +112,10 @@
                                   $feedbacks = $detailFeedback->where('id_feedback', $aspek->id_feedback)->where('nip', $dosen->nip);
                               @endphp
                               @if ($feedbacks->isEmpty())
-                                  <li>Feedback belum tersedia.</li>
+                                  Feedback belum tersedia.
                               @else
                                   @foreach ($feedbacks as $feedback)
-                                      <li>{{ $feedback->isi_feedback }}</li>
+                                    {!! $feedback->isi_feedback !!}
                                   @endforeach
                               @endif
                           </ol>

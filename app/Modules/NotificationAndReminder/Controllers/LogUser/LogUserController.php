@@ -4,33 +4,35 @@ namespace App\Modules\NotificationAndReminder\Controllers\LogUser;
 
 use App\Http\Controllers\Controller;
 use App\Models\NotifikasiKirim;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+
 
 class LogUserController extends Controller
 {
-    /**
-     * Mengambil log notifikasi milik pengguna saat ini.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getLogNotifications()
-    {
-        // Mendapatkan ID pengguna saat ini
-        $userId = Auth::id();
+public function getLogUserNotifications()
+{
+    Carbon::setLocale('id'); // Set Bahasa Indonesia
 
-        // Ambil log notifikasi berdasarkan user_id
-        $logNotifikasi = NotifikasiKirim::join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
-            ->where('notifikasi_kirim.user_id', $userId) // Filter berdasarkan user_id
-            ->select(
-                'notifikasi_kirim.waktu_kirim',
-                'notifikasi.judul',
-                'notifikasi.isi_notifikasi',
-                'notifikasi_kirim.respon_log',
-                'notifikasi_kirim.username'
-            )
-            ->get();
+    $username = Auth::user()->username; // Ambil username user yang login
+    // dd(Auth::user()->nama);
+    
+    $logUserNotifikasi = NotifikasiKirim::with('user')
+        ->join('notifikasi', 'notifikasi_kirim.id_notifikasi', '=', 'notifikasi.id_notifikasi')
+        ->where('notifikasi_kirim.username', $username) // Filter berdasarkan user login
+        ->select(
+            'notifikasi_kirim.waktu_kirim',
+            'notifikasi.judul',
+            'notifikasi.isi_notifikasi'
+        )
+        ->orderBy('notifikasi_kirim.waktu_kirim', 'desc')
+        ->paginate(10);
 
-        // Mengembalikan data sebagai JSON
-        return response()->json($logNotifikasi);
-    }
+    $logUserNotifikasi->getCollection()->transform(function ($notif) {
+        $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('d F Y H:i');
+        return $notif;
+    });
+    
+    return view('NotificationAndReminder::LogUser.logUser', compact('logUserNotifikasi'));
+}
 }

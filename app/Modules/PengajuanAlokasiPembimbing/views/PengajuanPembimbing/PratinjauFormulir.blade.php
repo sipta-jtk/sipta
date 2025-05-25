@@ -3,12 +3,26 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
 @section('content')
+
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
 
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -23,10 +37,10 @@
 
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3 fw-bold">Data Mahasiswa</h5>
-                <div class="row mb-3">
+                <p class="text-secondary text-md border-bottom">Data Mahasiswa</p> 
+                <div class="row mb-2">
                     <div class="col-md-4">
-                        <label class="form-label" style="font-weight: normal;">Anggota 1</label>
+                        <p class="text-secondary text-md">Anggota 1</p>
                         <table class="table table-borderless">
                             <tr>
                                 <th class="p-0" style="font-weight: bold;">Nama</th>
@@ -42,7 +56,7 @@
 
                     @foreach ($dataAnggota as $index => $anggota)
                         <div class="col-md-4">
-                            <label class="form-label" style="font-weight: normal;">Anggota {{ $index + 2 }}</label>
+                            <p class="text-secondary text-md">Anggota {{ $index + 2 }}</p>
                             <table class="table table-borderless">
                                 <tr>
                                     <th class="p-0" style="font-weight: bold;">Nama</th>
@@ -58,23 +72,30 @@
                     @endforeach
                 </div>
 
-                <h5 class="mb-3">Topik Tugas Akhir</h5>
-                <p id="preview-topik" style="font-weight: bold;">Memuat...</p>
+                <p class="text-secondary text-md border-bottom">Topik Tugas Akhir</p> 
+                <p id="preview-topik" style="font-weight: bold;">
+                    <span style='color: red;'>Topik tugas akhir belum diisi</span>
+                </p>
 
-                <h5 class="mt-3 mb-3">Bidang Tugas Akhir</h5>
-                <ol id="preview-bidang" style="font-weight: bold;">
-                    <li>Memuat...</li>
-                </ol>
+                <p class="text-secondary text-md border-bottom">Jenis Tugas Akhir</p> 
+                <p id="preview-jenis" style="font-weight: bold;">
+                    <span style='color: red;'>Jenis tugas akhir belum dipilih</span>
+                </p>
 
-                <h5 class="mt-3 mb-3">Prioritas Dosen Pembimbing</h5>
-                <ul id="preview-prioritas" style="font-weight: bold;">
-                    <li>Memuat...</li>
-                </ul>
+                <p class="text-secondary text-md border-bottom">Bidang Tugas Akhir</p> 
+                <p id="preview-bidang" style="font-weight: bold;">
+                    <span style='color: red;'>Bidang tugas akhir belum dipilih</span>
+                </p>
+
+                <p class="text-secondary text-md border-bottom">Prioritas Dosen Pembimbing</p> 
+                <p id="preview-prioritas" style="font-weight: bold;">
+                    <span style='color: red;'>Prioritas dosen belum dipilih</span>
+                </p>
 
                 <div class="d-flex justify-content-between mt-3">
                     <a href="{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }}"
-                        class="btn btn-info">Sebelumnya</a>
-                    <button type="submit" class="btn btn-sm btn-primary" style="font-size: 16px">Finalisasi Data</button>
+                        class="btn btn-info mr-3">Sebelumnya</a>
+                    <button type="submit" id="finalisasiData" class="btn btn-sm btn-primary" style="font-size: 16px">Finalisasi Data</button>
                 </div>
             </div>
         </div>
@@ -104,19 +125,65 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Menampilkan data topik tugas akhir yang sudah disimpan di localStorage
+            // Mengecek apakah mahasiswa sudah memiliki pengajuan
+            $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    
+                    if (response.Periode === false) {
+                        $("#warningMessage").show(); 
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        document.getElementById("preview-topik").textContent = response.topikTugasAkhir;
+                        document.getElementById("preview-bidang").textContent = response.bidangTugasAkhir;
+                        document.getElementById("preview-jenis").textContent = response.jenisTugasAkhir;
+
+                        let prioritasList = document.getElementById("preview-prioritas");
+                        prioritasList.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
+
+                        if (response.prioritasDosen && response.prioritasDosen.length > 0) {
+                            response.prioritasDosen.forEach(function(dosen, index) {
+                                if (index < 5) { // Maksimal 5 prioritas dosen
+                                    let listItem = `
+                                        <p>
+                                            ${dosen.priority}. ${dosen.name}
+                                        </p>
+                                    `;
+                                    prioritasList.innerHTML += listItem;
+                                }
+                            });
+                        } else {
+                            prioritasList.innerHTML = "<span style='color: red;'>Prioritas dosen belum dipilih</span>";
+                        }
+
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
+                        return;
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+                }
+            });
+
+            // Menampilkan topik tugas akhir dan bidang yang sudah disimpan di localStorage
             let savedData = JSON.parse(localStorage.getItem("pengajuanTopikDraft"));
 
             if (savedData) {
-                document.getElementById("preview-topik").textContent = savedData.topik || "Tidak ada data";
+                document.getElementById("preview-topik").textContent = savedData.topik || "<span style='color: red;'>Topik belum diisi</span>";
+                document.getElementById("preview-jenis").textContent = savedData.jenisTA || "<span style='color: red;'>Jenis tugas akhir belum dipilih</span>";
 
                 let namaBidang = document.getElementById("preview-bidang");
-                namaBidang.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
+                namaBidang.textContent = ""; // Kosongkan sebelumnya
 
-                if (savedData.bidang.length > 0) {
-                    namaBidang.innerHTML = savedData.bidang; 
+                if (savedData.bidang) {
+                    // Tampilkan bidang yang dipilih sebagai teks biasa
+                    namaBidang.textContent = savedData.bidang;
                 } else {
-                    namaBidang.innerHTML = "<li>Tidak ada bidang yang dipilih</li>";
+                    namaBidang.innerHTML = "<span style='color: red;'>Tidak ada bidang yang dipilih</span>";
                 }
             }
 
@@ -131,9 +198,9 @@
                     if (index < 5) { // Maksimal 5 prioritas dosen
                         // Memastikan hanya satu angka urutan yang ditambahkan
                         let listItem = `
-                            <li>
+                            <p>
                                 ${dosen.priority}. ${dosen.name}
-                            </li>
+                            </p>
                         `;
                         // Tambahkan item baru ke dalam daftar prioritas
                         prioritasList.innerHTML += listItem;
@@ -141,7 +208,7 @@
                 });
             } else {
                 document.getElementById("preview-prioritas").innerHTML =
-                    "<li>Tidak ada prioritas dosen yang dipilih.</li>";
+                    "<span style='color: red;'>Prioritas dosen belum dipilih</span>";
             }
         });
 
@@ -157,11 +224,12 @@
                     let dataToSend = {
                         topik: savedData.topik,
                         bidang: savedData.bidang,
+                        jenisTA: savedData.jenisTA,
                         prioritas: JSON.stringify(prioritasDosen)
                     };
                     console.log(dataToSend);
 
-                    FireSweetAlert('question', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
+                    FireSweetAlert('warning', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
                     if (confirmed) { 
 
                     // Kirim data ke backend dengan fetch
@@ -184,6 +252,13 @@
                     topikInput.value = savedData.topik;
                     form.appendChild(topikInput);
 
+                    // Tambahkan data jenis tugas akhir ke dalam form
+                    let jenisTAInput = document.createElement('input');
+                    jenisTAInput.type = 'hidden';
+                    jenisTAInput.name = 'jenisTA';
+                    jenisTAInput.value = savedData.jenisTA;
+                    form.appendChild(jenisTAInput);
+                    
                     // Tambahkan data bidang ke dalam form
                     let bidangInput = document.createElement('input');
                     bidangInput.type = 'hidden';

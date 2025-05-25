@@ -1,65 +1,49 @@
-<div id="myModals" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Preferensi Notifikasi</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-            <p>Pilih metode notifikasi yang ingin Anda terima:</p>
-                    @csrf
-                    <!-- Email -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-envelope" style="font-size: 24px;"></i> <!-- Email Icon -->
-                        <span class="switch-label" style="font-size: 18px;">Email</span> <!-- Teks "Email" -->
-                        <label class="switch">
-                            <input type="checkbox" id="emailSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+<x-adminlte-modal id="myModals" title="Preferensi Notifikasi" theme="primary" icon="fas fa-bell" size="md" scrollable>
+    <form id="notifForm">
+        @csrf
 
-                    <!-- Reminder H-5 -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-bell" style="font-size: 24px;"></i> <!-- Reminder Icon -->
-                        <span class="switch-label" style="font-size: 18px;">Reminder H-5</span> <!-- Teks "Reminder H-5" -->
-                        <label class="switch">
-                            <input type="checkbox" id="reminderSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-            </div>
-            <div class="modal-footer" style="border-top: none;">
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
-            </form>
+        <p class="mb-3">Pilih metode notifikasi yang ingin Anda terima:</p>
+
+        <!-- Email -->
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-envelope" style="font-size: 24px; width: 30px;"></i>
+            <span class="switch-label flex-grow-1 ml-2">Email</span>
+            <label class="switch mb-0">
+                <input type="checkbox" id="emailSwitch">
+                <span class="slider"></span>
+            </label>
         </div>
-    </div>
-</div>
+
+        <!-- Reminder H-5 -->
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-bell" style="font-size: 24px; width: 30px;"></i>
+            <span class="switch-label flex-grow-1 ml-2">Reminder H-5</span>
+            <label class="switch mb-0">
+                <input type="checkbox" id="reminderSwitch">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <x-slot name="footerSlot">
+            <x-adminlte-button label="Simpan" theme="primary" onclick="savePreferences()" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 
 <style>
-    .modal-content {
-        border-radius: 10px;
-        padding: 20px;
-        max-width: 400px;
-        margin: auto;
-        text-align: left;
-    }
-    .modal-header {
-        border-bottom: none;
-    }
     .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
     }
+
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
+
     .slider {
         position: absolute;
         cursor: pointer;
@@ -71,44 +55,44 @@
         transition: 0.4s;
         border-radius: 50px;
     }
+
     .slider:before {
         position: absolute;
         content: "";
         height: 26px;
         width: 26px;
-        border-radius: 50px;
         left: 4px;
         bottom: 4px;
         background-color: white;
         transition: 0.4s;
+        border-radius: 50px;
     }
-    input:checked + .slider {
+
+    input:checked+.slider {
         background-color: #4CAF50;
     }
-    input:checked + .slider:before {
+
+    input:checked+.slider:before {
         transform: translateX(26px);
     }
 
     .switch-label {
         font-size: 18px;
-        display: inline-block;
-        margin-left: 10px;  
-        flex: 1;
-    }
-
-
-    .btn:hover {
-        background-color: #ddd;
     }
 </style>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchPreferences(); 
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchPreferences();
 
+<<<<<<< HEAD
         document.querySelector(".btn-primary").addEventListener("click", function (e) {
+=======
+        document.querySelector(".btn-primary").addEventListener("click", function(e) {
+>>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
             e.preventDefault();
             savePreferences();
         });
@@ -116,6 +100,7 @@
 
     function fetchPreferences() {
         fetch("{{ route('preferensi.notifikasi.get') }}", {
+<<<<<<< HEAD
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -128,6 +113,20 @@
                 document.getElementById("reminderSwitch").checked = data.reminder_h5; 
             }
         });
+=======
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    document.getElementById("emailSwitch").checked = data.email;
+                    document.getElementById("reminderSwitch").checked = data.reminder_h5;
+                }
+            });
+>>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
     }
 
     function savePreferences() {
@@ -135,6 +134,7 @@
         let reminder = document.getElementById("reminderSwitch").checked ? 1 : 0;
 
         fetch("{{ route('preferensi.notifikasi.store') }}", {
+<<<<<<< HEAD
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -151,5 +151,23 @@
             $("#myModals").modal("hide"); 
         })
         .catch(error => console.error("Error:", error));
+=======
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    reminder_h5: reminder
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                $("#myModals").modal("hide");
+            })
+            .catch(error => console.error("Error:", error));
+>>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
     }
 </script>

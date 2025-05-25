@@ -3,14 +3,26 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
 @section('content')
 
-    {{-- <p>Data Kelompok > <a href="www">Topik Tugas Akhir</a> > <a href="www">Prioritas Dosen Pembimbing</a> > <a href="www">Pratinjau</a></p> --}}
+    <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
 
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -26,7 +38,7 @@
         <!-- Form Pengajuan -->
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Data Mahasiswa</h5>
+                <p class="text-secondary text-md border-bottom">Data Mahasiswa</p> 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Lengkap</label>
@@ -44,7 +56,8 @@
                     </div>
                 </div>
 
-                <h5 class="mb-3">Data Kelompok</h5>
+                {{-- <h5 class="mb-3">Data Kelompok</h5> --}}
+                <p class="text-secondary text-md border-bottom">Data Kelompok</p> 
                 @php
                     $anggota1 = $dataAnggota[0] ?? (object) ['nama' => '-', 'nim' => '-'];
                     $anggota2 = $dataAnggota[1] ?? (object) ['nama' => '-', 'nim' => '-'];
@@ -70,8 +83,9 @@
                     </div>
                 </div>
 
-                <!-- Tombol Simpan & Selanjutnya -->
-                <div class="d-flex justify-content-end mt-3">
+                <!-- Tombol Ubah Data & Selanjutnya -->
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" id="ubahData" class="btn btn-primary" onclick="window.location.href='{{ route('kota.saya') }}'">Ubah Data</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.topik-tugas-akhir') }}
                         class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
@@ -94,6 +108,27 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mengecek apakah mahasiswa sudah memiliki pengajuan
+            $.get("{{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.checkExistingData') }}", function(response) {
+                if (response.hasExistingData || response.Periode === false) {
+                    // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
+                    $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
+                    
+                    if (response.Periode === false) {
+                        $("#warningMessage").show(); 
+                        $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
+                    }
+                    else {
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
+                    }
+                    if (response.hasExistingData && response.Periode === false) {
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                    }
+                }
+            });
+
             Swal.fire({
                 icon: 'info',
                 title: 'Periksa kembali data anggota kelompok',
@@ -101,7 +136,7 @@
                 cancelButtonText: 'Ubah Data',
                 confirmButtonText: 'OK',
                 showCancelButton: true,
-                cancelButtonColor: '#3085d6',
+                cancelButtonColor: '#FFC107',
                 confirmButtonColor: '#3085d6',
                 reverseButtons: true
 

@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
         // Sixth batch: Document related
         $this->call(DokumenSeeder::class); // depends on Kota, SubKategori, User
         $this->call(ListJurnalPlagiarismeSeeder::class); // no dependencies
-        $this->call(ListKalimatPlagiarismeSeeder::class); // depends on Dokumen, ListJurnalPlagiarisme
+        // $this->call(ListKalimatPlagiarismeSeeder::class); // depends on Dokumen, ListJurnalPlagiarisme
         $this->call(ReviewDosenPembimbingSeeder::class); // depends on Dokumen, Dosen
 
         // Seventh batch: Scheduling related
@@ -84,5 +84,6 @@ class DatabaseSeeder extends Seeder
         // Ninth batch: Logs (should be last as they depend on many entities)
         $this->call(LogAktivitasSeeder::class); // depends on Kota, User, Dokumen
         $this->call(PembatalanSeeder::class); // depends on penjadwalan and dosen
+        $this->call(KotaArtefakSeeder::class); // depends on Kota, Artefak
     }
 }

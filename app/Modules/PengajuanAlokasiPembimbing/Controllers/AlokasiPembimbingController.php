@@ -18,6 +18,7 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
+use App\Services\Notifikasi;
 
 class AlokasiPembimbingController extends Controller
 {
@@ -45,20 +46,15 @@ class AlokasiPembimbingController extends Controller
 
             $data_pengajuan[$key]['mahasiswa'] = $listMahasiswaOnKelompok;
             $data_pengajuan[$key]['usulan_dosen'] = $listUsulanDosen;
-            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
+            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen;
         }
 
-        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')->get();
+        $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
+            ->leftJoin('kbk', 'dosen.id_kbk', '=', 'kbk.id_kbk')
+            ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
+            ->get();
 
-        foreach ($dosenList as $key => $value) {
-            $dosenBidang = KetertarikanBidang::join('bidang', 'ketertarikan_bidang.id_bidang', '=', 'bidang.id_bidang')
-                ->where('nip', $value->nip)
-                ->get();
-
-            $dosenList[$key]['ketertarikan_bidang'] = $dosenBidang;
-        }
-
-        return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
+        return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
             'dosenList' => $dosenList
         ]);
@@ -74,9 +70,9 @@ class AlokasiPembimbingController extends Controller
             ->select('username', 'nama')
             ->first();
 
-    if (!$dosen) {
-        return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
-    }
+        if (!$dosen) {
+            return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
+        }
 
         $pembimbing1_KoTA = AlokasiDosen::where('nip', $dosen->dosen->nip)
             ->where('urutan_prioritas_terpilih', '1')
@@ -92,15 +88,15 @@ class AlokasiPembimbingController extends Controller
 
 
         $pembimbing1_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '1')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '1')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $pembimbing2_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '2')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '2')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $jumlahMahasiswa = $pembimbing1_Mhs + $pembimbing2_Mhs;
@@ -136,7 +132,7 @@ class AlokasiPembimbingController extends Controller
                 ->pluck('id_kota')
                 ->first();
 
-            // Ambil NIP pembimbing dan penguji
+            // Ambil ID dosen (bukan NIP langsung)
             $pembimbing1 = $value->pembimbing1 ?? null;
             $pembimbing2 = $value->pembimbing2 ?? null;
 
@@ -144,7 +140,7 @@ class AlokasiPembimbingController extends Controller
             $penguji2 = $value->penguji2 ?? null;
             $penguji3 = $value->penguji3 ?? null;
 
-            // Validasi: Minimal harus ada 1 pembimbing dan 1 penguji
+            // Validasi: Minimal 1 pembimbing dan 1 penguji
             if (empty($pembimbing1) && empty($pembimbing2)) {
                 return back()->with('error', 'Minimal 1 pembimbing harus diisi sebelum finalisasi.');
             }
@@ -153,31 +149,29 @@ class AlokasiPembimbingController extends Controller
                 return back()->with('error', 'Minimal 1 penguji harus diisi sebelum finalisasi.');
             }
 
-            // Validasi: Tidak boleh ada pembimbing yang sama dalam satu kelompok
+            // Validasi duplikasi
             if (!empty($pembimbing1) && !empty($pembimbing2) && $pembimbing1 == $pembimbing2) {
                 return back()->with('error', 'Pembimbing 1 dan Pembimbing 2 tidak boleh sama dalam satu KoTA.');
             }
 
-            // Validasi: Tidak boleh ada penguji yang sama dalam satu kelompok
-            $pengujiSet = array_filter([$penguji1, $penguji2, $penguji3]); // Buang null atau kosong
+            $pengujiSet = array_filter([$penguji1, $penguji2, $penguji3]);
             if (count($pengujiSet) !== count(array_unique($pengujiSet))) {
                 return back()->with('error', 'Penguji tidak boleh sama dalam satu KoTA.');
             }
 
-            // Proses penyimpanan data
-            $nip_dosen_1 = Dosen::where('id_dosen', $pembimbing1)->select('nip')->first();
-            $nip_dosen_2 = Dosen::where('id_dosen', $pembimbing2)->select('nip')->first();
+            $nip_dosen_1 = Dosen::where('id_dosen', $pembimbing1)->value('nip');
+            $nip_dosen_2 = Dosen::where('id_dosen', $pembimbing2)->value('nip');
 
-            $nip_penguji_1 = Dosen::where('id_dosen', $penguji1)->select('nip')->first();
-            $nip_penguji_2 = Dosen::where('id_dosen', $penguji2)->select('nip')->first();
-            $nip_penguji_3 = Dosen::where('id_dosen', $penguji3)->select('nip')->first();
+            $nip_penguji_1 = Dosen::where('id_dosen', $penguji1)->value('nip');
+            $nip_penguji_2 = Dosen::where('id_dosen', $penguji2)->value('nip');
+            $nip_penguji_3 = Dosen::where('id_dosen', $penguji3)->value('nip');
 
             $catatan = $value->catatan ?? null;
 
-            // **Alokasi Pembimbing**
+            // === SIMPAN PEMBIMBING ===
             if ($nip_dosen_1) {
                 AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_1->nip],
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_1],
                     [
                         'urutan_prioritas_terpilih' => 1,
                         'status_alokasi' => $value->status_pembimbing1 ?? 'belum_fix',
@@ -187,9 +181,19 @@ class AlokasiPembimbingController extends Controller
                 );
             }
 
+            // Notifikasi::kirim(
+            //     '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+            //     $nip_dosen_1, // Ganti dengan username admin, atau log system
+            //     [
+            //         'nama' => Dosen::where('id_dosen', $pembimbing1)->value('kode_dosen'),
+            //         'Topik' => 'Dosen Pembimbing telah ditetapkan',
+            //         'deadline' => now()->format('d-m-Y H:i')
+            //     ]
+            // );
+            
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2->nip],
+                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_dosen_2],
                     [
                         'urutan_prioritas_terpilih' => 2,
                         'status_alokasi' => $value->status_pembimbing2 ?? 'belum_fix',
@@ -198,43 +202,40 @@ class AlokasiPembimbingController extends Controller
                     ]
                 );
             }
-
-            // **Alokasi Penguji**
-            if ($nip_penguji_1) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_1->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 1,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
+                
+            // Notifikasi::kirim(
+            //     '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+            //     $nip_dosen_2, // Ganti dengan username admin, atau log system
+            //     [
+            //         'nama' => Dosen::where('id_dosen', $pembimbing2)->value('kode_dosen'),
+            //         'Topik' => 'Dosen Pembimbing telah ditetapkan',
+            //         'deadline' => now()->format('d-m-Y H:i')
+            //     ]
+            // );
+                
+            // === SIMPAN PENGUJI ===
+            foreach ([[1, $nip_penguji_1], [2, $nip_penguji_2], [3, $nip_penguji_3]] as [$urutan, $nip]) {
+                if ($nip) {
+                    AlokasiDosen::updateOrCreate(
+                        ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip],
+                        [
+                            'urutan_prioritas_terpilih' => $urutan,
+                            'status_alokasi' => 'fix',
+                            'catatan' => $catatan,
+                            'tipe_alokasi' => 'penguji'
+                        ]
+                    );
+                }
             }
 
-            if ($nip_penguji_2) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_2->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 2,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
-            }
+            // === UPDATE STATUS PENGAJUAN ===
+            $statusFix1 = $value->status_pembimbing1 ?? null;
+            $statusFix2 = $value->status_pembimbing2 ?? null;
 
-            if ($nip_penguji_3) {
-                AlokasiDosen::updateOrCreate(
-                    ['id_pengajuan_pembimbing' => $value->id_pengajuan_pembimbing, 'nip' => $nip_penguji_3->nip],
-                    [
-                        'urutan_prioritas_terpilih' => 3,
-                        'status_alokasi' => 'fix',
-                        'catatan' => $catatan,
-                        'tipe_alokasi' => 'penguji'
-                    ]
-                );
-            }
+            $status_pengajuan = ($statusFix1 === 'fix' || $statusFix2 === 'fix') ? 'diterima' : 'diproses';
+
+            PengajuanPembimbing::where('id_pengajuan_pembimbing', $value->id_pengajuan_pembimbing)
+                ->update(['status_pengajuan' => $status_pengajuan]);
         }
 
         return redirect()->back()->with('success', 'Data alokasi pembimbing dan penguji berhasil disimpan.');

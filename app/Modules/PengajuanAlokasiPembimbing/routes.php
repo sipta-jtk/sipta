@@ -3,7 +3,8 @@
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarKesediaanMembimbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\KesediaanBimbinganController;
 use Illuminate\Support\Facades\Route;
-use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingController;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPembimbingv2Controller;
+use App\Modules\PengajuanAlokasiPembimbing\Controllers\AlokasiPengujiController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\DaftarPengajuanDosbingController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\MahasiswaMelihatJadwalController;
 use App\Modules\PengajuanAlokasiPembimbing\Controllers\PengajuanPembimbing\PengajuanPembimbingController;
@@ -43,17 +44,37 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::get('/', [MahasiswaMelihatJadwalController::class, 'view_MahasiswaMelihatJadwal']);
     });
 
-    Route::group(['prefix' => 'alokasi-pembimbing', 'as' => 'alokasi-pembimbing.', 'middleware' => ['auth', 'can:koordinator_ta']], function () {
-        Route::get('/', [AlokasiPembimbingController::class, 'index'])->name('index');
-        Route::post('/submit', [AlokasiPembimbingController::class, 'submit'])->name('submit');
-        Route::post('/simpan', [AlokasiPembimbingController::class, 'simpanDraft'])->name('simpan');
-        Route::get('/getDetailDosen/{nip}', [AlokasiPembimbingController::class, 'getDetailDosen']);
+    Route::group([
+        'prefix' => 'alokasi-pembimbing',
+        'as' => 'alokasi-pembimbing.',
+        'middleware' => ['auth', 'can:akses-alokasi']
+    ], function () {
+        Route::get('/', [AlokasiPembimbingv2Controller::class, 'index'])->name('index');
+        Route::get('/getDetailDosen', [AlokasiPembimbingv2Controller::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPembimbingv2Controller::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPembimbingv2Controller::class, 'updateAlokasi'])->name('updateAlokasi');
+        Route::post('/delete-alokasi', [AlokasiPembimbingv2Controller::class, 'deleteAlokasi'])->name('deleteAlokasi');
     });
+
+    Route::group([
+        'prefix' => 'alokasi-penguji',
+        'as' => 'alokasi-penguji.',
+        'middleware' => ['auth', 'can:akses-alokasi']
+    ], function () {
+        Route::get('/', [AlokasiPengujiController::class, 'index'])->name('index');
+        Route::get('/getDetailDosen', [AlokasiPengujiController::class, 'getDetailDosen'])->name('getDetailDosen');
+        Route::post('/fix-alokasi', [AlokasiPengujiController::class, 'fixAlokasi'])->name('fixAlokasi');
+        Route::post('/update-alokasi', [AlokasiPengujiController::class, 'updateAlokasi'])->name('updateAlokasi');
+        Route::post('/delete-alokasi', [AlokasiPengujiController::class, 'deleteAlokasi'])->name('deleteAlokasi');
+    });
+
+    
 
 
     Route::group(['prefix' => 'pengajuan-pembimbing', 'as' => 'pengajuan-pembimbing.', 'middleware' => ['auth', 'can:mahasiswa_kota']], function () {
         Route::get('/data-kelompok', [PengajuanPembimbingController::class, 'view_dataKelompok'])->name('data-kelompok');
         Route::get('/topik-tugas-akhir', [PengajuanPembimbingController::class, 'view_topikTugasAkhir'])->name('topik-tugas-akhir');
+        Route::get('/check-existing-data', [PengajuanPembimbingController::class, 'checkExistingData'])->name('checkExistingData');
 
         Route::group(['prefix' => 'prioritas-dosen-pembimbing', 'as' => 'prioritas-dosen-pembimbing.'], function () {
             Route::get('/', [PengajuanPembimbingController::class, 'view_prioritasDosenPembimbing'])->name('index');
@@ -79,5 +100,6 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::delete('/{id}', [PengelolaanPeriodeController::class, 'delete_PengelolaanPeriode'])->name('delete');
     });
 
+    Route::post('/alokasi/kirim-notifikasi-batch', [AlokasiPembimbingv2Controller::class, 'kirimNotifikasiBatch']);
 
 });
