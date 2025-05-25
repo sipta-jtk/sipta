@@ -12,7 +12,8 @@ use App\Models\Kota;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
+use Smalot\PdfParser\Parser;
 
 use Carbon\Carbon;
 
@@ -104,6 +105,14 @@ class CekPlagiarismeController extends Controller
 
     public function process(Request $request)
     {
+        if (!$request->isMethod('post')) {
+            Log::warning('GET request tidak sah ke /cek-plagiarisme/process', [
+                'ip' => $request->ip(),
+                'agent' => $request->userAgent(),
+                'user_id' => auth()->id(),
+            ]);
+            abort(405);
+        }
         // Validasi input
         $validated = $request->validate([
             'judul' => [
@@ -144,7 +153,7 @@ class CekPlagiarismeController extends Controller
             $idKota = auth()->user()->mahasiswa->id_kota ?? null;
 
             // Debug: Log ambang batas and user info
-            \Log::info('User and threshold info', [
+            Log::info('User and threshold info', [
                 'ambang_batas_id' => $ambangBatasAktif?->id_ambang_batas,
                 'nim' => $nim,
                 'id_kota' => $idKota,
@@ -227,7 +236,7 @@ class CekPlagiarismeController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Gagal memproses dokumen:', [
+            Log::error('Gagal memproses dokumen:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
