@@ -158,7 +158,6 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            <?php
             $parser = new Parser();
             $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
             $text = $pdf->getText();
@@ -220,7 +219,7 @@ class CekPlagiarismeController extends Controller
                 'threshold_exceeded' => $similarity !== null ? ($similarity >= ($ambangBatasAktif?->ambang_batas ?? 20)) : 'unknown',
                 'created_at' => $dokumen->created_at->toDateTimeString()
             ]);
-            
+
             // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
                 'judul' => $validated['judul'] . ' - Digital Receipt',
