@@ -15,6 +15,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
+use App\Models\PengajuanPembimbing;
+
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -258,39 +260,36 @@ class RepositoryController extends Controller
             if (strtolower($subkategoriName) == 'fta') {
                 $data['kode_fta'] = $request->kode_fta;
             }
-            
-            $nipDosen = auth()->user()->dosen->nip ?? null;
 
             Dokumen::create($data);
 
-            // Tambahan Notifikasi ke Dosen Pembimbing dari Alokasi Dosen
-            try {
-                // Get alokasi dosen pembimbing through pengajuan_pembimbing
-                $alokasiDosen = AlokasiDosen::whereHas('pengajuanPembimbing', function($query) use ($id_kota) {
-                    $query->where('id_kota', $id_kota)
-                          ->where('status_pengajuan', 'diterima');
-                })
-                ->where('tipe_alokasi', 'pembimbing')
-                ->where('status_alokasi', 'fix')
-                ->first();
+            // $nipDosen = auth()->user()->dosen->nip ?? null;
 
-                if ($alokasiDosen) {
-                    Notifikasi::kirim(
-                        '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
-                        $alokasiDosen->nip,
-                        [
-                            'kategori' => $kategori,
-                            'judul_dokumen' => $request->judul,
-                            'nama_mahasiswa' => auth()->user()->nama,
-                            'subkategori' => $subkategoriName
-                        ]
-                    );
+            // Ambil data mahasiswa berdasarkan username
+            $mahasiswa = Mahasiswa::where('nim', $username)->first();
+            $pengajuan = null;
+            $pembimbing1 = null;
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                $pengajuan = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
+                    ->orderByDesc('created_at')
+                    ->first();
+                if ($pengajuan) {
+                    $pembimbing1 = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuan->id_pengajuan_pembimbing)
+                        ->where('tipe_alokasi', 'pembimbing')
+                        ->where('urutan_prioritas_terpilih', 1)
+                        ->value('nip');
                 }
-            } catch (\Exception $notifEx) {
-                \Log::error('Gagal mengirim notifikasi dokumen baru: ' . $notifEx->getMessage(), [
-                    'id_kota' => $id_kota,
-                    'kategori' => $kategori
-                ]);
+            }
+
+            $judulNotif = '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen';
+            $payload = [
+                'kategori' => $kategori,
+                'judul' => $request->judul,
+                'nim' => $username,
+            ];
+            // Kirim notifikasi ke pembimbing1 jika ada
+            if ($pembimbing1) {
+                Notifikasi::kirim($judulNotif, $pembimbing1, $payload);
             }
 
             return redirect()->route('Repository.index.kota', [
@@ -582,55 +581,77 @@ class RepositoryController extends Controller
         }
     }
 
+    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
+    public function monitoringPenyimpanan()
+    {
+        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
+        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->groupBy('kategori', 'id_subkategori')
+            ->with('subkategori')  // Pastikan mengambil relasi subkategori
+            ->get();
+
+        // Data untuk pie chart berdasarkan subkategori
+        $penyimpananBySubkategori = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori')
+            ->get();
+
+        // Total penyimpanan yang digunakan
+        $totalPenyimpanan = $penyimpanan->sum('total_ukuran');
+
+        // Kapasitas maksimum penyimpanan (100 GB dalam KB)
+        $kapasitasMaksimum = 100 * 1024 * 1024; // 100 GB dalam KB
+
+        // Kirim data penyimpanan ke view
+        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan', 'penyimpananBySubkategori', 'totalPenyimpanan', 'kapasitasMaksimum'));
+    }
+
 
     public function logAktivitas(Request $request)
     {
-        // Query dasar dengan eager loading relasi user dan kota
+        // Start with a base query
         $query = LogAktivitas::with('user', 'kota');
 
-        // Filter pencarian kata kunci di nama user dan action
+        // Apply filters if provided
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->whereHas('user', function ($userQuery) use ($request) {
                     $userQuery->where('nama', 'like', '%' . $request->search . '%');
-                })->orWhere('action', 'like', '%' . $request->search . '%');
+                })
+                    ->orWhere('action', 'like', '%' . $request->search . '%');
             });
         }
 
-        // Filter berdasarkan username, bukan user_id
-        if ($request->filled('username')) {
-            $query->where('username', $request->username);
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
 
-        // Filter berdasarkan id_kota, bukan kota_id
-        if ($request->filled('id_kota')) {
-            $query->where('id_kota', $request->id_kota);
+        if ($request->filled('kota_id')) {
+            $query->where('kota_id', $request->kota_id);
         }
 
-        // Filter berdasarkan jenis aktivitas (action)
         if ($request->filled('action')) {
             $query->where('action', $request->action);
         }
 
-        // Filter berdasarkan tanggal mulai
         if ($request->filled('date_from')) {
             $query->whereDate('waktu_aktivitas', '>=', $request->date_from);
         }
 
-        // Filter berdasarkan tanggal akhir
         if ($request->filled('date_to')) {
             $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
         }
 
-        // Ambil hasil dengan urutan terbaru dan paginasi
+        // Get filtered results
         $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
 
-        // Ambil data dropdown filter
+        // Get data for filter dropdowns
         $users = User::orderBy('nama')->get();
-        $kotas = Kota::orderBy('nama_kota')->get();
-        $actions = LogAktivitas::select('action')->distinct()->pluck('action');
+        $kotas = KoTA::orderBy('nama_kota')->get();
+        $actions = LogAktivitas::distinct('action')->pluck('action');
 
-        // Kirim data ke view
+        // Return view with all needed data
         return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
     }
 
@@ -686,7 +707,7 @@ class RepositoryController extends Controller
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
-            // Find the document    
+            // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
@@ -721,6 +742,41 @@ class RepositoryController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan catatan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get filtered storage data for AJAX requests
+     */
+    public function getFilteredStorageData(Request $request)
+    {
+        $kategori = $request->input('kategori');
+        $subkategori = $request->input('subkategori');
+
+        // Start with base query
+        $query = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori');
+
+        // Apply kategori filter if provided
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        // Get filtered data
+        $filteredData = $query->get();
+
+        // Apply subkategori filter in PHP (if needed)
+        if ($subkategori) {
+            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+                return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
+            });
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $filteredData
+        ]);
     }
 }
 
