@@ -537,24 +537,80 @@
     }
 
     function validateKeyword() {
-        var keywordVal = $('#keywordsInput').val().trim();
+        var $input = $('#keywordsInput');
+        var keywordVal = $input.val().trim();
 
+        // Jika kosong, tandai sebagai invalid
         if (keywordVal.length === 0) {
-            $('#keywordsInput').addClass('is-invalid');
+            $input.addClass('is-invalid');
             return false;
         }
 
-        // Capitalize setiap kata di setiap keyword yang dipisahkan koma
-        var capitalized = keywordVal.split(',').map(keyword => {
-            return keyword.trim().split(' ').map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
-        }).filter(Boolean).join(', ');
-
-        $('#keywordsInput').val(capitalized);
-        $('#keywordsInput').removeClass('is-invalid');
+        $input.removeClass('is-invalid');
         return true;
     }
+
+    // Setup keyword input event handlers
+    $(document).ready(function () {
+        // Atur event handler untuk format keyword saat mengetik
+        $('#keywordsInput').on('input', function () {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+
+            // Jika kosong, tandai sebagai invalid
+            if (keywordVal.length === 0) {
+                $input.addClass('is-invalid');
+                return;
+            }
+
+            $input.removeClass('is-invalid');
+        });
+
+        // Format keyword dengan capitalization saat pengguna selesai mengetik
+        $('#keywordsInput').on('blur', function() {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+            
+            if (keywordVal.length === 0) {
+                return;
+            }
+            
+            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
+            var capitalized = keywordVal
+                .split(',')
+                .map(keyword => keyword
+                    .trim()
+                    .split(' ')
+                    .map(word => word.length > 0 ? 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+                    )
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+
+            // Update nilai input yang sudah diformat
+            $input.val(capitalized);
+        });
+
+        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
+        $('#keywordsInput').on('keydown', function(e) {
+            // Kode 32 adalah kode untuk tombol spasi
+            if (e.keyCode === 32) {
+                // Biarkan spasi dimasukkan secara normal
+                return true;
+            }
+        });
+
+        // Opsional: validasi saat submit
+        $('form').on('submit', function (e) {
+            var keywordVal = $('#keywordsInput').val().trim();
+            if (keywordVal.length === 0) {
+                $('#keywordsInput').addClass('is-invalid');
+                e.preventDefault(); // Hentikan submit jika kosong
+            }
+        });
+    });
 
     
     // Validasi real-time untuk abstrak
@@ -639,14 +695,18 @@
         const reader = new FileReader();
         reader.onload = async function(e) {
             const typedarray = new Uint8Array(e.target.result);
-            pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-
+            try {
+                pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+            } catch (err) {
+                console.error("Gagal memuat PDF:", err);
+                Swal.fire('Gagal', 'PDF tidak dapat dibaca, silakan gunakan file lain.', 'error');
+                return;
+            }
 
 
 
             let kataTotal = await countWords(pdfDoc);
             $('#jumlahKataPreview').val(kataTotal);
-
             // Isi field preview
             $('#judulPreview').text(judulInput);
             $('#keywordsPreview').text(keywordsInput);
