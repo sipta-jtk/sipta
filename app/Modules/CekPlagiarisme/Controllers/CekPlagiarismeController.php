@@ -102,7 +102,6 @@ class CekPlagiarismeController extends Controller
         ]);
     }
 
-
     public function process(Request $request)
     {
         if (!$request->isMethod('post')) {
