@@ -150,17 +150,17 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            $parser = new Parser();
-            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            $text = $pdf->getText();
+            // $parser = new Parser();
+            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            // $text = $pdf->getText();
 
-            $similarity = extractOverallSimilarity($text);
-            $sources = extractSourceLinks($text);
+            // $similarity = extractOverallSimilarity($text);
+            // $sources = extractSourceLinks($text);
 
-            \Log::info('Extracted similarity and sources', [
-                'similarity' => $similarity,
-                'sources' => $sources
-            ]);
+            // \Log::info('Extracted similarity and sources', [
+            //     'similarity' => $similarity,
+            //     'sources' => $sources
+            // ]);
 
             // Simpan dokumen utama
             $dokumen = Dokumen::create([
@@ -178,7 +178,7 @@ class CekPlagiarismeController extends Controller
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                'persentase_plagiarisme' => $similarity,
+                // 'persentase_plagiarisme' => $similarity,
             ]);
 
             // Simpan digital receipt
