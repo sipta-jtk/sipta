@@ -364,15 +364,15 @@ class PengelolaanNilaiController extends Controller
         }
 
         // Kirim notifikasi
-        foreach ($mahasiswa as $mhs) {
-            Notifikasi::kirim(
-                'Nilai sudah di publikasikan', // template notifikasi
-                $mhs->user->username, // id user/mahasiswa tujuan
-                [
-                    'nama_dosen' => auth()->user()->nama, // dosen pengirim
-                ]
-            );
-        }
+        // foreach ($mahasiswa as $mhs) {
+        //     Notifikasi::kirim(
+        //         'Nilai sudah di publikasikan', // template notifikasi
+        //         $mhs->user->username, // id user/mahasiswa tujuan
+        //         [
+        //             'nama_dosen' => auth()->user()->nama, // dosen pengirim
+        //         ]
+        //     );
+        // }
 
         $detailFeedback->update(['status_penilaian_dosen' => $status]);
         $nilaiKategori->update(['status_penilaian_dosen' => $status]);
