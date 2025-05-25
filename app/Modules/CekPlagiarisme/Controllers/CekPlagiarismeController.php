@@ -97,7 +97,7 @@ class CekPlagiarismeController extends Controller
 
     public function show($id): View
     {
-        return view('CekPlagiarisme.views.detail', [
+        return view('CekPlagiarisme.views.Detail', [
             'id' => $id
         ]);
     }
@@ -230,18 +230,17 @@ class CekPlagiarismeController extends Controller
 
             DB::commit();
 
-            // Tambahkan ini untuk mencatat aktivitas dengan nilai yang benar
+            // Dalam CekPlagiarismeController
             try {
-                // Gunakan nilai 'upload' yang sesuai dengan definisi enum
                 LogAktivitas::create([
-                    'username' => $nim,
-                    'id_kota' => $idKota,
+                    'username' => auth()->user()->username,
+                    'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
                     'id_dokumen' => $dokumen->id_dokumen,
-                    'action' => 'upload', // Gunakan nilai yang ada dalam enum
+                    'action' => 'upload', // Pastikan menggunakan nilai enum yang valid
                     'waktu_aktivitas' => now()
                 ]);
-            } catch (\Exception $logException) {
-                Log::warning('Gagal mencatat log aktivitas: ' . $logException->getMessage());
+            } catch (\Exception $e) {
+                Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
             }
 
             return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
