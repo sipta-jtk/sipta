@@ -64,6 +64,7 @@ class AlokasiPengujiController extends Controller
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama')
+            ->where('user.status_user', 'aktif')
             ->get();
 
         $prodiList = DB::table('prodi')->select('id_prodi', 'nama_prodi')->get();
@@ -84,6 +85,7 @@ class AlokasiPengujiController extends Controller
         $dosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
+            ->where('user.status_user', 'aktif')
             ->select('user.nama', 'dosen.nip', 'dosen.id_dosen')
             ->orderBy('user.nama', 'asc')
             ->get();

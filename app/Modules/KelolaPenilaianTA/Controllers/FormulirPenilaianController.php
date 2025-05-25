@@ -32,6 +32,7 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.nama_fta',
                 'prodi.nama_prodi',
                 'form_penilaian.jenis_form',
+                'form_penilaian.jenis_ta',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta'
             )
@@ -68,6 +69,7 @@ class FormulirPenilaianController extends Controller {
 
         $exists = FormPenilaian::where('id_prodi', $request->namaProdi)
             ->where('jenis_form', $request->jenisForm)
+            ->where('kode_fta', $request->kodeFTA)
             ->when(in_array($request->namaProdi, [1, 2]), function ($query) use ($request) {
                 // Cek jenis_ta jika prodi adalah D3 (id = 1) atau D4 (id = 2)
                 $query->where('jenis_ta', $request->jenisTA);
@@ -225,7 +227,8 @@ class FormulirPenilaianController extends Controller {
             'bobot_kriteria.*' => 'required|integer|min:0|max:100',
         ]);
 
-        $formPenilaian = FormPenilaian::where('id_fta', $id)->firstOrFail();
+        $formPenilaian = FormPenilaian::where('id_fta', $id)->with('kriteriaPenilaian')->firstOrFail();
+        $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian->pluck('id_kriteria')->toArray();
         
         // Update tanggal dan waktu tenggat pengisian
         $formPenilaian->tanggal_tenggat_pengisian = $request->tanggalTenggat;
@@ -242,26 +245,43 @@ class FormulirPenilaianController extends Controller {
                 return redirect()->back()->withErrors(['bobot_kriteria' => 'Total bobot harus 100 persen. Saat ini: ' . $totalBobot . '%']);
             }
             
-            // Hapus kiteria menggunakan id_fta
-            KriteriaPenilaian::where('id_fta', $id_fta)->delete();
-            
-            // Tambah kriteria baru dengan kode_fta dan id_fta
             $namaKriteria = $request->nama_kriteria;
             $bobotKriteria = $request->bobot_kriteria;
+
+            $kriteriaPenilaian = $formPenilaian->kriteriaPenilaian->pluck('id_kriteria')->toArray();
             
-            if ($namaKriteria) {
-                foreach ($namaKriteria as $index => $nama) {
-                    if (empty($nama)) {
-                        continue;
-                    }
-                    
-                    KriteriaPenilaian::create([
-                        'kode_fta' => $kodeFTA,
-                        'id_fta' => $id_fta,
-                        'nama_kriteria' => $nama,
+            foreach ($kriteriaPenilaian as $index => $idKriteria) {
+                if (isset($namaKriteria[$index])) {
+                    KriteriaPenilaian::where('id_kriteria', $idKriteria)->update([
+                        'nama_kriteria' => $namaKriteria[$index],
                         'bobot_kriteria' => $bobotKriteria[$index] ?? 0,
                     ]);
                 }
+            }
+
+            // Jika ada kriteria baru (input lebih banyak dari data lama), insert sisanya
+            for ($i = count($kriteriaPenilaian); $i < count($namaKriteria); $i++) {
+                if (!empty($namaKriteria[$i])) {
+                    KriteriaPenilaian::create([
+                        'kode_fta' => $kodeFTA,
+                        'id_fta' => $id_fta,
+                        'nama_kriteria' => $namaKriteria[$i],
+                        'bobot_kriteria' => $bobotKriteria[$i] ?? 0,
+                    ]);
+                }
+            }
+
+            // Jika ada kriteria lama yang dihapus di form, hapus dari DB
+            if (count($namaKriteria) < count($kriteriaPenilaian)) {
+                $idToKeep = [];
+                for ($i = 0; $i < count($namaKriteria); $i++) {
+                    if (!empty($namaKriteria[$i])) {
+                        $idToKeep[] = $kriteriaPenilaian[$i];
+                    }
+                }
+                KriteriaPenilaian::where('id_fta', $id_fta)
+                    ->whereNotIn('id_kriteria', $idToKeep)
+                    ->delete();
             }
         } else {
             AspekFeedback::where('id_fta', $id_fta)->delete();
@@ -300,6 +320,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -357,6 +378,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -388,6 +410,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -531,6 +554,7 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.nama_fta',
                 'prodi.nama_prodi',
                 'form_penilaian.jenis_form',
+                'form_penilaian.jenis_ta',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta')
             ->get()

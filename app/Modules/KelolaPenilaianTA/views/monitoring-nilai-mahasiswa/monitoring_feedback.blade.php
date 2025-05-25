@@ -12,7 +12,7 @@
         @if($routeName === 'monitoring.feedback')
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                     ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                     ['url' => '', 'label' => 'Detail Feedback']
                 ]

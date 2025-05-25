@@ -391,31 +391,31 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
         // Not So Sure About This
         // Kirim Notifikasi hanya ke dosen pembimbing saja (bukan penguji)
         // Query dosen pembimbing melalui relasi $kota
-        $kota = Kota::find($id_kota);
-        if ($kota) {
-            // Asumsi relasi: $kota->pengajuanPembimbing()->latest()->first()->pembimbing1->user->username
-            $pengajuan = $kota->pengajuanPembimbing()->latest()->first();
-            $pembimbing1 = $pengajuan?->pembimbing1?->user?->username;
-            $pembimbing2 = $pengajuan?->pembimbing2?->user?->username;
-            if ($pembimbing1) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $pembimbing1,
-                    [
-                        'nama_ruangan' => $nama_ruangan
-                    ]
-                );
-            }
-            if ($pembimbing2) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $pembimbing2,
-                    [
-                        'nama_ruangan' => $nama_ruangan
-                    ]
-                );
-            }
-        }
+        // $kota = Kota::find($id_kota);
+        // if ($kota) {
+        //     // Asumsi relasi: $kota->pengajuanPembimbing()->latest()->first()->pembimbing1->user->username
+        //     $pengajuan = $kota->pengajuanPembimbing()->latest()->first();
+        //     $pembimbing1 = $pengajuan?->pembimbing1?->user?->username;
+        //     $pembimbing2 = $pengajuan?->pembimbing2?->user?->username;
+        //     if ($pembimbing1) {
+        //         Notifikasi::kirim(
+        //             '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+        //             $pembimbing1,
+        //             [
+        //                 'nama_ruangan' => $nama_ruangan
+        //             ]
+        //         );
+        //     }
+        //     if ($pembimbing2) {
+        //         Notifikasi::kirim(
+        //             '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+        //             $pembimbing2,
+        //             [
+        //                 'nama_ruangan' => $nama_ruangan
+        //             ]
+        //         );
+        //     }
+        // }
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }

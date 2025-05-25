@@ -19,7 +19,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
@@ -103,12 +103,12 @@
                         default => 'Topik Tugas Akhir'
                     } }}
                 </strong> <br>
-                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
 
         <!-- Tombol Lihat Dokumen -->
-        <!-- <div class="row mt-4">
+        <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
                     {{ match ($data['namaFta']) {
@@ -118,30 +118,53 @@
                         'sidang akhir' => 'Sidang Akhir',
                         default => ''
                     } }}
-                </strong> <br> -->
+                </strong> <br>
 
                 <!-- Tombol Preview Laporan -->
-                <!-- <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen(
+                        '{{ $dokumen['laporan']->file_path ?? '' }}',
+                        '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                        '{{ $dokumen['laporan']->kategori ?? '' }}'
+                    )"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['laporan'] ? '' : 'disabled' }}>
                     Laporan <i class="fa-solid fa-file"></i>
-                </button> -->
+                </button>
 
                 <!-- Tombol Preview PowerPoint -->
-                <!-- <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
+                <button type="button" class="btn btn-primary btn-prev"
+                    onclick="LihatDokumen(
+                        '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                        '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                        '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                    )"
                     data-toggle="modal" data-target="#LihatDokumen"
                     {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
                     PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
                 </button>
             </div>
-        </div> -->
+        </div>
 
         <!-- Modal Lihat Dokumen -->
-        <!-- <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
             <div class="row px-3">
-                <div class="col-md-12">
+                <div class="col-md-3 mb-2">
+                    <label class="mt-2">Aksi File</label>
+                    <div class="d-flex flex-column">
+                        <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#"
+                        class="btn btn-success"
+                        id="view_file_download"
+                        data-url-template="{{ route('dokumen.download', ['kategori' => '__kategori__', 'id' => '__id__']) }}">
+                            <i class="fas fa-download"></i> Unduh
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-9 mb-2">
+                    <label class="form-label">Pratinjau Dokumen</label>
                     <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
                         <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
                         <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
@@ -155,7 +178,7 @@
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
             </x-slot>
-        </x-adminlte-modal> -->
+        </x-adminlte-modal>
 
         <!-- Judul Form -->      
         <h3 class="heading-spacing text-center">
@@ -206,17 +229,22 @@
                     @endphp
 
                     <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="{{ $oldValue }}">
-                    <trix-editor input="feedback-{{ $index }}"></trix-editor>
-                    <span>Masukan minimal 30 kata.</span>
+                    <trix-editor
+                        input="feedback-{{ $index }}"
+                        {{ $isPublished ? 'readonly contenteditable=false' : '' }}>
+                    </trix-editor>
+                    <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 30 kata.</span>
                 </div>
             @endforeach
             @endif
             
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
-                    Simpan <i class="fa-solid fa-floppy-disk"></i>
-                </button>
-            </div>
+            @if (!$isPublished)
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
+                        Simpan <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
 @stop
