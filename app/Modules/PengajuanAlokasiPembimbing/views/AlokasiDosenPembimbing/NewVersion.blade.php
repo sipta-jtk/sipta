@@ -495,26 +495,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                                                                                <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                                `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                <td class="p-1">
-                                                                                                                                                                    <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                                                                                        ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                                                                                    </span>
-                                                                                                                                                                </td>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                    <td class="p-1">
+                                                                                                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                                        </span>
+                                                                                                                                                                    </td>
+                                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                                `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -755,26 +755,27 @@
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {
-                    console.log(response);
-                    var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
-                    if (pembimbing.hasClass("bg-warning")) {
-                        pembimbing.removeClass("bg-warning");
-                        pembimbing.addClass("bg-success");
-                        $(caller).removeClass("btn-success");
-                        $(caller).addClass("btn-warning");
-                        $(caller).find('i').removeClass('fa-check').addClass('fa-undo');
+                    if (response.status == 'success') {
+                        var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                        if (pembimbing.hasClass("bg-warning")) {
+                            pembimbing.removeClass("bg-warning");
+                            pembimbing.addClass("bg-success");
+                            $(caller).removeClass("btn-success");
+                            $(caller).addClass("btn-warning");
+                            $(caller).find('i').removeClass('fa-check').addClass('fa-undo');
+                        } else {
+                            pembimbing.removeClass("bg-success");
+                            pembimbing.addClass("bg-warning");
+
+                            $(caller).removeClass("btn-warning");
+                            $(caller).addClass("btn-success");
+                            $(caller).find('i').removeClass('fa-undo');
+                            $(caller).find('i').addClass('fa-check');
+                        }
+                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
                     } else {
-                        pembimbing.removeClass("bg-success");
-                        pembimbing.addClass("bg-warning");
-
-                        $(caller).removeClass("btn-warning");
-                        $(caller).addClass("btn-success");
-                        $(caller).find('i').removeClass('fa-undo');
-                        $(caller).find('i').addClass('fa-check');
+                        toast(response.status, 'Gagal', response.message);
                     }
-
-
-                    toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
