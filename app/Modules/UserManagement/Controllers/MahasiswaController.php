@@ -70,11 +70,11 @@ class MahasiswaController extends Controller
 
         DB::commit();
     // Template Telah Diganti(Belum ada) 
-    // Notifikasi::kirim(
-    //     '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
-    //     $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
-    //     []
-    // );
+    Notifikasi::kirim(
+        '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
+        $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
+        []
+    );
         return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
     } catch (\Exception $e) {
         DB::rollBack();
@@ -247,18 +247,29 @@ public function import(Request $request)
         // 3. Bulk Insert
         User::insert($users);
         Mahasiswa::insert($mahasiswa);
-        DB::commit();  
-            //Template Telah Diganti(Belum ada)
-        // if (!empty($users)) {
-        //     foreach ($users as $user) {
-        //         Notifikasi::kirim(
-        //             '[Pemberitahuan] Akun Berhasil Dibuat',
-        //             $user['username'], // Kirim notifikasi ke username akun yang dibuat
-        //             []
-        //         );
-        //     }
-        // } 
-        return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
+        DB::commit();
+
+// Send notifications to new users
+if (!empty($users)) {
+    foreach ($users as $user) {
+        try {
+            Notifikasi::kirim(
+                '[Pemberitahuan] Akun Berhasil Dibuat',
+                $user['username'],
+                [
+                    'nama' => $user['nama'],
+                    'email' => $user['email']
+                ]
+            );
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                'username' => $user['username']
+            ]);
+        }
+    }
+}
+
+return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
     }
     catch (\Exception $e) {
         DB::rollBack();

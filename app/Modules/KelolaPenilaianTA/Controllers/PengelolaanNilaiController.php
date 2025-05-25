@@ -363,16 +363,24 @@ class PengelolaanNilaiController extends Controller
             return back()->with('error', 'Nilai untuk Kelompok ini belum lengkap.');
         }
 
-        // Kirim notifikasi
-        // foreach ($mahasiswa as $mhs) {
-        //     Notifikasi::kirim(
-        //         'Nilai sudah di publikasikan', // template notifikasi
-        //         $mhs->user->username, // id user/mahasiswa tujuan
-        //         [
-        //             'nama_dosen' => auth()->user()->nama, // dosen pengirim
-        //         ]
-        //     );
-        // }
+        try {
+            // Get all mahasiswa with same id_kota
+            $mahasiswaKota = Mahasiswa::where('id_kota', $idKota)
+                ->with('user')
+                ->get();
+
+            foreach ($mahasiswaKota as $mhs) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Nilai sudah di publikasikan',
+                    $mhs->user->username,
+                    [
+                        'nama_dosen' => auth()->user()->nama,
+                    ]
+                );
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi publikasi nilai: ' . $notifEx->getMessage());
+        }
 
         $detailFeedback->update(['status_penilaian_dosen' => $status]);
         $nilaiKategori->update(['status_penilaian_dosen' => $status]);
