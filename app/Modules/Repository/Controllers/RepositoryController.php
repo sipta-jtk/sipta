@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\PengajuanPembimbing;
+use Illuminate\Support\Facades\Log;
 
 
 Carbon::setlocale(LC_TIME, 'id');
@@ -264,29 +265,34 @@ class RepositoryController extends Controller
             Dokumen::create($data);
 
             try {
-                // Get alokasi dosen pembimbing through pengajuan_pembimbing
-                $alokasiDosen = AlokasiDosen::whereHas('pengajuanPembimbing', function($query) use ($id_kota) {
-                    $query->where('id_kota', $id_kota)
-                          ->where('status_pengajuan', 'diterima');
-                })
-                ->where('tipe_alokasi', 'pembimbing')
-                ->where('status_alokasi', 'fix')
-                ->first();
+                // Get pengajuan pembimbing directly for this kota
+                $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $id_kota)
+                    ->where('status_pengajuan', 'diterima')
+                    ->latest()
+                    ->first();
 
-                if ($alokasiDosen) {
-                    Notifikasi::kirim(
-                        '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
-                        $alokasiDosen->nip,
-                        [
-                            'kategori' => $kategori,
-                            'judul_dokumen' => $request->judul,
-                            'nama_mahasiswa' => auth()->user()->nama,
-                            'subkategori' => $subkategoriName
-                        ]
-                    );
+                if ($pengajuanPembimbing) {
+                    // Get supervisor from alokasi dosen
+                    $alokasiDosen = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuanPembimbing->id_pengajuan_pembimbing)
+                        ->where('tipe_alokasi', 'pembimbing')
+                        ->where('status_alokasi', 'fix')
+                        ->first();
+
+                    if ($alokasiDosen && $alokasiDosen->dosen) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
+                            $alokasiDosen->dosen->user->username,
+                            [
+                                'kategori' => $kategori,
+                                'judul_dokumen' => $request->judul,
+                                'nama_mahasiswa' => auth()->user()->nama,
+                                'subkategori' => $subkategoriName
+                            ]
+                        );
+                    }
                 }
             } catch (\Exception $notifEx) {
-                \Log::error('Gagal mengirim notifikasi dokumen baru: ' . $notifEx->getMessage(), [
+                Log::error('Gagal mengirim notifikasi dokumen baru: ' . $notifEx->getMessage(), [
                     'id_kota' => $id_kota,
                     'kategori' => $kategori
                 ]);
@@ -710,31 +716,41 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
+            // Get mahasiswa and their pengajuan pembimbing properly
             $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
-            $pengajuan = $mahasiswa ? $mahasiswa->pengajuanPembimbing()->latest()->first() : null;
-            $Anggota1 = $pengajuan?->pembimbing1?->user?->username ?? null;
-            $Anggota2 = $pengajuan?->penguji1?->user?->username ?? null;
-            $Anggota3 = $pengajuan?->penguji2?->user?->username ?? null;
+
+            if (!$mahasiswa) {
+                return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
+            }
+
+            // Get the latest accepted pengajuan pembimbing for this mahasiswa
+            $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
+                ->where('status_pengajuan', 'diterima')
+                ->latest()
+                ->first();
 
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
 
             try {
-                // Send notifications to all members
-                $recipients = array_filter([$Anggota1, $Anggota2, $Anggota3]);
-                
-                foreach ($recipients as $username) {
+                // Send notification to the student (document owner)
+                if ($mahasiswa->user) {
                     Notifikasi::kirim(
                         '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
-                        $username,
-                        ['catatan' => $request->input_notes]
+                        $mahasiswa->user->username,
+                        [
+                            'catatan' => $request->input_notes,
+                            'judul_dokumen' => $dokumen->judul,
+                            'kategori' => $dokumen->kategori,
+                            'nama_dosen' => auth()->user()->nama
+                        ]
                     );
                 }
             } catch (\Exception $notifEx) {
-                \Log::error('Gagal mengirim notifikasi review dokumen: ' . $notifEx->getMessage(), [
+                Log::error('Gagal mengirim notifikasi review dokumen: ' . $notifEx->getMessage(), [
                     'id_dokumen' => $dokumen->id_dokumen,
-                    'recipients' => [$Anggota1, $Anggota2, $Anggota3]
+                    'mahasiswa_nim' => $mahasiswa->nim
                 ]);
             }
 
@@ -768,7 +784,7 @@ class RepositoryController extends Controller
 
         // Apply subkategori filter in PHP (if needed)
         if ($subkategori) {
-            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+            $filteredData = $filteredData->filter(function ($item) use ($subkategori) {
                 return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
             });
         }
