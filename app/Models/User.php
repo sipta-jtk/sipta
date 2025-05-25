@@ -84,7 +84,13 @@ class User extends Authenticatable
     public function adminlte_image()
     {
         if ($this->photo && Storage::disk('public')->exists($this->photo)) {
-            return Storage::url($this->photo);
+            $prefix = env('PREFIX_URL');
+            
+            if (env('APP_ENV') == 'local') {
+                return Storage::url($this->photo);
+            }else{
+                return $prefix . Storage::url($this->photo);
+            }
         }
 
         return asset('default/default-profile.jpg');
