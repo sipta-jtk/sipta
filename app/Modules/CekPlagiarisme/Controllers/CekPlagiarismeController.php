@@ -158,19 +158,33 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            // $parser = new Parser();
-            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            // $text = $pdf->getText();
-
-            // $similarity = extractOverallSimilarity($text);
-            // $sources = extractSourceLinks($text);
-
-            // \Log::info('Extracted similarity and sources', [
-            //     'similarity' => $similarity,
-            //     'sources' => $sources
-            // ]);
-
-            // Simpan dokumen utama
+            <?php
+            $parser = new Parser();
+            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            $text = $pdf->getText();
+            
+            // Detailed logging for PDF parsing
+            Log::info('PDF parsing complete', [
+                'file_path' => $filePathDokumen,
+                'text_length' => strlen($text),
+                'storage_path' => storage_path('app/public/' . $filePathDokumen)
+            ]);
+            
+            // Fix: Use $this-> to call class methods
+            $similarity = $this->extractOverallSimilarity($text);
+            $sources = $this->extractSourceLinks($text);
+            
+            // Log the extracted data with more context
+            Log::info('Extracted plagiarism data from PDF', [
+                'similarity_percentage' => $similarity,
+                'sources_count' => count($sources),
+                'sources' => $sources,
+                'document_title' => $validated['judul'],
+                'user_id' => $user->id,
+                'username' => $nim
+            ]);
+            
+            // Create document with detailed attribute logging
             $dokumen = Dokumen::create([
                 'judul' => $validated['judul'],
                 'file_path' => $filePathDokumen,
@@ -186,9 +200,27 @@ class CekPlagiarismeController extends Controller
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                // 'persentase_plagiarisme' => $similarity,
+                'persentase_plagiarisme' => $similarity,
             ]);
-
+            
+            // Log document creation with all attributes
+            Log::info('Plagiarism document created', [
+                'id_dokumen' => $dokumen->id_dokumen,
+                'judul' => $dokumen->judul,
+                'file_path' => $dokumen->file_path,
+                'user_id' => $dokumen->user_id,
+                'username' => $dokumen->username,
+                'versi' => $dokumen->versi,
+                'ukuran_file' => $dokumen->ukuran_file,
+                'kategori' => $dokumen->kategori,
+                'deskripsi' => $dokumen->deskripsi,
+                'id_kota' => $dokumen->id_kota,
+                'id_ambang_batas' => $dokumen->id_ambang_batas,
+                'persentase_plagiarisme' => $dokumen->persentase_plagiarisme,
+                'threshold_exceeded' => $similarity !== null ? ($similarity >= ($ambangBatasAktif?->ambang_batas ?? 20)) : 'unknown',
+                'created_at' => $dokumen->created_at->toDateTimeString()
+            ]);
+            
             // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
                 'judul' => $validated['judul'] . ' - Digital Receipt',
