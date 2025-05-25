@@ -230,9 +230,7 @@ class CekPlagiarismeController extends Controller
 
             DB::commit();
 
-            return redirect()
-                ->route('dokumen.index')
-                ->with('success', 'Dokumen berhasil diunggah dan diproses.');
+            return redirect()->route('cekplagiarisme.index'); // asalkan kamu definisikan route-nya
         } catch (\Throwable $e) {
             DB::rollBack();
 
