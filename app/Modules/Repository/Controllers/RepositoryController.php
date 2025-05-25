@@ -261,6 +261,8 @@ class RepositoryController extends Controller
                 $data['kode_fta'] = $request->kode_fta;
             }
 
+            Dokumen::create($data);
+
             // $nipDosen = auth()->user()->dosen->nip ?? null;
 
             // Ambil data mahasiswa berdasarkan username
