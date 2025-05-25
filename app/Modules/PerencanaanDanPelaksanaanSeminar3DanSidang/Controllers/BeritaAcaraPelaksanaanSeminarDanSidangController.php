@@ -234,25 +234,23 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $kehadiran->save();
     
 
-                // Not So Sure About This
-        $nimKelompok = $kehadiran->user->nim ?? $kehadiran->user->username ?? null;
-        if ($nimKelompok) {
-            $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimKelompok)->first();
-            if ($mahasiswa) {
-                // Ambil semua anggota kelompok (termasuk pemilik)
-                $anggotaKelompok = $mahasiswa->anggotaKelompokTA()->pluck('nim');
-                // Jika tidak ada relasi, minimal kirim ke pemilik
-                if ($anggotaKelompok->isEmpty()) {
-                    $anggotaKelompok = collect([$nimKelompok]);
-                }
-                foreach ($anggotaKelompok as $nimAnggota) {
-                    Notifikasi::kirim(
-                        '[Pemberitahuan] Pemberitahuan Lulus Sidang',
-                        $nimAnggota,
-                        []
-                    );
-                }
+        // Kirim notifikasi ke mahasiswa yang hadir
+        try {
+            if ($kehadiran->username) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pemberitahuan Hasil Sidang',
+                    $kehadiran->username,
+                    [
+                        'status_kelulusan' => $kehadiran->status_kelulusan,
+                        'tanggal_sidang' => $kehadiran->penjadwalan->tanggal ?? '-'
+                    ]
+                );
             }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi hasil sidang: ' . $notifEx->getMessage(), [
+                'id_kehadiran' => $kehadiran->id_kehadiran,
+                'username' => $kehadiran->username
+            ]);
         }
 
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');

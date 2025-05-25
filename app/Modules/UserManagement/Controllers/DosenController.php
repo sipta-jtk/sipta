@@ -66,17 +66,29 @@ class DosenController extends Controller
 
         DB::commit();
 
-        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+        // Add notification inside try block
+        try {
+            Notifikasi::kirim(
+                '[Pemberitahuan] Role Berhasil Diperbarui',
+                $nip,
+                [
+                    'role_baru' => $request->role,
+                    'old_role' => $old_role
+                ]
+            );
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi update role: ' . $notifEx->getMessage(), [
+                'nip' => $nip,
+                'role' => $request->role
+            ]);
         }
-        // Template Telah diganti (Belum Ada)
-        // Notifikasi::kirim(
-        //     '[Pemberitahuan] Role Berhasil Diperbarui',
-        //     $nip, // Kirim notifikasi ke NIP dosen yang diupdate
-        //     []
-        // );
+
+        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+    }
+
     }
 
     /**
@@ -137,12 +149,22 @@ class DosenController extends Controller
             ]);
 
             DB::commit();
-        // Template Telah diganti (Belum Ada)
-        // Notifikasi::kirim(
-        //     '[Pemberitahuan] Akun Berhasil Dibuat',
-        //     $request->nip, // Kirim notifikasi ke NIP dosen yang baru dibuat
-        //     []
-        // );
+
+            try {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
+                    $request->nip,
+                    [
+                        'nama' => $request->nama,
+                        'email' => $request->email
+                    ]
+                );
+            } catch (\Exception $notifEx) {
+                \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                    'nip' => $request->nip
+                ]);
+            }
+
             return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -359,16 +381,26 @@ class DosenController extends Controller
         Dosen::insert($dosen);
         DB::commit();
 
-        // Template Telah diganti (Belum Ada)
-        // if (!empty($users)) {
-        //     foreach ($users as $user) {
-        //         Notifikasi::kirim(
-        //             '[Pemberitahuan] Akun Berhasil Dibuat',
-        //             $user['username'], // Kirim notifikasi ke username akun yang dibuat
-        //             []
-        //         );
-        //     }
-        // }
+        // Send notifications to new users
+        try {
+            if (!empty($users)) {
+                foreach ($users as $user) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Akun Berhasil Dibuat',
+                        $user['username'],
+                        [
+                            'nama' => $user['nama'],
+                            'email' => $user['email']
+                        ]
+                    );
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi bulk import: ' . $notifEx->getMessage(), [
+                'username' => $user['username']
+            ]);
+        }
+
         return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil dimasukkan dan diimport!');
         } catch (\Exception $e) {
             DB::rollBack();
