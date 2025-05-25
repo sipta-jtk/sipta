@@ -495,26 +495,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                                                                                    <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                                                                                                `).join('')}
+                                                                                                                                                                            <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                                        `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                    <td class="p-1">
-                                                                                                                                                                        <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                                                                                            ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                                                                                        </span>
-                                                                                                                                                                    </td>
-                                                                                                                                                                `).join('')}
+                                                                                                                                                                            <td class="p-1">
+                                                                                                                                                                                <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                                                    ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                                                </span>
+                                                                                                                                                                            </td>
+                                                                                                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                    <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                                                                                                `).join('')}
+                                                                                                                                                                            <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -708,6 +708,7 @@
                             let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
                             pembimbing.removeClass("bg-success");
                             pembimbing.addClass("bg-warning");
+                            updateKuotaDosen();
                         } else {
                             toast(response.status, 'Gagal', response.message);
                         }
@@ -731,6 +732,7 @@
                             let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
                             pembimbing.removeClass("bg-success");
                             pembimbing.addClass("bg-warning");
+                            updateKuotaDosen();
                         } else {
                             toast(response.status, 'Gagal', response.message);
                         }
@@ -784,9 +786,9 @@
         }
 
         // onchange on .alokasiInputText
-        $('.alokasiInputText').on('change', function() {
-            updateKuotaDosen();
-        });
+        // $('.alokasiInputText').on('change', function() {
+        //     updateKuotaDosen();
+        // });
 
         // REN REN
         function confirmSendNotification() {
