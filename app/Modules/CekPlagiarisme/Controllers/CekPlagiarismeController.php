@@ -23,20 +23,31 @@ class CekPlagiarismeController extends Controller
 {
     function extractOverallSimilarity($pdfText)
     {
-        // Cari baris yang mengandung 'Overall Similarity'
-        preg_match('/(\d+)% Overall Similarity/i', $pdfText, $matches);
-        return isset($matches[1]) ? (int)$matches[1] : null;
+        if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
+
+        if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
+
+        return null;
     }
+
 
     function extractSourceLinks($pdfText)
     {
-        // Cari semua URL
-        preg_match_all('/https?:\/\/[^\s"]+/i', $pdfText, $matches);
+        $cleanText = preg_replace("/\n|\r/", '', $pdfText);
 
-        // Hilangkan duplikat dan kembalikan array hasil
-        $uniqueLinks = array_unique($matches[0]);
-        return array_values($uniqueLinks);
+        preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
+
+        $links = array_map(function ($url) {
+            return rtrim($url, ".,)");
+        }, $matches[0]);
+
+        return array_values(array_unique($links));
     }
+
     
     public function getData()
     {
@@ -166,6 +177,7 @@ class CekPlagiarismeController extends Controller
             Log::info('PDF parsing complete', [
                 'file_path' => $filePathDokumen,
                 'text_length' => strlen($text),
+                'ISI TEXT' => $text,
                 'storage_path' => storage_path('app/public/' . $filePathDokumen)
             ]);
             
