@@ -177,6 +177,7 @@ class CekPlagiarismeController extends Controller
             Log::info('PDF parsing complete', [
                 'file_path' => $filePathDokumen,
                 'text_length' => strlen($text),
+                'ISI TEXT' => $text,
                 'storage_path' => storage_path('app/public/' . $filePathDokumen)
             ]);
             
