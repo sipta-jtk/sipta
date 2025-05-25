@@ -69,12 +69,24 @@ class MahasiswaController extends Controller
         ]);
 
         DB::commit();
-    // Template Telah Diganti(Belum ada) 
-    Notifikasi::kirim(
-        '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
-        $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
-        []
-    );
+
+        // Send notification with error handling
+        try {
+            Notifikasi::kirim(
+                '[Pemberitahuan] Akun Berhasil Dibuat',
+                $request->nim,
+                [
+                    'nama' => $request->nama,
+                    'email' => $request->email
+                ]
+            );
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                'nim' => $request->nim,
+                'nama' => $request->nama
+            ]);
+        }
+
         return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
     } catch (\Exception $e) {
         DB::rollBack();

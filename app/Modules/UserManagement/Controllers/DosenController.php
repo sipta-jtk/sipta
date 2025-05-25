@@ -39,7 +39,6 @@ class DosenController extends Controller
     ]);
 
     DB::beginTransaction();
-
     try {
         $nip = $request->nip;
         $old_role = Dosen::where('nip', $nip)->value('role_dosen');
@@ -57,7 +56,6 @@ class DosenController extends Controller
                 return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: Dosen ini sudah menjadi Kaprodi!');
             }
         }
-
             
         // Update selected dosen's role
         Dosen::where('nip', $nip)->update([
@@ -72,7 +70,8 @@ class DosenController extends Controller
                 '[Pemberitahuan] Role Berhasil Diperbarui',
                 $nip,
                 [
-                    'role_baru' => $request->role
+                    'role_baru' => $request->role,
+                    'old_role' => $old_role
                 ]
             );
         } catch (\Exception $notifEx) {
@@ -83,16 +82,11 @@ class DosenController extends Controller
         }
 
         return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
-        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+    }
 
-        Notifikasi::kirim(
-            '[Pemberitahuan] Role Berhasil Diperbarui',
-            $nip, // Kirim notifikasi ke NIP dosen yang diupdate
-            []
-        );
     }
 
     /**

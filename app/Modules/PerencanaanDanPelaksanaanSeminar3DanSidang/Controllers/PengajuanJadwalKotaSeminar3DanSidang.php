@@ -388,6 +388,9 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_koordinator_ta' => null,
         ]);
 
+
+        try {
+            
         // Get dosen information
         $pembimbingPenguji = User::select('user.username', 'user.nama', 'alokasi_dosen.tipe_alokasi')
             ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
@@ -396,11 +399,8 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             ->where('alokasi_dosen.status_alokasi', 'fix')
             ->where('pengajuan_pembimbing.id_kota', $id_kota)
             ->get();
-
-        // Get koordinator TA
-        $koordinatorTA = User::where('role_user', 'koordinator')->first();
-
-        try {
+            // Get koordinator TA
+            $koordinatorTA = User::where('role_user', 'koordinator')->first();
             // Kirim notifikasi ke pembimbing dan penguji
             foreach ($pembimbingPenguji as $dosen) {
                 $tipeDosen = $dosen->tipe_alokasi === 'pembimbing' ? 'Pembimbing' : 'Penguji';
