@@ -20,8 +20,21 @@ Carbon::setLocale('id');
 
 class CekPlagiarismeController extends Controller
 {
-    public function getOverallSimilarity() {
+    function extractOverallSimilarity($pdfText)
+    {
+        // Cari baris yang mengandung 'Overall Similarity'
+        preg_match('/(\d+)% Overall Similarity/i', $pdfText, $matches);
+        return isset($matches[1]) ? (int)$matches[1] : null;
+    }
 
+    function extractSourceLinks($pdfText)
+    {
+        // Cari semua URL
+        preg_match_all('/https?:\/\/[^\s"]+/i', $pdfText, $matches);
+
+        // Hilangkan duplikat dan kembalikan array hasil
+        $uniqueLinks = array_unique($matches[0]);
+        return array_values($uniqueLinks);
     }
     
     public function getData()
@@ -149,6 +162,18 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
+            $parser = new Parser();
+            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            $text = $pdf->getText();
+
+            $similarity = extractOverallSimilarity($text);
+            $sources = extractSourceLinks($text);
+
+            \Log::info('Extracted similarity and sources', [
+                'similarity' => $similarity,
+                'sources' => $sources
+            ]);
+
             // Simpan dokumen hasil plagiarisme
             $dokumen = Dokumen::create([
                 'judul' => $request->judul,
@@ -165,6 +190,7 @@ class CekPlagiarismeController extends Controller
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
+                'persentase_plagiarisme' => $similarity,
             ]);
 
             // Debug: Log dokumen plagiarisme
