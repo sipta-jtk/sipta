@@ -90,19 +90,14 @@ class AmbangBatasController extends Controller
                 }
             });
 
-
-        try {
-        foreach ($allUsers as $username) {
-        Notifikasi::kirim(
-            '[Pemberitahuan] Ambang Batas Baru',
-            $username,
-            ['AmbangBatas' => $request->ambang_batas],
-            );
-        }   
-        } catch (\Exception $notifEx) {
-            // Log error notifikasi, bisa menggunakan logger Laravel
-            \Log::error('Gagal mengirim notifikasi Ambang Batas: ' . $notifEx->getMessage());
-        }
+                // Template Telah Diganti (Belum Ada)
+        // foreach ($allUsers as $username) {
+        //     Notifikasi::kirim(
+        //         '[Pemberitahuan] Ambang Batas Baru',
+        //         $username,
+        //         ['AmbangBatas' => $request->ambang_batas],
+        //     );
+        // }
             
             return response()->json($response);
         } catch (\Exception $e) {
