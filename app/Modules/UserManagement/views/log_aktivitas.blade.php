@@ -1,66 +1,42 @@
-@extends('adminlte::page')
-
-@section('title', 'Log Aktivitas')
+@extends('layouts.app') <!-- Sesuaikan jika layout kamu beda -->
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Log Aktivitas - Login</h1>
-
-    {{-- Filter --}}
+<div class="container-fluid">
     <div class="mb-4">
-        <form method="GET" action="{{ route('log-aktivitas.index') }}" class="flex items-center gap-2">
-            <input 
-                type="text" 
-                name="search" 
-                value="{{ request('search') }}" 
-                placeholder="Nama" 
-                class="border rounded p-2"
-            >
-            <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2">Search</button>
-            <a href="{{ route('log-aktivitas.index') }}" class="bg-gray-500 text-white rounded px-4 py-2">Clear</a>
-        </form>
+        <h4 class="fw-bold">Daftar Log Aktivitas</h4>
     </div>
 
-    {{-- Table --}}
-    <div class="overflow-x-auto">
-        <table class="min-w-full border">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="border px-4 py-2">NIP</th>
-                    <th class="border px-4 py-2">Nama</th>
-                    <th class="border px-4 py-2">IP Address</th>
-                    <th class="border px-4 py-2">Timestamp</th>
-                    <th class="border px-4 py-2">Status Aktif</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($logins as $login)
-                    <tr>
-                        <td class="border px-4 py-2">{{ $login->user->username }}</td>
-                        <td class="border px-4 py-2">{{ $login->user->nama }}</td>
-                        <td class="border px-4 py-2">{{ $login->ip_address }}</td>
-                        <td class="border px-4 py-2">{{ $login->waktu_login->format('d-m-Y H:i') }}</td> <!-- Tanggal dan jam -->
-                        <td class="border px-4 py-2">
-                            @php
-                                $diffMinutes = now()->diffInMinutes($login->waktu_login);
-                                if ($diffMinutes < 60) {
-                                    echo $diffMinutes . ' menit yang lalu';
-                                } elseif ($diffMinutes < 1440) {
-                                    echo round($diffMinutes / 60) . ' jam yang lalu';
-                                } else {
-                                    echo round($diffMinutes / 1440) . ' hari yang lalu';
-                                }
-                            @endphp
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="border px-4 py-2 text-center">Tidak ada data login</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>NIP</th>
+                            <th>Nama</th>
+                            <th>Alamat IP</th>
+                            <th>Aktivitas</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($logAktivitas as $log)
+                            <tr>
+                                <td>{{ $log->user->nip ?? '-' }}</td>
+                                <td>{{ $log->user->nama ?? '-' }}</td>
+                                <td>{{ $log->ip_address ?? '-' }}</td>
+                                <td>{{ $log->aktivitas ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($log->waktu_aktivitas)->format('Y-m-d \p\a\d\a H:i') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center">Tidak ada data aktivitas ditemukan</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
-@stop

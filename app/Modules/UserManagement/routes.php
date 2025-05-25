@@ -17,6 +17,8 @@ use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Modules\UserManagement\Controllers\LogAktivitasController;
+
 
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Gate;
@@ -93,6 +95,8 @@ Route::prefix($prefix)->group(function () {
         Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
         Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
         Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
+        Route::put('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
+
 
         // Program Studi
         Route::get('/program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
