@@ -504,11 +504,24 @@
         var abstrakValid = validateAbstrak();
         var keywordValid = validateKeyword();
         
+        // Update status button secara real-time
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
         
-        // Tombol lanjutkan hanya aktif jika judul dan abstrak valid
-        $('#openConfirmBtn').prop('disabled', !(judulValid && abstrakValid && keywordValid));
+        return judulValid && abstrakValid && keywordValid;
+    }
+    
+    // Fungsi untuk update status button
+    function updateButtonStatus(judulValid, abstrakValid, keywordValid) {
+        // Tombol lanjutkan hanya aktif jika semua field valid
+        var allValid = judulValid && abstrakValid && keywordValid;
+        $('#openConfirmBtn').prop('disabled', !allValid);
         
-        return judulValid && abstrakValid;
+        // Visual feedback untuk button
+        if (allValid) {
+            $('#openConfirmBtn').removeClass('btn-secondary').addClass('btn-success');
+        } else {
+            $('#openConfirmBtn').removeClass('btn-success').addClass('btn-secondary');
+        }
     }
     
     // Validasi real-time untuk judul dokumen
@@ -528,6 +541,12 @@
             $('#judulCounter').addClass('text-danger').removeClass('text-muted'); // Counter jadi merah
             $('#judulDokumen').addClass('is-invalid'); // Input merah
             return false;
+        } else if (jumlahKata === 0) {
+            // Tambahan validasi untuk judul kosong
+            $('#judulError').removeClass('d-none').text('Judul tidak boleh kosong.'); 
+            $('#judulCounter').addClass('text-danger').removeClass('text-muted');
+            $('#judulDokumen').addClass('is-invalid');
+            return false;
         } else {
             $('#judulError').addClass('d-none'); // Sembunyikan pesan error
             $('#judulCounter').removeClass('text-danger').addClass('text-muted'); // Counter normal
@@ -537,24 +556,142 @@
     }
 
     function validateKeyword() {
-        var keywordVal = $('#keywordsInput').val().trim();
+        var $input = $('#keywordsInput');
+        var keywordVal = $input.val().trim();
 
+        // Jika kosong, tandai sebagai invalid
         if (keywordVal.length === 0) {
-            $('#keywordsInput').addClass('is-invalid');
+            $input.addClass('is-invalid');
             return false;
         }
 
-        // Capitalize setiap kata di setiap keyword yang dipisahkan koma
-        var capitalized = keywordVal.split(',').map(keyword => {
-            return keyword.trim().split(' ').map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
-        }).filter(Boolean).join(', ');
-
-        $('#keywordsInput').val(capitalized);
-        $('#keywordsInput').removeClass('is-invalid');
+        $input.removeClass('is-invalid');
         return true;
     }
+
+    // Setup keyword input event handlers
+    $(document).ready(function () {
+        // Atur event handler untuk format keyword saat mengetik
+        $('#keywordsInput').on('input', function () {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+
+            // Jika kosong, tandai sebagai invalid
+            if (keywordVal.length === 0) {
+                $input.addClass('is-invalid');
+                return;
+            }
+
+            $input.removeClass('is-invalid');
+        });
+
+        // Format keyword dengan capitalization saat pengguna selesai mengetik
+        $('#keywordsInput').on('blur', function() {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+            
+            if (keywordVal.length === 0) {
+                return;
+            }
+            
+            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
+            var capitalized = keywordVal
+                .split(',')
+                .map(keyword => keyword
+                    .trim()
+                    .split(' ')
+                    .map(word => word.length > 0 ? 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+                    )
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+
+            // Update nilai input yang sudah diformat
+            $input.val(capitalized);
+        });
+
+        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
+        $('#keywordsInput').on('keydown', function(e) {
+            // Kode 32 adalah kode untuk tombol spasi
+            if (e.keyCode === 32) {
+                // Biarkan spasi dimasukkan secara normal
+                return true;
+            }
+        });
+
+        // Opsional: validasi saat submit
+        $('form').on('submit', function (e) {
+            var keywordVal = $('#keywordsInput').val().trim();
+            if (keywordVal.length === 0) {
+                $('#keywordsInput').addClass('is-invalid');
+                e.preventDefault(); // Hentikan submit jika kosong
+            }
+        });
+    });
+
+    // Setup keyword input event handlers
+    $(document).ready(function () {
+        // Atur event handler untuk format keyword saat mengetik
+        $('#keywordsInput').on('input', function () {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+
+            // Jika kosong, tandai sebagai invalid
+            if (keywordVal.length === 0) {
+                $input.addClass('is-invalid');
+                return;
+            }
+
+            $input.removeClass('is-invalid');
+        });
+
+        // Format keyword dengan capitalization saat pengguna selesai mengetik
+        $('#keywordsInput').on('blur', function() {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+            
+            if (keywordVal.length === 0) {
+                return;
+            }
+            
+            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
+            var capitalized = keywordVal
+                .split(',')
+                .map(keyword => keyword
+                    .trim()
+                    .split(' ')
+                    .map(word => word.length > 0 ? 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+                    )
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+
+            // Update nilai input yang sudah diformat
+            $input.val(capitalized);
+        });
+
+        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
+        $('#keywordsInput').on('keydown', function(e) {
+            // Kode 32 adalah kode untuk tombol spasi
+            if (e.keyCode === 32) {
+                // Biarkan spasi dimasukkan secara normal
+                return true;
+            }
+        });
+
+        // Opsional: validasi saat submit
+        $('form').on('submit', function (e) {
+            var keywordVal = $('#keywordsInput').val().trim();
+            if (keywordVal.length === 0) {
+                $('#keywordsInput').addClass('is-invalid');
+                e.preventDefault(); // Hentikan submit jika kosong
+            }
+        });
+    });
 
     
     // Validasi real-time untuk abstrak
@@ -579,14 +716,28 @@
         }
     }
     
-    // Event handler untuk input judul
+    // Event handler untuk input judul - real-time validation
     $('#judulDokumen').on('input', function() {
-        validateForm();
+        var judulValid = validateJudul();
+        var abstrakValid = validateAbstrak();
+        var keywordValid = validateKeyword();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
     });
     
-    // Event handler untuk input abstrak
+    // Event handler untuk input abstrak - real-time validation
     $('#abstrakDokumen').on('input', function() {
-        validateForm();
+        var abstrakValid = validateAbstrak();
+        var judulValid = validateJudul();
+        var keywordValid = validateKeyword();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
+    });
+    
+    // Event handler untuk keyword input - real-time validation
+    $('#keywordsInput').on('input', function() {
+        var keywordValid = validateKeyword();
+        var judulValid = validateJudul();
+        var abstrakValid = validateAbstrak();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
     });
 
     $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
@@ -704,14 +855,16 @@
 
     // Final unggah ke server
     $('#finalUploadBtn').click(function() {
+        // Create form data as before
         let formData = new FormData();
         formData.append('judul', $('#judulDokumen').val());
         formData.append('keywords', $('#keywordsInput').val());
-        formData.append('deskripsi', $('#abstrakDokumen').val()); // Mengubah 'abstrak' menjadi 'deskripsi' sesuai dengan field di database
+        formData.append('deskripsi', $('#abstrakDokumen').val());
         formData.append('dokumen', pdfFile);
         formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
+    
+        // Show loading
         Swal.fire({
             title: 'Mengunggah...',
             allowOutsideClick: false,
@@ -719,23 +872,38 @@
                 Swal.showLoading();
             }
         });
-
+    
+        // Debug the URL being created
+        console.log("Sending to URL:", createApiUrl('/cek-plagiarisme/process'));
+    
+        // Explicitly set HTTP headers
         $.ajax({
-            url: createApiUrl('/cekplagiarisme/process'),
-            method: 'POST',
+            url: createApiUrl('/cek-plagiarisme/process'),
+            method: 'POST', 
+            type: 'POST', // Added for compatibility with some jQuery versions
             data: formData,
             contentType: false,
             processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function(response) {
+                console.log("Success response:", response);
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });
-                $('#confirmModal').modal('hide'); // Tutup modal konfirmasi
-                $('#uploadModal').modal('hide'); // Tutup modal upload
-                resetUploadForm(); // Reset form upload
+                $('#confirmModal').modal('hide');
+                $('#uploadModal').modal('hide');
+                resetUploadForm();
             },
-            error: function(xhr) {
-                Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
+            error: function(xhr, status, error) {
+                console.error("Error details:", {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText
+                });
+                Swal.fire('Gagal', 'Gagal mengunggah dokumen: ' + error, 'error');
             }
         });
     });

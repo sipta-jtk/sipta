@@ -1,9 +1,9 @@
-name: Deploy Staging
+name: Deploy Production
 
 on:
   push:
     branches:
-      - staging
+      - production
     paths-ignore:
       - '.github/workflows/**'
       - 'README.md'
