@@ -88,11 +88,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         fetchPreferences();
 
-<<<<<<< HEAD
-        document.querySelector(".btn-primary").addEventListener("click", function (e) {
-=======
         document.querySelector(".btn-primary").addEventListener("click", function(e) {
->>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
             e.preventDefault();
             savePreferences();
         });
@@ -100,20 +96,6 @@
 
     function fetchPreferences() {
         fetch("{{ route('preferensi.notifikasi.get') }}", {
-<<<<<<< HEAD
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                document.getElementById("emailSwitch").checked = data.email;
-                document.getElementById("reminderSwitch").checked = data.reminder_h5; 
-            }
-        });
-=======
                 method: "GET",
                 headers: {
                     "Accept": "application/json",
@@ -126,7 +108,6 @@
                     document.getElementById("reminderSwitch").checked = data.reminder_h5;
                 }
             });
->>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
     }
 
     function savePreferences() {
@@ -134,24 +115,6 @@
         let reminder = document.getElementById("reminderSwitch").checked ? 1 : 0;
 
         fetch("{{ route('preferensi.notifikasi.store') }}", {
-<<<<<<< HEAD
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                email: email,
-                reminder_h5: reminder 
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            $("#myModals").modal("hide"); 
-        })
-        .catch(error => console.error("Error:", error));
-=======
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -168,6 +131,5 @@
                 $("#myModals").modal("hide");
             })
             .catch(error => console.error("Error:", error));
->>>>>>> 4648624a4d867c5499c6ea03fb61efb2324deb3a
     }
 </script>
