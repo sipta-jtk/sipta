@@ -64,43 +64,98 @@ class DashboardController extends Controller
                     }
                 } catch (\Exception $e) {}
 
-                // Berkas Seminar 3
                 $idKota = $mahasiswa->id_kota;
-                $pengajuanSeminar = VerifikasiBerkasPengajuan::where('id_kota', $idKota)->first();
-                if($pengajuanSeminar) {
-                    $pengajuanSeminar->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSeminar->tanggal_pengajuan)->translatedFormat('d F Y H:i');
-                }
+                // Berkas Seminar 3
+                $laporanSeminar3 = Dokumen::with('subkategori')
+                    ->where('kategori', 'seminar3')
+                    ->where('id_subkategori', 1)
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
+                
+                $fta10 = Dokumen::with('subkategori')
+                    ->where('kategori', 'seminar3')
+                    ->where('id_subkategori', 2)
+                    ->where('kode_fta', 'FTA-10')
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
+                    
+                $fta10a = Dokumen::with('subkategori')
+                    ->where('kategori', 'seminar3')
+                    ->where('id_subkategori', 2)
+                    ->where('kode_fta', 'FTA-10a')
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
 
-                $dokumenWajibSeminar = [
-                    ['nama' => 'Laporan', 'id_subkategori' => 1],
-                    ['nama' => 'FTA 10', 'id_subkategori' => 2, 'kode_fta' => 'FTA-10'],
-                    ['nama' => 'FTA 10a', 'id_subkategori' => 2, 'kode_fta' => 'FTA-10a'],
-                    ['nama' => 'Presentasi', 'id_subkategori' => 3],
-                ];
-                $dokumenSeminar = $this->cekDokumen($dokumenWajibSeminar, $idKota);
+                $pptSeminar3 = Dokumen::with('subkategori')
+                    ->where('kategori', 'seminar3')
+                    ->where('id_subkategori', 3)
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
 
                 // Berkas Sidang
-                $pengajuanSidang = VerifikasiBerkasPengajuan::where('id_kota', $idKota)
-                    ->where('jenis_pengajuan', 'sidang_akhir')
+                $laporanSidang = Dokumen::with('subkategori')
+                    ->where('kategori', 'sidang')
+                    ->where('id_subkategori', 1)
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
                     ->first();
-                if($pengajuanSidang) {
-                    $pengajuanSidang->formatted_tanggal_pengajuan = Carbon::parse($pengajuanSidang->tanggal_pengajuan)->translatedFormat('d F Y H:i');
-                }
+                
+                $fta14 = Dokumen::with('subkategori')
+                    ->where('kategori', 'sidang')
+                    ->where('id_subkategori', 2)
+                    ->where('kode_fta', 'FTA-14')
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
 
-                $dokumenWajibSidang = [
-                    ['nama' => 'FTA 14', 'id_subkategori' => 2, 'kode_fta' => 'FTA-14'],
-                    ['nama' => 'FTA 14a', 'id_subkategori' => 2, 'kode_fta' => 'FTA-14a'],
-                    ['nama' => 'Laporan Tugas Akhir', 'id_subkategori' => 1],
-                    ['nama' => 'Presentasi', 'id_subkategori' => 3],
-                ];
+                $fta14a = Dokumen::with('subkategori')
+                    ->where('kategori', 'sidang')
+                    ->where('id_subkategori', 2)
+                    ->where('kode_fta', 'FTA-14a')
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
 
-                $dokumenSidang = $this->cekDokumen($dokumenWajibSidang, $idKota);
+                $pptSidang = Dokumen::with('subkategori')
+                    ->where('kategori', 'sidang')
+                    ->where('id_subkategori', 3)
+                    ->where('id_kota', $idKota)
+                    ->when($user->can('mahasiswa_ta'), function ($q) use ($user) {
+                        $q->where('username', $user->username);
+                    })
+                    ->orderBy('versi', 'desc')
+                    ->first();
 
                 return view('welcome', compact(
                     'user', 'mahasiswa', 'prodi',
                     'kota', 'anggotaKelompok', 'pembimbing',
-                    'pengajuanSeminar', 'dokumenSeminar',
-                    'pengajuanSidang', 'dokumenSidang'
+                    'laporanSeminar3', 'fta10', 'fta10a', 'pptSeminar3',
+                    'laporanSidang', 'fta14', 'fta14a', 'pptSidang',
                 ));
             }
 
