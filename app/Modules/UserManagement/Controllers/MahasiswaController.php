@@ -70,11 +70,11 @@ class MahasiswaController extends Controller
 
         DB::commit();
     // Template Telah Diganti(Belum ada) 
-    Notifikasi::kirim(
-        '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
-        $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
-        []
-    );
+    // Notifikasi::kirim(
+    //     '[Pemberitahuan] Akun Berhasil Dibuat', // Judul template notifikasi
+    //     $request->nim, // Kirim notifikasi ke username (NIM) akun yang dibuat
+    //     []
+    // );
         return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
     } catch (\Exception $e) {
         DB::rollBack();
@@ -249,15 +249,15 @@ public function import(Request $request)
         Mahasiswa::insert($mahasiswa);
         DB::commit();  
             //Template Telah Diganti(Belum ada)
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Akun Berhasil Dibuat',
-                    $user['username'], // Kirim notifikasi ke username akun yang dibuat
-                    []
-                );
-            }
-        } 
+        // if (!empty($users)) {
+        //     foreach ($users as $user) {
+        //         Notifikasi::kirim(
+        //             '[Pemberitahuan] Akun Berhasil Dibuat',
+        //             $user['username'], // Kirim notifikasi ke username akun yang dibuat
+        //             []
+        //         );
+        //     }
+        // } 
         return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
     }
     catch (\Exception $e) {
