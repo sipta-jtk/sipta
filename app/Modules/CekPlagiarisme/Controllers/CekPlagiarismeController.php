@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Smalot\PdfParser\Parser;
 use App\Models\LogAktivitas;
 use Carbon\Carbon;
+use Spatie\PdfToText\Pdf;
 
 Carbon::setLocale('id');
 
@@ -169,9 +170,12 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            $parser = new Parser();
-            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            $text = $pdf->getText();
+            // $parser = new Parser();
+            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            // $text = $pdf->getText();
+            
+            $absolutePath = storage_path('app/public/' . $filePathDokumen);
+            $text = (new Pdf())->setPdf($absolutePath)->text();
             
             // Detailed logging for PDF parsing
             Log::info('PDF parsing complete', [
