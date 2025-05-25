@@ -14,7 +14,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Smalot\PdfParser\Parser;
-
+use App\Models\LogAktivitas;
 use Carbon\Carbon;
 
 Carbon::setLocale('id');
@@ -97,11 +97,10 @@ class CekPlagiarismeController extends Controller
 
     public function show($id): View
     {
-        return view('CekPlagiarisme.views.detail', [
+        return view('CekPlagiarisme.views.Detail', [
             'id' => $id
         ]);
     }
-
 
     public function process(Request $request)
     {
@@ -229,6 +228,19 @@ class CekPlagiarismeController extends Controller
             }
 
             DB::commit();
+
+            // Dalam CekPlagiarismeController
+            try {
+                LogAktivitas::create([
+                    'username' => auth()->user()->username,
+                    'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
+                    'id_dokumen' => $dokumen->id_dokumen,
+                    'action' => 'upload', // Pastikan menggunakan nilai enum yang valid
+                    'waktu_aktivitas' => now()
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
+            }
 
             return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
