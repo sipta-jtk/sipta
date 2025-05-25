@@ -219,21 +219,13 @@ class PembatalanJadwalSeminarSidangController extends Controller
         ]);
         // Notifikasi Pembatalan Penjadwalan Seminar oleh mahasiswa
         // Not So Sure About This
-        try {
-            Notifikasi::kirim(
-                '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
-                $nip, // Kirim ke dosen pembimbing (nip)
-                [
-                    'Alasan' => $request->alasan
-                ]
-            );
-        } catch (\Exception $notifEx) {
-            \Log::error('Gagal mengirim notifikasi pembatalan seminar: ' . $notifEx->getMessage(), [
-                'nip' => $nip,
-                'id_penjadwalan' => $request->id
-            ]);
-        }
-
+        //  Notifikasi::kirim(
+        //     '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+        //     $nip, // Kirim ke dosen pembimbing (nip)
+        //     [
+        //         'Alasan' => $request->alasan
+        //     ]
+        // );
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal seminar berhasil dikirimkan.');
     }
 
@@ -289,20 +281,13 @@ class PembatalanJadwalSeminarSidangController extends Controller
 
         // Not So Sure About This
         //Notifikasi Pembatalan Penjadawalan Sidang oleh mahasiswa
-        try {
-            Notifikasi::kirim(
-                '[Pemberitahuan] Pembatalan Jadwal Sidang',
-                $nip,
-                [
-                    'Alasan' => $request->alasan
-                ]
-            );
-        } catch (\Exception $notifEx) {
-            \Log::error('Gagal mengirim notifikasi pembatalan sidang: ' . $notifEx->getMessage(), [
-                'nip' => $nip,
-                'id_penjadwalan' => $request->id
-            ]);
-        }
+        // Notifikasi::kirim(
+        //     '[Pemberitahuan] Pembatalan Jadwal Sidang', // Judul template notifikasi
+        //     $nip, // Ganti dengan username admin, atau log system
+        //     [
+        //        'Alasan' => $request->alasan
+        //     ]
+        // );
 
         return redirect()->route('jadwal.seminar')->with('success', 'Pengajuan pembatalan jadwal sidang berhasil dikirimkan.');
     }

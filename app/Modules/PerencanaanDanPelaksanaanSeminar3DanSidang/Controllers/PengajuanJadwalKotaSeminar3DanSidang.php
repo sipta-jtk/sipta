@@ -388,57 +388,34 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_koordinator_ta' => null,
         ]);
 
-
-        try {
-            
-        // Get dosen information
-        $pembimbingPenguji = User::select('user.username', 'user.nama', 'alokasi_dosen.tipe_alokasi')
-            ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
-            ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
-            ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
-            ->where('alokasi_dosen.status_alokasi', 'fix')
-            ->where('pengajuan_pembimbing.id_kota', $id_kota)
-            ->get();
-            // Get koordinator TA
-            $koordinatorTA = User::where('role_user', 'koordinator')->first();
-            // Kirim notifikasi ke pembimbing dan penguji
-            foreach ($pembimbingPenguji as $dosen) {
-                $tipeDosen = $dosen->tipe_alokasi === 'pembimbing' ? 'Pembimbing' : 'Penguji';
-                
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $dosen->username,
-                    [
-                        'tipe_dosen' => $tipeDosen,
-                        'nama_kota' => $kota->nama_kota,
-                        'agenda' => $request->agenda,
-                        'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
-                        'sesi' => $sesi,
-                        'ruangan' => $nama_ruangan
-                    ]
-                );
-            }
-
-            // Kirim notifikasi ke koordinator TA
-            if ($koordinatorTA) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $koordinatorTA->username,
-                    [
-                        'nama_kota' => $kota->nama_kota,
-                        'agenda' => $request->agenda,
-                        'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
-                        'sesi' => $sesi,
-                        'ruangan' => $nama_ruangan
-                    ]
-                );
-            }
-        } catch (\Exception $notifEx) {
-            \Log::error('Gagal mengirim notifikasi pengajuan jadwal: ' . $notifEx->getMessage(), [
-                'id_kota' => $id_kota,
-                'agenda' => $request->agenda
-            ]);
-        }
+        // Not So Sure About This
+        // Kirim Notifikasi hanya ke dosen pembimbing saja (bukan penguji)
+        // Query dosen pembimbing melalui relasi $kota
+        // $kota = Kota::find($id_kota);
+        // if ($kota) {
+        //     // Asumsi relasi: $kota->pengajuanPembimbing()->latest()->first()->pembimbing1->user->username
+        //     $pengajuan = $kota->pengajuanPembimbing()->latest()->first();
+        //     $pembimbing1 = $pengajuan?->pembimbing1?->user?->username;
+        //     $pembimbing2 = $pengajuan?->pembimbing2?->user?->username;
+        //     if ($pembimbing1) {
+        //         Notifikasi::kirim(
+        //             '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+        //             $pembimbing1,
+        //             [
+        //                 'nama_ruangan' => $nama_ruangan
+        //             ]
+        //         );
+        //     }
+        //     if ($pembimbing2) {
+        //         Notifikasi::kirim(
+        //             '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+        //             $pembimbing2,
+        //             [
+        //                 'nama_ruangan' => $nama_ruangan
+        //             ]
+        //         );
+        //     }
+        // }
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }
