@@ -243,7 +243,6 @@ class CekPlagiarismeController extends Controller
             } catch (\Exception $logException) {
                 Log::warning('Gagal mencatat log aktivitas: ' . $logException->getMessage());
             }
-            } catch (\Exception $logException) {
 
             return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
