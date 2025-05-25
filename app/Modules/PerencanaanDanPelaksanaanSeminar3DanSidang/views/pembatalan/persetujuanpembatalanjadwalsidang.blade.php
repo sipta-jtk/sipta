@@ -23,8 +23,8 @@
         <tr class="bg-dark text-white">
             <th>Kota No</th>
             <th>Judul</th>
-            <th>Tanggal Seminar</th>
-            <th>Sesi Seminar</th>
+            <th>Tanggal Sidang</th>
+            <th>Sesi Sidang</th>
             <th>Ruangan</th>
             <th>Dosen Pengaju</th>
             <th>Alasan</th>
@@ -43,13 +43,13 @@
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>
                     <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
+                        action="{{ route('persetujuan.pembatalan.sidang', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-md w-100 my-1">Setuju</button>
                     </form>
                     <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
+                        action="{{ route('persetujuan.pembatalan.sidang', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
                         <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>

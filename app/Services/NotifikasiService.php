@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Modules\NotificationAndReminder\helper\DynamicPlaceholderParser;
 use App\Models\TemplateNotifikasi;
 use App\Models\Notifikasi;
 use App\Models\NotifikasiKirim;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use App\Modules\NotificationAndReminder\helper\PlaceholderHelper;
 
 class NotifikasiService
 {
@@ -19,24 +21,36 @@ class NotifikasiService
 
         $template = TemplateNotifikasi::where('judul_notifikasi', trim($templateJudul))->first();
         if (!$template) {
-            throw new \Exception("Template email tidak ditemukan oleh service");
+            throw new \Exception("Template notifikasi tidak ditemukan oleh service");
         }
 
-        // Tambahkan nama ke data jika belum ada
+        // Ambil data default dari .json
+        $defaultData = PlaceholderHelper::get($templateJudul);
+
+        // Gabungkan dengan data yang diberikan
+        $data = array_merge($defaultData, $data);
+
+        // Tambahkan 'nama' user jika belum ada
         if (!isset($data['nama'])) {
             $data['nama'] = $user->nama;
         }
 
-        $isiEmail = $this->replacePlaceholders($template->isi_in_email, $data);
+        // Proses placeholder dinamis (tanggal, waktu, dst.)
+        $data = DynamicPlaceholderParser::parse($data);
 
+        // Gantikan placeholder di subject & isi email
+        $isiEmail = $this->replacePlaceholders($template->isi_in_email, $data);
+        $isiJudul = $this->replacePlaceholders($template->judul_notifikasi, $data);
+
+        // Simpan notifikasi
         $notifikasi = Notifikasi::create([
             'tipe_notifikasi' => $template->jenis_notifikasi,
-            'judul' => $template->judul_notifikasi,
+            'judul' => $isiJudul,
             'isi_notifikasi' => $isiEmail,
         ]);
 
-        // Simpan ke tabel notifikasi_kirim
-        $notifikasiKirim = NotifikasiKirim::create([
+        // Simpan log pengiriman
+        NotifikasiKirim::create([
             'id_notifikasi' => $notifikasi->id_notifikasi,
             'username' => $user->username,
             'kanal' => 'email',
@@ -45,11 +59,10 @@ class NotifikasiService
             'respon_log' => json_encode(['to' => $user->email])
         ]);
 
-
-        Mail::send([], [], function ($message) use ($user, $template, $isiEmail, $data) {
-            $subject = $this->replacePlaceholders($template->judul_notifikasi, $data);
+        // Kirim email
+        Mail::send([], [], function ($message) use ($user, $isiJudul, $isiEmail) {
             $message->to($user->email)
-                    ->subject($subject)
+                    ->subject($isiJudul)
                     ->html($isiEmail);
         });
 

@@ -6,6 +6,7 @@ use App\Modules\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Kehadiran;
 Carbon::setLocale('id');
@@ -176,11 +177,18 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Ambil id_kehadiran dari request
         $idKehadiran = $request->input('id_kehadiran');
 
+        // Ambil data kehadiran dari database
+        $kehadiran = Kehadiran::find($idKehadiran);
+
+        // Hapus file lama jika ada
+        if ($kehadiran->foto_sidang) {
+            Storage::disk('public')->delete($kehadiran->foto_sidang);
+        }
+
         // Simpan file baru ke storage
         $dokumentasiPath = $request->file('dokumentasi')->store('dokumentasi', 'public');
 
         // Update path file di database
-        $kehadiran = Kehadiran::find($idKehadiran);
         $kehadiran->foto_sidang = $dokumentasiPath;
         $kehadiran->save();
 
@@ -192,7 +200,16 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Validasi request
         $request->validate([
             'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
-            'batas_revisi' => 'required|date',
+            'batas_revisi' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $today = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+                    if ($value < $today) {
+                        $fail('Tanggal batas revisi tidak boleh sebelum hari ini.');
+                    }
+                },
+            ],
         ]);
 
         // Update batas revisi di database
@@ -216,6 +233,30 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $kehadiran->status_kelulusan = $request->input('status_kelulusan');
         $kehadiran->save();
     
+
+                // Not So Sure About This
+        $nimKelompok = $kehadiran->user->nim ?? $kehadiran->user->username ?? null;
+        if ($nimKelompok) {
+            $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimKelompok)->first();
+            if ($mahasiswa) {
+                // Ambil semua anggota kelompok (termasuk pemilik)
+                $anggotaKelompok = $mahasiswa->anggotaKelompokTA()->pluck('nim');
+                // Jika tidak ada relasi, minimal kirim ke pemilik
+                if ($anggotaKelompok->isEmpty()) {
+                    $anggotaKelompok = collect([$nimKelompok]);
+                }
+                foreach ($anggotaKelompok as $nimAnggota) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Pemberitahuan Lulus Sidang',
+                        $nimAnggota,
+                        []
+                    );
+                }
+            }
+        }
+
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
+
+
     }
 }
