@@ -230,7 +230,7 @@ class CekPlagiarismeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('cekplagiarisme.index'); // asalkan kamu definisikan route-nya
+            return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
             DB::rollBack();
 
