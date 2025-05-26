@@ -249,7 +249,8 @@
                                                                                                 <button
                                                                                                     {{-- class="btn btn-sm btn-success" --}}
                                                                                                     class="btn btn-sm {{ $alok1?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
+                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1, $('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val())">
+                                                                                                    {{-- <i class="fa fs-fw fa-check"></i> --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok1?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
                                                                                                 </button>
@@ -308,7 +309,9 @@
                                                                                             @if ($isKoordinator)
                                                                                                 <button
                                                                                                     class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
+                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2, $('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val())">
+                                                                                                    {{-- <i class="fa fs-fw fa-check"></i> --}}
+                                                                                                    {{-- <i class="fa fs-fw fa-undo"></i> --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
 
@@ -496,26 +499,26 @@
                                         <thead class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([id, kode]) => `
-                                                                                                                                                                <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                            <th class="p-1"><span class="badge fw-normal">${kode}</span></th>
+                                                                                                                                                                        `).join('')}
                                                 <th class="p-1"><span class="badge fw-normal"></span></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center">
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                <td class="p-1">
-                                                                                                                                                                    <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
-                                                                                                                                                                        ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
-                                                                                                                                                                    </span>
-                                                                                                                                                                </td>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                            <td class="p-1">
+                                                                                                                                                                                <span class="badge fw-normal ${kode} ${(row.mhs?.[kode] > row.kuota?.[kode]) ? 'bg-danger' : ''}">
+                                                                                                                                                                                    ${row.mhs?.[kode] || 0}/${row.kuota?.[kode] || 0}
+                                                                                                                                                                                </span>
+                                                                                                                                                                            </td>
+                                                                                                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">MHS</span></td>
                                             </tr>
                                             <tr>
                                                 ${Object.entries(prodiList).map(([_, kode]) => `
-                                                                                                                                                                <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
-                                                                                                                                                            `).join('')}
+                                                                                                                                                                            <td class="p-1"><span class="badge fw-normal">${row.kelompok?.[kode] || 0}</span></td>
+                                                                                                                                                                        `).join('')}
                                                 <td class="p-1 align-middle"><span class="badge fw-normal">KOTA</span></td>
                                             </tr>
                                         </tbody>
@@ -709,6 +712,7 @@
                             let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
                             pembimbing.removeClass("bg-success");
                             pembimbing.addClass("bg-warning");
+                            updateKuotaDosen();
                         } else {
                             toast(response.status, 'Gagal', response.message);
                         }
@@ -732,6 +736,7 @@
                             let pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
                             pembimbing.removeClass("bg-success");
                             pembimbing.addClass("bg-warning");
+                            updateKuotaDosen();
                         } else {
                             toast(response.status, 'Gagal', response.message);
                         }
@@ -743,9 +748,13 @@
             }
         }
 
-        function fixAlokasi(id_pengajuan, urutan) {
+        function fixAlokasi(id_pengajuan, urutan, id_dosen) {
 
             var caller = event.target.closest('button');
+            let dosen = kuotaDosen.find(d => d.id.toUpperCase() === id_dosen.toUpperCase());
+            if (!dosen) {
+                return;
+            }
 
             $.ajax({
                 url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
@@ -753,29 +762,31 @@
                 data: {
                     id_pengajuan_pembimbing: id_pengajuan,
                     urutan_prioritas_terpilih: urutan,
+                    nip: dosen.nip,
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {
-                    console.log(response);
-                    var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
-                    if (pembimbing.hasClass("bg-warning")) {
-                        pembimbing.removeClass("bg-warning");
-                        pembimbing.addClass("bg-success");
-                        $(caller).removeClass("btn-success");
-                        $(caller).addClass("btn-warning");
-                        $(caller).find('i').removeClass('fa-check').addClass('fa-undo');
+                    if (response.status == 'success') {
+                        var pembimbing = $("#bg-" + id_pengajuan + "pembimbing" + urutan);
+                        if (pembimbing.hasClass("bg-warning")) {
+                            pembimbing.removeClass("bg-warning");
+                            pembimbing.addClass("bg-success");
+                            $(caller).removeClass("btn-success");
+                            $(caller).addClass("btn-warning");
+                            $(caller).find('i').removeClass('fa-check').addClass('fa-undo');
+                        } else {
+                            pembimbing.removeClass("bg-success");
+                            pembimbing.addClass("bg-warning");
+
+                            $(caller).removeClass("btn-warning");
+                            $(caller).addClass("btn-success");
+                            $(caller).find('i').removeClass('fa-undo');
+                            $(caller).find('i').addClass('fa-check');
+                        }
+                        toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
                     } else {
-                        pembimbing.removeClass("bg-success");
-                        pembimbing.addClass("bg-warning");
-
-                        $(caller).removeClass("btn-warning");
-                        $(caller).addClass("btn-success");
-                        $(caller).find('i').removeClass('fa-undo');
-                        $(caller).find('i').addClass('fa-check');
+                        toast(response.status, 'Gagal', response.message);
                     }
-
-
-                    toast('success', 'Berhasil', 'Alokasi berhasil diperbarui');
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
@@ -784,9 +795,9 @@
         }
 
         // onchange on .alokasiInputText
-        $('.alokasiInputText').on('change', function() {
-            updateKuotaDosen();
-        });
+        // $('.alokasiInputText').on('change', function() {
+        //     updateKuotaDosen();
+        // });
 
         // REN REN
         function confirmSendNotification() {
