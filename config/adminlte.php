@@ -788,6 +788,12 @@ return [
                     'can' => 'admin'
                 ],
                 // [
+                //     'text' => 'Log Aktivitas',
+                //     'url' => $prefix . '/log-aktivitas',
+                //     'icon' => 'fas fa-user-graduate',
+                //     'can' => 'admin'
+                // ],
+                // [
                 //     'text' => 'level_one',
                 //     'url' => '#',
                 // ],

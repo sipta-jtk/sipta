@@ -11,6 +11,7 @@ use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
+use App\Models\Mahasiswa;
 
 Carbon::setLocale('id');
 
@@ -79,46 +80,53 @@ class CekPlagiarismeDetailController extends Controller
             'updated_at' => Carbon::now(),
         ]);
 
-        //         // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
-        // $nimPemilik = $dokumen->username;
-        // // Kirim ke pemilik dokumen
-        // Notifikasi::kirim(
-        //     '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-        //     $nimPemilik,
-        //     [
-        //         'catatan' => $catatan->review
-        //     ]
-        // );
-        // // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
-        // $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
-        // if ($mahasiswa) {
-        //     $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
-        //         ->where('nim', '!=', $nimPemilik)
-        //         ->limit(2)
-        //         ->pluck('nim');
-        //     if ($anggotaKelompok->count() > 0) {
-        //         $anggota2 = $anggotaKelompok[0] ?? null;
-        //         if ($anggota2) {
-        //             Notifikasi::kirim(
-        //                 '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-        //                 $anggota2,
-        //                 [
-        //                     'catatan' => $catatan->review
-        //                 ]
-        //             );
-        //         }
-        //         $anggota3 = $anggotaKelompok[1] ?? null;
-        //         if ($anggota3) {
-        //             Notifikasi::kirim(
-        //                 '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-        //                 $anggota3,
-        //                 [
-        //                     'catatan' => $catatan->review
-        //                 ]
-        //             );
-        //         }
-        //     }
-        // }
+                // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+        $nimPemilik = $dokumen->username;
+        try {
+            // Kirim ke pemilik dokumen
+            Notifikasi::kirim(
+                '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                $nimPemilik,
+                [
+                    'catatan' => $catatan->review
+                ]
+            );
+
+            // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+            $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                // Ambil mahasiswa lain dalam kota yang sama
+                $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                    ->where('nim', '!=', $nimPemilik)
+                    ->limit(2)
+                    ->pluck('nim');
+
+                if ($anggotaKelompok->count() > 0) {
+                    $anggota2 = $anggotaKelompok[0] ?? null;
+                    if ($anggota2) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                            $anggota2,
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        );
+                    }
+                    $anggota3 = $anggotaKelompok[1] ?? null;
+                    if ($anggota3) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                            $anggota3,
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        );
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi catatan: ' . $notifEx->getMessage());
+        }
         
         // Mengembalikan respons JSON
         return response()->json([
@@ -177,47 +185,52 @@ class CekPlagiarismeDetailController extends Controller
             'nip' => $nip,
         ]);
 
-        
-        // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memperbarui Catatan
-        // $nimPemilik = $dokumen->username;
-        // // Kirim ke pemilik dokumen
-        // Notifikasi::kirim(
-        //     '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-        //     $nimPemilik,
-        //     [
-        //         'catatan' => $catatan->review
-        //     ]
-        // );
-        // // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
-        // $mahasiswa = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first();
-        // if ($mahasiswa) {
-        //     $anggotaKelompok = $mahasiswa->anggotaKelompokTA()
-        //         ->where('nim', '!=', $nimPemilik)
-        //         ->limit(2)
-        //         ->pluck('nim');
-        //     if ($anggotaKelompok->count() > 0) {
-        //         $anggota2 = $anggotaKelompok[0] ?? null;
-        //         if ($anggota2) {
-        //             Notifikasi::kirim(
-        //                 '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-        //                 $anggota2,
-        //                 [
-        //                     'catatan' => $catatan->review
-        //                 ]
-        //             );
-        //         }
-        //         $anggota3 = $anggotaKelompok[1] ?? null;
-        //         if ($anggota3) {
-        //             Notifikasi::kirim(
-        //                 '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-        //                 $anggota3,
-        //                 [
-        //                     'catatan' => $catatan->review
-        //                 ]
-        //             );
-        //         }
-        //     }
-        // }
+        $nimPemilik = $dokumen->username;
+        try {
+            // Kirim ke pemilik dokumen
+            Notifikasi::kirim(
+                '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                $nimPemilik,
+                [
+                    'catatan' => $catatan->review
+                ]
+            );
+
+            // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+            $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                // Ambil mahasiswa lain dalam kota yang sama
+                $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                    ->where('nim', '!=', $nimPemilik)
+                    ->limit(2)
+                    ->pluck('nim');
+
+                if ($anggotaKelompok->count() > 0) {
+                    $anggota2 = $anggotaKelompok[0] ?? null;
+                    if ($anggota2) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                            $anggota2,
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        );
+                    }
+                    $anggota3 = $anggotaKelompok[1] ?? null;
+                    if ($anggota3) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                            $anggota3,
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        );
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pembaruan catatan: ' . $notifEx->getMessage());
+        }
 
         return response()->json([
             'success' => true,

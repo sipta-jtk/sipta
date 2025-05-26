@@ -85,7 +85,7 @@
                 Berkas Pengajuan Seminar 3
             </div>
             <div class="card-body">
-                <table id="dokumenTable" class="table table-striped" width="100%">
+                <table id="dokumenTable" class="table table-striped w-100">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
                             <th style="width: 80%">Nama Dokumen</th>
@@ -93,24 +93,96 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($dokumenSeminar as $item)
-                            <tr>
-                                <td>{{ $item['nama_dokumen'] }}</td>
-                                <td>
-                                    @if ($item['status'] === 'Sudah diunggah')
-                                        <span class="badge bg-success">{{ $item['status'] }}</span>
-                                    @else
-                                        <span class="badge bg-danger">{{ $item['status'] }}</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2" class="text-center">Tidak ada data dokumen.</td>
-                            </tr>
-                        @endforelse
+                        {{-- Laporan Seminar 3 --}}
+                        <tr>
+                            <td>
+                                <strong>Laporan Seminar 3</strong><br>
+                                @if ($laporanSeminar3)
+                                    <small class="text-muted">
+                                        Versi: {{ $laporanSeminar3->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($laporanSeminar3->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($laporanSeminar3)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        {{-- FTA-10 --}}
+                        <tr>
+                            <td>
+                                <strong>FTA 10</strong><br>
+                                @if ($fta10)
+                                    <small class="text-muted">
+                                        Versi: {{ $fta10->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($fta10->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($fta10)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        {{-- FTA-10a --}}
+                        <tr>
+                            <td>
+                                <strong>FTA 10a</strong><br>
+                                @if ($fta10a)
+                                    <small class="text-muted">
+                                        Versi: {{ $fta10a->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($fta10a->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($fta10a)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        {{-- PPT Seminar 3 --}}
+                        <tr>
+                            <td>
+                                <strong>PPT Seminar 3</strong><br>
+                                @if ($pptSeminar3)
+                                    <small class="text-muted">
+                                        Versi: {{ $pptSeminar3->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($pptSeminar3->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($pptSeminar3)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
 
@@ -120,7 +192,7 @@
                 Berkas Pengajuan Sidang Akhir
             </div>
             <div class="card-body">
-                <table id="dokumenTable" class="table table-striped" width="100%">
+                <table id="dokumenTable" class="table table-striped w-100">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
                             <th style="width: 80%">Nama Dokumen</th>
@@ -128,22 +200,93 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($dokumenSidang as $item)
-                            <tr>
-                                <td>{{ $item['nama_dokumen'] }}</td>
-                                <td>
-                                    @if ($item['status'] === 'Sudah diunggah')
-                                        <span class="badge bg-success">{{ $item['status'] }}</span>
-                                    @else
-                                        <span class="badge bg-danger">{{ $item['status'] }}</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2" class="text-center">Tidak ada data dokumen.</td>
-                            </tr>
-                        @endforelse
+                        {{-- Laporan Sidang --}}
+                        <tr>
+                            <td>
+                                <strong>Laporan Sidang</strong><br>
+                                @if ($laporanSidang)
+                                    <small class="text-muted">
+                                        Versi: {{ $laporanSidang->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($laporanSidang->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($laporanSidang)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+                
+                        {{-- FTA-14 --}}
+                        <tr>
+                            <td>
+                                <strong>FTA 14</strong><br>
+                                @if ($fta14)
+                                    <small class="text-muted">
+                                        Versi: {{ $fta14->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($fta14->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($fta14)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        {{-- FTA-14 --}}
+                        <tr>
+                            <td>
+                                <strong>FTA 14a</strong><br>
+                                @if ($fta14a)
+                                    <small class="text-muted">
+                                        Versi: {{ $fta14a->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($fta14a->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($fta14a)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
+                
+                        {{-- PPT Sidang --}}
+                        <tr>
+                            <td>
+                                <strong>PPT Sidang</strong><br>
+                                @if ($pptSidang)
+                                    <small class="text-muted">
+                                        Versi: {{ $pptSidang->versi }} |
+                                        Diunggah: {{ \Carbon\Carbon::parse($pptSidang->created_at)->translatedFormat('d M Y H:i') }}
+                                    </small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($pptSidang)
+                                    <span class="badge bg-success">
+                                        Sudah Diunggah
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">Belum Diunggah</span>
+                                @endif
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
