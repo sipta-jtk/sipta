@@ -270,7 +270,7 @@ $prefix = env('PREFIX_URL', '');
             const container = iframe.parentNode;
             const errorMsg = document.createElement('div');
             errorMsg.className = 'alert alert-warning mt-3';
-            errorMsg.innerHTML = '<strong>Dokumen tidak dapat ditampilkan.</strong><br>Silakan gunakan tombol di bawah untuk mengakses dokumen.';
+            errorMsg.innerHTML = '<strong>Dokumen tidak dapat ditampilkan.</strong><br>';
 
             // Insert error message before the iframe
             iframe.style.display = 'none';
@@ -298,25 +298,6 @@ $prefix = env('PREFIX_URL', '');
             });
         });
         
-        // Handle download buttons in document tabs
-        const documentTabDownloadButtons = document.querySelectorAll('#documentTabsContent a[download]');
-        documentTabDownloadButtons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                console.log('Document tab download initiated:', this.href);
-                const successMsg = document.createElement('span');
-                successMsg.className = 'badge badge-success ml-2';
-                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Mengunduh...';
-                
-                // Append to button 
-                this.appendChild(successMsg);
-                
-                // Remove after 2 seconds
-                setTimeout(function() {
-                    successMsg.remove();
-                }, 2000);
-            });
-        });
-
         // Enable jQuery tab functionality for both tab groups
         $('#documentTabs a').on('click', function(e) {
             e.preventDefault();
