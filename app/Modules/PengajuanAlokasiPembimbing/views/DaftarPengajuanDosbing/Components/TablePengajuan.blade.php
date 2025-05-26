@@ -56,7 +56,6 @@ dd($kelompokData['table']);
                 </td>
                 <td>
                     @php
-                    // status_peminatan_aktual dari controller: 'accepted' atau 'none'
                     $currentPeminatanStatus = $kelompok['status_peminatan_aktual'] ?? 'none';
 
                     $buttonClass = 'btn-danger';
@@ -68,14 +67,11 @@ dd($kelompokData['table']);
                     $buttonIcon = 'fa-check';
                     $dataStatusForJs = 'accepted';
                     } elseif ($currentPeminatanStatus === 'rejected') {
-                    // Sudah default merah
                     } elseif ($currentPeminatanStatus === 'none') {
-                    // Tetap gunakan style rejected untuk status 'none'
                     $buttonClass = 'btn-danger';
                     $buttonIcon = 'fa-times';
                     $dataStatusForJs = 'rejected';
                     }
-                    // Tombol tidak pernah 'disabled' di awal, selalu bisa diklik untuk accept/reject
                     @endphp
                     <button class="btn {{ $buttonClass }} w-100 btn-toggle-status" data-id="{{ $kelompok['id_kota_real'] }}" data-status="{{ $dataStatusForJs }}">
                         <i class="fas {{ $buttonIcon }}"></i>
@@ -119,10 +115,9 @@ dd($kelompokData['table']);
             , "ordering": true
             , responsive: true
             , "order": [
-                [0, "asc"] // Urutkan berdasarkan kolom No (index 0)
+                [0, "asc"]
             ]
             , "language": {
-                // ... Bahasa DataTables ...
                 search: "Cari:"
                 , lengthMenu: "Tampilkan _MENU_ data per halaman"
                 , zeroRecords: "Data tidak ditemukan"
