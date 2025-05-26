@@ -59,28 +59,27 @@ dd($kelompokData['table']);
                     // status_peminatan_aktual dari controller: 'accepted' atau 'none'
                     $currentPeminatanStatus = $kelompok['status_peminatan_aktual'] ?? 'none';
 
-                    $buttonClass = 'btn-secondary';
-                    $buttonIcon = '';
-                    $buttonText = 'Belum diminati';
-                    $dataStatusForJs = 'none';
+                    $buttonClass = 'btn-danger';
+                    $buttonIcon = 'fa-times';
+                    $dataStatusForJs = 'rejected';
 
                     if ($currentPeminatanStatus === 'accepted') {
                     $buttonClass = 'btn-success';
                     $buttonIcon = 'fa-check';
-                    $buttonText = '';
                     $dataStatusForJs = 'accepted';
                     } elseif ($currentPeminatanStatus === 'rejected') {
+                    // Sudah default merah
+                    } elseif ($currentPeminatanStatus === 'none') {
+                    // Tetap gunakan style rejected untuk status 'none'
                     $buttonClass = 'btn-danger';
                     $buttonIcon = 'fa-times';
-                    $buttonText = '';
                     $dataStatusForJs = 'rejected';
                     }
                     // Tombol tidak pernah 'disabled' di awal, selalu bisa diklik untuk accept/reject
                     @endphp
-                    <button class="btn {{ $buttonClass }} w-100 btn-toggle-status" data-id="{{ $kelompok['id_kota_real'] }}" {{-- Gunakan id_kota_real --}} data-status="{{ $dataStatusForJs }}"> {{-- status tombol saat ini --}}
-                        <i class="fas {{ $buttonIcon }}"></i> {{ $buttonText }}
+                    <button class="btn {{ $buttonClass }} w-100 btn-toggle-status" data-id="{{ $kelompok['id_kota_real'] }}" data-status="{{ $dataStatusForJs }}">
+                        <i class="fas {{ $buttonIcon }}"></i>
                     </button>
-
                 </td>
             </tr>
             @endforeach
@@ -262,6 +261,8 @@ dd($kelompokData['table']);
             let kelompokId = $btn.data("id");
             let currentStatus = $btn.data("status");
 
+            // Sederhana: jika rejected -> accept, jika accepted -> reject
+            let nextAction;
             if (currentStatus === "accepted") {
                 nextAction = "reject";
             } else {
