@@ -19,6 +19,9 @@ use Carbon\Carbon;
 
 Carbon::setLocale('id');
 
+$prefix = env('PREFIX_URL');
+$redirectPath = $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
+
 class CekPlagiarismeController extends Controller
 {
     function extractOverallSimilarity($pdfText)
@@ -213,24 +216,6 @@ class CekPlagiarismeController extends Controller
                 'kode_fta' => null,
                 'persentase_plagiarisme' => $similarity,
             ]);
-            
-            // Log document creation with all attributes
-            Log::info('Plagiarism document created', [
-                'id_dokumen' => $dokumen->id_dokumen,
-                'judul' => $dokumen->judul,
-                'file_path' => $dokumen->file_path,
-                'user_id' => $dokumen->user_id,
-                'username' => $dokumen->username,
-                'versi' => $dokumen->versi,
-                'ukuran_file' => $dokumen->ukuran_file,
-                'kategori' => $dokumen->kategori,
-                'deskripsi' => $dokumen->deskripsi,
-                'id_kota' => $dokumen->id_kota,
-                'id_ambang_batas' => $dokumen->id_ambang_batas,
-                'persentase_plagiarisme' => $dokumen->persentase_plagiarisme,
-                'threshold_exceeded' => $similarity !== null ? ($similarity >= ($ambangBatasAktif?->ambang_batas ?? 20)) : 'unknown',
-                'created_at' => $dokumen->created_at->toDateTimeString()
-            ]);
 
             // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
@@ -285,7 +270,7 @@ class CekPlagiarismeController extends Controller
                 Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
             }
 
-            return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
+            return redirect($redirectPath)->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
             DB::rollBack();
 
