@@ -248,7 +248,8 @@
                                                                                                 <button
                                                                                                     {{-- class="btn btn-sm btn-success" --}}
                                                                                                     class="btn btn-sm {{ $alok1?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
+                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1, $('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing1').val())">
+                                                                                                    {{-- <i class="fa fs-fw fa-check"></i> --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok1?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
                                                                                                 </button>
@@ -307,7 +308,9 @@
                                                                                             @if ($isKoordinator)
                                                                                                 <button
                                                                                                     class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
+                                                                                                    onclick="if ($('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2, $('#{{ str_replace(' ', '', $pengajuan->nama_kota) }}Pembimbing2').val())">
+                                                                                                    {{-- <i class="fa fs-fw fa-check"></i> --}}
+                                                                                                    {{-- <i class="fa fs-fw fa-undo"></i> --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
 
@@ -744,9 +747,13 @@
             }
         }
 
-        function fixAlokasi(id_pengajuan, urutan) {
+        function fixAlokasi(id_pengajuan, urutan, id_dosen) {
 
             var caller = event.target.closest('button');
+            let dosen = kuotaDosen.find(d => d.id.toUpperCase() === id_dosen.toUpperCase());
+            if (!dosen) {
+                return;
+            }
 
             $.ajax({
                 url: "{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.fixAlokasi') }}",
@@ -754,6 +761,7 @@
                 data: {
                     id_pengajuan_pembimbing: id_pengajuan,
                     urutan_prioritas_terpilih: urutan,
+                    nip: dosen.nip,
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {

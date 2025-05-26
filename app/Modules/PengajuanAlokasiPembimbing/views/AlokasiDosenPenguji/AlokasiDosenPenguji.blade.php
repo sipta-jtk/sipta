@@ -227,7 +227,7 @@
                                                                                                 <button
                                                                                                     {{-- class="btn btn-sm btn-success" --}}
                                                                                                     class="btn btn-sm {{ $alok1?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1)">
+                                                                                                    onclick="if ($('#penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 1, $('#penguji1-{{ $pengajuan->id_pengajuan_pembimbing }}').val())">
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok1?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
                                                                                                 </button>
@@ -294,7 +294,8 @@
                                                                                             @if ($isKoordinator)
                                                                                                 <button
                                                                                                     class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2)">
+                                                                                                    onclick="if ($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2, '{{ $alok2?->id_dosen ?? '' }}')">
+                                                                                                    {{-- class="btn btn-sm btn-success" --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
 
@@ -731,9 +732,13 @@
             }
         }
 
-        function fixAlokasi(id_pengajuan, urutan) {
+        function fixAlokasi(id_pengajuan, urutan, id_dosen) {
 
             var caller = event.target.closest('button');
+            let dosen = kuotaDosen.find(d => d.id.toUpperCase() === id_dosen.toUpperCase());
+            if (!dosen) {
+                return;
+            }
 
             $.ajax({
                 url: "{{ route('pengajuanalokasipembimbing.alokasi-penguji.fixAlokasi') }}",
@@ -741,6 +746,7 @@
                 data: {
                     id_pengajuan_pembimbing: id_pengajuan,
                     urutan_prioritas_terpilih: urutan,
+                    nip: dosen.nip,
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {
