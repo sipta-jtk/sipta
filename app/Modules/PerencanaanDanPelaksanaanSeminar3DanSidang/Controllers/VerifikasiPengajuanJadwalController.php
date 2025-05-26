@@ -39,13 +39,15 @@ class VerifikasiPengajuanJadwalController extends Controller
         ->map(function ($item) {
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
-                'id_kota' => $item->kota->id_kota,
+                'nama_kota' => $item->kota->nama_kota,
                 'judul_ta' => $item->kota->judul_ta,
                 'agenda' => $item->penjadwalan->agenda,
                 'tanggal' => $item->penjadwalan->tanggal,
                 'id_ruangan' => $item->penjadwalan->id_ruangan,
                 'nama_ruangan' => $item->penjadwalan->nama_ruangan,
                 'sesi' => $item->penjadwalan->sesi,
+                'start' => \Carbon\Carbon::parse($item->penjadwalan->start)->format('H:i'),
+                'end' => \Carbon\Carbon::parse($item->penjadwalan->end)->format('H:i'),
                 'status_koordinator_ta' => $item->status_koordinator_ta,
             ];
         });
@@ -86,13 +88,15 @@ class VerifikasiPengajuanJadwalController extends Controller
                         })->map(function ($alokasi) use ($penjadwalan, $pengajuan) {
                             return [
                                 'id_penjadwalan' => $pengajuan->id_penjadwalan,
-                                'id_kota' => $pengajuan->id_kota,
+                                'nama_kota' => $pengajuan->kota?->nama_kota,
                                 'judul_ta' => $pengajuan->kota?->judul_ta,
                                 'agenda' => $penjadwalan->agenda,
                                 'tanggal' => $penjadwalan->tanggal,
                                 'id_ruangan' => $penjadwalan->id_ruangan,
                                 'nama_ruangan' => $penjadwalan->nama_ruangan,
                                 'sesi' => $penjadwalan->sesi,
+                                'start' => \Carbon\Carbon::parse($penjadwalan->start)->format('H:i'),
+                                'end' => \Carbon\Carbon::parse($penjadwalan->end)->format('H:i'),
                                 'status_dosen_pembimbing_1' => $pengajuan->status_dosen_pembimbing_1,
                                 'status_dosen_pembimbing_2' => $pengajuan->status_dosen_pembimbing_2,
                                 'urutan_prioritas_terpilih' => $alokasi->urutan_prioritas_terpilih,
@@ -146,13 +150,15 @@ class VerifikasiPengajuanJadwalController extends Controller
                         })->map(function ($alokasi) use ($penjadwalan, $pengajuan) {
                             return [
                                 'id_penjadwalan' => $pengajuan->id_penjadwalan,
-                                'id_kota' => $pengajuan->id_kota,
+                                'nama_kota' => $pengajuan->kota?->nama_kota,
                                 'judul_ta' => $pengajuan->kota?->judul_ta,
                                 'agenda' => $penjadwalan->agenda,
                                 'tanggal' => $penjadwalan->tanggal,
                                 'id_ruangan' => $penjadwalan->id_ruangan,
                                 'nama_ruangan' => $penjadwalan->nama_ruangan,
                                 'sesi' => $penjadwalan->sesi,
+                                'start' => \Carbon\Carbon::parse($penjadwalan->start)->format('H:i'),
+                                'end' => \Carbon\Carbon::parse($penjadwalan->end)->format('H:i'),
                                 'status_dosen_pembimbing_1' => $pengajuan->status_dosen_penguji_1,
                                 'status_dosen_pembimbing_2' => $pengajuan->status_dosen_penguji_2,
                                 'urutan_prioritas_terpilih' => $alokasi->urutan_prioritas_terpilih,
@@ -170,83 +176,85 @@ class VerifikasiPengajuanJadwalController extends Controller
 
     public function verifikasiAsKoordinatorTA(Request $request, string $tipe, int $idPenjadwalan)
     {
-        // Ambil status verifikasi dari request
         $status = $request->input('status_verifikasi') === 'Ditolak' ? false : true;
-        
+
         if ($status == true) {
-            // Jika status disetujui, ambil informasi ruangan
             $roomInformation = Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                 ->select('id_ruangan', 'tanggal', 'agenda', 'nama_ruangan', 'status','sesi','tanggal','start', 'end','id_kota')
                 ->first();
-        
-            if ($roomInformation) {       
-                // Buat token untuk autentikasi API
+
+            if ($roomInformation) {
                 $token = auth()->user()->createToken(auth()->user()->username . '_token')->plainTextToken;
 
                 $data = [
                     'type' => 'add',
                     'agenda' => $roomInformation->agenda,
                     'start' => $roomInformation->start,
-                    'end' => $roomInformation->end  ,
+                    'end' => $roomInformation->end,
                     'id_ruangan' => $roomInformation->id_ruangan,
                     'id_kota' => $roomInformation->id_kota,
                     'nip' => auth()->user()->username,
                 ];
-            
-                $response = Http::withHeaders([
-                    'X-Requested-With' => 'XMLHttpRequest',
-                    'content-type' => 'application/json',
-                    'Accept' => 'application/json',
-                ])
-                ->withToken($token)
-                ->post('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
-                if( $response->successful()) {
-                    // Jika berhasil, update status verifikasi
-                    PengajuanJadwalKota::where('id_penjadwalan', $idPenjadwalan)
-                        ->update(['status_koordinator_ta' => $status]);
+                try {
+                    $response = Http::withHeaders([
+                            'X-Requested-With' => 'XMLHttpRequest',
+                            'content-type' => 'application/json',
+                            'Accept' => 'application/json',
+                        ])
+                        ->withToken($token)
+                        ->timeout(10)
+                        ->post('https://polban-space.cloudias79.com/penjadwalan-ruangan/api/v1/schedule/action', $data);
 
-                    Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
-                        ->update([
-                            'status' => 'fix',
+                    if ($response->successful()) {
+                        PengajuanJadwalKota::where('id_penjadwalan', $idPenjadwalan)
+                            ->update(['status_koordinator_ta' => $status]);
+
+                        Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
+                            ->update(['status' => 'fix']);
+
+                        $mahasiswa = Mahasiswa::where('id_kota', $roomInformation->id_kota)
+                            ->select('nim')
+                            ->first();
+
+                        if ($mahasiswa){
+                            Kehadiran::create([
+                                'id_penjadwalan' => $idPenjadwalan,
+                                'username' => $mahasiswa->nim,
+                                'status_hadir' => 'belum_absen',
+                                'status_kelulusan' => 'pending',
+                                'batas_revisi' => null,
+                                'foto_sidang' => null,
+                            ]);
+                        }
+                    } else {
+                        $responseData = $response->json();
+                        $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat memproses permintaan.';
+                        
+                        \Log::error('Gagal memverifikasi penjadwalan', [
+                            'data_dikirim' => $data,
+                            'response' => $response->body(),
+                            'status' => $response->status()
                         ]);
 
-                    // Buat entri kehadiran untuk mahasiswa
-                    $mahasiswa = Mahasiswa::where('id_kota', $roomInformation->id_kota)
-                        ->select('nim')
-                        ->first();
-
-                    if ($mahasiswa){
-                        Kehadiran::Create([
-                            'id_penjadwalan' => $idPenjadwalan,
-                            'username' =>$mahasiswa->nim,
-                            'status_hadir' => 'belum_absen',
-                            'status_kelulusan' => 'pending',
-                            'batas_revisi' => null,
-                            'foto_sidang' => null,
-                        ]);
+                        return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
+                            ->with('error', "Gagal memverifikasi: " . $errorMessage);
                     }
-                } else {
-                    // Jika gagal, kirimkan pop up error response json dari API
-                    $responseData = $response->json();
-                    $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat memproses permintaan.';
+                } catch (\Exception $e) {
                     return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
-                        ->with('error', "Gagal memverifikasi: " . $errorMessage);
+                        ->with('error', "Terjadi kesalahan: " . $e->getMessage());
                 }
             }
         } else {
-            // Jika status ditolak, update status verifikasi
             PengajuanJadwalKota::where('id_penjadwalan', $idPenjadwalan)
                 ->update(['status_koordinator_ta' => $status]);
 
-            // Update status penjadwalan menjadi batal
             Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                 ->update(['status' => 'batal']);
         }
-        
-        // Redirect kembali ke halaman dengan pesan
+
         return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
-                        ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
+            ->with('success', "Status verifikasi: " . ($status ? 'Disetujui' : 'Ditolak'));
     }
 
     public function verifikasiAsPembimbing(Request $request, string $tipe, int $idPenjadwalan)
