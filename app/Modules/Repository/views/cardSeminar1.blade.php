@@ -136,7 +136,9 @@
                                         data-toggle="modal" data-target="#UbahDokumen">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endif
 
+                                    @if($status_ta === 'mahasiswa_ta' || $isPenguji)
                                     <!-- View button -->
                                     <button class="btn btn-sm btn-outline-success"
                                         onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
@@ -151,24 +153,8 @@
                                     </button>
                                     @endif
 
+                                    <!-- View button -->
                                     @if ($isPembimbing)
-                                    <!-- View button -->
-                                    <div class="d-flex flex-row justify-content-center">
-                                        <button class="btn btn-sm btn-outline-success"
-                                            onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                            data-id="{{ $doc->id_dokumen }}"
-                                            data-judul="{{ $doc->judul }}"
-                                            data-file="{{ $doc->file_path }}"
-                                            data-deskripsi="{{ $doc->deskripsi }}"
-                                            data-notes="{{ $doc->notes }}"
-                                            data-toggle="modal"
-                                            data-target="#LihatDokumen">
-                                            <i class="fas fa-edit mr-1"></i> Catatan
-                                        </button>
-                                    </div>
-                                    @endif
-                                    @if($isPenguji)
-                                    <!-- View button -->
                                     <button class="btn btn-sm btn-outline-success"
                                         onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
                                         data-id="{{ $doc->id_dokumen }}"
@@ -178,7 +164,7 @@
                                         data-notes="{{ $doc->notes }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-edit mr-1"></i> Catatan
                                     </button>
                                     @endif
                                 </td>
@@ -955,17 +941,24 @@
                 var fullUrl = `${prefix}/storage/${filePath}`;
                 var fileExtension = filePath.split('.').pop().toLowerCase();
 
+                // Determine the appropriate URL for "Buka di halaman baru" based on file type
+                var openInNewTabUrl = fullUrl;
+                if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
+                    // For office documents, use Google Docs viewer (without embedded=true for new tab)
+                    openInNewTabUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}`;
+                }
+
                 // Buka di tab baru
-                $('#view_file_link').attr('href', fullUrl);
+                $('#view_file_link').attr('href', openInNewTabUrl);
 
                 // Link download
-                $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+                $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${docId}/download`);
 
                 // Preview file
                 if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
                     $('#viewDocumentPreview').attr('src', fullUrl).show();
                     $('#viewPreviewNotAvailable').hide();
-                } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                     var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                     $('#viewDocumentPreview').attr('src', viewerUrl).show();
                     $('#viewPreviewNotAvailable').hide();

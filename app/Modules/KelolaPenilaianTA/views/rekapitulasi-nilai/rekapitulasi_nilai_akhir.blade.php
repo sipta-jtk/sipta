@@ -8,7 +8,7 @@
     <h1 class="mb-0">Rekapitulasi Nilai Akhir</h1>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Rekapitulasi Nilai Akhir']
     ]
     ])
@@ -25,7 +25,16 @@
                 <button id="toggleFilter" class="btn btn-primary btn-md">
                     <i class="fas fa-filter"></i>
                 </button>
+                <button id="exportExcel" type="button" class="btn btn-primary"
+                    data-url="{{ route('rekapitulasi-akhir.export') }}">
+                    <i class="fas fa-file-excel"></i> Ekspor ke Excel
+                </button>
             </div>
+
+            <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
+                @csrf
+                <input type="hidden" name="data" id="exportData">
+            </form>
 
             {{-- Filter Section --}}
             <div id="filterSection" class="mt-3 mb-3" style="display: none;">
@@ -209,17 +218,6 @@
             <div class="d-flex justify-content-between mt-1">
                 <div id="infoControls"></div> <!-- Placeholder untuk info -->
                 <div id="paginationControls"></div> <!-- Placeholder untuk pagination -->
-            </div>
-            <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
-                @csrf
-                <input type="hidden" name="data" id="exportData">
-            </form>
-
-            <div class="d-flex justify-content-end mt-3">
-                <button id="exportExcel" type="button" class="btn btn-success"
-                    data-url="{{ route('rekapitulasi-akhir.export') }}">
-                    <i class="fas fa-file-excel"></i> Export to Excel
-                </button>
             </div>
         </div>
     </div>

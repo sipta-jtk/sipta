@@ -387,18 +387,58 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_dosen_penguji_2' => null,
             'status_koordinator_ta' => null,
         ]);
-        
-        // Notifikasi::kirim(
-        //     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-        //     Auth::User()->username, // Ganti dengan username admin, atau log system
-        //     [
-        //         'nama' => Auth::User()->name,
-        //         'topik' => 'User membuka halaman log',
-        //         'nama_ruangan' => $item['nama_ruangan'],
-        //         'tanggal' => $item['tanggal'],
-        //         'deadline' => now()->format('d-m-Y H:i')
-        //     ]
-        // );
+
+
+        try {
+            
+        // Get dosen information
+        $pembimbingPenguji = User::select('user.username', 'user.nama', 'alokasi_dosen.tipe_alokasi')
+            ->join('alokasi_dosen', 'user.username', '=', 'alokasi_dosen.nip')
+            ->join('pengajuan_pembimbing', 'alokasi_dosen.id_pengajuan_pembimbing', '=', 'pengajuan_pembimbing.id_pengajuan_pembimbing')
+            ->where('pengajuan_pembimbing.status_pengajuan', 'diterima')
+            ->where('alokasi_dosen.status_alokasi', 'fix')
+            ->where('pengajuan_pembimbing.id_kota', $id_kota)
+            ->get();
+            // Get koordinator TA
+            $koordinatorTA = User::where('role_user', 'koordinator')->first();
+            // Kirim notifikasi ke pembimbing dan penguji
+            foreach ($pembimbingPenguji as $dosen) {
+                $tipeDosen = $dosen->tipe_alokasi === 'pembimbing' ? 'Pembimbing' : 'Penguji';
+                
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $dosen->username,
+                    [
+                        'tipe_dosen' => $tipeDosen,
+                        'nama_kota' => $kota->nama_kota,
+                        'agenda' => $request->agenda,
+                        'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
+                        'sesi' => $sesi,
+                        'ruangan' => $nama_ruangan
+                    ]
+                );
+            }
+
+            // Kirim notifikasi ke koordinator TA
+            if ($koordinatorTA) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                    $koordinatorTA->username,
+                    [
+                        'nama_kota' => $kota->nama_kota,
+                        'agenda' => $request->agenda,
+                        'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
+                        'sesi' => $sesi,
+                        'ruangan' => $nama_ruangan
+                    ]
+                );
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pengajuan jadwal: ' . $notifEx->getMessage(), [
+                'id_kota' => $id_kota,
+                'agenda' => $request->agenda
+            ]);
+        }
 
         return redirect()->route('pengajuan')->with('success', 'Pengajuan berhasil dibuat dan status pengajuan diperbarui.');
     }

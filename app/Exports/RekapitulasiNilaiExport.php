@@ -24,6 +24,10 @@ class RekapitulasiNilaiExport implements FromCollection, WithHeadings, WithCusto
                 'prodi' => $item['prodi'] ?? '',
                 'kelas' => $item['kelas'] ?? '',
                 'kelompok' => $item['kelompok'] ?? '',
+                'seminar1Penguji1' => isset($item['seminar1Penguji1']) ? number_format($item['seminar1Penguji1'], 2) : '',
+                'seminar1Penguji2' => isset($item['seminar1Penguji2']) ? number_format($item['seminar1Penguji2'], 2) : '',
+                'seminar1Penguji3' => isset($item['seminar1Penguji3']) ? number_format($item['seminar1Penguji3'], 2) : '',
+                'rataSeminar1' => isset($item['rataSeminar1']) ? number_format($item['rataSeminar1'], 2) : '',
                 'seminar2Penguji1' => isset($item['seminar2Penguji1']) ? number_format($item['seminar2Penguji1'], 2) : '',
                 'seminar2Penguji2' => isset($item['seminar2Penguji2']) ? number_format($item['seminar2Penguji2'], 2) : '',
                 'seminar2Penguji3' => isset($item['seminar2Penguji3']) ? number_format($item['seminar2Penguji3'], 2) : '',
@@ -46,8 +50,8 @@ class RekapitulasiNilaiExport implements FromCollection, WithHeadings, WithCusto
     public function headings(): array
     {
         return [
-            [' ', ' ', ' ', ' ', ' ', 'Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Dosen Pembimbing', 'Dosen Pembimbing', 'Dosen Pembimbing'], // Baris pertama header
-            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'Pembimbing 1', 'Pembimbing 2', 'Rata-rata'] // Baris kedua header
+            [' ', ' ', ' ', ' ', ' ', 'Seminar 1','Seminar 1', 'Seminar 1', 'Seminar 1', 'Seminar 2','Seminar 2', 'Seminar 2', 'Seminar 2', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Seminar 3', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Sidang Akhir', 'Dosen Pembimbing', 'Dosen Pembimbing', 'Dosen Pembimbing'], // Baris pertama header
+            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'P1', 'P2', 'P3', 'Rata-rata', 'Pembimbing 1', 'Pembimbing 2', 'Rata-rata'] // Baris kedua header
         ];
     }
 

@@ -815,6 +815,13 @@ return [
                     'icon' => 'fas fa-clipboard-list',
                     'can' => 'admin',
                 ],
+                                [
+                    'text' => 'Pengaturan Placeholder',
+                    'url' => $prefix . '/notification-placeholders',
+                    'icon' => 'fas fa-pen',
+                    'can' => 'admin',
+                ],
+                
             ]
             // 'label' => 4,
             // 'label_color' => 'success',

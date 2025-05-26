@@ -8,6 +8,7 @@ use App\Modules\NotificationAndReminder\Controllers\LogUser\LogUserController;
 use App\Modules\NotificationAndReminder\Controllers\Preferensi\PreferensiNotifikasiController;
 use App\Modules\NotificationAndReminder\Controllers\EmailController;
 use App\Modules\NotificationAndReminder\Controllers\PendaftaranController;
+use App\Modules\NotificationAndReminder\Controllers\PlaceholderSettings\PlaceholderController;
 
 Route::prefix('/notification/admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/settingawal', [SettingAwalNotifController::class, 'index'])
@@ -48,6 +49,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/preferensi-notifikasi', [PreferensiNotifikasiController::class, 'store'])
         ->name('preferensi.notifikasi.store');
 });
+
+Route::prefix('notification-placeholders')->group(function () {
+    Route::get('/', [PlaceholderController::class, 'index'])->name('placeholders.index');
+    Route::get('/edit/{judul}', [PlaceholderController::class, 'edit'])->name('placeholders.edit');
+    Route::put('/placeholder/update', [PlaceholderController::class, 'update'])->name('placeholder.update');
+});
+
 
 Route::post('/kirim-email', [EmailController::class, 'kirimEmail']);
 Route::post('/daftar-user', [PendaftaranController::class, 'daftarUser']);

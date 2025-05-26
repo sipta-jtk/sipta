@@ -166,3 +166,4 @@ Route::prefix($prefix)->group(function () {
      */
     Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 });
+

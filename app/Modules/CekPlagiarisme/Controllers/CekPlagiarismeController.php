@@ -12,16 +12,30 @@ use App\Models\Kota;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
-
-
+use Illuminate\Support\Facades\Log;
+use Smalot\PdfParser\Parser;
+use App\Models\LogAktivitas;
 use Carbon\Carbon;
 
 Carbon::setLocale('id');
 
 class CekPlagiarismeController extends Controller
 {
-    public function getOverallSimilarity() {
+    function extractOverallSimilarity($pdfText)
+    {
+        // Cari baris yang mengandung 'Overall Similarity'
+        preg_match('/(\d+)% Overall Similarity/i', $pdfText, $matches);
+        return isset($matches[1]) ? (int)$matches[1] : null;
+    }
 
+    function extractSourceLinks($pdfText)
+    {
+        // Cari semua URL
+        preg_match_all('/https?:\/\/[^\s"]+/i', $pdfText, $matches);
+
+        // Hilangkan duplikat dan kembalikan array hasil
+        $uniqueLinks = array_unique($matches[0]);
+        return array_values($uniqueLinks);
     }
     
     public function getData()
@@ -80,33 +94,26 @@ class CekPlagiarismeController extends Controller
             return '<span class="badge badge-danger">Plagiat</span>';
         }
     }
+
     public function show($id): View
     {
-        return view('CekPlagiarisme.views.detail', [
+        return view('CekPlagiarisme.views.Detail', [
             'id' => $id
         ]);
     }
 
-
     public function process(Request $request)
     {
-
-        // if (!$request->hasFile('dokumen') || !$request->file('dokumen')->isValid()) {
-        //     return response()->json(['error' => 'File dokumen tidak valid atau tidak terkirim.'], 422);
-        // }
-
-        // if (!$request->hasFile('digital_receipt') || !$request->file('digital_receipt')->isValid()) {
-        //     return response()->json(['error' => 'File digital receipt tidak valid atau tidak terkirim.'], 422);
-        // }
-
-        \Log::info('Cek keberadaan file', [
-            'ada_dokumen' => $request->hasFile('dokumen'),
-            'valid_dokumen' => $request->file('dokumen')?->isValid(),
-            'dokumen_path' => $request->file('dokumen')?->getPathname()
-        ]);
-
+        if (!$request->isMethod('post')) {
+            Log::warning('GET request tidak sah ke /cek-plagiarisme/process', [
+                'ip' => $request->ip(),
+                'agent' => $request->userAgent(),
+                'user_id' => auth()->id(),
+            ]);
+            abort(405);
+        }
         // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'judul' => [
                 'required',
                 'string',
@@ -117,27 +124,16 @@ class CekPlagiarismeController extends Controller
                     }
                 }
             ],
-            'dokumen' => 'required|file|max:51200', // 50MB (hilangkan 'mimes:pdf')
-            'digital_receipt' => 'required|file|mimes:pdf|max:51200', // 50MB
+            'dokumen' => 'required|file|max:51200', // max 50MB
+            'digital_receipt' => 'required|file|mimes:pdf|max:51200',
             'keywords' => 'required|string|min:1',
-        ]);
-
-        dd($request->all());
-
-        // Debug: Log input data
-        \Log::info('Processing document upload request 2', [
-            'judul' => $request->judul,
-            'dokumen_name' => $request->file('dokumen')->getClientOriginalName(),
-            'digital_receipt_name' => $request->file('digital_receipt')->getClientOriginalName(),
-            'keywords' => $request->keywords,
-            'user_id' => auth()->id(),
-            'nim' => auth()->user()->username,
+            'deskripsi' => 'nullable|string|max:1000',
         ]);
 
         DB::beginTransaction();
 
         try {
-            // Simpan file utama (hasil plagiarisme)
+            // Simpan file dokumen
             $fileDokumen = $request->file('dokumen');
             $filePathDokumen = $fileDokumen->store('dokumen', 'public');
             $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
@@ -147,60 +143,62 @@ class CekPlagiarismeController extends Controller
             $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
             $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
 
-            // Debug: Log file paths
-            \Log::info('Files uploaded successfully', [
-                'dokumen_path' => $filePathDokumen,
-                'dokumen_size' => $fileSizeDokumen,
-                'receipt_path' => $filePathReceipt,
-                'receipt_size' => $fileSizeReceipt,
-            ]);
-
+            // Ambil data tambahan user
+            $user = auth()->user();
+            $nim = $user->username;
+            $idKota = $user->mahasiswa->id_kota ?? null;
             $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
             $nim = auth()->user()->username;
             $idKota = auth()->user()->mahasiswa->id_kota ?? null;
 
             // Debug: Log ambang batas and user info
-            \Log::info('User and threshold info', [
+            Log::info('User and threshold info', [
                 'ambang_batas_id' => $ambangBatasAktif?->id_ambang_batas,
                 'nim' => $nim,
                 'id_kota' => $idKota,
             ]);
 
-            // Simpan dokumen hasil plagiarisme
+            // $parser = new Parser();
+            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            // $text = $pdf->getText();
+
+            // $similarity = extractOverallSimilarity($text);
+            // $sources = extractSourceLinks($text);
+
+            // \Log::info('Extracted similarity and sources', [
+            //     'similarity' => $similarity,
+            //     'sources' => $sources
+            // ]);
+
+            // Simpan dokumen utama
             $dokumen = Dokumen::create([
-                'judul' => $request->judul,
+                'judul' => $validated['judul'],
                 'file_path' => $filePathDokumen,
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'username' => $nim,
                 'versi' => 1,
                 'ukuran_file' => $fileSizeDokumen,
                 'kategori' => 'plagiarisme',
-                'deskripsi' => $request->deskripsi,
+                'deskripsi' => $validated['deskripsi'] ?? null,
                 'id_kota' => $idKota,
                 'highlight_dokumen' => 0,
                 'status_berkas' => 'valid',
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
+                // 'persentase_plagiarisme' => $similarity,
             ]);
 
-            // Debug: Log dokumen plagiarisme
-            \Log::info('Dokumen plagiarisme saved', [
-                'id_dokumen' => $dokumen->id_dokumen,
-                'judul' => $dokumen->judul,
-                'kategori' => $dokumen->kategori,
-            ]);
-
-            // Simpan dokumen digital receipt
+            // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
-                'judul' => $request->judul . ' - Digital Receipt',
+                'judul' => $validated['judul'] . ' - Digital Receipt',
                 'file_path' => $filePathReceipt,
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'username' => $nim,
                 'versi' => 1,
                 'ukuran_file' => $fileSizeReceipt,
                 'kategori' => 'digital_receipt',
-                'deskripsi' => $request->deskripsi,
+                'deskripsi' => $validated['deskripsi'] ?? null,
                 'id_kota' => $idKota,
                 'highlight_dokumen' => 0,
                 'status_berkas' => 'valid',
@@ -209,64 +207,53 @@ class CekPlagiarismeController extends Controller
                 'kode_fta' => null,
             ]);
 
-            // Debug: Log digital receipt dokumen
-            \Log::info('Dokumen digital receipt saved', [
-                'id_dokumen' => $dokumenReceipt->id_dokumen,
-                'judul' => $dokumenReceipt->judul,
-                'kategori' => $dokumenReceipt->kategori,
-            ]);
-
-            // Tangani keywords (dipisahkan koma)
-            $keywordsInput = explode(',', $request->keywords);
+            // Proses keywords
+            $keywordsInput = array_filter(array_map('trim', explode(',', $validated['keywords'])));
             $keywordIds = [];
 
             foreach ($keywordsInput as $keyword) {
-                $normalized = ucwords(strtolower(trim($keyword))); // Capitalize setiap kata
+                $normalized = ucwords(strtolower($keyword));
                 if (empty($normalized)) continue;
 
                 $existing = Keyword::firstOrCreate(['nama_keyword' => $normalized]);
                 $keywordIds[] = $existing->id_keyword;
             }
 
-            // Debug: Log keywords
-            \Log::info('Keywords processed', [
-                'keyword_ids' => $keywordIds,
-                'raw_keywords' => $keywordsInput,
-            ]);
-
-            // Attach ke dokumen menggunakan direct DB insert ke pivot table (dokumen_keyword)
+            // Simpan relasi ke dokumen utama (bukan receipt)
             foreach ($keywordIds as $keywordId) {
-                // Insert langsung ke pivot table, sesuai dengan nama tabel yang ada
                 DB::table('dokumen_keyword')->insert([
                     'id_dokumen' => $dokumen->id_dokumen,
                     'id_keyword' => $keywordId,
                 ]);
             }
-            
-            // Debug: Log after direct pivot insert
-            \Log::info('Keywords attached to document using direct pivot insert');
 
             DB::commit();
-            \Log::info('Transaction committed successfully');
 
-            // Generate log output in storage/logs/laravel.log
-            \Log::info('Document processing completed successfully', [
-                'id_dokumen_plagiarisme' => $dokumen->id_dokumen,
-                'id_dokumen_receipt' => $dokumenReceipt->id_dokumen,
-                'judul' => $dokumen->judul,
-                'user_id' => auth()->id(),
-                'username' => $nim,
-            ]);
+            // Dalam CekPlagiarismeController
+            try {
+                LogAktivitas::create([
+                    'username' => auth()->user()->username,
+                    'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
+                    'id_dokumen' => $dokumen->id_dokumen,
+                    'action' => 'upload', // Pastikan menggunakan nilai enum yang valid
+                    'waktu_aktivitas' => now()
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
+            }
 
-            return view('CekPlagiarisme.views.DaftarDokumen');
+            return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            // Debug: Log error
-            \Log::error('Failed to save document', [
+
+            Log::error('Gagal memproses dokumen:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return back()->withErrors(['error' => 'Gagal menyimpan dokumen dan keyword: ' . $e->getMessage()]);
+
+            return back()->withErrors([
+                'error' => 'Terjadi kesalahan saat menyimpan dokumen: ' . $e->getMessage()
+            ]);
         }
     }
 

@@ -1,14 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'Informasi Detail Formulir Penilaian')
+@section('title', 'Informasi Detail Formulir Feedback')
 
 @section('content_header')
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
                 ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
-                ['url' => '', 'label' => 'Detail Formulir Penilaian']
+                ['url' => '', 'label' => 'Detail Formulir Feedback']
             ]
         ])
         @endcomponent
@@ -41,6 +41,13 @@
                     <label for="namaProdi">Program Studi</label>
                     <input type="text" class="form-control" id="namaProdi" name="namaProdi" 
                         value="{{ $kategori->nama_prodi ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="jenisFormulir">Jenis Formulir</label>
+                    <input type="text" class="form-control" id="jenisFormulir" name="jenisFormulir" 
+                        value="{{ $kategori->jenis_form ?? '' }}" readonly>
                 </div>
             </div>
             <div class="col-md-4">
@@ -95,4 +102,5 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/detail_fta.js') }}"></script>
 @stop

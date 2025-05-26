@@ -14,6 +14,9 @@ use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
+use App\Models\PengajuanPembimbing;
+use Illuminate\Support\Facades\Log;
 
 
 Carbon::setlocale(LC_TIME, 'id');
@@ -259,8 +262,41 @@ class RepositoryController extends Controller
                 $data['kode_fta'] = $request->kode_fta;
             }
 
-
             Dokumen::create($data);
+
+            try {
+                // Get pengajuan pembimbing directly for this kota
+                $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $id_kota)
+                    ->where('status_pengajuan', 'diterima')
+                    ->latest()
+                    ->first();
+
+                if ($pengajuanPembimbing) {
+                    // Get supervisor from alokasi dosen
+                    $alokasiDosen = AlokasiDosen::where('id_pengajuan_pembimbing', $pengajuanPembimbing->id_pengajuan_pembimbing)
+                        ->where('tipe_alokasi', 'pembimbing')
+                        ->where('status_alokasi', 'fix')
+                        ->first();
+
+                    if ($alokasiDosen && $alokasiDosen->dosen) {
+                        Notifikasi::kirim(
+                            '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
+                            $alokasiDosen->dosen->user->username,
+                            [
+                                'kategori' => $kategori,
+                                'judul_dokumen' => $request->judul,
+                                'nama_mahasiswa' => auth()->user()->nama,
+                                'subkategori' => $subkategoriName
+                            ]
+                        );
+                    }
+                }
+            } catch (\Exception $notifEx) {
+                Log::error('Gagal mengirim notifikasi dokumen baru: ' . $notifEx->getMessage(), [
+                    'id_kota' => $id_kota,
+                    'kategori' => $kategori
+                ]);
+            }
 
             return redirect()->route('Repository.index.kota', [
                 'id_kota' => $id_kota,
@@ -551,8 +587,33 @@ class RepositoryController extends Controller
         }
     }
 
+    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
+    public function monitoringPenyimpanan()
+    {
+        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
+        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->groupBy('kategori', 'id_subkategori')
+            ->with('subkategori')  // Pastikan mengambil relasi subkategori
+            ->get();
 
-    // Saabiq Muhyiyuddin Aulawi
+        // Data untuk pie chart berdasarkan subkategori
+        $penyimpananBySubkategori = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori')
+            ->get();
+
+        // Total penyimpanan yang digunakan
+        $totalPenyimpanan = $penyimpanan->sum('total_ukuran');
+
+        // Kapasitas maksimum penyimpanan (100 GB dalam KB)
+        $kapasitasMaksimum = 100 * 1024 * 1024; // 100 GB dalam KB
+
+        // Kirim data penyimpanan ke view
+        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan', 'penyimpananBySubkategori', 'totalPenyimpanan', 'kapasitasMaksimum'));
+    }
+
+
     public function logAktivitas(Request $request)
     {
         // Start with a base query
@@ -600,19 +661,6 @@ class RepositoryController extends Controller
         return view('Repository.views.log_aktivitas', compact('logAktivitas', 'users', 'kotas', 'actions'));
     }
 
-
-    // Fungsi untuk menampilkan halaman Monitoring Penyimpanan
-    public function monitoringPenyimpanan()
-    {
-        // Ambil data dokumen dari database, grup berdasarkan kategori dan subkategori serta total ukuran file per kategori dan subkategori
-        $penyimpanan = Dokumen::select('kategori', 'id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
-            ->groupBy('kategori', 'id_subkategori')
-            ->with('subkategori')  // Pastikan mengambil relasi subkategori
-            ->get();
-
-        // Kirim data penyimpanan ke view
-        return view('Repository.views.monitoring_penyimpanan', compact('penyimpanan'));
-    }
 
 
     // Muhammad Fahrizal Alzaelani
@@ -662,16 +710,49 @@ class RepositoryController extends Controller
         try {
             // Validate request
             $request->validate([
-                'input_notes' => 'required|string',
                 'id_dokumen' => 'required|exists:dokumen,id_dokumen'
             ]);
 
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
+            
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
+            
+            
+            try {
+                // Get mahasiswa and their pengajuan pembimbing properly
+                $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
+                if (!$mahasiswa) {
+                    return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
+                }
+    
+                // Get the latest accepted pengajuan pembimbing for this mahasiswa
+                $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
+                    ->where('status_pengajuan', 'diterima')
+                    ->latest()
+                    ->first();
+                // Send notification to the student (document owner)
+                if ($mahasiswa->user) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
+                        $mahasiswa->user->username,
+                        [
+                            'catatan' => $request->input_notes,
+                            'judul_dokumen' => $dokumen->judul,
+                            'kategori' => $dokumen->kategori,
+                            'nama_dosen' => auth()->user()->nama
+                        ]
+                    );
+                }
+            } catch (\Exception $notifEx) {
+                Log::error('Gagal mengirim notifikasi review dokumen: ' . $notifEx->getMessage(), [
+                    'id_dokumen' => $dokumen->id_dokumen,
+                    'mahasiswa_nim' => $mahasiswa->nim
+                ]);
+            }
 
             // Redirect back with success message
             return redirect()->back()->with('success', 'Catatan berhasil disimpan.');
@@ -679,4 +760,50 @@ class RepositoryController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan catatan: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Get filtered storage data for AJAX requests
+     */
+    public function getFilteredStorageData(Request $request)
+    {
+        $kategori = $request->input('kategori');
+        $subkategori = $request->input('subkategori');
+
+        // Start with base query
+        $query = Dokumen::select('id_subkategori', DB::raw('SUM(ukuran_file) as total_ukuran'))
+            ->whereNotNull('id_subkategori')
+            ->groupBy('id_subkategori')
+            ->with('subkategori');
+
+        // Apply kategori filter if provided
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        // Get filtered data
+        $filteredData = $query->get();
+
+        // Apply subkategori filter in PHP (if needed)
+        if ($subkategori) {
+            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+                return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
+            });
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $filteredData
+        ]);
+    }
 }
+
+
+// Buat Saabiq Notifikasi
+// $adminUsers = User::where('role_user', 'admin')->get();
+//                 foreach ($adminUsers as $admin) {
+//                     Notifikasi::kirim(
+//                         '[Pemberitahuan] Penyimpanan Hampir Penuh',
+//                         $admin->username,
+//                         ['catatan' => $request->input_notes]
+//                     );
+//                 }

@@ -1346,7 +1346,7 @@
                 // File gambar dan PDF langsung tampil
                 $('#documentPreview').attr('src', fullUrl).show();
                 $('#previewNotAvailable').hide();
-            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+            } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                 // File Word atau PowerPoint pakai Google Docs Viewer
                 var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                 $('#documentPreview').attr('src', viewerUrl).show();
@@ -1414,11 +1414,18 @@
             var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
+            // Determine the appropriate URL for "Buka di halaman baru" based on file type
+            var openInNewTabUrl = fullUrl;
+            if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
+                // For office documents, use Google Docs viewer (without embedded=true for new tab)
+                openInNewTabUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}`;
+            }
+
             // Buka di tab baru
-            $('#view_file_link').attr('href', fullUrl);
+            $('#view_file_link').attr('href', openInNewTabUrl);
 
             // Link download
-            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${docId}/download`);
 
             // Preview file
             if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
