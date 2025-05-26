@@ -267,7 +267,7 @@ class DosenController extends Controller
     {
         $data = session('importedData', []);
         $kbk = Kbk::all();
-        return view('UserManagement.views.preview-data-dosen', compact('data', 'kbk'));
+        return view('UserManagement.views.preview-data- dosen', compact('data', 'kbk'));
     }
 
     /**

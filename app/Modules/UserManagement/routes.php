@@ -129,9 +129,13 @@ Route::post('/aktif-mhs', [MahasiswaController::class, 'aktifkanAkun'])->name('a
 Route::post('/import-mhs', [MahasiswaController::class, 'import'])->name('import-mhs');
 Route::post('/import-dosen', [DosenController::class, 'import'])->name('import-dosen');
 Route::get('/previewDataDosen', [DosenController::class, 'previewDataDosen'])->name('previewDataDosen');
+
 Route::post('/inputBulkDosen', [DosenController::class, 'inputBulk'])->name('inputBulkDosen');
 Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name('updateBulkRole');
+
 Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
+Route::get('/data-kelompok-ta', [UserManagementController::class, 'show_kelompok_ta']);
+
 
 
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {

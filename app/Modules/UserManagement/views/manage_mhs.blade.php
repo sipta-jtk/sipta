@@ -1,7 +1,5 @@
 @extends('adminlte::page')
-
 @section('title', 'Data Mahasiswa')
-
 @section('content_header')
     <h1>Data Mahasiswa</h1>
     <div>
@@ -13,9 +11,7 @@
         @endcomponent
         </div>
 @stop
-
 @section('content')
-
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
@@ -42,7 +38,6 @@
             <button id="updateRoleButton" class="btn btn-success">Ubah Peran</button>
             </div>
         </div>
-        
         <table id="datatable" class="table table-striped">
             <thead class="bg-dark text-white">
                 <tr>
