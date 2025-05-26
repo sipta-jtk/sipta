@@ -230,12 +230,6 @@ class VerifikasiPengajuanJadwalController extends Controller
                     } else {
                         $responseData = $response->json();
                         $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat memproses permintaan.';
-                        
-                        \Log::error('Gagal memverifikasi penjadwalan', [
-                            'data_dikirim' => $data,
-                            'response' => $response->body(),
-                            'status' => $response->status()
-                        ]);
 
                         return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
                             ->with('error', "Gagal memverifikasi: " . $errorMessage);
