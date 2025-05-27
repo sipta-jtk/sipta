@@ -56,7 +56,7 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
         if ($namaFtaSlug == 'seminar ii') {
             return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
         } else {
@@ -98,9 +98,13 @@ class PemberianNilaiController extends Controller
 
     public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
     {
+        $username = auth()->user()->username;
+
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
+
+        Log::info('Keterangan Umum Penilaian: ' . json_encode($keteranganUmumPenilaian, JSON_PRETTY_PRINT));
 
         $jenisTa = $keteranganUmumPenilaian->jenis_ta;
 
@@ -109,17 +113,22 @@ class PemberianNilaiController extends Controller
             ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
-                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })->where('nip', $username);
                 },
-                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota) {
+                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })
+                    ->where('nip', $username);
                 }])
             ->get();
+
+        Log::info(json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
+
+        Log::info('username: ' . $username);
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
