@@ -165,19 +165,52 @@ $prefix = env('PREFIX_URL', '');
                     <div class="tab-pane fade" id="sumber" role="tabpanel">
                         <div class="card shadow-lg">
                             <div class="card-header bg-dark text-white">
-                                <h5>Daftar Sumber -
+                                <h5>
+                                    Daftar Sumber - 
                                     @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
-                                    {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
+                                        {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
                                     @else
-                                    {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
+                                        {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
                                     @endif
                                     Index Kesamaan
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Sumber</th>
+                                            <th>Persentase Kemunculan</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-
+                                        @forelse($jurnalPlagiarisme as $jurnal)
+                                            @php
+                                                $url = $jurnal->link_jurnal;
+                                                // Tambahkan protokol http:// jika belum ada
+                                                if (!preg_match('/^https?:\/\//i', $url)) {
+                                                    $url = 'http://' . $url;
+                                                }
+                                            @endphp
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ $jurnal->link_jurnal }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    @if($jurnal->persentase_kemunculan > 0 && $jurnal->persentase_kemunculan < 1)
+                                                        &lt;1%
+                                                    @else
+                                                        {{ number_format($jurnal->persentase_kemunculan, 0) }}%
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="2" class="text-center">Belum ada sumber plagiarisme.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

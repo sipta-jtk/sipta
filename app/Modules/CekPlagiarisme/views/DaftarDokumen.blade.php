@@ -731,11 +731,43 @@
 
     $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+        
+        // Validasi file PDF
+        if (fileExtension !== 'pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            // Reset file input
+            $(this).val('');
+            $('#namaFileTerpilih').text('Tidak ada file');
+            return;
+        }
+        
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
     $('#dokumenFileDigitalReceipt').on('change', function() {
         var fileName2 = $(this).val().split('\\').pop();
+        var fileExtension = fileName2.split('.').pop().toLowerCase();
+        
+        // Validasi file PDF
+        if (fileExtension !== 'pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen digital receipt harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            // Reset file input
+            $(this).val('');
+            $('#namaFileTerpilih2').text('Tidak ada file');
+            return;
+        }
+        
         $('#namaFileTerpilih2').text(fileName2 ? fileName2 : 'Tidak ada file');
     });
 
@@ -752,8 +784,30 @@
         // Validasi sekali lagi sebelum melanjutkan
         const isValid = validateForm();
         
-        if (!fileInput || !judulInput || !abstrakInput || !isValid) {
-            Swal.fire('Peringatan', 'Silakan isi judul TA dan abstrak sesuai ketentuan, serta pilih dokumen.', 'warning');
+        if (!fileInput || !fileInput2 || !judulInput || !abstrakInput || !isValid) {
+            Swal.fire('Peringatan', 'Silakan isi judul TA dan abstrak sesuai ketentuan, serta pilih semua dokumen yang diperlukan.', 'warning');
+            return;
+        }
+
+        // validasi tipe file untuk hasil check plagiarism
+        if (fileInput.type !== 'application/pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+        
+        // validasi tipe file untuk digital receipt
+        if (fileInput2.type !== 'application/pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen digital receipt harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -762,14 +816,20 @@
         if (fileInput.size > maxFileSize) {
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal mengunggah!',
-                text: 'Ukuran dokumen melebihi batas maksimal 15MB.',
+                title: 'Ukuran File Terlalu Besar',
+                text: 'Ukuran dokumen hasil check plagiarism melebihi batas maksimal 15MB.',
+                confirmButtonColor: '#3085d6'
             });
             return;
         }
-
-        if (fileInput.type !== 'application/pdf') {
-            Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
+        
+        if (fileInput2.size > maxFileSize) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ukuran File Terlalu Besar',
+                text: 'Ukuran dokumen digital receipt melebihi batas maksimal 15MB.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -783,7 +843,12 @@
                 pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
             } catch (err) {
                 console.error("Gagal memuat PDF:", err);
-                Swal.fire('Gagal', 'PDF tidak dapat dibaca, silakan gunakan file lain.', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'PDF Tidak Valid',
+                    text: 'File PDF tidak dapat dibaca. Pastikan file tidak rusak dan merupakan PDF yang valid.',
+                    confirmButtonColor: '#3085d6'
+                });
                 return;
             }
 
@@ -880,7 +945,7 @@
         // Explicitly set HTTP headers
         $.ajax({
             url: createApiUrl('/cek-plagiarisme/process'),
-            method: 'POST', 
+            method: 'POST',
             type: 'POST', // Added for compatibility with some jQuery versions
             data: formData,
             contentType: false,
