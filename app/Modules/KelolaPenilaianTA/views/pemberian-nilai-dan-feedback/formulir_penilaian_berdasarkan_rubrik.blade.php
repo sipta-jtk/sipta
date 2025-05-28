@@ -179,7 +179,7 @@
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
             </x-slot>
-        </x-adminlte-modal>
+        </x-adminlte-modal> <br>
 
         <!-- Form Penilaian -->
         @php
@@ -281,6 +281,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
         window.PREFIX_URL = "{{ env('PREFIX_URL') }}";

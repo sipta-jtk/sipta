@@ -127,7 +127,7 @@
                         data-placement="bottom"
                         title="Laporan belum tersedia"
                     @endif
-                    style="display: inline-block;">
+                    style="display: inline-block; cursor: not-allowed;">
 
                     <button type="button" class="btn btn-primary btn-prev"
                         onclick="LihatDokumen(
@@ -148,7 +148,7 @@
                         data-placement="bottom"
                         title="PowerPoint belum tersedia"
                     @endif
-                    style="display: inline-block;">
+                    style="display: inline-block; cursor: not-allowed;">
 
                     <button type="button" class="btn btn-primary btn-prev"
                         onclick="LihatDokumen(
