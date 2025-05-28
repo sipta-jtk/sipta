@@ -96,7 +96,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
-                    {{ match ($data['namaFta']) {
+                    {{ match ($namaFta) {
                         'seminar i' => 'Seminar I',
                         'seminar ii' => 'Seminar II',
                         'seminar iii' => 'Seminar III',
