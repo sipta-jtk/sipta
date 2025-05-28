@@ -45,11 +45,11 @@
                     @if ($item['status_penilaian'] === 'draf' || $item['status'] === 'Belum dinilai')
                     <div class="mb-2">
                         <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
-                            class="btn btn-primary w-100">Nilai</a>
+                            class="btn btn-primary w-100">Edit Nilai</a>
                     </div>
                     <div class="mb-2">
                         <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
-                            class="btn btn-primary w-100">Masukan</a>
+                            class="btn btn-primary w-100">Isi Masukan</a>
                     </div>
                     <div class="mb-2">
                         <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"

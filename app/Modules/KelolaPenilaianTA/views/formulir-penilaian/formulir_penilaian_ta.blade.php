@@ -53,6 +53,12 @@
                                     <option value="feedback">Feedback</option>
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <label for="filterJenisTA"><i class="fas fa-graduation-cap"></i> Jenis TA</label>
+                                <select id="filterJenisTA" class="form-control">
+                                    <option value="">Semua Jenis TA</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card-footer text-right">
@@ -80,9 +86,10 @@
                         <tr class="bg-dark text-white">
                             <th style="width: 3%;">No</th>
                             <th style="width: 12%;">Kode Formulir</th>
-                            <th style="width: 19%;">Nama Formulir</th>
+                            <th style="width: 15%;">Nama Formulir</th>
                             <th style="width: 12%;">Program Studi</th>
-                            <th style="width: 19%;">Jenis Formulir</th>
+                            <th style="width: 13%;">Jenis Formulir</th>
+                            <th style="width: 13%;">Jenis TA</th>
                             <th style="width: 15%;">Tanggal Tenggat Pengisian</th>
                             <th style="width: 15%;">Aksi</th>
                         </tr>
@@ -90,7 +97,7 @@
                     <tbody>
                         @if(empty($data) || count($data) == 0)
                         <tr>
-                            <td colspan="7" class="text-center">Data tidak tersedia</td>
+                            <td colspan="8" class="text-center">Data tidak tersedia</td>
                         </tr>
                         @else
                         @foreach ($data as $index => $row)
@@ -100,6 +107,7 @@
                             <td class="align-middle">{{ $row->nama_fta }}</td>
                             <td class="align-middle">{{ $row->nama_prodi }}</td>
                             <td class="align-middle">{{ $row->jenis_form }}</td>
+                            <td class="align-middle">{{ $row->jenis_ta ?? '-' }}</td>
                             <td class="align-middle">
                                 {{ \Carbon\Carbon::parse($row->tanggal_tenggat_pengisian)->translatedFormat('d F Y') }}
                             </td>

@@ -63,9 +63,7 @@
                                 <div class="form-group">
                                     <label for="namaFTA">Nama FTA</label>
                                     <x-adminlte-select name="namaFTA" id="namaFTA" required fgroup-class="mb-0">
-                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>Pilih Nama FTA</option>
-                                        <option value="Seminar I" {{ old('namaFTA') == 'Seminar I' ? 'selected' : '' }}>Seminar I</option>
-                                        <option value="Seminar II" {{ old('namaFTA') == 'Seminar II' ? 'selected' : '' }}>Seminar II</option>
+                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>-- Pilih Nama FTA --</option>
                                         <option value="Seminar III" {{ old('namaFTA') == 'Seminar III' ? 'selected' : '' }}>Seminar III</option>
                                         <option value="Sidang Akhir" {{ old('namaFTA') == 'Sidang Akhir' ? 'selected' : '' }}>Sidang Akhir</option>
                                         <option value="Dosen Pembimbing" {{ old('namaFTA') == 'Dosen Pembimbing' ? 'selected' : '' }}>Dosen Pembimbing</option>

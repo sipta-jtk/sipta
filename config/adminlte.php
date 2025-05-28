@@ -504,7 +504,7 @@ return [
                         ],
                         [
                             'text' => 'Penilaian',
-                            'url' => $prefix . '/DosenTabelPenilaian',
+                            'url' => $prefix . '/dosen-tabel-penilaian/seminar-iii',
                             'can' => 'dosen',
                             'icon' => 'fas fa-fw fa-award',
                         ],  
@@ -564,7 +564,7 @@ return [
                         ],    
                         [
                             'text' => 'Penilaian',
-                            'url' => $prefix . '/DosenTabelPenilaian',
+                            'url' => $prefix . '/dosen-tabel-penilaian/sidang-akhir',
                             'can' => 'dosen',
                             'icon' => 'fas fa-fw fa-award',
                         ],  
@@ -787,6 +787,12 @@ return [
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],
+                // [
+                //     'text' => 'Log Aktivitas',
+                //     'url' => $prefix . '/log-aktivitas',
+                //     'icon' => 'fas fa-user-graduate',
+                //     'can' => 'admin'
+                // ],
                 // [
                 //     'text' => 'level_one',
                 //     'url' => '#',

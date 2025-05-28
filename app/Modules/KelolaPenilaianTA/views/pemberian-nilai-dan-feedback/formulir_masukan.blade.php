@@ -124,28 +124,46 @@
                 </strong> <br>
 
                 <!-- Tombol Preview Laporan -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen(
-                        '{{ $dokumen['laporan']->file_path ?? '' }}',
-                        '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
-                        '{{ $dokumen['laporan']->kategori ?? '' }}'
-                    )"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['laporan'] ? '' : 'disabled' }}>
-                    Laporan <i class="fa-solid fa-file"></i>
-                </button>
+                <span
+                    @if(!$dokumen['laporan'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Laporan belum tersedia"
+                    @endif
+                    style="display: inline-block;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['laporan']->file_path ?? '' }}',
+                            '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['laporan']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                        Laporan <i class="fa-solid fa-file"></i>
+                    </button>
+                </span>
 
                 <!-- Tombol Preview PowerPoint -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen(
-                        '{{ $dokumen['powerpoint']->file_path ?? '' }}',
-                        '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
-                        '{{ $dokumen['powerpoint']->kategori ?? '' }}'
-                    )"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
-                    PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
-                </button>
+                <span
+                    @if(!$dokumen['powerpoint'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="PowerPoint belum tersedia"
+                    @endif
+                    style="display: inline-block;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                            '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                        PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                    </button>
+                </span>
             </div>
         </div>
 
@@ -232,17 +250,22 @@
                     @endphp
 
                     <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="{{ $oldValue }}">
-                    <trix-editor input="feedback-{{ $index }}"></trix-editor>
-                    <span>Masukan minimal 30 kata.</span>
+                    <trix-editor
+                        input="feedback-{{ $index }}"
+                        {{ $isPublished ? 'readonly contenteditable=false' : '' }}>
+                    </trix-editor>
+                    <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 30 kata.</span>
                 </div>
             @endforeach
             @endif
             
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
-                    Simpan <i class="fa-solid fa-floppy-disk"></i>
-                </button>
-            </div>
+            @if (!$isPublished)
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
+                        Simpan <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
 @stop
@@ -261,7 +284,12 @@
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
+    <script>
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
+    </script>
 @stop

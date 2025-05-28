@@ -72,13 +72,13 @@
         </table>
 
         <!-- Tombol Tampilkan Semua -->
-        @if (count($kategoriPenilaian) > 4)
+        {{-- @if (count($kategoriPenilaian) > 4)
             <div class="d-flex justify-content-center mt-3">
                 <button id="show-more-btn" class="btn btn-secondary" onclick="showAllRows()">
                     Tampilkan Semua
                 </button>
             </div>
-        @endif
+        @endif --}}
     </div>
 @stop
 

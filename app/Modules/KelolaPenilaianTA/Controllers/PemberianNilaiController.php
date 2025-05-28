@@ -12,7 +12,9 @@ use App\Models\Mahasiswa;
 use App\Models\Dosen;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
-use  App\Models\AlokasiDosen;
+use App\Models\Dokumen;
+use App\Models\AlokasiDosen;
+use App\Models\SubkategoriDokumen;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -54,7 +56,7 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
         if ($namaFtaSlug == 'seminar ii') {
             return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
         } else {
@@ -96,9 +98,13 @@ class PemberianNilaiController extends Controller
 
     public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
     {
+        $username = auth()->user()->username;
+
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
+
+        Log::info('Keterangan Umum Penilaian: ' . json_encode($keteranganUmumPenilaian, JSON_PRETTY_PRINT));
 
         $jenisTa = $keteranganUmumPenilaian->jenis_ta;
 
@@ -107,23 +113,31 @@ class PemberianNilaiController extends Controller
             ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
-                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })->where('nip', $username);
                 },
-                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota) {
+                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })
+                    ->where('nip', $username);
                 }])
             ->get();
+
+        Log::info(json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
+
+        Log::info('username: ' . $username);
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
                 return $kriteria->rubrik;
             });
         })->first()->detailRubrik;
+
+        // Ambil dokumen terbaru berdasarkan kota dan kategori
+        $dokumen = $this->getLatestDokumenByKota($idKota, $namaFtaSlug);
 
         $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
         
@@ -135,7 +149,59 @@ class PemberianNilaiController extends Controller
             'namaFta' => $namaFtaSlug,
             'idProdi' => $idProdi,
             'view' => $view,
+            'dokumen' => $dokumen,
         ]);
+    }
+
+    /**
+     * Ambil dokumen terbaru berdasarkan kota dan kategori
+     * 
+     * @param int $idKota
+     * @param string $kategori
+     * @return array
+     */
+    private function getLatestDokumenByKota($idKota, $kategori)
+    {
+        // Ubah kategori menjadi huruf kecil untuk konsistensi
+        $kategori = strtolower($kategori);
+
+        // Mapping manual kategori supaya sesuai dengan format di database
+        $kategori = match ($kategori) {
+            'seminar-i' => 'seminar1', // Seminar I
+            'seminar-ii' => 'seminar2', // Seminar II
+            'seminar-iii' => 'seminar3', // Seminar III
+            'sidang-akhir' => 'sidang', // Sidang Akhir
+            'dosen-pembimbing' => 'sidang', // Untuk dosen pembimbing, ambil dokumen sidang
+            default => $kategori // Kategori lainnya
+        };
+
+        // Ambil dokumen laporan terbaru berdasarkan kota dan kategori
+        $laporan = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 1) // Subkategori 1: Laporan
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+
+        // Ambil dokumen PowerPoint terbaru berdasarkan kota dan kategori
+        $powerpoint = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 3) // Subkategori 3: PowerPoint
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+        
+        // Log informasi dokumen untuk keperluan debugging
+        // Log::info('Preview Dokumen:', [
+        //     'id_kota' => $idKota,
+        //     'kategori' => $kategori,
+        //     'laporan_file_path' => optional($laporan)->file_path, // Path file laporan
+        //     'powerpoint_file_path' => optional($powerpoint)->file_path, // Path file PowerPoint
+        // ]);
+
+        // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
+        return [
+            'laporan' => $laporan,
+            'powerpoint' => $powerpoint
+        ];
     }
 
     public function simpanNilaiSeminar(Request $request, $namaFta, $idKota)
@@ -184,7 +250,8 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+            // return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -224,7 +291,13 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            return redirect()->route('nilai.index')->with('success', 'Nilai berhasil disimpan');
+            if ($namaFtaSlug == 'seminar iii') {
+                $namaFtaSlug = 'seminar-iii';
+            } elseif ($namaFtaSlug == 'sidang akhir') {
+                $namaFtaSlug = 'sidang-akhir';
+            }
+
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
@@ -480,6 +553,9 @@ class PemberianNilaiController extends Controller
                 }
             ])
             ->get();
+        
+        // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
+        $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
 
         Log::info('Detail informasi'. json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
@@ -488,6 +564,28 @@ class PemberianNilaiController extends Controller
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),
             'namaFta' => $namaFtaSlug,
             'idKota' => $idKota,
+            'dokumen' => $dokumen,
         ]);
+    }
+
+    /**
+     * Mengunduh dokumen.
+     */
+    public function download($kategori, $id)
+    {
+        try {
+            $dokumen = Dokumen::where('id_dokumen', $id)->where('kategori', $kategori)->firstOrFail();
+
+            if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
+            }
+
+            $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
+            $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
+
+            return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
+        }
     }
 }

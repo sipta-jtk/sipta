@@ -32,12 +32,22 @@ class ProgramStudiController extends Controller
 
         $dosen = Dosen::leftJoin('user as u', 'dosen.nip', '=', 'u.username')
         ->select('dosen.nip', 'u.nama as nama_dosen')
-        ->where('u.status_user', 'aktif') 
-        ->where('dosen.role_dosen', '!=', 'kajur') 
-        ->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('kaprodi')
-                ->whereColumn('kaprodi.nip', 'dosen.nip');
+        ->where('u.status_user', 'aktif')
+        ->where('dosen.role_dosen', '!=', 'kajur')
+        ->where(function($query) use ($programStudi) {
+            $kaprodiNips = $programStudi->pluck('kaprodi_nip')->filter()->all();
+
+            // Ambil dosen yang bukan Kaprodi di prodi lain ATAU dosen yang sedang jadi Kaprodi di prodi yang sedang di-edit
+            $query->whereNotExists(function ($subQuery) {
+                $subQuery->select(DB::raw(1))
+                    ->from('kaprodi')
+                    ->whereColumn('kaprodi.nip', 'dosen.nip');
+            });
+
+            // Tambahkan juga dosen yang ada di daftar kaprodi_nip (yang sedang menjabat)
+            if (!empty($kaprodiNips)) {
+                $query->orWhereIn('dosen.nip', $kaprodiNips);
+            }
         })
         ->get();
 
