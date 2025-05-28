@@ -283,6 +283,8 @@
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
+
         $(document).ready(function() {
             // Menginisialisasi DataTable dengan FixedColumns
             var table = $('#myTable').DataTable({
