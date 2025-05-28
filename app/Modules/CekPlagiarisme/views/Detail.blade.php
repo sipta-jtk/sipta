@@ -134,7 +134,7 @@ $prefix = env('PREFIX_URL', '');
                                             <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
                                             @endforeach
                                             @else
-                                            <span class="text-muted">Tidak ada keyword</span>
+                                            <span class="text-muted">Tidak ada kata kunci</span>
                                             @endif
                                         </td>
                                         </tr>

@@ -113,7 +113,7 @@
                     <!-- Keyword -->
                     <div class="form-group">
                         <label for="keywords">Kata Kunci</label>
-                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
+                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan Kata Kunci dokumen" required>
                         <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
                     </div>
                     
@@ -190,7 +190,7 @@
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul TA:</strong> <span id="judulPreview"></span></p>
-                        <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
+                        <p><strong>Kata Kunci:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
