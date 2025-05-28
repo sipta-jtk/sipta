@@ -70,10 +70,10 @@
                     <tr class="bg-dark text-white">
                         <th style="width:5%;">Id_dokumen</th>
                         <th style="width:5%;">Nomor</th>
-                        <th style="width:30%;">Judul</th>
-                        <th style="width:15%;">Waktu Pengecekan</th>
+                        <th style="width:30%;">Judul TA</th>
+                        <th style="width:15%;">Waktu Unggah</th>
                         <th style="width:20%;">Penulis</th>
-                        <th style="width:10%;">Presentase</th>
+                        <th style="width:10%;">Persentase</th>
                         <th style="width:10%;">Status</th>
                         <th style="width:10%;">Catatan</th>
                     </tr>
@@ -112,8 +112,8 @@
 
                     <!-- Keyword -->
                     <div class="form-group">
-                        <label for="keywords">Keyword</label>
-                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
+                        <label for="keywords">Kata Kunci</label>
+                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan Kata Kunci dokumen" required>
                         <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
                     </div>
                     
@@ -190,7 +190,7 @@
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul TA:</strong> <span id="judulPreview"></span></p>
-                        <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
+                        <p><strong>Kata Kunci:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
