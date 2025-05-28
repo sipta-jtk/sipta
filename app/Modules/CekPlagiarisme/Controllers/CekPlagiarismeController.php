@@ -135,7 +135,7 @@ class CekPlagiarismeController extends Controller
                 'max:255',
                 function ($attribute, $value, $fail) {
                     if (str_word_count($value) > 20) {
-                        $fail('Judul dokumen tidak boleh lebih dari 20 kata.');
+                        $fail('Judul TA tidak boleh lebih dari 20 kata.');
                     }
                 }
             ],

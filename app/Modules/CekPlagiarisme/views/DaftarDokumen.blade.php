@@ -103,11 +103,11 @@
                 <form id="uploadForm">
                     @csrf
 
-                    <!-- Judul Dokumen -->
+                    <!-- Judul TA -->
                     <div class="form-group">
-                        <label for="judulDokumen">Judul Dokumen</label>
-                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
-                        <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
+                        <label for="judulDokumen">Judul TA</label>
+                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul TA" required>
+                        <small class="text-danger d-none" id="judulError">Judul TA tidak boleh lebih dari 20 kata.</small>
                     </div>
 
                     <!-- Keyword -->
@@ -189,7 +189,7 @@
                 <div class="row">
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
-                        <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Judul TA:</strong> <span id="judulPreview"></span></p>
                         <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
@@ -543,7 +543,7 @@
             return false;
         } else if (jumlahKata === 0) {
             // Tambahan validasi untuk judul kosong
-            $('#judulError').removeClass('d-none').text('Judul tidak boleh kosong.'); 
+            $('#judulError').removeClass('d-none').text('Judul TA tidak boleh kosong.'); 
             $('#judulCounter').addClass('text-danger').removeClass('text-muted');
             $('#judulDokumen').addClass('is-invalid');
             return false;
@@ -764,7 +764,7 @@
         const isValid = validateForm();
         
         if (!fileInput || !judulInput || !abstrakInput || !isValid) {
-            Swal.fire('Peringatan', 'Silakan isi judul dan abstrak sesuai ketentuan, serta pilih dokumen.', 'warning');
+            Swal.fire('Peringatan', 'Silakan isi judul TA dan abstrak sesuai ketentuan, serta pilih dokumen.', 'warning');
             return;
         }
 
