@@ -175,7 +175,7 @@ $prefix = env('PREFIX_URL', '');
                                     Index Kesamaan
                                 </h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 595px; overflow-y: auto;">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>

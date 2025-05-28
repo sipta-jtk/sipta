@@ -120,9 +120,9 @@
                     <!-- Abstrak -->
                     <div class="form-group">
                         <label for="abstrakDokumen">Abstrak</label>
-                        <textarea class="form-control" id="abstrakDokumen" name="abstrak" rows="5" placeholder="Masukkan abstrak dokumen (150-250 kata)" required></textarea>
-                        <small id="abstrakCounter" class="form-text text-muted mt-1">0/250 kata</small>
-                        <small class="text-danger d-none" id="abstrakError">Abstrak harus memiliki minimal 150 kata dan maksimal 250 kata.</small>
+                        <textarea class="form-control" id="abstrakDokumen" name="abstrak" rows="5" placeholder="Masukkan abstrak dokumen (100-200 kata)" required></textarea>
+                        <small id="abstrakCounter" class="form-text text-muted mt-1">0/200 kata</small>
+                        <small class="text-danger d-none" id="abstrakError">Abstrak harus memiliki minimal 100 kata dan maksimal 200 kata.</small>
                     </div>
 
                     <!-- Pilih Dokumen -->
@@ -217,9 +217,6 @@
 @stop
 
 @section('css')
-{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
 <style>
     #table tbody tr {
@@ -231,9 +228,7 @@
         background-color:rgb(200, 200, 200);
     }
 </style>
-@stop
 
-@section('js')
 <style>
     .modal-body {
         overflow-y: auto;
@@ -241,9 +236,12 @@
     }
 </style>
 
-<!-- jQuery (ensure it's loaded first) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+@stop
+
+@section('js')
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
 <!-- DataTables (after jQuery) -->
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
@@ -478,7 +476,7 @@
         $('#dokumenFileHasilDigitalReceipt').val('');
         $('#namaFileTerpilih').text('Tidak ada file');
         $('#judulCounter').text('0/20 kata');
-        $('#abstrakCounter').text('0/250 kata');
+        $('#abstrakCounter').text('0/200 kata');
         $('#abstrakError').addClass('d-none');
         $('#judulError').addClass('d-none');
         $('#judulDokumen').removeClass('is-invalid');
@@ -620,68 +618,6 @@
         });
     });
 
-    // Setup keyword input event handlers
-    $(document).ready(function () {
-        // Atur event handler untuk format keyword saat mengetik
-        $('#keywordsInput').on('input', function () {
-            var $input = $(this);
-            var keywordVal = $input.val().trim();
-
-            // Jika kosong, tandai sebagai invalid
-            if (keywordVal.length === 0) {
-                $input.addClass('is-invalid');
-                return;
-            }
-
-            $input.removeClass('is-invalid');
-        });
-
-        // Format keyword dengan capitalization saat pengguna selesai mengetik
-        $('#keywordsInput').on('blur', function() {
-            var $input = $(this);
-            var keywordVal = $input.val().trim();
-            
-            if (keywordVal.length === 0) {
-                return;
-            }
-            
-            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
-            var capitalized = keywordVal
-                .split(',')
-                .map(keyword => keyword
-                    .trim()
-                    .split(' ')
-                    .map(word => word.length > 0 ? 
-                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
-                    )
-                    .join(' ')
-                )
-                .filter(Boolean)
-                .join(', ');
-
-            // Update nilai input yang sudah diformat
-            $input.val(capitalized);
-        });
-
-        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
-        $('#keywordsInput').on('keydown', function(e) {
-            // Kode 32 adalah kode untuk tombol spasi
-            if (e.keyCode === 32) {
-                // Biarkan spasi dimasukkan secara normal
-                return true;
-            }
-        });
-
-        // Opsional: validasi saat submit
-        $('form').on('submit', function (e) {
-            var keywordVal = $('#keywordsInput').val().trim();
-            if (keywordVal.length === 0) {
-                $('#keywordsInput').addClass('is-invalid');
-                e.preventDefault(); // Hentikan submit jika kosong
-            }
-        });
-    });
-
     
     // Validasi real-time untuk abstrak
     function validateAbstrak() {
@@ -689,10 +625,10 @@
         var jumlahKata = abstrak.length > 0 ? abstrak.split(/\s+/).length : 0;
         
         // Update counter
-        $('#abstrakCounter').text(jumlahKata + '/250 kata');
+        $('#abstrakCounter').text(jumlahKata + '/200 kata');
         
         // Validasi jumlah kata
-        if (jumlahKata < 150 || jumlahKata > 250) {
+        if (jumlahKata < 100 || jumlahKata > 200) {
             $('#abstrakError').removeClass('d-none');
             $('#abstrakCounter').addClass('text-danger').removeClass('text-muted');
             $('#abstrakDokumen').addClass('is-invalid');
