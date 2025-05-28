@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\TemplateNotifikasi;
@@ -11,7 +12,7 @@ use App\Modules\NotificationAndReminder\helper\PlaceholderHelper;
 use App\Models\Notifikasi;
 use App\Models\NotifikasiKirim;
 
-class TestEmailNotification extends Notification
+class TestEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
