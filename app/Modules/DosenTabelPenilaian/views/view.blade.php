@@ -42,11 +42,24 @@
                 <td>{{ $item['judul'] }}</td>
                 <td>{{ $item['kota'] }}</td>
                 <td>
-                    @if (item['status_penilaian'] ===)
-                    @if ($item['status_penilaian'] === 'draf' || $item['sudah_penilaian'] === 'Belum dinilai')
+                    {{-- @if (item['status_penilaian'] ===) --}}
+                    @if ($item['sudah_penilaian'] === 'Sudah diisi')
+                        @if($item['status_penilaian'] === 'draf')
+                            <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                                class="btn btn-primary w-100">Edit Nilai
+                            </a>
+                        @elseif($item['status_penilaian'] === 'dipublikasikan')
+                            <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
+                                class="btn btn-primary w-100">Lihat Nilai
+                            </a>
+                        @endif
+
+                    @endif
+                    {{-- @if ($item['status_penilaian'] === 'draf' || $item['sudah_penilaian'] === 'Belum dinilai')
                         <div class="mb-2">
                             <a href="{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
-                                class="btn btn-primary w-100">Edit Nilai</a>
+                                class="btn btn-primary w-100">Edit Nilai
+                            </a>
                         </div>
                         <div class="mb-2">
                             <a href="{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}"
@@ -75,7 +88,7 @@
                                 <button type="submit" class="btn btn-primary w-100">Batal Publikasi</button>
                             </form>
                         </div>
-                    @endif
+                    @endif --}}
                 </td>
             </tr>
         @endforeach
