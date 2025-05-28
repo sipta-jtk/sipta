@@ -9,6 +9,7 @@ use App\Models\Dokumen;
 use App\Models\Keyword;
 use App\Models\AmbangBatas;
 use App\Models\Kota;
+use App\Models\ListJurnalPlagiarisme;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
@@ -43,18 +44,43 @@ class CekPlagiarismeController extends Controller
         return null;
     }
 
-    function extractSourceLinks($pdfText)
+    function extractSourceLinksWithPercentages($pdfText)
     {
-        $cleanText = preg_replace("/\n|\r/", '', $pdfText);
+        // Hapus newline agar lebih mudah diproses
+        $cleanText = preg_replace("/\r|\n/", ' ', $pdfText);
 
-        preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
+        // Pola: ambil domain (atau nama sumber) yang kemungkinan diikuti persentase
+        preg_match_all('/(?<source>(?:[a-zA-Z0-9.-]+\.[a-z]{2,}|[A-Z][^%]{3,100}?))\s+(?<percent><1%|1%|2%|3%|[1-9]{1,2}%)/i', $cleanText, $matches);
 
-        $links = array_map(function ($url) {
-            return rtrim($url, ".,)");
-        }, $matches[0]);
+        $sources = $matches['source'];
+        $percents = $matches['percent'];
 
-        return array_values(array_unique($links));
+        $result = [];
+
+        foreach ($sources as $index => $source) {
+            $source = trim($source);
+            $percent = $percents[$index];
+
+            if (!isset($result[$source])) {
+                $result[$source] = [];
+            }
+
+            // Hindari duplikat jika persentase yang sama sudah tercatat
+            if (!in_array($percent, $result[$source])) {
+                $result[$source][] = $percent;
+            }
+        }
+
+        return $result;
     }
+
+    function convertToFloat($percent) {
+        if (strpos($percent, '<') !== false) {
+            return 0.99; // atau 0.5 tergantung preferensi
+        }
+        return floatval(str_replace('%', '', $percent));
+    }
+
     
     public function getData()
     {
@@ -175,10 +201,6 @@ class CekPlagiarismeController extends Controller
                 'nim' => $nim,
                 'id_kota' => $idKota,
             ]);
-
-            $parser = new Parser();
-            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            $text = $pdf->getText();
             
             $pathToPdf = storage_path('app/public/' . $filePathDokumen);
             $text = (new Pdf('pdftotext'))->setPdf($pathToPdf)->text();
@@ -193,7 +215,7 @@ class CekPlagiarismeController extends Controller
             
             // Fix: Use $this-> to call class methods
             $similarity = $this->extractOverallSimilarity($text);
-            $sources = $this->extractSourceLinks($text);
+            $sources = $this->extractSourceLinksWithPercentages($text);
             
             // Log the extracted data with more context
             Log::info('Extracted plagiarism data from PDF', [
@@ -225,6 +247,36 @@ class CekPlagiarismeController extends Controller
                 'jumlah_kata' => $request->jumlah_kata,
                 'jumlah_halaman' => $request->jumlah_halaman,
             ]);
+
+            // Debug isi hasil parsing
+            Log::info('Extracted sources:', $sources);
+
+            foreach ($sources as $link => $persentaseList) {
+                foreach ($persentaseList as $percent) {
+                    // Log sebelum simpan ke DB
+                    Log::info('Mencoba simpan:', [
+                        'link_jurnal' => $link,
+                        'judul' => '-',
+                        'persentase_kemunculan' => $percent
+                    ]);
+
+                    try {
+                        DB::table('list_jurnal_plagiarisme')->insert([
+                            'link_jurnal' => $link,
+                            'judul' => '-',
+                            'persentase_kemunculan' => (float) str_replace(['<', '%'], '', $percent),
+                            'id_dokumen' => $dokumen->id_dokumen,
+                        ]);
+                    } catch (\Exception $e) {
+                        // Log error jika gagal
+                        Log::error('Gagal simpan jurnal:', [
+                            'link_jurnal' => $link,
+                            'percent' => $percent,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
 
             // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
