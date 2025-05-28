@@ -131,7 +131,7 @@
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
@@ -142,7 +142,7 @@
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih2" class="ml-2">Tidak ada file</span>
                         </div>
