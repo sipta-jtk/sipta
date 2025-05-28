@@ -165,19 +165,52 @@ $prefix = env('PREFIX_URL', '');
                     <div class="tab-pane fade" id="sumber" role="tabpanel">
                         <div class="card shadow-lg">
                             <div class="card-header bg-dark text-white">
-                                <h5>Daftar Sumber -
+                                <h5>
+                                    Daftar Sumber - 
                                     @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
-                                    {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
+                                        {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
                                     @else
-                                    {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
+                                        {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
                                     @endif
                                     Index Kesamaan
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Sumber</th>
+                                            <th>Persentase Kemunculan</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-
+                                        @forelse($jurnalPlagiarisme as $jurnal)
+                                            @php
+                                                $url = $jurnal->link_jurnal;
+                                                // Tambahkan protokol http:// jika belum ada
+                                                if (!preg_match('/^https?:\/\//i', $url)) {
+                                                    $url = 'http://' . $url;
+                                                }
+                                            @endphp
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ $jurnal->link_jurnal }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    @if($jurnal->persentase_kemunculan > 0 && $jurnal->persentase_kemunculan < 1)
+                                                        &lt;1%
+                                                    @else
+                                                        {{ number_format($jurnal->persentase_kemunculan, 0) }}%
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="2" class="text-center">Belum ada sumber plagiarisme.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -270,7 +303,7 @@ $prefix = env('PREFIX_URL', '');
             const container = iframe.parentNode;
             const errorMsg = document.createElement('div');
             errorMsg.className = 'alert alert-warning mt-3';
-            errorMsg.innerHTML = '<strong>Dokumen tidak dapat ditampilkan.</strong><br>Silakan gunakan tombol di bawah untuk mengakses dokumen.';
+            errorMsg.innerHTML = '<strong>Dokumen tidak dapat ditampilkan.</strong><br>';
 
             // Insert error message before the iframe
             iframe.style.display = 'none';
@@ -298,25 +331,6 @@ $prefix = env('PREFIX_URL', '');
             });
         });
         
-        // Handle download buttons in document tabs
-        const documentTabDownloadButtons = document.querySelectorAll('#documentTabsContent a[download]');
-        documentTabDownloadButtons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                console.log('Document tab download initiated:', this.href);
-                const successMsg = document.createElement('span');
-                successMsg.className = 'badge badge-success ml-2';
-                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Mengunduh...';
-                
-                // Append to button 
-                this.appendChild(successMsg);
-                
-                // Remove after 2 seconds
-                setTimeout(function() {
-                    successMsg.remove();
-                }, 2000);
-            });
-        });
-
         // Enable jQuery tab functionality for both tab groups
         $('#documentTabs a').on('click', function(e) {
             e.preventDefault();
