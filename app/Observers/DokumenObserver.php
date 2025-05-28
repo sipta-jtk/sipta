@@ -37,7 +37,7 @@ class DokumenObserver
                 'waktu_aktivitas' => now(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Gagal menyimpan log aktivitas: ' . $e->getMessage());
+            Log::error('Gagal menyimpan log aktivitas: ' . $e->getMessage());
         }
     }
 }
