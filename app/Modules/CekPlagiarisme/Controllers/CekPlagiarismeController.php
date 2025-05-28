@@ -20,11 +20,16 @@ use Spatie\PdfToText\Pdf;
 
 Carbon::setLocale('id');
 
-$prefix = env('PREFIX_URL');
-$redirectPath = $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
+
 
 class CekPlagiarismeController extends Controller
 {
+    private function getRedirectPath(): string
+    {
+        $prefix = env('PREFIX_URL');
+        return $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
+    }
+
     function extractOverallSimilarity($pdfText)
     {
         if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
@@ -272,7 +277,7 @@ class CekPlagiarismeController extends Controller
                 Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
             }
 
-            return redirect($redirectPath)->with('success', 'Dokumen berhasil diunggah.');
+            return redirect($this->getRedirectPath())->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
             DB::rollBack();
 
