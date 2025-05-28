@@ -250,7 +250,8 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+            // return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -290,7 +291,13 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            return redirect()->route('nilai.index')->with('success', 'Nilai berhasil disimpan');
+            if ($namaFtaSlug == 'seminar iii') {
+                $namaFtaSlug = 'seminar-iii';
+            } elseif ($namaFtaSlug == 'sidang akhir') {
+                $namaFtaSlug = 'sidang-akhir';
+            }
+
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     

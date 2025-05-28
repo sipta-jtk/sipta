@@ -11,7 +11,8 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                // ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => route('nilai.index', ['kegiatan' => $namaFta]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
