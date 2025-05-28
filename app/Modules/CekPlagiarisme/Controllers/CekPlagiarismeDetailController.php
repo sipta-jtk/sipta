@@ -17,11 +17,11 @@ Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
+
     public function show($id)
     {
         $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
-        // Mengambil digital receipt yang terkait (memiliki kategori 'digital_receipt' dan username yang sama)
         $digital_receipt = null;
         if ($dokumen) {
             $digital_receipt = Dokumen::where('username', $dokumen->username)
@@ -31,21 +31,18 @@ class CekPlagiarismeDetailController extends Controller
                 ->first();
         }
 
-        // Mengambil semua review (catatan) yang terkait dengan dokumen
-        $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
+        $catatan = ReviewDosenPembimbing::with('dosen.user')
+            ->where('id_dokumen', $id)
+            ->get();
 
-        // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
-        // $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
-        //     ->where('id_dokumen', $id)
-        //     ->get();
-
-        // Mengambil data alokasi dosen yang statusnya 'fix' dan mengirimkan ke view
         $alokasiDosen = AlokasiDosen::all();
 
-        // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
-    }
+        // Ambil data jurnal plagiarisme berdasarkan id dokumen
+        $jurnalPlagiarisme = ListJurnalPlagiarisme::where('id_dokumen', $id)->get();
 
+        // Kirim data jurnal ke view
+        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen', 'jurnalPlagiarisme'));
+    }
 
     public function PenentuanAmbangBatas(): View
     {
