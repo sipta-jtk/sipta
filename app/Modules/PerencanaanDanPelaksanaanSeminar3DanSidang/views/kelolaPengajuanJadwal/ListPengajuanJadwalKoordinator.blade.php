@@ -195,13 +195,13 @@
             let id_penjadwalan = $(this).data('idpenjadwalan');
             let namakota = $(this).data('namakota');
             let judul = $(this).data('judul');
-            let agenda = $(this).data('agenda');
             let tanggal = $(this).data('tanggal');
             let ruangan = $(this).data('ruangan');
             let sesi = $(this).data('sesi');
             let start = $(this).data('start');
             let end = $(this).data('end');
             let status = $(this).data('status');
+            let agenda = $(this).data('agenda');
 
             if (agenda === "seminar_3") {
                 agenda = "Seminar 3";

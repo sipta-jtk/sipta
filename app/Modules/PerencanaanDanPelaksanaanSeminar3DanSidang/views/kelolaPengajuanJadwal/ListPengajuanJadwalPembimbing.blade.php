@@ -235,7 +235,6 @@
             $('#modalKelompok').text(namakota);
             $('#modalJudul').text(judul);
             $('#modalTanggal').text(tanggal);
-            $('#modalRuangan').text(ruangan);
             $('#modalAgenda').text(agenda);
             $('#modalRuangan').text(ruangan);
             $('#modalSesi').text(sesi);

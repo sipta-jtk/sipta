@@ -84,7 +84,7 @@
             <p><strong>Agenda:</strong> <span id="modalAgenda"></span></p>
         </div>
         <div class="col-md-6 mb-2">
-            <p><strong>Tanggal:</strong> <span id="modalTanggal"></span></p>
+            <p><strong>Tanggal Kegiatan:</strong> <span id="modalTanggal"></span></p>
         </div>
         <div class="col-md-6 mb-2">
             <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
