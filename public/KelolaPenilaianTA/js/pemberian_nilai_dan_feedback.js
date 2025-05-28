@@ -49,6 +49,15 @@ $(document).ready(function () {
         updateContent();
     });
 
+    // Make sure to define window.PREFIX_URL in your HTML template using the value from .env
+    // Example in Blade: <script>window.PREFIX_URL = "{{ env('PREFIX_URL') }}";</script>
+    // const prefix = window.PREFIX_URL || '';
+
+    // window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
+    //     if (filePath && filePath.trim() !== '') {
+    //         const fullUrl = `${prefix}/storage/${filePath}`;
+    //         const fileExtension = filePath.split('.').pop().toLowerCase();
+
     window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
         if (filePath && filePath.trim() !== '') {
             const fullUrl = `${window.location.origin}/storage/${filePath}`;
