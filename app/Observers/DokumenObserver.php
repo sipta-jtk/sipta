@@ -18,23 +18,26 @@ class DokumenObserver
         $this->log('Memperbarui dokumen', $dokumen);
     }
 
-    public function deleted(Dokumen $dokumen)
+    public function deleting(Dokumen $dokumen)
     {
         $this->log('Menghapus dokumen', $dokumen);
     }
 
     protected function log(string $action, Dokumen $dokumen)
     {
-        // Skip logging jika tidak ada user yang login
-        if (!Auth::check()) {
-            return;
+        try {
+            if (!Auth::check()) {
+                return;
+            }
+            LogAktivitas::create([
+                'username' => Auth::user()->username ?? 'system',
+                'id_kota' => $dokumen->id_kota,
+                'id_dokumen' => $dokumen->id_dokumen,
+                'action' => $action,
+                'waktu_aktivitas' => now(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Gagal menyimpan log aktivitas: ' . $e->getMessage());
         }
-        LogAktivitas::create([
-            'username' => Auth::user()->username ?? 'system', // pastikan user login
-            'id_kota' => $dokumen->id_kota,
-            'id_dokumen' => $dokumen->id_dokumen,
-            'action' => $action,
-            'waktu_aktivitas' => now(),
-        ]);
     }
 }
