@@ -10,16 +10,18 @@ class Dokumen extends Model
     protected $primaryKey = 'id_dokumen';
 
     protected $fillable = [
-        'judul', // 1
+        'judul', 
         'persentase_plagiarisme',
         'highlight_dokumen',
         'status_plagiarisme',
         'id_ambang_batas',
-        'kategori', // 2
-        'deskripsi', // 3
-        'versi', // 4
-        'ukuran_file', // 5
-        'notes', // 6
+        'kategori', 
+        'deskripsi', 
+        'versi', 
+        'ukuran_file', 
+        'jumlah_kata', 
+        'jumlah_halaman', 
+        'notes', 
         'id_kota',
         'id_subkategori',
         'username',

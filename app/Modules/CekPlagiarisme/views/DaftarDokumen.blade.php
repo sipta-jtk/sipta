@@ -462,17 +462,6 @@
     });
 
 
-
-    function getStatusBadge(persentase, ambangBatas) {
-        if (persentase === null) {
-            return '<span class="badge badge-warning">Processing</span>';
-        } else if (persentase < ambangBatas) {
-            return '<span class="badge badge-success">Tidak Plagiat</span>';
-        } else {
-            return '<span class="badge badge-danger">Plagiat</span>';
-        }
-    }
-
     function getCatatan(catatan, id) {
         if (catatan) {
             return '<span class="text-dark">Catatan diberikan</span>';
@@ -865,6 +854,16 @@
         formData.append('dokumen', pdfFile);
         formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+        console.log("Form data being sent:", {
+            judul: $('#judulDokumen').val(),
+            keywords: $('#keywordsInput').val(),
+            deskripsi: $('#abstrakDokumen').val(),
+            jumlah_kata: $('#jumlahKataPreview').text(),
+            jumlah_halaman: $('#jumlahHalamanPreview').text(),
+            dokumen: pdfFile.name,
+            digital_receipt: pdfFile2.name
+        });
     
         // Show loading
         Swal.fire({
