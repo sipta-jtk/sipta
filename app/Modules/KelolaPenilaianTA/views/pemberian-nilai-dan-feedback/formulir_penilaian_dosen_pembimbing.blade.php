@@ -72,31 +72,57 @@
         <!-- Tombol Lihat Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Dokumen Sidang Akhir</strong> <br>
+                <strong>Dokumen
+                    {{ match ($data['namaFta']) {
+                        'seminar i' => 'Seminar I',
+                        'seminar ii' => 'Seminar II',
+                        'seminar iii' => 'Seminar III',
+                        'sidang akhir' => 'Sidang Akhir',
+                        default => ''
+                    } }}
+                </strong> <br>
 
                 <!-- Tombol Preview Laporan -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen(
-                        '{{ $dokumen['laporan']->file_path ?? '' }}',
-                        '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
-                        '{{ $dokumen['laporan']->kategori ?? '' }}'
-                    )"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['laporan'] ? '' : 'disabled' }}>
-                    Laporan <i class="fa-solid fa-file"></i>
-                </button>
+                <span
+                    @if(!$dokumen['laporan'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Laporan belum tersedia"
+                    @endif
+                    style="display: inline-block;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['laporan']->file_path ?? '' }}',
+                            '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['laporan']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                        Laporan <i class="fa-solid fa-file"></i>
+                    </button>
+                </span>
 
                 <!-- Tombol Preview PowerPoint -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen(
-                        '{{ $dokumen['powerpoint']->file_path ?? '' }}',
-                        '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
-                        '{{ $dokumen['powerpoint']->kategori ?? '' }}'
-                    )"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
-                    PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
-                </button>
+                <span
+                    @if(!$dokumen['powerpoint'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="PowerPoint belum tersedia"
+                    @endif
+                    style="display: inline-block;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                            '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                        PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                    </button>
+                </span>
             </div>
         </div>
 
@@ -234,4 +260,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
+    <script>
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
+    </script>
 @stop

@@ -49,9 +49,18 @@ $(document).ready(function () {
         updateContent();
     });
 
+    // Inisialisasi semua tooltip Bootstrap setelah DOM siap
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({
+            delay: { "show": 0, "hide": 0 } 
+        }); 
+    });
+
+    let prefix = window.PREFIX_URL || '';
+
     window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
         if (filePath && filePath.trim() !== '') {
-            const fullUrl = `${window.location.origin}/storage/${filePath}`;
+            const fullUrl = `${window.location.origin}/${prefix}/storage/${filePath}`;
             const fileExtension = filePath.split('.').pop().toLowerCase();
 
             // Open in new tab
