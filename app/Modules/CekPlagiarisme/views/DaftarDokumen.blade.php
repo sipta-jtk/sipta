@@ -70,8 +70,8 @@
                     <tr class="bg-dark text-white">
                         <th style="width:5%;">Id_dokumen</th>
                         <th style="width:5%;">Nomor</th>
-                        <th style="width:30%;">Judul</th>
-                        <th style="width:15%;">Waktu Pengecekan</th>
+                        <th style="width:30%;">Judul TA</th>
+                        <th style="width:15%;">Waktu Unggah</th>
                         <th style="width:20%;">Penulis</th>
                         <th style="width:10%;">Presentase</th>
                         <th style="width:10%;">Status</th>
