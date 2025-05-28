@@ -3,6 +3,9 @@
 @section('title', 'PENILAIAN ' . strtoupper($namaFta))
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
         
@@ -10,8 +13,7 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                // ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('nilai.index', ['kegiatan' => $namaFta]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
@@ -94,7 +96,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
-                    {{ match ($data['namaFta']) {
+                    {{ match ($namaFta) {
                         'seminar i' => 'Seminar I',
                         'seminar ii' => 'Seminar II',
                         'seminar iii' => 'Seminar III',

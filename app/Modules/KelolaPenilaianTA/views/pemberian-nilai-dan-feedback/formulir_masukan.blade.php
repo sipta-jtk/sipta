@@ -12,6 +12,9 @@
 @section('title', $title)
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <!-- Judul Halaman -->
         <h1 class="mb-0">MASUKAN {{ strtoupper($data['namaFta']) }}</h1>
@@ -19,8 +22,8 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => route('nilai.index', ['kegiatan' => $data['namaFta']]), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
+                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',
