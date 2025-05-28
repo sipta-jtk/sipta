@@ -258,7 +258,7 @@ $prefix = env('PREFIX_URL', '');
                                 <h5>Catatan</h5>
                             </div>
                             <div class="card-body">
-                                @include('CekPlagiarisme.views.catatan')
+                                @include('CekPlagiarisme.views.Catatan')
                             </div>
                         </div>
                     </div>
