@@ -88,6 +88,8 @@ class VerifikasiBerkasController extends Controller
         if ($dataKota) {
                 $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
                 $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
+                $dataKota->nama_kota = $dataKota->kota?->nama_kota ?? '-';
+                
 
                 if ($dataKota->jenis_pengajuan === 'seminar_3') {
                     $dataKota->jenis_pengajuan = 'Seminar 3';

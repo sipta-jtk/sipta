@@ -14,7 +14,7 @@
                 <h3 class="card-title">Informasi Pengajuan</h3>
             </div>
             <div class="card-body">
-                <p><strong>Kelompok:</strong> {{ $dataKota->id_kota }}</p>
+                <p><strong>Kelompok:</strong> {{ $dataKota->nama_kota }}</p>
                 <p><strong>Judul:</strong> {{ $dataKota->judul_ta }}</p>
                 <p><strong>Agenda:</strong> {{ $dataKota->jenis_pengajuan }}</p>
                 <p><strong>Tanggal Pengajuan:</strong> {{ $dataKota->tanggal_pengajuan }}</p>
