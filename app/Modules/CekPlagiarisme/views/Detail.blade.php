@@ -179,15 +179,22 @@ $prefix = env('PREFIX_URL', '');
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Jurnal</th>
+                                            <th>Sumber</th>
                                             <th>Persentase Kemunculan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse($jurnalPlagiarisme as $jurnal)
+                                            @php
+                                                $url = $jurnal->link_jurnal;
+                                                // Tambahkan protokol http:// jika belum ada
+                                                if (!preg_match('/^https?:\/\//i', $url)) {
+                                                    $url = 'http://' . $url;
+                                                }
+                                            @endphp
                                             <tr>
                                                 <td>
-                                                    <a href="{{ $jurnal->link_jurnal }}" target="_blank" rel="noopener noreferrer">
+                                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
                                                         {{ $jurnal->link_jurnal }}
                                                     </a>
                                                 </td>
