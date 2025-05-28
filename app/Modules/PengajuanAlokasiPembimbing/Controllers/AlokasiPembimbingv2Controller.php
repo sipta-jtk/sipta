@@ -222,6 +222,21 @@ class AlokasiPembimbingv2Controller extends Controller
         if (!$pengajuan) {
             return redirect()->back()->with('error', 'Pengajuan tidak ditemukan!');
         }
+        $nip = $request->input('nip');
+
+        // check penguji
+        $currentDosen = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'penguji')
+            ->where('nip', $nip)
+            ->first();
+        if ($currentDosen) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dosen sudah teralokasi sebagai penguji!'
+            ]);
+        }
+        // - check penguji
 
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
@@ -251,8 +266,10 @@ class AlokasiPembimbingv2Controller extends Controller
                 'updated_at' => now(),
             ]);
 
-
-        return null;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi berhasil diperbarui!'
+        ]);
 
     }
     public function kirimNotifikasiBatch(Request $request)
