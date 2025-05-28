@@ -860,6 +860,8 @@
         formData.append('judul', $('#judulDokumen').val());
         formData.append('keywords', $('#keywordsInput').val());
         formData.append('deskripsi', $('#abstrakDokumen').val());
+        formData.append('jumlah_kata', $('#jumlahKataPreview').text());
+        formData.append('jumlah_halaman', $('#jumlahHalamanPreview').text());
         formData.append('dokumen', pdfFile);
         formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
