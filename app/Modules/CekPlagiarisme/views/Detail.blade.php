@@ -120,7 +120,7 @@ $prefix = env('PREFIX_URL', '');
                                             <td>{{ $dokumen->user->nama ?? 'Nama Tidak Tersedia' }}</td> <!-- Data penulis dari database -->
                                         </tr>
                                         <tr>
-                                            <th>Judul Dokumen</th>
+                                            <th>Judul Tugas Akhir</th>
                                             <td>{{ $dokumen->judul }}</td> <!-- Data judul dari database -->
                                         </tr>
                                         <tr>
@@ -261,7 +261,7 @@ $prefix = env('PREFIX_URL', '');
                                 <h5>Catatan</h5>
                             </div>
                             <div class="card-body">
-                                @include('CekPlagiarisme.views.catatan')
+                                @include('CekPlagiarisme.views.Catatan')
                             </div>
                         </div>
                     </div>
