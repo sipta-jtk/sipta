@@ -176,8 +176,7 @@ class CekPlagiarismeController extends Controller
             $text = $pdf->getText();
             
             $pathToPdf = storage_path('app/public/' . $filePathDokumen);
-            $binaryPath = 'C:\\Dean\\Programs\\poppler\\poppler-24.08.0\\Library\\bin\\pdftotext.exe';
-            $text = (new Pdf($binaryPath))->setPdf($pathToPdf)->text();
+            $text = (new Pdf('pdftotext'))->setPdf($pathToPdf)->text();
             
             // Detailed logging for PDF parsing
             Log::info('PDF parsing complete', [
