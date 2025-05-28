@@ -11,7 +11,8 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                // ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => route('nilai.index', ['kegiatan' => $namaFta]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
@@ -27,18 +28,18 @@
             <!-- Kode FTA -->
             <div class="col-md-12">
                 <strong>Kode FTA</strong> <br>
-                <span>{{ ($detailInformasiFta->first()?->nama_fta) }}</span>
+                <span>{{ ($detailInformasiFta->first()?->kode_fta) }}</span>
             </div>
 
             <div class="col-md-2 mt-3">
                 <strong>Pada Hari/Tanggal</strong> <br>
-                <span>{{ $keteranganUmumPenilaian ? \Carbon\Carbon::parse($keteranganUmumPenilaian->tanggal)->translatedFormat('d F Y') : '-' }}</span>
+                <span>{{ $keteranganUmumPenilaian ? \Carbon\Carbon::parse($keteranganUmumPenilaian->penjadwalan->first()->tanggal)->translatedFormat('d F Y') : '-' }}</span>
             </div>
             <div class="col-md-2 mt-3">
                 <strong>Waktu</strong> <br>
                 <span>
                     @if($keteranganUmumPenilaian)
-                        {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->start)->format('H:i') }} - {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->end)->format('H:i') }}
+                        {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->penjadwalan->first()->start)->format('H:i') }} - {{ \Carbon\Carbon::parse($keteranganUmumPenilaian->penjadwalan->first()->end)->format('H:i') }}
                     @else
                         -
                     @endif
