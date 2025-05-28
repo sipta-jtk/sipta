@@ -17,7 +17,7 @@ use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\PengajuanPembimbing;
 use Illuminate\Support\Facades\Log;
-
+use App\Notifications\TestEmailNotification;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -279,16 +279,16 @@ class RepositoryController extends Controller
                         ->first();
 
                     if ($alokasiDosen && $alokasiDosen->dosen) {
-                        Notifikasi::kirim(
+                        // Menggunakan TestEmailNotification yang baru
+                        $alokasiDosen->dosen->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
-                            $alokasiDosen->dosen->user->username,
                             [
                                 'kategori' => $kategori,
                                 'judul_dokumen' => $request->judul,
                                 'nama_mahasiswa' => auth()->user()->nama,
                                 'subkategori' => $subkategoriName
                             ]
-                        );
+                        ));
                     }
                 }
             } catch (\Exception $notifEx) {

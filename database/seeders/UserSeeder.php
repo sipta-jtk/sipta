@@ -740,6 +740,26 @@ class UserSeeder extends Seeder
                 'status_user' => 'aktif'
             ],
             [
+                'username' => '221524027',
+                'nama' => 'Rayhan',
+                'email' => 'rayhan.fanez.tif422@polban.ac.id',
+                'password' => Hash::make('yusu123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '081234567978',
+                'photo' => 'rayhan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '221524030',
+                'nama' => 'Roy',
+                'email' => 'roy.aziz.tif422@polban.ac.id',
+                'password' => Hash::make('yusu123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '081234567978',
+                'photo' => 'roy.png',
+                'status_user' => 'aktif'
+            ],
+            [
                 'username' => '221524063',
                 'nama' => 'Zahran Anugerah Rizqullah',
                 'email' => 'zahran.anugerah.tif422@polban.ac.id',
