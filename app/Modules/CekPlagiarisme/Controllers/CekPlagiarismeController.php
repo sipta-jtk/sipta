@@ -49,8 +49,8 @@ class CekPlagiarismeController extends Controller
         // Hapus newline agar lebih mudah diproses
         $cleanText = preg_replace("/\r|\n/", ' ', $pdfText);
 
-        // Pola: ambil domain (atau nama sumber) yang kemungkinan diikuti persentase
-        preg_match_all('/(?<source>(?:[a-zA-Z0-9.-]+\.[a-z]{2,}|[A-Z][^%]{3,100}?))\s+(?<percent><1%|1%|2%|3%|[1-9]{1,2}%)/i', $cleanText, $matches);
+        // Hanya cocokkan domain yang valid dan diikuti persentase
+        preg_match_all('/(?<source>[a-zA-Z0-9.-]+\.[a-z]{2,})(?:\s+\d+)?\s+(?<percent><1%|[1-9][0-9]?%)/i', $cleanText, $matches);
 
         $sources = $matches['source'];
         $percents = $matches['percent'];
@@ -58,14 +58,13 @@ class CekPlagiarismeController extends Controller
         $result = [];
 
         foreach ($sources as $index => $source) {
-            $source = trim($source);
+            $source = strtolower(trim($source)); // pakai lowercase biar konsisten
             $percent = $percents[$index];
 
             if (!isset($result[$source])) {
                 $result[$source] = [];
             }
 
-            // Hindari duplikat jika persentase yang sama sudah tercatat
             if (!in_array($percent, $result[$source])) {
                 $result[$source][] = $percent;
             }
@@ -73,6 +72,7 @@ class CekPlagiarismeController extends Controller
 
         return $result;
     }
+
 
     function convertToFloat($percent) {
         if (strpos($percent, '<') !== false) {
