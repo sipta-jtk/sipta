@@ -120,9 +120,9 @@
                     <!-- Abstrak -->
                     <div class="form-group">
                         <label for="abstrakDokumen">Abstrak</label>
-                        <textarea class="form-control" id="abstrakDokumen" name="abstrak" rows="5" placeholder="Masukkan abstrak dokumen (150-250 kata)" required></textarea>
-                        <small id="abstrakCounter" class="form-text text-muted mt-1">0/250 kata</small>
-                        <small class="text-danger d-none" id="abstrakError">Abstrak harus memiliki minimal 150 kata dan maksimal 250 kata.</small>
+                        <textarea class="form-control" id="abstrakDokumen" name="abstrak" rows="5" placeholder="Masukkan abstrak dokumen (100-200 kata)" required></textarea>
+                        <small id="abstrakCounter" class="form-text text-muted mt-1">0/200 kata</small>
+                        <small class="text-danger d-none" id="abstrakError">Abstrak harus memiliki minimal 100 kata dan maksimal 200 kata.</small>
                     </div>
 
                     <!-- Pilih Dokumen -->
@@ -478,7 +478,7 @@
         $('#dokumenFileHasilDigitalReceipt').val('');
         $('#namaFileTerpilih').text('Tidak ada file');
         $('#judulCounter').text('0/20 kata');
-        $('#abstrakCounter').text('0/250 kata');
+        $('#abstrakCounter').text('0/200 kata');
         $('#abstrakError').addClass('d-none');
         $('#judulError').addClass('d-none');
         $('#judulDokumen').removeClass('is-invalid');
@@ -689,10 +689,10 @@
         var jumlahKata = abstrak.length > 0 ? abstrak.split(/\s+/).length : 0;
         
         // Update counter
-        $('#abstrakCounter').text(jumlahKata + '/250 kata');
+        $('#abstrakCounter').text(jumlahKata + '/200 kata');
         
         // Validasi jumlah kata
-        if (jumlahKata < 150 || jumlahKata > 250) {
+        if (jumlahKata < 100 || jumlahKata > 200) {
             $('#abstrakError').removeClass('d-none');
             $('#abstrakCounter').addClass('text-danger').removeClass('text-muted');
             $('#abstrakDokumen').addClass('is-invalid');
