@@ -307,7 +307,10 @@ class PemberianFeedbackController extends Controller
 
             // Commit transaksi jika berhasil
             DB::commit();
-            return redirect()->route('nilai.index')->with('success', 'Masukan berhasil disimpan.');
+
+            $namaFtaSlug = str_replace(' ', '-', $namaFtaSlug);
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])
+                ->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
