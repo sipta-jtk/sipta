@@ -32,6 +32,7 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.nama_fta',
                 'prodi.nama_prodi',
                 'form_penilaian.jenis_form',
+                'form_penilaian.jenis_ta',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta'
             )
@@ -319,6 +320,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -376,6 +378,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -407,6 +410,7 @@ class FormulirPenilaianController extends Controller {
             'form_penilaian.kode_fta',
             'form_penilaian.nama_fta',
             'prodi.nama_prodi',
+            'form_penilaian.jenis_form',
             'form_penilaian.jenis_ta',
             'form_penilaian.tanggal_tenggat_pengisian',
             'form_penilaian.waktu_tenggat_pengisian'
@@ -550,6 +554,7 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.nama_fta',
                 'prodi.nama_prodi',
                 'form_penilaian.jenis_form',
+                'form_penilaian.jenis_ta',
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta')
             ->get()

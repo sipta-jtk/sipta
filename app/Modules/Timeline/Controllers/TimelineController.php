@@ -9,6 +9,8 @@ use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Services\Notifikasi;
 
 class TimelineController extends Controller
 {
@@ -54,6 +56,28 @@ class TimelineController extends Controller
 
         // Simpan data timeline
         $timeline = Timeline::create($request->only(['nama_kegiatan', 'tanggal_mulai', 'tanggal_selesai', 'deskripsi']));
+
+        // Kirim notifikasi dengan try-catch
+        try {
+            $users = User::all();
+            foreach ($users as $user) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Kegiatan Timeline Baru Ditambahkan',
+                    $user->id,
+                    [
+                        'nama_kegiatan' => $timeline->nama_kegiatan,
+                        'tanggal_mulai' => $timeline->tanggal_mulai,
+                        'tanggal_selesai' => $timeline->tanggal_selesai,
+                        'deskripsi' => $timeline->deskripsi
+                    ]
+                );
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi timeline baru: ' . $notifEx->getMessage(), [
+                'id_timeline' => $timeline->id_timeline,
+                'nama_kegiatan' => $timeline->nama_kegiatan
+            ]);
+        }
 
         // Simpan data ke timeline_has_artefak
         foreach ($request->id_kategori_artefak as $id_artefak) {

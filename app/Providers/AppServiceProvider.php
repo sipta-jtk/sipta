@@ -6,6 +6,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\View;
 use App\Services\NotifikasiService;
+use App\Models\Dokumen;
+use App\Observers\DokumenObserver;
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -32,5 +35,6 @@ class AppServiceProvider extends ServiceProvider
         View::addLocation(base_path('app/Modules'));
         View::addLocation(base_path('app/Modules/NotificationAndReminder/views'));
         View::addNamespace('NotificationAndReminder', base_path('app/Modules/NotificationAndReminder/views'));
+        Dokumen::observe(DokumenObserver::class);
     }
 }

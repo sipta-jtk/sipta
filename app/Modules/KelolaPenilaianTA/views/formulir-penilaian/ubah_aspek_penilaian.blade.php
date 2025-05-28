@@ -156,7 +156,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="2" class="text-center">Tidak ada data pertanyaan feedback.</td>
+                                                <td colspan="2" class="text-center">Tidak ada data feedback.</td>
                                             </tr>
                                         @endforelse
                                         

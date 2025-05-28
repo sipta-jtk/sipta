@@ -44,7 +44,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="form-group text-secondary">
                                 <label>
                                     <i class="fas fa-user mr-1"> KoTa</i> 
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-right">
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" id="terapkanFilterBtn" class="btn btn-primary">
                         Terapkan
                     </button>
                 </div>
@@ -110,29 +110,51 @@
                         <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
                     </div>
 
+                    <!-- Keyword -->
+                    <div class="form-group">
+                        <label for="keywords">Keyword</label>
+                        <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
+                        <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
+                    </div>
+                    
+                    <!-- Abstrak -->
+                    <div class="form-group">
+                        <label for="abstrakDokumen">Abstrak</label>
+                        <textarea class="form-control" id="abstrakDokumen" name="abstrak" rows="5" placeholder="Masukkan abstrak dokumen (150-250 kata)" required></textarea>
+                        <small id="abstrakCounter" class="form-text text-muted mt-1">0/250 kata</small>
+                        <small class="text-danger d-none" id="abstrakError">Abstrak harus memiliki minimal 150 kata dan maksimal 250 kata.</small>
+                    </div>
+
                     <!-- Pilih Dokumen -->
                     <div class="form-group">
-                        <label>Pilih Dokumen</label>
+                        <label>Pilih Dokumen Hasil Check Plagiarism</label>
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFile" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
                     </div>
 
-                    <!-- Pilih dari Google Drive -->
                     <div class="form-group">
-                        <button type="button" class="btn btn-secondary btn-sm" id="uploadGoogleDrive">Pilih dokumen dari Google Drive</button>
+                        <label>Pilih Dokumen Digital Receipt</label>
+                        <div class="d-flex align-items-center">
+                            <label class="btn btn-outline-secondary btn-sm mb-0">
+                                Pilih dokumen dari komputer ini
+                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf, .docx" style="display: none;" required>
+                            </label>
+                            <span id="namaFileTerpilih2" class="ml-2">Tidak ada file</span>
+                        </div>
                     </div>
+
 
                     <!-- Info Batasan Unggah -->
                     <div class="form-group">
                         <small class="text-muted">
                             Batasan Unggah <br>
                             Ukuran dokumen maksimal: 15 MB <br>
-                            Jenis dokumen yang valid: PDF, DOCX
+                            Jenis dokumen yang valid: PDF
                         </small>
                     </div>
 
@@ -168,6 +190,8 @@
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
                         <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
+                        <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
                         <p><strong>Ukuran File:</strong> <span id="ukuranFilePreview"></span></p>
                         <p><strong>Jumlah Halaman:</strong> <span id="jumlahHalamanPreview"></span></p>
@@ -194,8 +218,8 @@
 
 @section('css')
 {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-<link rel="stylesheet"
-    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
 <style>
     #table tbody tr {
@@ -217,12 +241,14 @@
     }
 </style>
 
-<script
-    src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script
-    src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<!-- jQuery (ensure it's loaded first) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://apis.google.com/js/api.js"></script>
+<!-- DataTables (after jQuery) -->
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 
 
@@ -234,78 +260,45 @@
 <meta name="prefix-url" content="{{ env('PREFIX_URL', 'sipta-dev') }}">
 
 <script>
-    // Google Picker Setup
-    var clientId = '22453178479-2lelvpruokcgqqat527ce5sbk9glld4f.apps.googleusercontent.com';
-    var developerKey = 'AIzaSyCfPOTwZ8_N2Nzpfagl-JszIBkrN0xfYuk';
-    var scope = ['https://www.googleapis.com/auth/drive.file'];
-    var pickerApiLoaded = false;
-    var oauthToken = '';
-
-    function onApiLoad() {
-        gapi.load('auth', {
-            'callback': onAuthApiLoad
-        });
-        gapi.load('picker', {
-            'callback': onPickerApiLoad
-        });
-    }
-
-    function onAuthApiLoad() {
-        gapi.auth.authorize({
-            client_id: clientId,
-            scope: scope,
-            immediate: false
-        }, handleAuthResult);
-    }
-
-    function onPickerApiLoad() {
-        pickerApiLoaded = true;
-    }
-
-    function handleAuthResult(authResult) {
-        if (authResult && !authResult.error) {
-            oauthToken = authResult.access_token;
-            createPicker();
-        }
-    }
-
-    function createPicker() {
-        if (pickerApiLoaded && oauthToken) {
-            var picker = new google.picker.PickerBuilder()
-                .enableFeature(google.picker.Feature.NAV_HIDDEN)
-                .setOAuthToken(oauthToken)
-                .addView(google.picker.ViewId.DOCS)
-                .setDeveloperKey(developerKey)
-                .setCallback(pickerCallback)
-                .build();
-            picker.setVisible(true);
-        }
-    }
-
-    function pickerCallback(data) {
-        if (data.action === google.picker.Action.PICKED) {
-            var fileName = data.docs[0].name;
-            $('#namaFileTerpilih').text(fileName);
-        }
-    }
-
-
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
+    
+    // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
+    function createApiUrl(endpoint) {
+        // Periksa apakah url sudah berisi domain name atau dimulai dengan http
+        if (endpoint.includes('://') || endpoint.startsWith('http')) {
+            return endpoint;
+        }
+        
+        // Hapus slash di awal endpoint jika ada
+        if (endpoint.startsWith('/')) {
+            endpoint = endpoint.substring(1);
+        }
+        
+        // Hapus slash di akhir prefixUrl jika ada
+        let prefix = prefixUrl;
+        if (prefix.endsWith('/')) {
+            prefix = prefix.substring(0, prefix.length - 1);
+        }
+        
+        // Gabungkan dengan slash di tengah
+        return '/' + prefix + '/' + endpoint;
+    }
+    
+    
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
 
-        // Ambil prefix URL dari meta tag yang ada di halaman
-        var urlKota = `${prefixUrl}/api/kotas`;
+        // Membuat URL untuk API kota
+        var urlKota = '/api/kotas';
 
         if (roleUser === 'dosen') {
             // Mengambil data kota dari API
             $.ajax({
                 type: "GET",
-                url: urlKota,
+                url: createApiUrl(urlKota),
                 dataType: "json",
                 success: function(response) {
-                    console.log("Data Kota:", response); // Periksa data yang diterima
 
                     var kelompokOptions;
 
@@ -323,7 +316,6 @@
                     $("#kelompokSelect").append(kelompokOptions);
                 },
                 error: function(xhr, status, error) {
-                    console.error("Gagal mengambil data kota:", status, error);
                 }
             });
         } else {
@@ -332,53 +324,61 @@
     });
 
 
-    $(document).ready(function() {
-        // Ambil prefix URL dari meta tag yang ada di halaman
-        var urlDokumen = `${prefixUrl}/api/cek-plagiarisme`;
+    $(document).ready(function() {        
+        // Buat URL untuk API dokumen
+        var urlDokumen = '/api/cek-plagiarisme';
 
-        var table = $('#table').DataTable({
-            language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
-                zeroRecords: "Dokumen tidak ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                infoEmpty: "Tidak ada dokumen tersedia",
-                infoFiltered: "(difilter dari total _MAX_ data)",
-                paginate: {
-                    first: "<<",
-                    last: ">>",
-                    next: ">",
-                    previous: "<"
+        // Inisialisasi DataTable dengan try-catch untuk menangkap error
+        try {
+            var table = $('#table').DataTable({
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Dokumen tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada dokumen tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
+                    }
+                },
+            columnDefs: [
+                {
+                    targets: [0],
+                    visible: false,
+                    searchable: false
+                },
+                {
+                    targets: [8], // id_kota column (hidden)
+                    visible: false,
+                    searchable: true
                 }
-            },
-            columnDefs: [{
-                targets: [0],
-                visible: false,
-                searchable: false
-            }],
+            ],
             responsive: true,
             autoWidth: false
         });
+        
 
         $('#table tbody').on('click', 'tr', function() {
             var data = table.row(this).data();
             if (data) {
                 var idDokumen = data[0]; // ambil id_dokumen dari kolom tersembunyi
-                window.location.href = prefixUrl + "/cek-plagiarisme/" + idDokumen + "/detail-dokumen";
+                window.location.href = createApiUrl("/cek-plagiarisme/" + idDokumen + "/detail-dokumen");
             }
         });
 
 
         $.ajax({
             type: "GET",
-            url: urlDokumen,
+            url: createApiUrl(urlDokumen),
             dataType: "json",
             success: function(response) {
 
                 // Clear dulu sebelum isi
                 table.clear();
-
-                console.log("Data dari API:", response);
 
                 // Sorting berdasarkan waktu secara descending
                 response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
@@ -413,67 +413,52 @@
                 // Draw ulang tabel
                 table.draw();
 
-                // Fungsi untuk memperbarui jsGrid setelah filter
-                function updateJsGrid(filteredData) {
-                    // Update nomor urut setelah filter
-                    filteredData = filteredData.map((item, index) => ({
-                        ...item,
-                        nomor: index + 1 // Reset nomor urut
-                    }));
-
-                    // Update data di jsGrid
-                    $("#jsGridPlagiarism").jsGrid("option", "data", filteredData);
+                // Fungsi untuk filter DataTable
+                function applyFilters() {
+                    var selectedKota = $("#kelompokSelect").val();
+                    
+                    // Clear table filter first
+                    table.search('').columns().search('').draw();
+                    
+                    // Custom filtering function for DataTables
+                    $.fn.dataTable.ext.search.push(
+                        function(settings, data, dataIndex) {
+                            var rowData = response[dataIndex];
+                            
+                            // Filter by kota if selected
+                            var kotaMatch = !selectedKota || 
+                                (rowData && rowData.id_kota != null && rowData.id_kota.toString() == selectedKota);
+                            
+                            return kotaMatch;
+                        }
+                    );
+                    
+                    // Redraw the table to apply filters
+                    table.draw();
+                    
+                    // Remove the custom filter function after drawing
+                    $.fn.dataTable.ext.search.pop();
+                    
+                    // Count visible rows after filtering
+                    var visibleRowCount = table.rows({search:'applied'}).count();
                 }
-
-                // Filter berdasarkan kelompok (id_kota) yang dipilih
-                $("#kelompokSelect").on("change", function() {
-                    var selectedKota = $(this).val(); // Ambil id_kota yang dipilih
-
-                    // Filter berdasarkan id_kota dan search input
-                    filterData(selectedKota, $("#searchInput").val());
+                
+                // Handle the "Terapkan" button click
+                $("#terapkanFilterBtn").on("click", function() {
+                    applyFilters();
                 });
-
-                // Filter berdasarkan pencarian (search input)
-                $("#searchInput").on("keyup", function() {
-                    var searchValue = $(this).val().toLowerCase();
-
-                    // Filter berdasarkan id_kota yang dipilih dan search input
-                    filterData($("#kelompokSelect").val(), searchValue);
-                });
-
-                // Fungsi untuk melakukan filter berdasarkan id_kota dan search
-                function filterData(selectedKota, searchValue) {
-                    var filteredData = response.filter(item => {
-                        // Filter berdasarkan id_kota
-                        var kotaFilter = selectedKota ? item.id_kota == selectedKota : true;
-
-                        // Filter berdasarkan pencarian (search)
-                        var searchFilter = Object.values(item).some(value =>
-                            String(value).toLowerCase().includes(searchValue)
-                        );
-
-                        // Kembalikan true jika data memenuhi kedua kondisi (id_kota dan search)
-                        return kotaFilter && searchFilter;
-                    });
-
-                    // Update data di jsGrid
-                    updateJsGrid(filteredData);
-                }
             },
             error: function(xhr, status, error) {
-                console.error("Gagal mengambil data dari API:", status, error);
             }
         });
+    } catch (err) {
+        alert("Terjadi kesalahan saat memuat tabel data. Silakan refresh halaman.");
+    }
     });
 
     // Fungsi untuk menampilkan modal upload
     $('#uploadButton').click(function() {
         $('#uploadModal').modal('show');
-    });
-
-    // Google Drive Picker
-    $('#uploadGoogleDrive').click(function() {
-        onApiLoad();
     });
 
 
@@ -498,15 +483,50 @@
 
     function resetUploadForm() {
         $('#judulDokumen').val('');
-        $('#dokumenFile').val('');
+        $('#keywordsInput').val('');
+        $('#abstrakDokumen').val('');
+        $('#dokumenFileHasilCheckPlagiarisme').val('');
+        $('#dokumenFileHasilDigitalReceipt').val('');
         $('#namaFileTerpilih').text('Tidak ada file');
         $('#judulCounter').text('0/20 kata');
+        $('#abstrakCounter').text('0/250 kata');
+        $('#abstrakError').addClass('d-none');
+        $('#judulError').addClass('d-none');
+        $('#judulDokumen').removeClass('is-invalid');
+        $('#keywordsPreview').text('');
+        $('#abstrakDokumen').removeClass('is-invalid');
     }
 
 
-    // Validasi real-time + counter + enable/disable tombol Unggah
-    $('#judulDokumen').on('input', function() {
-        var judul = $(this).val().trim();
+    // Fungsi untuk validasi form
+    function validateForm() {
+        var judulValid = validateJudul();
+        var abstrakValid = validateAbstrak();
+        var keywordValid = validateKeyword();
+        
+        // Update status button secara real-time
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
+        
+        return judulValid && abstrakValid && keywordValid;
+    }
+    
+    // Fungsi untuk update status button
+    function updateButtonStatus(judulValid, abstrakValid, keywordValid) {
+        // Tombol lanjutkan hanya aktif jika semua field valid
+        var allValid = judulValid && abstrakValid && keywordValid;
+        $('#openConfirmBtn').prop('disabled', !allValid);
+        
+        // Visual feedback untuk button
+        if (allValid) {
+            $('#openConfirmBtn').removeClass('btn-secondary').addClass('btn-success');
+        } else {
+            $('#openConfirmBtn').removeClass('btn-success').addClass('btn-secondary');
+        }
+    }
+    
+    // Validasi real-time untuk judul dokumen
+    function validateJudul() {
+        var judul = $('#judulDokumen').val().trim();
         var jumlahKata = judul.length > 0 ? judul.split(/\s+/).length : 0;
 
         // Update counter
@@ -520,29 +540,231 @@
             $('#judulError').removeClass('d-none'); // Tampilkan pesan error
             $('#judulCounter').addClass('text-danger').removeClass('text-muted'); // Counter jadi merah
             $('#judulDokumen').addClass('is-invalid'); // Input merah
-            $('#openConfirmBtn').prop('disabled', true);
+            return false;
+        } else if (jumlahKata === 0) {
+            // Tambahan validasi untuk judul kosong
+            $('#judulError').removeClass('d-none').text('Judul tidak boleh kosong.'); 
+            $('#judulCounter').addClass('text-danger').removeClass('text-muted');
+            $('#judulDokumen').addClass('is-invalid');
+            return false;
         } else {
             $('#judulError').addClass('d-none'); // Sembunyikan pesan error
             $('#judulCounter').removeClass('text-danger').addClass('text-muted'); // Counter normal
             $('#judulDokumen').removeClass('is-invalid'); // Input normal
-            $('#openConfirmBtn').prop('disabled', false);
+            return true;
         }
+    }
+
+    function validateKeyword() {
+        var $input = $('#keywordsInput');
+        var keywordVal = $input.val().trim();
+
+        // Jika kosong, tandai sebagai invalid
+        if (keywordVal.length === 0) {
+            $input.addClass('is-invalid');
+            return false;
+        }
+
+        $input.removeClass('is-invalid');
+        return true;
+    }
+
+    // Setup keyword input event handlers
+    $(document).ready(function () {
+        // Atur event handler untuk format keyword saat mengetik
+        $('#keywordsInput').on('input', function () {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+
+            // Jika kosong, tandai sebagai invalid
+            if (keywordVal.length === 0) {
+                $input.addClass('is-invalid');
+                return;
+            }
+
+            $input.removeClass('is-invalid');
+        });
+
+        // Format keyword dengan capitalization saat pengguna selesai mengetik
+        $('#keywordsInput').on('blur', function() {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+            
+            if (keywordVal.length === 0) {
+                return;
+            }
+            
+            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
+            var capitalized = keywordVal
+                .split(',')
+                .map(keyword => keyword
+                    .trim()
+                    .split(' ')
+                    .map(word => word.length > 0 ? 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+                    )
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+
+            // Update nilai input yang sudah diformat
+            $input.val(capitalized);
+        });
+
+        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
+        $('#keywordsInput').on('keydown', function(e) {
+            // Kode 32 adalah kode untuk tombol spasi
+            if (e.keyCode === 32) {
+                // Biarkan spasi dimasukkan secara normal
+                return true;
+            }
+        });
+
+        // Opsional: validasi saat submit
+        $('form').on('submit', function (e) {
+            var keywordVal = $('#keywordsInput').val().trim();
+            if (keywordVal.length === 0) {
+                $('#keywordsInput').addClass('is-invalid');
+                e.preventDefault(); // Hentikan submit jika kosong
+            }
+        });
     });
 
-    $('#dokumenFile').on('change', function() {
+    // Setup keyword input event handlers
+    $(document).ready(function () {
+        // Atur event handler untuk format keyword saat mengetik
+        $('#keywordsInput').on('input', function () {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+
+            // Jika kosong, tandai sebagai invalid
+            if (keywordVal.length === 0) {
+                $input.addClass('is-invalid');
+                return;
+            }
+
+            $input.removeClass('is-invalid');
+        });
+
+        // Format keyword dengan capitalization saat pengguna selesai mengetik
+        $('#keywordsInput').on('blur', function() {
+            var $input = $(this);
+            var keywordVal = $input.val().trim();
+            
+            if (keywordVal.length === 0) {
+                return;
+            }
+            
+            // Capitalize setiap kata di tiap keyword (yang dipisahkan koma)
+            var capitalized = keywordVal
+                .split(',')
+                .map(keyword => keyword
+                    .trim()
+                    .split(' ')
+                    .map(word => word.length > 0 ? 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+                    )
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+
+            // Update nilai input yang sudah diformat
+            $input.val(capitalized);
+        });
+
+        // Tangani spasi yang hilang dengan mendeteksi keydown untuk tombol spasi
+        $('#keywordsInput').on('keydown', function(e) {
+            // Kode 32 adalah kode untuk tombol spasi
+            if (e.keyCode === 32) {
+                // Biarkan spasi dimasukkan secara normal
+                return true;
+            }
+        });
+
+        // Opsional: validasi saat submit
+        $('form').on('submit', function (e) {
+            var keywordVal = $('#keywordsInput').val().trim();
+            if (keywordVal.length === 0) {
+                $('#keywordsInput').addClass('is-invalid');
+                e.preventDefault(); // Hentikan submit jika kosong
+            }
+        });
+    });
+
+    
+    // Validasi real-time untuk abstrak
+    function validateAbstrak() {
+        var abstrak = $('#abstrakDokumen').val().trim();
+        var jumlahKata = abstrak.length > 0 ? abstrak.split(/\s+/).length : 0;
+        
+        // Update counter
+        $('#abstrakCounter').text(jumlahKata + '/250 kata');
+        
+        // Validasi jumlah kata
+        if (jumlahKata < 150 || jumlahKata > 250) {
+            $('#abstrakError').removeClass('d-none');
+            $('#abstrakCounter').addClass('text-danger').removeClass('text-muted');
+            $('#abstrakDokumen').addClass('is-invalid');
+            return false;
+        } else {
+            $('#abstrakError').addClass('d-none');
+            $('#abstrakCounter').removeClass('text-danger').addClass('text-muted');
+            $('#abstrakDokumen').removeClass('is-invalid');
+            return true;
+        }
+    }
+    
+    // Event handler untuk input judul - real-time validation
+    $('#judulDokumen').on('input', function() {
+        var judulValid = validateJudul();
+        var abstrakValid = validateAbstrak();
+        var keywordValid = validateKeyword();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
+    });
+    
+    // Event handler untuk input abstrak - real-time validation
+    $('#abstrakDokumen').on('input', function() {
+        var abstrakValid = validateAbstrak();
+        var judulValid = validateJudul();
+        var keywordValid = validateKeyword();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
+    });
+    
+    // Event handler untuk keyword input - real-time validation
+    $('#keywordsInput').on('input', function() {
+        var keywordValid = validateKeyword();
+        var judulValid = validateJudul();
+        var abstrakValid = validateAbstrak();
+        updateButtonStatus(judulValid, abstrakValid, keywordValid);
+    });
+
+    $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
-    let pdfFile, pdfDoc;
+    $('#dokumenFileDigitalReceipt').on('change', function() {
+        var fileName2 = $(this).val().split('\\').pop();
+        $('#namaFileTerpilih2').text(fileName2 ? fileName2 : 'Tidak ada file');
+    });
+
+    let pdfFile, pdfDoc, pdfFile2;
 
     // Saat klik "Unggah" pertama
     $('#openConfirmBtn').click(function() {
-        const fileInput = $('#dokumenFile')[0].files[0];
+        const fileInput = $('#dokumenFileHasilCheckPlagiarisme')[0].files[0];
+        const fileInput2 = $('#dokumenFileDigitalReceipt')[0].files[0];
         const judulInput = $('#judulDokumen').val().trim();
-
-        if (!fileInput || !judulInput) {
-            Swal.fire('Peringatan', 'Silakan isi judul, dan pilih dokumen.', 'warning');
+        const abstrakInput = $('#abstrakDokumen').val().trim();
+        const keywordsInput = $('#keywordsInput').val().trim();
+        
+        // Validasi sekali lagi sebelum melanjutkan
+        const isValid = validateForm();
+        
+        if (!fileInput || !judulInput || !abstrakInput || !isValid) {
+            Swal.fire('Peringatan', 'Silakan isi judul dan abstrak sesuai ketentuan, serta pilih dokumen.', 'warning');
             return;
         }
 
@@ -563,20 +785,27 @@
         }
 
         pdfFile = fileInput;
+        pdfFile2 = fileInput2;
 
         const reader = new FileReader();
         reader.onload = async function(e) {
             const typedarray = new Uint8Array(e.target.result);
-            pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-
+            try {
+                pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+            } catch (err) {
+                console.error("Gagal memuat PDF:", err);
+                Swal.fire('Gagal', 'PDF tidak dapat dibaca, silakan gunakan file lain.', 'error');
+                return;
+            }
 
 
 
             let kataTotal = await countWords(pdfDoc);
             $('#jumlahKataPreview').val(kataTotal);
-
             // Isi field preview
             $('#judulPreview').text(judulInput);
+            $('#keywordsPreview').text(keywordsInput);
+            $('#abstrakPreview').text(abstrakInput);
             $('#namaFilePreview').text(fileInput.name);
             $('#ukuranFilePreview').text((fileInput.size / (1024 * 1024)).toFixed(2) + ' MB');
             $('#jumlahHalamanPreview').text(pdfDoc.numPages);
@@ -626,11 +855,16 @@
 
     // Final unggah ke server
     $('#finalUploadBtn').click(function() {
+        // Create form data as before
         let formData = new FormData();
         formData.append('judul', $('#judulDokumen').val());
+        formData.append('keywords', $('#keywordsInput').val());
+        formData.append('deskripsi', $('#abstrakDokumen').val());
         formData.append('dokumen', pdfFile);
+        formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
+    
+        // Show loading
         Swal.fire({
             title: 'Mengunggah...',
             allowOutsideClick: false,
@@ -638,21 +872,38 @@
                 Swal.showLoading();
             }
         });
-
+    
+        // Debug the URL being created
+        console.log("Sending to URL:", createApiUrl('/cek-plagiarisme/process'));
+    
+        // Explicitly set HTTP headers
         $.ajax({
-            url: `${prefixUrl}/cekplagiarisme/process`,
-            method: 'POST',
+            url: createApiUrl('/cek-plagiarisme/process'),
+            method: 'POST', 
+            type: 'POST', // Added for compatibility with some jQuery versions
             data: formData,
             contentType: false,
             processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function(response) {
+                console.log("Success response:", response);
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });
+                $('#confirmModal').modal('hide');
+                $('#uploadModal').modal('hide');
+                resetUploadForm();
             },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                Swal.fire('Gagal', 'Gagal mengunggah dokumen.', 'error');
+            error: function(xhr, status, error) {
+                console.error("Error details:", {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText
+                });
+                Swal.fire('Gagal', 'Gagal mengunggah dokumen: ' + error, 'error');
             }
         });
     });
