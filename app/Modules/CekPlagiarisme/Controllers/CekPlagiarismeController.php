@@ -55,7 +55,7 @@ class CekPlagiarismeController extends Controller
 
         return array_values(array_unique($links));
     }
-    
+
     public function getData()
     {
         // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
@@ -93,7 +93,7 @@ class CekPlagiarismeController extends Controller
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
-                'status' => $this->getStatus($item->persentase_plagiarisme, $item->ambangBatas ? $item->ambangBatas->ambang_batas : 20), // Default 20 jika tidak ada
+                'status' => $this->getStatus($item->status_plagiarisme), // Default 20 jika tidak ada
                 'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null,
                 'id_kota' => $item->id_kota
             ];
@@ -102,11 +102,11 @@ class CekPlagiarismeController extends Controller
         return response()->json($data);
     }
 
-    private function getStatus($persentase, $ambangBatas)
+    private function getStatus($statusPlagiarisme)
     {
-        if ($persentase === null) {
+        if ($statusPlagiarisme === null) {
             return '<span class="badge badge-warning">Processing</span>';
-        } elseif ($persentase < $ambangBatas) {
+        } elseif ($statusPlagiarisme === 'tidak_plagiarisme') {
             return '<span class="badge badge-success">Tidak Plagiat</span>';
         } else {
             return '<span class="badge badge-danger">Plagiat</span>';
@@ -161,6 +161,20 @@ class CekPlagiarismeController extends Controller
             $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
             $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
 
+            // Simpan jumlah kata dan halaman
+            $jumlahKata = (int) $request->input('jumlah_kata', 0);
+            $jumlahHalaman = (int) $request->input('jumlah_halaman', 0);
+
+            // Debug: Log file paths and sizes
+            Log::info('File paths and sizes', [
+                'dokumen_path' => $filePathDokumen,
+                'dokumen_size' => $fileSizeDokumen,
+                'receipt_path' => $filePathReceipt,
+                'receipt_size' => $fileSizeReceipt,
+                'jumlah_kata' => $jumlahKata,
+                'jumlah_halaman' => $jumlahHalaman
+            ]);
+
             // Ambil data tambahan user
             $user = auth()->user();
             $nim = $user->username;
@@ -179,10 +193,10 @@ class CekPlagiarismeController extends Controller
             $parser = new Parser();
             $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
             $text = $pdf->getText();
-            
+
             $pathToPdf = storage_path('app/public/' . $filePathDokumen);
             $text = (new Pdf('pdftotext'))->setPdf($pathToPdf)->text();
-            
+
             // Detailed logging for PDF parsing
             Log::info('PDF parsing complete', [
                 'file_path' => $filePathDokumen,
@@ -190,11 +204,18 @@ class CekPlagiarismeController extends Controller
                 'ISI TEXT' => $text,
                 'storage_path' => storage_path('app/public/' . $filePathDokumen)
             ]);
-            
+
             // Fix: Use $this-> to call class methods
             $similarity = $this->extractOverallSimilarity($text);
             $sources = $this->extractSourceLinks($text);
-            
+
+            // Status Plagiarisme
+            if ($similarity > $ambangBatasAktif->ambang_batas) {
+                $statusPlagiarisme = "plagiarisme";
+            } else {
+                $statusPlagiarisme = "tidak_plagiarisme";
+            }
+
             // Log the extracted data with more context
             Log::info('Extracted plagiarism data from PDF', [
                 'similarity_percentage' => $similarity,
@@ -204,7 +225,7 @@ class CekPlagiarismeController extends Controller
                 'user_id' => $user->id,
                 'username' => $nim
             ]);
-            
+
             // Create document with detailed attribute logging
             $dokumen = Dokumen::create([
                 'judul' => $validated['judul'],
@@ -213,17 +234,32 @@ class CekPlagiarismeController extends Controller
                 'username' => $nim,
                 'versi' => 1,
                 'ukuran_file' => $fileSizeDokumen,
+                'jumlah_kata' => $jumlahKata,
+                'jumlah_halaman' => $jumlahHalaman,
                 'kategori' => 'plagiarisme',
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'id_kota' => $idKota,
                 'highlight_dokumen' => 0,
+                'status_plagiarisme' => $statusPlagiarisme,
                 'status_berkas' => 'valid',
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                'persentase_plagiarisme' => $similarity,
-                'jumlah_kata' => $request->jumlah_kata,
-                'jumlah_halaman' => $request->jumlah_halaman,
+                'persentase_plagiarisme' => $similarity
+            ]);
+
+            // Log dokumen creation
+            Log::info('Dokumen created successfully', [
+                'dokumen_id' => $dokumen->id_dokumen,
+                'judul' => $dokumen->judul,
+                'user_id' => $user->id,
+                'username' => $nim,
+                'jumlah_kata' => $dokumen->jumlah_kata,
+                'jumlah_halaman' => $dokumen->jumlah_halaman,
+                'status_plagiarisme' => $dokumen->status_plagiarisme,
+                'persentase_plagiarisme' => $dokumen->persentase_plagiarisme,
+                'ambang_batas_id' => $dokumen->id_ambang_batas,
+                'id_kota' => $dokumen->id_kota
             ]);
 
             // Simpan digital receipt
