@@ -24,6 +24,7 @@
         "smalot/pdfparser": "^2.12",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-responsecache": "^7.6",
+        "spatie/pdf-to-text": "^1.54",
         "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
