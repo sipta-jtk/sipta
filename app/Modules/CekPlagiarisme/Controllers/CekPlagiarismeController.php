@@ -221,7 +221,7 @@ class CekPlagiarismeController extends Controller
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                // 'persentase_plagiarisme' => $similarity,
+                'persentase_plagiarisme' => $similarity,
             ]);
 
             // Simpan digital receipt
