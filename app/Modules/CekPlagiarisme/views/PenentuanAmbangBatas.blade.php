@@ -79,31 +79,31 @@
 
 <script>
     var prefixUrl = $("meta[name='prefix-url']").attr("content");
-    
+
     // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
     function createApiUrl(endpoint) {
         // Periksa apakah url sudah berisi domain name atau dimulai dengan http
         if (endpoint.includes('://') || endpoint.startsWith('http')) {
             return endpoint;
         }
-        
+
         // Hapus slash di awal endpoint jika ada
         if (endpoint.startsWith('/')) {
             endpoint = endpoint.substring(1);
         }
-        
+
         // Hapus slash di akhir prefixUrl jika ada
         let prefix = prefixUrl;
         if (prefix.endsWith('/')) {
             prefix = prefix.substring(0, prefix.length - 1);
         }
-        
+
         // Gabungkan dengan slash di tengah
         return '/' + prefix + '/' + endpoint;
     }
-    
+
     console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
-    
+
     $(document).ready(function() {
 
         var table = $('#table').DataTable({
@@ -231,6 +231,15 @@
                 ambang_batas: $("#ambang_batas").val()
             };
 
+            // Show loading
+            Swal.fire({
+                title: 'Mengunggah...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             $.ajax({
                 type: "POST",
                 url: createApiUrl('api/ambang-batas'),
@@ -244,6 +253,7 @@
                 }).then(() => {
                     $("#addAmbangBatasModal").modal('hide');
                     $("#ambangBatasForm")[0].reset();
+                    location.reload();
                     loadData();
                 });
             }).fail(function(xhr) {
