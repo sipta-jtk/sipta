@@ -222,6 +222,21 @@ class AlokasiPembimbingv2Controller extends Controller
         if (!$pengajuan) {
             return redirect()->back()->with('error', 'Pengajuan tidak ditemukan!');
         }
+        $nip = $request->input('nip');
+
+        // check penguji
+        $currentDosen = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'penguji')
+            ->where('nip', $nip)
+            ->first();
+        if ($currentDosen) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dosen sudah teralokasi sebagai penguji!'
+            ]);
+        }
+        // - check penguji
 
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
@@ -251,8 +266,10 @@ class AlokasiPembimbingv2Controller extends Controller
                 'updated_at' => now(),
             ]);
 
-
-        return null;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi berhasil diperbarui!'
+        ]);
 
     }
     public function kirimNotifikasiBatch(Request $request)
@@ -263,45 +280,67 @@ class AlokasiPembimbingv2Controller extends Controller
         $koordinatorName = auth()->user()->nama;
         $waktu = now()->format('d-m-Y H:i');
 
+        $errorCount = 0;
+
         // Kirim notifikasi ke mahasiswa
-        // foreach ($mahasiswaList as $mhs) {
-        //     // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
-        //     $user = User::where('username', $mhs['nim'])->first();
-        //     if ($user) {
-        //         Notifikasi::kirim(
-        //             '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
-        //             $user->id,
-        //             [
-        //                 'nama_koordinator' => $koordinatorName,
-        //                 'topik' => 'Alokasi Bimbingan Disetujui',
-        //                 'nama_mahasiswa' => $mhs['nama'],
-        //                 'nim' => $mhs['nim'],
-        //                 'tanggal' => $waktu,
-        //             ]
-        //         );
-        //     }
-        // }
+        foreach ($mahasiswaList as $mhs) {
+            try {
+                // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
+                $user = User::where('username', $mhs['nim'])->first();
+                if ($user) {
+                    Notifikasi::kirim(
+                        '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
+                        $user->id,
+                        [
+                            'nama_koordinator' => $koordinatorName,
+                            'topik' => 'Alokasi Bimbingan Disetujui',
+                            'nama_mahasiswa' => $mhs['nama'],
+                            'nim' => $mhs['nim'],
+                            'tanggal' => $waktu,
+                        ]
+                    );
+                }
+            } catch (\Exception $notifEx) {
+                $errorCount++;
+                \Log::error('Gagal mengirim notifikasi ke mahasiswa: ' . $notifEx->getMessage(), [
+                    'nim' => $mhs['nim'],
+                    'nama' => $mhs['nama']
+                ]);
+            }
+        }
 
         // Kirim notifikasi ke dosen
-        // foreach ($dosenList as $nip) {
-        //     // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
-        //     $user = User::where('username', $nip)->first();
-        //     if ($user) {
-        //         Notifikasi::kirim(
-        //             '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
-        //             $user->id,
-        //             [
-        //                 'nama_koordinator' => $koordinatorName,
-        //                 'topik' => 'Alokasi Bimbingan Disetujui',
-        //                 'nama_dosen' => $user->nama,
-        //                 'tanggal' => $waktu,
-        //             ]
-        //         );
-        //     }
-        // }
+        foreach ($dosenList as $nip) {
+            try {
+                // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
+                $user = User::where('username', $nip)->first();
+                if ($user) {
+                    Notifikasi::kirim(
+                        '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
+                        $user->id,
+                        [
+                            'nama_koordinator' => $koordinatorName,
+                            'topik' => 'Alokasi Bimbingan Disetujui',
+                            'nama_dosen' => $user->nama,
+                            'tanggal' => $waktu,
+                        ]
+                    );
+                }
+            } catch (\Exception $notifEx) {
+                $errorCount++;
+                \Log::error('Gagal mengirim notifikasi ke dosen: ' . $notifEx->getMessage(), [
+                    'nip' => $nip
+                ]);
+            }
+        }
+
+        $successMessage = 'Notifikasi berhasil dikirim ke ' . count($mahasiswaList) . ' mahasiswa dan ' . count($dosenList) . ' dosen.';
+        if ($errorCount > 0) {
+            $successMessage .= " Terdapat {$errorCount} notifikasi yang gagal dikirim.";
+        }
 
         return response()->json([
-            'message' => 'Notifikasi berhasil dikirim ke ' . count($mahasiswaList) . ' mahasiswa dan ' . count($dosenList) . ' dosen.'
+            'message' => $successMessage
         ]);
     }
 }
