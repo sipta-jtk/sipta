@@ -184,6 +184,7 @@ class PengajuanPembimbingController extends Controller
 
         DB::table('kota')->where('id_kota', $id_kota_user)->update([
             'jenis_ta' => $jenisTA === 'Penelitian' ? 'penelitian' : ($jenisTA === 'Pengembangan' ? 'pengembangan' : null),
+            'status_kota' => 'aktif',
         ]);
 
         // Insert data ke tabel kota (judul_ta) dan bidang (id_bidang)
