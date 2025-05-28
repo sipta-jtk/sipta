@@ -70,10 +70,10 @@
                     <tr class="bg-dark text-white">
                         <th style="width:5%;">Id_dokumen</th>
                         <th style="width:5%;">Nomor</th>
-                        <th style="width:30%;">Judul</th>
-                        <th style="width:15%;">Waktu Pengecekan</th>
+                        <th style="width:30%;">Judul TA</th>
+                        <th style="width:15%;">Waktu Unggah</th>
                         <th style="width:20%;">Penulis</th>
-                        <th style="width:10%;">Presentase</th>
+                        <th style="width:10%;">Persentase</th>
                         <th style="width:10%;">Status</th>
                         <th style="width:10%;">Catatan</th>
                     </tr>
@@ -112,7 +112,7 @@
 
                     <!-- Keyword -->
                     <div class="form-group">
-                        <label for="keywords">Keyword</label>
+                        <label for="keywords">Kata Kunci</label>
                         <input type="text" class="form-control" id="keywordsInput" name="keywords" placeholder="Masukkan keyword dokumen" required>
                         <small class="text-muted">Pisahkan dengan koma. Contoh: cloud computing, mobile app, AI</small>
                     </div>
