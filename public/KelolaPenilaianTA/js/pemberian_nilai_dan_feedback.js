@@ -52,24 +52,15 @@ $(document).ready(function () {
     // Inisialisasi semua tooltip Bootstrap setelah DOM siap
     $(function () {
         $('[data-toggle="tooltip"]').tooltip({
-            delay: { "show": 0, "hide": 0 } // Mengatur delay menjadi 0 milidetik
+            delay: { "show": 0, "hide": 0 } 
         }); 
     });
 
-    // Make sure to define window.PREFIX_URL in your HTML template using the value from .env
-    // Example in Blade: <script>window.PREFIX_URL = "{{ env('PREFIX_URL') }}";</script>
-    // const prefix = window.PREFIX_URL || '';
-
-    // window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
-    //     if (filePath && filePath.trim() !== '') {
-    //         const fullUrl = `${prefix}/storage/${filePath}`;
-    //         const fileExtension = filePath.split('.').pop().toLowerCase();
-
-    const prefix = "/{{ env('PREFIX_URL') }}";
+    let prefix = window.PREFIX_URL || '';
 
     window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
         if (filePath && filePath.trim() !== '') {
-            const fullUrl = `${prefix}/storage/${filePath}`;
+            const fullUrl = `${window.location.origin}/${prefix}/storage/${filePath}`;
             const fileExtension = filePath.split('.').pop().toLowerCase();
 
             // Open in new tab
