@@ -146,7 +146,7 @@
                 ]
             };
 
-            daftarDokumen.forEach(doc => {
+            daftarDokumen.forEach((doc, index) => {
                 const filePath = doc.file_path?.trim();
                 const fileUrl = filePath ? `${prefix}/storage/${filePath}` : '';
                 const fileExtension = filePath?.split('.').pop().toLowerCase();
