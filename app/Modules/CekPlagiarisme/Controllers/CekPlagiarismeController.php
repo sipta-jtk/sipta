@@ -25,33 +25,31 @@ $redirectPath = $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
 
 class CekPlagiarismeController extends Controller
 {
-    // function extractOverallSimilarity($pdfText)
-    // {
-    //     if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
-    //         return (int)$matches[1];
-    //     }
+    function extractOverallSimilarity($pdfText)
+    {
+        if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
 
-    //     if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
-    //         return (int)$matches[1];
-    //     }
+        if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
 
-    //     return null;
-    // }
+        return null;
+    }
 
+    function extractSourceLinks($pdfText)
+    {
+        $cleanText = preg_replace("/\n|\r/", '', $pdfText);
 
-    // function extractSourceLinks($pdfText)
-    // {
-    //     $cleanText = preg_replace("/\n|\r/", '', $pdfText);
+        preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
 
-    //     preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
+        $links = array_map(function ($url) {
+            return rtrim($url, ".,)");
+        }, $matches[0]);
 
-    //     $links = array_map(function ($url) {
-    //         return rtrim($url, ".,)");
-    //     }, $matches[0]);
-
-    //     return array_values(array_unique($links));
-    // }
-
+        return array_values(array_unique($links));
+    }
     
     public function getData()
     {
@@ -62,7 +60,7 @@ class CekPlagiarismeController extends Controller
                 ->where('kategori', 'plagiarisme')
                 ->where('id_kota', $idKota)
                 ->get();
-        } else if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+        } elseif (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
                 ->where('kategori', 'plagiarisme')
                 ->get();
@@ -142,7 +140,7 @@ class CekPlagiarismeController extends Controller
             'dokumen' => 'required|file|max:51200', // max 50MB
             'digital_receipt' => 'required|file|mimes:pdf|max:51200',
             'keywords' => 'required|string|min:1',
-            'deskripsi' => 'nullable|string|max:1000',
+            'deskripsi' => 'nullable|string|max:5000',
         ]);
 
         DB::beginTransaction();
@@ -173,13 +171,13 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            // $parser = new Parser();
-            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            // $text = $pdf->getText();
+            $parser = new Parser();
+            $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            $text = $pdf->getText();
             
-            // $pathToPdf = storage_path('app/public/' . $filePathDokumen);
-            // $binaryPath = 'C:\\Dean\\Programs\\poppler\\poppler-24.08.0\\Library\\bin\\pdftotext.exe';
-            // $text = (new Pdf($binaryPath))->setPdf($pathToPdf)->text();
+            $pathToPdf = storage_path('app/public/' . $filePathDokumen);
+            $binaryPath = 'C:\\Dean\\Programs\\poppler\\poppler-24.08.0\\Library\\bin\\pdftotext.exe';
+            $text = (new Pdf($binaryPath))->setPdf($pathToPdf)->text();
             
             // Detailed logging for PDF parsing
             Log::info('PDF parsing complete', [
