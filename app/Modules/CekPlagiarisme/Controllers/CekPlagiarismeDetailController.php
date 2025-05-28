@@ -41,7 +41,7 @@ class CekPlagiarismeDetailController extends Controller
         $jurnalPlagiarisme = ListJurnalPlagiarisme::where('id_dokumen', $id)->get();
 
         // Kirim data jurnal ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen', 'jurnalPlagiarisme'));
+        return view('CekPlagiarisme.views.Detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen', 'jurnalPlagiarisme'));
     }
 
     public function PenentuanAmbangBatas(): View
