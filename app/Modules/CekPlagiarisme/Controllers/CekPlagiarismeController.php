@@ -25,32 +25,32 @@ $redirectPath = $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
 
 class CekPlagiarismeController extends Controller
 {
-    function extractOverallSimilarity($pdfText)
-    {
-        if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
-            return (int)$matches[1];
-        }
+    // function extractOverallSimilarity($pdfText)
+    // {
+    //     if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
+    //         return (int)$matches[1];
+    //     }
 
-        if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
-            return (int)$matches[1];
-        }
+    //     if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
+    //         return (int)$matches[1];
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
 
-    function extractSourceLinks($pdfText)
-    {
-        $cleanText = preg_replace("/\n|\r/", '', $pdfText);
+    // function extractSourceLinks($pdfText)
+    // {
+    //     $cleanText = preg_replace("/\n|\r/", '', $pdfText);
 
-        preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
+    //     preg_match_all('/https?:\/\/(?:[^\s()<>"]+|\([^\s()<>"]+\))+/i', $cleanText, $matches);
 
-        $links = array_map(function ($url) {
-            return rtrim($url, ".,)");
-        }, $matches[0]);
+    //     $links = array_map(function ($url) {
+    //         return rtrim($url, ".,)");
+    //     }, $matches[0]);
 
-        return array_values(array_unique($links));
-    }
+    //     return array_values(array_unique($links));
+    // }
 
     
     public function getData()
@@ -177,9 +177,9 @@ class CekPlagiarismeController extends Controller
             // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
             // $text = $pdf->getText();
             
-            $pathToPdf = storage_path('app/public/' . $filePathDokumen);
-            $binaryPath = 'C:\\Dean\\Programs\\poppler\\poppler-24.08.0\\Library\\bin\\pdftotext.exe';
-            $text = (new Pdf($binaryPath))->setPdf($pathToPdf)->text();
+            // $pathToPdf = storage_path('app/public/' . $filePathDokumen);
+            // $binaryPath = 'C:\\Dean\\Programs\\poppler\\poppler-24.08.0\\Library\\bin\\pdftotext.exe';
+            // $text = (new Pdf($binaryPath))->setPdf($pathToPdf)->text();
             
             // Detailed logging for PDF parsing
             Log::info('PDF parsing complete', [
@@ -219,7 +219,7 @@ class CekPlagiarismeController extends Controller
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                'persentase_plagiarisme' => $similarity,
+                // 'persentase_plagiarisme' => $similarity,
             ]);
 
             // Simpan digital receipt
