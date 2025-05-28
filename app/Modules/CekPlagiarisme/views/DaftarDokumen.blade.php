@@ -103,11 +103,11 @@
                 <form id="uploadForm">
                     @csrf
 
-                    <!-- Judul Dokumen -->
+                    <!-- Judul TA -->
                     <div class="form-group">
-                        <label for="judulDokumen">Judul Dokumen</label>
-                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul dokumen" required>
-                        <small class="text-danger d-none" id="judulError">Judul dokumen tidak boleh lebih dari 20 kata.</small>
+                        <label for="judulDokumen">Judul TA</label>
+                        <input type="text" class="form-control" id="judulDokumen" name="judul" placeholder="Masukkan judul TA" required>
+                        <small class="text-danger d-none" id="judulError">Judul TA tidak boleh lebih dari 20 kata.</small>
                     </div>
 
                     <!-- Keyword -->
@@ -131,7 +131,7 @@
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileHasilCheckPlagiarisme" name="dokumen" accept=".pdf" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih" class="ml-2">Tidak ada file</span>
                         </div>
@@ -142,7 +142,7 @@
                         <div class="d-flex align-items-center">
                             <label class="btn btn-outline-secondary btn-sm mb-0">
                                 Pilih dokumen dari komputer ini
-                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf, .docx" style="display: none;" required>
+                                <input type="file" id="dokumenFileDigitalReceipt" name="digital_receipt" accept=".pdf" style="display: none;" required>
                             </label>
                             <span id="namaFileTerpilih2" class="ml-2">Tidak ada file</span>
                         </div>
@@ -189,7 +189,7 @@
                 <div class="row">
                     <div class="col-md-7">
                         <p><strong>Penulis:</strong> <span>{{ auth()->user()->nama }}</span></p>
-                        <p><strong>Judul Dokumen:</strong> <span id="judulPreview"></span></p>
+                        <p><strong>Judul TA:</strong> <span id="judulPreview"></span></p>
                         <p><strong>Keyword:</strong> <span id="keywordsPreview"></span></p>
                         <p><strong>Abstrak:</strong> <span id="abstrakPreview" style="display: block; max-height: 100px; overflow-y: auto; font-size: 0.9em; margin-bottom: 10px;"></span></p>
                         <p><strong>Nama File:</strong> <span id="namaFilePreview"></span></p>
@@ -462,17 +462,6 @@
     });
 
 
-
-    function getStatusBadge(persentase, ambangBatas) {
-        if (persentase === null) {
-            return '<span class="badge badge-warning">Processing</span>';
-        } else if (persentase < ambangBatas) {
-            return '<span class="badge badge-success">Tidak Plagiat</span>';
-        } else {
-            return '<span class="badge badge-danger">Plagiat</span>';
-        }
-    }
-
     function getCatatan(catatan, id) {
         if (catatan) {
             return '<span class="text-dark">Catatan diberikan</span>';
@@ -543,7 +532,7 @@
             return false;
         } else if (jumlahKata === 0) {
             // Tambahan validasi untuk judul kosong
-            $('#judulError').removeClass('d-none').text('Judul tidak boleh kosong.'); 
+            $('#judulError').removeClass('d-none').text('Judul TA tidak boleh kosong.'); 
             $('#judulCounter').addClass('text-danger').removeClass('text-muted');
             $('#judulDokumen').addClass('is-invalid');
             return false;
@@ -742,11 +731,43 @@
 
     $('#dokumenFileHasilCheckPlagiarisme').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+        
+        // Validasi file PDF
+        if (fileExtension !== 'pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            // Reset file input
+            $(this).val('');
+            $('#namaFileTerpilih').text('Tidak ada file');
+            return;
+        }
+        
         $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
     });
 
     $('#dokumenFileDigitalReceipt').on('change', function() {
         var fileName2 = $(this).val().split('\\').pop();
+        var fileExtension = fileName2.split('.').pop().toLowerCase();
+        
+        // Validasi file PDF
+        if (fileExtension !== 'pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen digital receipt harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            // Reset file input
+            $(this).val('');
+            $('#namaFileTerpilih2').text('Tidak ada file');
+            return;
+        }
+        
         $('#namaFileTerpilih2').text(fileName2 ? fileName2 : 'Tidak ada file');
     });
 
@@ -763,8 +784,30 @@
         // Validasi sekali lagi sebelum melanjutkan
         const isValid = validateForm();
         
-        if (!fileInput || !judulInput || !abstrakInput || !isValid) {
-            Swal.fire('Peringatan', 'Silakan isi judul dan abstrak sesuai ketentuan, serta pilih dokumen.', 'warning');
+        if (!fileInput || !fileInput2 || !judulInput || !abstrakInput || !isValid) {
+            Swal.fire('Peringatan', 'Silakan isi judul TA dan abstrak sesuai ketentuan, serta pilih semua dokumen yang diperlukan.', 'warning');
+            return;
+        }
+
+        // validasi tipe file untuk hasil check plagiarism
+        if (fileInput.type !== 'application/pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+        
+        // validasi tipe file untuk digital receipt
+        if (fileInput2.type !== 'application/pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Format File Tidak Valid',
+                text: 'Dokumen digital receipt harus dalam format PDF.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -773,14 +816,20 @@
         if (fileInput.size > maxFileSize) {
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal mengunggah!',
-                text: 'Ukuran dokumen melebihi batas maksimal 15MB.',
+                title: 'Ukuran File Terlalu Besar',
+                text: 'Ukuran dokumen hasil check plagiarism melebihi batas maksimal 15MB.',
+                confirmButtonColor: '#3085d6'
             });
             return;
         }
-
-        if (fileInput.type !== 'application/pdf') {
-            Swal.fire('Peringatan', 'Hanya file PDF yang diperbolehkan.', 'warning');
+        
+        if (fileInput2.size > maxFileSize) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ukuran File Terlalu Besar',
+                text: 'Ukuran dokumen digital receipt melebihi batas maksimal 15MB.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -794,7 +843,12 @@
                 pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
             } catch (err) {
                 console.error("Gagal memuat PDF:", err);
-                Swal.fire('Gagal', 'PDF tidak dapat dibaca, silakan gunakan file lain.', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'PDF Tidak Valid',
+                    text: 'File PDF tidak dapat dibaca. Pastikan file tidak rusak dan merupakan PDF yang valid.',
+                    confirmButtonColor: '#3085d6'
+                });
                 return;
             }
 
@@ -860,9 +914,21 @@
         formData.append('judul', $('#judulDokumen').val());
         formData.append('keywords', $('#keywordsInput').val());
         formData.append('deskripsi', $('#abstrakDokumen').val());
+        formData.append('jumlah_kata', $('#jumlahKataPreview').text());
+        formData.append('jumlah_halaman', $('#jumlahHalamanPreview').text());
         formData.append('dokumen', pdfFile);
         formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+        console.log("Form data being sent:", {
+            judul: $('#judulDokumen').val(),
+            keywords: $('#keywordsInput').val(),
+            deskripsi: $('#abstrakDokumen').val(),
+            jumlah_kata: $('#jumlahKataPreview').text(),
+            jumlah_halaman: $('#jumlahHalamanPreview').text(),
+            dokumen: pdfFile.name,
+            digital_receipt: pdfFile2.name
+        });
     
         // Show loading
         Swal.fire({
@@ -879,7 +945,7 @@
         // Explicitly set HTTP headers
         $.ajax({
             url: createApiUrl('/cek-plagiarisme/process'),
-            method: 'POST', 
+            method: 'POST',
             type: 'POST', // Added for compatibility with some jQuery versions
             data: formData,
             contentType: false,
