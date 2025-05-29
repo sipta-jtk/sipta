@@ -12,14 +12,17 @@ use App\Models\AlokasiDosen;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Crypt;
 
 Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
 
-    public function show($id)
+    public function show($encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
+
         $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
         $digital_receipt = null;
