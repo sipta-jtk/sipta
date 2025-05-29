@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Detail Plagiarism Check')
+@section('title', 'Detail Pengecekan Plagiarisme')
 
 @section('content_header')
 @php
