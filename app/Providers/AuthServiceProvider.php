@@ -216,10 +216,36 @@ class AuthServiceProvider extends ServiceProvider
          */
 
         Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
-            return $user->role_user === 'mahasiswa'
-                && $user->mahasiswa->status_ta === 'mahasiswa_ta'
-                && $user->mahasiswa->id_kota !== null
-                && $user->mahasiswa->id_kota === $dokumen->id_kota;
+            // Mahasiswa TA dengan id_kota sama
+            if (
+                $user->role_user === 'mahasiswa' &&
+                $user->mahasiswa->status_ta === 'mahasiswa_ta' &&
+                $user->mahasiswa->id_kota !== null &&
+                $user->mahasiswa->id_kota === $dokumen->id_kota
+            ) {
+                return true;
+            }
+            // Dosen pembimbing pada KoTA yang sama
+            if (
+                $user->role_user === 'dosen' &&
+                $user->status_user === 'aktif' &&
+                $user->dosen &&
+                AlokasiDosen::where('nip', $user->dosen->nip)
+                    ->where('tipe_alokasi', 'pembimbing')
+                    ->where('id_kota', $dokumen->id_kota)
+                    ->exists()
+            ) {
+                return true;
+            }
+
+            // 3. Admin atau Koordinator TA memiliki akses penuh
+            if (
+                $user->role_user === 'admin' ||
+                (isset($user->dosen) && $user->dosen->role_dosen === 'koordinator_ta')
+            ) {
+                return true;
+            }
+            return false;
         });
     }
 }
