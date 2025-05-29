@@ -397,6 +397,21 @@ class RepositoryController extends Controller
                 return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
             }
 
+            // Logging aktivitas download
+            if (auth()->check()) {
+                try {
+                    LogAktivitas::create([
+                        'username' => auth()->user()->username,
+                        'id_kota' => $dokumen->id_kota,
+                        'id_dokumen' => $dokumen->id_dokumen,
+                        'action' => 'Download dokumen',
+                        'waktu_aktivitas' => now(),
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Gagal menyimpan log download dokumen: ' . $e->getMessage());
+                }
+            }
+
             $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
             $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
 
@@ -405,6 +420,7 @@ class RepositoryController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
     }
+
 
     // Farrel Keiza Muhammad Yamin Putra
     public function dashboard($id_kota)
@@ -716,19 +732,19 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
-            
+
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
-            
-            
+
+
             try {
                 // Get mahasiswa and their pengajuan pembimbing properly
                 $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
                 if (!$mahasiswa) {
                     return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
                 }
-    
+
                 // Get the latest accepted pengajuan pembimbing for this mahasiswa
                 $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
                     ->where('status_pengajuan', 'diterima')
@@ -785,7 +801,7 @@ class RepositoryController extends Controller
 
         // Apply subkategori filter in PHP (if needed)
         if ($subkategori) {
-            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+            $filteredData = $filteredData->filter(function ($item) use ($subkategori) {
                 return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
             });
         }
