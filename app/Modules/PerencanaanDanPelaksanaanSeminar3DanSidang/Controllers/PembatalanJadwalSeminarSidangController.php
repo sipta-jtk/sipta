@@ -183,7 +183,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
                 $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
                 return $item;
             });
-        dd($jadwal_penguji);
+        // dd($jadwal_penguji);
 
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
             ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
