@@ -7,6 +7,8 @@
         'seminar iii' => 'MASUKAN SEMINAR III',
         default => 'MASUKAN SIDANG AKHIR',
     };
+
+    $namaFtaBreadcrumb = str_replace(' ', '-', $data['namaFta']);
 @endphp
 
 @section('title', $title)
@@ -23,7 +25,7 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => "/$prefix", 'label' => 'Beranda'],
-                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => route('nilai.index', ['kegiatan' => $namaFtaBreadcrumb]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',

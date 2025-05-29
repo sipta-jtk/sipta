@@ -8,13 +8,17 @@
 @endphp
     <div class="container-fluid p-3">
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
+
+        @php 
+            $namaFtaBreadcrumb = str_replace(' ', '-', $namaFta);
+        @endphp
         
         <!-- Breadcrumb -->
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => "/$prefix", 'label' => 'Beranda'],
-                ['url' => route('nilai.index', ['kegiatan' => $namaFta]), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => route('nilai.index', ['kegiatan' => $namaFtaBreadcrumb]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => 'Penilaian Seminar III']
             ]
         ])
