@@ -14,6 +14,7 @@ use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
+use App\Notifications\TestEmailNotification;
 
 Carbon::setLocale('id');
 

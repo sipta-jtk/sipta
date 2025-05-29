@@ -8,6 +8,7 @@ use App\Models\AmbangBatas;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use \App\Models\User;
+use App\Notifications\TestEmailNotification;
 
 Carbon::setLocale('id');
 
