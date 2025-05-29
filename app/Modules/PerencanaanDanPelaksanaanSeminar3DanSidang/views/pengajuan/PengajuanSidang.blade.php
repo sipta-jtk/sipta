@@ -137,7 +137,7 @@
             alert.style.opacity = "0";
             setTimeout(() => alert.remove(), 500);
         }
-    }, 7000);
+    }, 5000);
 </script>
 @stop
 

@@ -11,6 +11,7 @@ use App\Models\Penjadwalan;
 use App\Models\PengajuanJadwalKota;
 use App\Models\VerifikasiBerkasPengajuan;
 use App\Services\Notifikasi;
+use App\Models\Timeline;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
@@ -44,37 +45,62 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             ->whereHas('penjadwalan', function ($query) use ($agenda) {
                 $query->where('agenda', $agenda);
             })
+            ->with('penjadwalan')
             ->where('status_mahasiswa', 1) 
             ->orderBy('id_penjadwalan', 'desc')
             ->get();
 
+        $latest = $pengajuan->first();
+
+        $formattedTanggal = null;
+        if ($latest && $latest->penjadwalan) {
+            try {
+                $formattedTanggal = Carbon::parse($latest->penjadwalan->tanggal)->translatedFormat('d F Y');
+            } catch (\Exception $e) {
+                $formattedTanggal = 'Format Tanggal Tidak Valid';
+            }
+            $penjadwalanData = [
+                'tanggal' => $formattedTanggal,
+                'sesi'    => $latest->penjadwalan->sesi,
+                'nama_ruangan' => $latest->penjadwalan->nama_ruangan,
+            ];
+        }
+
+        // dd($penjadwalanData);
+
         if ($pengajuan->isEmpty()) {
-            return ['status' => 'Belum Ada Pengajuan', 'agenda' => $agenda];
+            $penjadwalanData = [
+                'tanggal' => null,
+                'sesi'    => null,
+                'ruangan' => null,
+            ];
+
+            return ['status' => 'Belum Ada Pengajuan', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
         }
 
         foreach ($pengajuan as $item) {
             if ($item->status_dosen_pembimbing_1 === 0 || $item->status_dosen_pembimbing_2 === 0) {
-                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 2];
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 2, 'penjadwalan' => $penjadwalanData];
             }
 
             if (is_null($item->status_dosen_pembimbing_1) || is_null($item->status_dosen_pembimbing_2)) {
-                return ['status' => 'Diajukan', 'agenda' => $agenda];
+                return ['status' => 'Diajukan', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
             }
 
             if ((is_null($item->status_dosen_penguji_1) || is_null($item->status_dosen_penguji_2)) && (($item->status_dosen_penguji_1 !== 0) && ($item->status_dosen_penguji_2 !== 0)) && (($item->status_dosen_pembimbing_1 === 1) && ($item->status_dosen_pembimbing_2 === 1))) {
-                return ['status' => 'Pembimbing', 'agenda' => $agenda];
+                return ['status' => 'Pembimbing', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
             }
 
             if ($item->status_dosen_penguji_1 === 0 || $item->status_dosen_penguji_2 === 0) {
-                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 3];
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 3, 'penjadwalan' => $penjadwalanData];
             }
 
             if (is_null($item->status_koordinator_ta) && (($item->status_dosen_penguji_1 === 1) && ($item->status_dosen_penguji_2 === 1))) {
-                return ['status' => 'Penguji', 'agenda' => $agenda];
+                return ['status' => 'Penguji', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
             }
 
             if ($item->status_koordinator_ta === 0) {
-                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 4];
+                return ['status' => 'Ditolak', 'agenda' => $agenda, 'rejected_step' => 4, 'penjadwalan' => $penjadwalanData];
             }
 
             if (
@@ -82,11 +108,11 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                 ($item->status_dosen_penguji_1 === 1 && $item->status_dosen_penguji_2 === 1) &&
                 $item->status_koordinator_ta === 1
             ) {
-                return ['status' => 'Diterima', 'agenda' => $agenda];
+                return ['status' => 'Diterima', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
             }
         }
 
-        return ['status' => 'Diajukan', 'agenda' => $agenda];
+        return ['status' => 'Diajukan', 'agenda' => $agenda, 'penjadwalan' => $penjadwalanData];
     }
     
     public function indexPengajuan(): View
@@ -280,15 +306,37 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
     public function tambahPengajuanPenjadwalan(Request $request, $id_kota)
     {
+        $maxDate = null;
+        $agendaRequest = $request->input('agenda');
+
+        if ($agendaRequest === 'seminar_3') {
+            // Find timeline where nama_kegiatan contains '3'
+            $timelineEntry = Timeline::where('nama_kegiatan', 'like', '%3%')
+                                     ->latest('tanggal_selesai')
+                                     ->first();
+            if ($timelineEntry) {
+                $maxDate = $timelineEntry->tanggal_selesai;
+            }
+        } elseif ($agendaRequest === 'sidang') {
+            // Find timeline where nama_kegiatan contains 'sidang'
+            $timelineEntry = Timeline::where('nama_kegiatan', 'like', '%sidang%')
+                                     ->latest('tanggal_selesai')
+                                     ->first();
+            if ($timelineEntry) {
+                $maxDate = $timelineEntry->tanggal_selesai;
+            }
+        }
+        
         // Validasi input
         try {
             $request->validate([
-                'tanggal_pengajuan' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
+                'tanggal_pengajuan' => ['required', 'date', 'after_or_equal:' . now()->toDateString(), 'before_or_equal:' . $maxDate],
                 'sesi_pengajuan' => 'required|integer',
                 'ruangan_pengajuan' => 'required|string|max:255',
                 'agenda' => 'required|in:seminar_1,seminar_2,seminar_3,sidang',
             ], [
                 'tanggal_pengajuan.after_or_equal' => 'Tanggal pengajuan harus hari ini atau setelahnya.',
+                'tanggal_pengajuan.before_or_equal' => 'Tanggal pengajuan melebihi timeline.'
             ]);
         } catch (ValidationException $e) {
             return redirect()->back()
