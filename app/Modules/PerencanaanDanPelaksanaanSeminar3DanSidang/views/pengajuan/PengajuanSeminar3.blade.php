@@ -72,6 +72,7 @@
                     
                     <div class="mb-3">
                         <label for="tanggal_pengajuan" class="form-label">Tanggal:</label>
+                        <p class="text-secondary">*tanggal tersedia mulai dari {{ $tanggal_mulai }} sampai {{ $tanggal_selesai }}</p>
                         <input type="date" id="tanggal_pengajuan" name="tanggal_pengajuan" class="form-control" required>
                     </div>
 

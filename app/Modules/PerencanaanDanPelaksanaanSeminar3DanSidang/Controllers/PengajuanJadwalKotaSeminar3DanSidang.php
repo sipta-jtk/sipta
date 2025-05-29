@@ -169,6 +169,19 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
 
     public function indexPengajuanSeminar3(Request $request): View
     {
+        $minDate = null;
+        $maxDate = null;
+
+        // Find timeline where nama_kegiatan contains '3'
+        $timelineEntry = Timeline::where('nama_kegiatan', 'like', '%3%')
+                            ->latest('tanggal_mulai')
+                            ->latest('tanggal_selesai')
+                            ->first();
+        if ($timelineEntry) {
+            $minDate = Carbon::parse($timelineEntry->tanggal_mulai)->translatedFormat('d F Y');
+            $maxDate = Carbon::parse($timelineEntry->tanggal_selesai)->translatedFormat('d F Y');
+        }
+
         // mengambil id_kota dari mahasiswa by username
         $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
 
@@ -231,12 +244,29 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'mahasiswa' => $mahasiswa,
             'pembimbing' => $pembimbing,
             'penguji' => $penguji,
-            'ruanganTersedia' => $ruanganTersedia
+            'ruanganTersedia' => $ruanganTersedia,
+            'tanggal_mulai' => $minDate,
+            'tanggal_selesai' => $maxDate
         ]);
     }
 
     public function indexPengajuanSidang(Request $request): View
     {
+        $minDate = null;
+        $maxDate = null;
+
+        // Find timeline where nama_kegiatan contains 'sidang'
+        $timelineEntry = Timeline::where('nama_kegiatan', 'like', '%sidang%')
+                                 ->latest('tanggal_mulai')
+                                 ->latest('tanggal_selesai')
+                                 ->first();
+        if ($timelineEntry) {
+            $minDate = Carbon::parse($timelineEntry->tanggal_mulai)->translatedFormat('d F Y');
+            $maxDate = Carbon::parse($timelineEntry->tanggal_selesai)->translatedFormat('d F Y');
+        }
+
+        // dd($minDate, $maxDate);
+
         // mengambil id_kota dari mahasiswa by username
         $id_kota = Mahasiswa::find(Auth::User()->username)->id_kota;
 
@@ -281,14 +311,10 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                     ];
                 });
             } else {
-                // Jika response tidak sukses, tetap gunakan data kosong
                 $ruangan = collect([]);
             }
         } catch (\Exception $e) {
-            // Jika request gagal karena timeout, koneksi gagal, dll
-            // Gunakan data kosong supaya program tetap jalan
             $ruangan = collect([]);
-            // Optional: log error untuk debugging
             \Log::error('Gagal ambil data ruangan dari API: ' . $e->getMessage());
         }
 
@@ -300,12 +326,15 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'mahasiswa' => $mahasiswa,
             'pembimbing' => $pembimbing,
             'penguji' => $penguji, 
-            'ruanganTersedia' => $ruanganTersedia
+            'ruanganTersedia' => $ruanganTersedia,
+            'tanggal_mulai' => $minDate,
+            'tanggal_selesai' => $maxDate
         ]);
     }
 
     public function tambahPengajuanPenjadwalan(Request $request, $id_kota)
     {
+        $minDate = null;
         $maxDate = null;
         $agendaRequest = $request->input('agenda');
 
@@ -315,6 +344,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                                      ->latest('tanggal_selesai')
                                      ->first();
             if ($timelineEntry) {
+                $minDate = $timelineEntry->tanggal_mulai;
                 $maxDate = $timelineEntry->tanggal_selesai;
             }
         } elseif ($agendaRequest === 'sidang') {
@@ -323,20 +353,21 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                                      ->latest('tanggal_selesai')
                                      ->first();
             if ($timelineEntry) {
+                $minDate = $timelineEntry->tanggal_mulai;
                 $maxDate = $timelineEntry->tanggal_selesai;
             }
         }
-        
+
         // Validasi input
         try {
             $request->validate([
-                'tanggal_pengajuan' => ['required', 'date', 'after_or_equal:' . now()->toDateString(), 'before_or_equal:' . $maxDate],
+                'tanggal_pengajuan' => ['required', 'date', 'after_or_equal:' . $minDate, 'before_or_equal:' . $maxDate],
                 'sesi_pengajuan' => 'required|integer',
                 'ruangan_pengajuan' => 'required|string|max:255',
                 'agenda' => 'required|in:seminar_1,seminar_2,seminar_3,sidang',
             ], [
-                'tanggal_pengajuan.after_or_equal' => 'Tanggal pengajuan harus hari ini atau setelahnya.',
-                'tanggal_pengajuan.before_or_equal' => 'Tanggal pengajuan melebihi timeline.'
+                'tanggal_pengajuan.after_or_equal' => 'Tanggal pengajuan tidak valid. Pastikan tanggal yang Anda pilih sesuai dengan timeline yang ditentukan.',
+                'tanggal_pengajuan.before_or_equal' => 'Tanggal pengajuan tidak valid. Pastikan tanggal yang Anda pilih sesuai dengan timeline yang ditentukan.'
             ]);
         } catch (ValidationException $e) {
             return redirect()->back()
