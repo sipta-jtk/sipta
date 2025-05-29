@@ -40,7 +40,7 @@
                 <td>{{ $s->kota->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama_ruangan }}</td>
                 <td>
                     @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                         <span>Terjadwal</span>
@@ -105,7 +105,7 @@
                 <td>{{ $s->kota->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama_ruangan }}</td>
                 <td>
                     @if ($s->id_pembatalan == null || $s->status_pembatalan == 0)
                         <span>Terjadwal</span>

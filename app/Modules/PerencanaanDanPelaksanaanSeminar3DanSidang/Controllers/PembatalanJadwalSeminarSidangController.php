@@ -178,11 +178,12 @@ class PembatalanJadwalSeminarSidangController extends Controller
             ->where('agenda', '=', 'seminar_3')
             ->where('alokasi_dosen.status_alokasi', 'fix')
             ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+            ->where('status', '=', 'fix')
             ->where('alokasi_dosen.nip', '=', $user)->get()->map(function ($item) {
                 $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
                 return $item;
             });
-        // dd($jadwal_penguji);
+        dd($jadwal_penguji);
 
         $jadwal_pembimbing = Penjadwalan::select('penjadwalan.id_penjadwalan as penjadwalan_id', 'penjadwalan.*', 'kota.*', 'pengajuan_pembimbing.*', 'alokasi_dosen.*', 'pembatalan.*')
             ->join('kota', 'penjadwalan.id_kota', '=', 'kota.id_kota')
@@ -192,6 +193,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             ->where('agenda', '=', 'seminar_3')
             ->where('alokasi_dosen.status_alokasi', 'fix')
             ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+            ->where('status', '=', 'fix')
             ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
                 $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
                 return $item;
@@ -248,6 +250,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             ->where('agenda', '=', 'sidang')
             ->where('alokasi_dosen.status_alokasi', 'fix')
             ->where('alokasi_dosen.tipe_alokasi', 'penguji')
+            ->where('status', '=', 'fix')
             ->where('alokasi_dosen.nip', '=', $user)->get()->map(function ($item) {
                 $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
                 return $item;
@@ -262,6 +265,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             ->where('agenda', '=', 'sidang')
             ->where('alokasi_dosen.status_alokasi', 'fix')
             ->where('alokasi_dosen.tipe_alokasi', 'pembimbing')
+            ->where('status', '=', 'fix')
             ->where('alokasi_dosen.nip', $user)->get()->map(function ($item) {
                 $item->tanggal = Carbon::parse($item->tanggal)->translatedFormat('d F Y');
                 return $item;
