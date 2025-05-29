@@ -13,7 +13,9 @@ Route::middleware(['auth', 'can:dosen'])->get(
 Route::middleware(['auth', 'can:user'])->group(function () {
    
     Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-    Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
+    Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])
+    ->middleware(['auth', 'can:user'])
+    ->name('plagiarism.detail');
     Route::post('/cek-plagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
     Route::get('/cek-plagiarisme/process', function () {
         return redirect('/cek-plagiarisme');

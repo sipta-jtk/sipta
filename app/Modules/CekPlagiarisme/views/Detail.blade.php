@@ -18,8 +18,6 @@ $prefix = env('PREFIX_URL', '');
     ])
     @endcomponent
 </div>
-
-
 @stop
 
 

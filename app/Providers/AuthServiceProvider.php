@@ -211,5 +211,15 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('dosen') || Gate::allows('koordinator_ta');
         });
 
+        /***
+         * [TOPIK 5] - Fitur Cek Plagiarisme
+         */
+
+        Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
+            return $user->role_user === 'mahasiswa'
+                && $user->mahasiswa->status_ta === 'mahasiswa_ta'
+                && $user->mahasiswa->id_kota !== null
+                && $user->mahasiswa->id_kota === $dokumen->id_kota;
+        });
     }
 }
