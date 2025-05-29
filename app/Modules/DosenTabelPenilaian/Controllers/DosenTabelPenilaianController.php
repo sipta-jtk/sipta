@@ -75,38 +75,31 @@ class DosenTabelPenilaianController extends Controller
 
 
         $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip, $idKategoriSemua, $idKategoriFeedback) {
-            // Log::info("item : " . json_encode($item, JSON_PRETTY_PRINT));
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
-            // Log::info("mahasiswa : " . json_encode($mahasiswa, JSON_PRETTY_PRINT));
 
             $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip, $idKategoriSemua) {
                 return $mahasiswa->nilaiKategori->whereIn('id_kategori', $idKategoriSemua)
                     ->where('nip', $nip)
                     ->isNotEmpty();
             });
-            // Log::info("sudah dinilai : " . json_encode($sudahDinilai, JSON_PRETTY_PRINT));
-            
+
             $statusPenilaian = $mahasiswa->flatMap(function ($mhs) use ($nip, $idKategoriSemua) {
                 return $mhs->nilaiKategori->whereIn('id_kategori', $idKategoriSemua)
                     ->where('nip', $nip)
                     ->pluck('status_penilaian_dosen');
             })->unique()->first();
-            // Log::info("status penilaian : " . json_encode($statusPenilaian, JSON_PRETTY_PRINT));
 
             $sudahFeedback = $mahasiswa->contains(function ($mhs) use ($nip, $idKategoriFeedback) {
-                // Log::info("mhs : " . json_encode($mhs->kota->detailFeedback, JSON_PRETTY_PRINT));
                 return $mhs->kota->detailFeedback->whereIn('id_feedback', $idKategoriFeedback)
                     ->where('nip', $nip)
                     ->isNotEmpty();
             });
-            // Log::info("sudah feedback : " . json_encode($sudahFeedback, JSON_PRETTY_PRINT));
-            
+          
             $statusFeedback = $mahasiswa->flatMap(function ($mhs) use ($nip, $idKategoriFeedback) {
                 return $mhs->kota->detailFeedback->whereIn('id_feedback', $idKategoriFeedback)
                     ->where('nip', $nip)
                     ->pluck('status_penilaian_dosen');
             })->unique()->first();
-            // Log::info("status feedback : " . json_encode($statusFeedback, JSON_PRETTY_PRINT));
 
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
@@ -115,6 +108,7 @@ class DosenTabelPenilaianController extends Controller
                     'seminar_3' => 'Seminar 3',
                     'sidang' => 'Sidang Akhir',
                 },
+                'sudah_dibuka' => Carbon::now()->greaterThanOrEqualTo(Carbon::parse($item->start)),
                 'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,
                 'kota' => $item->kota->nama_kota,

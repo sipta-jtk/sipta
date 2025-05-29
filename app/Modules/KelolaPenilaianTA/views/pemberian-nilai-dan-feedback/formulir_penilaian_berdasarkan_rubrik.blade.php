@@ -209,16 +209,17 @@
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($rubrikList as $index => $rubrik)
                                     <th style="min-width: 200px;">
+                                        {{ Log::info($rubrik['nilai']) }}
                                         @if($index == count($rubrikList) - 1)
-                                            {{ $rubrik['nilai']['batas_bawah'] }} - ??? ({{ $rubrik['nilai']['id_nilai'] }})
+                                            {{ $rubrik['nilai']['batas_atas'] }} - {{ $rubrik['nilai']['batas_bawah'] }} ({{ $rubrik['nilai']['id_nilai'] }})
                                         @else
-                                            {{ $rubrik['nilai']['batas_bawah'] }} - {{ $rubrik['nilai']['batas_atas'] }} ({{ $rubrik['nilai']['id_nilai'] }})
+                                            {{ $rubrik['nilai']['batas_atas'] }} - {{ $rubrik['nilai']['batas_bawah'] }} ({{ $rubrik['nilai']['id_nilai'] }})
                                         @endif
                                     </th>
                                 @endforeach
 
                                 @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
-                                    <th>{{ $key + 1 }}</th>  
+                                    <th>{{ $key + 1 }}</th>
                                 @endforeach
                             </tr>
                         </thead>
