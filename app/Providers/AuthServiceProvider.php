@@ -217,36 +217,28 @@ class AuthServiceProvider extends ServiceProvider
          */
 
         Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
-            // 1. Mahasiswa TA dan satu KoTA
-            if (
-                $user->role_user === 'mahasiswa' &&
-                $user->mahasiswa->status_ta === 'mahasiswa_ta' &&
-                $user->mahasiswa->id_kota !== null &&
-                $user->mahasiswa->id_kota === $dokumen->id_kota
-            ) {
-                return true;
+            // Admin & Koordinator TA
+            if ($user->role_user === 'admin' || ($user->dosen->role_dosen ?? null) === 'koordinator_ta') {
+            return true;
             }
-
-            // 2. Dosen dengan preferensi kota cocok
+            // Mahasiswa TA satu KoTA
             if (
-                $user->role_user === 'dosen' &&
-                $user->status_user === 'aktif' &&
-                $user->dosen &&
-                PreferensiKota::where('nip', $user->dosen->nip)
-                    ->where('id_kota', $dokumen->id_kota)
-                    ->exists()
+            $user->role_user === 'mahasiswa' &&
+            $user->mahasiswa->status_ta === 'mahasiswa_ta' &&
+            $user->mahasiswa->id_kota === $dokumen->id_kota
             ) {
-                return true;
+            return true;
             }
-
-            // 3. Admin dan Koordinator TA akses penuh
+            // Dosen preferensi kota cocok
             if (
-                $user->role_user === 'admin' ||
-                (isset($user->dosen) && $user->dosen->role_dosen === 'koordinator_ta')
+            $user->role_user === 'dosen' &&
+            $user->status_user === 'aktif' &&
+            PreferensiKota::where('nip', $user->dosen->nip ?? null)
+                ->where('id_kota', $dokumen->id_kota)
+                ->exists()
             ) {
-                return true;
+            return true;
             }
-
             return false;
         });
     }
