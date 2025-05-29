@@ -18,6 +18,7 @@ use Smalot\PdfParser\Parser;
 use App\Models\LogAktivitas;
 use Carbon\Carbon;
 use Spatie\PdfToText\Pdf;
+use Illuminate\Support\Facades\Crypt;
 
 Carbon::setLocale('id');
 
@@ -74,14 +75,15 @@ class CekPlagiarismeController extends Controller
     }
 
 
-    function convertToFloat($percent) {
+    function convertToFloat($percent)
+    {
         if (strpos($percent, '<') !== false) {
             return 0.99; // atau 0.5 tergantung preferensi
         }
         return floatval(str_replace('%', '', $percent));
     }
 
-    
+
     public function getData()
     {
         // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
@@ -215,7 +217,7 @@ class CekPlagiarismeController extends Controller
                 'nim' => $nim,
                 'id_kota' => $idKota,
             ]);
-            
+
             $pathToPdf = storage_path('app/public/' . $filePathDokumen);
             $text = (new Pdf('pdftotext'))->setPdf($pathToPdf)->text();
 
@@ -230,7 +232,7 @@ class CekPlagiarismeController extends Controller
             // Fix: Use $this-> to call class methods
             $similarity = $this->extractOverallSimilarity($text);
             $sources = $this->extractSourceLinksWithPercentages($text);
-            
+
             // Log the extracted data with more context
             Log::info('Extracted plagiarism data from PDF', [
                 'similarity_percentage' => $similarity,
@@ -267,8 +269,6 @@ class CekPlagiarismeController extends Controller
                 'id_subkategori' => 3,
                 'kode_fta' => null,
                 'persentase_plagiarisme' => $similarity,
-                'jumlah_kata' => $request->jumlah_kata,
-                'jumlah_halaman' => $request->jumlah_halaman,
             ]);
 
             // Log dokumen creation
@@ -410,5 +410,19 @@ class CekPlagiarismeController extends Controller
 
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);
+    }
+
+    public function encryptId(Request $request)
+    {
+        if (!$request->has('id')) {
+            return response()->json(['error' => 'ID tidak ditemukan'], 400);
+        }
+
+        try {
+            $encryptedId = Crypt::encryptString($request->input('id'));
+            return response()->json(['encrypted_id' => $encryptedId]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal mengenkripsi ID'], 500);
+        }
     }
 }
