@@ -269,8 +269,6 @@ class CekPlagiarismeController extends Controller
                 'id_subkategori' => 3,
                 'kode_fta' => null,
                 'persentase_plagiarisme' => $similarity,
-                'jumlah_kata' => $request->jumlah_kata,
-                'jumlah_halaman' => $request->jumlah_halaman,
             ]);
 
             // Log dokumen creation
