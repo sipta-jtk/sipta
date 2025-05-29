@@ -22,6 +22,8 @@ class CekPlagiarismeDetailController extends Controller
 
     public function show($encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
+
         $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
         // VALIDASI AKSES
