@@ -239,7 +239,7 @@
                                             @endphp
 
                                             <td>
-                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}" {{ $view ? '' : 'readonly' }} required>
+                                                <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}" {{ $view ? '' : 'readonly' }} required data-toggle="tooltip" data-placement="top" title="{{ $mhs->user->nama }}">
                                             </td>
                                         @endforeach
                                     </tr>
@@ -269,18 +269,6 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
-    <style>
-        /* Hide the increment and decrement buttons */
-        input[type=number]::-webkit-outer-spin-button,
-        input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-    </style>
 @stop
 
 @section('js')
@@ -292,14 +280,5 @@
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
         window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
-
-        $(document).ready(function() {
-            // Menginisialisasi DataTable dengan FixedColumns
-            var table = $('#myTable').DataTable({
-                scrollX: true,
-                fixedColumns: {
-                    rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
-                }
-            });
     </script>
 @stop

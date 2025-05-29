@@ -205,7 +205,12 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -221,12 +226,18 @@
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
+                                        {{ Log::info($item->user->nama) }}
                                         <td>
                                             <input type="number"
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
