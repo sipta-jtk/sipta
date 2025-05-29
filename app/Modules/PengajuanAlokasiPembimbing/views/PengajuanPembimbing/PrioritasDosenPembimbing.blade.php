@@ -299,5 +299,22 @@
             });
         });
     });
+
+    // Cek sebelum ke halaman selanjutnya
+    $(".btn-info.ml-3").click(function(e) {
+        let prioritasDosen = [];
+        $("#prioritasList .priority-name").each(function () {
+            let name = $(this).text();
+            if (name !== "-") {
+                prioritasDosen.push(name);
+            }
+        });
+        let saved = JSON.parse(localStorage.getItem("prioritasDosen")) || [];
+        // Jika ada data di prioritas tapi belum disimpan ke draft
+        if (prioritasDosen.length > 0 && saved.length !== prioritasDosen.length) {
+            e.preventDefault();
+            toast("warning", "Simpan draft sebelum melanjutkan.");
+        }
+    });
 </script>
 @stop

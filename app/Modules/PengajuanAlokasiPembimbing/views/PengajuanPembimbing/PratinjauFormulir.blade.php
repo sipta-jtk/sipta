@@ -234,7 +234,7 @@
                     };
                     console.log(dataToSend);
 
-                    FireSweetAlert('warning', 'Lakukan Finalisasi Data?', 'Pastikan data yang Anda isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
+                    FireSweetAlert('warning', 'Lakukan Finalisasi Data?', 'Pengajuan hanya dapat dilakukan satu kali. Pastikan data yang Anda isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
                     if (confirmed) { 
 
                     // Kirim data ke backend dengan fetch
