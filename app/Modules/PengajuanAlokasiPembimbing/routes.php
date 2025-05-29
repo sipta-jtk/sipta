@@ -103,3 +103,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
     Route::post('/alokasi/kirim-notifikasi-batch', [AlokasiPembimbingv2Controller::class, 'kirimNotifikasiBatch']);
 
 });
+
+Route::get('/redirect-data-kelompok', function () {
+    return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok');
+})->middleware(['auth', 'can:mahasiswa_kota'])->name('data-kelompok');
