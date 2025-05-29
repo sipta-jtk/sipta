@@ -23,7 +23,7 @@
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
                 ['url' => "/$prefix", 'label' => 'Beranda'],
-                ['url' => route('nilai.index'), 'label' => 'Tabel Penilaian & Masukan'],
+                ['url' => route('nilai.index', ['kegiatan' => $data['namaFta']]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',
