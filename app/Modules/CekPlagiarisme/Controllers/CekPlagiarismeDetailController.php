@@ -12,6 +12,7 @@ use App\Models\AlokasiDosen;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
+use App\Notifications\TestEmailNotification;
 
 Carbon::setLocale('id');
 
@@ -81,13 +82,15 @@ class CekPlagiarismeDetailController extends Controller
         $nimPemilik = $dokumen->username;
         try {
             // Kirim ke pemilik dokumen
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                $nimPemilik,
-                [
-                    'catatan' => $catatan->review
-                ]
-            );
+            $userPemilik = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
 
             // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
             $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
@@ -96,28 +99,16 @@ class CekPlagiarismeDetailController extends Controller
                 $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
                     ->where('nim', '!=', $nimPemilik)
                     ->limit(2)
-                    ->pluck('nim');
+                    ->get();
 
-                if ($anggotaKelompok->count() > 0) {
-                    $anggota2 = $anggotaKelompok[0] ?? null;
-                    if ($anggota2) {
-                        Notifikasi::kirim(
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                            $anggota2,
                             [
                                 'catatan' => $catatan->review
                             ]
-                        );
-                    }
-                    $anggota3 = $anggotaKelompok[1] ?? null;
-                    if ($anggota3) {
-                        Notifikasi::kirim(
-                            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                            $anggota3,
-                            [
-                                'catatan' => $catatan->review
-                            ]
-                        );
+                        ));
                     }
                 }
             }
@@ -185,13 +176,15 @@ class CekPlagiarismeDetailController extends Controller
         $nimPemilik = $dokumen->username;
         try {
             // Kirim ke pemilik dokumen
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                $nimPemilik,
-                [
-                    'catatan' => $catatan->review
-                ]
-            );
+            $userPemilik = Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
 
             // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
             $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
@@ -200,28 +193,16 @@ class CekPlagiarismeDetailController extends Controller
                 $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
                     ->where('nim', '!=', $nimPemilik)
                     ->limit(2)
-                    ->pluck('nim');
+                    ->get();
 
-                if ($anggotaKelompok->count() > 0) {
-                    $anggota2 = $anggotaKelompok[0] ?? null;
-                    if ($anggota2) {
-                        Notifikasi::kirim(
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                            $anggota2,
                             [
                                 'catatan' => $catatan->review
                             ]
-                        );
-                    }
-                    $anggota3 = $anggotaKelompok[1] ?? null;
-                    if ($anggota3) {
-                        Notifikasi::kirim(
-                            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                            $anggota3,
-                            [
-                                'catatan' => $catatan->review
-                            ]
-                        );
+                        ));
                     }
                 }
             }

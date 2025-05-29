@@ -716,36 +716,34 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
-            
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
-            
-            
+
             try {
                 // Get mahasiswa and their pengajuan pembimbing properly
                 $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
                 if (!$mahasiswa) {
                     return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
                 }
-    
+
                 // Get the latest accepted pengajuan pembimbing for this mahasiswa
                 $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
                     ->where('status_pengajuan', 'diterima')
                     ->latest()
                     ->first();
-                // Send notification to the student (document owner)
+
+                // Send notification to the student (document owner) using Laravel notification
                 if ($mahasiswa->user) {
-                    Notifikasi::kirim(
+                    $mahasiswa->user->notify(new TestEmailNotification(
                         '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
-                        $mahasiswa->user->username,
                         [
                             'catatan' => $request->input_notes,
                             'judul_dokumen' => $dokumen->judul,
                             'kategori' => $dokumen->kategori,
                             'nama_dosen' => auth()->user()->nama
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 Log::error('Gagal mengirim notifikasi review dokumen: ' . $notifEx->getMessage(), [

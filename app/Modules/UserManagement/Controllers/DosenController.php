@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 /**
  * Class DosenController
@@ -68,14 +69,16 @@ class DosenController extends Controller
 
         // Add notification inside try block
         try {
-            Notifikasi::kirim(
-                '[Pemberitahuan] Role Berhasil Diperbarui',
-                $nip,
-                [
-                    'role_baru' => $request->role,
-                    'old_role' => $old_role
-                ]
-            );
+            $user = User::where('username', $nip)->first();
+            if ($user) {
+                $user->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Role Berhasil Diperbarui',
+                    [
+                        'role_baru' => $request->role,
+                        'old_role' => $old_role
+                    ]
+                ));
+            }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi update role: ' . $notifEx->getMessage(), [
                 'nip' => $nip,
@@ -151,14 +154,16 @@ class DosenController extends Controller
             DB::commit();
 
             try {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Akun Berhasil Dibuat',
-                    $request->nip,
-                    [
-                        'nama' => $request->nama,
-                        'email' => $request->email
-                    ]
-                );
+                $user = User::where('username', $request->nip)->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Akun Berhasil Dibuat',
+                        [
+                            'nama' => $request->nama,
+                            'email' => $request->email
+                        ]
+                    ));
+                }
             } catch (\Exception $notifEx) {
                 \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
                     'nip' => $request->nip
@@ -384,20 +389,22 @@ class DosenController extends Controller
         // Send notifications to new users
         try {
             if (!empty($users)) {
-                foreach ($users as $user) {
-                    Notifikasi::kirim(
-                        '[Pemberitahuan] Akun Berhasil Dibuat',
-                        $user['username'],
-                        [
-                            'nama' => $user['nama'],
-                            'email' => $user['email']
-                        ]
-                    );
+                foreach ($users as $userData) {
+                    $user = User::where('username', $userData['username'])->first();
+                    if ($user) {
+                        $user->notify(new TestEmailNotification(
+                            '[Pemberitahuan] Akun Berhasil Dibuat',
+                            [
+                                'nama' => $userData['nama'],
+                                'email' => $userData['email']
+                            ]
+                        ));
+                    }
                 }
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi bulk import: ' . $notifEx->getMessage(), [
-                'username' => $user['username']
+                'username' => $userData['username'] ?? null
             ]);
         }
 

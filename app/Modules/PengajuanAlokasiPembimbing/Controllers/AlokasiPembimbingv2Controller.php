@@ -19,6 +19,7 @@ use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
 use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 class AlokasiPembimbingv2Controller extends Controller
 {
@@ -288,9 +289,8 @@ class AlokasiPembimbingv2Controller extends Controller
                 // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
                 $user = User::where('username', $mhs['nim'])->first();
                 if ($user) {
-                    Notifikasi::kirim(
+                    $user->notify(new TestEmailNotification(
                         '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
-                        $user->id,
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
@@ -298,7 +298,7 @@ class AlokasiPembimbingv2Controller extends Controller
                             'nim' => $mhs['nim'],
                             'tanggal' => $waktu,
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 $errorCount++;
@@ -315,16 +315,15 @@ class AlokasiPembimbingv2Controller extends Controller
                 // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
                 $user = User::where('username', $nip)->first();
                 if ($user) {
-                    Notifikasi::kirim(
+                    $user->notify(new TestEmailNotification(
                         '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
-                        $user->id,
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
                             'nama_dosen' => $user->nama,
                             'tanggal' => $waktu,
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 $errorCount++;
