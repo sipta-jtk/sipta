@@ -205,7 +205,12 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -221,12 +226,18 @@
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
+                                        {{ Log::info($item->user->nama) }}
                                         <td>
                                             <input type="number"
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -261,7 +272,6 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
         window.PREFIX_URL = "{{ env('PREFIX_URL') }}";

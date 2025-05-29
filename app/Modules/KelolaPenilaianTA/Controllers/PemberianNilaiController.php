@@ -250,7 +250,7 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            // return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+            return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -556,8 +556,6 @@ class PemberianNilaiController extends Controller
         
         // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
         $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
-
-        Log::info('Detail informasi'. json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,

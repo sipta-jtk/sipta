@@ -99,4 +99,19 @@ $(document).ready(function () {
             $('#view_file_download').attr('href', '#').addClass('disabled'); // Disable download button if no file path
         }
     };
+
+    $(document).ready(function() {
+        var table = $('#myTable').DataTable({
+            scrollX: true,
+            fixedColumns: {
+                rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
+            }
+        });
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover focus', delay: { "show": 0, "hide": 100 } });
+    });
 });
+
+
