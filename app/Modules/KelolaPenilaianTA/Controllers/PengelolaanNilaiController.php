@@ -11,11 +11,12 @@ use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mahasiswa;
-use App\Models\kategoriPenilaian;
+use App\Models\KategoriPenilaian;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
 use App\Models\DetailFeedback;
 use App\Models\NilaiKategori;
+use App\Services\Notifikasi;
 use App\Models\Prodi;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -360,6 +361,25 @@ class PengelolaanNilaiController extends Controller
             return back()->with('error', 'Feedback untuk Kelompok ini belum lengkap.');
         } else if ($nilaiKategori->get()->isEmpty()) {
             return back()->with('error', 'Nilai untuk Kelompok ini belum lengkap.');
+        }
+
+        try {
+            // Get all mahasiswa with same id_kota
+            $mahasiswaKota = Mahasiswa::where('id_kota', $idKota)
+                ->with('user')
+                ->get();
+
+            foreach ($mahasiswaKota as $mhs) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Nilai sudah di publikasikan',
+                    $mhs->user->username,
+                    [
+                        'nama_dosen' => auth()->user()->nama,
+                    ]
+                );
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi publikasi nilai: ' . $notifEx->getMessage());
         }
 
         $detailFeedback->update(['status_penilaian_dosen' => $status]);

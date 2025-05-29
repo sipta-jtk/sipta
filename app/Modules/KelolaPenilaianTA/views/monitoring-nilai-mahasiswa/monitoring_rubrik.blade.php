@@ -7,13 +7,14 @@
     <div>
         @php
             $routeName = Route::currentRouteName();
+            $prefix = env('PREFIX_URL', 'sipta');
         @endphp
 
         @if($routeName === 'monitoring.rubrik.mahasiswa')
             {{-- Jalur dari Mahasiswa --}}
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                    ['url' => "/$prefix", 'label' => 'Beranda'],
                     ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                     ['url' => '', 'label' => 'Detail Rubrik']
                 ]

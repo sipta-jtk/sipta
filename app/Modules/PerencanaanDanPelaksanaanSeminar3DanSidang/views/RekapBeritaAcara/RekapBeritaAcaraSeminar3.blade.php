@@ -67,9 +67,7 @@
                                             </a>
                                         </div>
                                     @else
-                                        <div class="alert alert-warning p-1" style="font-size: 0.7rem;">
-                                            Dokumentasi belum diupload.
-                                        </div>
+                                        <span style="font-size: 1 rem;"> Belum diupload</span>
                                     @endif
                                 </td>
                             </tr>

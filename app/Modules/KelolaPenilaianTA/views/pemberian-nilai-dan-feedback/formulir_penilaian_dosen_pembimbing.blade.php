@@ -3,6 +3,9 @@
 @section('title', 'Penilaian Dosen Pembimbing')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <!-- Judul Halaman -->
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
@@ -10,7 +13,7 @@
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                 ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]
@@ -64,12 +67,7 @@
         <!-- Topik Tugas Akhir -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>
-                    {{ match ($data['namaFta']) {
-                        'seminar i' => 'Usulan Topik Tugas Akhir',
-                        default => 'Topik Tugas Akhir'
-                    } }}
-                </strong> <br>
+                <strong>Judul Tugas Akhir</strong> <br>
                 <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
@@ -78,7 +76,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
-                    {{ match ($data['namaFta']) {
+                    {{ match ($namaFta) {
                         'seminar i' => 'Seminar I',
                         'seminar ii' => 'Seminar II',
                         'seminar iii' => 'Seminar III',
@@ -88,27 +86,68 @@
                 </strong> <br>
 
                 <!-- Tombol Preview Laporan -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['laporan']->file_path ?? '' }}')"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['laporan'] ? '' : 'disabled' }}>
-                    Laporan <i class="fa-solid fa-file"></i>
-                </button>
+                <span
+                    @if(!$dokumen['laporan'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Laporan belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['laporan']->file_path ?? '' }}',
+                            '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['laporan']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                        Laporan <i class="fa-solid fa-file"></i>
+                    </button>
+                </span>
 
                 <!-- Tombol Preview PowerPoint -->
-                <button type="button" class="btn btn-primary btn-prev"
-                    onclick="LihatDokumen('{{ $dokumen['powerpoint']->file_path ?? '' }}')"
-                    data-toggle="modal" data-target="#LihatDokumen"
-                    {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
-                    PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
-                </button>
+                <span
+                    @if(!$dokumen['powerpoint'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="PowerPoint belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                            '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                        PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                    </button>
+                </span>
             </div>
         </div>
 
         <!-- Modal Lihat Dokumen -->
         <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
             <div class="row px-3">
-                <div class="col-md-12">
+                <div class="col-md-3 mb-2">
+                    <label class="mt-2">Aksi File</label>
+                    <div class="d-flex flex-column">
+                        <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#"
+                        class="btn btn-success"
+                        id="view_file_download"
+                        data-url-template="{{ route('dokumen.download', ['kategori' => '__kategori__', 'id' => '__id__']) }}">
+                            <i class="fas fa-download"></i> Unduh
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-9 mb-2">
+                    <label class="form-label">Pratinjau Dokumen</label>
                     <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
                         <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
                         <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
@@ -122,7 +161,7 @@
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
             </x-slot>
-        </x-adminlte-modal>
+        </x-adminlte-modal> <br>
 
         <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
@@ -166,7 +205,12 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -182,12 +226,18 @@
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
+                                        {{ Log::info($item->user->nama) }}
                                         <td>
                                             <input type="number"
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -211,9 +261,12 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">  
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
@@ -221,39 +274,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            // Menginisialisasi popover untuk elemen yang sudah ada
-            $('[data-toggle="popover"]').popover({
-                trigger: 'hover',
-                placement: 'top',
-                html: true
-            });
-
-            // Event delegation untuk elemen dinamis
-            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
-                $(this).popover('show');
-            }).on('mouseleave', '[data-toggle="popover"]', function () {
-                $(this).popover('hide');
-            });
-        });
-
-        function loadPreview(url) {
-            let fileId = extractDriveFileId(url);
-            if (fileId) {
-                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                document.getElementById('previewFrame').src = embedUrl;
-            } else {
-                alert("Format link tidak valid!");
-            }
-        }
-
-        function extractDriveFileId(url) {
-            let match = url.match(/[-\w]{25,}/);
-            return match ? match[0] : null;
-        }
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
     </script>
 @stop

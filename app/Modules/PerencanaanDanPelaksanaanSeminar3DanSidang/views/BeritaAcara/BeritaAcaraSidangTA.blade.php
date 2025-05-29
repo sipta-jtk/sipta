@@ -30,7 +30,7 @@
                             <th style="width: 1%;">Sesi</th>
                             <th style="width: 13%;">Status Kehadiran</th>
                             <th style="width: 10%;">Dokumentasi</th>
-                            <th style="width: 10%;">Batas Revisi</th>
+                            <th style="width: 11%;">Batas Revisi</th>
                             <th style="width: 13%;">Status Kelulusan</th>
                         </tr>
                     </thead>
@@ -217,6 +217,7 @@
                                                    placeholder="-- Pilih Tanggal --"
                                                    onfocus="this.showPicker()"
                                                    value="{{ $item->batas_revisi }}"
+                                                   {{-- min="{{ \carbon\Carbon::now('Asia/Jakarta')->format('Y-m-d') }}" --}}
                                                    required>
                                         </div>
                                         <small class="form-text text-muted">

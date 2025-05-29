@@ -3,10 +3,13 @@
 @section('title', 'Informasi Detail Formulir Penilaian - Dosen')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
                 ['url' => '', 'label' => 'Detail Formulir Penilaian - Dosen Pembimbing']   
             ]

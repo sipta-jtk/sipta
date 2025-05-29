@@ -5,27 +5,39 @@ namespace App\Modules\CekPlagiarisme\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
-use App\Modules\CekPlagiarisme\Services\PlagiarismChecker;
 use App\Models\Dokumen;
+use App\Models\Keyword;
 use App\Models\AmbangBatas;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Kota;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Smalot\PdfParser\Parser as PdfParser;
-use ZipArchive;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Smalot\PdfParser\Parser;
+use App\Models\LogAktivitas;
 use Carbon\Carbon;
 
 Carbon::setLocale('id');
 
-// console::info
-// import this console::info
-use Illuminate\Support\Facades\Log as console;
-
 class CekPlagiarismeController extends Controller
 {
+    function extractOverallSimilarity($pdfText)
+    {
+        // Cari baris yang mengandung 'Overall Similarity'
+        preg_match('/(\d+)% Overall Similarity/i', $pdfText, $matches);
+        return isset($matches[1]) ? (int)$matches[1] : null;
+    }
+
+    function extractSourceLinks($pdfText)
+    {
+        // Cari semua URL
+        preg_match_all('/https?:\/\/[^\s"]+/i', $pdfText, $matches);
+
+        // Hilangkan duplikat dan kembalikan array hasil
+        $uniqueLinks = array_unique($matches[0]);
+        return array_values($uniqueLinks);
+    }
+    
     public function getData()
     {
         // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
@@ -34,6 +46,10 @@ class CekPlagiarismeController extends Controller
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
                 ->where('kategori', 'plagiarisme')
                 ->where('id_kota', $idKota)
+                ->get();
+        } else if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+            $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
+                ->where('kategori', 'plagiarisme')
                 ->get();
         } else {
             $idKota = auth()->user()
@@ -78,18 +94,26 @@ class CekPlagiarismeController extends Controller
             return '<span class="badge badge-danger">Plagiat</span>';
         }
     }
+
     public function show($id): View
     {
-        return view('CekPlagiarisme.views.detail', [
+        return view('CekPlagiarisme.views.Detail', [
             'id' => $id
         ]);
     }
 
-    // ! Aplikasi dari open source
     public function process(Request $request)
     {
+        if (!$request->isMethod('post')) {
+            Log::warning('GET request tidak sah ke /cek-plagiarisme/process', [
+                'ip' => $request->ip(),
+                'agent' => $request->userAgent(),
+                'user_id' => auth()->id(),
+            ]);
+            abort(405);
+        }
         // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'judul' => [
                 'required',
                 'string',
@@ -100,222 +124,163 @@ class CekPlagiarismeController extends Controller
                     }
                 }
             ],
-            'dokumen' => 'required|file|mimes:pdf,docx,txt|max:15360',
+            'dokumen' => 'required|file|max:51200', // max 50MB
+            'digital_receipt' => 'required|file|mimes:pdf|max:51200',
+            'keywords' => 'required|string|min:1',
+            'deskripsi' => 'nullable|string|max:1000',
         ]);
 
-        // Simpan file yang diunggah ke storage
-        $file = $request->file('dokumen');
-        $filePath = $file->store('dokumen', 'public');
+        DB::beginTransaction();
 
-        // Kirim file ke server Django untuk pengecekan plagiarisme
-        $plagiarismUrl = config('app.plagiarism_url', env('PLAGIARISM_URL'));
         try {
-            $client = new Client();
-            $response = $client->post("{$plagiarismUrl}/filetest/", [
-                'multipart' => [
-                    [
-                        'name'     => 'docfile',
-                        'contents' => fopen($file->getPathname(), 'r'),
-                        'filename' => $file->getClientOriginalName(),
-                    ],
-                ],
+            // Simpan file dokumen
+            $fileDokumen = $request->file('dokumen');
+            $filePathDokumen = $fileDokumen->store('dokumen', 'public');
+            $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
+
+            // Simpan file digital receipt
+            $fileReceipt = $request->file('digital_receipt');
+            $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
+            $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
+
+            // Ambil data tambahan user
+            $user = auth()->user();
+            $nim = $user->username;
+            $idKota = $user->mahasiswa->id_kota ?? null;
+            $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
+            $nim = auth()->user()->username;
+            $idKota = auth()->user()->mahasiswa->id_kota ?? null;
+
+            // Debug: Log ambang batas and user info
+            Log::info('User and threshold info', [
+                'ambang_batas_id' => $ambangBatasAktif?->id_ambang_batas,
+                'nim' => $nim,
+                'id_kota' => $idKota,
             ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
-            $percentage = isset($data['percent']) ? number_format($data['percent'], 2) : null;
-            $link = $data['link'] ?? null;
-            // console::info("RESPONSE DARI DJANGO: ", $data);
-            dump($data);
-        } catch (RequestException $e) {
-            return back()->withErrors(['error' => 'Gagal menghubungi server Django.']);
+            // $parser = new Parser();
+            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
+            // $text = $pdf->getText();
+
+            // $similarity = extractOverallSimilarity($text);
+            // $sources = extractSourceLinks($text);
+
+            // \Log::info('Extracted similarity and sources', [
+            //     'similarity' => $similarity,
+            //     'sources' => $sources
+            // ]);
+
+            // Simpan dokumen utama
+            $dokumen = Dokumen::create([
+                'judul' => $validated['judul'],
+                'file_path' => $filePathDokumen,
+                'user_id' => $user->id,
+                'username' => $nim,
+                'versi' => 1,
+                'ukuran_file' => $fileSizeDokumen,
+                'kategori' => 'plagiarisme',
+                'deskripsi' => $validated['deskripsi'] ?? null,
+                'id_kota' => $idKota,
+                'highlight_dokumen' => 0,
+                'status_berkas' => 'valid',
+                'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+                'id_subkategori' => 3,
+                'kode_fta' => null,
+                // 'persentase_plagiarisme' => $similarity,
+            ]);
+
+            // Simpan digital receipt
+            $dokumenReceipt = Dokumen::create([
+                'judul' => $validated['judul'] . ' - Digital Receipt',
+                'file_path' => $filePathReceipt,
+                'user_id' => $user->id,
+                'username' => $nim,
+                'versi' => 1,
+                'ukuran_file' => $fileSizeReceipt,
+                'kategori' => 'digital_receipt',
+                'deskripsi' => $validated['deskripsi'] ?? null,
+                'id_kota' => $idKota,
+                'highlight_dokumen' => 0,
+                'status_berkas' => 'valid',
+                'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
+                'id_subkategori' => 3,
+                'kode_fta' => null,
+            ]);
+
+            // Proses keywords
+            $keywordsInput = array_filter(array_map('trim', explode(',', $validated['keywords'])));
+            $keywordIds = [];
+
+            foreach ($keywordsInput as $keyword) {
+                $normalized = ucwords(strtolower($keyword));
+                if (empty($normalized)) continue;
+
+                $existing = Keyword::firstOrCreate(['nama_keyword' => $normalized]);
+                $keywordIds[] = $existing->id_keyword;
+            }
+
+            // Simpan relasi ke dokumen utama (bukan receipt)
+            foreach ($keywordIds as $keywordId) {
+                DB::table('dokumen_keyword')->insert([
+                    'id_dokumen' => $dokumen->id_dokumen,
+                    'id_keyword' => $keywordId,
+                ]);
+            }
+
+            DB::commit();
+
+            // Dalam CekPlagiarismeController
+            try {
+                LogAktivitas::create([
+                    'username' => auth()->user()->username,
+                    'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
+                    'id_dokumen' => $dokumen->id_dokumen,
+                    'action' => 'upload', // Pastikan menggunakan nilai enum yang valid
+                    'waktu_aktivitas' => now()
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
+            }
+
+            return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error('Gagal memproses dokumen:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->withErrors([
+                'error' => 'Terjadi kesalahan saat menyimpan dokumen: ' . $e->getMessage()
+            ]);
         }
-
-        // Simpan informasi file ke database
-        $fileSizeInKB = round($file->getSize() / 1024, 2);
-        $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-        $nim = auth()->user()->username;
-        $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
-
-        Dokumen::create([
-            'judul' => $request->judul,
-            'file_path' => $filePath,
-            'user_id' => auth()->id(),
-            'username' => $nim,
-            'status_plagiarisme' => $statusPlagiarisme,
-            'persentase_plagiarisme' => $percentage,
-            'versi' => 1,
-            'ukuran_file' => $fileSizeInKB,
-            'kategori' => 'plagiarisme',
-            'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
-            'highlight_dokumen' => 0,
-            'status_berkas' => 'valid',
-            'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
-            'id_subkategori' => 3,
-            'kode_fta' => null,
-        ]);
-
-        //Notifikasi Cek Plagiarisme Selesai
-        Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
-
-        // Tampilkan hasil ke view PengecekanTugasAkhir
-        return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link'));
     }
-
-
-    // ! Aplikasi berbayar
-    // public function process(Request $request)
-    // {
-    //     // Validasi input
-    //     $request->validate([
-    //         'judul' => [
-    //             'required',
-    //             'string',
-    //             'max:255',
-    //             function ($attribute, $value, $fail) {
-    //                 if (str_word_count($value) > 20) {
-    //                     $fail('Judul dokumen tidak boleh lebih dari 20 kata.');
-    //                 }
-    //             }
-    //         ],
-    //         'dokumen' => 'required|file|mimes:pdf,docx,txt|max:15360',
-    //     ]);
-
-    //     // Simpan file ke storage
-    //     $file = $request->file('dokumen');
-    //     $filePath = $file->store('dokumen', 'public');
-
-    //     try {
-    //         $text = '';
-
-    //         // Ekstrak teks dari file
-    //         $extension = $file->getClientOriginalExtension();
-    //         if ($extension === 'txt') {
-    //             $text = file_get_contents($file->getPathname());
-    //         } elseif ($extension === 'pdf') {
-    //             $parser = new PdfParser();
-    //             $pdf = $parser->parseFile($file->getPathname());
-    //             $text = $pdf->getText();
-    //         } elseif ($extension === 'docx') {
-    //             $zip = new ZipArchive;
-    //             if ($zip->open($file->getPathname()) === true) {
-    //                 $xml = $zip->getFromName('word/document.xml');
-    //                 $text = strip_tags(str_replace(["</w:p>", "</w:tbl>"], "\n", $xml));
-    //                 $zip->close();
-    //             } else {
-    //                 throw new \Exception("Gagal membaca file DOCX.");
-    //             }
-    //         } else {
-    //             throw new \Exception("Format dokumen tidak didukung untuk ekstraksi teks.");
-    //         }
-
-    //         if (empty(trim($text))) {
-    //             return back()->withErrors(['error' => 'Gagal membaca isi dokumen. Pastikan file memiliki isi teks.']);
-    //         }
-
-    //         $client = new Client([
-    //             'headers' => [
-    //                 'X-API-TOKEN' => 'LHrwX5_0EyVEEOw74qJ4ff1Bah0eNmqM'
-    //             ]
-    //         ]);
-
-    //         // Kirim teks ke PlagiarismCheck API
-    //         $uploadResponse = $client->post('https://plagiarismcheck.org/api/v1/text', [
-    //             'form_params' => [
-    //                 'language' => 'en',
-    //                 'text' => $text,
-    //             ]
-    //         ]);
-
-    //         $uploadData = json_decode($uploadResponse->getBody()->getContents(), true);
-    //         $textId = $uploadData['data']['text']['id'] ?? null;
-
-    //         if (!$textId) {
-    //             throw new \Exception("Gagal mendapatkan ID teks dari API.");
-    //         }
-
-    //         // Tunggu 3 detik (opsional, jika perlu delay untuk pemrosesan)
-    //         sleep(3);
-
-    //         // Dapatkan hasil report
-    //         $reportResponse = $client->get("https://plagiarismcheck.org/api/v1/text/report/{$textId}");
-    //         $reportData = json_decode($reportResponse->getBody()->getContents(), true);
-
-    //         $percentage = isset($reportData['data']['report']['percent']) 
-    //         ? number_format($reportData['data']['report']['percent'], 2) 
-    //         : null;
-
-    //         $link = "https://plagiarismcheck.org/report/{$textId}";
-
-    //         $sources = [];
-
-    //         if (isset($reportData['data']['report_data']['sources'])) {
-    //             foreach ($reportData['data']['report_data']['sources'] as $source) {
-    //                 $sources[] = [
-    //                     'percent' => $source['percent'],
-    //                     'url' => $source['source'],
-    //                 ];
-    //             }
-    //         }
-
-
-    //     } catch (RequestException $e) {
-    //         return back()->withErrors(['error' => 'Gagal menghubungi API PlagiarismCheck.']);
-    //     } catch (\Exception $e) {
-    //         return back()->withErrors(['error' => $e->getMessage()]);
-    //     }
-
-    //     // Simpan ke database
-    //     $fileSizeInKB = round($file->getSize() / 1024, 2);
-    //     $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-    //     $nim = auth()->user()->username;
-    //     $statusPlagiarisme = ($percentage > ($ambangBatasAktif->nilai ?? 0)) ? 'plagiarisme' : 'tidak_plagiarisme';
-
-    //     Dokumen::create([
-    //         'judul' => $request->judul,
-    //         'file_path' => $filePath,
-    //         'user_id' => auth()->id(),
-    //         'username' => $nim,
-    //         'status_plagiarisme' => $statusPlagiarisme,
-    //         'persentase_plagiarisme' => $percentage,
-    //         'versi' => 1,
-    //         'ukuran_file' => $fileSizeInKB,
-    //         'kategori' => 'plagiarisme',
-    //         'id_kota' => auth()->user()->mahasiswa->id_kota ?? null,
-    //         'highlight_dokumen' => 0,
-    //         'status_berkas' => 'valid',
-    //         'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
-    //         'id_subkategori' => 3,
-    //         'kode_fta' => null,
-    //     ]);
-
-    //     // Tampilkan hasil ke view
-    //     return view('CekPlagiarisme.views.PengecekanTugasAkhir', compact('percentage', 'link', 'sources'));
-    // }
 
 
     public function getKota()
     {
         // Mengambil id_kota dan nama_kota dari relasi preferensiKota -> kota
-        $kotas = auth()->user()
-            ->dosen
-            ->preferensiKota
-            ->map(function ($preferensiKota) {
+
+        if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+            $kotas = Kota::all()->map(function ($kota) {
                 // Mengembalikan id_kota dan nama_kota
                 return [
-                    'id_kota' => $preferensiKota->id_kota,
-                    'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                    'id_kota' => $kota->id_kota,
+                    'nama_kota' => $kota->nama_kota, // Pastikan relasi dengan model Kota
                 ];
             });
+        } else
+            $kotas = auth()->user()
+                ->dosen
+                ->preferensiKota
+                ->map(function ($preferensiKota) {
+                    // Mengembalikan id_kota dan nama_kota
+                    return [
+                        'id_kota' => $preferensiKota->id_kota,
+                        'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                    ];
+                });
 
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);

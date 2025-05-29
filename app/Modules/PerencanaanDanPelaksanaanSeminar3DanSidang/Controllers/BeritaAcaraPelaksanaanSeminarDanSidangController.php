@@ -6,6 +6,7 @@ use App\Modules\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Kehadiran;
 Carbon::setLocale('id');
@@ -176,11 +177,18 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Ambil id_kehadiran dari request
         $idKehadiran = $request->input('id_kehadiran');
 
+        // Ambil data kehadiran dari database
+        $kehadiran = Kehadiran::find($idKehadiran);
+
+        // Hapus file lama jika ada
+        if ($kehadiran->foto_sidang) {
+            Storage::disk('public')->delete($kehadiran->foto_sidang);
+        }
+
         // Simpan file baru ke storage
         $dokumentasiPath = $request->file('dokumentasi')->store('dokumentasi', 'public');
 
         // Update path file di database
-        $kehadiran = Kehadiran::find($idKehadiran);
         $kehadiran->foto_sidang = $dokumentasiPath;
         $kehadiran->save();
 
@@ -192,7 +200,16 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Validasi request
         $request->validate([
             'id_kehadiran' => 'required|exists:kehadiran,id_kehadiran',
-            'batas_revisi' => 'required|date',
+            'batas_revisi' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $today = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+                    if ($value < $today) {
+                        $fail('Tanggal batas revisi tidak boleh sebelum hari ini.');
+                    }
+                },
+            ],
         ]);
 
         // Update batas revisi di database
@@ -216,19 +233,28 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $kehadiran->status_kelulusan = $request->input('status_kelulusan');
         $kehadiran->save();
     
+
+        // Kirim notifikasi ke mahasiswa yang hadir
+        try {
+            if ($kehadiran->username) {
+                Notifikasi::kirim(
+                    '[Pemberitahuan] Pemberitahuan Hasil Sidang',
+                    $kehadiran->username,
+                    [
+                        'status_kelulusan' => $kehadiran->status_kelulusan,
+                        'tanggal_sidang' => $kehadiran->penjadwalan->tanggal ?? '-'
+                    ]
+                );
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi hasil sidang: ' . $notifEx->getMessage(), [
+                'id_kehadiran' => $kehadiran->id_kehadiran,
+                'username' => $kehadiran->username
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Status kelulusan berhasil disimpan.');
 
-        //Notifikasi Status Lulus Ke Mahasiswa
-            Notifikasi::kirim(
-            '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!', // Judul template notifikasi
-            Auth::User()->username, // Ganti dengan username admin, atau log system
-            [
-                'nama' => Auth::User()->name,
-                'topik' => 'User membuka halaman log',
-                'nama_ruangan' => $item['nama_ruangan'],
-                'tanggal' => $item['tanggal'],
-                'deadline' => now()->format('d-m-Y H:i')
-            ]
-        );
+
     }
 }
