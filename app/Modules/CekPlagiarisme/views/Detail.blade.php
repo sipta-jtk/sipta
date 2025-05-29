@@ -110,7 +110,7 @@ $prefix = env('PREFIX_URL', '');
                             <div class="card-header bg-dark text-white">
                                 <h5>Detail Dokumen</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 595px; overflow-y: auto;">
                                 <table class="table table-bordered">
                                     <tbody>
                                         <tr>
@@ -125,16 +125,17 @@ $prefix = env('PREFIX_URL', '');
                                             <th>Abstrak</th>
                                             <td>{{ $dokumen->deskripsi ?? 'Tidak Tersedia' }}</td> <!-- Data deskripsi -->
                                         </tr>
-                                        <th>Kata Kunci</th>
-                                        <td>
-                                            @if($dokumen->keywords && $dokumen->keywords->count() > 0)
-                                            @foreach($dokumen->keywords as $keyword)
-                                            <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
-                                            @endforeach
-                                            @else
-                                            <span class="text-muted">Tidak ada kata kunci</span>
-                                            @endif
-                                        </td>
+                                        <tr>
+                                            <th>Kata Kunci</th>
+                                            <td>
+                                                @if($dokumen->keywords && $dokumen->keywords->count() > 0)
+                                                @foreach($dokumen->keywords as $keyword)
+                                                <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
+                                                @endforeach
+                                                @else
+                                                <span class="text-muted">Tidak ada kata kunci</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Tanggal Unggah</th>
@@ -258,7 +259,7 @@ $prefix = env('PREFIX_URL', '');
                             <div class="card-header bg-dark text-white">
                                 <h5>Catatan</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 595px; overflow-y: auto;">
                                 @include('CekPlagiarisme.views.Catatan')
                             </div>
                         </div>
