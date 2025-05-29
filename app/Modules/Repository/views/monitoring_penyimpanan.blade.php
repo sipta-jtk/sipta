@@ -16,7 +16,7 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between px-3 pt-3">
-                <button class="btn btn-primary btn-md" type="button" data-toggle="collapse" data-target="#filterMenu">
+                <button class="btn btn-primary btn-md" id="filterButton" type="button" style="height: 40px;">
                     <i class="fas fa-filter"></i> Filter
                 </button>
                 <div class="form-group text-secondary">
@@ -27,17 +27,20 @@
 
             <div class="collapse" id="filterMenu">
                 <div class="card mx-3 mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-filter mr-2"></i>Filter Data
-                        </h3>
+                    <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title m-0">
+                            <i class="fas fa-filter mr-1"></i>Filter Data
+                        </h5>
+                        <button id="closeFilter" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body py-3">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group text-secondary">
-                                    <label><i class="fas fa-folder mr-1"></i> Kategori</label>
-                                    <select id="kategoriFilter" class="form-control">
+                            <div class="col-md-5">
+                                <div class="form-group text-secondary mb-2">
+                                    <label class="mb-1"><i class="fas fa-folder mr-1"></i> Kategori</label>
+                                    <select id="kategoriFilter" class="form-control form-control-sm">
                                         <option value="">Semua Kategori</option>
                                         <option value="seminar1">Seminar 1</option>
                                         <option value="seminar2">Seminar 2</option>
@@ -48,10 +51,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group text-secondary">
-                                    <label><i class="fas fa-file-alt mr-1"></i> Subkategori</label>
-                                    <select id="subkategoriFilter" class="form-control">
+                            <div class="col-md-5">
+                                <div class="form-group text-secondary mb-2">
+                                    <label class="mb-1"><i class="fas fa-file-alt mr-1"></i> Subkategori</label>
+                                    <select id="subkategoriFilter" class="form-control form-control-sm">
                                         <option value="">Semua Subkategori</option>
                                         <option value="Laporan">Laporan</option>
                                         <option value="FTA">FTA</option>
@@ -65,15 +68,15 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <button id="applyFilter" class="btn btn-primary btn-sm float-right">
-                                    <i class="fas fa-check mr-1"></i> Terapkan Filter
-                                </button>
-                                <button id="resetFilter" class="btn btn-secondary btn-sm float-right mr-2">
-                                    <i class="fas fa-redo mr-1"></i> Reset
-                                </button>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <div class="form-group text-secondary mb-2 d-flex">
+                                    <button id="applyFilter" class="btn btn-primary btn-sm mr-1">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button id="resetFilter" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -390,6 +393,16 @@
 
             // Initialize chart with all data on page load
             initializeChart(subkategoriData);
+
+            // Toggle filter menu with the filter button
+            $('#filterButton').on('click', function() {
+                $('#filterMenu').collapse('toggle');
+            });
+
+            // Close filter with close button
+            $('#closeFilter').on('click', function() {
+                $('#filterMenu').collapse('hide');
+            });
         });
     </script>
 @stop

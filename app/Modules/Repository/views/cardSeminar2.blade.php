@@ -242,11 +242,10 @@
                                             <option selected disabled>Pilih Kode FTA</option>
                                             <option value="FTA-05">FTA-05 - Kehadiran Mahasiswa pada Seminar I</option>
                                             <option value="FTA-05a">FTA-05a - Lesson Learnt Seminar I</option>
-                                            <option value="FTA-06">FTA-06 - Bukti Bimbingan Seminar II</option>
-                                            <option value="FTA-06a">FTA-06a - Resume Bimbingan</option>
+                                            <option value="FTA-06">FTA 06 - Bukti Bimbingan untuk Seminar II</option>
                                             <option value="FTA-07">FTA-07 - Penilaian Seminar II</option>
                                             <option value="FTA-08">FTA-08 - Masukan Seminar II</option>
-                                            <option value="FTA-023">FTA-023 - Persetujuan Pelaksanaan Seminar II/III Tugas Akhir</option>
+                                            <option value="FTA-023">FTA-023 - FTA 23 - Persetujuan Pembimbing TA</option>
 
                                         </select>
                                     </div>
@@ -836,11 +835,10 @@
                         $ftaOptions =[
                         ['value' => 'FTA-05', 'text' => 'FTA-05 - Kehadiran Mahasiswa pada Seminar I'],
                         ['value' => 'FTA-05a', 'text' => 'FTA-05a - Lesson Learnt Seminar I'],
-                        ['value' => 'FTA-06', 'text' => 'FTA-06 - Bukti Bimbingan Seminar II'],
-                        ['value' => 'FTA-06a', 'text' => 'FTA-06a - Resume Bimbingan'],
+                        ['value' => 'FTA-06', 'text' => 'FTA 06 - Bukti Bimbingan untuk Seminar II'],
                         ['value' => 'FTA-07', 'text' => 'FTA-07 - Penilaian Seminar II'],
                         ['value' => 'FTA-08', 'text' => 'FTA-08 - Masukan Seminar II'],
-                        ['value' => 'FTA-023', 'text' => 'FTA-023 - Persetujuan Pelaksanaan Seminar II Tugas Akhir'],
+                        ['value' => 'FTA-023', 'text' => 'FTA 23 - Persetujuan Pembimbing TA'],
                         ];
                         @endphp
 
