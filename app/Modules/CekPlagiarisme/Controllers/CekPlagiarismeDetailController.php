@@ -12,6 +12,7 @@ use App\Models\AlokasiDosen;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 
 Carbon::setLocale('id');
@@ -25,26 +26,31 @@ class CekPlagiarismeDetailController extends Controller
 
         $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
-        $digital_receipt = null;
-        if ($dokumen) {
-            $digital_receipt = Dokumen::where('username', $dokumen->username)
-                ->where('kategori', 'digital_receipt')
-                ->where('judul', 'like', $dokumen->judul . '%')
-                ->latest()
-                ->first();
+        // VALIDASI AKSES
+        if (!Gate::allows('akses-dokumen-mahasiswa-kota', $dokumen)) {
+            abort(403, 'Anda tidak memiliki akses ke dokumen ini.');
         }
+
+        $digital_receipt = Dokumen::where('username', $dokumen->username)
+            ->where('kategori', 'digital_receipt')
+            ->where('judul', 'like', $dokumen->judul . '%')
+            ->latest()
+            ->first();
 
         $catatan = ReviewDosenPembimbing::with('dosen.user')
             ->where('id_dokumen', $id)
             ->get();
 
         $alokasiDosen = AlokasiDosen::all();
-
-        // Ambil data jurnal plagiarisme berdasarkan id dokumen
         $jurnalPlagiarisme = ListJurnalPlagiarisme::where('id_dokumen', $id)->get();
 
-        // Kirim data jurnal ke view
-        return view('CekPlagiarisme.views.Detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen', 'jurnalPlagiarisme'));
+        return view('CekPlagiarisme.views.Detail', compact(
+            'dokumen',
+            'digital_receipt',
+            'catatan',
+            'alokasiDosen',
+            'jurnalPlagiarisme'
+        ));
     }
 
     public function PenentuanAmbangBatas(): View
