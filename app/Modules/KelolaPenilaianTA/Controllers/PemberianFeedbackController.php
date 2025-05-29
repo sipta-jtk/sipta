@@ -172,6 +172,7 @@ class PemberianFeedbackController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
+        Log::info('Mengambil dokumen terbaru untuk kota: ' . $idKota . ' dengan kategori: ' . $kategori);
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 

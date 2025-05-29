@@ -104,8 +104,6 @@ class PemberianNilaiController extends Controller
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
 
-        Log::info('Keterangan Umum Penilaian: ' . json_encode($keteranganUmumPenilaian, JSON_PRETTY_PRINT));
-
         $jenisTa = $keteranganUmumPenilaian->jenis_ta;
 
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
@@ -126,10 +124,6 @@ class PemberianNilaiController extends Controller
                 }])
             ->get();
 
-        Log::info(json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
-
-        Log::info('username: ' . $username);
-
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
                 return $kriteria->rubrik;
@@ -138,6 +132,7 @@ class PemberianNilaiController extends Controller
 
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFtaSlug);
+        Log::info(json_encode($dokumen, JSON_PRETTY_PRINT));
 
         $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
         
@@ -162,6 +157,7 @@ class PemberianNilaiController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
+        $kategori = Str::slug($kategori, '-');
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 
