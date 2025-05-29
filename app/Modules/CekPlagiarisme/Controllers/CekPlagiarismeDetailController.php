@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 use App\Notifications\TestEmailNotification;
 
-
 Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
