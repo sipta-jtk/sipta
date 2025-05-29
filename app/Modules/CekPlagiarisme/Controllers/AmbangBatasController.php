@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller;
 use App\Models\AmbangBatas;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Services\Notifikasi;
+use \App\Models\User;
 
 Carbon::setLocale('id');
 
@@ -90,20 +90,19 @@ class AmbangBatasController extends Controller
                 }
             });
 
+            try {
+                // Kirim notifikasi ke semua user
+                $allUsers = User::all();
+                foreach ($allUsers as $user) {
+                    $user->notify(new \App\Notifications\TestEmailNotification(
+                        '[Pemberitahuan] Ambang Batas Baru',
+                        ['AmbangBatas' => $request->ambang_batas]
+                    ));
+                }
+            } catch (\Exception $notifEx) {
+                \Log::error('Gagal mengirim notifikasi Ambang Batas: ' . $notifEx->getMessage());
+            }
 
-        try {
-        foreach ($allUsers as $username) {
-        Notifikasi::kirim(
-            '[Pemberitahuan] Ambang Batas Baru',
-            $username,
-            ['AmbangBatas' => $request->ambang_batas],
-            );
-        }   
-        } catch (\Exception $notifEx) {
-            // Log error notifikasi, bisa menggunakan logger Laravel
-            \Log::error('Gagal mengirim notifikasi Ambang Batas: ' . $notifEx->getMessage());
-        }
-            
             return response()->json($response);
         } catch (\Exception $e) {
             return response()->json([
@@ -112,6 +111,5 @@ class AmbangBatasController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 }

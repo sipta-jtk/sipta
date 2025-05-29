@@ -370,13 +370,14 @@ class PengelolaanNilaiController extends Controller
                 ->get();
 
             foreach ($mahasiswaKota as $mhs) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Nilai sudah di publikasikan',
-                    $mhs->user->username,
-                    [
-                        'nama_dosen' => auth()->user()->nama,
-                    ]
-                );
+                if ($mhs->user) {
+                    $mhs->user->notify(new \App\Notifications\TestEmailNotification(
+                        '[Pemberitahuan] Nilai sudah di publikasikan',
+                        [
+                            'nama_dosen' => auth()->user()->nama,
+                        ]
+                    ));
+                }
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi publikasi nilai: ' . $notifEx->getMessage());
