@@ -12,8 +12,8 @@ $prefix = env('PREFIX_URL', '');
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
     ['url' => url($prefix . '/'), 'label' => 'Beranda'],
-    ['url' => url($prefix . '/cek-plagiarisme'), 'label' => 'Pengecekan Plagiarisme'],
-    ['url' => '', 'label' => 'Detail Laporan']
+    ['url' => url($prefix . '/cek-plagiarisme'), 'label' => 'Cek Plagiarisme'],
+    ['url' => '', 'label' => 'Detail Pengecekan Plagiarisme']
     ]
     ])
     @endcomponent
