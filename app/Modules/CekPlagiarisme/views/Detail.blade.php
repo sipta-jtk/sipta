@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Detail Plagiarism Check')
+@section('title', 'Detail Pengecekan Plagiarisme')
 
 @section('content_header')
 @php
@@ -12,14 +12,12 @@ $prefix = env('PREFIX_URL', '');
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
     ['url' => url($prefix . '/'), 'label' => 'Beranda'],
-    ['url' => url($prefix . '/cek-plagiarisme'), 'label' => 'Pengecekan Plagiarisme'],
-    ['url' => '', 'label' => 'Detail Laporan']
+    ['url' => url($prefix . '/cek-plagiarisme'), 'label' => 'Cek Plagiarisme'],
+    ['url' => '', 'label' => 'Detail Pengecekan Plagiarisme']
     ]
     ])
     @endcomponent
 </div>
-
-
 @stop
 
 
@@ -120,20 +118,23 @@ $prefix = env('PREFIX_URL', '');
                                             <td>{{ $dokumen->user->nama ?? 'Nama Tidak Tersedia' }}</td> <!-- Data penulis dari database -->
                                         </tr>
                                         <tr>
-                                            <th>Judul Dokumen</th>
+                                            <th>Judul Tugas Akhir</th>
                                             <td>{{ $dokumen->judul }}</td> <!-- Data judul dari database -->
                                         </tr>
                                         <tr>
-                                            <th>Keywords</th>
-                                            <td>
-                                                @if($dokumen->keywords && $dokumen->keywords->count() > 0)
-                                                    @foreach($dokumen->keywords as $keyword)
-                                                        <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="text-muted">Tidak ada keyword</span>
-                                                @endif
-                                            </td>
+                                            <th>Abstrak</th>
+                                            <td>{{ $dokumen->deskripsi ?? 'Tidak Tersedia' }}</td> <!-- Data deskripsi -->
+                                        </tr>
+                                        <th>Kata Kunci</th>
+                                        <td>
+                                            @if($dokumen->keywords && $dokumen->keywords->count() > 0)
+                                            @foreach($dokumen->keywords as $keyword)
+                                            <span class="badge badge-primary mr-1">{{ $keyword->nama_keyword }}</span>
+                                            @endforeach
+                                            @else
+                                            <span class="text-muted">Tidak ada kata kunci</span>
+                                            @endif
+                                        </td>
                                         </tr>
                                         <tr>
                                             <th>Tanggal Unggah</th>
@@ -166,16 +167,16 @@ $prefix = env('PREFIX_URL', '');
                         <div class="card shadow-lg">
                             <div class="card-header bg-dark text-white">
                                 <h5>
-                                    Daftar Sumber - 
+                                    Daftar Sumber -
                                     @if(fmod($dokumen->persentase_plagiarisme, 1) == 0)
-                                        {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
+                                    {{ number_format($dokumen->persentase_plagiarisme, 0) }}%
                                     @else
-                                        {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
+                                    {{ number_format($dokumen->persentase_plagiarisme, 1) }}%
                                     @endif
                                     Index Kesamaan
                                 </h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 595px; overflow-y: auto;">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -185,31 +186,31 @@ $prefix = env('PREFIX_URL', '');
                                     </thead>
                                     <tbody>
                                         @forelse($jurnalPlagiarisme as $jurnal)
-                                            @php
-                                                $url = $jurnal->link_jurnal;
-                                                // Tambahkan protokol http:// jika belum ada
-                                                if (!preg_match('/^https?:\/\//i', $url)) {
-                                                    $url = 'http://' . $url;
-                                                }
-                                            @endphp
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
-                                                        {{ $jurnal->link_jurnal }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    @if($jurnal->persentase_kemunculan > 0 && $jurnal->persentase_kemunculan < 1)
-                                                        &lt;1%
+                                        @php
+                                        $url = $jurnal->link_jurnal;
+                                        // Tambahkan protokol http:// jika belum ada
+                                        if (!preg_match('/^https?:\/\//i', $url)) {
+                                        $url = 'http://' . $url;
+                                        }
+                                        @endphp
+                                        <tr>
+                                            <td>
+                                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                                    {{ $jurnal->link_jurnal }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                @if($jurnal->persentase_kemunculan > 0 && $jurnal->persentase_kemunculan < 1)
+                                                    &lt;1%
                                                     @else
-                                                        {{ number_format($jurnal->persentase_kemunculan, 0) }}%
+                                                    {{ number_format($jurnal->persentase_kemunculan, 0) }}%
                                                     @endif
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                        </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="2" class="text-center">Belum ada sumber plagiarisme.</td>
-                                            </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-center">Belum ada sumber plagiarisme.</td>
+                                        </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
@@ -233,7 +234,7 @@ $prefix = env('PREFIX_URL', '');
                                     <i class="fas fa-file-download mr-1"></i> Unduh Dokumen Plagiarisme (Tidak Tersedia)
                                 </button>
                                 @endif
-                                
+
                                 @if(isset($digital_receipt) && isset($digital_receipt->file_path))
                                 <a href="{{ asset('storage/' . $digital_receipt->file_path) }}" download class="btn btn-primary w-100 mt-2">
                                     <i class="fas fa-receipt mr-1"></i> Unduh Bukti Penerimaan Digital
@@ -243,7 +244,7 @@ $prefix = env('PREFIX_URL', '');
                                     <i class="fas fa-receipt mr-1"></i> Unduh Bukti Penerimaan Digital (Tidak Tersedia)
                                 </button>
                                 @endif
-                                
+
                                 <div class="alert alert-info mt-3">
                                     <i class="fas fa-info-circle mr-2"></i> Klik tombol di atas untuk mengunduh dokumen langsung ke perangkat Anda.
                                 </div>
@@ -258,7 +259,7 @@ $prefix = env('PREFIX_URL', '');
                                 <h5>Catatan</h5>
                             </div>
                             <div class="card-body">
-                                @include('CekPlagiarisme.views.catatan')
+                                @include('CekPlagiarisme.views.Catatan')
                             </div>
                         </div>
                     </div>
@@ -309,28 +310,28 @@ $prefix = env('PREFIX_URL', '');
             iframe.style.display = 'none';
             container.insertBefore(errorMsg, iframe);
         }
-        
+
         // Handle download buttons in Unduh tab
         const downloadButtons = document.querySelectorAll('#unduh a[download]');
         downloadButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
                 console.log('Download initiated:', this.href);
-                
+
                 // Create a notification about the download
                 const notification = document.createElement('div');
                 notification.className = 'alert alert-success mt-2';
                 notification.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Mengunduh dokumen...';
-                
+
                 // Add notification after the button
                 this.parentNode.appendChild(notification);
-                
+
                 // Remove notification after 3 seconds
                 setTimeout(function() {
                     notification.remove();
                 }, 3000);
             });
         });
-        
+
         // Enable jQuery tab functionality for both tab groups
         $('#documentTabs a').on('click', function(e) {
             e.preventDefault();

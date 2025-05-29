@@ -245,9 +245,9 @@
                                             <i class="fas fa-project-diagram mr-1"></i> Kode FTA
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option value="FTA-18">FTA-18 - Bukti telah menyelesaikan hasil revisi laporan</option>
-                                            <option value="FTA-19">FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan</option>
-                                            <option value="FTA-19a">FTA-19a - Bukti telah merevisi abstrak dan tata tulis</option>
+                                            <option value="FTA-18">FTA 18 - Bukti Telah Menyelesaikan Revisi</option>
+                                            <option value="FTA-19">FTA 19 - Bukti Menyerahkan Laporan-FTA</option>
+                                            <option value="FTA-19a">FTA 19a - Bukti Menyerahkan Tata Tulis</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1140,9 +1140,9 @@
 
                         @php
                         $ftaOptions = [
-                        ['value' => 'FTA-18', 'text' => 'FTA-18 - Bukti telah menyelesaikan hasil revisi laporan'],
-                        ['value' => 'FTA-19', 'text' => 'FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan'],
-                        ['value' => 'FTA-19a', 'text' => 'FTA-19a - Bukti telah merevisi abstrak dan tata tulis'],
+                        ['value' => 'FTA-18', 'text' => 'FTA 18 - Bukti Telah Menyelesaikan Revisi'],
+                        ['value' => 'FTA-19', 'text' => 'FTA 19 - Bukti Menyerahkan Laporan-FTA'],
+                        ['value' => 'FTA-19a', 'text' => 'FTA 19a - Bukti Menyerahkan Tata Tulis'],
                         ];
                         @endphp
 

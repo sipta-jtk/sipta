@@ -84,8 +84,7 @@
                         </div>
                     </div>
                     <div class="container-fluid form-check">
-                        <input type="checkbox" id="checkAll" class="form-check-input" disabled
-                            {{ $AllowEdit ? '' : 'disabled' }}>
+                        <input type="checkbox" id="checkAll" class="form-check-input" {{ $AllowEdit ? '' : 'disabled' }}>
                         <label class="form-check-label text-dark" for="checkAll">Pilih Semua</label>
                     </div>
 
