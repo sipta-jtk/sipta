@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\NotifikasiKirim;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\TestEmailNotification;
 
 
 class LogUserController extends Controller
@@ -29,11 +28,6 @@ public function getLogUserNotifications()
         ->orderBy('notifikasi_kirim.waktu_kirim', 'desc')
         ->paginate(10);
         
-        Auth::user()->notify(new TestEmailNotification(
-                        '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
-                        [
-                        ]
-                    ));
     $logUserNotifikasi->getCollection()->transform(function ($notif) {
         $notif->waktu_kirim = Carbon::parse($notif->waktu_kirim)->translatedFormat('d F Y H:i');
         return $notif;
