@@ -45,13 +45,15 @@
                                 -
                                 <span
                                     class="badge badge-primary">{{ \Carbon\Carbon::parse($periode->periode_akhir)->translatedFormat('d F Y') }}</span>
-                                ({{ \Carbon\Carbon::parse($periode->periode_mulai)->diffInDays(\Carbon\Carbon::parse($periode->periode_akhir)) }}
+                                ({{ \Carbon\Carbon::parse($periode->periode_mulai)->diffInDays(\Carbon\Carbon::parse($periode->periode_akhir)) + 1 }}
                                 hari)
                             </td>
                             <td>
                                 @if (\Carbon\Carbon::now()->lt($periode->periode_mulai))
                                     <span class="badge badge-warning">Belum Dimulai</span>
-                                @elseif (\Carbon\Carbon::now()->between($periode->periode_mulai, $periode->periode_akhir))
+                                @elseif (
+                                    \Carbon\Carbon::now()->toDateString() >= \Carbon\Carbon::parse($periode->periode_mulai)->toDateString() &&
+                                        \Carbon\Carbon::now()->toDateString() <= \Carbon\Carbon::parse($periode->periode_akhir)->toDateString())
                                     <span class="badge badge-success">Berlangsung</span>
                                 @else
                                     <span class="badge badge-secondary">Berakhir</span>

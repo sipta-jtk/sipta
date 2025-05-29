@@ -36,10 +36,14 @@ return new class extends Migration
             $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen');
         });
 
-        // 5. Tambah kategori dokumen Enum = digital_receipt di table dokumen
+        // 5. Tambah kategori dokumen Enum = digital_receipt di table dokumen dan tambah field jumlah_kata dan jumlah_halaman
         Schema::table('dokumen', function (Blueprint $table) {
             // Tambahkan opsi 'digital_receipt' ke enum kategori yang sudah ada
             DB::statement("ALTER TABLE `dokumen` MODIFY `kategori` ENUM('yudisium', 'sidang', 'seminar3', 'seminar2', 'seminar1', 'plagiarisme', 'digital_receipt')");
+            
+            // Tambah field untuk jumlah kata dan jumlah halaman
+            $table->integer('jumlah_kata')->nullable()->after('ukuran_file');
+            $table->integer('jumlah_halaman')->nullable()->after('jumlah_kata');
         });
     }
 
@@ -47,6 +51,9 @@ return new class extends Migration
     {
         // Rollback perubahan di dokumen
         Schema::table('dokumen', function (Blueprint $table) {
+            // Hapus kolom jumlah_kata dan jumlah_halaman
+            $table->dropColumn(['jumlah_kata', 'jumlah_halaman']);
+            
             // Kembalikan enum ke nilai semula
             DB::statement("ALTER TABLE `dokumen` MODIFY `kategori` ENUM('yudisium', 'sidang', 'seminar3', 'seminar2', 'seminar1', 'plagiarisme')");
         });
