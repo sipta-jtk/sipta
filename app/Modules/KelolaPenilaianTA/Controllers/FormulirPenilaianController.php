@@ -36,6 +36,8 @@ class FormulirPenilaianController extends Controller {
                 'form_penilaian.tanggal_tenggat_pengisian',
                 'form_penilaian.id_fta'
             )
+            ->orderBy('form_penilaian.created_at', 'asc')
+            ->orderBy('form_penilaian.id_fta', 'asc')
             ->get();
 
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
