@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\AlokasiDosen;
+use App\Models\PreferensiKota;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -216,7 +217,7 @@ class AuthServiceProvider extends ServiceProvider
          */
 
         Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
-            // Mahasiswa TA dengan id_kota sama
+            // 1. Mahasiswa TA dan satu KoTA
             if (
                 $user->role_user === 'mahasiswa' &&
                 $user->mahasiswa->status_ta === 'mahasiswa_ta' &&
@@ -225,26 +226,27 @@ class AuthServiceProvider extends ServiceProvider
             ) {
                 return true;
             }
-            // Dosen pembimbing pada KoTA yang sama
+
+            // 2. Dosen dengan preferensi kota cocok
             if (
                 $user->role_user === 'dosen' &&
                 $user->status_user === 'aktif' &&
                 $user->dosen &&
-                AlokasiDosen::where('nip', $user->dosen->nip)
-                    ->where('tipe_alokasi', 'pembimbing')
+                PreferensiKota::where('nip', $user->dosen->nip)
                     ->where('id_kota', $dokumen->id_kota)
                     ->exists()
             ) {
                 return true;
             }
 
-            // 3. Admin atau Koordinator TA memiliki akses penuh
+            // 3. Admin dan Koordinator TA akses penuh
             if (
                 $user->role_user === 'admin' ||
                 (isset($user->dosen) && $user->dosen->role_dosen === 'koordinator_ta')
             ) {
                 return true;
             }
+
             return false;
         });
     }
