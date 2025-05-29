@@ -13,7 +13,7 @@ Route::middleware(['auth', 'can:dosen'])->get(
 Route::middleware(['auth', 'can:user'])->group(function () {
    
     Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-    Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])
+    Route::get('/cek-plagiarisme/detail/{encrypted_id}', [CekPlagiarismeDetailController::class, 'show'])
     ->middleware(['auth', 'can:user'])
     ->name('plagiarism.detail');
     Route::post('/cek-plagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
@@ -23,6 +23,7 @@ Route::middleware(['auth', 'can:user'])->group(function () {
     Route::get('/cek-plagiarisme', function () {
         return view('CekPlagiarisme.views.DaftarDokumen');
     });
+    Route::post('/cek-plagiarisme/encrypt-id', [CekPlagiarismeController::class, 'encryptId']);
 });
 
 /**********************************

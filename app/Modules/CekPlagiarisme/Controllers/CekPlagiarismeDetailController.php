@@ -13,15 +13,16 @@ use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Crypt;
 
 Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
 
-    public function show($id)
+    public function show($encryptedId)
     {
-        $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->findOrFail($id);
+        $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
         // VALIDASI AKSES
         if (!Gate::allows('akses-dokumen-mahasiswa-kota', $dokumen)) {
