@@ -4,7 +4,7 @@ namespace App\Modules\NotificationAndReminder\Jobs;
 
 use App\Models\FormPenilaian;
 use App\Models\User;
-use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,15 +30,14 @@ class FormPenilaianReminderJob implements ShouldQueue
                 $users = User::where('role_user', 'dosen')->get();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Deadline Form Penilaian Hari Ini',
-                            $user->id,
                             [
                                 'nama_form' => $form->nama_fta,
                                 'kode_form' => $form->kode_fta,
                                 'deadline' => $form->tanggal_tenggat_pengisian
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi deadline hari ini: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,
@@ -54,15 +53,14 @@ class FormPenilaianReminderJob implements ShouldQueue
                 $users = User::where('role_user', 'dosen')->get();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Reminder] 1 Hari Menuju Deadline Form Penilaian',
-                            $user->id,
                             [
                                 'nama_form' => $form->nama_fta,
                                 'kode_form' => $form->kode_fta,
                                 'deadline' => $form->tanggal_tenggat_pengisian
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi H-1: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,
@@ -78,15 +76,14 @@ class FormPenilaianReminderJob implements ShouldQueue
                 $users = User::where('role_user', 'dosen')->get();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Reminder] 3 Hari Menuju Deadline Form Penilaian',
-                            $user->id,
                             [
                                 'nama_form' => $form->nama_fta,
                                 'kode_form' => $form->kode_fta,
                                 'deadline' => $form->tanggal_tenggat_pengisian
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi H-3: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,
@@ -102,15 +99,14 @@ class FormPenilaianReminderJob implements ShouldQueue
                 $users = User::where('role_user', 'dosen')->get();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Reminder] 7 Hari Menuju Deadline Form Penilaian',
-                            $user->id,
                             [
                                 'nama_form' => $form->nama_fta,
                                 'kode_form' => $form->kode_fta,
                                 'deadline' => $form->tanggal_tenggat_pengisian
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi H-7: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,

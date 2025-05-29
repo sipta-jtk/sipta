@@ -483,26 +483,26 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             // Kirim notifikasi ke pembimbing dan penguji
             foreach ($pembimbingPenguji as $dosen) {
                 $tipeDosen = $dosen->tipe_alokasi === 'pembimbing' ? 'Pembimbing' : 'Penguji';
-                
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $dosen->username,
-                    [
-                        'tipe_dosen' => $tipeDosen,
-                        'nama_kota' => $kota->nama_kota,
-                        'agenda' => $request->agenda,
-                        'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
-                        'sesi' => $sesi,
-                        'ruangan' => $nama_ruangan
-                    ]
-                );
+                $user = User::where('username', $dosen->username)->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
+                        [
+                            'tipe_dosen' => $tipeDosen,
+                            'nama_kota' => $kota->nama_kota,
+                            'agenda' => $request->agenda,
+                            'tanggal' => Carbon::parse($request->tanggal_pengajuan)->format('d-m-Y'),
+                            'sesi' => $sesi,
+                            'ruangan' => $nama_ruangan
+                        ]
+                    ));
+                }
             }
 
             // Kirim notifikasi ke koordinator TA
             if ($koordinatorTA) {
-                Notifikasi::kirim(
+                $koordinatorTA->notify(new TestEmailNotification(
                     '[Pemberitahuan] Pengajuan Jadwal Seminar/Sidang Baru Oleh Mahasiswa!',
-                    $koordinatorTA->username,
                     [
                         'nama_kota' => $kota->nama_kota,
                         'agenda' => $request->agenda,
@@ -510,7 +510,7 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
                         'sesi' => $sesi,
                         'ruangan' => $nama_ruangan
                     ]
-                );
+                ));
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi pengajuan jadwal: ' . $notifEx->getMessage(), [
