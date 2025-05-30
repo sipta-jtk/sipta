@@ -287,10 +287,8 @@ class FormulirPenilaianController extends Controller {
             }
         } else {
             $namaAspekFeedback = $request->nama_aspek_feedback;
-            // Ambil data aspek lama
             $aspekLama = AspekFeedback::where('id_fta', $id_fta)->pluck('id_feedback')->toArray();
 
-            // Update aspek yang sudah ada
             foreach ($aspekLama as $index => $idAspek) {
                 if (isset($namaAspekFeedback[$index]) && !empty($namaAspekFeedback[$index])) {
                     AspekFeedback::where('id_feedback', $idAspek)->update([
@@ -310,7 +308,7 @@ class FormulirPenilaianController extends Controller {
                 }
             }
 
-            // Hapus aspek lama jika dikurangi di form
+            // Hapus aspek
             if (count($namaAspekFeedback) < count($aspekLama)) {
                 $idToKeep = [];
                 for ($i = 0; $i < count($namaAspekFeedback); $i++) {

@@ -117,7 +117,14 @@ $(document).ready(function () {
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
         if (!selectedKodeFTA) {
-            alert("Silakan pilih Kode FTA terlebih dahulu.");
+            Swal.fire({
+                icon: "error",
+                title: "Kode FTA Belum Dipilih",
+                text: "Silakan pilih Kode FTA terlebih dahulu.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
             return;
         }
 
@@ -175,7 +182,14 @@ $(document).ready(function () {
             $(this).closest("tr").remove();
             updateRowStriping();
         } else {
-            alert("Tidak dapat menghapus baris terakhir.");
+            Swal.fire({
+                icon: "error",
+                title: "Tidak Bisa Hapus",
+                text: "Tidak dapat menghapus baris terakhir.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
         }
     });
 
