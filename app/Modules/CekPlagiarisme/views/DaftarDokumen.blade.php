@@ -23,7 +23,7 @@
 <section class="content">
     <div class="card">
         <div class="d-flex justify-content-between px-3 pt-3">
-            @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin')
+            @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin' || auth()->user()->role_user === 'mahasiswa_non_ta')
             <button class="btn btn-primary btn-md" type="button"
                 data-toggle="collapse" data-target="#filterMenu">
                 <i class="fas fa-filter"></i>
