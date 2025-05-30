@@ -630,7 +630,7 @@ class FormulirPenilaianController extends Controller {
     /**
      * Memperbarui rubrik penilaian di database.
      */
-public function updateRubrik(Request $request)
+    public function updateRubrik(Request $request)
     {
         Log::info('Update Rubrik Request: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
         DB::beginTransaction();
@@ -658,13 +658,16 @@ public function updateRubrik(Request $request)
             foreach ($formulirPenilaian as $form) {
                 $counterIndexRubrik = 0;
                 $counterIndexDetailRubrik = 0;
-                foreach ($form->kriteriaPenilaian as $index => $kriteria) {
-                    if (!$status[$index]) {
-                        // Jika status kriteria adalah false, hapus kriteria dan semua rubriknya
-                        KriteriaPenilaian::where('id_kriteria', $kriteria->id_kriteria)->delete();
-                        continue;
-                    }
-                    foreach ($kriteria->rubrik as $rubrik) {
+                foreach ($form->kriteriaPenilaian as $kriteria) {
+                    foreach ($kriteria->rubrik as $index => $rubrik) {
+                        if (!$status[$index]) {
+                            // Jika status kriteria adalah false, hapus kriteria dan semua rubriknya
+                            Rubrik::where('id_rubrik', $rubrik->id_rubrik)->delete();
+                            $counterIndexRubrik++;
+                            $counterIndexDetailRubrik++;
+                            continue;
+                        }
+                        
                         Rubrik::where('id_rubrik', $rubrik->id_rubrik)
                             ->update(['nama_rubrik' => $details[$counterIndexRubrik]], ['id_kriteria' => $kriterias[$counterIndexRubrik]]);
                         $counterIndexRubrik++;
@@ -672,6 +675,7 @@ public function updateRubrik(Request $request)
                             DetailRubrik::where('id_detail_rubrik', $detailRubrik->id_detail_rubrik)
                                 ->update(['detail_rubrik_penilaian' => $request->input('nilai_' . $counterIndexDetailRubrik)[$index]]);
                         }
+                        
                         $counterIndexDetailRubrik++;
                     }
 
