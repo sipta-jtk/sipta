@@ -34,46 +34,49 @@ $(document).ready(function () {
 
     // Add new row to table
     $("#addRow").on("click", function () {
-        const selectedKodeFTA = $("#kode_fta").val();
-        if (!selectedKodeFTA) {
-            Swal.fire({
-                icon: "error",
-                title: "Kode FTA Belum Dipilih",
-                text: "Silakan pilih Kode FTA terlebih dahulu.",
-                timer: 2500,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-            return;
-        }
+    const selectedKodeFTA = $("#kode_fta").val();
+    if (!selectedKodeFTA) {
+        Swal.fire({
+            icon: "error",
+            title: "Kode FTA Belum Dipilih",
+            text: "Silakan pilih Kode FTA terlebih dahulu.",
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+        return;
+    }
 
-        // Get rentangNilai from the page
-        let nilaiColumns = '';
-        // Check if rentangNilai is defined globally
-        if (typeof rentangNilai !== 'undefined') {
-            rentangNilai.forEach(function (nilai) {
-                nilaiColumns += `
-                    <td>
-                        <textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea>
-                    </td>`;
-            });
-        } else {
-            // Fallback: get values from existing table headers
-            $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
-                if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
-                    // Extract id_nilai from header text using regex
-                    const headerText = $(this).text();
-                    const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
-                    if (match && match[1]) {
-                        const id_nilai = match[1];
-                        nilaiColumns += `
-                            <td>
-                                <textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea>
-                            </td>`;
-                    }
+    // Hitung jumlah tr yang ada saat ini
+    const trCount = $("#rubrikPenilaianTable tr").length;
+
+    // Get rentangNilai from the page
+    let nilaiColumns = '';
+    // Check if rentangNilai is defined globally
+    if (typeof rentangNilai !== 'undefined') {
+        rentangNilai.forEach(function (nilai) {
+            nilaiColumns += `
+                <td>
+                    <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                </td>`;
+        });
+    } else {
+        // Fallback: get values from existing table headers
+        $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
+            if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
+                // Extract id_nilai from header text using regex
+                const headerText = $(this).text();
+                const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
+                if (match && match[1]) {
+                    // Gunakan trCount sebagai index
+                    nilaiColumns += `
+                        <td>
+                            <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                        </td>`;
                 }
-            });
-        }
+            }
+        });
+    }
 
         // Dapatkan semua kriteria yang tersedia
         let kriteriaOptions = '';
@@ -94,6 +97,7 @@ $(document).ready(function () {
         var newRow = `
         <tr>
             <td>
+                <input type="hidden" name="status[]" value="1">
                 <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
                     ${kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('')}

@@ -673,10 +673,12 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
-
+            Log::info('Formulir Penilaian: ' . json_encode($formulirPenilaian, JSON_PRETTY_PRINT));
+            
+            $globalRubrikIndex = 0;
+            $globalDetailIndex = 0;
+            
             foreach ($formulirPenilaian as $form) {
-                $globalRubrikIndex = 0;
-                $globalDetailIndex = 0;
                 foreach ($form->kriteriaPenilaian as $kriteria) {
                     foreach ($kriteria->rubrik as $rubrik) {
                         if (empty($status[$globalRubrikIndex])) {
@@ -703,7 +705,54 @@ class FormulirPenilaianController extends Controller {
                     }
                 }
             }
-            
+
+            $formulirPenilaian = FormPenilaian::where('nama_fta', $namaFta)
+                ->whereHas('prodi', function ($query) use ($namaProdi) {
+                    $query->where('nama_prodi', $namaProdi);
+                })
+                ->where('jenis_ta', $jenisTA)
+                ->where('jenis_form', 'penilaian')
+                ->with('kriteriaPenilaian.rubrik.detailRubrik')
+                ->get();
+
+            $jumlahRubrik = $formulirPenilaian->sum(function ($form) {
+                return $form->kriteriaPenilaian->sum(function ($kriteria) {
+                    return $kriteria->rubrik->count();
+                });
+            });
+
+            // insert rubrik baru jika lebih dari jumlah rubrik yang ada
+            Log::info('globalRubrikIndex: ' . $globalRubrikIndex);
+            Log::info('Jumlah Kriteria: ' . count($kriterias));
+            Log::info('Jumlah Rubrik: ' . $jumlahRubrik);
+            Log::info('Kriteria: ' . json_encode(count($kriterias) + $jumlahRubrik - 2, JSON_PRETTY_PRINT));
+            for ($i = $globalRubrikIndex; $i < count($kriterias) + $jumlahRubrik - 2; $i++) {
+                if (empty($status[$i])) {
+                    continue;
+                }
+
+                $idRubrik = DB::table('rubrik')->insertGetId([
+                    'id_kriteria' => $kriterias[$i],
+                    'nama_rubrik' => $details[$i]
+                ]);
+
+                $rentangNilai = DB::table('rentang_nilai')
+                    ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
+                    ->select('id_nilai')
+                    ->orderBy('batas_atas', 'desc')
+                    ->get();
+
+                foreach ($rentangNilai as $index => $nilai) {
+                    $detailNilai = $request->input("nilai_".$globalRubrikIndex)[$index];
+                    
+                    DB::table('detail_rubrik')->insert([
+                        'id_rubrik' => $idRubrik,
+                        'id_nilai' => $nilai->id_nilai,
+                        'detail_rubrik_penilaian' => $detailNilai
+                    ]);
+                }
+            }
+
             DB::commit();
             return redirect()->route('tabelRubrik')
                 ->with('success', 'Rubrik penilaian berhasil diperbarui.');
