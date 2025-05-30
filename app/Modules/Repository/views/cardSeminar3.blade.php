@@ -242,6 +242,7 @@
                                             <option value="FTA-09">FTA-09 - Kehadiran Seminar II</option>
                                             <option value="FTA-09a">FTA-09a - Lesson Learnt Seminar II</option>
                                             <option value="FTA-10">FTA 10 - Bukti Bimbingan untuk Seminar III</option>
+                                            <option value="FTA-10a">FTA-10a - Resume Bimbingan</option>
                                             <option value="FTA-11">FTA-11 - Penilaian Seminar III</option>
                                             <option value="FTA-12">FTA-12 - Masukan Seminar III</option>
                                             <option value="FTA-23">FTA 23 - Persetujuan Pembimbing TA</option>
@@ -833,6 +834,7 @@
                         ['value' => 'FTA-09', 'text' => 'FTA-09 - Kehadiran Seminar II'],
                         ['value' => 'FTA-09a', 'text' => 'FTA-09a - Lesson Learnt Seminar II'],
                         ['value' => 'FTA-10', 'text' => 'FTA 10 - Bukti Bimbingan untuk Seminar III'],
+                        ['value' => 'FTA-10a', 'text' => 'FTA-10a - Resume Bimbingan'],
                         ['value' => 'FTA-11', 'text' => 'FTA-11 - Penilaian Seminar III'],
                         ['value' => 'FTA-12', 'text' => 'FTA-12 - Masukan Seminar III'],
                         ['value' => 'FTA-23', 'text' => 'FTA 23 - Persetujuan Pembimbing TA'],
