@@ -286,22 +286,41 @@ class FormulirPenilaianController extends Controller {
                     ->delete();
             }
         } else {
-            AspekFeedback::where('id_fta', $id_fta)->delete();
-            
             $namaAspekFeedback = $request->nama_aspek_feedback;
-            
-            if ($namaAspekFeedback) {
-                foreach ($namaAspekFeedback as $nama) {
-                    if (empty($nama)) {
-                        continue;
-                    }
-                    
+            // Ambil data aspek lama
+            $aspekLama = AspekFeedback::where('id_fta', $id_fta)->pluck('id_feedback')->toArray();
+
+            // Update aspek yang sudah ada
+            foreach ($aspekLama as $index => $idAspek) {
+                if (isset($namaAspekFeedback[$index]) && !empty($namaAspekFeedback[$index])) {
+                    AspekFeedback::where('id_feedback', $idAspek)->update([
+                        'nama_aspek_feedback' => $namaAspekFeedback[$index],
+                    ]);
+                }
+            }
+
+            // Tambah aspek baru jika ada
+            for ($i = count($aspekLama); $i < count($namaAspekFeedback); $i++) {
+                if (!empty($namaAspekFeedback[$i])) {
                     AspekFeedback::create([
                         'kode_fta' => $kodeFTA,
                         'id_fta' => $id_fta,
-                        'nama_aspek_feedback' => $nama,
+                        'nama_aspek_feedback' => $namaAspekFeedback[$i],
                     ]);
                 }
+            }
+
+            // Hapus aspek lama jika dikurangi di form
+            if (count($namaAspekFeedback) < count($aspekLama)) {
+                $idToKeep = [];
+                for ($i = 0; $i < count($namaAspekFeedback); $i++) {
+                    if (!empty($namaAspekFeedback[$i])) {
+                        $idToKeep[] = $aspekLama[$i];
+                    }
+                }
+                AspekFeedback::where('id_fta', $id_fta)
+                    ->whereNotIn('id_feedback', $idToKeep)
+                    ->delete();
             }
         }
         
@@ -656,29 +675,32 @@ class FormulirPenilaianController extends Controller {
                 ->get();
 
             foreach ($formulirPenilaian as $form) {
-                $counterIndexRubrik = 0;
-                $counterIndexDetailRubrik = 0;
+                $globalRubrikIndex = 0;
+                $globalDetailIndex = 0;
                 foreach ($form->kriteriaPenilaian as $kriteria) {
-                    foreach ($kriteria->rubrik as $index => $rubrik) {
-                        if (!$status[$index]) {
-                            // Jika status kriteria adalah false, hapus kriteria dan semua rubriknya
+                    foreach ($kriteria->rubrik as $rubrik) {
+                        if (empty($status[$globalRubrikIndex])) {
                             Rubrik::where('id_rubrik', $rubrik->id_rubrik)->delete();
-                            $counterIndexRubrik++;
-                            $counterIndexDetailRubrik++;
+                            $globalRubrikIndex++;
+                            $globalDetailIndex++;
                             continue;
                         }
-                        
-                        Rubrik::where('id_rubrik', $rubrik->id_rubrik)
-                            ->update(['nama_rubrik' => $details[$counterIndexRubrik]], ['id_kriteria' => $kriterias[$counterIndexRubrik]]);
-                        $counterIndexRubrik++;
-                        foreach ($rubrik->detailRubrik as $index => $detailRubrik) {
-                            DetailRubrik::where('id_detail_rubrik', $detailRubrik->id_detail_rubrik)
-                                ->update(['detail_rubrik_penilaian' => $request->input('nilai_' . $counterIndexDetailRubrik)[$index]]);
-                        }
-                        
-                        $counterIndexDetailRubrik++;
-                    }
 
+                        Rubrik::where('id_rubrik', $rubrik->id_rubrik)
+                            ->update([
+                                'nama_rubrik' => $details[$globalRubrikIndex],
+                                'id_kriteria' => $kriterias[$globalRubrikIndex]
+                            ]);
+                        $globalRubrikIndex++;
+
+                        foreach ($rubrik->detailRubrik as $idx => $detailRubrik) {
+                            DetailRubrik::where('id_detail_rubrik', $detailRubrik->id_detail_rubrik)
+                                ->update([
+                                    'detail_rubrik_penilaian' => $request->input('nilai_' . $globalDetailIndex)[$idx]
+                                ]);
+                        }
+                        $globalDetailIndex++;
+                    }
                 }
             }
             
