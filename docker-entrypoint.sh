@@ -6,6 +6,9 @@ export $(grep -v '^#' .env | sed -E 's/(^|[^\\])#.*$//' | xargs -d '\n')
 # Generate APP_KEY
 php artisan key:generate
 
+# Kebutuhan plagiarisme
+apt-get update && apt-get install poppler-utils -y
+
 # Fungsi untuk menunggu database siap
 echo "Menunggu database siap..."
 until php -r "try { new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}'); echo 'Database siap.'; } catch (PDOException \$e) { exit(1); }"; do

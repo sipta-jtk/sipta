@@ -243,11 +243,10 @@
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
                                             <option value="FTA-13">FTA-13 - Persetujuan pelaksanaan sidan tugas akhir</option>
-                                            <option value="FTA-14">FTA-14 - Bukti bimbingan sidang</option>
+                                            <option value="FTA-14">FTA 14 - Bukti Bimbingan untuk Sidang TA</option>
                                             <option value="FTA-14a">FTA-14a - Resume bimbingan</option>
-                                            <option value="FTA-15">FTA-15 - Penilaian sidang d3</option>
+                                            <option value="FTA-15">FTA-15 - Penilaian sidang</option>
                                             <option value="FTA-16">FTA-16 - Berita acara pelaksanaan sidang</option>
-                                            <option value="FTA-17">FTA-17 - Penilaian pelaksanaan tugas akhir</option>
                                         </select>
                                     </div>
                                 </div>
@@ -988,11 +987,10 @@
                         @php
                         $ftaOptions = [
                         ['value' => 'FTA-13', 'text' => 'FTA-13 - Persetujuan pelaksanaan sidan tugas akhir'],
-                        ['value' => 'FTA-14', 'text' => 'FTA-14 - Bukti bimbingan sidang'],
+                        ['value' => 'FTA-14', 'text' => 'FTA 14 - Bukti Bimbingan untuk Sidang TA'],
                         ['value' => 'FTA-14a', 'text' => 'FTA-14a - Resume bimbingan'],
-                        ['value' => 'FTA-15', 'text' => 'FTA-15 - Penilaian sidang d3'],
+                        ['value' => 'FTA-15', 'text' => 'FTA 15 - Penilaian & Masukan Sidang'],
                         ['value' => 'FTA-16', 'text' => 'FTA-16 - Berita acara pelaksanaan sidang'],
-                        ['value' => 'FTA-17', 'text' => 'FTA-17 - Penilaian pelaksanaan tugas akhir'],
                         ];
                         @endphp
 

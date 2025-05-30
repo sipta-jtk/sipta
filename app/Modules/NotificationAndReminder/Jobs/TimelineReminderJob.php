@@ -4,7 +4,7 @@ namespace App\Modules\NotificationAndReminder\Jobs;
 
 use App\Models\Timeline;
 use App\Models\User;
-use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,15 +28,14 @@ class TimelineReminderJob implements ShouldQueue
                 $users = User::all();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Kegiatan Timeline Selesai Hari Ini',
-                            $user->id,
                             [
                                 'nama_kegiatan' => $timeline->nama_kegiatan,
                                 'tanggal_selesai' => $timeline->tanggal_selesai,
                                 'deskripsi' => $timeline->deskripsi
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi timeline selesai: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,
@@ -53,15 +52,14 @@ class TimelineReminderJob implements ShouldQueue
                 $users = User::all();
                 foreach ($users as $user) {
                     try {
-                        Notifikasi::kirim(
+                        $user->notify(new TestEmailNotification(
                             '[Reminder] 3 Hari Menuju Selesai Kegiatan Timeline',
-                            $user->id,
                             [
                                 'nama_kegiatan' => $timeline->nama_kegiatan,
                                 'tanggal_selesai' => $timeline->tanggal_selesai,
                                 'deskripsi' => $timeline->deskripsi
                             ]
-                        );
+                        ));
                     } catch (\Exception $notifEx) {
                         \Log::error('Gagal mengirim notifikasi H-3 timeline: ' . $notifEx->getMessage(), [
                             'user_id' => $user->id,

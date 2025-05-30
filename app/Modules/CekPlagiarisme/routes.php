@@ -13,25 +13,30 @@ Route::middleware(['auth', 'can:dosen'])->get(
 Route::middleware(['auth', 'can:user'])->group(function () {
    
     Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-    Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
+    Route::get('/cek-plagiarisme/detail/{encrypted_id}', [CekPlagiarismeDetailController::class, 'show'])
+    ->middleware(['auth', 'can:user'])
+    ->name('plagiarism.detail');
     Route::post('/cek-plagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
-    Route::get('/sipta-dev/cek-plagiarisme/process', function () {
-        return redirect('/sipta-dev/cek-plagiarisme');
+    Route::get('/cek-plagiarisme/process', function () {
+        return redirect('/cek-plagiarisme');
     });
     Route::get('/cek-plagiarisme', function () {
         return view('CekPlagiarisme.views.DaftarDokumen');
     });
+    Route::post('/cek-plagiarisme/encrypt-id', [CekPlagiarismeController::class, 'encryptId']);
 });
 
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
-Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
-    Route::get('/penentuan-ambang-batas', function () {
-        return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+Route::middleware(['auth', 'can:akses-koordinator-admin'])->group(function () {
+    Route::middleware(['can:koordinator_ta,admin'])->group(function () {
+        Route::get('/penentuan-ambang-batas', function () {
+            return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+        });
+        Route::get('/api/ambang-batas', [AmbangBatasController::class, 'getData']);
+        Route::post('/api/ambang-batas', [AmbangBatasController::class, 'store']);
     });
-    Route::get('/api/ambang-batas', [AmbangBatasController::class, 'getData']);
-    Route::post('/api/ambang-batas', [AmbangBatasController::class, 'store']);
 });
 
 /**********************************

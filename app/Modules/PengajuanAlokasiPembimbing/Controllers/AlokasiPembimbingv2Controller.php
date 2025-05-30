@@ -19,6 +19,7 @@ use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
 use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 class AlokasiPembimbingv2Controller extends Controller
 {
@@ -222,6 +223,21 @@ class AlokasiPembimbingv2Controller extends Controller
         if (!$pengajuan) {
             return redirect()->back()->with('error', 'Pengajuan tidak ditemukan!');
         }
+        $nip = $request->input('nip');
+
+        // check penguji
+        $currentDosen = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'penguji')
+            ->where('nip', $nip)
+            ->first();
+        if ($currentDosen) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dosen sudah teralokasi sebagai penguji!'
+            ]);
+        }
+        // - check penguji
 
         $statusAlokasi = DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
@@ -251,8 +267,10 @@ class AlokasiPembimbingv2Controller extends Controller
                 'updated_at' => now(),
             ]);
 
-
-        return null;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi berhasil diperbarui!'
+        ]);
 
     }
     public function kirimNotifikasiBatch(Request $request)
@@ -271,9 +289,8 @@ class AlokasiPembimbingv2Controller extends Controller
                 // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
                 $user = User::where('username', $mhs['nim'])->first();
                 if ($user) {
-                    Notifikasi::kirim(
+                    $user->notify(new TestEmailNotification(
                         '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
-                        $user->id,
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
@@ -281,7 +298,7 @@ class AlokasiPembimbingv2Controller extends Controller
                             'nim' => $mhs['nim'],
                             'tanggal' => $waktu,
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 $errorCount++;
@@ -298,16 +315,15 @@ class AlokasiPembimbingv2Controller extends Controller
                 // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
                 $user = User::where('username', $nip)->first();
                 if ($user) {
-                    Notifikasi::kirim(
+                    $user->notify(new TestEmailNotification(
                         '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
-                        $user->id,
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
                             'nama_dosen' => $user->nama,
                             'tanggal' => $waktu,
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 $errorCount++;
