@@ -729,7 +729,7 @@ return [
                     'text' => 'Penentuan Ambang Batas Plagiarisme',
                     'url' => $prefix . '/penentuan-ambang-batas',
                     'icon' => 'fas fa-scroll',
-                    'can' => 'koordinator_ta'
+                    'can' => 'akses-koordinator-admin'
                 ],
             ]
         ],
