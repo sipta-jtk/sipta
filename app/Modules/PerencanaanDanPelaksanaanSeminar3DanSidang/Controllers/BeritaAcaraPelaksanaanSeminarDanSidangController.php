@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use App\Services\Notifikasi;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Kehadiran;
+use App\Models\User;
+use App\Notifications\TestEmailNotification;
 Carbon::setLocale('id');
 
 class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
@@ -237,14 +239,16 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         // Kirim notifikasi ke mahasiswa yang hadir
         try {
             if ($kehadiran->username) {
-                Notifikasi::kirim(
-                    '[Pemberitahuan] Pemberitahuan Hasil Sidang',
-                    $kehadiran->username,
-                    [
-                        'status_kelulusan' => $kehadiran->status_kelulusan,
-                        'tanggal_sidang' => $kehadiran->penjadwalan->tanggal ?? '-'
-                    ]
-                );
+                $user = User::where('username', $kehadiran->username)->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Pemberitahuan Hasil Sidang',
+                        [
+                            'status_kelulusan' => $kehadiran->status_kelulusan,
+                            'tanggal_sidang' => $kehadiran->penjadwalan->tanggal ?? '-'
+                        ]
+                    ));
+                }
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi hasil sidang: ' . $notifEx->getMessage(), [

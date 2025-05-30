@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\AlokasiDosen;
+use App\Models\PreferensiKota;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -211,5 +212,34 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows('dosen') || Gate::allows('koordinator_ta');
         });
 
+        /***
+         * [TOPIK 5] - Fitur Cek Plagiarisme
+         */
+
+        Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
+            // Admin & Koordinator TA
+            if ($user->role_user === 'admin' || ($user->dosen->role_dosen ?? null) === 'koordinator_ta') {
+            return true;
+            }
+            // Mahasiswa TA satu KoTA
+            if (
+            $user->role_user === 'mahasiswa' &&
+            $user->mahasiswa->status_ta === 'mahasiswa_ta' &&
+            $user->mahasiswa->id_kota === $dokumen->id_kota
+            ) {
+            return true;
+            }
+            // Dosen preferensi kota cocok
+            if (
+            $user->role_user === 'dosen' &&
+            $user->status_user === 'aktif' &&
+            PreferensiKota::where('nip', $user->dosen->nip ?? null)
+                ->where('id_kota', $dokumen->id_kota)
+                ->exists()
+            ) {
+            return true;
+            }
+            return false;
+        });
     }
 }

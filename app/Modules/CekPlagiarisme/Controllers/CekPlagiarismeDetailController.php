@@ -12,40 +12,47 @@ use App\Models\AlokasiDosen;
 use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Crypt;
+use App\Notifications\TestEmailNotification;
 
 Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
-    public function show($id)
+
+    public function show($encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
+
         $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
-        // Mengambil digital receipt yang terkait (memiliki kategori 'digital_receipt' dan username yang sama)
-        $digital_receipt = null;
-        if ($dokumen) {
-            $digital_receipt = Dokumen::where('username', $dokumen->username)
-                ->where('kategori', 'digital_receipt')
-                ->where('judul', 'like', $dokumen->judul . '%')
-                ->latest()
-                ->first();
+        // VALIDASI AKSES
+        if (!Gate::allows('akses-dokumen-mahasiswa-kota', $dokumen)) {
+            abort(403, 'Anda tidak memiliki akses ke dokumen ini.');
         }
 
-        // Mengambil semua review (catatan) yang terkait dengan dokumen
-        $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
+        $digital_receipt = Dokumen::where('username', $dokumen->username)
+            ->where('kategori', 'digital_receipt')
+            ->where('judul', 'like', $dokumen->judul . '%')
+            ->latest()
+            ->first();
 
-        // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
-        // $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
-        //     ->where('id_dokumen', $id)
-        //     ->get();
+        $catatan = ReviewDosenPembimbing::with('dosen.user')
+            ->where('id_dokumen', $id)
+            ->get();
 
-        // Mengambil data alokasi dosen yang statusnya 'fix' dan mengirimkan ke view
         $alokasiDosen = AlokasiDosen::all();
+        $jurnalPlagiarisme = ListJurnalPlagiarisme::where('id_dokumen', $id)->get();
 
-        // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'digital_receipt', 'catatan', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
+        return view('CekPlagiarisme.views.Detail', compact(
+            'dokumen',
+            'digital_receipt',
+            'catatan',
+            'alokasiDosen',
+            'jurnalPlagiarisme'
+        ));
     }
-
 
     public function PenentuanAmbangBatas(): View
     {
@@ -84,13 +91,15 @@ class CekPlagiarismeDetailController extends Controller
         $nimPemilik = $dokumen->username;
         try {
             // Kirim ke pemilik dokumen
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                $nimPemilik,
-                [
-                    'catatan' => $catatan->review
-                ]
-            );
+            $userPemilik = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
 
             // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
             $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
@@ -99,28 +108,16 @@ class CekPlagiarismeDetailController extends Controller
                 $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
                     ->where('nim', '!=', $nimPemilik)
                     ->limit(2)
-                    ->pluck('nim');
+                    ->get();
 
-                if ($anggotaKelompok->count() > 0) {
-                    $anggota2 = $anggotaKelompok[0] ?? null;
-                    if ($anggota2) {
-                        Notifikasi::kirim(
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                            $anggota2,
                             [
                                 'catatan' => $catatan->review
                             ]
-                        );
-                    }
-                    $anggota3 = $anggotaKelompok[1] ?? null;
-                    if ($anggota3) {
-                        Notifikasi::kirim(
-                            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
-                            $anggota3,
-                            [
-                                'catatan' => $catatan->review
-                            ]
-                        );
+                        ));
                     }
                 }
             }
@@ -188,13 +185,15 @@ class CekPlagiarismeDetailController extends Controller
         $nimPemilik = $dokumen->username;
         try {
             // Kirim ke pemilik dokumen
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                $nimPemilik,
-                [
-                    'catatan' => $catatan->review
-                ]
-            );
+            $userPemilik = Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
 
             // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
             $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
@@ -203,28 +202,16 @@ class CekPlagiarismeDetailController extends Controller
                 $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
                     ->where('nim', '!=', $nimPemilik)
                     ->limit(2)
-                    ->pluck('nim');
+                    ->get();
 
-                if ($anggotaKelompok->count() > 0) {
-                    $anggota2 = $anggotaKelompok[0] ?? null;
-                    if ($anggota2) {
-                        Notifikasi::kirim(
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                            $anggota2,
                             [
                                 'catatan' => $catatan->review
                             ]
-                        );
-                    }
-                    $anggota3 = $anggotaKelompok[1] ?? null;
-                    if ($anggota3) {
-                        Notifikasi::kirim(
-                            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
-                            $anggota3,
-                            [
-                                'catatan' => $catatan->review
-                            ]
-                        );
+                        ));
                     }
                 }
             }

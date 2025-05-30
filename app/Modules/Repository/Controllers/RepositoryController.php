@@ -17,7 +17,7 @@ use Carbon\Carbon;
 use App\Services\Notifikasi;
 use App\Models\PengajuanPembimbing;
 use Illuminate\Support\Facades\Log;
-
+use App\Notifications\TestEmailNotification;
 
 Carbon::setlocale(LC_TIME, 'id');
 
@@ -279,16 +279,16 @@ class RepositoryController extends Controller
                         ->first();
 
                     if ($alokasiDosen && $alokasiDosen->dosen) {
-                        Notifikasi::kirim(
+                        // Menggunakan TestEmailNotification yang baru
+                        $alokasiDosen->dosen->user->notify(new TestEmailNotification(
                             '[Pemberitahuan] Mahasiswa Telah Mengirimkan Dokumen',
-                            $alokasiDosen->dosen->user->username,
                             [
                                 'kategori' => $kategori,
                                 'judul_dokumen' => $request->judul,
                                 'nama_mahasiswa' => auth()->user()->nama,
                                 'subkategori' => $subkategoriName
                             ]
-                        );
+                        ));
                     }
                 }
             } catch (\Exception $notifEx) {
@@ -397,6 +397,21 @@ class RepositoryController extends Controller
                 return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
             }
 
+            // Logging aktivitas download
+            if (auth()->check()) {
+                try {
+                    LogAktivitas::create([
+                        'username' => auth()->user()->username,
+                        'id_kota' => $dokumen->id_kota,
+                        'id_dokumen' => $dokumen->id_dokumen,
+                        'action' => 'Download dokumen',
+                        'waktu_aktivitas' => now(),
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Gagal menyimpan log download dokumen: ' . $e->getMessage());
+                }
+            }
+
             $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
             $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
 
@@ -405,6 +420,7 @@ class RepositoryController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
     }
+
 
     // Farrel Keiza Muhammad Yamin Putra
     public function dashboard($id_kota)
@@ -716,36 +732,34 @@ class RepositoryController extends Controller
             // Find the document
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
-            
             // Update notes
             $dokumen->notes = $request->input_notes;
             $dokumen->save();
-            
-            
+
             try {
                 // Get mahasiswa and their pengajuan pembimbing properly
                 $mahasiswa = Mahasiswa::where('nim', $dokumen->username)->first();
                 if (!$mahasiswa) {
                     return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
                 }
-    
+
                 // Get the latest accepted pengajuan pembimbing for this mahasiswa
                 $pengajuanPembimbing = PengajuanPembimbing::where('id_kota', $mahasiswa->id_kota)
                     ->where('status_pengajuan', 'diterima')
                     ->latest()
                     ->first();
-                // Send notification to the student (document owner)
+
+                // Send notification to the student (document owner) using Laravel notification
                 if ($mahasiswa->user) {
-                    Notifikasi::kirim(
+                    $mahasiswa->user->notify(new TestEmailNotification(
                         '[Pemberitahuan] Dosen Telah Memberikan Review untuk Dokumen Anda!',
-                        $mahasiswa->user->username,
                         [
                             'catatan' => $request->input_notes,
                             'judul_dokumen' => $dokumen->judul,
                             'kategori' => $dokumen->kategori,
                             'nama_dosen' => auth()->user()->nama
                         ]
-                    );
+                    ));
                 }
             } catch (\Exception $notifEx) {
                 Log::error('Gagal mengirim notifikasi review dokumen: ' . $notifEx->getMessage(), [
@@ -785,7 +799,7 @@ class RepositoryController extends Controller
 
         // Apply subkategori filter in PHP (if needed)
         if ($subkategori) {
-            $filteredData = $filteredData->filter(function($item) use ($subkategori) {
+            $filteredData = $filteredData->filter(function ($item) use ($subkategori) {
                 return $item->subkategori && $item->subkategori->nama_subkategori === $subkategori;
             });
         }

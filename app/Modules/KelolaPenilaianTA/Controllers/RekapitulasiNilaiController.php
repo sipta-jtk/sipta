@@ -319,9 +319,6 @@ private function aturNilaiKategori($records)
             'partisipatif' => 0,
         ];
 
-        Log::info('Nilai Komponen:', $komponen_nilai_akhir->toArray());
-        Log::info('Nilai Kategori:', $nilaiKategori);
-
         foreach ($komponen_nilai_akhir as $komponen) {
             $nilai = $this->getNilaiPerKategori($komponen, $nilaiKategori);
 
@@ -352,8 +349,6 @@ private function aturNilaiKategori($records)
                     break;
             }
         }
-
-        Log::info('Nilai Komponen:', $nilai_komponen);
 
         return $nilai_komponen;
     }
