@@ -231,15 +231,43 @@
 @section('css')
 <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
+
 @stop
 
 @section('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
-
 <script>
+    $(document).ready(function() {
+        $('#datatable').DataTable({
+            responsive: true,
+            columnDefs: [
+                { targets: [0, 6], orderable: false } // Kolom No & Aksi tidak bisa disort
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ entri",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "→",
+                    previous: "←"
+                },
+                zeroRecords: "Data tidak ditemukan",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                infoFiltered: "(disaring dari _MAX_ total entri)"
+            },
+            drawCallback: function (settings) {
+                let api = this.api();
+                api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+    });
   
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -276,14 +304,10 @@
             }
         });
     });
-    $(document).ready(function () {
-        $("#dosenTable").DataTable();
-    });
 
 
 
-     $(document).ready(function () {
-         $(".btn-update-mhs").click(function () {
+    $('#datatable tbody').on('click', '.btn-update-mhs', function () {
              var nim = $(this).data("nim");
              var nama = $(this).data("nama");
              var email = $(this).data("email");
@@ -303,26 +327,21 @@
              console.log(nim);
  
          });
-     });
 
-     $(document).ready(function () {
-        $(".btn-nonaktif-mhs").click(function () {
+        $('#datatable tbody').on('click', '.btn-nonaktif-mhs', function () {
             var nim = $(this).data("nim");
             var nama = $(this).data("nama");
             document.getElementById("nim-input-nonaktif").value = nim;
             document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
             "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
     });
-        });
 
-     $(document).ready(function () {
-        $(".btn-aktif-mhs").click(function () {
+        $('#datatable tbody').on('click', '.btn-aktif-mhs', function () {
             var nim = $(this).data("nim");
             var nama = $(this).data("nama");
             document.getElementById("nim-input-aktif").value = nim;
             document.getElementById("konfirmasi-pesan-aktif").textContent = 
             "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
         });
-    });
 </script>
 @stop

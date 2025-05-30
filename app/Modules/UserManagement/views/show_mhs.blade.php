@@ -34,11 +34,10 @@
             </thead>
             <tbody>
                 @php
-                        $no = 1;
                     @endphp
                 @foreach ($mahasiswa as $mhs)
                 <tr>
-                    <td>{{$no}}</td>
+                    <td></td>
                     <td>{{ $mhs->nim }}</td>
                     <td>{{ $mhs->nama }}</td>
                     <td>{{ $mhs->nama_prodi }}</td>
@@ -57,7 +56,6 @@
                         <i class="fas fa-eye"></i></button>
                     </td>
                     @php
-                    $no++; 
                     @endphp
                 </tr>
                 @endforeach 
@@ -86,8 +84,42 @@
 @stop
 
 @section('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
 <script>
-     $(document).ready(function () {
+    $(document).ready(function() {
+        $('#datatable').DataTable({
+            responsive: true,
+            columnDefs: [
+                { targets: [0, 6], orderable: false } // Kolom No & Aksi tidak bisa disort
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ entri",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "→",
+                    previous: "←"
+                },
+                zeroRecords: "Data tidak ditemukan",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                infoFiltered: "(disaring dari _MAX_ total entri)"
+            },
+            drawCallback: function (settings) {
+                let api = this.api();
+                api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+    });
+
+
+    $('#datatable tbody').on('click', '.btn-detail-mhs', function () {
          $(".btn-detail-mhs").click(function () {
              var nim = $(this).data("nim");
              var nama = $(this).data("nama");

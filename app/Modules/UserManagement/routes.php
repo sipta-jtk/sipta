@@ -136,6 +136,8 @@ Route::post('/updateBulkRole', [DosenController::class, 'updateBulkRole'])->name
 Route::get('/data-mahasiswa', [UserManagementController::class, 'show_mhs']);
 Route::get('/data-kelompok-ta', [UserManagementController::class, 'show_kelompok_ta']);
 
+Route::get('/detail-kota-prodi/{id}', [UserManagementController::class, 'getDetailKotaProdi']);
+
 
 
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {

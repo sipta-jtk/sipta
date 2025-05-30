@@ -64,9 +64,8 @@ class UserManagementController extends Controller
         ->join('mahasiswa', 'mahasiswa.id_kota', '=', 'kota.id_kota')
         ->join('user', 'user.username', '=', 'mahasiswa.nim')
         ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
-        ->join('bidang', 'bidang.id_bidang', '=', 'kota.id_bidang')
-
-        ->select('kota.tahun_kota', 'kota.nama_kota','kota.judul_ta','kota.status_kota','bidang.bidang') 
+        ->select('kota.id_kota','kota.tahun_kota', 'kota.nama_kota','kota.judul_ta','kota.status_kota') 
+        ->orderBy('kota.tahun_kota', 'desc')
         ->distinct(); 
     if ($user->role_user != 'kajur') {
         $kaprodi = Kaprodi::where('nip', $user->username)->first();
@@ -74,6 +73,22 @@ class UserManagementController extends Controller
     }
     $kota = $query->get();
     return view('UserManagement.views.show_kota', compact('kota'));
+}
+public function getDetailKotaProdi($id)
+{
+    $kota = DB::table('mahasiswa')
+        ->join('user', 'user.username', '=', 'mahasiswa.nim')
+        ->join('kota', 'mahasiswa.id_kota', '=', 'kota.id_kota')
+        ->where('kota.id_kota', $id)
+        ->select('mahasiswa.nim','mahasiswa.kelas','user.nama')
+        ->get();
+    $bidang = DB::table('kota')
+        ->leftjoin('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
+        ->where('kota.id_kota', $id)
+        ->select('bidang.bidang')
+        ->first();
+
+    return view('UserManagement.views.detail-kota-ajax', compact('kota','bidang'));
 }
 }
 
