@@ -167,7 +167,7 @@ class VerifikasiBerkasController extends Controller
         if ($keputusan === 'tidak_disetujui') {
             $keputusan = 'ditolak';
         }
-    
+        // Ke MHS
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }

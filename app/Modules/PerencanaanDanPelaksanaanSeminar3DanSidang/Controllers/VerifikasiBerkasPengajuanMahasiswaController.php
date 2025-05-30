@@ -99,7 +99,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
                 'status_konfirmasi' => 'pending',
             ]);
         }
-
+        // Ke Koordinator TA
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
     }
 
@@ -178,7 +178,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
                 'id_kota' => Auth::user()->mahasiswa->id_kota,
             ]);
         }
-        
+        // Ke Koordinator TA
         return redirect()->route('verifikasi-sidang.create')->with('success', 'Pengajuan berhasil diajukan.');
     } //nambah
 }

@@ -166,6 +166,8 @@ class PembatalanJadwalSeminarSidangController extends Controller
         if ($status == '0') {
             $pembatalan->delete();
         }
+        // Notif Dosen
+
         return redirect()->route('view.persetujuan.pembatalan.sidang')->with('success', $message);
     }
 
@@ -222,6 +224,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             'nip' => $nip
         ]);
         // Notifikasi Pembatalan Penjadwalan Seminar oleh mahasiswa
+        // Masuk ke koordinator dan mahasiswa
         try {
             $user = User::where('username', $nip)->first();
             if ($user) {
