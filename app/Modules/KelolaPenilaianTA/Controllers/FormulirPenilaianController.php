@@ -15,6 +15,8 @@ use App\Models\FormPenilaian;
 use App\Models\RentangNilai;
 use App\Models\KriteriaPenilaian;
 use App\Models\AspekFeedback;
+use App\Models\Rubrik;
+use App\Models\DetailRubrik;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -450,8 +452,6 @@ class FormulirPenilaianController extends Controller {
             }
         }
 
-        Log::info(json_encode($kategori, JSON_PRETTY_PRINT));
-
         return view('KelolaPenilaianTA.views.formulir-penilaian.detail_fta_dosen_pembimbing', compact('kategori', 'aspekPenilaian'));
     }
 
@@ -630,66 +630,44 @@ class FormulirPenilaianController extends Controller {
     /**
      * Memperbarui rubrik penilaian di database.
      */
-    public function updateRubrik(Request $request)
+public function updateRubrik(Request $request)
     {
+        Log::info('Update Rubrik Request: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
         DB::beginTransaction();
 
         try {
             $kodeFta = $request->input('kode_fta');
             
             // Ambil data kriteria dari request
+            $namaFta = $request->input('nama_fta');
+            $namaProdi = $request->input('nama_prodi');
+            $jenisTA = $request->input('jenisTA');
             $kriterias = $request->input('nama_kriteria');
             $details = $request->input('detail');
-            
-            $idFta = DB::table('form_penilaian')
-                ->where('kode_fta', $kodeFta)
-                ->value('id_fta');
-                
-            $existingKriteriaIds = DB::table('kriteria_penilaian')
-                ->where('id_fta', $idFta)
-                ->pluck('id_kriteria')
-                ->toArray();
-            
-            $existingRubrikIds = DB::table('rubrik')
-                ->whereIn('id_kriteria', $existingKriteriaIds)
-                ->pluck('id_rubrik')
-                ->toArray();
-                
-            if (!empty($existingRubrikIds)) {
-                DB::table('detail_rubrik')
-                    ->whereIn('id_rubrik', $existingRubrikIds)
-                    ->delete();
-                    
-                DB::table('rubrik')
-                    ->whereIn('id_rubrik', $existingRubrikIds)
-                    ->delete();
-            }
-            
-            foreach ($kriterias as $index => $idKriteria) {
-                $detail = $details[$index] ?? '';
-                
-                // Insert new rubrik
-                $idRubrik = DB::table('rubrik')->insertGetId([
-                    'id_kriteria' => $idKriteria,
-                    'nama_rubrik' => $detail
-                ]);
-                
-                $rentangNilai = DB::table('rentang_nilai')
-                    ->whereIn('id_nilai', ['A', 'AB', 'B', 'BC', 'C', 'CD'])
-                    ->select('id_nilai')
-                    ->orderBy('batas_atas', 'desc')
-                    ->get();
-                    
-                foreach ($rentangNilai as $nilai) {
-                    $nilaiKey = 'nilai_' . $nilai->id_nilai;
-                    $detailArray = $request->input($nilaiKey);
-                    $detailNilai = $detailArray[$index] ?? '';
-                    
-                    DB::table('detail_rubrik')->insert([
-                        'id_rubrik' => $idRubrik,
-                        'id_nilai' => $nilai->id_nilai,
-                        'detail_rubrik_penilaian' => $detailNilai
-                    ]);
+
+            $formulirPenilaian = FormPenilaian::where('nama_fta', $namaFta)
+                ->whereHas('prodi', function ($query) use ($namaProdi) {
+                    $query->where('nama_prodi', $namaProdi);
+                })
+                ->where('jenis_ta', $jenisTA)
+                ->where('jenis_form', 'penilaian')
+                ->with('kriteriaPenilaian.rubrik.detailRubrik')
+                ->get();
+
+            foreach ($formulirPenilaian as $form) {
+                $counterIndexRubrik = 0;
+                $counterIndexDetailRubrik = 0;
+                foreach ($form->kriteriaPenilaian as $kriteria) {
+                    foreach ($kriteria->rubrik as $rubrik) {
+                        Rubrik::where('id_rubrik', $rubrik->id_rubrik)
+                            ->update(['nama_rubrik' => $details[$counterIndexRubrik]], ['id_kriteria' => $kriterias[$counterIndexRubrik]]);
+                        $counterIndexRubrik++;
+                        foreach ($rubrik->detailRubrik as $index => $detailRubrik) {
+                            DetailRubrik::where('id_detail_rubrik', $detailRubrik->id_detail_rubrik)
+                                ->update(['detail_rubrik_penilaian' => $request->input('nilai_' . $counterIndexDetailRubrik)[$index]]);
+                        }
+                        $counterIndexDetailRubrik++;
+                    }
                 }
             }
             

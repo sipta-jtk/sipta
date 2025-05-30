@@ -87,9 +87,15 @@
                         </tr>
                     </thead>
                     <tbody id="rubrikPenilaianTable">
+                        @php 
+                            $index = 0;
+                        @endphp
                         @foreach ($rubrikList as $kriteria)
                             @foreach ($kriteria->rubrik as $rubrik)
                                 <tr>
+                                    <td style="display: none;">
+                                        <input type="hidden" name="status" value="1">
+                                    </td>
                                     <td>
                                         <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                             <option value="{{ $kriteria->id_kriteria }}" selected>
@@ -109,9 +115,12 @@
                                             $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
                                         @endphp
                                         <td>
-                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
+                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $index }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
                                         </td>
                                     @endforeach
+                                    @php
+                                        $index++;
+                                    @endphp
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-row">
                                             <i class="fa-solid fa-minus"></i>
