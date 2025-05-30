@@ -23,12 +23,12 @@
 <section class="content">
     <div class="card">
         <div class="d-flex justify-content-between px-3 pt-3">
-            @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin' || auth()->user()->mahasiswa()->status_ta === 'mahasiswa_non_ta')
+            @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin')
             <button class="btn btn-primary btn-md" type="button"
                 data-toggle="collapse" data-target="#filterMenu">
                 <i class="fas fa-filter"></i>
             </button>
-            @else(auth()->user()->role_user === 'mahasiswa')
+            @else(auth()->user()->role_user === 'mahasiswa' || auth()->user()->mahasiwa->status_ta === 'mahasiswa_ta')
             <div class="form-group ml-auto align-items-right mt-3">
                 <!-- Button Unggah Dokumen -->
                 <button class="btn btn-primary ml-3 btn-md" id="uploadButton"> + Unggah Dokumen</button>

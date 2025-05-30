@@ -93,8 +93,8 @@ class CekPlagiarismeController extends Controller
                 ->where('kategori', 'plagiarisme')
                 ->where('id_kota', $idKota)
                 ->get();
-        } elseif (auth()->user()->role_user === 'admin' || 
-                (auth()->user()->role_user === 'dosen' && auth()->user()->dosen->role_dosen === 'koordinator_ta')) {
+        } elseif (auth()->user()->dosen->role_dosen === 'koordinator_ta' || auth()->user()->role_user === 'admin') {
+            // Jika user adalah koordinator TA atau admin, ambil semua dokumen tanpa filter kota
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
                 ->where('kategori', 'plagiarisme')
                 ->get();
@@ -389,7 +389,7 @@ class CekPlagiarismeController extends Controller
     {
         // Mengambil id_kota dan nama_kota dari relasi preferensiKota -> kota
 
-        if (auth()->user()->role_user === 'admin' ||(auth()->user()->role_user === 'dosen' && auth()->user()->dosen->role_dosen === 'koordinator_ta')) {
+        if (auth()->user()->dosen->role_dosen === 'koordinator_ta' || auth()->user()->role_user === 'admin') {
             $kotas = Kota::all()->map(function ($kota) {
                 // Mengembalikan id_kota dan nama_kota
                 return [
