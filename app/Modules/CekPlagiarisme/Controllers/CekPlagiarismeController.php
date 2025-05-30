@@ -9,6 +9,7 @@ use App\Models\Dokumen;
 use App\Models\Keyword;
 use App\Models\AmbangBatas;
 use App\Models\Kota;
+use App\Models\ListJurnalPlagiarisme;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
@@ -16,28 +17,73 @@ use Illuminate\Support\Facades\Log;
 use Smalot\PdfParser\Parser;
 use App\Models\LogAktivitas;
 use Carbon\Carbon;
+use Spatie\PdfToText\Pdf;
+use Illuminate\Support\Facades\Crypt;
 
 Carbon::setLocale('id');
 
+
+
 class CekPlagiarismeController extends Controller
 {
+    private function getRedirectPath(): string
+    {
+        $prefix = env('PREFIX_URL');
+        return $prefix ? "/{$prefix}/cek-plagiarisme" : "/cek-plagiarisme";
+    }
+
     function extractOverallSimilarity($pdfText)
     {
-        // Cari baris yang mengandung 'Overall Similarity'
-        preg_match('/(\d+)% Overall Similarity/i', $pdfText, $matches);
-        return isset($matches[1]) ? (int)$matches[1] : null;
+        if (preg_match('/Overall\s+Similarity\s*[:\-]?\s*(\d{1,3})%/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
+
+        if (preg_match('/(\d{1,3})%\s+Overall\s+Similarity/i', $pdfText, $matches)) {
+            return (int)$matches[1];
+        }
+
+        return null;
     }
 
-    function extractSourceLinks($pdfText)
+    function extractSourceLinksWithPercentages($pdfText)
     {
-        // Cari semua URL
-        preg_match_all('/https?:\/\/[^\s"]+/i', $pdfText, $matches);
+        // Hapus newline agar lebih mudah diproses
+        $cleanText = preg_replace("/\r|\n/", ' ', $pdfText);
 
-        // Hilangkan duplikat dan kembalikan array hasil
-        $uniqueLinks = array_unique($matches[0]);
-        return array_values($uniqueLinks);
+        // Hanya cocokkan domain yang valid dan diikuti persentase
+        preg_match_all('/(?<source>[a-zA-Z0-9.-]+\.[a-z]{2,})(?:\s+\d+)?\s+(?<percent><1%|[1-9][0-9]?%)/i', $cleanText, $matches);
+
+        $sources = $matches['source'];
+        $percents = $matches['percent'];
+
+        $result = [];
+
+        foreach ($sources as $index => $source) {
+            $source = strtolower(trim($source)); // pakai lowercase biar konsisten
+            $percent = $percents[$index];
+
+            if (!isset($result[$source])) {
+                $result[$source] = [];
+            }
+
+            if (!in_array($percent, $result[$source])) {
+                $result[$source][] = $percent;
+            }
+        }
+
+        return $result;
     }
-    
+
+
+    function convertToFloat($percent)
+    {
+        if (strpos($percent, '<') !== false) {
+            return 0.99; // atau 0.5 tergantung preferensi
+        }
+        return floatval(str_replace('%', '', $percent));
+    }
+
+
     public function getData()
     {
         // Ambil id kota dari user yang sedang login, serta Ambil data dokumen kategori laporan beserta relasi ke ambang batas, user dan review dosen pembimbing
@@ -47,7 +93,7 @@ class CekPlagiarismeController extends Controller
                 ->where('kategori', 'plagiarisme')
                 ->where('id_kota', $idKota)
                 ->get();
-        } else if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+        } elseif (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
             $dokumen = Dokumen::with('AmbangBatas', 'User', 'ReviewDosenPembimbing')
                 ->where('kategori', 'plagiarisme')
                 ->get();
@@ -75,7 +121,7 @@ class CekPlagiarismeController extends Controller
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
-                'status' => $this->getStatus($item->persentase_plagiarisme, $item->ambangBatas ? $item->ambangBatas->ambang_batas : 20), // Default 20 jika tidak ada
+                'status' => $this->getStatus($item->status_plagiarisme), // Default 20 jika tidak ada
                 'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null,
                 'id_kota' => $item->id_kota
             ];
@@ -84,11 +130,11 @@ class CekPlagiarismeController extends Controller
         return response()->json($data);
     }
 
-    private function getStatus($persentase, $ambangBatas)
+    private function getStatus($statusPlagiarisme)
     {
-        if ($persentase === null) {
+        if ($statusPlagiarisme === null) {
             return '<span class="badge badge-warning">Processing</span>';
-        } elseif ($persentase < $ambangBatas) {
+        } elseif ($statusPlagiarisme === 'tidak_plagiarisme') {
             return '<span class="badge badge-success">Tidak Plagiat</span>';
         } else {
             return '<span class="badge badge-danger">Plagiat</span>';
@@ -120,14 +166,14 @@ class CekPlagiarismeController extends Controller
                 'max:255',
                 function ($attribute, $value, $fail) {
                     if (str_word_count($value) > 20) {
-                        $fail('Judul dokumen tidak boleh lebih dari 20 kata.');
+                        $fail('Judul TA tidak boleh lebih dari 20 kata.');
                     }
                 }
             ],
             'dokumen' => 'required|file|max:51200', // max 50MB
             'digital_receipt' => 'required|file|mimes:pdf|max:51200',
             'keywords' => 'required|string|min:1',
-            'deskripsi' => 'nullable|string|max:1000',
+            'deskripsi' => 'nullable|string|max:5000',
         ]);
 
         DB::beginTransaction();
@@ -142,6 +188,20 @@ class CekPlagiarismeController extends Controller
             $fileReceipt = $request->file('digital_receipt');
             $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
             $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
+
+            // Simpan jumlah kata dan halaman
+            $jumlahKata = (int) $request->input('jumlah_kata', 0);
+            $jumlahHalaman = (int) $request->input('jumlah_halaman', 0);
+
+            // Debug: Log file paths and sizes
+            Log::info('File paths and sizes', [
+                'dokumen_path' => $filePathDokumen,
+                'dokumen_size' => $fileSizeDokumen,
+                'receipt_path' => $filePathReceipt,
+                'receipt_size' => $fileSizeReceipt,
+                'jumlah_kata' => $jumlahKata,
+                'jumlah_halaman' => $jumlahHalaman
+            ]);
 
             // Ambil data tambahan user
             $user = auth()->user();
@@ -158,19 +218,38 @@ class CekPlagiarismeController extends Controller
                 'id_kota' => $idKota,
             ]);
 
-            // $parser = new Parser();
-            // $pdf = $parser->parseFile(storage_path('app/public/' . $filePathDokumen));
-            // $text = $pdf->getText();
+            $pathToPdf = storage_path('app/public/' . $filePathDokumen);
+            $text = (new Pdf('pdftotext'))->setPdf($pathToPdf)->text();
 
-            // $similarity = extractOverallSimilarity($text);
-            // $sources = extractSourceLinks($text);
+            // Detailed logging for PDF parsing
+            Log::info('PDF parsing complete', [
+                'file_path' => $filePathDokumen,
+                'text_length' => strlen($text),
+                'ISI TEXT' => $text,
+                'storage_path' => storage_path('app/public/' . $filePathDokumen)
+            ]);
 
-            // \Log::info('Extracted similarity and sources', [
-            //     'similarity' => $similarity,
-            //     'sources' => $sources
-            // ]);
+            // Fix: Use $this-> to call class methods
+            $similarity = $this->extractOverallSimilarity($text);
+            $sources = $this->extractSourceLinksWithPercentages($text);
 
-            // Simpan dokumen utama
+            // Log the extracted data with more context
+            Log::info('Extracted plagiarism data from PDF', [
+                'similarity_percentage' => $similarity,
+                'sources_count' => count($sources),
+                'sources' => $sources,
+                'document_title' => $validated['judul'],
+                'user_id' => $user->id,
+                'username' => $nim
+            ]);
+
+            if ($similarity < $ambangBatasAktif->ambang_batas) {
+                $statusPlagiarisme = 'tidak_plagiarisme';
+            } else {
+                $statusPlagiarisme = 'plagiarisme';
+            }
+
+            // Create document with detailed attribute logging
             $dokumen = Dokumen::create([
                 'judul' => $validated['judul'],
                 'file_path' => $filePathDokumen,
@@ -178,16 +257,63 @@ class CekPlagiarismeController extends Controller
                 'username' => $nim,
                 'versi' => 1,
                 'ukuran_file' => $fileSizeDokumen,
+                'jumlah_kata' => $jumlahKata,
+                'jumlah_halaman' => $jumlahHalaman,
                 'kategori' => 'plagiarisme',
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'id_kota' => $idKota,
                 'highlight_dokumen' => 0,
+                'status_plagiarisme' => $statusPlagiarisme,
                 'status_berkas' => 'valid',
                 'id_ambang_batas' => $ambangBatasAktif?->id_ambang_batas,
                 'id_subkategori' => 3,
                 'kode_fta' => null,
-                // 'persentase_plagiarisme' => $similarity,
+                'persentase_plagiarisme' => $similarity,
             ]);
+
+            // Log dokumen creation
+            Log::info('Dokumen created successfully', [
+                'dokumen_id' => $dokumen->id_dokumen,
+                'judul' => $dokumen->judul,
+                'user_id' => $user->id,
+                'username' => $nim,
+                'jumlah_kata' => $dokumen->jumlah_kata,
+                'jumlah_halaman' => $dokumen->jumlah_halaman,
+                'status_plagiarisme' => $dokumen->status_plagiarisme,
+                'persentase_plagiarisme' => $dokumen->persentase_plagiarisme,
+                'ambang_batas_id' => $dokumen->id_ambang_batas,
+                'id_kota' => $dokumen->id_kota
+            ]);
+
+            // Debug isi hasil parsing
+            Log::info('Extracted sources:', $sources);
+
+            foreach ($sources as $link => $persentaseList) {
+                foreach ($persentaseList as $percent) {
+                    // Log sebelum simpan ke DB
+                    Log::info('Mencoba simpan:', [
+                        'link_jurnal' => $link,
+                        'judul' => '-',
+                        'persentase_kemunculan' => $percent
+                    ]);
+
+                    try {
+                        DB::table('list_jurnal_plagiarisme')->insert([
+                            'link_jurnal' => $link,
+                            'judul' => '-',
+                            'persentase_kemunculan' => (float) str_replace(['<', '%'], '', $percent),
+                            'id_dokumen' => $dokumen->id_dokumen,
+                        ]);
+                    } catch (\Exception $e) {
+                        // Log error jika gagal
+                        Log::error('Gagal simpan jurnal:', [
+                            'link_jurnal' => $link,
+                            'percent' => $percent,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
 
             // Simpan digital receipt
             $dokumenReceipt = Dokumen::create([
@@ -242,7 +368,7 @@ class CekPlagiarismeController extends Controller
                 Log::warning('Gagal mencatat log aktivitas: ' . $e->getMessage());
             }
 
-            return redirect('/sipta-dev/cek-plagiarisme')->with('success', 'Dokumen berhasil diunggah.');
+            return redirect($this->getRedirectPath())->with('success', 'Dokumen berhasil diunggah.');
         } catch (\Throwable $e) {
             DB::rollBack();
 
@@ -284,5 +410,19 @@ class CekPlagiarismeController extends Controller
 
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);
+    }
+
+    public function encryptId(Request $request)
+    {
+        if (!$request->has('id')) {
+            return response()->json(['error' => 'ID tidak ditemukan'], 400);
+        }
+
+        try {
+            $encryptedId = Crypt::encryptString($request->input('id'));
+            return response()->json(['encrypted_id' => $encryptedId]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal mengenkripsi ID'], 500);
+        }
     }
 }
