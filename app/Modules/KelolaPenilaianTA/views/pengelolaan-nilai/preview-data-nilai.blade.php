@@ -3,11 +3,14 @@
 @section('title', 'Preview Data Nilai')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <h1>Data Import Nilai</h1>
 <div>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => "/$prefix", 'label' => 'Beranda'],
     ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
     ['url' => route('kelola.penilaian.detail', ['namaFta' => $namaFta, 'idProdi' => $idProdi]), 'label' => 'Data'],
     ['url' => '', 'label' => 'Preview Data Nilai']
