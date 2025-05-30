@@ -29,7 +29,7 @@ Route::middleware(['auth', 'can:user'])->group(function () {
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'can:akses-koordinator-admin'])->group(function () {
     Route::middleware(['can:koordinator_ta,admin'])->group(function () {
         Route::get('/penentuan-ambang-batas', function () {
             return view('CekPlagiarisme.views.PenentuanAmbangBatas');
