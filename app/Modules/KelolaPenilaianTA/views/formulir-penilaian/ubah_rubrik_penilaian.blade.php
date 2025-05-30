@@ -93,10 +93,8 @@
                         @foreach ($rubrikList as $kriteria)
                             @foreach ($kriteria->rubrik as $rubrik)
                                 <tr>
-                                    <td style="display: none;">
-                                        <input type="hidden" name="status" value="1">
-                                    </td>
                                     <td>
+                                        <input type="hidden" name="status[]" value="1">
                                         <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                             <option value="{{ $kriteria->id_kriteria }}" selected>
                                                 {{ $kriteria->nama_kriteria }}

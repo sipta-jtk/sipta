@@ -106,15 +106,24 @@ $(document).ready(function () {
         updateRowStriping();
     });
 
-    // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
-        // Make sure we keep at least one row
-        if ($("#rubrikPenilaianTable tr").length > 1) {
-            $(this).closest("tr").remove();
-            updateRowStriping();
-        } else {
+        var $row = $(this).closest("tr");
+        var $statusInput = $row.find('input[name="status[]"]');
+        var visibleRows = $("#rubrikPenilaianTable tr:visible").length;
+
+        if (visibleRows <= 1) {
             alert("Tidak dapat menghapus baris terakhir.");
+            return;
         }
+
+        if ($statusInput.length) {
+            $statusInput.val("0");
+            $row.hide();
+        } else {
+            // Untuk baris baru yang belum ada status, tetap hapus dari DOM
+            $row.remove();
+        }
+        updateRowStriping();
     });
 
     updateRowStriping();

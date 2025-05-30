@@ -644,6 +644,7 @@ public function updateRubrik(Request $request)
             $jenisTA = $request->input('jenisTA');
             $kriterias = $request->input('nama_kriteria');
             $details = $request->input('detail');
+            $status = $request->input('status');
 
             $formulirPenilaian = FormPenilaian::where('nama_fta', $namaFta)
                 ->whereHas('prodi', function ($query) use ($namaProdi) {
@@ -657,7 +658,12 @@ public function updateRubrik(Request $request)
             foreach ($formulirPenilaian as $form) {
                 $counterIndexRubrik = 0;
                 $counterIndexDetailRubrik = 0;
-                foreach ($form->kriteriaPenilaian as $kriteria) {
+                foreach ($form->kriteriaPenilaian as $index => $kriteria) {
+                    if (!$status[$index]) {
+                        // Jika status kriteria adalah false, hapus kriteria dan semua rubriknya
+                        KriteriaPenilaian::where('id_kriteria', $kriteria->id_kriteria)->delete();
+                        continue;
+                    }
                     foreach ($kriteria->rubrik as $rubrik) {
                         Rubrik::where('id_rubrik', $rubrik->id_rubrik)
                             ->update(['nama_rubrik' => $details[$counterIndexRubrik]], ['id_kriteria' => $kriterias[$counterIndexRubrik]]);
@@ -668,6 +674,7 @@ public function updateRubrik(Request $request)
                         }
                         $counterIndexDetailRubrik++;
                     }
+
                 }
             }
             
