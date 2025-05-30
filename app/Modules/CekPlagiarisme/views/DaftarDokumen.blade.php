@@ -286,11 +286,12 @@
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
+        console.log("Role user:", roleUser);
 
         // Membuat URL untuk API kota
         var urlKota = '/api/kotas';
 
-        if (roleUser === 'dosen') {
+        if (roleUser === 'dosen' || roleUser === 'admin') {
             // Mengambil data kota dari API
             $.ajax({
                 type: "GET",

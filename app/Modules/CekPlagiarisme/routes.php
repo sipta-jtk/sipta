@@ -5,7 +5,7 @@ use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
-Route::middleware(['auth', 'can:dosen'])->get(
+Route::middleware(['auth', 'can:akses-dosen-admin'])->get(
     '/api/kotas',
     [CekPlagiarismeController::class, 'getKota']
 );
