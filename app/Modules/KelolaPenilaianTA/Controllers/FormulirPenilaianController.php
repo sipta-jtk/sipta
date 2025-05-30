@@ -649,7 +649,6 @@ class FormulirPenilaianController extends Controller {
      */
     public function updateRubrik(Request $request)
     {
-        Log::info('Update Rubrik Request: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
         DB::beginTransaction();
 
         try {
@@ -671,7 +670,6 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
-            Log::info('Formulir Penilaian: ' . json_encode($formulirPenilaian, JSON_PRETTY_PRINT));
             
             $globalRubrikIndex = 0;
             $globalDetailIndex = 0;
@@ -719,11 +717,6 @@ class FormulirPenilaianController extends Controller {
                 });
             });
 
-            // insert rubrik baru jika lebih dari jumlah rubrik yang ada
-            Log::info('globalRubrikIndex: ' . $globalRubrikIndex);
-            Log::info('Jumlah Kriteria: ' . count($kriterias));
-            Log::info('Jumlah Rubrik: ' . $jumlahRubrik);
-            Log::info('Kriteria: ' . json_encode(count($kriterias) + $jumlahRubrik - 2, JSON_PRETTY_PRINT));
             for ($i = $globalRubrikIndex; $i < count($kriterias) + $jumlahRubrik - 2; $i++) {
                 if (empty($status[$i])) {
                     continue;

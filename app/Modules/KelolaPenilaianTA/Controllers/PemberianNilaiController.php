@@ -132,7 +132,6 @@ class PemberianNilaiController extends Controller
 
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFtaSlug);
-        Log::info(json_encode($dokumen, JSON_PRETTY_PRINT));
 
         $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
         
@@ -185,14 +184,6 @@ class PemberianNilaiController extends Controller
             ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
             ->first();
         
-        // Log informasi dokumen untuk keperluan debugging
-        // Log::info('Preview Dokumen:', [
-        //     'id_kota' => $idKota,
-        //     'kategori' => $kategori,
-        //     'laporan_file_path' => optional($laporan)->file_path, // Path file laporan
-        //     'powerpoint_file_path' => optional($powerpoint)->file_path, // Path file PowerPoint
-        // ]);
-
         // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
         return [
             'laporan' => $laporan,

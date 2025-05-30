@@ -172,7 +172,6 @@ class PemberianFeedbackController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
-        Log::info('Mengambil dokumen terbaru untuk kota: ' . $idKota . ' dengan kategori: ' . $kategori);
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 
@@ -315,7 +314,6 @@ class PemberianFeedbackController extends Controller
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
-            Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }
     }
