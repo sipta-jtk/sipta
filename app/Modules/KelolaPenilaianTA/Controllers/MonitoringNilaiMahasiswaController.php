@@ -308,7 +308,7 @@ class MonitoringNilaiMahasiswaController extends Controller{
 
         $daftarKota = DB::table('kota')
             ->whereIn('id_kota', $kotaBimbingan)
-            ->where('status_kota', 'aktif')
+            ->where('status_kota', operator: 'aktif')
             ->get();
 
         // Ambil ID FTA yang sudah punya feedback dipublikasikan

@@ -3,13 +3,16 @@
 @section('title', 'Penambahan Rubrik Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Tambah Rubrik Penilaian']
         ]
