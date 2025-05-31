@@ -93,7 +93,7 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+jQuery(document).ready(function($) {
         $('#datatable').DataTable({
             responsive: true,
             columnDefs: [
@@ -122,7 +122,7 @@
         });
     });
 
-    $('#datatable tbody').on('click', '.btn-detail-kota', function () {
+$(document).on('click', '.btn-detail-kota', function() {
         var id = $(this).data('id');
         console.log('ID Kota:', id);
         $('#modal-detail-kota').html('<div class="text-center">Loading...</div>');

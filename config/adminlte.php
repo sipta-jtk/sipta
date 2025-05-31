@@ -717,9 +717,8 @@ return [
                 // ],
             ],
         ],
-         ['header' => 'Pendataan Mahasiswa'],
         [
-            'text' => 'User Management',
+            'text' => 'Pendataan Mahasiswa',
             'icon' => 'fas fa-user',
             'submenu' => [
                 [

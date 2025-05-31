@@ -51,21 +51,16 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                        $no = 1;
-                    @endphp
+
                 @foreach ($mahasiswa as $mhs)
                 <tr>
-                    <td>{{$no}}</td>
+                    <td></td>
                     <td>{{ $mhs->nim }}</td>
                     <td>{{ $mhs->nama }}</td>
                     <td>{{ $mhs->nama_prodi }}</td>
                     <td>{{ $mhs->kelas}}</td>
                     <td>{{ $mhs->tahun_masuk }}</td>
                     <td>    
-                    @php
-                    $no++; 
-                    @endphp
                     @if($mhs->status_user != 'nonaktif')
                         <button class="btn btn-danger btn-xs shadow btn-nonaktif-mhs" title="Nonaktifkan Mahasiswa" data-toggle="modal" data-target="#nonAktifMhs" 
                         data-nim="{{ $mhs->nim }}"

@@ -89,7 +89,7 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+jQuery(document).ready(function($) {
         $('#datatable').DataTable({
             responsive: true,
             columnDefs: [
@@ -119,8 +119,7 @@
     });
 
 
-    $('#datatable tbody').on('click', '.btn-detail-mhs', function () {
-         $(".btn-detail-mhs").click(function () {
+$(document).on('click', '.btn-detail-mhs', function() {
              var nim = $(this).data("nim");
              var nama = $(this).data("nama");
              var email = $(this).data("email");
@@ -140,7 +139,6 @@
              document.getElementById("status_user-detail").value = status_user;
              console.log(nim);
  
-         });
      });
 </script>
 @stop
