@@ -181,12 +181,12 @@ class PengelolaanNilaiController extends Controller
             'data.*.nim' => 'required|string|max:22',
             'data.*.nama' => 'required|string|max:100',
             'data.*.kelompok' => 'required|string|max:255',
-            'data.*.penguji1' => 'string|max:3',
-            'data.*.penguji2' => 'string|max:3',
-            'data.*.penguji3' => 'string|max:3',
-            'data.*.nilaiPenguji1' => 'numeric|min:0|max:100',
-            'data.*.nilaiPenguji2' => 'numeric|min:0|max:100',
-            'data.*.nilaiPenguji3' => 'numeric|min:0|max:100',
+            'data.*.penguji1' => 'nullable|string|max:3',
+            'data.*.penguji2' => 'nullable|string|max:3',
+            'data.*.penguji3' => 'nullable|string|max:3',
+            'data.*.nilaiPenguji1' => 'nullable|numeric|min:0|max:100',
+            'data.*.nilaiPenguji2' => 'nullable|numeric|min:0|max:100',
+            'data.*.nilaiPenguji3' => 'nullable|numeric|min:0|max:100',
         ], [
             'data.*.nim.required' => 'NIM tidak boleh kosong',
             'data.*.nim.string' => 'NIM harus berupa string',
@@ -219,6 +219,9 @@ class PengelolaanNilaiController extends Controller
         DB::beginTransaction();
 
         try {
+            if ($idProdi == 1 && $namaFtaFormatted == "Seminar I") {
+                throw new \Exception("Seminar I pada prodi D3 tidak terdapat penilaian!");
+            }
             foreach ($validatedData['data'] as $row) {
                 $mahasiswa = Mahasiswa::where('nim', $row['nim'])->first();
                 $mahasiswaKota = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
@@ -233,30 +236,30 @@ class PengelolaanNilaiController extends Controller
                     ->first();
 
                     if (!$formPenilaian) {
-                        Log::error("Form Penilaian tidak ditemukan", [
+                        Log::error("Jenis TA Kelompok KOTA tidak valid!", [
                             'nama_fta' => $namaFtaFormatted,
                             'jenis_form' => 'penilaian',
                             'id_prodi' => $idProdi,
                             'jenis_ta' => $mahasiswaKota->first()->kota->jenis_ta,
                         ]);
-                        throw new \Exception("Form Penilaian tidak ditemukan");
+                        throw new \Exception("Jenis TA Kelompok KOTA tidak valid!");
                     }
                 
                 $kategoriPenilaian = $formPenilaian->kategoriPenilaian->first();
                 $idKategori = $kategoriPenilaian->id_kategori;
 
                 if (!$kategoriPenilaian) {
-                    Log::error("Kategori Penilaian tidak ditemukan", [
+                    Log::error("Jenis TA Kelompok KOTA tidak valid!", [
                         'form_penilaian_id' => $formPenilaian->id_fta,
                     ]);
-                    throw new \Exception("Kategori Penilaian tidak ditemukan");
+                    throw new \Exception("Jenis TA Kelompok KOTA tidak valid!");
                 }
 
                 if (!$idKategori) {
-                    Log::error("ID Kategori tidak ditemukan", [
+                    Log::error("Jenis TA Kelompok KOTA tidak valid!", [
                         'kategori_penilaian_id' => $kategoriPenilaian->id_kategori,
                     ]);
-                    throw new \Exception("ID Kategori tidak ditemukan");
+                    throw new \Exception("Jenis TA Kelompok KOTA tidak valid!");
                 }
 
                 if (!$mahasiswa) {
@@ -275,6 +278,21 @@ class PengelolaanNilaiController extends Controller
                     $row['nilaiPenguji3'],
                 ];
 
+                $filledPenguji = array_filter($penguji);
+                $filledNilai = array_filter($nilai);
+
+
+                // Validasi jumlah penguji dan nilai (minimal 2 penguji)
+                if (count($filledPenguji) < 2 || count($filledNilai) < 2) {
+                    throw new \Exception("Minimal 2 penguji dan 2 nilai penguji harus diisi.");
+                }
+
+                // Hapus nilai kategori sebelumnya untuk mahasiswa ini
+                DB::table('nilai_kategori')
+                    ->where('nim', $mahasiswa->nim)
+                    ->where('id_kategori', $idKategori)
+                    ->delete();
+
                 foreach ($penguji as $index => $idPenguji) {
                     if (!empty($idPenguji)) {
                         $dosen = Dosen::where('id_dosen', $idPenguji)
@@ -283,13 +301,6 @@ class PengelolaanNilaiController extends Controller
                         if (!$dosen) {
                             continue; // Skip jika dosen tidak ditemukan
                         }
-
-                        // Hapus nilai kategori sebelumnya untuk mahasiswa dan dosen ini
-                        DB::table('nilai_kategori')
-                            ->where('nim', $mahasiswa->nim)
-                            ->where('nip', $dosen->nip)
-                            ->where('id_kategori', $idKategori)
-                            ->delete();
 
                         // Simpan nilai kategori baru
                         $mahasiswa->nilaiKategori()->create([
@@ -304,7 +315,7 @@ class PengelolaanNilaiController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('kelola.penilaian.detail', ['namaFta' => $namaFta, 'idProdi' => $idProdi])->with('success', 'Data nilai kategori berhasil disimpan!');
+            return redirect()->route('kelola.penilaian.detail', ['namaFta' => $namaFta, 'idProdi' => $idProdi])->with('success', 'Data nilai seminar berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('kelola.penilaian.detail', ['namaFta' => $namaFta, 'idProdi' => $idProdi])->with('error', 'Gagal mengimport nilai: ' . $e->getMessage());
