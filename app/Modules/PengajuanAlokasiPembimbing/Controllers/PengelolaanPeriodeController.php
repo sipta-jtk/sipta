@@ -28,17 +28,26 @@ class PengelolaanPeriodeController extends Controller
         ]);
 
         $periode = explode(' - ', $data['periode']);
-        $periode_mulai = date('Y-m-d', strtotime($periode[0]));
-        $periode_akhir = date('Y-m-d', strtotime($periode[1]));
 
-        if ($periode_mulai > $periode_akhir || 
+        $bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $bulanEng = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        $periode_mulai_str = str_replace($bulanIndo, $bulanEng, trim($periode[0]));
+        $periode_akhir_str = str_replace($bulanIndo, $bulanEng, trim($periode[1]));
+
+        $periode_mulai = \DateTime::createFromFormat('d F Y', $periode_mulai_str)->format('Y-m-d');
+        $periode_akhir = \DateTime::createFromFormat('d F Y', $periode_akhir_str)->format('Y-m-d');
+
+        if (
+            $periode_mulai > $periode_akhir ||
             PeriodePengajuan::where('periode_mulai', '<=', $periode_akhir)
-            ->where('periode_akhir', '>=', $periode_mulai)
-            ->when($mode == 'update', function ($query) use ($data) {
-                return $query->where('id_periode_pengajuan', '!=', $data['periodeId']);
-            })
-            ->exists() || 
-            ($mode == 'update' && $data['periodeId'] == null)) {
+                ->where('periode_akhir', '>=', $periode_mulai)
+                ->when($mode == 'update', function ($query) use ($data) {
+                    return $query->where('id_periode_pengajuan', '!=', $data['periodeId']);
+                })
+                ->exists() ||
+            ($mode == 'update' && $data['periodeId'] == null)
+        ) {
             session()->flash('error', 'Periode pengajuan tidak valid');
             return redirect()->back();
         }

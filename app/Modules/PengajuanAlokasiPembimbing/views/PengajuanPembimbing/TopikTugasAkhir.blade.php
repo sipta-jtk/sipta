@@ -22,6 +22,7 @@
 @section('content')
 
     <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
     
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -37,12 +38,44 @@
         <div class="col">
             <div class="card p-4 bg-light">
                 <p class="text-secondary text-md border-bottom">Topik dan Bidang Tugas Akhir</p> 
+                {{-- Form Topik TA--}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Topik/Judul Tugas Akhir</label>
                         <textarea class="form-control" name="topik" rows="3" placeholder="Masukkan topik/judul tugas akhir" required></textarea>
                     </div>
                 </div>
+                {{-- Form Jenis TA--}}
+                @php
+                    $id_prodi_user = $sessionUser->id_prodi;
+                @endphp
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Jenis Tugas Akhir</label>
+                        @if ($id_prodi_user == 1)
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="pengembangan" value="Pengembangan" style="accent-color: #17a2b8;">
+                                <label class="form-check-label" for="pengembangan">
+                                    Pengembangan
+                                </label>
+                            </div>
+                        @elseif ($id_prodi_user == 2)
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="penelitian" value="Penelitian" style="accent-color: #17a2b8;">
+                                <label class="form-check-label" for="penelitian">
+                                    Penelitian
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="jenis_tugas_akhir" id="pengembangan" value="Pengembangan" style="accent-color: #17a2b8;">
+                                <label class="form-check-label" for="pengembangan">
+                                    Pengembangan
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                {{-- Form Bidang TA --}}
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label">Bidang Tugas Akhir</label>
@@ -55,7 +88,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- ================== --}}
+                        {{-- Tabel Bidang --}}
                         <div class="container-fluid bg-white border rounded-bottom bg-opacity-25 pre-scrollable mb-4">
                             <div class="container">
                                 <div class="row d-flex flex-wrap pl-4 py-3">
@@ -76,7 +109,7 @@
                 <!-- Tombol Simpan & Selanjutnya -->
                 <div class="d-flex justify-content-between mt-3">
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok') }} class="btn btn-info mr-3">Sebelumnya</a>
-                    <button type="button" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
+                    <button type="submit" id="saveDraft" class="btn btn-sm btn-primary" style="font-size: 15px">Simpan Draft</button>
                     <a href={{ route('pengajuanalokasipembimbing.pengajuan-pembimbing.prioritas-dosen-pembimbing.index') }} class="btn btn-info ml-3">Selanjutnya</a>
                 </div>
             </div>
@@ -103,17 +136,36 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
+                    $("textarea[name='topik']").prop("disabled", true); // Menonaktifkan input topik tugas akhir
+                    $("input[type='radio']").prop("disabled", true); // Menonaktifkan semua radio button
+                    
                     if (response.Periode === false) {
+                        $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                        $("textarea[name='topik']").val(response.topikTugasAkhir);
+                        $("input[type='radio'][name='bidang']").each(function () {
+                            let label = $(this).next("label").text().trim();
+                            if (label === response.bidangTugasAkhir) {
+                                $(this).prop("checked", true); 
+                            }
+                        });
+                        if (response.jenisTugasAkhir === "penelitian") {
+                            $("#penelitian").prop("checked", true); 
+                        } else if (response.jenisTugasAkhir === "pengembangan") {
+                            $("#pengembangan").prop("checked", true); 
+                        }
+
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
                     if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
                     }
+
+                    
                 }
             });
 
@@ -127,36 +179,50 @@
             }
         });
 
-        // // Simpan data secara otomatis saat input berubah
-        // $("textarea, input[type='radio']").on("input change", function () {
-        //     saveDraftData();
-        // });
+        // Simpan data secara otomatis saat input berubah
+        $("textarea, input[type='radio']").on("input change", function () {
+            saveDraftData(false); // false = tanpa validasi
+        });
 
         // Fungsi untuk menyimpan data ke localStorage
-        function saveDraftData() {
+        function saveDraftData(validasi = true) {
             let topikValue = $("textarea[name='topik']").val().trim();
-            let bidangChecked = $("input[type='radio']:checked");
+            let bidangChecked = $("input[type='radio'][name='bidang']:checked");
+            let jenisTAChecked = $("input[type='radio'][name='jenis_tugas_akhir']:checked");
 
-            // Validasi: topik harus diisi
-            if (topikValue === "") {
-                toast("error", "Topik harus diisi.");
-                return false; 
-            }
+            if (validasi) {
+                if (topikValue === "") {
+                    toast("error", "Topik/judul tugas akhir harus diisi.");
+                    return false; 
+                }
 
-            // Validasi: bidang harus dipilih
-            if (bidangChecked.length === 0) {
-                toast("error", "Pilih salah satu bidang terlebih dahulu.");
-                return false;
+                if (jenisTAChecked.length === 0) {
+                    toast("error", "Jenis tugas akhir harus dipilih.");
+                    return false;
+                }
+                
+                if (bidangChecked.length === 0) {
+                    toast("error", "Bidang tugas akhir harus dipilih.");
+                    return false;
+                }
             }
 
             let draftData = {
-                topik: topikValue,
-                bidang: bidangChecked.next("label").text().trim()
+            topik: topikValue,
+            bidang: bidangChecked.next("label").text().trim(),
+            jenisTA: jenisTAChecked.val()
             };
 
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
             return true;
         }
+
+        // Saat klik Simpan Draft, lakukan validasi penuh
+        $("#saveDraft").click(function () {
+            if (saveDraftData(true)) {
+            toast("success", "Draft berhasil disimpan!");
+            }
+        });
 
         // Fungsi untuk memuat draft dari localStorage
         function loadDraftData() {
@@ -165,21 +231,18 @@
             if (savedData) {
                 $("textarea[name='topik']").val(savedData.topik);
 
-                $("input[type='radio']").each(function () {
+                $("input[type='radio'][name='bidang']").each(function () {
                     let label = $(this).next("label").text().trim();
-                    // if (Array.isArray(savedData.bidang)) {
-                    //     // Jika bidang adalah array
-                    //     if (savedData.bidang.includes(label)) {
-                    //         $(this).prop("checked", true);
-                    //     }
-                    // } else {
-                    // Jika bidang adalah string, cukup periksa kesesuaian langsung
                     if (savedData.bidang === label) {
                         $(this).prop("checked", true);
                     }
-                
                 });
 
+                if (savedData.jenisTA === "Penelitian") {
+                    $("#penelitian").prop("checked", true);
+                } else if (savedData.jenisTA === "Pengembangan") {
+                    $("#pengembangan").prop("checked", true);
+                }
             }
         }
     });

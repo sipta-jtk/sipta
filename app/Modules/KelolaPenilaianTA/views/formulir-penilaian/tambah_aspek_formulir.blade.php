@@ -3,13 +3,16 @@
 @section('title', 'Penambahan Aspek Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Penambahan Aspek Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+           ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Tambah Aspek Penilaian']
         ]
@@ -60,9 +63,7 @@
                                 <div class="form-group">
                                     <label for="namaFTA">Nama FTA</label>
                                     <x-adminlte-select name="namaFTA" id="namaFTA" required fgroup-class="mb-0">
-                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>Pilih Nama FTA</option>
-                                        <option value="Seminar I" {{ old('namaFTA') == 'Seminar I' ? 'selected' : '' }}>Seminar I</option>
-                                        <option value="Seminar II" {{ old('namaFTA') == 'Seminar II' ? 'selected' : '' }}>Seminar II</option>
+                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>-- Pilih Nama FTA --</option>
                                         <option value="Seminar III" {{ old('namaFTA') == 'Seminar III' ? 'selected' : '' }}>Seminar III</option>
                                         <option value="Sidang Akhir" {{ old('namaFTA') == 'Sidang Akhir' ? 'selected' : '' }}>Sidang Akhir</option>
                                         <option value="Dosen Pembimbing" {{ old('namaFTA') == 'Dosen Pembimbing' ? 'selected' : '' }}>Dosen Pembimbing</option>
@@ -85,7 +86,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="namaProdi">Nama Prodi</label>
+                                    <label for="namaProdi">Program Studi</label>
                                     <x-adminlte-select name="namaProdi" id="namaProdi" required>
                                         <option value="" disabled {{ old('namaProdi') ? '' : 'selected' }}>-- Pilih Nama Prodi --</option>
                                         @foreach ($prodiList as $prodi)
@@ -93,6 +94,19 @@
                                                 {{ $prodi->nama_prodi }}
                                             </option>
                                         @endforeach
+                                    </x-adminlte-select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6" id="jenisTAContainer" style="display: none;">
+                                <div class="form-group">
+                                    <label for="jenisTA">Jenis TA</label>
+                                    <x-adminlte-select name="jenisTA" id="jenisTA" required>
+                                        <option value="" disabled {{ old('jenisTA') ? '' : 'selected' }}>-- Pilih Jenis TA --</option>
+                                        <option value="Penelitian" {{ old('jenisTA') == 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
+                                        <option value="Pengembangan" {{ old('jenisTA') == 'Pengembangan' ? 'selected' : '' }}>Pengembangan</option>
                                     </x-adminlte-select>
                                 </div>
                             </div>
@@ -144,7 +158,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-right">
-                                            <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                                            <div class="bobot-summary alert alert-warning">Total bobot harus 100%. Saat ini: 0%</div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -158,14 +172,27 @@
                                     </tr>
                                 </thead>
                                 <tbody id="aspekFeedbackTable">
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm remove-row">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    @if(old('nama_aspek_feedback'))
+                                        @foreach(old('nama_aspek_feedback') as $namaAspekFeedback)
+                                            <tr>
+                                                <td><input type="text" class="form-control" name="nama_aspek_feedback[]" value="{{ $namaAspekFeedback }}" required></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                        <i class="fa-solid fa-minus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="nama_aspek_feedback[]" required></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -224,5 +251,6 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/tambah_aspek_formulir.js') }}"></script>
 @stop

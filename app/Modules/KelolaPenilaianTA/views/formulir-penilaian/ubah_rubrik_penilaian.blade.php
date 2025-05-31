@@ -3,13 +3,16 @@
 @section('title', 'Pengubahan Rubrik Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Pengubahan Rubrik Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Rubrik Penilaian']
         ]
@@ -19,27 +22,45 @@
 @stop
 
 @section('content')
-<div class="card p-4">
+<div class="card p-4" style="min-height: 80vh;">
     <div class="p-4">
-        <form action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
+        <form id="rubrikPenilaianForm" action="{{ route('formulir-penilaian.update-rubrik') }}" method="POST">
             @csrf
 
             <div class="row">
                 <!-- Kode FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="nama_fta">Kode FTA</label>
+                        <label for="kode_fta">Kode FTA</label>
                         <input type="text" class="form-control" id="kode_fta" name="kode_fta"
                         value="{{ $data->kode_fta ?? '' }}" readonly>
                     </div>
                 </div>
 
                 <!-- Nama FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
                         <input type="text" class="form-control" id="nama_fta" name="nama_fta" 
                         value="{{ $data->nama_fta ?? '' }}"readonly>
+                    </div>
+                </div>
+
+                <!-- Program Studi -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nama_prodi">Program Studi</label>
+                        <input type="text" class="form-control" id="nama_prodi" name="nama_prodi" 
+                            value="{{ $data->nama_prodi ?? '' }}" readonly>
+                    </div>
+                </div>
+
+                <!-- Jenis TA -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="jenisTA">Jenis TA</label>
+                        <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                            value="{{ $data->jenis_ta ?? '' }}" readonly>
                     </div>
                 </div>
             </div>
@@ -52,7 +73,7 @@
                 </button>
             </div>
 
-            <div class="table-container mb-3">
+            <div class="table-container mb-3" style="min-height: 50vh;">
                 <table class="table text-center">
                     <thead class="sticky-header">
                         <tr class="bg-dark text-white">
@@ -66,10 +87,14 @@
                         </tr>
                     </thead>
                     <tbody id="rubrikPenilaianTable">
+                        @php 
+                            $index = 0;
+                        @endphp
                         @foreach ($rubrikList as $kriteria)
                             @foreach ($kriteria->rubrik as $rubrik)
                                 <tr>
                                     <td>
+                                        <input type="hidden" name="status[]" value="1">
                                         <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                             <option value="{{ $kriteria->id_kriteria }}" selected>
                                                 {{ $kriteria->nama_kriteria }}
@@ -88,9 +113,12 @@
                                             $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
                                         @endphp
                                         <td>
-                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
+                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $index }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
                                         </td>
                                     @endforeach
+                                    @php
+                                        $index++;
+                                    @endphp
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-row">
                                             <i class="fa-solid fa-minus"></i>
@@ -105,13 +133,14 @@
 
             <!-- Tombol Submit -->
             <div class="d-flex justify-content-end px-3">
-                <button type="submit" class="btn btn-primary btn-md my-1">
+                <button type="button" class="btn btn-primary btn-md my-1" id="showKonfirmasiModal">
                     Simpan <i class="fa-solid fa-floppy-disk"></i>
                 </button>
             </div>
         </form>
     </div>
 </div>
+
 @stop
 
 @section('css')
@@ -122,6 +151,7 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/ubah_rubrik_penilaian.js') }}"></script>
     <script>
         const rentangNilai = @json($rentangNilai);

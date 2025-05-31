@@ -3,13 +3,16 @@
 @section('title', 'Penambahan Rubrik Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Penambahan Rubrik Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Tambah Rubrik Penilaian']
         ]
@@ -26,20 +29,38 @@
 
             <div class="row">
                 <!-- Kode FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="nama_fta">Kode FTA</label>
+                        <label for="kode_fta">Kode FTA</label>
                         <input type="text" class="form-control" id="kode_fta" name="kode_fta"
                         value="{{ $data->kode_fta ?? '' }}" readonly>
                     </div>
                 </div>
 
                 <!-- Nama FTA -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="nama_fta">Nama FTA</label>
                         <input type="text" class="form-control" id="nama_fta" name="nama_fta" 
                         value="{{ $data->nama_fta ?? '' }}"readonly>
+                    </div>
+                </div>
+
+                <!-- Program Studi -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nama_prodi">Program Studi</label>
+                        <input type="text" class="form-control" id="nama_prodi" name="nama_prodi" 
+                            value="{{ $data->nama_prodi ?? '' }}" readonly>
+                    </div>
+                </div>
+
+                <!-- Jenis TA -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="jenisTA">Jenis TA</label>
+                        <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                            value="{{ $data->jenis_ta ?? '' }}" readonly>
                     </div>
                 </div>
             </div>
@@ -68,7 +89,7 @@
                     <tbody id="rubrikPenilaianTable">
                         <tr>
                             <td>
-                                <select class="form-control id_kriteria" name="nama_kriteria" required>
+                                <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                     <option value="" disabled selected>Pilih Kriteria</option>
                                     @foreach ($kriteriaList as $kriteriaPenilaian)
                                         <option value="{{ $kriteriaPenilaian->id_kriteria }}" 

@@ -19,3 +19,5 @@ yarn-error.log
 /Docker/mysql
 plagiarism-checking/plagiarismchecker/__pycache__/
 plagiarism-checking/Plagiarism_Checker/__pycache__/
+composer.lock
+catatan

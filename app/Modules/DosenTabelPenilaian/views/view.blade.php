@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'DosenTabelPenilaian')
+@section('title', 'Tabel Penilaian & Masukan')
 
 @section('content_header')
-    <h1>Tabel Penilaian & Masukan</h1>
+    <h1 class="m-0 text-dark">Tabel Penilaian & Masukan</h1>
     <div>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
@@ -42,27 +42,70 @@
                 <td>{{ $item['judul'] }}</td>
                 <td>{{ $item['kota'] }}</td>
                 <td>
-                    @if ($item['status'] === 'Sudah dinilai')
-                        @if ($item['status_penilaian'] === 'dipublikasikan')
-                            <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                                class="btn btn-primary btn-md">Lihat Nilai</a>
-                        @elseif ($item['status_penilaian'] === 'draf')
-                            <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                                class="btn btn-warning btn-md">Edit Nilai</a>
-                            <a href="#" 
-                                class="btn btn-warning btn-md"
-                                onclick="event.preventDefault(); document.getElementById('publikasikan-form-{{ $item['id_penjadwalan'] }}').submit();">
-                                Publikasikan
-                            </a>
-                            <form id="publikasikan-form-{{ $item['id_penjadwalan'] }}" 
-                                  action="{{ route('nilai.publikasikan', ['id_penjadwalan' => $item['id_penjadwalan']]) }}" 
-                                  method="POST" style="display: none;">
-                                @csrf
-                            </form>
+                    {{-- @if (item['status_penilaian'] ===) --}}
+                    <div class="mb-2">
+                        @if ($item['sudah_penilaian'] === 'Sudah dinilai')
+                            @if($item['status_penilaian'] === 'draf')
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-warning w-100">
+                                    Edit Nilai
+                                </button>
+                            @elseif($item['status_penilaian'] === 'dipublikasikan')
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-primary w-100">
+                                    Lihat Nilai
+                                </button>
+                            @else
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                    Isi Nilai
+                                </button>
+                            @endif
+                        @else
+                            <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                Isi Nilai
+                            </button>
                         @endif
-                    @else
-                        <a href="{{ route('pengisian.nilai', ['id' => $item['id'], 'kota' => $item['id_kota']]) }}"
-                            class="btn btn-warning btn-md">Isi Nilai</a>
+                    </div>
+                    <div class="mb-2">
+                        @if ($item['sudah_feedback'] === "Sudah diisi")
+                            @if($item['status_feedback'] === "draf")
+                                <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-warning w-100">
+                                    Edit Masukan
+                                </button>
+                            @elseif($item['status_feedback'] === "dipublikasikan")
+                                <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-primary w-100">
+                                    Lihat Masukan
+                                </button>
+                            @else
+                                <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                    class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                    Isi Masukan
+                                </button>
+                            @endif
+                        @else
+                            <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                Isi Masukan
+                            </button>
+                        @endif
+                    </div>
+
+                    @if ($item['status_penilaian'] === 'draf' || $item['sudah_penilaian'] === 'Belum dinilai')
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled'}}>Publikasi</button>
+                        </form>
+                    @elseif ($item['status_penilaian'] === 'dipublikasikan')
+                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'unpublish']) }}"
+                            method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100">Batal Publikasi</button>
+                        </form>
                     @endif
                 </td>
             </tr>

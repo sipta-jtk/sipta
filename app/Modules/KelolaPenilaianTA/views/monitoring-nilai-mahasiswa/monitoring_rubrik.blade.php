@@ -3,23 +3,43 @@
 @section('title', 'Monitoring Rubrik')
 
 @section('content_header')
-    <h1 class="mb-3">Rubrik Penilaian {{ $kategori->nama_fta }}</h1>
+    <h1 class="mb-0">Rubrik Penilaian {{ $kategori->nama_fta }}</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
-                ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
-                ['url' => '', 'label' => 'Detail Rubrik']
-            ]
-        ])
-        @endcomponent
+        @php
+            $routeName = Route::currentRouteName();
+            $prefix = env('PREFIX_URL', 'sipta');
+        @endphp
+
+        @if($routeName === 'monitoring.rubrik.mahasiswa')
+            {{-- Jalur dari Mahasiswa --}}
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => "/$prefix", 'label' => 'Beranda'],
+                    ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                    ['url' => '', 'label' => 'Detail Rubrik']
+                ]
+            ])
+            @endcomponent
+
+        @elseif($routeName === 'monitoring.rubrik.dosen')
+            {{-- Jalur dari Dosen Pembimbing --}}
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                    ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
+                    ['url' => '', 'label' => 'Detail Rubrik']
+                ]
+            ])
+            @endcomponent
+        @endif
     </div>
 @stop
 
+
 @section('content')
-<div class="card">
+<div class="card mb-4">
     <!-- /.card-header -->
-    <div class="card-body p-0">
+    <div class="card-body p-4">
         <div class="table-container">
             <table class="table text-center">
                 <thead class="sticky-header">

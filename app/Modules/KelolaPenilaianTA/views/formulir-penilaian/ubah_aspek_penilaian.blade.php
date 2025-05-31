@@ -3,13 +3,16 @@
 @section('title', 'Pengubahan Aspek Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Pengubahan Aspek Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Aspek Penilaian']
         ]
@@ -60,8 +63,17 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="namaProdi">Nama Prodi</label>
+                                    <label for="namaProdi">Program Studi</label>
                                     <input type="text" class="form-control" id="namaProdi" name="namaProdi" value="{{ $aspek->namaProdi }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="jenisTA">Jenis TA</label>
+                                    <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                                        value="{{ $aspek->jenisTA ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -106,7 +118,7 @@
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-right">
-                                                <div class="bobot-summary alert alert-info">Total bobot harus 100%. Saat ini: 0%</div>
+                                                <div class="bobot-summary alert alert-warning">Total bobot harus 100%. Saat ini: 0%</div>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -147,7 +159,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="2" class="text-center">Tidak ada data pertanyaan feedback.</td>
+                                                <td colspan="2" class="text-center">Tidak ada data feedback.</td>
                                             </tr>
                                         @endforelse
                                         
@@ -215,5 +227,6 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/ubah_aspek_formulir.js') }}"></script>
 @stop

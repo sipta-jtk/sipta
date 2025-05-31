@@ -1,22 +1,24 @@
 @extends('adminlte::page')
 
-@section('title', 'PENILAIAN SEMINAR II')
+@section('title', 'Penilaian Dosen Pembimbing')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
         
         <!-- Breadcrumb -->
-        {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
+                ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
                 ['url' => '', 'label' => 'Penilaian Dosen Pembimbing']
                 ]
                 ])
         @endcomponent
-        
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
     </div>
 @stop
 
@@ -38,9 +40,9 @@
 
         <!-- Data Mahasiswa dalam Tabel -->
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-striped">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -65,48 +67,102 @@
         <!-- Topik Tugas Akhir -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Topik Tugas Akhir</strong> <br>
-                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
+                <strong>Judul Tugas Akhir</strong> <br>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
 
-        <!-- Tombol Preview -->
+        <!-- Tombol Lihat Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
-                <strong>Preview File Dokumen Seminar II</strong> <br>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Laporan
-                </button>
-                {{-- TBD get file secara dinamis --}}
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
-                </button>
+                <strong>Dokumen
+                    {{ match ($namaFta) {
+                        'seminar i' => 'Seminar I',
+                        'seminar ii' => 'Seminar II',
+                        'seminar iii' => 'Seminar III',
+                        'sidang akhir' => 'Sidang Akhir',
+                        default => ''
+                    } }}
+                </strong> <br>
+
+                <!-- Tombol Preview Laporan -->
+                <span
+                    @if(!$dokumen['laporan'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Laporan belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['laporan']->file_path ?? '' }}',
+                            '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['laporan']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                        Laporan <i class="fa-solid fa-file"></i>
+                    </button>
+                </span>
+
+                <!-- Tombol Preview PowerPoint -->
+                <span
+                    @if(!$dokumen['powerpoint'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="PowerPoint belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                            '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                        PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                    </button>
+                </span>
             </div>
         </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <!-- Modal Lihat Dokumen -->
+        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+            <div class="row px-3">
+                <div class="col-md-3 mb-2">
+                    <label class="mt-2">Aksi File</label>
+                    <div class="d-flex flex-column">
+                        <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#"
+                        class="btn btn-success"
+                        id="view_file_download"
+                        data-url-template="{{ route('dokumen.download', ['kategori' => '__kategori__', 'id' => '__id__']) }}">
+                            <i class="fas fa-download"></i> Unduh
+                        </a>
                     </div>
-                    <div class="modal-body">
-                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div class="col-md-9 mb-2">
+                    <label class="form-label">Pratinjau Dokumen</label>
+                    <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
+                        <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal> <br>
 
-        <!-- Form Penilaian -->
         <form action="{{ route('pengisian.nilai.store', ['namaFta' => Str::slug($namaFta), 'idKota' => $idKota]) }}" method="POST">
             @csrf
             <div class="row mt-4">
@@ -118,7 +174,7 @@
                         $mhs   = $keteranganUmumPenilaian->mahasiswa;
                     @endphp
 
-                    <table class="table table-bordered text-center">
+                    <table class="table table-bordered table-striped text-center">
                         <thead class="thead-dark align-middle">
                             <tr>
                                 <th rowspan="3">No</th>
@@ -149,7 +205,12 @@
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -161,16 +222,22 @@
                             </tr>
                             @foreach($secB as $i => $krit)
                                 <tr>
-                                    <td>{{ $i + i }}</td>
+                                    <td>{{ $i + 1 }}</td>
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
+                                        {{ Log::info($item->user->nama) }}
                                         <td>
                                             <input type="number"
                                                    name="nilai{{ $key }}[]"
                                                    class="form-control form-control-sm"
                                                    min="0" max="100"
-                                                   value="{{ old("nilai.{$krit->id_kriteria}.{$item->nim}") }}">
+                                                   value="{{ $krit->nilaiKriteria->firstWhere('nim', $item->nim)?->nilai_kriteria ?? '' }}"
+                                                   required
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="{{ $item->user->nama }}"
+                                            />
                                         </td>
                                     @endforeach
                                 </tr>
@@ -182,9 +249,11 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <button type="submit" class="btn btn-warning">
-                Simpan
-            </button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-prev btn-md my-1">
+                    Simpan <i class="fa-solid fa-floppy-disk"></i>
+                </button>
+            </div>
         </form>
     </div>
 @stop
@@ -192,9 +261,12 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">  
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
@@ -202,39 +274,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            // Menginisialisasi popover untuk elemen yang sudah ada
-            $('[data-toggle="popover"]').popover({
-                trigger: 'hover',
-                placement: 'top',
-                html: true
-            });
-
-            // Event delegation untuk elemen dinamis
-            $(document).on('mouseenter', '[data-toggle="popover"]', function () {
-                $(this).popover('show');
-            }).on('mouseleave', '[data-toggle="popover"]', function () {
-                $(this).popover('hide');
-            });
-        });
-
-        function loadPreview(url) {
-            let fileId = extractDriveFileId(url);
-            if (fileId) {
-                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                document.getElementById('previewFrame').src = embedUrl;
-            } else {
-                alert("Format link tidak valid!");
-            }
-        }
-
-        function extractDriveFileId(url) {
-            let match = url.match(/[-\w]{25,}/);
-            return match ? match[0] : null;
-        }
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
     </script>
 @stop

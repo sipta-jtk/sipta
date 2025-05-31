@@ -84,15 +84,14 @@
                         </div>
                     </div>
                     <div class="container-fluid form-check">
-                        <input type="checkbox" id="checkAll" class="form-check-input" disabled
-                            {{ $AllowEdit ? '' : 'disabled' }}>
+                        <input type="checkbox" id="checkAll" class="form-check-input" {{ $AllowEdit ? '' : 'disabled' }}>
                         <label class="form-check-label text-dark" for="checkAll">Pilih Semua</label>
                     </div>
 
 
                     {{-- ================== --}}
                     <div class="container-fluid d-flex justify-content-end mt-2 pl-0 pt-3 pb-3 pr-0">
-                        <button type="submit" class="btn btn-primary ml-3" {{ $AllowEdit ? '' : 'disabled' }}>Simpan <i
+                        <button type="submit" class="btn btn-primary ml-3" {{ $AllowEdit ? '' : 'disabled' }}><i
                                 class="fas fa-save pl-1"></i></button>
                         <button type="button" onclick="nextPage()" form="nextForm" class="btn btn-info ml-3"><i
                                 class="fas fa-chevron-right pl-1"></i></button>

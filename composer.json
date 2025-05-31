@@ -11,7 +11,7 @@
         "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
         "jeroennoten/laravel-adminlte": "^3.14",
-        "lab404/laravel-impersonate": "^1.8",
+        "lab404/laravel-impersonate": "^1.7",
         "laravel/fortify": "^1.25",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.3",
@@ -21,9 +21,10 @@
         "nesbot/carbon": "^2.73",
         "realrashid/sweet-alert": "^7.1",
         "simplehtmldom/simplehtmldom": "dev-master",
-        "smalot/pdfparser": "^2.11",
+        "smalot/pdfparser": "^2.12",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-responsecache": "^7.6",
+        "spatie/pdf-to-text": "^1.54",
         "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {

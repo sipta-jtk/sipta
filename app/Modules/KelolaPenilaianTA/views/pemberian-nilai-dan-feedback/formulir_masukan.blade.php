@@ -5,26 +5,27 @@
         'seminar i' => 'MASUKAN SEMINAR I',
         'seminar ii' => 'MASUKAN SEMINAR II',
         'seminar iii' => 'MASUKAN SEMINAR III',
-        default => 'SIDANG AKHIR',
+        default => 'MASUKAN SIDANG AKHIR',
     };
+
+    $namaFtaBreadcrumb = str_replace(' ', '-', $data['namaFta']);
 @endphp
 
 @section('title', $title)
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
+        <!-- Judul Halaman -->
+        <h1 class="mb-0">MASUKAN {{ strtoupper($data['namaFta']) }}</h1>
+
         <!-- Breadcrumb -->
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
-                ['url' => route('pengisian.nilai', ['namaFta' => $data['namaFta'], 'idKota' => $data['id_kota'], 'idProdi' => $seminar['id_prodi']]), 
-                    'label' => match ($data['namaFta']) {
-                        'seminar i' => '',
-                        'seminar ii' => 'Penilaian Seminar II',
-                        'seminar iii' => 'Penilaian Seminar III',
-                        default => 'Penilaian Sidang Akhir'
-                    }
-                ],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
+                ['url' => route('nilai.index', ['kegiatan' => $namaFtaBreadcrumb]), 'label' => 'Tabel Penilaian & Masukan'],
                 ['url' => '', 'label' => match ($data['namaFta']) {
                         'seminar i' => 'Masukan Seminar I',
                         'seminar ii' => 'Masukan Seminar II',
@@ -35,9 +36,6 @@
             ]
         ])
         @endcomponent
-
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">MASUKAN {{ strtoupper($data['namaFta']) }}</h1>
     </div>
 @stop
 
@@ -54,7 +52,7 @@
                 <span>{{ $data['kode_fta'] }}</span>
             </div>
 
-            <!-- Tanggal, Waktu, ID KoTA -->
+            <!-- Tanggal, Waktu, KoTA -->
             <div class="col-md-2 mt-3">
                 <strong>Pada Hari/Tanggal</strong> <br>
                 <span>{{ $jadwal ? \Carbon\Carbon::parse($jadwal->tanggal)->translatedFormat('d F Y') : '-' }}</span>
@@ -77,9 +75,9 @@
 
         <!-- Data Mahasiswa dalam Tabel -->
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-striped">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
@@ -110,11 +108,11 @@
                         default => 'Topik Tugas Akhir'
                     } }}
                 </strong> <br>
-                <span>{{ $keteranganUmumPenilaian->judul_ta }}</span>
+                <span>{{ $keteranganUmumPenilaian->judul_ta ? $keteranganUmumPenilaian->judul_ta : '-' }}</span>
             </div>
         </div>
 
-        <!-- Tombol Preview Dokumen -->
+        <!-- Tombol Lihat Dokumen -->
         <div class="row mt-4">
             <div class="col-md-12">
                 <strong>Dokumen
@@ -126,34 +124,84 @@
                         default => ''
                     } }}
                 </strong> <br>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('dokumen/a4xQcjsyixgnm6AOzkYOCnfVY7xgUB0j3LwgZ8Uf.pdf')">
-                    Laporan
-                </button>
-                <button type="button" class="btn btn-primary btn-prev" data-toggle="modal" data-target="#previewModal" onclick="loadPreview('https://drive.google.com/file/d/1csAcC_MeS9YI3BkdW-i747-aG92-8yLf/view?usp=sharing')">
-                    Power Point
-                </button>
+
+                <!-- Tombol Preview Laporan -->
+                <span
+                    @if(!$dokumen['laporan'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Laporan belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['laporan']->file_path ?? '' }}',
+                            '{{ $dokumen['laporan']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['laporan']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['laporan'] ? '' : 'disabled' }}>
+                        Laporan <i class="fa-solid fa-file"></i>
+                    </button>
+                </span>
+
+                <!-- Tombol Preview PowerPoint -->
+                <span
+                    @if(!$dokumen['powerpoint'])
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="PowerPoint belum tersedia"
+                    @endif
+                    style="display: inline-block; cursor: not-allowed;">
+
+                    <button type="button" class="btn btn-primary btn-prev"
+                        onclick="LihatDokumen(
+                            '{{ $dokumen['powerpoint']->file_path ?? '' }}',
+                            '{{ $dokumen['powerpoint']->id_dokumen ?? '' }}',
+                            '{{ $dokumen['powerpoint']->kategori ?? '' }}'
+                        )"
+                        data-toggle="modal" data-target="#LihatDokumen"
+                        {{ $dokumen['powerpoint'] ? '' : 'disabled' }}>
+                        PowerPoint <i class="fa-solid fa-file-powerpoint"></i>
+                    </button>
+                </span>
             </div>
         </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="previewModalLabel">Preview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <!-- Modal Lihat Dokumen -->
+        <x-adminlte-modal id="LihatDokumen" title="Preview Dokumen" theme="green" size="xl">
+            <div class="row px-3">
+                <div class="col-md-3 mb-2">
+                    <label class="mt-2">Aksi File</label>
+                    <div class="d-flex flex-column">
+                        <a href="#" target="_blank" class="btn btn-primary mb-2" id="view_file_link">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                        <a href="#"
+                        class="btn btn-success"
+                        id="view_file_download"
+                        data-url-template="{{ route('dokumen.download', ['kategori' => '__kategori__', 'id' => '__id__']) }}">
+                            <i class="fas fa-download"></i> Unduh
+                        </a>
                     </div>
-                    <div class="modal-body">
-                        <iframe id="previewFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div class="col-md-9 mb-2">
+                    <label class="form-label">Pratinjau Dokumen</label>
+                    <div class="document-preview-container" style="height: 470px; border: 1px solid #ddd;">
+                        <iframe id="viewDocumentPreview" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+                        <div id="viewPreviewNotAvailable" class="text-center p-5" style="display: none;">
+                            <i class="fas fa-file-alt fa-3x mb-3 text-secondary"></i>
+                            <p>Preview tidak tersedia untuk jenis file ini</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal>
 
         <!-- Judul Form -->      
         <h3 class="heading-spacing text-center">
@@ -165,7 +213,7 @@
             } }}
         </h3>
 
-        <!-- Form Penilaian -->
+        <!-- Form Masukan -->
         @php
             // Cek apakah data masukan sudah ada
             $isEdit = isset($seminar) && $seminar->kategoriPenilaian->isNotEmpty();
@@ -191,11 +239,12 @@
                         <label for="{{ Str::slug($feedback->nama_aspek_feedback) }}" class="mb-1">
                             Masukan untuk {{ $feedback->nama_aspek_feedback }}
                         </label>
-                        <div class="text-muted" id="char-count-{{ $index }}">0/100 karakter</div>
+                        <div class="text-muted char-counter" id="char-count-{{ $index }}">0 kata</div>
                     </div>
 
                     <input type="hidden" name="feedback[{{ $index }}][id_fta]" value="{{ $data['kode_fta'] }}">
                     <input type="hidden" name="feedback[{{ $index }}][nama_aspek_feedback]" value="{{ $feedback->nama_aspek_feedback }}">
+                    <input type="hidden" name="feedback[{{ $index }}][id_feedback]" value="{{ $feedback->id_feedback }}">
 
                     @php
                         $existingFeedback = $data['detailFeedback']->get($feedback->id_feedback);
@@ -203,140 +252,46 @@
                     @endphp
 
                     <input id="feedback-{{ $index }}" type="hidden" name="feedback[{{ $index }}][masukan]" value="{{ $oldValue }}">
-                    <trix-editor input="feedback-{{ $index }}"></trix-editor>
-                    <span>Min. 15 karakter</span>
+                    <trix-editor
+                        input="feedback-{{ $index }}"
+                        {{ $isPublished ? 'readonly contenteditable=false' : '' }}>
+                    </trix-editor>
+                    <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 30 kata.</span>
                 </div>
             @endforeach
             @endif
             
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
-                    Simpan <i class="mx-1 my-1 fa-solid fa-floppy-disk me-1"></i>
-                </button>
-            </div>
+            @if (!$isPublished)
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-prev btn-md my-1 {{ $aspekFeedback->isEmpty() ? 'disabled' : '' }}">
+                        Simpan <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
 @stop
 
 @section('css')
-    <!-- Trix Editor Styling -->
+    <!-- Bootstrap dan Library lainnya -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">  
     <link rel="stylesheet" href="{{ asset('KelolaPenilaianTA/css/pemberian_nilai_dan_feedback.css') }}">
 @stop
 
 @section('js')
     <!-- Trix Editor Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('KelolaPenilaianTA/js/pemberian_nilai_dan_feedback.js') }}"></script>
     <script>
-        document.addEventListener("trix-change", function(event) {
-            let editor = event.target;
-            let inputId = editor.getAttribute("input");
-            document.getElementById(inputId).value = event.target.innerHTML;
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const editors = document.querySelectorAll('trix-editor');
-
-            editors.forEach((editor, index) => {
-                const counter = document.querySelector(`#char-count-${index}`);
-                const hiddenInput = document.querySelector(`#feedback-${index}`);
-
-                const updateCharCount = () => {
-                    // Ambil teks bersih dari editor
-                    const plainText = editor.editor.getDocument().toString().trim();
-                    const charLength = plainText.length;
-
-                    counter.textContent = `${charLength}/100 karakter`;
-
-                    if (charLength < 15 || charLength > 100) {
-                        counter.classList.add('text-danger');
-                    } else {
-                        counter.classList.remove('text-danger');
-                    }
-                };
-
-                editor.addEventListener('trix-change', updateCharCount);
-
-                // Trigger awal biar muncul nilai default
-                updateCharCount();
-            });
-        });
-
-        // Tampilkan jumlah karakter real-time
-        document.querySelectorAll('trix-editor').forEach((editor, index) => {
-            editor.addEventListener('trix-change', function (e) {
-                const hiddenInput = document.querySelector(`#feedback-${index}`);
-                const countDisplay = document.querySelector(`#char-count-${index}`);
-                const value = hiddenInput.value.trim();
-                countDisplay.textContent = `${value.length}/100 karakter`;
-            });
-        });
-
-        function loadPreview(url) {
-            let fileId = extractDriveFileId(url);
-            if (fileId) {
-                let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                document.getElementById('previewFrame').src = embedUrl;
-            } else {
-                alert("Format link tidak valid!");
-            }
-        }
-
-        function extractDriveFileId(url) {
-            let match = url.match(/[-\w]{25,}/);
-            return match ? match[0] : null;
-        }
-
-        // $('.view-btn').on('click', function() {
-        function LihatDokumen(judul, deskripsi, filePath, kodeFta) {
-            // console.log("Tes");
-            // var judul = $(this).data('judul');
-            // var deskripsi = $(this).data('deskripsi');
-            // var filePath = $(this).data('file');
-            // var kodeFta = $(this).data('kode-fta');
-
-            $('#view_judul').val(judul);
-            $('#view_deskripsi').val(deskripsi);
-            $('#username').val('{{ auth()->user()->username }}');
-
-            // Handle Kode FTA
-            // if (kodeFta) {
-            //     $('#field_kode_fta_view').show();
-            //     $('#view_kode_fta').val(kodeFta);
-            // } else {
-            //     $('#field_kode_fta_view').hide();
-            //     $('#view_kode_fta').val('');
-            // }
-
-            if (filePath && filePath.trim() !== '') {
-                var fullUrl = `/storage/${filePath}`;
-                var fileExtension = filePath.split('.').pop().toLowerCase();
-
-                // Buka di tab baru
-                $('#view_file_link').attr('href', fullUrl);
-
-                // Link download
-                $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
-
-                // Preview file
-                if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
-                    $('#viewDocumentPreview').attr('src', fullUrl).show();
-                    $('#viewPreviewNotAvailable').hide();
-                } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
-                    var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
-                    $('#viewDocumentPreview').attr('src', viewerUrl).show();
-                    $('#viewPreviewNotAvailable').hide();
-                } else {
-                    $('#viewDocumentPreview').hide();
-                    $('#viewPreviewNotAvailable').show();
-                }
-            } else {
-                $('#viewDocumentPreview').hide();
-                $('#viewPreviewNotAvailable').show();
-            }
-        };
+        window.PREFIX_URL = "{{ env('PREFIX_URL') }}";
     </script>
 @stop

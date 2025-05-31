@@ -19,7 +19,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+                <table id="BeritaAcaraSidangTA" class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
                             <th style="width: 8%;">KoTA</th>
@@ -30,7 +30,7 @@
                             <th style="width: 1%;">Sesi</th>
                             <th style="width: 13%;">Status Kehadiran</th>
                             <th style="width: 10%;">Dokumentasi</th>
-                            <th style="width: 10%;">Batas Revisi</th>
+                            <th style="width: 11%;">Batas Revisi</th>
                             <th style="width: 13%;">Status Kelulusan</th>
                         </tr>
                     </thead>
@@ -41,7 +41,7 @@
                                 <td>{{ $item->user->mahasiswa->nim ?? '-' }}</td>
                                 <td>{{ $item->user->nama ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->translatedFormat ?? '-' }}</td>
-                                <td>{{ $item->penjadwalan->id_ruangan ?? '-' }}</td>
+                                <td>{{ $item->penjadwalan->nama_ruangan ?? '-' }}</td>
                                 <td>{{ $item->penjadwalan->sesi ?? '-' }}</td>
                                 <td>
                                     @if($item->status_hadir == 'hadir')
@@ -53,12 +53,12 @@
                                             @csrf
                                             <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                             <input type="hidden" name="status_hadir" value="hadir">
-                                            <button type="submit" class="btn btn-info btn-md my-1 w-100">Absensi</button>
+                                            <button type="submit" class="btn btn-info btn-md my-1 w-100">Isi presensi</button>
                                         </form>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
                                         <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Absen</button>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum isi presensi</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
@@ -217,6 +217,7 @@
                                                    placeholder="-- Pilih Tanggal --"
                                                    onfocus="this.showPicker()"
                                                    value="{{ $item->batas_revisi }}"
+                                                   {{-- min="{{ \carbon\Carbon::now('Asia/Jakarta')->format('Y-m-d') }}" --}}
                                                    required>
                                         </div>
                                         <small class="form-text text-muted">
@@ -245,7 +246,31 @@
 @stop
 
 @section('js')
-    <script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $('#BeritaAcaraSidangTA').DataTable({
+                "searching": false,
+                "lengthMenu": false,
+                "infoFiltered": false,
+                "paginate": false,
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    "infoEmpty": "Tidak ada data tersedia",
+                    "infoFiltered": "(difilter dari total _MAX_ data)",
+                    "paginate": {
+                        "first": "<<",
+                        "last": ">>",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                }
+            });
+    </script>    
+    <script> 
     // Fungsi untuk semua file input
     function handleFileInput() {
         document.querySelectorAll('input[type="file"].d-none').forEach(input => {

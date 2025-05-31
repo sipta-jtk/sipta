@@ -24,32 +24,32 @@
 @endif
 
 @if (is_null($verifikasi->kota ?? null))
-    <div class="p-4 bg-light text-center">
-        <h3 class="flex-grow-1 p-5">Anda belum memiliki KoTA.</h3>
+    <div class="p-4 bg-light text-center my-4">
+        <h3 class="flex-grow-1 p-5">Anda belum memiliki Kelompok TA.</h3>
     </div>
 @elseif (is_null($verifikasi->dosen ?? null))
-    <div class="p-4 bg-light text-center">
+    <div class="p-4 bg-light text-center my-4">
         <h3 class="flex-grow-1 p-5">Anda belum memiliki pembimbing atau penguji.</h3>
     </div>
 @else
 <div class="mx-4">
-    <div class="row bg-light text-center mb-3">
-        <!-- Card Pengajuan Seminar 3 -->
-        <div class="col-md-6">
+    {{-- Card Pengajuan Seminar 3 & Sidang Akhir --}}
+    <div class="row mb-3">
+        <div class="col-md-6 mb-3 mb-md-0">
             @php
                 $seminar3Approved = collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'seminar_3' && $item->status_konfirmasi === 'disetujui');
                 $seminar3Active = isset($verifikasi->pengajuan) && ($verifikasi->pengajuanSeminar3['status'] !== 'Ditolak' || $verifikasi->pengajuanSeminar3['status'] !== 'Diterima');
                 $seminar3InProgress = $verifikasi->pengajuanSeminar3['status'] === 'Diajukan' || $verifikasi->pengajuanSeminar3['status'] === 'Pembimbing' || $verifikasi->pengajuanSeminar3['status'] === 'Penguji' || $verifikasi->pengajuanSeminar3['status'] === 'Koordinator';
                 $Seminar3Finished = $verifikasi->pengajuanSeminar3['status'] === 'Diterima'
             @endphp
-            <x-adminlte-card title="Pengajuan Seminar 3" 
-                theme="{{ $Seminar3Finished ? 'success' : ($seminar3Approved ? ($seminar3InProgress ? 'warning' : ($seminar3Active ? 'primary' : 'secondary')) : 'secondary') }}" 
+            <x-adminlte-card title="Pengajuan Seminar 3"
+                theme="{{ $Seminar3Finished ? 'success' : ($seminar3Approved ? ($seminar3InProgress ? 'warning' : ($seminar3Active ? 'primary' : 'secondary')) : 'secondary') }}"
                 icon="fas fa-file-alt"
                 class="d-flex flex-column h-100"
                 style="{{ $Seminar3Finished ? 'opacity: 0.5; pointer-events: none;' : ($seminar3Approved && !$seminar3InProgress ? '' : 'opacity: 0.5; pointer-events: none;') }}">
                 <div class="d-flex flex-column flex-grow-1">
                     <p class="flex-grow-1">Seminar 3 dapat diajukan setelah pengajuan berkas persyaratan Seminar 3 telah mendapat persetujuan.</p>
-                    <div class="mt-auto">
+                    <div class="mt-auto text-center">
                         @if (!$Seminar3Finished && $seminar3Approved && !$seminar3InProgress)
                             <a href="{{ route('pengajuan-seminar3', ['id_kota']) }}" class="btn btn-primary btn-md my-1">Buat Pengajuan</a>
                         @elseif (!$Seminar3Finished && $seminar3Approved && $seminar3InProgress)
@@ -64,7 +64,6 @@
             </x-adminlte-card>
         </div>
 
-        <!-- Card Pengajuan Sidang Akhir -->
         <div class="col-md-6">
             @php
                 $sidangApproved = $Seminar3Finished && $seminar3Approved && collect($verifikasi)->contains(fn($item) => $item->jenis_pengajuan === 'sidang_akhir' && $item->status_konfirmasi === 'disetujui');
@@ -80,7 +79,7 @@
                 style="{{ $sidangFinished ? 'opacity: 0.5; pointer-events: none;' : ($sidangApproved && !$sidangInProgress ? '' : 'opacity: 0.5; pointer-events: none;') }}">
                 <div class="d-flex flex-column flex-grow-1">
                     <p class="flex-grow-1">Sidang Akhir dapat diajukan setelah Seminar 3 selesai dan pengajuan berkas persyaratan Sidang Akhir telah mendapat persetujuan.</p>
-                    <div class="mt-auto">
+                    <div class="mt-auto text-center"> 
                         @if (!$sidangFinished && $sidangApproved && !$sidangInProgress)
                             <a href="{{ route('pengajuan-sidang') }}" class="btn btn-primary btn-md my-1">Buat Pengajuan</a>
                         @elseif (!$sidangFinished && $sidangApproved && $sidangInProgress)
@@ -96,22 +95,52 @@
         </div>
     </div>
 
-    <!-- Panggil Komponen Progress Step -->
-    <div class="card row mx-1 p-4 bg-light text-center">
-        <h2 class="mb-5"><strong>Status Pengajuan Seminar 3</strong></h2>
-        <x-perencanaan-dan-pelaksanaan-seminar3-dan-sidang.components.pengajuan.status-pengajuan-jadwal-kota 
-            :status="$verifikasi->pengajuanSeminar3['status'] ?? 'Belum Ada Pengajuan'" 
-            :rejectedStep="$verifikasi->pengajuanSeminar3['rejected_step'] ?? null"
-            activeColor="success"
-            inactiveColor="secondary" />
+    {{-- Status Pengajuan Seminar 3 --}}
+    <div class="card p-4 bg-light mb-3"> 
+        <h2 class="mb-4 text-center"><strong>Pengajuan Seminar 3</strong></h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 col-lg-3 border-md-endpe-md-4 mb-4 mb-md-0">
+                <h4 class="mb-3 text-center">Detail Pengajuan</h4>
+                <div class="text-md-start">
+                    <p><strong>Ruangan:</strong> {{ $verifikasi->pengajuanSeminar3['penjadwalan']['nama_ruangan'] ?? '-'}}</p>
+                    <p><strong>Sesi:</strong> {{ $verifikasi->pengajuanSeminar3['penjadwalan']['sesi'] ?? '-'}}</p>
+                    <p><strong>Tanggal:</strong> {{ $verifikasi->pengajuanSeminar3['penjadwalan']['tanggal'] ?? '-'}}</p>
+                </div>
+            </div>
+            <div class="d-flex d-none d-md-block border-right border-secondary px-0" style="width: 2px; height: auto;"></div>
+            <div class="col-md-7 col-lg-8 text-center ps-md-4"> 
+                <h4 class="mb-3">Status Pengajuan</h4>
+                <x-perencanaan-dan-pelaksanaan-seminar3-dan-sidang.components.pengajuan.status-pengajuan-jadwal-kota
+                    :status="$verifikasi->pengajuanSeminar3['status'] ?? 'Belum Ada Pengajuan'"
+                    :rejectedStep="$verifikasi->pengajuanSeminar3['rejected_step'] ?? null"
+                    activeColor="success"
+                    inactiveColor="secondary" />
+            </div>
+        </div>
     </div>
-    <div class="card row mx-1 p-4 bg-light text-center">
-        <h2 class="mb-5"><strong>Status Pengajuan Sidang</strong></h2>
-        <x-perencanaan-dan-pelaksanaan-seminar3-dan-sidang.components.pengajuan.status-pengajuan-jadwal-kota 
-            :status="$verifikasi->pengajuanSidang['status'] ?? 'Belum Ada Pengajuan'" 
-            :rejectedStep="$verifikasi->pengajuanSidang['rejected_step'] ?? null"
-            activeColor="success"
-            inactiveColor="secondary" />
+
+    {{-- Status Pengajuan Sidang --}}
+    <div class="card p-4 bg-light mb-3"> 
+        <h2 class="mb-4 text-center"><strong>Pengajuan Sidang</strong></h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 col-lg-3 border-md-endpe-md-4 mb-4 mb-md-0">
+                <h4 class="mb-3 text-center">Detail Pengajuan</h4>
+                <div class="text-md-start">
+                    <p><strong>Ruangan:</strong> {{ $verifikasi->pengajuanSidang['penjadwalan']['nama_ruangan'] ?? '-'}}</p>
+                    <p><strong>Sesi:</strong> {{ $verifikasi->pengajuanSidang['penjadwalan']['sesi'] ?? '-'}}</p>
+                    <p><strong>Tanggal:</strong> {{ $verifikasi->pengajuanSidang['penjadwalan']['tanggal'] ?? '-'}}</p>
+                </div>
+            </div>
+            <div class="d-flex d-none d-md-block border-right border-secondary px-0" style="width: 2px; height: auto;"></div>
+            <div class="col-md-7 col-lg-8 text-center ps-md-4"> 
+                <h4 class="mb-3">Status Pengajuan</h4>
+                <x-perencanaan-dan-pelaksanaan-seminar3-dan-sidang.components.pengajuan.status-pengajuan-jadwal-kota
+                    :status="$verifikasi->pengajuanSidang['status'] ?? 'Belum Ada Pengajuan'"
+                    :rejectedStep="$verifikasi->pengajuanSidang['rejected_step'] ?? null"
+                    activeColor="success"
+                    inactiveColor="secondary" />
+            </div>
+        </div>
     </div>
 </div>
 @endif
@@ -126,6 +155,8 @@
             alert.style.opacity = "0";
             setTimeout(() => alert.remove(), 500);
         }
-    }, 10000); 
+    }, 5000);
 </script>
+
+@stack('css')
 @stop

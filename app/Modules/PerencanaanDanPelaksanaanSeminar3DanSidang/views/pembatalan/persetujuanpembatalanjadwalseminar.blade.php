@@ -38,7 +38,7 @@
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama_ruangan }}</td>
                 <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>
@@ -77,19 +77,19 @@
     $(document).ready(function () {
         $('#seminarTable').DataTable({
             language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan MENU data per halaman",
-                zeroRecords: "Data tidak ditemukan",
-                info: "Menampilkan START sampai END dari TOTAL data",
-                infoEmpty: "Tidak ada data tersedia",
-                infoFiltered: "(difilter dari total MAX data)",
-                paginate: {
-                first: "<<",
-                last: ">>",
-                next: ">",
-                previous: "<"
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
                 }
-            }
         });
     });
 </script>

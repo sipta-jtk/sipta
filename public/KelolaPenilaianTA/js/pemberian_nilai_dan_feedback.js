@@ -1,62 +1,117 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const tanggalInput = document.getElementById("tanggal_catatan");
-    const hariPerbaikan = document.getElementById("hari_perbaikan");
-    const tanggalPerbaikan = document.getElementById("tanggal_perbaikan");
+$(document).ready(function () {
+    const editors = document.querySelectorAll('trix-editor');
 
-    // Fungsi untuk mengubah tanggal menjadi format hari & tanggal
-    function formatTanggal(dateString) {
-        if (!dateString) return { hari: "________", tanggal: "________" };
+    editors.forEach((editor, index) => {
+        const counter = document.querySelector(`#char-count-${index}`);
+        // Get publication status from data attribute
+        const isPublished = editor.dataset.isPublished === 'true';
 
-        const hariList = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const bulanList = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
+        // If feedback is published, set Trix Editor to read-only and hide toolbar
+        if (isPublished) {
+            editor.setAttribute('contenteditable', 'false'); // Disable direct editing
+            editor.toolbar.style.display = 'none'; // Hide Trix toolbar
+        }
 
-        let date = new Date(dateString);
-        let hari = hariList[date.getDay()];
-        let tanggal = date.getDate();
-        let bulan = bulanList[date.getMonth()];
-        let tahun = date.getFullYear();
+        const updateContent = () => {
+            const inputId = editor.getAttribute("input");
+            const inputWithHtml = document.getElementById(inputId);
+            if (inputWithHtml) {
+                inputWithHtml.value = editor.innerHTML;
+            }
 
-        return { hari, tanggal: `${tanggal} ${bulan} ${tahun}` };
-    }
+            const plainText = editor.editor.getDocument().toString().trim();
+            const wordCount = plainText.split(/\s+/).filter(word => word.length > 0).length;
+            
+            // Only update counter text if the counter element exists
+            if (counter) {
+                counter.textContent = `${wordCount} kata`;
 
-    // Event listener ketika user memilih tanggal
-    tanggalInput.addEventListener("change", function () {
-        let hasilFormat = formatTanggal(this.value);
-        hariPerbaikan.textContent = hasilFormat.hari;
-        tanggalPerbaikan.textContent = hasilFormat.tanggal;
+                // Apply styling based on word count only if not published.
+                // If published, the counter will remain 'text-muted'.
+                if (!isPublished) {
+                    if (wordCount < 30) {
+                        counter.classList.add("text-danger");
+                        counter.classList.remove("text-muted");
+                    } else {
+                        counter.classList.remove("text-danger");
+                        counter.classList.add("text-muted");
+                    }
+                } else {
+                    // Ensure it's always muted if published
+                    counter.classList.remove("text-danger");
+                    counter.classList.add("text-muted");
+                }
+            }
+        };
+
+        editor.addEventListener("trix-change", updateContent);
+        // Call updateContent directly for initial status initialization for all editors
+        updateContent();
     });
+
+    // Inisialisasi semua tooltip Bootstrap setelah DOM siap
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({
+            delay: { "show": 0, "hide": 0 } 
+        }); 
+    });
+
+    let prefix = window.PREFIX_URL || '';
+
+    window.LihatDokumen = function (filePath, dokumenId, dokumenKategori) {
+        if (filePath && filePath.trim() !== '') {
+            const fullUrl = `${window.location.origin}/${prefix}/storage/${filePath}`;
+            const fileExtension = filePath.split('.').pop().toLowerCase();
+
+            // Open in new tab
+            $('#view_file_link').attr('href', fullUrl);
+
+            // Create download URL from template using dokumenId and dokumenKategori
+            const $downloadLink = $('#view_file_download');
+            const urlTemplate = $downloadLink.data('url-template');
+
+            // Only proceed if dokumenId and dokumenKategori are valid
+            if (dokumenId && dokumenKategori) {
+                const downloadUrl = urlTemplate
+                    .replace('__kategori__', dokumenKategori)
+                    .replace('__id__', dokumenId);
+                $downloadLink.attr('href', downloadUrl).removeClass('disabled'); // Enable download button
+            } else {
+                $downloadLink.attr('href', '#').addClass('disabled'); // Disable if ID/Category is invalid
+            }
+
+            // Preview file
+            if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
+                $('#viewDocumentPreview').attr('src', fullUrl).show();
+                $('#viewPreviewNotAvailable').hide();
+            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+                // Use encodeURIComponent for URL to avoid issues with special characters
+                const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`;
+                $('#viewDocumentPreview').attr('src', viewerUrl).show();
+                $('#viewPreviewNotAvailable').hide();
+            } else {
+                $('#viewDocumentPreview').hide();
+                $('#viewPreviewNotAvailable').show();
+            }
+        } else {
+            $('#viewDocumentPreview').hide();
+            $('#viewPreviewNotAvailable').show();
+            $('#view_file_download').attr('href', '#').addClass('disabled'); // Disable download button if no file path
+        }
+    };
 
     $(document).ready(function() {
-        // Menginisialisasi popover untuk elemen yang sudah ada
-        $('[data-toggle="popover"]').popover({
-            trigger: 'hover',
-            placement: 'top',
-            html: true
-        });
-
-        // Event delegation untuk elemen dinamis
-        $(document).on('mouseenter', '[data-toggle="popover"]', function () {
-            $(this).popover('show');
-        }).on('mouseleave', '[data-toggle="popover"]', function () {
-            $(this).popover('hide');
+        var table = $('#myTable').DataTable({
+            scrollX: true,
+            fixedColumns: {
+                rightColumns: 1 // Jumlah kolom yang ingin dibekukan di sebelah kanan
+            }
         });
     });
 
-    function loadPreview(url) {
-        let fileId = extractDriveFileId(url);
-        if (fileId) {
-            let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-            document.getElementById('previewFrame').src = embedUrl;
-        } else {
-            alert("Format link tidak valid!");
-        }
-    }
-
-    function extractDriveFileId(url) {
-        let match = url.match(/[-\w]{25,}/);
-        return match ? match[0] : null;
-    }
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover focus', delay: { "show": 0, "hide": 100 } });
+    });
 });
+
+

@@ -1,3 +1,7 @@
+@php
+$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+@endphp
+
 <x-adminlte-modal id="myModal" title="Notification" theme="info" size="md" icon="fas fa-bell" scrollable>
 
     <div class="d-flex justify-content-end align-items-center mb-2" style="margin-top: -15px;">
@@ -8,7 +12,7 @@
 
     <div id="notification-list"></div>
 
-    <a href="{{ url('sipta/logUser') }}" class="btn btn-secondary w-100 mt-3">
+    <a href="{{ url($prefix . '/logUser') }}" class="btn btn-secondary w-100 mt-3">
         See All Notifications
     </a>
 

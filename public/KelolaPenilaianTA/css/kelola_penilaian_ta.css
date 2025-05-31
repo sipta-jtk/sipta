@@ -22,12 +22,11 @@
 }
 table {
     width: 100%;
-    border-collapse: collapse;
 }
 
 th,
 td {
-    border: 1px solid #ccc !important; /* Tambahkan border untuk outline */
+    border: none !important; /* Tambahkan border untuk outline */
     padding: 10px;
     text-align: center;
 }
@@ -48,7 +47,7 @@ thead th {
     color: white;
     text-align: center;
     padding: 12px;
-    border-bottom: 2px solid #fff;
+    border-bottom: none !important;
 }
 
 tbody tr:nth-child(even) {
@@ -88,4 +87,6 @@ tbody tr:hover {
     gap: 1rem;
 }
 
-
+.border-bold {
+    border-bottom: 3px solid #000; /* Tebal border 3px dengan warna hitam */
+}

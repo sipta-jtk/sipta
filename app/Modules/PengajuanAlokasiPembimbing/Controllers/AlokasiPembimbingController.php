@@ -46,7 +46,7 @@ class AlokasiPembimbingController extends Controller
 
             $data_pengajuan[$key]['mahasiswa'] = $listMahasiswaOnKelompok;
             $data_pengajuan[$key]['usulan_dosen'] = $listUsulanDosen;
-            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen; // inject ke view
+            $data_pengajuan[$key]['preferensi_dosen'] = $preferensiDosen;
         }
 
         $dosenList = Dosen::join('user', 'dosen.nip', '=', 'user.username')
@@ -54,7 +54,7 @@ class AlokasiPembimbingController extends Controller
             ->select('dosen.id_dosen', 'dosen.nip', 'user.nama', 'kbk.kbk')
             ->get();
 
-        return view('PengajuanAlokasiPembimbing.views.AlokasiPembimbing.AlokasiPembimbing', [
+        return view('PengajuanAlokasiPembimbing.views.AlokasiDosenPembimbing.NewVersion', [
             'list_pengajuan' => $data_pengajuan,
             'dosenList' => $dosenList
         ]);
@@ -70,9 +70,9 @@ class AlokasiPembimbingController extends Controller
             ->select('username', 'nama')
             ->first();
 
-    if (!$dosen) {
-        return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
-    }
+        if (!$dosen) {
+            return response()->json(['error' => 'Dosen tidak ditemukan'], 404);
+        }
 
         $pembimbing1_KoTA = AlokasiDosen::where('nip', $dosen->dosen->nip)
             ->where('urutan_prioritas_terpilih', '1')
@@ -88,15 +88,15 @@ class AlokasiPembimbingController extends Controller
 
 
         $pembimbing1_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '1')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '1')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $pembimbing2_Mhs = Mahasiswa::whereHas('kota.pengajuanPembimbing.alokasiDosen', function ($query) use ($dosen) {
-            $query->where('nip',  $dosen->dosen->nip)
-                  ->where('urutan_prioritas_terpilih', '2')
-                  ->where('status_alokasi', 'fix');
+            $query->where('nip', $dosen->dosen->nip)
+                ->where('urutan_prioritas_terpilih', '2')
+                ->where('status_alokasi', 'fix');
         })->count();
 
         $jumlahMahasiswa = $pembimbing1_Mhs + $pembimbing2_Mhs;
@@ -181,15 +181,15 @@ class AlokasiPembimbingController extends Controller
                 );
             }
 
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
-                $nip_dosen_1, // Ganti dengan username admin, atau log system
-                [
-                    'nama' => Dosen::where('id_dosen', $pembimbing1)->value('kode_dosen'),
-                    'Topik' => 'Dosen Pembimbing telah ditetapkan',
-                    'deadline' => now()->format('d-m-Y H:i')
-                ]
-            );
+            // Notifikasi::kirim(
+            //     '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+            //     $nip_dosen_1, // Ganti dengan username admin, atau log system
+            //     [
+            //         'nama' => Dosen::where('id_dosen', $pembimbing1)->value('kode_dosen'),
+            //         'Topik' => 'Dosen Pembimbing telah ditetapkan',
+            //         'deadline' => now()->format('d-m-Y H:i')
+            //     ]
+            // );
             
             if ($nip_dosen_2) {
                 AlokasiDosen::updateOrCreate(
@@ -203,15 +203,15 @@ class AlokasiPembimbingController extends Controller
                 );
             }
                 
-            Notifikasi::kirim(
-                '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
-                $nip_dosen_2, // Ganti dengan username admin, atau log system
-                [
-                    'nama' => Dosen::where('id_dosen', $pembimbing2)->value('kode_dosen'),
-                    'Topik' => 'Dosen Pembimbing telah ditetapkan',
-                    'deadline' => now()->format('d-m-Y H:i')
-                ]
-            );
+            // Notifikasi::kirim(
+            //     '[Pemberitahuan] Dosen Pembimbing Tugas AKhir Telah Ditetapkan!', // Judul template notifikasi
+            //     $nip_dosen_2, // Ganti dengan username admin, atau log system
+            //     [
+            //         'nama' => Dosen::where('id_dosen', $pembimbing2)->value('kode_dosen'),
+            //         'Topik' => 'Dosen Pembimbing telah ditetapkan',
+            //         'deadline' => now()->format('d-m-Y H:i')
+            //     ]
+            // );
                 
             // === SIMPAN PENGUJI ===
             foreach ([[1, $nip_penguji_1], [2, $nip_penguji_2], [3, $nip_penguji_3]] as [$urutan, $nip]) {

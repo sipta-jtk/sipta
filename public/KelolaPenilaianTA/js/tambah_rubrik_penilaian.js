@@ -1,5 +1,17 @@
 $(document).ready(function () {
-    // Handle change of FTA code dropdown
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+
     $("#kode_fta").change(function () {
         validateKodeFTA();
         const selectedKodeFTA = $(this).val();
@@ -91,32 +103,43 @@ $(document).ready(function () {
         });
     }
 
+    function updateRowStriping() {
+        $("#rubrikPenilaianTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); 
+            } else {
+                $(this).css("background-color", "#f8f9fa"); 
+            }
+        });
+    }
+
     // Add new row to table
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
         if (!selectedKodeFTA) {
-            alert("Silakan pilih Kode FTA terlebih dahulu.");
+            Swal.fire({
+                icon: "error",
+                title: "Kode FTA Belum Dipilih",
+                text: "Silakan pilih Kode FTA terlebih dahulu.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
             return;
         }
 
-        // Get rentangNilai from the page
         let nilaiColumns = '';
-        // Check if rentangNilai is defined globally
         if (typeof rentangNilai !== 'undefined') {
             rentangNilai.forEach(function (nilai) {
-                // Using textarea instead of input
                 nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea></td>`;
             });
         } else {
-            // Fallback: get values from existing table headers
             $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
                 if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
-                    // Extract id_nilai from header text using regex
                     const headerText = $(this).text();
                     const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
                     if (match && match[1]) {
                         const id_nilai = match[1];
-                        // Using textarea instead of input
                         nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea></td>`;
                     }
                 }
@@ -140,6 +163,7 @@ $(document).ready(function () {
         </tr>`;
 
         $("#rubrikPenilaianTable").append(newRow);
+        updateRowStriping();
     });
 
     // Handle kriteria selection change (works for both .kriteria and .id_kriteria)
@@ -150,20 +174,27 @@ $(document).ready(function () {
             .closest("tr")
             .find(".bobot")
             .text(bobot ? bobot + "%" : "-");
-        console.log("Selected criteria with bobot:", bobot);
     });
 
     // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
-        // Make sure we keep at least one row
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
+            updateRowStriping();
         } else {
-            alert("Tidak dapat menghapus baris terakhir.");
+            Swal.fire({
+                icon: "error",
+                title: "Tidak Bisa Hapus",
+                text: "Tidak dapat menghapus baris terakhir.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
         }
     });
 
-    // If kode_fta already has a value on page load, load its kriteria
+    updateRowStriping();
+
     const initialKodeFTA = $("#kode_fta").val();
     if (initialKodeFTA) {
         loadKriteria(initialKodeFTA);

@@ -22,6 +22,7 @@
 @section('content')
 
     <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
 
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -152,16 +153,31 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
+                    $(".removeDosen, .addDosen").prop("disabled", true); // Menonaktifkan tombol remove dan add dosen
+                    
                     if (response.Periode === false) {
+                        $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                        let prioritasList = $("#prioritasList li");
+                        prioritasList.find(".priority-name").text("-");  // Reset tampilan
+
+                        if (response.prioritasDosen && response.prioritasDosen.length > 0) {
+                            response.prioritasDosen.forEach(function (dosen, index) {
+                                if (index < 5) {  // Maksimal 5 prioritas
+                                    let listItem = prioritasList.eq(index);
+                                    listItem.find(".priority-name").text(dosen.name);
+                                    listItem.find(".removeDosen").hide();  // Sembunyikan tombol hapus karena sudah fix
+                                }
+                            });
+                        }
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
                     if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
                     }
                 }
         });
@@ -282,6 +298,23 @@
                 }
             });
         });
+    });
+
+    // Cek sebelum ke halaman selanjutnya
+    $(".btn-info.ml-3").click(function(e) {
+        let prioritasDosen = [];
+        $("#prioritasList .priority-name").each(function () {
+            let name = $(this).text();
+            if (name !== "-") {
+                prioritasDosen.push(name);
+            }
+        });
+        let saved = JSON.parse(localStorage.getItem("prioritasDosen")) || [];
+        // Jika ada data di prioritas tapi belum disimpan ke draft
+        if (prioritasDosen.length > 0 && saved.length !== prioritasDosen.length) {
+            e.preventDefault();
+            toast("warning", "Simpan draft sebelum melanjutkan.");
+        }
     });
 </script>
 @stop

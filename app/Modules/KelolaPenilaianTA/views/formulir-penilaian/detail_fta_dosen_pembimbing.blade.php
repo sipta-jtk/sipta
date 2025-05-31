@@ -1,9 +1,22 @@
 @extends('adminlte::page')
 
-@section('title', 'Informasi Detail Formulir Penilaian - Dosen Pembimbing')
+@section('title', 'Informasi Detail Formulir Penilaian - Dosen')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => "/$prefix", 'label' => 'Beranda'],
+                ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
+                ['url' => '', 'label' => 'Detail Formulir Penilaian - Dosen Pembimbing']   
+            ]
+        ])
+        @endcomponent
+
+        <!-- Judul Halaman -->
         <h1 class="mb-0">Informasi Detail Formulir Penilaian - Dosen Pembimbing</h1>
     </div>
 @stop
@@ -13,18 +26,39 @@
     <div class="p-4">
         <!-- Informasi Kategori -->
         <div class="row mb-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="kodeFTA">Kode FTA</label>
                     <input type="text" class="form-control" id="kodeFTA" name="kodeFTA" 
                            value="{{ $kategori->kode_fta ?? '' }}" readonly>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="namaFTA">Nama FTA</label>
                     <input type="text" class="form-control" id="namaFTA" name="namaFTA" 
                            value="{{ $kategori->nama_fta ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="namaProdi">Program Studi</label>
+                    <input type="text" class="form-control" id="namaProdi" name="namaProdi" 
+                        value="{{ $kategori->nama_prodi ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="jenisFormulir">Jenis Formulir</label>
+                    <input type="text" class="form-control" id="jenisFormulir" name="jenisFormulir" 
+                        value="{{ $kategori->jenis_form ?? '' }}" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="jenisTA">Jenis TA</label>
+                    <input type="text" class="form-control" id="jenisTA" name="jenisTA" 
+                        value="{{ $kategori->jenis_ta ?? '' }}" readonly>
                 </div>
             </div>
         </div>
@@ -43,14 +77,14 @@
                         </thead>
                         <tbody>
                             @foreach ($aspekPenilaian as $data_aspek => $aspekList)
-                                <!-- Tampilkan Nama Kategori -->
+                                <!-- Nama Kategori -->
                                 <tr class="bg-light">
                                     <td colspan="2" class="text-left">
                                         <strong>{{ $data_aspek }}</strong>
                                     </td>
                                 </tr>
 
-                                <!-- Tampilkan Aspek Penilaian -->
+                                <!-- Aspek Penilaian -->
                                 @foreach ($aspekList as $aspek)
                                     <tr class="bg-white">
                                         <td class="text-left">{{ $aspek['nama'] }}</td>
@@ -93,4 +127,5 @@
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('KelolaPenilaianTA/js/detail_fta.js') }}"></script>
 @stop

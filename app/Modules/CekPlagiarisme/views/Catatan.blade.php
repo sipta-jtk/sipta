@@ -200,17 +200,38 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Ambil prefix URL dari meta tag
+    const prefixUrl = document.querySelector("meta[name='prefix-url']") ?
+        document.querySelector("meta[name='prefix-url']").getAttribute("content") :
+        'sipta-dev';
+
+    // Fungsi untuk membuat URL API yang benar (tanpa duplikasi prefix)
+    function createApiUrl(endpoint) {
+        // Periksa apakah url sudah berisi domain name atau dimulai dengan http
+        if (endpoint.includes('://') || endpoint.startsWith('http')) {
+            return endpoint;
+        }
+
+        // Hapus slash di awal endpoint jika ada
+        if (endpoint.startsWith('/')) {
+            endpoint = endpoint.substring(1);
+        }
+
+        // Hapus slash di akhir prefixUrl jika ada
+        let prefix = prefixUrl;
+        if (prefix.endsWith('/')) {
+            prefix = prefix.substring(0, prefix.length - 1);
+        }
+
+        // Gabungkan dengan slash di tengah
+        return '/' + prefix + '/' + endpoint;
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById('comment-form');
 
-        // Ambil prefix URL dari meta tag
-        const prefixUrl = document.querySelector("meta[name='prefix-url']") ?
-            document.querySelector("meta[name='prefix-url']").getAttribute("content") :
-            'sipta-dev';
-
         // Ambil ID dokumen dari atribut data-dokumen-id
         const dokumenId = form.getAttribute('data-dokumen-id');
-
 
         // Event listener untuk submit form
         form.addEventListener('submit', function(e) {
@@ -219,9 +240,19 @@
             const commentText = document.getElementById('comment-input').value.trim();
             const dokumenId = form.getAttribute('data-dokumen-id'); // ID dokumen dari form
 
-            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}`;
+            const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}`);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+            console.log("URL for POST request:", url); // Debugging URL
+
+            // Show loading
+            Swal.fire({
+                title: 'Memproses...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             fetch(url, {
                     method: 'POST',
@@ -383,7 +414,7 @@
                 editCharCount.textContent = `${review.length}/500 karakter`;
                 if (review.length > 500) {
                     editCharCount.classList.add('over-limit');
-                    saveEditButton.disabled = true; 
+                    saveEditButton.disabled = true;
                 } else {
                     editCharCount.classList.remove('over-limit');
                     saveEditButton.disabled = false;
@@ -421,9 +452,18 @@
                 'sipta-dev';
             let id = $("#editCommentId").attr("data-id");
             let review = $("#editCommentText").val();
-            const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${id}`;
+            const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}/${id}`);
 
-            console.log(url)
+            // Show loading
+            Swal.fire({
+                title: 'Memproses...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            console.log("Edit URL:", url) // Debugging URL
             $.ajax({
                 url: url,
                 type: "PUT",
@@ -457,6 +497,7 @@
 
 
     $(document).ready(function() {
+
         let deleteId = null; // Variabel untuk menyimpan ID yang akan dihapus
 
         // Saat tombol "Hapus" dalam dropdown diklik
@@ -476,7 +517,17 @@
         // Saat tombol "Hapus" di modal diklik
         $("#confirmDeleteBtn").click(function() {
             if (deleteId) {
-                const url = `${prefixUrl}/cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`;
+                const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`);
+                console.log("Delete URL:", url); // Debugging URL
+
+                // Show loading
+                Swal.fire({
+                    title: 'Memproses...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
                 $.ajax({
                     headers: {

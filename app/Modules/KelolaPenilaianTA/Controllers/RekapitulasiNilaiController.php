@@ -68,6 +68,7 @@ class RekapitulasiNilaiController extends Controller
         // Kelompokkan per mahasiswa
         $grouped = $daftarNilai->groupBy('nim');
 
+        // Proses setiap kelompok mahasiswa
         $data = $grouped->map(function ($items) {
             return $this->prosesMahasiswa($items);
         })->values()->toArray();
@@ -106,49 +107,65 @@ class RekapitulasiNilaiController extends Controller
     /**
      * Mengatur nilai kategori berdasarkan penguji dan pembimbing
      */
-    private function aturNilaiKategori($records)
-    {
-        $kategori = [
-            'seminar2Penguji1',
-            'seminar2Penguji2',
-            'seminar2Penguji3',
-            'seminar3Penguji1',
-            'seminar3Penguji2',
-            'seminar3Penguji3',
-            'sidangPenguji1',
-            'sidangPenguji2',
-            'sidangPenguji3',
-            'pembimbing1',
-            'pembimbing2'
-        ];
+private function aturNilaiKategori($records)
+{
+    $kategori = [
+        'seminar1Penguji1',
+        'seminar1Penguji2',
+        'seminar1Penguji3',
+        'seminar2Penguji1',
+        'seminar2Penguji2',
+        'seminar2Penguji3',
+        'seminar3Penguji1',
+        'seminar3Penguji2',
+        'seminar3Penguji3',
+        'sidangPenguji1',
+        'sidangPenguji2',
+        'sidangPenguji3',
+        'pembimbing1',
+        'pembimbing2'
+    ];
 
-        $nilaiKategori = array_fill_keys($kategori, null);
+    $nilaiKategori = array_fill_keys($kategori, null);
 
-        $mappingKategori = [
-            2 => ['seminar2Penguji1', 'seminar2Penguji2', 'seminar2Penguji3'],
-            3 => ['seminar3Penguji1', 'seminar3Penguji2', 'seminar3Penguji3'],
-            4 => ['sidangPenguji1', 'sidangPenguji2', 'sidangPenguji3'],
-            5 => ['pembimbing1', 'pembimbing2']
-        ];
+    // Mapping berdasarkan nama_fta
+    $mappingKategori = [
+        'Seminar I' => ['seminar1Penguji1', 'seminar1Penguji2', 'seminar1Penguji3'],
+        'Seminar II' => ['seminar2Penguji1', 'seminar2Penguji2', 'seminar2Penguji3'],
+        'Seminar III' => ['seminar3Penguji1', 'seminar3Penguji2', 'seminar3Penguji3'],
+        'Sidang Akhir' => ['sidangPenguji1', 'sidangPenguji2', 'sidangPenguji3'],
+        'Dosen Pembimbing' => ['pembimbing1', 'pembimbing2']
+    ];
 
-        foreach ($records as $record) {
-            if (!$record->kategori_id || $record->status_penilaian_dosen !== 'dipublikasikan') continue;
+    foreach ($records as $record) {
+        if (!$record->kategori_id || $record->status_penilaian_dosen !== 'dipublikasikan') continue;
 
-            $id = $record->kategori_id;
-            $value = number_format($record->nilai, 2);
+        // Ambil nama_fta berdasarkan kategori_id
+        $kategoriPenilaian = DB::table('kategori_penilaian')
+            ->join('form_penilaian', 'kategori_penilaian.id_fta', '=', 'form_penilaian.id_fta')
+            ->where('kategori_penilaian.id_kategori', $record->kategori_id)
+            ->select('form_penilaian.nama_fta')
+            ->first();
 
-            if (isset($mappingKategori[$id])) {
-                $this->assignNilai($nilaiKategori, $mappingKategori[$id], $value);
-            }
+        if (!$kategoriPenilaian) continue;
+
+        $namaFta = $kategoriPenilaian->nama_fta;
+        $value = number_format($record->nilai, 2);
+
+        // Cocokkan nama_fta dengan mappingKategori
+        if (isset($mappingKategori[$namaFta])) {
+            $this->assignNilai($nilaiKategori, $mappingKategori[$namaFta], $value);
         }
-
-        foreach (['seminar2', 'seminar3', 'sidang', 'pembimbing'] as $kategori) {
-            $keys = array_filter(array_keys($nilaiKategori), fn($k) => str_starts_with($k, $kategori));
-            $nilaiKategori["rata" . ucfirst($kategori)] = number_format($this->hitungRataRata(array_intersect_key($nilaiKategori, array_flip($keys))), 2);
-        }
-
-        return $nilaiKategori;
     }
+
+    // Hitung rata-rata untuk setiap kategori utama
+    foreach (['seminar1', 'seminar2', 'seminar3', 'sidang', 'pembimbing'] as $kategori) {
+        $keys = array_filter(array_keys($nilaiKategori), fn($k) => str_starts_with($k, $kategori));
+        $nilaiKategori["rata" . ucfirst($kategori)] = number_format($this->hitungRataRata(array_intersect_key($nilaiKategori, array_flip($keys))), 2);
+    }
+
+    return $nilaiKategori;
+}
 
 
 
@@ -349,6 +366,9 @@ class RekapitulasiNilaiController extends Controller
         $nilai = 0;
 
         switch ($komponen->id_kategori) {
+            case 1:
+                $nilai = $nilaiKategori['rataSeminar1'] ?? 0;
+                break;
             case 2:
                 $nilai = $nilaiKategori['rataSeminar2'] ?? 0;
                 break;

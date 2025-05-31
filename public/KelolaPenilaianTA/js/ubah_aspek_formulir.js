@@ -1,14 +1,58 @@
 $(document).ready(function () {
-    function updateBobotSummary() {
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisFormField = $("#jenisForm");
+    if (jenisFormField.length) {
+        let jenisFormValue = jenisFormField.val().trim();
+        if (jenisFormValue) {
+            jenisFormField.val(capitalizeFirstLetter(jenisFormValue));
+        }
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+
+    function initBobotInputs() {
+        $("input[name='bobot_kriteria[]']").addClass('bobot-kriteria');
+    }
+
+    // Validasi total bobot
+    function validateTotalBobot() {
+        initBobotInputs();
+
         let totalBobot = 0;
-        $("input[name='bobot_kriteria[]']").each(function () {
-            let bobot = parseFloat($(this).val()) || 0;
-            totalBobot += bobot;
+        $(".bobot-kriteria").each(function () {
+            let value = parseFloat($(this).val());
+            if (!isNaN(value)) {
+                totalBobot += value;
+            }
         });
 
-        $(".bobot-summary").text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        const bobotSummary = $(".bobot-summary");
+        if (totalBobot === 100) {
+            bobotSummary
+                .removeClass("alert-warning")
+                .addClass("alert-info")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        } else {
+            bobotSummary
+                .removeClass("alert-info")
+                .addClass("alert-warning")
+                .text(`Total bobot harus 100%. Saat ini: ${totalBobot}%`);
+        }
+
         return totalBobot;
     }
+
+    validateTotalBobot();
 
     function setMinDate() {
         const today = new Date();
@@ -20,58 +64,42 @@ $(document).ready(function () {
         $('#tanggalTenggat').attr('min', minDate);
     }
 
-    // Panggil fungsi untuk mengatur tanggal minimum saat halaman dimuat
     setMinDate();
 
-    // Panggil fungsi untuk menghitung total bobot saat halaman pertama kali dimuat
-    if ($("#jenisForm").val() === "penilaian") {
-        updateBobotSummary();
+    function updateRowStriping() {
+        $("#aspekPenilaianTable tr, #aspekFeedbackTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff");
+            } else {
+                $(this).css("background-color", "#f8f9fa");
+            }
+        });
     }
 
-    // Update total bobot saat nilai bobot diubah
-    $(document).on("input", "input[name='bobot_kriteria[]']", function () {
-        if ($("#jenisForm").val() === "penilaian") {
-            updateBobotSummary();
-        }
-    });
-
-    // Form tidak bisa dikirim jika total bobot tidak 100% (hanya untuk penilaian)
-    $('#aspekForm').on('submit', function (e) {
-        const jenisForm = $("#jenisForm").val();
-        if (jenisForm === "penilaian") {
-            let totalBobot = updateBobotSummary();
-            if (totalBobot !== 100) {
-                e.preventDefault();
-                $("#notificationMessage").text("Total bobot harus 100%");
-                $("#notification").removeClass("d-none");
-
-                setTimeout(function () {
-                    $("#notification").addClass("d-none");
-                }, 3000);
-            }
+    $(document).on("input", ".bobot-kriteria", function () {
+        if ($("#jenisForm").val().toLowerCase() === "penilaian") {
+            validateTotalBobot();
         }
     });
 
     // Menambahkan baris baru di tabel Aspek Penilaian
     $("#addRow").on("click", function () {
-        const jenisForm = $("#jenisForm").val();
-
-        if (jenisForm === "penilaian") {
-            const newRow = `
+        const newRow = `
             <tr>
                 <td><input type="text" class="form-control" name="nama_kriteria[]" required></td>
-                <td><input type="number" class="form-control" name="bobot_kriteria[]" required></td>
+                <td><input type="number" class="form-control bobot-kriteria" name="bobot_kriteria[]" required></td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm remove-row">
                         <i class="fa-solid fa-minus"></i>
                     </button>
                 </td>
             </tr>`;
-            $("#aspekPenilaianTable").append(newRow);
-        }
+        $("#aspekPenilaianTable").append(newRow);
+        validateTotalBobot();
+        updateRowStriping();
     });
 
-    // Tambah baris baru di tabel Aspek Feedback
+    // Menambahkan baris baru di tabel Aspek Feedback
     $("#addFeedbackRow").on("click", function () {
         const newFeedbackRow = `
         <tr>
@@ -83,18 +111,92 @@ $(document).ready(function () {
             </td>
         </tr>`;
         $("#aspekFeedbackTable").append(newFeedbackRow);
+        updateRowStriping();
     });
 
     // Hapus baris dari tabel Aspek Penilaian
     $(document).on("click", ".remove-row", function () {
         $(this).closest("tr").remove();
-        if ($("#jenisForm").val() === "penilaian") {
-            updateBobotSummary();
+        if ($("#jenisForm").val().toLowerCase() === "penilaian") {
+            validateTotalBobot();
+        }
+        updateRowStriping();
+        if ($("#aspekPenilaianTable tr").length === 0) {
+            $("#aspekPenilaianTable").append('<tr><td colspan="3" class="text-center">Tidak ada data kriteria penilaian.</td></tr>');
         }
     });
 
     // Hapus baris dari tabel Aspek Feedback
     $(document).on("click", ".remove-feedback-row", function () {
         $(this).closest("tr").remove();
+        updateRowStriping();
+        if ($("#aspekFeedbackTable tr").length === 0) {
+            $("#aspekFeedbackTable").append('<tr><td colspan="2" class="text-center">Tidak ada data feedback.</td></tr>');
+        }
     });
+
+    updateRowStriping();
+
+    // Validasi Form sebelum submit
+    $('#aspekForm').on('submit', function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        $("input[required], select[required], textarea[required]").each(function () {
+            if (!$(this).val()) {
+                valid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!valid) {
+            Swal.fire({
+                icon: "error",
+                title: "Terdapat Field Kosong",
+                text: "Mohon isi semua field yang diperlukan.",
+            });
+            return false;
+        }
+
+        const jenisForm = $("#jenisForm").val().toLowerCase();
+        if (jenisForm === "penilaian") {
+            let totalBobot = validateTotalBobot();
+            if (totalBobot !== 100) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Total Bobot Tidak Valid",
+                    text: `Total bobot harus 100%`,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+                return false;
+            }
+        }
+
+        Swal.fire({
+            title: "Konfirmasi Simpan",
+            text: "Apakah Anda yakin ingin menyimpan perubahan aspek penilaian ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Simpan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#aspekForm')[0].submit();
+            }
+        });
+    });
+
+    updateRowStriping();
+    initBobotInputs();
+    if ($("#jenisForm").val().toLowerCase() === "penilaian") {
+        validateTotalBobot();
+    }
 });

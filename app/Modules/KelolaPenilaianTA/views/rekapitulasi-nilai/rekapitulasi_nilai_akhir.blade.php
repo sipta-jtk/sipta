@@ -3,12 +3,15 @@
 @section('title', 'Rekapitulasi Nilai Akhir')
 
 @section('content_header')
-<div class="container-fluid p-3">
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
+<div class="container-fluid">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Rekapitulasi Nilai Akhir</h1>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => route('beranda.get'), 'label' => 'Home'],
+    ['url' => "/$prefix", 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Rekapitulasi Nilai Akhir']
     ]
     ])
@@ -17,19 +20,28 @@
 @stop
 
 @section('content')
-<div class="p-2">
+<div class="container-fluid">
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body p-3">
             {{-- Filter Toggle Button --}}
-            <div class="d-flex justify-content-between px-3 pt-3">
+            <div class="d-flex justify-content-between mb-3">
                 <button id="toggleFilter" class="btn btn-primary btn-md">
                     <i class="fas fa-filter"></i>
                 </button>
+                <button id="exportExcel" type="button" class="btn btn-primary"
+                    data-url="{{ route('rekapitulasi-akhir.export') }}">
+                    <i class="fas fa-file-excel"></i> Ekspor ke Excel
+                </button>
             </div>
 
+            <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
+                @csrf
+                <input type="hidden" name="data" id="exportData">
+            </form>
+
             {{-- Filter Section --}}
-            <div id="filterSection" class="mt-3" style="display: none;">
-                <div class="card mx-3 mt-3">
+            <div id="filterSection" class="mt-3 mb-3" style="display: none;">
+                <div class="card mt-3">
                     <div class="card-header">
                         <i class="fas fa-filter"></i> Filter Data
                     </div>
@@ -52,14 +64,14 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="card-footer text-right">
-                            <button id="applyFilter" class="btn btn-primary">Terapkan</button>
-                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button id="applyFilter" class="btn btn-primary">Terapkan</button>
                     </div>
                 </div>
             </div>
             {{-- DataTables Controls (Jumlah data & Search) --}}
-            <div class="d-flex justify-content-between mb-2">
+            <div class="d-flex justify-content-between mb-3">
                 <div id="dataTableControls"></div> <!-- Placeholder untuk jumlah data -->
                 <div id="searchBox"></div> <!-- Placeholder untuk pencarian -->
             </div>
@@ -209,17 +221,6 @@
             <div class="d-flex justify-content-between mt-1">
                 <div id="infoControls"></div> <!-- Placeholder untuk info -->
                 <div id="paginationControls"></div> <!-- Placeholder untuk pagination -->
-            </div>
-            <form id="exportForm" action="{{ route('rekapitulasi-nilai-akhir.export') }}" method="POST" style="display: none;">
-                @csrf
-                <input type="hidden" name="data" id="exportData">
-            </form>
-
-            <div class="d-flex justify-content-end mt-3">
-                <button id="exportExcel" type="button" class="btn btn-success"
-                    data-url="{{ route('rekapitulasi-akhir.export') }}">
-                    <i class="fas fa-file-excel"></i> Export to Excel
-                </button>
             </div>
         </div>
     </div>

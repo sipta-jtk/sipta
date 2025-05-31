@@ -23,8 +23,8 @@
         <tr class="bg-dark text-white">
             <th>Kota No</th>
             <th>Judul</th>
-            <th>Tanggal Seminar</th>
-            <th>Sesi Seminar</th>
+            <th>Tanggal Sidang</th>
+            <th>Sesi Sidang</th>
             <th>Ruangan</th>
             <th>Dosen Pengaju</th>
             <th>Alasan</th>
@@ -38,37 +38,22 @@
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama_ruangan }}</td>
                 <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>
-                    @if ($s->status_pembatalan == 1 || $s->status_pembatalan == 0)
                     <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
-                        method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-md w-100 my-1" disabled>Setuju</button>
-                    </form>
-                    <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
-                        method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-md w-100 my-1" disabled>Tolak</button>
-                    </form>
-                    @else
-                    <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
+                        action="{{ route('persetujuan.pembatalan.sidang', ['pembatalan_id' => $s->id_pembatalan, 'status' => 1]) }}"
                         method="post">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-md w-100 my-1">Setuju</button>
                     </form>
                     <form
-                        action="{{ route('persetujuan.pembatalan.seminar', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
+                        action="{{ route('persetujuan.pembatalan.sidang', ['pembatalan_id' => $s->id_pembatalan, 'status' => 0]) }}"
                         method="post">
                         @csrf
                         <button type="submit" class="btn btn-danger btn-md w-100 my-1">Tolak</button>
                     </form>
-                    @endif
                 </td>
             </tr>
         @endforeach
@@ -92,19 +77,19 @@
     $(document).ready(function () {
         $('#seminarTable').DataTable({
             language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan MENU data per halaman",
-                zeroRecords: "Data tidak ditemukan",
-                info: "Menampilkan START sampai END dari TOTAL data",
-                infoEmpty: "Tidak ada data tersedia",
-                infoFiltered: "(difilter dari total MAX data)",
-                paginate: {
-                first: "<<",
-                last: ">>",
-                next: ">",
-                previous: "<"
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
                 }
-            }
         });
     });
 </script>

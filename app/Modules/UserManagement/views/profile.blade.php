@@ -98,42 +98,139 @@
                     <div class="text-right mb-3">
                         <button type="submit" class="btn btn-success">Simpan</button>
                     </div>
-
-                    @if(auth()->user()->role_user === 'admin')
-                        <div class="card mt-4">
-                            <div class="card-header bg-info">
-                                <h5 class="mb-0"><i class="fas fa-user-secret"></i> Mode Testing Impersonate</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h6>Dosen:</h6>
-                                        @foreach(\App\Models\User::where('role_user', 'dosen')->take(10)->get() as $dosen)
-                                            <div class="mb-2">
-                                                {{ $dosen->nama }}
-                                                <a href="{{ route('impersonate', $dosen->username) }}" class="btn btn-warning btn-sm">
-                                                    Login sebagai
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6>Mahasiswa:</h6>
-                                        @foreach(\App\Models\User::where('role_user', 'mahasiswa')->take(10)->get() as $mahasiswa)
-                                            <div class="mb-2">
-                                                {{ $mahasiswa->nama }}
-                                                <a href="{{ route('impersonate', $mahasiswa->username) }}" class="btn btn-warning btn-sm">
-                                                    Login sebagai
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Card untuk Search Impersonate - Khusus Admin -->
+    @if(auth()->user()->role_user === 'admin')
+        <div class="card mt-4">
+            <div class="card-header bg-info">
+                <h5 class="mb-0"><i class="fas fa-user-secret"></i> Mode Testing Impersonate</h5>
+            </div>
+            <div class="card-body">
+                <!-- Form Pencarian -->
+                <form action="{{ route('profile') }}" method="GET">
+                    <div class="input-group mb-4">
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Cari berdasarkan nama atau username..." 
+                               value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Dropdown Section -->
+                @if(!request('search'))
+                    <div class="row">
+                        <!-- Dropdown Dosen -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary">
+                                    <h6 class="mb-0">Dosen</h6>
+                                </div>
+                                <div class="card-body">
+                                    <select class="form-control select2" onchange="if(this.value) window.location.href=this.value">
+                                        <option value="">Pilih Dosen...</option>
+                                        @foreach($allDosen as $dosen)
+                                            <option value="{{ url(env('PREFIX_URL', 'sipta') . '/impersonate/' . $dosen->username) }}">
+                                                {{ $dosen->nama }} ({{ $dosen->username }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown Mahasiswa -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success">
+                                    <h6 class="mb-0">Mahasiswa</h6>
+                                </div>
+                                <div class="card-body">
+                                    <select class="form-control select2" onchange="if(this.value) window.location.href=this.value">
+                                        <option value="">Pilih Mahasiswa...</option>
+                                        @foreach($allMahasiswa as $mahasiswa)
+                                            <option value="{{ url(env('PREFIX_URL', 'sipta') . '/impersonate/' . $mahasiswa->username) }}">
+                                                {{ $mahasiswa->nama }} ({{ $mahasiswa->username }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Hasil Pencarian Section -->
+                @if(request('search'))
+                    <div class="row">
+                        <!-- Hasil Pencarian Dosen -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary">
+                                    <h6 class="mb-0">Dosen</h6>
+                                </div>
+                                <div class="card-body">
+                                    @if(isset($searchResults['dosen']) && $searchResults['dosen']->isNotEmpty())
+                                        @foreach($searchResults['dosen'] as $dosen)
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span>{{ $dosen->nama }} ({{ $dosen->username }})</span>
+                                                <a href="{{ url(env('PREFIX_URL', 'sipta') . '/impersonate/' . $dosen->username) }}" 
+                                                   class="btn btn-primary btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted mb-0">Tidak ada dosen yang ditemukan.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hasil Pencarian Mahasiswa -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success">
+                                    <h6 class="mb-0">Mahasiswa</h6>
+                                </div>
+                                <div class="card-body">
+                                    @if(isset($searchResults['mahasiswa']) && $searchResults['mahasiswa']->isNotEmpty())
+                                        @foreach($searchResults['mahasiswa'] as $mahasiswa)
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span>{{ $mahasiswa->nama }} ({{ $mahasiswa->username }})</span>
+                                                <a href="{{ url(env('PREFIX_URL', 'sipta') . '/impersonate/' . $mahasiswa->username) }}" 
+                                                   class="btn btn-primary btn-sm">
+                                                    Login sebagai
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted mb-0">Tidak ada mahasiswa yang ditemukan.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endif
 @stop
+
+@push('js')
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%'
+    });
+});
+</script>
+@endpush

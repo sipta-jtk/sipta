@@ -12,16 +12,51 @@ use App\Models\Mahasiswa;
 use App\Models\Dosen;
 use App\Models\FormPenilaian;
 use App\Models\Kota;
+use App\Models\Dokumen;
+use App\Models\AlokasiDosen;
+use App\Models\SubkategoriDokumen;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Facades\Validator;
 
 class PemberianNilaiController extends Controller
 {
+    private function cekAksebilitasPenilaian($namaFtaSlug, $idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Ambil semua id_kota yang boleh diakses dosen ini
+        $kotaDibimbing = AlokasiDosen::where('nip', $nip)
+            ->with([
+                'pengajuanPembimbing.kota.penjadwalan',
+                'pengajuanPembimbing.kota.mahasiswa',
+            ])
+            ->get()
+            ->pluck('pengajuanPembimbing.kota')
+            ->flatten()
+            ->unique('id_kota');
+    
+        $bolehAkses = $kotaDibimbing->contains(function ($kota) use ($idKota) {
+            return $kota && $kota->id_kota == $idKota;
+        });
+    
+        if (!$bolehAkses) {
+            abort(403, 'Anda tidak memiliki akses untuk menilai kelompok ini');
+        }
+    }
 
+    /**
+     * Menampilkan halaman pengisian nilai seminar
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param int $idProdi
+     */
     public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
+        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
         if ($namaFtaSlug == 'seminar ii') {
             return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
         } else {
@@ -35,10 +70,12 @@ class PemberianNilaiController extends Controller
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
             ->get();
 
-        // TBD tambahkan where untuk membedakan mana research dan pengembangan
+        $jenisTa = $keteranganUmumPenilaian->first()->jenis_ta;
+
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
         ->where('id_prodi', $idProdi)
         ->where('jenis_form', 'penilaian')
+        ->where('jenis_ta', $jenisTa)
         ->distinct()
         ->with([
             'kriteriaPenilaian.rubrik',
@@ -61,23 +98,30 @@ class PemberianNilaiController extends Controller
 
     public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
     {
+        $username = auth()->user()->username;
+
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
 
-        // TBD tambahkan where untuk membedakan mana research dan pengembangan
+        $jenisTa = $keteranganUmumPenilaian->jenis_ta;
+
         $detailInformasiFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->where('id_prodi', $idProdi)
+            ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
-                'kriteriaPenilaian.rubrik' => function ($query) {
-                    $query->with('detailRubrik.nilai'); 
-                }
-            , 'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
-                $query->whereHas('mahasiswa', function ($q) use ($idKota) {
-                    $q->where('id_kota', $idKota);
-                });
-            }])
+                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota, $username) {
+                    $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                        $q->where('id_kota', $idKota);
+                    })->where('nip', $username);
+                },
+                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota, $username) {
+                    $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                        $q->where('id_kota', $idKota);
+                    })
+                    ->where('nip', $username);
+                }])
             ->get();
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
@@ -86,6 +130,12 @@ class PemberianNilaiController extends Controller
             });
         })->first()->detailRubrik;
 
+        // Ambil dokumen terbaru berdasarkan kota dan kategori
+        $dokumen = $this->getLatestDokumenByKota($idKota, $namaFtaSlug);
+        Log::info(json_encode($dokumen, JSON_PRETTY_PRINT));
+
+        $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
+        
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_berdasarkan_rubrik', [
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian,
             'detailInformasiFta' => $detailInformasiFta,
@@ -93,7 +143,61 @@ class PemberianNilaiController extends Controller
             'idKota' => $idKota,
             'namaFta' => $namaFtaSlug,
             'idProdi' => $idProdi,
+            'view' => $view,
+            'dokumen' => $dokumen,
         ]);
+    }
+
+    /**
+     * Ambil dokumen terbaru berdasarkan kota dan kategori
+     * 
+     * @param int $idKota
+     * @param string $kategori
+     * @return array
+     */
+    private function getLatestDokumenByKota($idKota, $kategori)
+    {
+        $kategori = Str::slug($kategori, '-');
+        // Ubah kategori menjadi huruf kecil untuk konsistensi
+        $kategori = strtolower($kategori);
+
+        // Mapping manual kategori supaya sesuai dengan format di database
+        $kategori = match ($kategori) {
+            'seminar-i' => 'seminar1', // Seminar I
+            'seminar-ii' => 'seminar2', // Seminar II
+            'seminar-iii' => 'seminar3', // Seminar III
+            'sidang-akhir' => 'sidang', // Sidang Akhir
+            'dosen-pembimbing' => 'sidang', // Untuk dosen pembimbing, ambil dokumen sidang
+            default => $kategori // Kategori lainnya
+        };
+
+        // Ambil dokumen laporan terbaru berdasarkan kota dan kategori
+        $laporan = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 1) // Subkategori 1: Laporan
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+
+        // Ambil dokumen PowerPoint terbaru berdasarkan kota dan kategori
+        $powerpoint = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 3) // Subkategori 3: PowerPoint
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+        
+        // Log informasi dokumen untuk keperluan debugging
+        // Log::info('Preview Dokumen:', [
+        //     'id_kota' => $idKota,
+        //     'kategori' => $kategori,
+        //     'laporan_file_path' => optional($laporan)->file_path, // Path file laporan
+        //     'powerpoint_file_path' => optional($powerpoint)->file_path, // Path file PowerPoint
+        // ]);
+
+        // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
+        return [
+            'laporan' => $laporan,
+            'powerpoint' => $powerpoint
+        ];
     }
 
     public function simpanNilaiSeminar(Request $request, $namaFta, $idKota)
@@ -142,7 +246,8 @@ class PemberianNilaiController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -157,11 +262,16 @@ class PemberianNilaiController extends Controller
         $nilai = $request->except('_token', '_method');
         $nilai = array_values($nilai);
     
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
+        $mahasiswa = Mahasiswa::where('id_kota', $idKota)
+            ->with('kota')
+            ->get();
+        
+        $jenisTa = $mahasiswa->first()->kota->jenis_ta;
     
         $formPenilaian = FormPenilaian::where('nama_fta', $namaFtaSlug)
             ->where('jenis_form', 'penilaian')
             ->where('id_prodi', $mahasiswa->first()->id_prodi)
+            ->where('jenis_ta', $jenisTa)
             ->with('kriteriaPenilaian.rubrik', 'kategoriPenilaian')
             ->first();
     
@@ -177,9 +287,13 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
-            
-            // return redirect()->route('pengisian.masukan', [$namaFtaSlug, $idKota])->with('success', 'Nilai berhasil disimpan');
+            if ($namaFtaSlug == 'seminar iii') {
+                $namaFtaSlug = 'seminar-iii';
+            } elseif ($namaFtaSlug == 'sidang akhir') {
+                $namaFtaSlug = 'sidang-akhir';
+            }
+
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
@@ -231,11 +345,6 @@ class PemberianNilaiController extends Controller
     
     private function ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip): array
     {
-        Log::info('START');
-        Log::info('Nilai Kriteria: ' . json_encode($nilai, JSON_PRETTY_PRINT));
-        Log::info('Mahasiswa: ' . json_encode($mahasiswa, JSON_PRETTY_PRINT));
-        Log::info('Kriteria Penilaian: ' . json_encode($kriteriaPenilaian, JSON_PRETTY_PRINT));
-        Log::info('NIP: ' . $nip);
         $nilai_rata_rata = [];
         $bobotKriteria = $kriteriaPenilaian->pluck('bobot_kriteria')->toArray();
     
@@ -419,59 +528,58 @@ class PemberianNilaiController extends Controller
         ]);
     }
     
-    public function pengisianNilaiDosenPembimbing($idKota): View
+    public function pengisianNilaiDosenPembimbing($namaFta, $idKota): View
     {
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
             ->get();
 
+        $idProdi = $keteranganUmumPenilaian->first()->mahasiswa->first()->id_prodi;
+
         $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
-        ->with('kriteriaPenilaian.rubrik')
-        ->get();
+            ->where('id_prodi', $idProdi)
+            ->with([
+                'kriteriaPenilaian.rubrik',
+                'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota) {
+                    $query->whereHas('mahasiswa', function ($q) use ($idKota) {
+                        $q->where('id_kota', $idKota);
+                    });
+                }
+            ])
+            ->get();
+        
+        // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
+        $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),
-            'namaFta' => 'dosen pembimbing',
+            'namaFta' => $namaFtaSlug,
             'idKota' => $idKota,
+            'dokumen' => $dokumen,
         ]);
     }
 
-    public function simpanNilaiDosenPembimbing(Request $request, $idKota)
+    /**
+     * Mengunduh dokumen.
+     */
+    public function download($kategori, $id)
     {
-        $nip = auth()->user()->username;
-        $action = $request->form_action;
-        $nilai = $request->except('_token', '_method');
-        $nilai = array_values($nilai);
-
-        $mahasiswa = Mahasiswa::where('id_kota', $idKota)->get();
-
-        DB::beginTransaction();
-
         try {
-            foreach ($mahasiswa as $index => $mhs) {
-                $mhs->nilaiKriteria()
-                    ->where('nim', $mhs->nim)
-                    ->where('nip', $nip)
-                    ->where('id_kriteria', 1)
-                    ->delete();
+            $dokumen = Dokumen::where('id_dokumen', $id)->where('kategori', $kategori)->firstOrFail();
 
-                $mhs->nilaiKriteria()->create([
-                    'nim' => $mhs->nim,
-                    'nip' => $nip,
-                    'id_kriteria' => 1,
-                    'nilai_kriteria' => (double) $nilai[$index],
-                    'status_penilaian_dosen' => 'dipublikasikan'
-                ]);
+            if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
             }
 
-            DB::commit();
+            $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
+            $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
 
-            return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+            return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
         } catch (\Exception $e) {
-            DB::rollBack();
-
-            return redirect()->back()->with('error', 'Gagal menyimpan nilai: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
     }
 }

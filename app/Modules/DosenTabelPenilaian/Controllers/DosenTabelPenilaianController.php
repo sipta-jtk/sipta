@@ -12,7 +12,11 @@ use App\Models\AlokasiDosen;
 use App\Models\PengajuanPembimbing;
 use App\Models\Kota;
 use App\Models\Mahasiswa;
+use App\Models\KategoriPenilaian;
+use App\Models\FormPenilaian;
+use App\Models\DetailFeedback;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 Carbon::setLocale('id');
 
 
@@ -20,68 +24,117 @@ use Illuminate\Support\Facades\Auth;
 
 class DosenTabelPenilaianController extends Controller
 {
-    public function index()
+    public function index($kegiatan)
     {
-        $nip = Auth::user()->dosen->nip; // Asumsi NIP dosen disimpan di kolom `username` pada tabel `users`
+        $nip = Auth::user()->dosen->nip;
 
-        // Cari kota yang dibimbing atau diuji oleh dosen tersebut
+        //change kegiatan seminar-iii to Seminar III
+        $kegiatanForm = match ($kegiatan) {
+            'seminar-iii' => 'Seminar III',
+            'sidang-akhir' => 'Sidang Akhir',
+        };
+
+        $id_kategori = FormPenilaian::where('nama_fta', $kegiatanForm)
+            ->where('jenis_form', 'penilaian')
+            ->with('kategoriPenilaian')
+            ->get();
+
+        $idKategoriSemua = [];
+        foreach ($id_kategori as $item) {
+            foreach ($item->kategoriPenilaian as $kategori) {
+                $idKategoriSemua[] = $kategori->id_kategori;
+            }
+        }
+
+        $id_feedback = FormPenilaian::where('nama_fta', $kegiatanForm)
+            ->where('jenis_form', 'feedback')
+            ->with('aspekFeedback.detailFeedback')
+            ->get();
+        
+        $idKategoriFeedback = [];
+        foreach ($id_feedback as $item) {
+            foreach ($item->aspekFeedback as $feedback) {
+                $idKategoriFeedback[] = $feedback->id_feedback;
+            }
+        }
+
+        // Ambil hanya penjadwalan yang status-nya 'fix'
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
-            ->with(['pengajuanPembimbing.kota.penjadwalan', 
-                'pengajuanPembimbing.kota.mahasiswa.nilaiKriteria' => function ($query) use ($nip) {
-                    $query->where('nip', $nip);
-                }])
+            ->with([
+                'pengajuanPembimbing.kota.penjadwalan' => function ($query) use ($kegiatan) {
+                    $query->where('status', 'fix')
+                        ->where('agenda', $this->mappingKegiatan($kegiatan));
+                },
+                'pengajuanPembimbing.kota.mahasiswa',
+            ])
             ->get()
             ->pluck('pengajuanPembimbing.kota.penjadwalan')
             ->flatten()
-            ->unique('id_penjadwalan'); // Pastikan tidak ada duplikasi penjadwalan
+            ->unique('id_penjadwalan')
+            ->filter(); // filter() untuk menghilangkan null jika tidak ada penjadwalan yang fix
 
-        // Format data penjadwalan
-        $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip) {
+
+        $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip, $idKategoriSemua, $idKategoriFeedback) {
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
-            $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip) {
-                return $mahasiswa->nilaiKriteria->where('nip', $nip)->isNotEmpty();
+
+            $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip, $idKategoriSemua) {
+                return $mahasiswa->nilaiKategori->whereIn('id_kategori', $idKategoriSemua)
+                    ->where('nip', $nip)
+                    ->isNotEmpty();
             });
-            $statusPenilaian = $mahasiswa->flatMap(function ($mhs) use ($nip) {
-                return $mhs->nilaiKriteria->where('nip', $nip)->pluck('status_penilaian_dosen');
+
+            $statusPenilaian = $mahasiswa->flatMap(function ($mhs) use ($nip, $idKategoriSemua) {
+                return $mhs->nilaiKategori->whereIn('id_kategori', $idKategoriSemua)
+                    ->where('nip', $nip)
+                    ->pluck('status_penilaian_dosen');
             })->unique()->first();
+
+            $sudahFeedback = $mahasiswa->contains(function ($mhs) use ($nip, $idKategoriFeedback) {
+                return $mhs->kota->detailFeedback->whereIn('id_feedback', $idKategoriFeedback)
+                    ->where('nip', $nip)
+                    ->isNotEmpty();
+            });
+          
+            $statusFeedback = $mahasiswa->flatMap(function ($mhs) use ($nip, $idKategoriFeedback) {
+                return $mhs->kota->detailFeedback->whereIn('id_feedback', $idKategoriFeedback)
+                    ->where('nip', $nip)
+                    ->pluck('status_penilaian_dosen');
+            })->unique()->first();
+
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
                 'sesi' => $item->sesi,
-                'agenda' => $item->agenda,
+                'agenda' => match ($item->agenda) {
+                    'seminar_3' => 'Seminar 3',
+                    'sidang' => 'Sidang Akhir',
+                },
+                'sudah_dibuka' => Carbon::now()->greaterThanOrEqualTo(Carbon::parse($item->start)),
                 'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,
-                'kota' => $item->kota->nama_kota, // Asumsi ada relasi ke tabel `kota`
+                'kota' => $item->kota->nama_kota,
                 'id_kota' => $item->kota->id_kota,
-                'status' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
-                'status_penilaian' => $statusPenilaian ?? 'Belum dinilai',
-                'id' => $item->agenda === 'seminar_3' ? 4 : ($item->agenda === 'sidang' ? 6 : 4)
+                'sudah_penilaian' => $sudahDinilai ? 'Sudah dinilai' : 'Belum dinilai',
+                'status_penilaian' => $statusPenilaian,
+                'namaFta' => match ($item->agenda) {
+                    'seminar_3' => 'seminar-iii',
+                    'sidang' => 'sidang-akhir',
+                },
+                'id_prodi' => $mahasiswa->first()->id_prodi,
+                'sudah_feedback' => $sudahFeedback ? 'Sudah diisi' : 'Belum diisi',
+                'status_feedback' => $statusFeedback,
             ];
         });
 
-        // Kembalikan response JSON
+        Log::info(json_encode($penjadwalan, JSON_PRETTY_PRINT));
+
         return view('DosenTabelPenilaian.views.view', compact('penjadwalan'));
     }
 
-    public function publikasikan(Request $request, $id_penjadwalan)
-    {
-        $nip = Auth::user()->dosen->nip; // Ambil NIP dosen yang login
-
-        // Cari semua nilai kriteria terkait penjadwalan dan dosen
-        $nilaiKriteria = NilaiKriteria::whereHas('mahasiswa.kota.penjadwalan', function ($query) use ($id_penjadwalan) {
-            $query->where('id_penjadwalan', $id_penjadwalan);
-        })->where('nip', $nip)->get();
-
-        // Update status_penilaian_dosen menjadi "dipublikasikan"
-        foreach ($nilaiKriteria as $nilai) {
-            $nilai->update(['status_penilaian_dosen' => 'dipublikasikan']);
-        }
-
-        // Redirect kembali ke halaman dengan pesan sukses
-        return redirect()->route('nilai.index')->with('success', 'Nilai berhasil dipublikasikan.');
-    }
-
-    public function getForm($id, $kota)
-    {
-        return redirect()->route('nilai.index');
+    private function mappingKegiatan($kegiatan) {
+        return match ($kegiatan) {
+            'seminar-iii' => 'seminar_3',
+            'sidang-akhir' => 'sidang',
+            default => null,
+        };
     }
 }
