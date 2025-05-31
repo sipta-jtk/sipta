@@ -28,9 +28,15 @@ class TokenVerify extends Controller
 
         $user = $accessToken->tokenable; // Get the associated user
 
+        $role = $user->role_user; // Assuming 'role_user' is the field that contains the user's role
+        if (!$role) {
+            // try getting field 'role_dosen' if 'role_user' is not set
+            $role = $user->role_dosen ?? null;
+        }
+
         // return user
         return Response::json([
-            'role' => $user->role_user
+            'role' => $role
         ]);
     }
 }
