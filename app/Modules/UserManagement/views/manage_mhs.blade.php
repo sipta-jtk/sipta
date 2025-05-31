@@ -1,7 +1,5 @@
 @extends('adminlte::page')
-
 @section('title', 'Data Mahasiswa')
-
 @section('content_header')
 <h1>Data Mahasiswa</h1>
 <div>
@@ -13,9 +11,7 @@
     @endcomponent
 </div>
 @stop
-
 @section('content')
-
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3" style="gap: 0.5rem;">
@@ -42,7 +38,7 @@
                 <button id="updateRoleButton" class="btn btn-success">Ubah Peran</button>
             </div>
         </div>
-
+        
         <table id="datatable" class="table table-striped">
             <thead class="bg-dark text-white">
                 <tr>
@@ -57,34 +53,34 @@
             </thead>
             <tbody>
                 @php
-                $no = 1;
-                @endphp
+                        $no = 1;
+                    @endphp
                 @foreach ($mahasiswa as $mhs)
                 <tr>
-                    <td>{{$no}}</td>
+                    <td></td>
                     <td>{{ $mhs->nim }}</td>
                     <td>{{ $mhs->nama }}</td>
                     <td>{{ $mhs->nama_prodi }}</td>
                     <td>{{ $mhs->kelas}}</td>
                     <td>{{ $mhs->tahun_masuk }}</td>
-                    <td>
-                        @php
-                        $no++;
-                        @endphp
-                        @if($mhs->status_user != 'nonaktif')
-                        <button class="btn btn-danger btn-xs shadow btn-nonaktif-mhs" title="Nonaktifkan Mahasiswa" data-toggle="modal" data-target="#nonAktifMhs"
-                            data-nim="{{ $mhs->nim }}"
-                            data-nama="{{ $mhs->nama }}">
-                            <i class="fas fa-power-off m-1"></i>
-                        </button>
-                        @else
-                        <button class="btn btn-success btn-xs shadow btn-aktif-mhs" title="Aktifkan Mahasiswa" data-toggle="modal" data-target="#AktifMhs"
-                            data-nim="{{ $mhs->nim }}"
-                            data-nama="{{ $mhs->nama }}">
-                            <i class="fas fa-power-off m-1"></i>
-                        </button>
-                        @endif
-                        <button class="btn btn-warning btn-xs me-2 shadow btn-update-mhs" title="Edit" data-toggle="modal" data-target="#updateMhs"
+                    <td>    
+                    @php
+                    $no++; 
+                    @endphp
+                    @if($mhs->status_user != 'nonaktif')
+                        <button class="btn btn-danger btn-xs shadow btn-nonaktif-mhs" title="Nonaktifkan Mahasiswa" data-toggle="modal" data-target="#nonAktifMhs" 
+                        data-nim="{{ $mhs->nim }}"
+                        data-nama="{{ $mhs->nama }}">
+                        <i class="fas fa-power-off m-1"></i>
+                    </button>
+                    @else
+                    <button class="btn btn-success btn-xs shadow btn-aktif-mhs" title="Aktifkan Mahasiswa" data-toggle="modal" data-target="#AktifMhs" 
+                        data-nim="{{ $mhs->nim }}"
+                        data-nama="{{ $mhs->nama }}">
+                        <i class="fas fa-power-off m-1"></i> 
+                    </button>
+                    @endif
+                            <button class="btn btn-warning btn-xs me-2 shadow btn-update-mhs" title="Edit" data-toggle="modal" data-target="#updateMhs"
                             data-nim="{{ $mhs->nim }}"
                             data-nama="{{ $mhs->nama }}"
                             data-email="{{ $mhs->email }}"
@@ -235,18 +231,49 @@
 @section('css')
 <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
+
 @stop
 
 @section('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const fileInput = document.querySelector('input[type="file"]');
-        if (!fileInput) return;
+    jQuery(document).ready(function($) {
+
+    $('#datatable').DataTable({
+            responsive: true,
+            columnDefs: [
+                { targets: [0, 6], orderable: false } // Kolom No & Aksi tidak bisa disort
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ entri",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "→",
+                    previous: "←"
+                },
+                zeroRecords: "Data tidak ditemukan",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                infoFiltered: "(disaring dari _MAX_ total entri)"
+            },
+            drawCallback: function (settings) {
+                let api = this.api();
+                api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+});
+  
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.querySelector('input[type="file"]');
+    if (!fileInput) return;
 
         const allowedExtensions = ['xls', 'xlsx', 'csv'];
 
@@ -278,21 +305,21 @@
             }
         });
     });
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#dosenTable").DataTable();
     });
 
 
 
-    $(document).ready(function() {
-        $(".btn-update-mhs").click(function() {
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            var email = $(this).data("email");
-            var no_whatsapp = $(this).data("no_whatsapp");
-            var id_prodi = $(this).data("id_prodi");
-            var kelas = $(this).data("kelas");
-            var tahun_masuk = $(this).data("tahun_masuk");
+     $(document).ready(function () {
+         $(".btn-update-mhs").click(function () {
+             var nim = $(this).data("nim");
+             var nama = $(this).data("nama");
+             var email = $(this).data("email");
+             var no_whatsapp = $(this).data("no_whatsapp");
+             var id_prodi = $(this).data("id_prodi");
+             var kelas = $(this).data("kelas");
+             var tahun_masuk = $(this).data("tahun_masuk");
 
             document.getElementById("nim-update").value = nim;
             document.getElementById("nama-update").value = nama;
@@ -302,28 +329,28 @@
             document.getElementById("kelas-update").value = kelas;
             document.getElementById("tahun_masuk-update").value = tahun_masuk;
 
-            console.log(nim);
+             console.log(nim);
+ 
+         });
+     });
 
-        });
-    });
-
-    $(document).ready(function() {
-        $(".btn-nonaktif-mhs").click(function() {
+     $(document).ready(function () {
+        $(".btn-nonaktif-mhs").click(function () {
             var nim = $(this).data("nim");
             var nama = $(this).data("nama");
             document.getElementById("nim-input-nonaktif").value = nim;
-            document.getElementById("konfirmasi-pesan-nonaktif").textContent =
-                "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
-        });
+            document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
+            "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
     });
+        });
 
-    $(document).ready(function() {
-        $(".btn-aktif-mhs").click(function() {
+     $(document).ready(function () {
+        $(".btn-aktif-mhs").click(function () {
             var nim = $(this).data("nim");
             var nama = $(this).data("nama");
             document.getElementById("nim-input-aktif").value = nim;
-            document.getElementById("konfirmasi-pesan-aktif").textContent =
-                "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
+            document.getElementById("konfirmasi-pesan-aktif").textContent = 
+            "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
         });
     });
 </script>

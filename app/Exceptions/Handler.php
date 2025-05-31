@@ -61,6 +61,10 @@ public function render($request, Throwable $exception)
     if ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
         return response()->view('UserManagement.views.error404', ['errors' => $errors], 404);
     }
+    
+    if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $exception->getStatusCode() === 503) {
+    return response()->view('UserManagement.views.error503', ['errors' => $errors], 503);
+    }
 
     return parent::render($request, $exception);
 }
