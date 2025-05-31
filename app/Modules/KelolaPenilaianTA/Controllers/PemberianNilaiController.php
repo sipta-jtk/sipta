@@ -56,7 +56,7 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
         if ($namaFtaSlug == 'seminar ii') {
             return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
         } else {
@@ -98,6 +98,8 @@ class PemberianNilaiController extends Controller
 
     public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
     {
+        $username = auth()->user()->username;
+
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
@@ -109,15 +111,16 @@ class PemberianNilaiController extends Controller
             ->where('jenis_ta', $jenisTa)
             ->where('jenis_form', 'penilaian')
             ->with([
-                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota) {
+                'kriteriaPenilaian.rubrik.nilaiRubrik' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })->where('nip', $username);
                 },
-                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota) {
+                'kategoriPenilaian.nilaiKategori' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })
+                    ->where('nip', $username);
                 }])
             ->get();
 
@@ -129,6 +132,7 @@ class PemberianNilaiController extends Controller
 
         // Ambil dokumen terbaru berdasarkan kota dan kategori
         $dokumen = $this->getLatestDokumenByKota($idKota, $namaFtaSlug);
+        Log::info(json_encode($dokumen, JSON_PRETTY_PRINT));
 
         $view = $detailInformasiFta->first()->kategoriPenilaian->first()->nilaiKategori->first()?->status_penilaian_dosen == 'dipublikasikan' ? false : true;
         
@@ -153,6 +157,7 @@ class PemberianNilaiController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
+        $kategori = Str::slug($kategori, '-');
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 
@@ -242,6 +247,7 @@ class PemberianNilaiController extends Controller
             DB::commit();
 
             return redirect()->route('monitoring.dosen.pembimbing')->with('success', 'Nilai berhasil disimpan');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -281,7 +287,13 @@ class PemberianNilaiController extends Controller
     
             DB::commit();
     
-            return redirect()->route('nilai.index')->with('success', 'Nilai berhasil disimpan');
+            if ($namaFtaSlug == 'seminar iii') {
+                $namaFtaSlug = 'seminar-iii';
+            } elseif ($namaFtaSlug == 'sidang akhir') {
+                $namaFtaSlug = 'sidang-akhir';
+            }
+
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
     
@@ -540,8 +552,6 @@ class PemberianNilaiController extends Controller
         
         // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
         $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
-
-        Log::info('Detail informasi'. json_encode($detailInformasiFta, JSON_PRETTY_PRINT));
 
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,

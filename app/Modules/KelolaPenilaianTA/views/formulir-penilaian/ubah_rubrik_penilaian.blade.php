@@ -3,13 +3,16 @@
 @section('title', 'Pengubahan Rubrik Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Pengubahan Rubrik Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Ubah Rubrik Penilaian']
         ]
@@ -84,10 +87,14 @@
                         </tr>
                     </thead>
                     <tbody id="rubrikPenilaianTable">
+                        @php 
+                            $index = 0;
+                        @endphp
                         @foreach ($rubrikList as $kriteria)
                             @foreach ($kriteria->rubrik as $rubrik)
                                 <tr>
                                     <td>
+                                        <input type="hidden" name="status[]" value="1">
                                         <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                                             <option value="{{ $kriteria->id_kriteria }}" selected>
                                                 {{ $kriteria->nama_kriteria }}
@@ -106,9 +113,12 @@
                                             $deskripsi = $rubrik->detail->firstWhere('id_nilai', $nilai->id_nilai);
                                         @endphp
                                         <td>
-                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $nilai->id_nilai }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
+                                            <textarea class="form-control textarea-rubrik" name="nilai_{{ $index }}[]" rows="6" required>{{ $deskripsi->detail_rubrik_penilaian ?? '-' }}</textarea>
                                         </td>
                                     @endforeach
+                                    @php
+                                        $index++;
+                                    @endphp
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-row">
                                             <i class="fa-solid fa-minus"></i>

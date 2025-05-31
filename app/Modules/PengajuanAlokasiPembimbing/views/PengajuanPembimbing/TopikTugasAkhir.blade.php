@@ -179,43 +179,50 @@
             }
         });
 
-        // // Simpan data secara otomatis saat input berubah
-        // $("textarea, input[type='radio']").on("input change", function () {
-        //     saveDraftData();
-        // });
+        // Simpan data secara otomatis saat input berubah
+        $("textarea, input[type='radio']").on("input change", function () {
+            saveDraftData(false); // false = tanpa validasi
+        });
 
         // Fungsi untuk menyimpan data ke localStorage
-        function saveDraftData() {
+        function saveDraftData(validasi = true) {
             let topikValue = $("textarea[name='topik']").val().trim();
             let bidangChecked = $("input[type='radio'][name='bidang']:checked");
             let jenisTAChecked = $("input[type='radio'][name='jenis_tugas_akhir']:checked");
 
-            // Validasi: topik harus diisi
-            if (topikValue === "") {
-                toast("error", "Topik/judul tugas akhir harus diisi.");
-                return false; 
-            }
+            if (validasi) {
+                if (topikValue === "") {
+                    toast("error", "Topik/judul tugas akhir harus diisi.");
+                    return false; 
+                }
 
-            // Validasi: bidang harus dipilih
-            if (bidangChecked.length === 0) {
-                toast("error", "Bidang tugas akhir harus dipilih.");
-                return false;
-            }
-
-            if (jenisTAChecked.length === 0) {
-                toast("error", "Jenis tugas akhir harus dipilih.");
-                return false;
+                if (jenisTAChecked.length === 0) {
+                    toast("error", "Jenis tugas akhir harus dipilih.");
+                    return false;
+                }
+                
+                if (bidangChecked.length === 0) {
+                    toast("error", "Bidang tugas akhir harus dipilih.");
+                    return false;
+                }
             }
 
             let draftData = {
-                topik: topikValue,
-                bidang: bidangChecked.next("label").text().trim(),
-                jenisTA: jenisTAChecked.val()
+            topik: topikValue,
+            bidang: bidangChecked.next("label").text().trim(),
+            jenisTA: jenisTAChecked.val()
             };
 
             localStorage.setItem("pengajuanTopikDraft", JSON.stringify(draftData));
             return true;
         }
+
+        // Saat klik Simpan Draft, lakukan validasi penuh
+        $("#saveDraft").click(function () {
+            if (saveDraftData(true)) {
+            toast("success", "Draft berhasil disimpan!");
+            }
+        });
 
         // Fungsi untuk memuat draft dari localStorage
         function loadDraftData() {
