@@ -3,6 +3,9 @@
 @section('title', 'PENILAIAN SEMINAR II')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <!-- Judul Halaman -->
         <h1 class="mb-0">PENILAIAN {{ strtoupper($namaFta) }}</h1>
@@ -11,7 +14,7 @@
         {{-- TBD perbaiki alur breadcumb --}}
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Penilaian Seminar II']
                 ]
                 ])

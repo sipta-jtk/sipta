@@ -6,12 +6,42 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('UserManagement.views.profile', ['user' => Auth::user()]);
+        $search = $request->input('search');
+        $searchResults = [];
+        
+        // Get all users for dropdowns
+        $allDosen = User::where('role_user', 'dosen')
+            ->orderBy('nama', 'asc')
+            ->get();
+        
+        $allMahasiswa = User::where('role_user', 'mahasiswa')
+            ->orderBy('nama', 'asc')
+            ->get();
+
+        // Search results
+        if ($search) {
+            $searchResults['dosen'] = User::where('role_user', 'dosen')
+                ->where(function($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                })
+                ->get();
+                
+            $searchResults['mahasiswa'] = User::where('role_user', 'mahasiswa')
+                ->where(function($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                })
+                ->get();
+        }
+
+        return view('UserManagement.views.profile', compact('searchResults', 'allDosen', 'allMahasiswa'));
     }
 
     public function update(Request $request)

@@ -176,6 +176,7 @@ class PemberianFeedbackController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
+        Log::info('Mengambil dokumen terbaru untuk kota: ' . $idKota . ' dengan kategori: ' . $kategori);
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 
@@ -338,7 +339,10 @@ class PemberianFeedbackController extends Controller
             }
             // Commit transaksi jika berhasil
             DB::commit();
-            return redirect()->route('nilai.index')->with('success', 'Masukan berhasil disimpan.');
+
+            $namaFtaSlug = str_replace(' ', '-', $namaFtaSlug);
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])
+                ->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();

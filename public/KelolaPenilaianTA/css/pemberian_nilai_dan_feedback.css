@@ -94,3 +94,14 @@ tbody tr:hover {
 .char-counter {
     transition: color 0.3s ease;
 }
+
+/* Hide the increment and decrement buttons */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}

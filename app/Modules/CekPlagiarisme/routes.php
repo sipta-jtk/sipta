@@ -29,12 +29,14 @@ Route::middleware(['auth', 'can:user'])->group(function () {
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
-Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
-    Route::get('/penentuan-ambang-batas', function () {
-        return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+Route::middleware(['auth', 'can:akses-koordinator-admin'])->group(function () {
+    Route::middleware(['can:koordinator_ta,admin'])->group(function () {
+        Route::get('/penentuan-ambang-batas', function () {
+            return view('CekPlagiarisme.views.PenentuanAmbangBatas');
+        });
+        Route::get('/api/ambang-batas', [AmbangBatasController::class, 'getData']);
+        Route::post('/api/ambang-batas', [AmbangBatasController::class, 'store']);
     });
-    Route::get('/api/ambang-batas', [AmbangBatasController::class, 'getData']);
-    Route::post('/api/ambang-batas', [AmbangBatasController::class, 'store']);
 });
 
 /**********************************

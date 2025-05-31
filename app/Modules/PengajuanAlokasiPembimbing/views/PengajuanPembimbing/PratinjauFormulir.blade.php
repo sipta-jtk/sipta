@@ -138,7 +138,12 @@
                     else {
                         document.getElementById("preview-topik").textContent = response.topikTugasAkhir;
                         document.getElementById("preview-bidang").textContent = response.bidangTugasAkhir;
-                        document.getElementById("preview-jenis").textContent = response.jenisTugasAkhir;
+                        let jenisTugasAkhir = response.jenisTugasAkhir;
+                        if (jenisTugasAkhir === "penelitian") {
+                            document.getElementById("preview-jenis").textContent = "Penelitian";
+                        } else if (jenisTugasAkhir === "pengembangan") {
+                            document.getElementById("preview-jenis").textContent = "Pengembangan";
+                        }
 
                         let prioritasList = document.getElementById("preview-prioritas");
                         prioritasList.innerHTML = ""; // Kosongkan daftar sebelum ditambahkan
@@ -229,7 +234,7 @@
                     };
                     console.log(dataToSend);
 
-                    FireSweetAlert('warning', 'Lakukan Finalisasi Data?', 'Pastikan data yang ada isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
+                    FireSweetAlert('warning', 'Lakukan Finalisasi Data?', 'Pengajuan hanya dapat dilakukan satu kali. Pastikan data yang Anda isi sudah benar!', 'Submit', 'Kembali', '#3085d6', '#d33', true, true, (confirmed) => {
                     if (confirmed) { 
 
                     // Kirim data ke backend dengan fetch
