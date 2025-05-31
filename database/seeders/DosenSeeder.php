@@ -120,20 +120,10 @@ class DosenSeeder extends Seeder
                 'bersedia_membimbing' => 'belum_konfirmasi'
             ],
             [
-                'nip' => '197109031999032001',
-                'id_kbk' => 2,
-                'id_dosen' => 'SN',
-                'kode_dosen' => 'KO009N',
-                'status_dosen' => 'aktif',
-                'role_dosen' => 'dosen',
-                'bersedia_membimbing' => 'belum_konfirmasi' //bersedia
-            ],
-            [
                 'nip' => '198104072006041001',
                 'id_kbk' => 3,
                 'id_dosen' => 'PH',
                 'kode_dosen' => 'KO048N',
-                'status_dosen' => 'aktif',
                 'role_dosen' => 'dosen',
                 'bersedia_membimbing' => 'belum_konfirmasi' //bersedia
             ],
@@ -214,7 +204,6 @@ class DosenSeeder extends Seeder
                 'id_kbk' => 3,
                 'id_dosen' => 'HA',
                 'kode_dosen' => 'KO060N',
-                'status_dosen' => 'aktif',
                 'role_dosen' => 'dosen',
                 'bersedia_membimbing' => 'belum_konfirmasi' //bersedia
             ],
@@ -327,14 +316,6 @@ class DosenSeeder extends Seeder
                 'id_kbk' => 2,
                 'id_dosen' => 'TG',
                 'kode_dosen' => 'KO078N',
-                'role_dosen' => 'dosen',
-                'bersedia_membimbing' => 'belum_konfirmasi'
-            ],
-            [
-                'nip' => '198706302019031011',
-                'id_kbk' => 1,
-                'id_dosen' => 'WW',
-                'kode_dosen' => 'KO079N',
                 'role_dosen' => 'dosen',
                 'bersedia_membimbing' => 'belum_konfirmasi'
             ],

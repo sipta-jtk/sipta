@@ -41,6 +41,167 @@ class UserSeeder extends Seeder
             ],
             // Koordinator TA
             [
+                'username' => '199301062019031017',
+                'nama' => 'Lukmannul Hakim Firdaus, S.Kom., M.T.',
+                'email' => 'lukmannul.hakim@polban.ac.id',
+                'password' => Hash::make('lukm123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567941',
+                'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198903252019032023',
+                'nama' => 'Sri Ratna Wulan, S.Pd., M.T.',
+                'email' => 'sri.ratna@polban.ac.id',
+                'password' => Hash::make('srir123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567944',
+                'photo' => 'sri_ratna_wulan,_s.pd.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            // Dosen
+             [
+                'username' => '197312271999031003',
+                'nama' => 'Ade Chandra Nugraha, S.Si., M.T.',
+                'email' => 'ade.chandra@polban.ac.id',
+                'password' => Hash::make('adec123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567912',
+                'photo' => 'ade_chandra_nugraha,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196810141993032002',
+                'nama' => 'Ani Rahmani, S.Si., M.T.',
+                'email' => 'ani.rahmani@polban.ac.id',
+                'password' => Hash::make('anir123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567912',
+                'photo' => 'ani_rahmani,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '197201061999031002',
+                'nama' => 'Bambang Wisnuadhi, S.Si., M.T.',
+                'email' => 'bambang.wisnuadhi@polban.ac.id',
+                'password' => Hash::make('bamb123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567912',
+                'photo' => 'bambang_wisnuadhi,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196012261992031001',
+                'nama' => 'Didik Suwito Pribadi, BSCS.',
+                'email' => 'didik.suwito@polban.ac.id',
+                'password' => Hash::make('didi123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567912',
+                'photo' => 'didik_suwito_pribadi,_bscs..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196101141992021001',
+                'nama' => 'Eddy B. Soewono, DRS., M.Kom.',
+                'email' => 'eddy.soewono@polban.ac.id',
+                'password' => Hash::make('eddy123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567913',
+                'photo' => 'eddy_b._soewono,_drs.,_m.kom..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198009162009122001',
+                'nama' => 'Fitri Diani, S.Si., M.T.',
+                'email' => 'fitri.diani@polban.ac.id',
+                'password' => Hash::make('fitr123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567914',
+                'photo' => 'fitri_diani,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198604122014041001',
+                'nama' => 'Ghifari Munawar, S.T., M.T.',
+                'email' => 'ghifari.munawar@polban.ac.id',
+                'password' => Hash::make('ghif123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567915',
+                'photo' => 'ghifari_munawar,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198502102015042001',
+                'nama' => 'Ade Hodijah, S.T., M.T.',
+                'email' => 'ade.hodijah@polban.ac.id',
+                'password' => Hash::make('adeh123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567916',
+                'photo' => 'ade_hodijah,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '197604182001121004',
+                'nama' => 'Iwan Awaludin, S.T., M.T.',
+                'email' => 'iwan.awaludin@polban.ac.id',
+                'password' => Hash::make('iwan123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567917',
+                'photo' => 'iwan_awaludin,_s.t.,_m.t._.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198012122008122001',
+                'nama' => 'Ida Suhartini, S.Kom., MMSI.',
+                'email' => 'ida.suhartini@polban.ac.id',
+                'password' => Hash::make('idas123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567918',
+                'photo' => 'ida_suhartini,_s.kom.,_mmsi..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198004192005011002',
+                'nama' => 'Irwan Setiawan, S.Si., M.T.',
+                'email' => 'irwan.setiawan@polban.ac.id',
+                'password' => Hash::make('irwa123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567919',
+                'photo' => 'irwan_setiawan,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196208151990031001',
+                'nama' => 'Irawan Thamrin, IR., M.T.',
+                'email' => 'irawan.thamrin@polban.ac.id',
+                'password' => Hash::make('iraw123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567920',
+                'photo' => 'irawan_thamrin,_ir.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198104072006041001',
+                'nama' => 'Dr. Priyanto Hidayatullah, ST.,M.Sc.',
+                'email' => 'priyanto.hidayatullah@polban.ac.id',
+                'password' => Hash::make('dr.p123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567921',
+                'photo' => 'dr._priyanto_hidayatullah,_st.,m.sc..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196210211993031002',
+                'nama' => 'Jonner Hutahaean, BSET., M.Info.Sys.',
+                'email' => 'jonner.hutahaean@polban.ac.id',
+                'password' => Hash::make('jonn123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567922',
+                'photo' => 'jonner_hutahaean,_bset.,_m.info.sys..png',
+                'status_user' => 'aktif'
+            ],
+            [
                 'username' => '196610181995121001',
                 'nama' => 'Joe Lian Min, M.Eng.',
                 'email' => 'joe.lian@polban.ac.id',
@@ -50,15 +211,15 @@ class UserSeeder extends Seeder
                 'photo' => 'joe_lian_min,_m.eng..png',
                 'status_user' => 'aktif'
             ],
-            // Dosen
             [
-                'username' => '198706302019031011',
-                'nama' => 'Wendi Wirasta, S.T., M.T.',
-                'email' => 'wendi.wirasta@polban.ac.id',
-                'password' => Hash::make('wend123!#'),
+                'username' => '196312131992012001',
+                'nama' => 'Dr. Nurjannah Syakrani, DRA., M.T.',
+                'email' => 'nurjannah.syakrani@polban.ac.id',
+                'password' => Hash::make('dr.n123!#'),
                 'role_user' => 'dosen',
-                'no_whatsapp' => '081234567946',
-                'photo' => 'wendi_wirasta,_s.t.,_m.t..png'
+                'no_whatsapp' => '081234567924',
+                'photo' => 'dr._nurjannah_syakrani,_dra.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '197109031999032001',
@@ -71,31 +232,153 @@ class UserSeeder extends Seeder
                 'status_user' => 'aktif'
             ],
             [
-                'username' => '198104072006041001',
-                'nama' => 'Dr. Priyanto Hidayatullah, ST.,M.Sc.',
-                'email' => 'priyanto.hidayatullah@polban.ac.id',
-                'password' => Hash::make('dr.p123!#'),
+                'username' => '196303161995121001',
+                'nama' => 'Suprihanto, BSEE., M.Sc.',
+                'email' => 'suprihanto@polban.ac.id',
+                'password' => Hash::make('supr123!#'),
                 'role_user' => 'dosen',
-                'no_whatsapp' => '081234567921',
-                'photo' => 'dr._priyanto_hidayatullah,_st.,m.sc..png'
+                'no_whatsapp' => '081234567926',
+                'photo' => 'suprihanto,_bsee.,_m.sc..png',
+                'status_user' => 'aktif'
             ],
             [
-                'username' => '198502102015042001',
-                'nama' => 'Ade Hodijah, S.T., M.T.',
-                'email' => 'ade.hodijah@polban.ac.id',
-                'password' => Hash::make('adeh123!#'),
+                'username' => '196904041998031001',
+                'nama' => 'Setiadi Rachmat, M.Eng.',
+                'email' => 'setiadi.rachmat@polban.ac.id',
+                'password' => Hash::make('seti123!#'),
                 'role_user' => 'dosen',
-                'no_whatsapp' => '081234567916',
-                'photo' => 'ade_hodijah,_s.t.,_m.t..png'
+                'no_whatsapp' => '081234567927',
+                'photo' => 'setiadi_rachmat,_m.eng..png',
+                'status_user' => 'aktif'
             ],
             [
-                'username' => '199301062019031017',
-                'nama' => 'Lukmannul Hakim Firdaus, S.Kom., M.T.',
-                'email' => 'lukmannul.hakim@polban.ac.id',
-                'password' => Hash::make('lukm123!#'),
+                'username' => '196111091993032001',
+                'nama' => 'Dr. Transmissia Semiawan, BSCS., M.IT.',
+                'email' => 'transmissia.semiawan@polban.ac.id',
+                'password' => Hash::make('dr.t123!#'),
                 'role_user' => 'dosen',
-                'no_whatsapp' => '081234567941',
-                'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png',
+                'no_whatsapp' => '081234567928',
+                'photo' => 'dr._transmissia_semiawan,_bscs.,_m.it..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '196009281994031001',
+                'nama' => 'Urip Teguh Setijohatmo, BSCS., M.Kom.',
+                'email' => 'urip.setijohatmo@polban.ac.id',
+                'password' => Hash::make('urip123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567929',
+                'photo' => 'urip_teguh_setijohatmo,_bscs.,_m.kom..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '197912242008121001',
+                'nama' => 'Yadhi Adhitia P., S.T.',
+                'email' => 'yadhi.adhitia@polban.ac.id',
+                'password' => Hash::make('yadh123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567930',
+                'photo' => 'yadhi_adhitia_p.,_s.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '197407182001121002',
+                'nama' => 'Yudi Widhiyasana, S.Si., M.T.',
+                'email' => 'yudi.widhiyasana@polban.ac.id',
+                'password' => Hash::make('yudi123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567931',
+                'photo' => 'yudi_widhiyasana,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198604212018031001',
+                'nama' => 'Maisevli Harika, S.ST., M.T., M.Eng',
+                'email' => 'maisevli.harika@polban.ac.id',
+                'password' => Hash::make('mais123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567932',
+                'photo' => 'maisevli_harika,_s.st.,_m.t.,_m.eng.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198801292015041003',
+                'nama' => 'Zulkifli Arsyad, S.T., M.T.',
+                'email' => 'zulkifli.arsyad@polban.ac.id',
+                'password' => Hash::make('zulk123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567933',
+                'photo' => 'zulkifli_arsyad,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198705172019031004',
+                'nama' => 'Akhmad Bakhrun, S.Kom, M.T.',
+                'email' => 'akhmad.bakhrun@polban.ac.id',
+                'password' => Hash::make('akhm123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567934',
+                'photo' => 'akhmad_bakhrun,_s.kom,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '199304262019032028',
+                'nama' => 'Aprianti Nanda Sari, S.T., M.Kom.',
+                'email' => 'aprianti.nanda@polban.ac.id',
+                'password' => Hash::make('apri123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567935',
+                'photo' => 'aprianti_nanda_sari,_s.t.,_m.kom..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198405122019031008',
+                'nama' => 'Ardhian Ekawijana, S.T., M.T.',
+                'email' => 'ardhian.ekawijana@polban.ac.id',
+                'password' => Hash::make('ardh123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567936',
+                'photo' => 'ardhian_ekawijana,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198906102019032019',
+                'nama' => 'Asri Maspupah, S.S.T., M.T.',
+                'email' => 'asri.maspupah@polban.ac.id',
+                'password' => Hash::make('asri123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567937',
+                'photo' => 'asri_maspupah,_s.s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198911032019031019',
+                'nama' => 'Beri Noviansyah, S.Kom., M.T.',
+                'email' => 'beri.noviansyah@polban.ac.id',
+                'password' => Hash::make('beri123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567938',
+                'photo' => 'beri_noviansyah,_s.kom.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '198409012019031008',
+                'nama' => 'Cholid Fauzi, S.T., M.T.',
+                'email' => 'cholid.fauzi@polban.ac.id',
+                'password' => Hash::make('chol123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567939',
+                'photo' => 'cholid_fauzi,_s.t.,_m.t..png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '199210222019032018',
+                'nama' => 'Hashri Hayati, S.T., M.T.',
+                'email' => 'hashri.hayati@polban.ac.id',
+                'password' => Hash::make('hash123!#'),
+                'role_user' => 'dosen',
+                'no_whatsapp' => '081234567940',
+                'photo' => 'hashri_hayati,_s.t.,_m.t..png',
                 'status_user' => 'aktif'
             ],
             [
@@ -116,16 +399,6 @@ class UserSeeder extends Seeder
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567943',
                 'photo' => 'siti_dwi_setiarini,_s.si.,_m.t..png',
-                'status_user' => 'aktif'
-            ],
-            [
-                'username' => '198903252019032023',
-                'nama' => 'Sri Ratna Wulan, S.Pd., M.T.',
-                'email' => 'sri.ratna@polban.ac.id',
-                'password' => Hash::make('srir123!#'),
-                'role_user' => 'dosen',
-                'no_whatsapp' => '081234567944',
-                'photo' => 'sri_ratna_wulan,_s.pd.,_m.t..png',
                 'status_user' => 'aktif'
             ],
             [
@@ -189,16 +462,6 @@ class UserSeeder extends Seeder
                 'status_user' => 'aktif'
             ],
             [
-                'username' => '199106142019032000',
-                'nama' => 'Lia Rahmawati',
-                'email' => 'lia.rahmawati@polban.ac.id',
-                'password' => Hash::make('liar123!#'),
-                'role_user' => 'admin',
-                'no_whatsapp' => '081234567950',
-                'photo' => 'lia_rahmawati.png',
-                'status_user' => 'aktif'
-            ],
-                        [
                 'username' => '221511001',
                 'nama' => 'Agam Andika',
                 'email' => 'agam.andika.tif22@polban.ac.id',
