@@ -800,6 +800,28 @@ return [
             ],
         ],
         [
+            'text' => 'Pendataan Mahasiswa',
+            'icon' => 'fas fa-user',
+            'submenu' => [
+                [
+                    'text' => 'Data Mahasiswa',
+                    'url' => $prefix . '/data-mahasiswa',
+                    'icon' => 'fas fa-user-tie',
+                    'can' => 'pemimpin'
+                ],
+                [
+                    'text' => 'Data Kelompok TA',
+                    'url' => $prefix . '/data-kelompok-ta',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'pemimpin'
+                ],
+                // [
+                //     'text' => 'level_one',
+                //     'url' => '#',
+                // ],
+            ],
+        ],
+        [
             'text' => 'Notifikasi dan Reminder',
             'icon' => 'fas fa-bell',
             'submenu' => [
