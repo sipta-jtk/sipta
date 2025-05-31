@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+{{-- @php
+dd($prodiList);
+@endphp --}}
+
 @section('title', 'PengajuanAlokasiPembimbing')
 
 @section('css')
@@ -11,21 +15,29 @@
 
 @section('content_header')
 <div class="container">
-    <h1>Daftar Pengajuan Dosen Pembimbing</h1>
+    <h1>Peminatan Menjadi Penguji</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+        ['url' => '', 'label' => 'Peminatan Menjadi Penguji']
+        ]
+        ])
+        @endcomponent
+    </div>
 </div>
 @stop
 
 @section('content')
 
 {{-- <x-pengajuan-alokasi-pembimbing.table-pengajuan :pengajuan="$pengajuan" /> --}}
-<div class="container">
-    <p>Beranda > <a href="www">Daftar Pengajuan Dosen Pembimbing</a>
-        <div class="justify-content-center">
-            <div class="mr-2">
-                {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
-                <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
-            </div>
+<div class="card p-3 container">
+    <div class="justify-content-center">
+        <div class="mr-2">
+            {{-- <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.alert-info-kuota /> --}}
+            <x-pengajuan-alokasi-pembimbing.components.daftar-pengajuan-dosbing.table-pengajuan :kelompokData="$kelompokData" tableId="myTable" tableClass="table table-striped" />
         </div>
+    </div>
 </div>
 
 

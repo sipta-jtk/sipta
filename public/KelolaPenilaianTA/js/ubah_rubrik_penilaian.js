@@ -1,5 +1,17 @@
 $(document).ready(function () {
-    // Handle change of kriteria dropdown
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+    
     $(document).on("change", ".id_kriteria", function () {
         var selectedOption = $(this).find(":selected");
         var bobot = selectedOption.data("bobot");
@@ -10,35 +22,61 @@ $(document).ready(function () {
         console.log("Selected criteria with bobot:", bobot);
     });
 
+    function updateRowStriping() {
+        $("#rubrikPenilaianTable tr").each(function (index) {
+            if (index % 2 === 0) {
+                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+            } else {
+                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+            }
+        });
+    }
+
     // Add new row to table
     $("#addRow").on("click", function () {
-        const selectedKodeFTA = $("#kode_fta").val();
-        if (!selectedKodeFTA) {
-            alert("Silakan pilih Kode FTA terlebih dahulu.");
-            return;
-        }
+    const selectedKodeFTA = $("#kode_fta").val();
+    if (!selectedKodeFTA) {
+        Swal.fire({
+            icon: "error",
+            title: "Kode FTA Belum Dipilih",
+            text: "Silakan pilih Kode FTA terlebih dahulu.",
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+        return;
+    }
 
-        // Get rentangNilai from the page
-        let nilaiColumns = '';
-        // Check if rentangNilai is defined globally
-        if (typeof rentangNilai !== 'undefined') {
-            rentangNilai.forEach(function (nilai) {
-                nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${nilai.id_nilai}[]" required></td>`;
-            });
-        } else {
-            // Fallback: get values from existing table headers
-            $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
-                if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
-                    // Extract id_nilai from header text using regex
-                    const headerText = $(this).text();
-                    const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
-                    if (match && match[1]) {
-                        const id_nilai = match[1];
-                        nilaiColumns += `<td><input type="text" class="form-control" name="nilai_${id_nilai}[]" required></td>`;
-                    }
+    // Hitung jumlah tr yang ada saat ini
+    const trCount = $("#rubrikPenilaianTable tr").length;
+
+    // Get rentangNilai from the page
+    let nilaiColumns = '';
+    // Check if rentangNilai is defined globally
+    if (typeof rentangNilai !== 'undefined') {
+        rentangNilai.forEach(function (nilai) {
+            nilaiColumns += `
+                <td>
+                    <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                </td>`;
+        });
+    } else {
+        // Fallback: get values from existing table headers
+        $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
+            if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
+                // Extract id_nilai from header text using regex
+                const headerText = $(this).text();
+                const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
+                if (match && match[1]) {
+                    // Gunakan trCount sebagai index
+                    nilaiColumns += `
+                        <td>
+                            <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                        </td>`;
                 }
-            });
-        }
+            }
+        });
+    }
 
         // Dapatkan semua kriteria yang tersedia
         let kriteriaOptions = '';
@@ -59,13 +97,16 @@ $(document).ready(function () {
         var newRow = `
         <tr>
             <td>
+                <input type="hidden" name="status[]" value="1">
                 <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
                     ${kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('')}
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot">-</p></td>
-            <td><input type="text" class="form-control" name="detail[]" required></td>
+            <td>
+                <textarea class="form-control textarea-rubrik" name="detail[]" rows="6" required></textarea>
+            </td>
             ${nilaiColumns}
             <td><button type="button" class="btn btn-danger btn-sm remove-row">
                 <i class="fa-solid fa-minus"></i>
@@ -73,23 +114,42 @@ $(document).ready(function () {
         </tr>`;
 
         $("#rubrikPenilaianTable").append(newRow);
+        updateRowStriping();
     });
 
-    // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
-        // Make sure we keep at least one row
-        if ($("#rubrikPenilaianTable tr").length > 1) {
-            $(this).closest("tr").remove();
-        } else {
-            alert("Tidak dapat menghapus baris terakhir.");
+        var $row = $(this).closest("tr");
+        var $statusInput = $row.find('input[name="status[]"]');
+        var visibleRows = $("#rubrikPenilaianTable tr:visible").length;
+
+        if (visibleRows <= 1) {
+            Swal.fire({
+                icon: "error",
+                title: "Tidak Bisa Hapus",
+                text: "Tidak dapat menghapus baris terakhir.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
         }
+
+        if ($statusInput.length) {
+            $statusInput.val("0");
+            $row.hide();
+        } else {
+            // Untuk baris baru yang belum ada status, tetap hapus dari DOM
+            $row.remove();
+        }
+        updateRowStriping();
     });
 
-    // Konfirmasi sebelum submit form
-    $("form").on("submit", function (e) {
-        // Validasi form sebelum submit
+    updateRowStriping();
+
+    $("#showKonfirmasiModal").on("click", function () {
+        // Validasi Form
         let valid = true;
-        $("input[required], select[required]").each(function () {
+        $("input[required], select[required], textarea[required]").each(function () {
             if (!$(this).val()) {
                 valid = false;
                 $(this).addClass("is-invalid");
@@ -99,16 +159,29 @@ $(document).ready(function () {
         });
 
         if (!valid) {
-            e.preventDefault();
-            alert("Mohon isi semua field yang diperlukan.");
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Mohon isi semua field yang diperlukan.",
+            });
             return false;
         }
 
-        // Konfirmasi update
-        if (!confirm("Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?")) {
-            e.preventDefault();
-            return false;
-        }
+        Swal.fire({
+            title: "Konfirmasi Simpan",
+            text: "Apakah Anda yakin ingin menyimpan perubahan rubrik penilaian ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Simpan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#rubrikPenilaianForm").submit();
+            }
+        });
     });
 
     // Inisialisasi: periksa bobot pada semua baris yang sudah ada

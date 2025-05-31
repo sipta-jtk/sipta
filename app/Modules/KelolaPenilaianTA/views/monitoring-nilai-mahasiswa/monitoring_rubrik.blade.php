@@ -3,27 +3,43 @@
 @section('title', 'Monitoring Rubrik')
 
 @section('content_header')
-    <div class="container-fluid p-3">
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => url('/'), 'label' => 'Home'],
-                ['url' => url('kelola-penilaian-ta/monitoring/mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
-                ['url' => '', 'label' => 'Detail Rubrik']
-            ]
-        ])
-        @endcomponent
+    <h1 class="mb-0">Rubrik Penilaian {{ $kategori->nama_fta }}</h1>
+    <div>
+        @php
+            $routeName = Route::currentRouteName();
+            $prefix = env('PREFIX_URL', 'sipta');
+        @endphp
 
-        <!-- Judul Halaman -->
-        <h1 class="mb-0">Detail Rubrik</h1>
+        @if($routeName === 'monitoring.rubrik.mahasiswa')
+            {{-- Jalur dari Mahasiswa --}}
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => "/$prefix", 'label' => 'Beranda'],
+                    ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
+                    ['url' => '', 'label' => 'Detail Rubrik']
+                ]
+            ])
+            @endcomponent
+
+        @elseif($routeName === 'monitoring.rubrik.dosen')
+            {{-- Jalur dari Dosen Pembimbing --}}
+            @component('KelolaPenilaianTA.views.components.breadcrumb', [
+                'links' => [
+                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                    ['url' => route('monitoring.dosen.pembimbing'), 'label' => 'Monitoring Dosen Pembimbing'],
+                    ['url' => '', 'label' => 'Detail Rubrik']
+                ]
+            ])
+            @endcomponent
+        @endif
     </div>
 @stop
 
+
 @section('content')
-<h6>Kategori : {{ $kategori->nama_fta }}</h6>
-<h6>Rubrik Penilaian</h6>
-<div class="card">
+<div class="card mb-4">
     <!-- /.card-header -->
-    <div class="card-body p-0">
+    <div class="card-body p-4">
         <div class="table-container">
             <table class="table text-center">
                 <thead class="sticky-header">

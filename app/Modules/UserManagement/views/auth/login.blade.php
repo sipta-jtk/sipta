@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SiPTA</title>
     <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,6 +53,7 @@
         .forgot-password {
             text-align: right;
             font-size: 12px;
+            margin-bottom: 10px;
         }
         .forgot-password a {
             color: #007bff;
@@ -101,15 +103,32 @@
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                        <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <p class="password-note">It must be a combination of minimum letters, numbers, and symbols.</p>
                 <div class="forgot-password">
-                    <a href="/forgot-password">Forgot Password?</a>
+                    <a href="{{ route('password.request') }}">Forgot Password?</a>
                 </div>
                 <button type="submit" class="login-button">Log In</button>
             </form>
         </div>
     </div>
 </body>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        if(togglePassword && password) {
+            togglePassword.addEventListener('click', function (e) {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        }
+    </script>
 </html>

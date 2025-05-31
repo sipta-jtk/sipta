@@ -3,14 +3,26 @@
 @section('title', 'Formulir Pengajuan Dosen Pembimbing')
 
 @section('content_header')
-    <div class="m-3">
+    {{-- <div class="m-3">
         <h1>Formulir Pengajuan Dosen Pembimbing</h1>
+    </div> --}}
+    <h1 class="mb-3">Formulir Pengajuan Dosen Pembimbing</h1> 
+ 
+    <div> 
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [ 
+            'links' => [ 
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'], 
+                ['url' => '', 'label' => 'Formulir Pengajuan Dosen Pembimbing']
+            ] 
+        ]) 
+        @endcomponent   
     </div>
 @stop
 
 @section('content')
 
     <div id="warningMessage" class="alert alert-danger" role="alert" style="display: none;"> </div>
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"> </div>
 
     <div class="container-fluid row w-100 justify-content-start">
         <div class="card p-4 bg-light">
@@ -25,7 +37,7 @@
 
         <div class="col">
             <div class="card p-4 bg-light">
-                <h5 class="mb-3">Prioritas Dosen Pembimbing</h5>
+                <p class="text-secondary text-md border-bottom">Prioritas Dosen Pembimbing</p> 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">List Dosen Pembimbing</label>
@@ -45,42 +57,41 @@
                                         </div>
                                     </li>
 
-                                    <!-- Modal untuk Riwayat Topik -->
-                                    <div class="modal fade" id="historyModal{{$d->nip}}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="historyModalLabel">Riwayat Ketertarikan Bidang</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                      </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p id="dosenName">
-                                                        {{ $d->nama }}
-                                                    </p>
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>List Ketertarikan Bidang</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="historyContent">
-                                                            @forelse ($d->history as $bidang)
-                                                            <tr>
-                                                                <td>{{ $bidang->bidang }}</td>
-                                                            </tr>
-                                                            @empty
-                                                                <tr>
-                                                                    <td colspan="1" class="text-center">Tidak ada data</td>
-                                                                </tr>
-                                                            @endforelse
-                                                            </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                    {{-- Modal Riwayat Ketertarikan Bidang --}}
+                                    <x-adminlte-modal id="historyModal{{ $d->nip }}" title="Riwayat Ketertarikan Bidang" theme="blue" size="lg" static-backdrop scrollable>
+
+                                        <div class="px-3"> 
+                                            <p id="dosenName" class="mb-3">
+                                                {{ $d->nama }}
+                                            </p>
+                                    
+                                            <table id="table-history-{{ $d->nip }}" class="table table-striped" width="100%">
+                                                <thead class="sticky-header">
+                                                    <tr class="bg-dark text-white">
+                                                        <th>List Ketertarikan Bidang</th>
+                                                    </tr>
+                                                </thead>
+                                    
+                                                <tbody>
+                                                    @forelse ($d->history as $bidang)
+                                                        <tr>
+                                                            <td>{{ $bidang->bidang }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="1" class="text-center">Tidak ada data tersedia</td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                    
+                                            <x-slot name="footerSlot">
+                                                <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"/>
+                                            </x-slot>
                                         </div>
-                                    </div>
+                                    
+                                    </x-adminlte-modal>                                    
+                                    
                                 @endforeach
                             </ul>
                         </div>
@@ -115,6 +126,10 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href=" https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
 
+    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}} 
+    <link rel="stylesheet" 
+    href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"> 
+
     <style>
         .button-container {
             display: flex;
@@ -127,6 +142,8 @@
 @section ('js')
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> 
+<script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script> 
 @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
 
 <script>
@@ -136,16 +153,31 @@
                 if (response.hasExistingData || response.Periode === false) {
                     // Jika sudah ada data, nonaktifkan tombol dan tampilkan pesan peringatan
                     $("#ubahData, .btn-primary[type='submit']").prop("disabled", true); // Menonaktifkan tombol
-                    $("#warningMessage").show(); // Menampilkan pesan peringatan
-
+                    $(".removeDosen, .addDosen").prop("disabled", true); // Menonaktifkan tombol remove dan add dosen
+                    
                     if (response.Periode === false) {
+                        $("#warningMessage").show(); 
                         $("#warningMessage").html("Periode pengajuan dosen pembimbing belum dibuka.");
                     }
                     else {
-                        $("#warningMessage").html("Anda telah mengirim dan finalisasi formulir ini. Pengajuan tidak dapat dilakukan lagi.");
+                        let prioritasList = $("#prioritasList li");
+                        prioritasList.find(".priority-name").text("-");  // Reset tampilan
+
+                        if (response.prioritasDosen && response.prioritasDosen.length > 0) {
+                            response.prioritasDosen.forEach(function (dosen, index) {
+                                if (index < 5) {  // Maksimal 5 prioritas
+                                    let listItem = prioritasList.eq(index);
+                                    listItem.find(".priority-name").text(dosen.name);
+                                    listItem.find(".removeDosen").hide();  // Sembunyikan tombol hapus karena sudah fix
+                                }
+                            });
+                        }
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir. Pengajuan tidak dapat dilakukan dua kali. Terima kasih.");
                     }
                     if (response.hasExistingData && response.Periode === false) {
-                        $("#warningMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
+                        $("#successMessage").show(); 
+                        $("#successMessage").html("Anda telah melakukan finalisasi formulir dan periode pengisian telah berakhir. Terima kasih.");
                     }
                 }
         });
@@ -266,6 +298,23 @@
                 }
             });
         });
+    });
+
+    // Cek sebelum ke halaman selanjutnya
+    $(".btn-info.ml-3").click(function(e) {
+        let prioritasDosen = [];
+        $("#prioritasList .priority-name").each(function () {
+            let name = $(this).text();
+            if (name !== "-") {
+                prioritasDosen.push(name);
+            }
+        });
+        let saved = JSON.parse(localStorage.getItem("prioritasDosen")) || [];
+        // Jika ada data di prioritas tapi belum disimpan ke draft
+        if (prioritasDosen.length > 0 && saved.length !== prioritasDosen.length) {
+            e.preventDefault();
+            toast("warning", "Simpan draft sebelum melanjutkan.");
+        }
     });
 </script>
 @stop

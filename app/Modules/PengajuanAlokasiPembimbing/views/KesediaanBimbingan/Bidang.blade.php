@@ -8,135 +8,127 @@
 
 @section('content')
     @php
-        if ($savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia') {
-            $savedInformation['Periode'] = false;
-        }
+        $AllowEdit =
+            $savedInformation['StatusBersediaMembimbing'] == 'tidak_bersedia' || !$savedInformation['Periode']
+                ? false
+                : true;
     @endphp
 
     @if ($savedInformation['StatusBersediaMembimbing'] == 'belum_konfirmasi')
+        <p> <a href="/">Beranda</a> / Formulir Kesediaan Membimbing</p>
         @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.V_KonfirmasiBersedia')
     @else
-        <p>Peminatan Bidang > <a
+        <p> <a href="/">Beranda</a> / Peminatan Bidang / <a
                 href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}">Kuota
-                Bimbingan</a> > <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index') }}">Jadwal
+                Bimbingan</a> / <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index') }}">Jadwal
                 Kesediaan</a></p>
 
-        @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_CardBar')
+        <div class="card p-3">
+            @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_CardBar')
 
-        <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="1"
-            activeColor="primary" inactiveColor="secondary" :hrefs="[
-                route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
-                route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index'),
-                route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index'),
-            ]" />
 
-        <div class="container-fluid m-0 p-0">
+            <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.horizontal-progres number="3" active="1"
+                activeColor="primary" inactiveColor="secondary" :hrefs="[
+                    route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index'),
+                    route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index'),
+                    route('pengajuanalokasipembimbing.kesediaan-membimbing.jadwal.index'),
+                ]" />
 
-            <div id="errorContainer">
-            </div>
+            <div class="container-fluid m-0 p-0">
 
-            @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_ErrorPeriode')
-
-            {{-- ================== --}}
-
-            <div class="container-fluid bg-gradient-info rounded-top p-0">
-                <div class="container-fluid">
-                    <div class="row row-cols-2 p-2">
-                        <div class="col">
-                            <p class="m-0">Daftar Bidang</p>
-                        </div>
-                        <div class="col text-right">
-                            <button type="button" class="btn btn-sm p-0 m-0 bg-transparent text-light" data-toggle="modal"
-                                data-target="#AddNewModal" {{ $savedInformation['Periode'] ? '' : 'disabled' }}>
-                                <i class="fas fa-plus"></i> Tambah Bidang
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{-- ================== --}}
-
-            <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.store') }}" method="POST"
-                id="MinatForm">
-                @csrf
-                <div class="container-fluid bg-light rounded-bottom bg-opacity-25 pre-scrollable mb-4 border">
-
-                    <div class="container text-left">
-                        <div class="row row-cols-lg-2 row-cols-1 p-0 pt-2 pb-2 p-md-3 pt-md-3 pb-md-3">
-                            @foreach ($bidang as $bidangitem)
-                                <div class="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="bidang{{ $bidangitem->id_bidang }}" name="bidang[]"
-                                            value="{{ $bidangitem->id_bidang }}"
-                                            {{ $savedInformation['Periode'] ? '' : 'disabled' }}>
-                                        <label class="form-check-label text-dark" for="bidang{{ $bidangitem->id_bidang }}">
-                                            {{ $bidangitem->bidang }}
-                                        </label>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="container-fluid form-check">
-                    <input type="checkbox" id="checkAll" class="form-check-input">
-                    <label class="form-check-label text-dark" for="checkAll">Pilih Semua</label>
+                <div id="errorContainer">
                 </div>
 
+                @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.C_ErrorPeriode')
 
                 {{-- ================== --}}
-                <div class="container-fluid d-flex justify-content-end mt-2 pl-0 pt-3 pb-3 pr-0">
-                    <button type="submit" class="btn btn-primary ml-3"
-                        {{ $savedInformation['Periode'] ? '' : 'disabled' }}>Simpan <i
-                            class="fas fa-save pl-1"></i></button>
-                    <button type="button" onclick="nextPage()" form="nextForm" class="btn btn-info ml-3"><i
-                            class="fas fa-chevron-right pl-1"></i></button>
-                </div>
-            </form>
-        </div>
 
-        @if ($savedInformation['Periode'])
-            <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.add') }}"
-                            method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah bidang baru</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                <div class="container-fluid bg-gradient-info rounded-top p-0">
+                    <div class="container-fluid">
+                        <div class="row row-cols-2 p-2">
+                            <div class="col">
+                                <p class="m-0">Daftar Bidang</p>
+                            </div>
+                            <div class="col text-right">
+                                <button type="button" class="btn btn-sm p-0 m-0 bg-transparent text-light"
+                                    data-toggle="modal" data-target="#AddNewModal" {{ $AllowEdit ? '' : 'disabled' }}>
+                                    <i class="fas fa-plus"></i> Tambah Bidang
                                 </button>
                             </div>
-                            <div class="modal-body">
-                                <div class="container">
-                                    <div class="form-group m-0">
-                                        <label for="bidang">Bidang</label>
-
-                                        @php
-                                            $oldBidangValue = old('bidang');
-                                            if (is_array($oldBidangValue)) {
-                                                $oldBidangValue = null;
-                                            }
-                                        @endphp
-
-                                        <input type="text" id="bidang" name="bidang" class="form-control"
-                                            value="{{ $oldBidangValue }}" required>
-                                    </div>
-                                    <small class="text-danger d-none" id="addBidangError">* Bidang yang sudah ada tidak bisa
-                                        ditambahkan</small>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-sm btn-primary" disabled id="modalSaveBtn">Simpan <i
-                                        class="fas fa-save"></i></button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+                {{-- ================== --}}
+
+                <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.store') }}"
+                    method="POST" id="MinatForm">
+                    @csrf
+                    <div class="container-fluid bg-light rounded-bottom bg-opacity-25 pre-scrollable mb-4 border">
+
+                        <div class="container text-left">
+                            <div class="row row-cols-lg-2 row-cols-1 p-0 pt-2 pb-2 p-md-3 pt-md-3 pb-md-3">
+                                @foreach ($bidang as $bidangitem)
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                id="bidang{{ $bidangitem->id_bidang }}" name="bidang[]"
+                                                value="{{ $bidangitem->id_bidang }}" {{ $AllowEdit ? '' : 'disabled' }}>
+                                            <label class="form-check-label text-dark"
+                                                for="bidang{{ $bidangitem->id_bidang }}">
+                                                {{ $bidangitem->bidang }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid form-check">
+                        <input type="checkbox" id="checkAll" class="form-check-input" {{ $AllowEdit ? '' : 'disabled' }}>
+                        <label class="form-check-label text-dark" for="checkAll">Pilih Semua</label>
+                    </div>
+
+
+                    {{-- ================== --}}
+                    <div class="container-fluid d-flex justify-content-end mt-2 pl-0 pt-3 pb-3 pr-0">
+                        <button type="submit" class="btn btn-primary ml-3" {{ $AllowEdit ? '' : 'disabled' }}><i
+                                class="fas fa-save pl-1"></i></button>
+                        <button type="button" onclick="nextPage()" form="nextForm" class="btn btn-info ml-3"><i
+                                class="fas fa-chevron-right pl-1"></i></button>
+                    </div>
+                </form>
             </div>
+
+        </div>
+
+        @if ($AllowEdit)
+            <x-adminlte-modal id="AddNewModal" title="Tambah bidang baru" theme="primary" size="md" centered
+                theme="blue">
+                <form action="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.add') }}"
+                    method="POST" id="addNewForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="bidang">Bidang</label>
+
+                        @php
+                            $oldBidangValue = old('bidang');
+                            if (is_array($oldBidangValue)) {
+                                $oldBidangValue = null;
+                            }
+                        @endphp
+
+                        <x-adminlte-input type="text" id="bidang" name="bidang" class="form-control"
+                            value="{{ $oldBidangValue }}" required />
+                        <small class="text-danger d-none" id="addBidangError">* Bidang yang sudah ada tidak bisa
+                            ditambahkan</small>
+                    </div>
+                    <x-slot name="footerSlot">
+                        <x-adminlte-button label="Tutup" data-dismiss="modal" theme="danger" class="btn-sm" />
+                        <x-adminlte-button label="Simpan" type="submit" theme="success" class="btn-sm" id="modalSaveBtn"
+                            form="addNewForm" disabled />
+                    </x-slot>
+                </form>
+            </x-adminlte-modal>
         @endif
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
@@ -148,13 +140,13 @@
             $('#bidang').on('input', function() {
                 if (bidang_list.map(b => b.toLowerCase()).includes($(this).val().toLowerCase())) {
                     $('#modalSaveBtn').prop('disabled', true);
-                    $('#modalSaveBtn').addClass('btn-danger');
-                    $('#modalSaveBtn').removeClass('btn-primary');
+                    $('#modalSaveBtn').addClass('btn-secondary');
+                    $('#modalSaveBtn').removeClass('btn-success');
                     $('#addBidangError').removeClass('d-none');
                 } else {
                     $('#modalSaveBtn').prop('disabled', false);
-                    $('#modalSaveBtn').addClass('btn-primary');
-                    $('#modalSaveBtn').removeClass('btn-danger');
+                    $('#modalSaveBtn').addClass('btn-success');
+                    $('#modalSaveBtn').removeClass('btn-secondary');
                     $('#addBidangError').addClass('d-none');
                 }
             });

@@ -17,8 +17,8 @@ class ListJurnalPlagiarisme extends Model
         'persentase_kemunculan'
     ];
 
-    public function listKalimatPlagiarisme()
-    {
-        return $this->hasMany(ListKalimatPlagiarisme::class, 'id_jurnal', 'id_jurnal');
-    }
+    // public function listKalimatPlagiarisme()
+    // {
+    //     return $this->hasMany(ListKalimatPlagiarisme::class, 'id_jurnal', 'id_jurnal');
+    // }
 }

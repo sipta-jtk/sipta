@@ -1,15 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Pengajuan Mahasiswa')
+@section('title', 'Daftar Pengajuan Verifikasi Berkas')
 
 @section('content_header')
-<h1 class="text-center mb-5">Daftar Pengajuan {{$tipe}}</h1>
+    <h1 class="mb-3">Daftar Pengajuan Verifikasi Berkas {{ $tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir' }}</h1>
+    <div>
+        @component('KelolaPenilaianTA.views.components.breadcrumb', ['links'=> [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/sipta-dev/kelola-pengajuan-berkas/'.$tipe), 'label' => 'Daftar Pengajuan Verifikasi Berkas ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
+                ['url' => url('/sipta-dev/kelola-pengajuan-berkas/'.$tipe.'/ditolak'), 'label' => 'Daftar Pengajuan Verifikasi Berkas Ditolak'],
+            ]])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
-<div class="container-fluid text-center">
+<div class="container-fluid">
     <!-- Area filter berdasarkan proses -->
-    <div class="d-flex mb-3">
+    <div class="d-flex mb-3 mx-3">
         <ul class="nav nav-tabs">
             @php
                 $tipe = request()->route('tipe'); // Ambil tipe dari parameter route (seminar atau sidang)
@@ -37,10 +45,11 @@
 
 
     <!-- Tabel daftar pengajuan -->
-    <div class="container-fluid ">
+    <div class="card mx-3 mt-3">
+    <div class="card-body">
         <table id="pengajuanTable" class="table table-striped text-center" style="width:100%">
-            <thead>
-                <tr>
+            <thead class="sticky-header">
+                <tr class="bg-dark text-white">
                     <th>No</th>
                     <th>Tanggal Pengajuan</th>
                     <th>Kelompok TA</th>
@@ -51,13 +60,13 @@
             </thead>
             <tbody></tbody>
         </table>
+        </div>
     </div>
 </div>
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
     <style>
         .judul-ta-column {
@@ -74,8 +83,8 @@
 
 @section('js')
     <!-- Load DataTables -->
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -95,11 +104,7 @@
                     },
                     { data: "tanggal_pengajuan", className: 'text-center', },
                     { 
-                        data: "id_kota",
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                            return `KoTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka
-                        }
+                        data: "nama_kota", className: 'text-center',
                     },
                     { 
                         data: "judul_ta",
@@ -124,7 +129,18 @@
                     }
                 ],
                 language: {
-                    search: "Cari dalam semua kolom:"
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                        first: "<<",  // Tombol pertama
+                        last: ">>",   // Tombol terakhir
+                        next: ">",    // Tombol berikutnya
+                        previous: "<" // Tombol sebelumnya
+                    }
                 }
             });
 

@@ -3,6 +3,14 @@
 namespace App\Modules\KelolaPenilaianTA\Controllers;
 
 use App\Modules\Controller;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
@@ -10,148 +18,326 @@ use App\Models\KategoriPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\DetailFeedback;
 use App\Models\FormPenilaian;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Models\Penjadwalan;
+use App\Models\Dokumen;
+use App\Models\SubkategoriDokumen;
+
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Facades\Log;
 
 class PemberianFeedbackController extends Controller
 {
-    public function pengisianMasukanSeminar($id, $kota): View
+    /**
+     * Tampilkan halaman pengisian masukan seminar
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param int $idProdi
+     * @return View
+     */
+    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
     {
-        Log::info("Mengakses halaman feedback untuk id_fta $id di kota $kota");
+        // Mengubah nama FTA menjadi slug
+        $namaFtaSlug = Str::slug($namaFta, ' ');
 
-        $seminar = KategoriPenilaian::where('id_fta', $id)
-            ->with('formulirPenilaian')
+        // Konversi nama FTA ke format yang sesuai dengan database
+        $namaAgenda = $this->konversiNamaAgenda($namaFta);
+
+        // Ambil data umum penilaian berdasarkan kota
+        $keteranganUmumPenilaian = Kota::with('penjadwalan', 'mahasiswa.user')
+            ->find($idKota);
+
+        // Ambil jadwal seminar yang sudah fix berdasarkan kota dan agenda
+        $jadwal = Penjadwalan::where([
+            ['id_kota', $idKota],
+            ['agenda', $namaAgenda],
+            ['status', 'fix']
+            ])
+            ->select('tanggal', 'start', 'end', 'agenda')
             ->first();
 
-        Log::info("Data seminar: ".json_encode($seminar));
+        // Ambil data form penilaian seminar berdasarkan nama FTA, prodi, dan jenis form
+        $seminar = FormPenilaian::with('kategoriPenilaian')
+            ->where([
+            ['nama_fta', $namaFtaSlug],
+            ['id_prodi', $idProdi],
+            ['jenis_form', 'feedback']
+            ])
+            ->first();
 
-        $mahasiswa = Mahasiswa::where('id_kota', $kota)
-            ->with('user', 'kota.penjadwalan')
+        // Ambil data mahasiswa yang terkait dengan kota
+        $mahasiswa = Mahasiswa::with(['user', 'kota.penjadwalan'])
+            ->where('id_kota', $idKota)
             ->get();
 
-        Log::info("Data mahasiswa: ".json_encode($mahasiswa));
+        // Ambil aspek feedback yang terkait dengan form penilaian
+        $aspekFeedback = AspekFeedback::whereHas('formPenilaian', function ($query) use ($namaFtaSlug, $idProdi) {
+            $query->where([
+                ['nama_fta', $namaFtaSlug],
+                ['id_prodi', $idProdi],
+                ['jenis_form', 'feedback']
+            ]);
+            })
+            ->get();
 
-        $aspekFeedback = AspekFeedback::where('id_fta', $id+1)->get();
-        Log::info("Data aspek feedback: ".json_encode($aspekFeedback));
+        // Ambil username dosen yang sedang login
+        $nip = auth()->user()->username;
 
+        // Ambil detail feedback yang sudah diberikan oleh dosen untuk aspek feedback tertentu
+        $detailFeedback = DetailFeedback::whereIn('id_feedback', $aspekFeedback->pluck('id_feedback'))
+            ->where([
+            ['id_kota', $idKota],
+            ['nip', $nip]
+            ])
+            ->get()
+            ->keyBy('id_feedback');
+
+        $view = $detailFeedback->every(function ($item) {
+                return $item->status_penilaian_dosen === 'dipublikasikan';
+            }) ? false : true;
+
+        // Cek apakah semua feedback dosen untuk FTA ini sudah dipublikasikan
+        $isPublished = true; // Asumsikan sudah dipublikasikan di awal
+        if ($detailFeedback->isNotEmpty()) {
+            foreach ($detailFeedback as $feedbackItem) {
+                if ($feedbackItem->status_penilaian_dosen !== 'dipublikasikan') {
+                    $isPublished = false;
+                    break;
+                }
+            }
+        } else {
+            // Jika belum ada feedback, berarti belum dipublikasikan
+            $isPublished = false;
+        }
+
+        // Ambil dokumen terbaru berdasarkan kota dan kategori
+        $dokumen = $this->getLatestDokumenByKota($idKota, $namaFta);
+
+        // Siapkan data untuk dikirim ke view
         $data = [
-            'kode_fta' => $seminar->formulirPenilaian->kode_fta,
-            'tanggal' => $seminar->formulirPenilaian->tanggal_tenggat_pengisian,
-            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswa->first()->kota->nama_kota,
-            'id_kota' => $kota
+            'kode_fta' => $seminar->kode_fta ?? null,
+            'namaFta' => $namaFtaSlug,
+            'namaKota' => $mahasiswa->first()->kota->nama_kota ?? null,
+            'id_kota' => $idKota,
+            'aspekFeedback' => $aspekFeedback,
+            'detailFeedback' => $detailFeedback
         ];
 
-        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.pengisian_masukan_seminar_II', 
-                    compact('seminar', 'mahasiswa', 'id', 'aspekFeedback', 'kota', 'data'));
+        // Render view dengan data yang sudah disiapkan
+        return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_masukan', compact(
+            'seminar', 
+            'mahasiswa', 
+            'aspekFeedback', 
+            'data', 
+            'keteranganUmumPenilaian', 
+            'jadwal', 
+            'detailFeedback', 
+            'dokumen',
+            'isPublished'
+        ));
     }
 
     /**
-     * Helper mapping untuk data mahasiswa di form pengisian masukan seminar 2
+     * Konversi nama FTA ke format yang sesuai dengan database
+     * 
+     * @param string $namaFta
+     * @return string|null
      */
-    public function mappingDataMahasiswaMasukan($kategoriPenilaian, $mahasiswa)
+    private function konversiNamaAgenda($namaFta)
     {
-        // Log::info($mahasiswa);
-        Log::info(json_encode($mahasiswa, JSON_PRETTY_PRINT));
-        $data = [
-            'kode_fta' => $kategoriPenilaian->formulirPenilaian->kode_fta,
-            'tanggal' => $kategoriPenilaian->formulirPenilaian->tanggal_tenggat_pengisian,
-            'start' => date('H:i', strtotime($mahasiswa->first()->kota->penjadwalan[0]->start)),
-            'kota' => $mahasiswa->first()->kota->nama_kota
-        ];
+        // Mengubah nama FTA menjadi huruf kecil
+        $namaFtaLower = strtolower($namaFta);
 
-
-        return $data;
-    }
-
-    /**
-     * Simpan feedback berdasarkan seminar yang dipilih
-     */
-    public function simpanFeedback(Request $request, $seminar, $kota)
-    {
-        switch ($seminar) {
-            case 1:
-                return $this->simpanFeedbackSeminarI($request, $seminar, $kota);
-            case 2:
-                return $this->simpanFeedbackSeminarII($request, $seminar, $kota);
-            case 3:
-                return $this->simpanFeedbackSeminarIII($request, $kota);
-            default:
-                return $this->simpanFeedbackSidangAkhir($request, $kota);
+        // Mapping manual supaya sesuai format database
+        if ($namaFtaLower === 'seminar-i') {
+            return 'seminar_1';
+        } elseif ($namaFtaLower === 'seminar-ii') {
+            return 'seminar_2';
+        } elseif ($namaFtaLower === 'seminar-iii') {
+            return 'seminar_3';
+        } elseif ($namaFtaLower === 'sidang-akhir') {
+            return 'sidang';
+        } else {
+            return null;
         }
     }
 
     /**
-     * Simpan feedback untuk Seminar 2
+     * Ambil dokumen terbaru berdasarkan kota dan kategori
+     * 
+     * @param int $idKota
+     * @param string $kategori
+     * @return array
      */
-    public function simpanMasukanSeminar(Request $request, $id, $kota)
+    private function getLatestDokumenByKota($idKota, $kategori)
     {
-        if ($id > 1){
-            $id_fta = $id + 1;
-        }
-        
-        $nip = auth()->user()->username; // Ambil NIP dosen yang login
-    
-        // Validasi data masukan
-        $request->validate([
-            'feedback' => 'required|array',
-            'feedback.*.masukan' => 'required|string',
-        ]);
-    
-        $idKota = Kota::where('id_kota', $kota)->first()->id_kota;
-    
-        // Ambil semua masukan dari parameter request
+        Log::info('Mengambil dokumen terbaru untuk kota: ' . $idKota . ' dengan kategori: ' . $kategori);
+        // Ubah kategori menjadi huruf kecil untuk konsistensi
+        $kategori = strtolower($kategori);
+
+        // Mapping manual kategori supaya sesuai dengan format di database
+        $kategori = match ($kategori) {
+            'seminar-i' => 'seminar1', // Seminar I
+            'seminar-ii' => 'seminar2', // Seminar II
+            'seminar-iii' => 'seminar3', // Seminar III
+            'sidang-akhir' => 'sidang', // Sidang Akhir
+            default => $kategori // Kategori lainnya
+        };
+
+        // Ambil dokumen laporan terbaru berdasarkan kota dan kategori
+        $laporan = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 1) // Subkategori 1: Laporan
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+
+        // Ambil dokumen PowerPoint terbaru berdasarkan kota dan kategori
+        $powerpoint = Dokumen::where('id_kota', $idKota)
+            ->where('kategori', $kategori)
+            ->where('id_subkategori', 3) // Subkategori 3: PowerPoint
+            ->orderByDesc('versi') // Urutkan berdasarkan versi terbaru
+            ->first();
+
+        // Kembalikan dokumen laporan dan PowerPoint dalam bentuk array
+        return [
+            'laporan' => $laporan,
+            'powerpoint' => $powerpoint
+        ];
+    }
+
+    /**
+     * Simpan masukan seminar
+     * 
+     * @param Request $request
+     * @param string $namaFta
+     * @param int $idKota
+     * @return \Illuminate\Http\RedirectResponse
+     */ 
+    public function simpanMasukanSeminar(Request $request, $namaFta, $idKota)
+    {
+        // Ubah nama FTA menjadi slug
+        $namaFtaSlug = Str::slug($namaFta, ' ');
+
+        // Ambil username dosen yang sedang login
+        $nip = auth()->user()->username;
+
+        // Ambil action dari form
+        $action = $request->form_action;
+
+        // Ambil ID kota berdasarkan input
+        $idKota = Kota::where('id_kota', $idKota)->first()->id_kota;
+
+        // Ambil data feedback dari request
         $feedbacks = $request->input('feedback');
-    
-        // Ambil semua id_feedback yang sesuai dengan id_fta dari URL
-        $idFeedbacks = AspekFeedback::where('id_fta', $id_fta)
+
+        // Cari ID FTA berdasarkan nama FTA dan jenis form
+        $idFta = FormPenilaian::where('nama_fta', $namaFtaSlug)
+            ->where('jenis_form', 'feedback')
+            ->pluck('id_fta')
+            ->first();
+
+        // Jika ID FTA tidak ditemukan, kembalikan error
+        if (!$idFta) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        // Ambil ID feedback berdasarkan ID FTA
+        $idFeedbacks = AspekFeedback::where('id_fta', $idFta)
             ->pluck('id_feedback', 'nama_aspek_feedback')
             ->toArray();
-    
-        // Buat array baru dengan array_merge
-        $data = [];
+
+        // Validasi masukan dari request
+        $errorMessage = null;
         foreach ($feedbacks as $feedback) {
-            if (isset($idFeedbacks[$feedback['nama_aspek_feedback']])) {
-                $data[] = array_merge($feedback, [
-                    'id_feedback' => $idFeedbacks[$feedback['nama_aspek_feedback']]
-                ]);
-            } else {
-                Log::warning("Feedback dengan nama aspek '{$feedback['nama_aspek_feedback']}' tidak ditemukan.");
+            $plainText = trim(strip_tags($feedback['masukan'] ?? ''));
+
+            if ($plainText === '') {
+                $errorMessage = "Masukan tidak boleh kosong.";
+                break;
+            }
+
+            $wordCount = str_word_count($plainText);
+            if ($wordCount < 30) {
+                $errorMessage = "Masukan minimal 30 kata.";
+                break;
             }
         }
-    
+
+        // Jika ada error validasi, kembalikan ke halaman sebelumnya
+        if ($errorMessage) {
+            return redirect()->back()
+                ->withErrors(['feedback.masukan' => $errorMessage])
+                ->withInput();
+        }
+
         // Mulai transaksi database
         DB::beginTransaction();
-    
+
         try {
-            // Simpan setiap masukan ke dalam database
-            foreach ($data as $feedback) {
-                DetailFeedback::create([
-                    'id_feedback' => $feedback['id_feedback'],
-                    'id_kota' => $idKota, // Kota tujuan dari URL
-                    'nip' => $nip,
-                    'status_penilaian_dosen' => 'draf', // Status default
-                    'isi_feedback' => $feedback['masukan'], // Data feedback dari form
-                ]);
+            // Loop melalui semua feedback untuk disimpan
+            foreach ($feedbacks as $feedback) {
+                $idFeedback = $feedback['id_feedback'] ?? null;
+
+                // Jika ID feedback tidak ada, lewati
+                if (!$idFeedback) continue;
+
+                // Cek apakah feedback sudah ada di database
+                $existingFeedback = DetailFeedback::where('id_feedback', $idFeedback)
+                    ->where('id_kota', $idKota)
+                    ->where('nip', $nip)
+                    ->first();
+
+                if ($existingFeedback) {
+                    // Update feedback yang sudah ada
+                    $existingFeedback->update([
+                        'isi_feedback' => $feedback['masukan'],
+                        'status_penilaian_dosen' => in_array($namaFtaSlug, ['seminar i', 'seminar ii']) ? 'dipublikasikan' : 'draf',
+                    ]);
+                } else {
+                    // Buat feedback baru
+                    DetailFeedback::create([
+                        'id_feedback' => $idFeedback,
+                        'id_kota' => $idKota,
+                        'nip' => $nip,
+                        'status_penilaian_dosen' => in_array($namaFtaSlug, ['seminar i', 'seminar ii']) ? 'dipublikasikan' : 'draf',
+                        'isi_feedback' => $feedback['masukan'],
+                    ]);
+                }
             }
-    
-            // Commit transaksi jika semua berhasil
+
+            // Commit transaksi jika berhasil
             DB::commit();
-    
-            return redirect('kelola-penilaian-ta/pengelolaan-nilai')->with('success', 'Masukan berhasil disimpan.');
+
+            $namaFtaSlug = str_replace(' ', '-', $namaFtaSlug);
+            return redirect()->route('nilai.index', ['kegiatan' => $namaFtaSlug])
+                ->with('success', 'Masukan berhasil disimpan.');
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi error
-            DB::rollback();
-    
+            // Rollback transaksi jika terjadi kesalahan
+            DB::rollBack();
             Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }
     }
-    
+
+    /**
+     * Mengunduh dokumen.
+     */
+    public function download($kategori, $id)
+    {
+        try {
+            $dokumen = Dokumen::where('id_dokumen', $id)->where('kategori', $kategori)->firstOrFail();
+
+            if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()->route('Repository.index', $kategori)->with('error', 'File tidak ditemukan');
+            }
+
+            $extension = pathinfo(storage_path('app/public/' . $dokumen->file_path), PATHINFO_EXTENSION);
+            $filename = $dokumen->judul . '-v' . $dokumen->versi . '.' . $extension;
+
+            return response()->download(storage_path('app/public/' . $dokumen->file_path), $filename);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
+        }
+    }
 }

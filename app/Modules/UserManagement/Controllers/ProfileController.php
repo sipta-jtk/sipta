@@ -6,20 +6,50 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('UserManagement.views.profile', ['user' => Auth::user()]);
+        $search = $request->input('search');
+        $searchResults = [];
+        
+        // Get all users for dropdowns
+        $allDosen = User::where('role_user', 'dosen')
+            ->orderBy('nama', 'asc')
+            ->get();
+        
+        $allMahasiswa = User::where('role_user', 'mahasiswa')
+            ->orderBy('nama', 'asc')
+            ->get();
+
+        // Search results
+        if ($search) {
+            $searchResults['dosen'] = User::where('role_user', 'dosen')
+                ->where(function($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                })
+                ->get();
+                
+            $searchResults['mahasiswa'] = User::where('role_user', 'mahasiswa')
+                ->where(function($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                })
+                ->get();
+        }
+
+        return view('UserManagement.views.profile', compact('searchResults', 'allDosen', 'allMahasiswa'));
     }
 
     public function update(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
             'email' => 'required|email|unique:user,email,' . Auth::user()->username . ',username',
-            'no_whatsapp' => 'nullable|string|max:15',
+            'no_whatsapp' => 'nullable|regex:/^[0-9]+$/|min:10|max:15',
             'photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
@@ -29,7 +59,7 @@ class ProfileController extends Controller
         $user->no_whatsapp = $request->no_whatsapp;
 
         if ($request->hasFile('photo')) {
-            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            if ($user->photo && Storage::exists($user->photo)) {
                 Storage::disk('public')->delete($user->photo);
             }
             $photoPath = $request->file('photo')->store('photos', 'public');
@@ -38,6 +68,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui');
+        $prefix = env('PREFIX_URL', 'sipta');
+        return redirect($prefix . '/profile')->with('success', 'Profil berhasil diperbarui');
     }
 }

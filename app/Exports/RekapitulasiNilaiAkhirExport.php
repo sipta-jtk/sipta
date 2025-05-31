@@ -24,11 +24,16 @@ class RekapitulasiNilaiAkhirExport implements FromCollection, WithHeadings, With
                 'prodi' => $item['prodi'] ?? '',
                 'kelas' => $item['kelas'] ?? '',
                 'kelompok' => $item['kelompok'] ?? '',
-                'nilaiUts' => ($item['nilaiUts'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUts'], 2),
-                'nilaiUas' => ($item['nilaiUas'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUas'], 2),
-                'nilaiLainLain' => ($item['nilaiLainLain'] ?? 0) == 0 ? 'T' : number_format($item['nilaiLainLain'], 2),
-                'nilaiAkhir' => isset($item['nilaiAkhir']) ? number_format($item['nilaiAkhir'], 2) : '',
-                'predikat' => $item['predikat'] ?? '',
+                'nilaiUtsTeori' => ($item['nilaiUtsTeori'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUtsTeori'], 2),
+                'nilaiPraktikumETS' => ($item['nilaiPraktikumETS'] ?? 0) == 0 ? 'T' : number_format($item['nilaiPraktikumETS'], 2),
+                'nilaiLainLainETS' => ($item['nilaiLainLainETS'] ?? 0) == 0 ? 'T' : number_format($item['nilaiLainLainETS'], 2),
+                'nilaiUasTeori' => ($item['nilaiUasTeori'] ?? 0) == 0 ? 'T' : number_format($item['nilaiUasTeori'], 2),
+                'nilaiPraktikumEAS' => ($item['nilaiPraktikumEAS'] ?? 0) == 0 ? 'T' : number_format($item['nilaiPraktikumEAS'], 2),
+                'nilaiLainLainEAS' => ($item['nilaiLainLainEAS'] ?? 0) == 0 ? 'T' : number_format($item['nilaiLainLainEAS'], 2),
+                'nilaiPjBl' => ($item['nilaiPjBl'] ?? 0) == 0 ? 'T' : number_format($item['nilaiPjBl'], 2),
+                'nilaiPartisipatif' => ($item['nilaiPartisipatif'] ?? 0) == 0 ? 'T' : number_format($item['nilaiPartisipatif'], 2),
+                'nilaiAkhir' => ($item['nilaiAkhir'] ?? 0) == 0 ? 'T' : number_format($item['nilaiAkhir'], 2),
+                'predikat' => ($item['nilaiAkhir'] ?? 0) == 0 ? 'T' : $item['predikat'],
             ];
         });
     }
@@ -36,7 +41,7 @@ class RekapitulasiNilaiAkhirExport implements FromCollection, WithHeadings, With
     public function headings(): array
     {
         return [
-            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'UTS', 'UAS', 'Lain-Lain', 'Predikat'], // Baris pertama header
+            ['NIM', 'Nama', 'Prodi', 'Kelas', 'Kelompok', 'UTS (Teori)', 'Praktikum ETS', 'Lain - lain ETS', 'UAS (Teori)', 'Praktikum EAS', 'Lain - lain EAS', 'PjBL', 'Partisipatif', 'Nilai Akhir', 'Predikat'], // Baris pertama header
         ];
     }
 

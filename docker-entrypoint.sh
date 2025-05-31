@@ -1,10 +1,13 @@
 #!/bin/bash
 
 # Load environment variables dari .env
-export $(grep -v '^#' .env | xargs)
+export $(grep -v '^#' .env | sed -E 's/(^|[^\\])#.*$//' | xargs -d '\n')
 
 # Generate APP_KEY
 php artisan key:generate
+
+# Kebutuhan plagiarisme
+apt-get update && apt-get install poppler-utils -y
 
 # Fungsi untuk menunggu database siap
 echo "Menunggu database siap..."

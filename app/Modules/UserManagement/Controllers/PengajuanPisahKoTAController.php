@@ -26,11 +26,17 @@ class PengajuanPisahKoTAController extends Controller
         $mahasiswa = Mahasiswa::where('nim', $pengajuan->nim)->first();
         $kota = Kota::where('id_kota', $pengajuan->id_kota)->first();
 
+        if($mahasiswa->id_kota){
+            $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                ->where('nim', '!=', $mahasiswa->nim)
+                ->get();
+        }
+        
         if (!$pengajuan) {
             return abort(404, 'Data tidak ditemukan');
         }
     
-        return view('UserManagement.views.form-pisah-kota', compact('mahasiswa', 'kota', 'pengajuan'));
+        return view('UserManagement.views.form-pisah-kota', compact('mahasiswa', 'kota', 'anggotaKelompok', 'pengajuan'));
     }
 
     public function terima($id)
@@ -45,6 +51,14 @@ class PengajuanPisahKoTAController extends Controller
         $pengajuan->delete();
 
         return redirect()->route('pengajuan.pisah.kota')->with('success', 'Pengajuan pisah berhasil diterima.');
+    }
+
+    public function tolak($id)
+    {
+        $pengajuan = PengajuanPisahKota::findOrFail($id);
+
+        $pengajuan->delete();
+        return redirect()->route('pengajuan.pisah.kota')->with('danger', 'Pengajuan pisah berhasil ditolak.');
     }
 
     public function ajukan($id)

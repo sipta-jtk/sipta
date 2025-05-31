@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Modules\CekPlagiarisme\Controllers;
 
 use App\Modules\Controller;
@@ -10,28 +9,50 @@ use App\Models\ReviewDosenPembimbing;
 use App\Models\ListJurnalPlagiarisme;
 use App\Models\ListKalimatPlagiarisme;
 use App\Models\AlokasiDosen;
+use Carbon\Carbon;
+use App\Services\Notifikasi;
+use App\Models\Mahasiswa;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Crypt;
+use App\Notifications\TestEmailNotification;
+
+Carbon::setLocale('id');
 
 class CekPlagiarismeDetailController extends Controller
 {
-    public function show($id)
+
+    public function show($encryptedId)
     {
-        $dokumen = Dokumen::with('user', 'ambangBatas')->find($id);
+        $id = Crypt::decryptString($encryptedId);
 
-        // Mengambil semua review (catatan) yang terkait dengan dokumen
-        $catatan = ReviewDosenPembimbing::with('dosen.user')->where('id_dokumen', $id)->get();
+        $dokumen = Dokumen::with(['user', 'ambangBatas', 'keywords'])->find($id);
 
-        // Mengambil kalimat plagiat yang berelasi dengan dokumen dan jurnal
-        $sumberPlagiarisme = ListKalimatPlagiarisme::with('listJurnalPlagiarisme') // Menggunakan relasi yang benar
+        // VALIDASI AKSES
+        if (!Gate::allows('akses-dokumen-mahasiswa-kota', $dokumen)) {
+            abort(403, 'Anda tidak memiliki akses ke dokumen ini.');
+        }
+
+        $digital_receipt = Dokumen::where('username', $dokumen->username)
+            ->where('kategori', 'digital_receipt')
+            ->where('judul', 'like', $dokumen->judul . '%')
+            ->latest()
+            ->first();
+
+        $catatan = ReviewDosenPembimbing::with('dosen.user')
             ->where('id_dokumen', $id)
             ->get();
 
-        // Mengambil data alokasi dosen yang statusnya 'fix' dan mengirimkan ke view
         $alokasiDosen = AlokasiDosen::all();
+        $jurnalPlagiarisme = ListJurnalPlagiarisme::where('id_dokumen', $id)->get();
 
-        // Mengirimkan data ke view
-        return view('CekPlagiarisme.views.detail', compact('dokumen', 'catatan', 'sumberPlagiarisme', 'alokasiDosen')); // Tambahkan 'sumberPlagiarisme'
+        return view('CekPlagiarisme.views.Detail', compact(
+            'dokumen',
+            'digital_receipt',
+            'catatan',
+            'alokasiDosen',
+            'jurnalPlagiarisme'
+        ));
     }
-
 
     public function PenentuanAmbangBatas(): View
     {
@@ -62,29 +83,68 @@ class CekPlagiarismeDetailController extends Controller
             'id_dokumen' => $id_dokumen,
             'nip' => $nip,
             'review' => $request->comment,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
+                // Notifikasi Ke 3 Mahasiswa Dosen Sudah Memberikan Catatan
+        $nimPemilik = $dokumen->username;
+        try {
+            // Kirim ke pemilik dokumen
+            $userPemilik = \App\Models\Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
+
+            // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+            $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                // Ambil mahasiswa lain dalam kota yang sama
+                $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                    ->where('nim', '!=', $nimPemilik)
+                    ->limit(2)
+                    ->get();
+
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
+                            '[Pemberitahuan] Dosen Telah Menambahkan Catatan',
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi catatan: ' . $notifEx->getMessage());
+        }
+        
         // Mengembalikan respons JSON
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil ditambahkan!',
             'catatan' => $catatan,
         ]);
+
     }
 
     public function deleteCatatan($id_dokumen, $id_catatan)
     {
 
-        $caatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
-        if (!$caatan) {
+        $catatan = ReviewDosenPembimbing::where('id_dokumen', $id_dokumen)->where('id_review', $id_catatan)->first();
+        if (!$catatan) {
             return response()->json([
                 'success' => false,
                 'message' => 'Catatan tidak ditemukan!'
             ]);
         }
-        $caatan->delete();
+        $catatan->delete();
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil dihapus!'
@@ -118,14 +178,52 @@ class CekPlagiarismeDetailController extends Controller
         }
         $catatan->update([
             'review' => $request->comment,
-            'updated_at' => now(),
+            'updated_at' => Carbon::now(),
             'nip' => $nip,
         ]);
+
+        $nimPemilik = $dokumen->username;
+        try {
+            // Kirim ke pemilik dokumen
+            $userPemilik = Mahasiswa::where('nim', $nimPemilik)->first()?->user;
+            if ($userPemilik) {
+                $userPemilik->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                    [
+                        'catatan' => $catatan->review
+                    ]
+                ));
+            }
+
+            // Kirim ke anggota kelompok TA kedua dan ketiga jika ada
+            $mahasiswa = Mahasiswa::where('nim', $nimPemilik)->first();
+            if ($mahasiswa && $mahasiswa->id_kota) {
+                // Ambil mahasiswa lain dalam kota yang sama
+                $anggotaKelompok = Mahasiswa::where('id_kota', $mahasiswa->id_kota)
+                    ->where('nim', '!=', $nimPemilik)
+                    ->limit(2)
+                    ->get();
+
+                foreach ($anggotaKelompok as $anggota) {
+                    if ($anggota->user) {
+                        $anggota->user->notify(new TestEmailNotification(
+                            '[Pemberitahuan] Dosen Telah Memperbarui Catatan',
+                            [
+                                'catatan' => $catatan->review
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pembaruan catatan: ' . $notifEx->getMessage());
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Catatan berhasil diperbarui!',
             'catatan' => $catatan,
         ]);
+
     }
 }

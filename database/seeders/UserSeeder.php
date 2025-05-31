@@ -47,7 +47,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('joel123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567923',
-                'photo' => 'joe_lian_min,_m.eng..png'
+                'photo' => 'joe_lian_min,_m.eng..png',
+                'status_user' => 'aktif'
             ],
             // Dosen
             [
@@ -66,7 +67,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('sant123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567925',
-                'photo' => 'santi_sundari,_s.si.,_m.t..png'
+                'photo' => 'santi_sundari,_s.si.,_m.t..png',
+                'status_user' => 'aktif'
             ],
             [
                 'username' => '198104072006041001',

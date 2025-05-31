@@ -1,7 +1,6 @@
 trix-editor {
     min-height: 150px;
     background: white;
-    border: 1px solid #ddd;
     border-radius: 5px;
     padding: 12px;
     font-size: 14px;
@@ -25,18 +24,17 @@ trix-editor {
     max-height: 600px;
     overflow-y: auto; /* overflow-y untuk mengaktifkan scroll vertikal jika konten melebihi tinggi maksimal */
     overflow-x: auto; /* overflow-x untuk mengaktifkan scroll horizontal*/
-    border: 1px solid #ddd;
     position: relative;
 }
+
 .table-container::-webkit-scrollbar {
     display: auto;
 }
 table {
     width: 100%;
-    border-collapse: collapse;
 }
 th, td {
-    border: 1px solid #ccc !important;
+    border: none !important;
     padding: 10px;
     text-align: left;
 }
@@ -56,7 +54,7 @@ thead th {
     background-color: rgba(0, 0, 0, 0.9);
     color: white;
     text-align: center;
-    border-bottom: 2px solid #fff;
+    border-bottom: none !important;
 }
 tbody tr:nth-child(even) {
     background-color: #f8f9fa;
@@ -66,8 +64,8 @@ tbody tr:hover {
 }
 
 .btn-prev {
-    max-width: 200px; /* Batas maksimal panjang tombol */
-    white-space: nowrap; /* Biar teks tidak turun ke bawah */
+    width: 150px; /* Ukuran tombol tetap */
+    white-space: nowrap;
     overflow: hidden;
     margin-top: 10px;
     display: inline-block;
@@ -79,11 +77,31 @@ tbody tr:hover {
     color: #fff; /* Warna teks putih */
     background-color: #007bff; /* Warna biru Bootstrap */
     border: 2px solid #007bff; /* Border sesuai warna */
-    border-radius: 5px; /* Sudut membulat */
+    border-radius: 5px;
     transition: all 0.3s ease-in-out;
 }
 
 .btn-prev:hover {
     background-color: #0056b3; /* Warna biru lebih gelap saat hover */
     border-color: #0056b3;
+}
+
+.text-danger {
+    color: red !important;
+    font-weight: bold;
+}
+
+.char-counter {
+    transition: color 0.3s ease;
+}
+
+/* Hide the increment and decrement buttons */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }

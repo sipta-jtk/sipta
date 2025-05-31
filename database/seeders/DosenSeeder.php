@@ -116,7 +116,6 @@ class DosenSeeder extends Seeder
                 'id_kbk' => 1,
                 'id_dosen' => 'WW',
                 'kode_dosen' => 'KO079N',
-                'status_dosen' => 'aktif',
                 'role_dosen' => 'dosen',
                 'bersedia_membimbing' => 'belum_konfirmasi'
             ],

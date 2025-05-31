@@ -3,12 +3,22 @@
 @section('title', 'Pengajuan Sidang')
 
 @section('content_header')
-    <h1 class="mx-2"><strong>Pengajuan Sidang</strong></h1>
+    <h1 class="mx-2">Pengajuan Sidang Akhir</h1>
+    <div class="ml-2">
+        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/pengajuan/'), 'label' => 'Daftar Pengajuan'],
+                ['url' => '', 'label' => 'Pengajuan Sidang Akhir']
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
 
 @section('content')
 @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show ml-2" role="alert">
         {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
     </div>
@@ -58,14 +68,15 @@
                     @csrf
                     
                     <div class="mb-3">
-                        <label for="tanggal_pengajuan" class="form-label">Tanggal:</label>
+                        <label for="tanggal_pengajuan" class="form-label">Tanggal:</label>                        
+                        <p class="text-secondary">*tanggal tersedia mulai dari {{ $tanggal_mulai }} sampai {{ $tanggal_selesai }}</p>
                         <input type="date" id="tanggal_pengajuan" name="tanggal_pengajuan" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="sesi_pengajuan" class="form-label">Sesi:</label>
                         <select id="sesi_pengajuan" name="sesi_pengajuan" class="form-control" required>
-                            <option value="" disabled selected>Pilih Sesi</option>
+                            <option value="" disabled selected>-- Pilih Sesi --</option>
                             <option value="1">Sesi I</option>
                             <option value="2">Sesi II</option>
                             <option value="3">Sesi III</option>
@@ -76,10 +87,10 @@
                     <div class="mb-5">
                         <label for="ruangan_pengajuan" class="form-label">Ruangan:</label>
                         <select id="ruangan_pengajuan" name="ruangan_pengajuan" class="form-control" required>
-                            <option value="" disabled selected>Pilih Ruangan</option>
+                            <option value="" disabled selected>-- Pilih Ruangan --</option>
                             @foreach($ruanganTersedia as $ruangan)
-                                <option value="{{ $ruangan['id_ruangan'] }}">
-                                    {{ $ruangan['kode_ruangan'] }} - {{ $ruangan['nama_ruangan'] }}
+                                <option value='@json(["id" => $ruangan["id_ruangan"], "nama" => $ruangan["nama_ruangan"]])'>
+                                    {{ $ruangan['nama_ruangan'] }}
                                 </option>
                             @endforeach
                         </select>
@@ -95,7 +106,7 @@
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary" id="ajukan-btn" disabled>Ajukan</button>
+                        <button type="submit" class="btn btn-primary btn-md my-1" id="ajukan-btn" disabled>Ajukan</button>
                     </div>
                 </form>
             </div>
@@ -114,6 +125,10 @@
             submitButton.disabled = !checkbox.checked;
         });
     });
+
+    document.getElementById('tanggal_pengajuan').addEventListener('focus', function() {
+        this.showPicker();
+    });
 </script>
 <script>
     setTimeout(function() {
@@ -123,7 +138,7 @@
             alert.style.opacity = "0";
             setTimeout(() => alert.remove(), 500);
         }
-    }, 7000);
+    }, 5000);
 </script>
 @stop
 
