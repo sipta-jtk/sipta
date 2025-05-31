@@ -288,7 +288,6 @@
     $(document).ready(function() {
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
-        console.log("Role user:", roleUser);
 
         // Membuat URL untuk API kota
         var urlKota = '/api/kotas';
@@ -878,16 +877,6 @@
         formData.append('digital_receipt', pdfFile2);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
-        console.log("Form data being sent:", {
-            judul: $('#judulDokumen').val(),
-            keywords: $('#keywordsInput').val(),
-            deskripsi: $('#abstrakDokumen').val(),
-            jumlah_kata: $('#jumlahKataPreview').text(),
-            jumlah_halaman: $('#jumlahHalamanPreview').text(),
-            dokumen: pdfFile.name,
-            digital_receipt: pdfFile2.name
-        });
-
         // Show loading
         Swal.fire({
             title: 'Mengunggah...',
@@ -896,9 +885,6 @@
                 Swal.showLoading();
             }
         });
-
-        // Debug the URL being created
-        console.log("Sending to URL:", createApiUrl('/cek-plagiarisme/process'));
 
         // Explicitly set HTTP headers
         $.ajax({
@@ -913,7 +899,6 @@
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function(response) {
-                console.log("Success response:", response);
                 Swal.fire('Sukses!', 'Dokumen berhasil diunggah.', 'success').then(() => {
                     location.reload();
                 });

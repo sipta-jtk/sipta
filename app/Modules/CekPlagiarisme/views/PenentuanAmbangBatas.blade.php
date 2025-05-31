@@ -102,8 +102,6 @@
         return '/' + prefix + '/' + endpoint;
     }
 
-    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
-
     $(document).ready(function() {
 
         var table = $('#table').DataTable({
@@ -128,7 +126,6 @@
         // Ambil prefix URL dari meta tag yang ada di halaman
         var urlEndpoint = 'api/ambang-batas';
         var url = createApiUrl(urlEndpoint);
-        console.log("URL for ambang-batas:", url); // Debugging URL
 
         /**
          * Fungsi ini digunakan untuk mengambil data ambang batas dari API

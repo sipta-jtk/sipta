@@ -243,8 +243,6 @@
             const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}`);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            console.log("URL for POST request:", url); // Debugging URL
-
             // Show loading
             Swal.fire({
                 title: 'Memproses...',
@@ -463,7 +461,6 @@
                 }
             });
 
-            console.log("Edit URL:", url) // Debugging URL
             $.ajax({
                 url: url,
                 type: "PUT",
@@ -518,7 +515,6 @@
         $("#confirmDeleteBtn").click(function() {
             if (deleteId) {
                 const url = createApiUrl(`cek-plagiarisme/catatan-store/${dokumenId}/${deleteId}`);
-                console.log("Delete URL:", url); // Debugging URL
 
                 // Show loading
                 Swal.fire({
