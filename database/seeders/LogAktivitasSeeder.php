@@ -13,7 +13,7 @@ class LogAktivitasSeeder extends Seeder
 {
     public function run()
     {
-        // Matikan sementara foreign key checks
+        // // Matikan sementara foreign key checks
         // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         // DB::table('log_aktivitas')->truncate(); // Kosongkan tabel
         // DB::statement('SET FOREIGN_KEY_CHECKS=1;');

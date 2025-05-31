@@ -27,18 +27,21 @@ class PengajuanPisahKotaSeeder extends Seeder
         //         'nim' => '221524033',
         //         'id_kota' => 1,
         //         'fta_20' => 1,
+        //         'alasan' => 'Ingin mengajukan tema yang berbeda'
         //     ],
         //     [
         //         'id_pengajuan' => 2,
         //         'nim' => '221524042',
         //         'id_kota' => 5,
         //         'fta_20' => 1,
+        //         'alasan' => 'Terdapat ketidakcocokan'
         //     ],
         //     [
         //         'id_pengajuan' => 3,
         //         'nim' => '221524061',
         //         'id_kota' => 8,
         //         'fta_20' => 1,
+        //         'alasan' => 'Ingin cuti'
         //     ]
         // ];
 

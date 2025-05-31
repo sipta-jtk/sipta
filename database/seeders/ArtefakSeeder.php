@@ -14,95 +14,95 @@ class ArtefakSeeder extends Seeder
     
     public function run(): void
     {
-        Artefak::create([
-            'nama_artefak' => 'FTA 01',
-            'deskripsi' => 'Persetujuan menjadi Dosen Pembimbing',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 01',
+        //     'deskripsi' => 'Persetujuan menjadi Dosen Pembimbing',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 02',
-            'deskripsi' => 'Pengajuan Topik Tugas Akhir',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 02',
+        //     'deskripsi' => 'Pengajuan Topik Tugas Akhir',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 03',
-            'deskripsi' => 'Persetujuan Menjadi Pembimbing Tugas Akhir',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 03',
+        //     'deskripsi' => 'Persetujuan Menjadi Pembimbing Tugas Akhir',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 04',
-            'deskripsi' => 'Penilaian Seminar 1',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 04',
+        //     'deskripsi' => 'Penilaian Seminar 1',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 05',
-            'deskripsi' => 'Seminar 1',
-            'kategori_artefak' => 'Kehadiran Seminar 1',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 05',
+        //     'deskripsi' => 'Seminar 1',
+        //     'kategori_artefak' => 'Kehadiran Seminar 1',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 05a',
-            'deskripsi' => 'Lesson Learn Seminar 1',
-            'kategori_artefak' => 'Resume Seminar 1',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 05a',
+        //     'deskripsi' => 'Lesson Learn Seminar 1',
+        //     'kategori_artefak' => 'Resume Seminar 1',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'Proposal Tugas Akhir',
-            'deskripsi' => 'Dokumen Lengkap Proposal Tugas Akhir',
-            'kategori_artefak' => 'Dokumen',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'Proposal Tugas Akhir',
+        //     'deskripsi' => 'Dokumen Lengkap Proposal Tugas Akhir',
+        //     'kategori_artefak' => 'Dokumen',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'Laporan Tugas Akhir',
-            'deskripsi' => 'Dokumen Lengkap Laporan Tugas Akhir',
-            'kategori_artefak' => 'Dokumen',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'Laporan Tugas Akhir',
+        //     'deskripsi' => 'Dokumen Lengkap Laporan Tugas Akhir',
+        //     'kategori_artefak' => 'Dokumen',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'Presentasi',
-            'deskripsi' => 'Presentasi Tugas Akhir',
-            'kategori_artefak' => 'Dokumen',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'Presentasi',
+        //     'deskripsi' => 'Presentasi Tugas Akhir',
+        //     'kategori_artefak' => 'Dokumen',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 10',
-            'deskripsi' => 'Bukti Bimbingan Seminar 3',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 10',
+        //     'deskripsi' => 'Bukti Bimbingan Seminar 3',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 10a',
-            'deskripsi' => 'Resume Bimbingan Seminar 3',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 10a',
+        //     'deskripsi' => 'Resume Bimbingan Seminar 3',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 14',
-            'deskripsi' => 'Bukti Bimbingan Sidang',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 14',
+        //     'deskripsi' => 'Bukti Bimbingan Sidang',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
 
-        Artefak::create([
-            'nama_artefak' => 'FTA 14a',
-            'deskripsi' => 'Resume Bimbingan Sidang',
-            'kategori_artefak' => 'FTA',
-            'tenggat_waktu' => '2024-06-30 23:59:00',
-        ]);
+        // Artefak::create([
+        //     'nama_artefak' => 'FTA 14a',
+        //     'deskripsi' => 'Resume Bimbingan Sidang',
+        //     'kategori_artefak' => 'FTA',
+        //     'tenggat_waktu' => '2024-06-30 23:59:00',
+        // ]);
     }
 }
