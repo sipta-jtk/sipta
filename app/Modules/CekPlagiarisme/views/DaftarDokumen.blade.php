@@ -31,7 +31,9 @@
             @else(auth()->user()->role_user === 'mahasiswa' || auth()->user()->mahasiwa->status_ta === 'mahasiswa_ta')
             <div class="form-group ml-auto align-items-right mt-3">
                 <!-- Button Unggah Dokumen -->
-                <button class="btn btn-primary ml-3 btn-md" id="uploadButton"> + Unggah Dokumen</button>
+                <button class="btn btn-primary ml-3 btn-md" id="uploadButton"> 
+                    <i class="fa fa-upload"></i> Unggah Dokumen
+                </button>
             </div>
             @endif
         </div>

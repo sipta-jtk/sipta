@@ -23,8 +23,8 @@
 <section class="content">
     <div class="card">
         <div class="d-flex justify-content-end px-3 pt-3">
-            <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#addAmbangBatasModal">
-                + Tambah
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
+                <i class="fa fa-plus"></i> Tambah
             </button>
         </div>
         <div class="card-body">
