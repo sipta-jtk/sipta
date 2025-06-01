@@ -11,7 +11,7 @@ use App\Modules\NotificationAndReminder\helper\DynamicPlaceholderParser;
 use App\Modules\NotificationAndReminder\helper\PlaceholderHelper;
 use App\Models\Notifikasi;
 use App\Models\NotifikasiKirim;
-use App\Models\PreferensiNotifikasi;
+
 
 class TestEmailNotification extends Notification implements ShouldQueue
 {
@@ -36,15 +36,6 @@ class TestEmailNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // Cek preferensi notifikasi email user
-        $preferensi = PreferensiNotifikasi::where('username', $notifiable->username)
-            ->where('tipe_notifikasi', 'email')
-            ->first();
-        if (!$preferensi || $preferensi->email != 1) {
-            // Selain 1 (termasuk null, 0, 2, dst), tidak kirim email
-            return [];
-        }
-        // Hanya kirim email jika preferensi email == 1
         return ['mail'];
     }
 
@@ -54,7 +45,7 @@ class TestEmailNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $template = TemplateNotifikasi::where('judul_notifikasi', trim($this->templateJudul))->first();
-        
+
         if (!$template) {
             throw new \Exception("Template notifikasi tidak ditemukan");
         }
@@ -93,10 +84,15 @@ class TestEmailNotification extends Notification implements ShouldQueue
             'waktu_kirim' => now(),
             'respon_log' => json_encode(['to' => $notifiable->email])
         ]);
+    $preferensi = PreferensiNotifikasi::where('username', '196610181995121001')
+        ->first();
 
+    // Periksa apakah $preferensi ada (tidak null) DAN nilai emailnya adalah '1'
+    if ($preferensi && $preferensi->email == '1') {
         return (new MailMessage)
             ->subject($isiJudul)
             ->view('vendor.notifications.email', ['content' => $isiEmail]);
+    }
     }
 
     private function replacePlaceholders($text, $data)
