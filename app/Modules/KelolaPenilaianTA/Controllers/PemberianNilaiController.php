@@ -29,7 +29,7 @@ class PemberianNilaiController extends Controller
      * @param string $namaFtaSlug
      * @param int $idKota
      */
-    private function cekAksebilitasPenilaian($namaFtaSlug, $idKota)
+    private function cekAksebilitasPenilaian($idKota)
     {
         $nip = Auth::user()->dosen->nip;
     
@@ -37,8 +37,7 @@ class PemberianNilaiController extends Controller
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
             ->where('status_alokasi', 'fix')
             ->with([
-                'pengajuanPembimbing.kota.penjadwalan',
-                'pengajuanPembimbing.kota.mahasiswa',
+                'pengajuanPembimbing.kota'
             ])
             ->get()
             ->pluck('pengajuanPembimbing.kota')
@@ -53,12 +52,13 @@ class PemberianNilaiController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk menilai kelompok ini');
         }
     }
+    
     /**
      * Cek apakah dosen ini adalah pembimbing di kota tersebut
      * 
      * @param int $idKota
      */
-    private function cekAksesPembimbing($idKota)
+    private function cekAksesPenilaianPembimbing($idKota)
     {
         $nip = Auth::user()->dosen->nip;
     
@@ -101,17 +101,17 @@ class PemberianNilaiController extends Controller
     private function cekAksesJadwalDimulai($idKota, $namaFta)
     {
         // Mapping namaFta ke format agenda di database
-        $agendaDb = match (strtolower($namaFta)) {
+        $agenda = match (strtolower($namaFta)) {
             'seminar iii' => 'seminar_3',
             'sidang akhir' => 'sidang',
             default => $namaFta,
         };
     
         $jadwalQuery = Kota::where('id_kota', $idKota)
-            ->with(['penjadwalan' => function ($q) use ($agendaDb) {
-                if ($agendaDb) {
-                    $q->where(function ($query) use ($agendaDb) {
-                        $query->where('agenda', $agendaDb);
+            ->with(['penjadwalan' => function ($q) use ($agenda) {
+                if ($agenda) {
+                    $q->where(function ($query) use ($agenda) {
+                        $query->where('agenda', $agenda);
                     });
                 }
             }])
@@ -119,7 +119,7 @@ class PemberianNilaiController extends Controller
     
         $penjadwalan = $jadwalQuery->penjadwalan->first();
         $start = optional($penjadwalan)->start;
-        $agenda = optional($penjadwalan)->agenda ?? $agendaDb;
+        $agenda = optional($penjadwalan)->agenda ?? $agenda;
     
         // Mapping agenda ke label user-friendly
         $jenisSeminar = match (strtolower($agenda)) {
@@ -148,10 +148,10 @@ class PemberianNilaiController extends Controller
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
         if ($namaFtaSlug == 'dosen pembimbing') {
-            $this->cekAksesPembimbing($idKota);
+            $this->cekAksesPenilaianPembimbing($idKota);
             return $this->pengisianNilaiDosenPembimbing($namaFtaSlug, $idKota);
         } else {
-            $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+            $this->cekAksebilitasPenilaian($idKota);
             $this->cekAksesJadwalDimulai($idKota, $namaFtaSlug);
             return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota);
         }
