@@ -18,16 +18,24 @@ use App\Models\SubkategoriDokumen;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PemberianNilaiController extends Controller
 {
+
+    /**
+     * Cek aksesibilitas penilaian berdasarkan nama FTA dan idKota
+     * 
+     * @param string $namaFtaSlug
+     * @param int $idKota
+     */
     private function cekAksebilitasPenilaian($namaFtaSlug, $idKota)
     {
         $nip = Auth::user()->dosen->nip;
     
         // Ambil semua id_kota yang boleh diakses dosen ini
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
+            ->where('status_alokasi', 'fix')
             ->with([
                 'pengajuanPembimbing.kota.penjadwalan',
                 'pengajuanPembimbing.kota.mahasiswa',
@@ -45,8 +53,11 @@ class PemberianNilaiController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk menilai kelompok ini');
         }
     }
-
-    // filepath: [PemberianNilaiController.php](http://_vscodecontentref_/0)
+    /**
+     * Cek apakah dosen ini adalah pembimbing di kota tersebut
+     * 
+     * @param int $idKota
+     */
     private function cekAksesPembimbing($idKota)
     {
         $nip = Auth::user()->dosen->nip;
@@ -66,6 +77,66 @@ class PemberianNilaiController extends Controller
         }
     }
 
+    private function cekAksesPenilaianRubrikTerkunci($kategoriPenilaian, $mahasiswa, $nip)
+    {
+        // Cek apakah kategori penilaian dikunci
+        if ($kategoriPenilaian->kunci_penilaian) {
+            // Cek apakah dosen sudah pernah memberi nilai rubrik untuk kategori ini pada salah satu mahasiswa
+            $sudahNilai = $mahasiswa->contains(function ($mhs) use ($kategoriPenilaian, $nip) {
+                return $mhs->nilaiRubrik()
+                    ->where('nip', $nip)
+                    ->whereHas('rubrik.kriteriaPenilaian.formPenilaian.kategoriPenilaian', function ($q) use ($kategoriPenilaian) {
+                        $q->where('id_kategori', $kategoriPenilaian->id_kategori);
+                    })
+                    ->exists();
+            });
+    
+            // Jika belum pernah memberi nilai, abort
+            if (!$sudahNilai) {
+                abort(403, 'Penilaian rubrik untuk kategori ini sudah dikunci. Anda tidak dapat mengisi nilai baru.');
+            }
+        }
+    }
+    
+    private function cekAksesJadwalDimulai($idKota, $namaFta)
+    {
+        // Mapping namaFta ke format agenda di database
+        $agendaDb = match (strtolower($namaFta)) {
+            'seminar iii' => 'seminar_3',
+            'sidang akhir' => 'sidang',
+            default => $namaFta,
+        };
+    
+        $jadwalQuery = Kota::where('id_kota', $idKota)
+            ->with(['penjadwalan' => function ($q) use ($agendaDb) {
+                if ($agendaDb) {
+                    $q->where(function ($query) use ($agendaDb) {
+                        $query->where('agenda', $agendaDb);
+                    });
+                }
+            }])
+            ->first();
+    
+        $penjadwalan = $jadwalQuery->penjadwalan->first();
+        $start = optional($penjadwalan)->start;
+        $agenda = optional($penjadwalan)->agenda ?? $agendaDb;
+    
+        // Mapping agenda ke label user-friendly
+        $jenisSeminar = match (strtolower($agenda)) {
+            'seminar_3', 'seminar 3', 'seminar-3' => 'Seminar III',
+            'sidang' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $agenda ?? 'Seminar')),
+        };
+
+        if (!$start) {
+            abort(403, "Jadwal penilaian $jenisSeminar belum ditentukan.");
+        }
+    
+        if (Carbon::now()->lt(Carbon::parse($start))) {
+            abort(403, "Penilaian $jenisSeminar belum dapat dilakukan karena jadwal belum dimulai.");
+        }
+    }
+
     /**
      * Menampilkan halaman pengisian nilai seminar
      * 
@@ -81,6 +152,7 @@ class PemberianNilaiController extends Controller
             return $this->pengisianNilaiDosenPembimbing($namaFtaSlug, $idKota);
         } else {
             $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+            $this->cekAksesJadwalDimulai($idKota, $namaFtaSlug);
             return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota);
         }
     }
@@ -145,6 +217,12 @@ class PemberianNilaiController extends Controller
                     ->where('nip', $username);
                 }])
             ->get();
+
+        $this->cekAksesPenilaianRubrikTerkunci(
+            $detailInformasiFta->first()->kategoriPenilaian->first(),
+            $keteranganUmumPenilaian->mahasiswa,
+            $username
+        );
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
