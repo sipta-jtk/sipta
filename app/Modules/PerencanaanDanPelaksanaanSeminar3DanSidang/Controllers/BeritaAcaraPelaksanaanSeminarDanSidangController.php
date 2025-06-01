@@ -236,7 +236,7 @@ class BeritaAcaraPelaksanaanSeminarDanSidangController extends Controller
         $kehadiran->save();
     
 
-        // Kirim notifikasi ke mahasiswa yang hadir
+        // gausah
         try {
             if ($kehadiran->username) {
                 $user = User::where('username', $kehadiran->username)->first();

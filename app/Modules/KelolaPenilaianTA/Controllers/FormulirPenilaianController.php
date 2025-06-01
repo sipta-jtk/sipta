@@ -17,6 +17,7 @@ use App\Models\KriteriaPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\Rubrik;
 use App\Models\DetailRubrik;
+use App\Models\KategoriPenilaian;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -101,6 +102,11 @@ class FormulirPenilaianController extends Controller {
             $id_fta = $formPenilaian->id_fta;
 
             if ($request->jenisForm === 'Penilaian') {
+                KategoriPenilaian::create([
+                    'id_fta' => $id_fta,
+                    'kunci_penilaian' => 0
+                ]);
+
                 if ($request->has('nama_kriteria')) {
                     // Kalkulasi total bobot
                     $totalBobot = array_sum($request->bobot_kriteria);
@@ -649,7 +655,6 @@ class FormulirPenilaianController extends Controller {
      */
     public function updateRubrik(Request $request)
     {
-        Log::info('Update Rubrik Request: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
         DB::beginTransaction();
 
         try {
@@ -671,7 +676,6 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
-            Log::info('Formulir Penilaian: ' . json_encode($formulirPenilaian, JSON_PRETTY_PRINT));
             
             $globalRubrikIndex = 0;
             $globalDetailIndex = 0;
@@ -719,11 +723,6 @@ class FormulirPenilaianController extends Controller {
                 });
             });
 
-            // insert rubrik baru jika lebih dari jumlah rubrik yang ada
-            Log::info('globalRubrikIndex: ' . $globalRubrikIndex);
-            Log::info('Jumlah Kriteria: ' . count($kriterias));
-            Log::info('Jumlah Rubrik: ' . $jumlahRubrik);
-            Log::info('Kriteria: ' . json_encode(count($kriterias) + $jumlahRubrik - 2, JSON_PRETTY_PRINT));
             for ($i = $globalRubrikIndex; $i < count($kriterias) + $jumlahRubrik - 2; $i++) {
                 if (empty($status[$i])) {
                     continue;

@@ -14,6 +14,9 @@ use App\Models\KotaArtefak;
 use App\Models\Artefak;
 use App\Models\Dokumen;
 use App\Models\Subkategori;
+use App\Models\Dosen;
+
+use app\Notifications\TestEmailNotification;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -100,6 +103,29 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
             ]);
         }
 
+        // Ke Koordinator TA
+        try {
+            if ($idKota) {
+                $koordinatorTA = Dosen::where('role_dosen', 'koordinator_ta')->pluck('id_kota');
+                foreach($koordinatorTA as $nip){
+                    if ($nip) {
+                        $nip->notify(new TestEmailNotification(
+                            'Perubahan Status Dokumen Tugas Akhir!',
+                            [
+                                'tanggal_pengajuan' => Carbon::now(),
+                                'status_konfirmasi' => 'pending',
+                                'id_kota' => $idKota
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_kota' => $idKota,
+                'nip' => $nip
+            ]);
+        }
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
     }
 
@@ -178,7 +204,31 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
                 'id_kota' => Auth::user()->mahasiswa->id_kota,
             ]);
         }
-        
+
+        // Ke Koordinator TA
+        try {
+            if ($idKota) {
+                $koordinatorTA = Dosen::where('role_dosen', 'koordinator_ta')->pluck('id_kota');
+                foreach($koordinatorTA as $nip){
+                    if ($nip) {
+                        $nip->notify(new TestEmailNotification(
+                            'Perubahan Status Dokumen Tugas Akhir!',
+                            [
+                                'tanggal_pengajuan' => Carbon::now(),
+                                'status_konfirmasi' => 'pending',
+                                'jenis_pengajuan' => 'sidang_akhir',
+                                'id_kota' => Auth::user()->mahasiswa->id_kota,
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_kota' => $idKota,
+                'nip' => $nip
+            ]);
+        }
         return redirect()->route('verifikasi-sidang.create')->with('success', 'Pengajuan berhasil diajukan.');
     } //nambah
 }
