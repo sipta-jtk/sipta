@@ -125,8 +125,6 @@ class DosenTabelPenilaianController extends Controller
             ];
         });
 
-        Log::info(json_encode($penjadwalan, JSON_PRETTY_PRINT));
-
         return view('DosenTabelPenilaian.views.view', compact('penjadwalan'));
     }
 

@@ -24,59 +24,68 @@ $(document).ready(function () {
 
     function updateRowStriping() {
         $("#rubrikPenilaianTable tr").each(function (index) {
+            $(this).removeClass('even-row odd-row');
             if (index % 2 === 0) {
-                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+                $(this).addClass('odd-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#ffffff");
             } else {
-                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+                $(this).addClass('even-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#f8f9fa");
             }
         });
+    }
+
+    // Function to calculate frozen column width
+    function calculateFrozenColumnWidth() {
+        const firstColumnWidth = $('.table th:nth-child(1)').outerWidth() || 200;
+        $('.table th:nth-child(2), .table td:nth-child(2)').css('left', firstColumnWidth + 'px');
     }
 
     // Add new row to table
     $("#addRow").on("click", function () {
-    const selectedKodeFTA = $("#kode_fta").val();
-    if (!selectedKodeFTA) {
-        Swal.fire({
-            icon: "error",
-            title: "Kode FTA Belum Dipilih",
-            text: "Silakan pilih Kode FTA terlebih dahulu.",
-            timer: 2500,
-            timerProgressBar: true,
-            showConfirmButton: false
-        });
-        return;
-    }
+        const selectedKodeFTA = $("#kode_fta").val();
+        if (!selectedKodeFTA) {
+            Swal.fire({
+                icon: "error",
+                title: "Kode FTA Belum Dipilih",
+                text: "Silakan pilih Kode FTA terlebih dahulu.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
 
-    // Hitung jumlah tr yang ada saat ini
-    const trCount = $("#rubrikPenilaianTable tr").length;
+        // Hitung jumlah tr yang ada saat ini
+        const trCount = $("#rubrikPenilaianTable tr").length;
 
-    // Get rentangNilai from the page
-    let nilaiColumns = '';
-    // Check if rentangNilai is defined globally
-    if (typeof rentangNilai !== 'undefined') {
-        rentangNilai.forEach(function (nilai) {
-            nilaiColumns += `
-                <td>
-                    <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
-                </td>`;
-        });
-    } else {
-        // Fallback: get values from existing table headers
-        $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
-            if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
-                // Extract id_nilai from header text using regex
-                const headerText = $(this).text();
-                const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
-                if (match && match[1]) {
-                    // Gunakan trCount sebagai index
-                    nilaiColumns += `
-                        <td>
-                            <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
-                        </td>`;
+        // Get rentangNilai from the page
+        let nilaiColumns = '';
+        // Check if rentangNilai is defined globally
+        if (typeof rentangNilai !== 'undefined') {
+            rentangNilai.forEach(function (nilai) {
+                nilaiColumns += `
+                    <td>
+                        <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                    </td>`;
+            });
+        } else {
+            // Fallback: get values from existing table headers
+            $('#rubrikPenilaianTable').closest('table').find('thead th').each(function(index) {
+                if (index > 2 && index < $(this).closest('tr').find('th').length - 1) {
+                    // Extract id_nilai from header text using regex
+                    const headerText = $(this).text();
+                    const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
+                    if (match && match[1]) {
+                        // Gunakan trCount sebagai index
+                        nilaiColumns += `
+                            <td>
+                                <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
+                            </td>`;
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
         // Dapatkan semua kriteria yang tersedia
         let kriteriaOptions = '';
@@ -100,7 +109,10 @@ $(document).ready(function () {
                 <input type="hidden" name="status[]" value="1">
                 <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
-                    ${kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('')}
+                    ${typeof kriteriaList !== 'undefined' ? 
+                        kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('') :
+                        kriteriaOptions
+                    }
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot">-</p></td>
@@ -115,6 +127,7 @@ $(document).ready(function () {
 
         $("#rubrikPenilaianTable").append(newRow);
         updateRowStriping();
+        calculateFrozenColumnWidth(); // Recalculate frozen column positions
     });
 
     $(document).on("click", ".remove-row", function () {
@@ -142,6 +155,7 @@ $(document).ready(function () {
             $row.remove();
         }
         updateRowStriping();
+        calculateFrozenColumnWidth(); // Recalculate frozen column positions
     });
 
     updateRowStriping();
@@ -184,14 +198,23 @@ $(document).ready(function () {
         });
     });
 
-    // Inisialisasi: periksa bobot pada semua baris yang sudah ada
     $(".id_kriteria").each(function () {
         var selectedOption = $(this).find(":selected");
         var bobot = selectedOption.data("bobot");
         if (!bobot) {
-            // Jika data-bobot tidak ada, coba ambil dari teks yang sudah ada
             bobot = $(this).closest("tr").find(".bobot").text().replace("%", "");
         }
         $(this).closest("tr").find(".bobot").text(bobot ? bobot + "%" : "-");
+    });
+
+    // Initialize frozen columns on page load
+    setTimeout(function() {
+        calculateFrozenColumnWidth();
+        updateRowStriping();
+    }, 100);
+
+    // Recalculate on window resize
+    $(window).on('resize', function() {
+        calculateFrozenColumnWidth();
     });
 });

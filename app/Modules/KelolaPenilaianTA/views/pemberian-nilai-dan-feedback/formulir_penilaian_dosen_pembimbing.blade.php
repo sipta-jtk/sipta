@@ -226,7 +226,6 @@
                                     <td class="text-left">{{ $krit->nama_kriteria }}</td>
                                     <td>{{ $krit->bobot_kriteria }}%</td>
                                     @foreach($mhs as $key => $item)
-                                        {{ Log::info($item->user->nama) }}
                                         <td>
                                             <input type="number"
                                                    name="nilai{{ $key }}[]"

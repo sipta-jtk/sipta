@@ -133,7 +133,7 @@
                                 <div class="position-relative d-inline-block">
                                     <a title="Ubah" 
                                     class="btn btn-warning btn-md m-1 {{ $isSidangAkhirAvailable ? '' : 'disabled-link' }}"
-                                    href="{{ $isSidangAkhirAvailable ? route('pengisian.nilai.dosbing', ['namaFta' => 'dosen-pembimbing', $sidangAkhir['id_kota']]) : '#' }}">
+                                    href="{{ $isSidangAkhirAvailable ? route('pengisian.nilai', ['namaFta' => 'dosen-pembimbing', $sidangAkhir['id_kota']]) : '#' }}">
                                         <i class="fas fa-edit text-dark m-1"></i>
                                     </a>
                                     @if (!$isSidangAkhirAvailable)
