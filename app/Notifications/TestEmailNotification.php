@@ -11,6 +11,7 @@ use App\Modules\NotificationAndReminder\helper\DynamicPlaceholderParser;
 use App\Modules\NotificationAndReminder\helper\PlaceholderHelper;
 use App\Models\Notifikasi;
 use App\Models\NotifikasiKirim;
+use App\Models\PreferensiNotifikasi;
 
 class TestEmailNotification extends Notification implements ShouldQueue
 {
@@ -35,6 +36,15 @@ class TestEmailNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
+        // Cek preferensi notifikasi email user
+        $preferensi = PreferensiNotifikasi::where('username', $notifiable->username)
+            ->where('tipe_notifikasi', 'email')
+            ->first();
+        if (!$preferensi || $preferensi->email != 1) {
+            // Selain 1 (termasuk null, 0, 2, dst), tidak kirim email
+            return [];
+        }
+        // Hanya kirim email jika preferensi email == 1
         return ['mail'];
     }
 
