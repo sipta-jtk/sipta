@@ -804,17 +804,17 @@ return [
             'icon' => 'fas fa-user-graduate',
             'submenu' => [
                 [
-                    'text' => 'Data Mahasiswa',
-                    'url' => $prefix . '/data-mahasiswa',
-                    'icon' => 'fas fa-user-graduate',
-                    'can' => 'pemimpin'
-                ],
-                [
-                    'text' => 'Data Kelompok TA',
-                    'url' => $prefix . '/data-kelompok-ta',
-                    'icon' => 'fas fa-users',
-                    'can' => 'pemimpin'
-                ],
+                            'text' => 'Pendataan Mahasiswa',
+                            'url' => $prefix . '/pendataan-mahasiswa',
+                            'icon' => 'fas fa-user-graduate',
+                            'can' => 'pemimpin'
+                        ],
+                        [
+                            'text' => 'Pendataan KoTA',
+                            'url' => $prefix . '/pendataan-kelompok-ta',
+                            'icon' => 'fas fa-users',
+                            'can' => 'pemimpin'
+                        ],
             ]
         ],
         [
