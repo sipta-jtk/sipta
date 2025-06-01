@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
+use App\Models\AlokasiDosen;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
@@ -29,6 +31,35 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 class PemberianFeedbackController extends Controller
 {
     /**
+     * Cek aksesibilitas pemberian feedback berdasarkan idKota
+     * 
+     * @param int $idKota
+     */
+    public function cekAksebilitasFeedback($idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Ambil semua id_kota yang boleh diakses dosen ini
+        $kotaDiuji = AlokasiDosen::where('nip', $nip)
+            ->where('status_alokasi', 'fix')
+            ->with([
+                'pengajuanPembimbing.kota'
+            ])
+            ->get()
+            ->pluck('pengajuanPembimbing.kota')
+            ->flatten()
+            ->unique('id_kota');
+    
+        $bolehAkses = $kotaDiuji->contains(function ($kota) use ($idKota) {
+            return $kota && $kota->id_kota == $idKota;
+        });
+    
+        if (!$bolehAkses) {
+            abort(403, 'Anda tidak memiliki akses untuk memberikan masukan kota ini');
+        }
+    }
+
+    /**
      * Tampilkan halaman pengisian masukan seminar
      * 
      * @param string $namaFta
@@ -37,6 +68,8 @@ class PemberianFeedbackController extends Controller
      */
     public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
+        $this->cekAksebilitasFeedback($idKota);
+
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
 
