@@ -145,6 +145,15 @@ Route::prefix($prefix)->group(function () {
         Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
     });
 
+    
+    /**
+     * ========== Kajur dan Kaprodi ==========
+     */
+    Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
+    Route::get('/management-kota', [ManagementKoTAController::class, 'index'])->name('management-kota');
+    Route::get('/detail-kota/{id}', [DetailKoTAController::class, 'index'])->name('detail.kota');
+});
+
 
     /**
      * ========== Profile & Dashboard ==========

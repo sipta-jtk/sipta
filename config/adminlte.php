@@ -799,6 +799,24 @@ return [
                 // ],
             ],
         ],
+         [
+            'text' => 'Pendataan Mahasiswa',
+            'icon' => 'fas fa-user-graduate',
+            'submenu' => [
+                [
+                    'text' => 'Data Mahasiswa',
+                    'url' => $prefix . '/data-mahasiswa',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'pemimpin'
+                ],
+                [
+                    'text' => 'Data Kelompok TA',
+                    'url' => $prefix . '/data-kelompok-ta',
+                    'icon' => 'fas fa-users',
+                    'can' => 'pemimpin'
+                ],
+            ]
+        ],
         [
             'text' => 'Notifikasi dan Reminder',
             'icon' => 'fas fa-bell',

@@ -135,6 +135,14 @@ class AuthServiceProvider extends ServiceProvider
             $mahasiswa = \App\Models\Mahasiswa::where('nim', $user->username)->first();
             return $user->role_user === 'mahasiswa' && $mahasiswa->status_ta === 'mahasiswa_ta' && $mahasiswa->id_kota !== null;
         });
+        
+        /********************************************
+         * [Topik 7] - Fitur Kaprodi dan Kajur
+         *********************************************/
+
+         Gate::define('pemimpin', function(){
+            return Gate::allows('kaprodi') || Gate::allows('kajur');
+        });
 
         /********************************************
          * [Topik 6] - Fitur Repository TA
