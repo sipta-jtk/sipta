@@ -95,7 +95,7 @@ Route::group(['prefix' => 'kelola-penilaian-ta'], function () {
 
     // ================= PEMBERIAN FEEDBACK =================
     Route::prefix('nilai-seminar')->middleware(['auth', 'can:akses-pemberian-nilai'])->group(function () {
-        Route::get('/nilai/{namaFta}/masukan/{idKota}/{idProdi}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar'])->name('pengisian.masukan');
+        Route::get('/nilai/{namaFta}/masukan/{idKota}', [PemberianFeedbackController::class, 'pengisianMasukanSeminar'])->name('pengisian.masukan');
         Route::post('/nilai/{namaFta}/masukan/{idKota}/tambah', [PemberianFeedbackController::class, 'simpanMasukanSeminar'])->name('pengisian.masukan.store');
         Route::post('/nilai/{namaFta}/masukan/{idKota}/edit', [PemberianFeedbackController::class, 'ubahMasukanSeminar'])->name('pengisian.masukan.edit');
         Route::get('/repository/mahasiswa/{kategori}/{id}/download', [PemberianFeedbackController::class, 'download'])->name('dokumen.download');

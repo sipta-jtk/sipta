@@ -33,10 +33,9 @@ class PemberianFeedbackController extends Controller
      * 
      * @param string $namaFta
      * @param int $idKota
-     * @param int $idProdi
      * @return View
      */
-    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
+    public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
@@ -47,6 +46,8 @@ class PemberianFeedbackController extends Controller
         // Ambil data umum penilaian berdasarkan kota
         $keteranganUmumPenilaian = Kota::with('penjadwalan', 'mahasiswa.user')
             ->find($idKota);
+
+        $idProdi = $keteranganUmumPenilaian->mahasiswa->first()->id_prodi;
 
         // Ambil jadwal seminar yang sudah fix berdasarkan kota dan agenda
         $jadwal = Penjadwalan::where([
