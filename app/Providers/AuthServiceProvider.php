@@ -216,6 +216,11 @@ class AuthServiceProvider extends ServiceProvider
          * [TOPIK 5] - Fitur Cek Plagiarisme
          */
 
+        // Akses dosen dan admin
+        Gate::define('akses-dosen-admin', function ($user) {
+            return Gate::allows('dosen') || Gate::allows('admin');
+        });
+
         Gate::define('akses-dokumen-mahasiswa-kota', function ($user, $dokumen) {
             // Admin & Koordinator TA
             if ($user->role_user === 'admin' || ($user->dosen->role_dosen ?? null) === 'koordinator_ta') {

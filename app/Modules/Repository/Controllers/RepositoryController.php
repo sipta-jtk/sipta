@@ -665,12 +665,12 @@ class RepositoryController extends Controller
             $query->whereDate('waktu_aktivitas', '<=', $request->date_to);
         }
 
-        // Get filtered results
-        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->paginate(15);
+        // Get all results (DataTables will handle pagination client-side)
+        $logAktivitas = $query->orderBy('waktu_aktivitas', 'desc')->get();
 
         // Get data for filter dropdowns
         $users = User::orderBy('nama')->get();
-        $kotas = KoTA::orderBy('nama_kota')->get();
+        $kotas = Kota::orderBy('nama_kota')->get();
         $actions = LogAktivitas::distinct('action')->pluck('action');
 
         // Return view with all needed data
