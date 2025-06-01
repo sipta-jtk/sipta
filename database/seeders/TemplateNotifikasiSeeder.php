@@ -264,6 +264,18 @@ class TemplateNotifikasiSeeder extends Seeder
                 'isi_in_apps' => "Penyimpanan hampir penuh!\nPenggunaan: {used_storage}\nBatas: {storage_limit}",
                 'isi_in_email' => "Halo {nama},\n\nPenyimpanan Anda hampir penuh.\nPenggunaan saat ini: {used_storage}\nBatas penyimpanan: {storage_limit}\n\nSilakan kelola ruang penyimpanan Anda.\n\nTerima kasih.",
             ],
+            [
+                'judul_notifikasi' => '[Pemberitahuan] Alokasi Dosen Pembimbing TA Anda Telah Disetujui!',
+                'jenis_notifikasi' => 'pemberitahuan',
+                'isi_in_apps' => "Halo {nama_mahasiswa} ({nim_mahasiswa}), alokasi dosen pembimbing untuk topik '{topik}' telah disetujui pada tanggal {tanggal_penetapan} oleh koordinator {nama_koordinator}. Segera cek detail dan hubungi dosen pembimbing Anda.",
+                'isi_in_email' => "Yth. {nama_mahasiswa} ({nim_mahasiswa}),\n\nKami dari tim koordinator Tugas Akhir ingin memberitahukan bahwa pengajuan alokasi dosen pembimbing Anda untuk topik '{topik}' telah **disetujui**.",
+            ],
+            [
+                'judul_notifikasi' => '[Pemberitahuan] Penugasan Sebagai Dosen Pembimbing TA',
+                'jenis_notifikasi' => 'pemberitahuan',
+                'isi_in_apps'      => "Yth. Bapak/Ibu {nama_dosen},\nAnda telah dialokasikan sebagai dosen pembimbing Tugas Akhir pada {tanggal_penetapan} oleh Koordinator TA ({nama_koordinator}). Detail mahasiswa dan topik dapat dilihat di sistem.",
+                'isi_in_email'     => "Yth. Bapak/Ibu {nama_dosen} (NIP: {nip_dosen}),\n\nDengan hormat,\n\nKami dari Tim Koordinator Tugas Akhir ingin memberitahukan bahwa Bapak/Ibu telah ditetapkan sebagai Dosen Pembimbing untuk pelaksanaan Tugas Akhir.\n\nDetail Penugasan:\n- Nama Dosen: {nama_dosen}\n- NIP: {nip_dosen}\n- Tanggal Penetapan: {tanggal_penetapan}\n- Ditetapkan oleh: {nama_koordinator}\n\nInformasi lebih lanjut mengenai mahasiswa yang akan Bapak/Ibu bimbing beserta detail topiknya dapat diakses melalui Sistem Informasi Akademik atau platform Tugas Akhir yang digunakan.\n\nKami sangat mengharapkan kerjasama dan bimbingan terbaik dari Bapak/Ibu untuk kelancaran studi mahasiswa. Mohon untuk dapat segera berkoordinasi dengan mahasiswa yang bersangkutan.\n\nAtas perhatian dan kesediaan Bapak/Ibu, kami ucapkan terima kasih.\n\nSalam hormat,\nTim Koordinator TA\n({nama_koordinator})",
+            ]
         ];
 
         foreach ($data as $template) {
