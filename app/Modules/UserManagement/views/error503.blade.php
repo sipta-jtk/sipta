@@ -63,7 +63,6 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         .btn-home:hover {
             background-color: #ec971f;
         }

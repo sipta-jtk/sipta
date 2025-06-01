@@ -18,8 +18,8 @@
         </td>
         @forelse($kota as $data)
         <tr>
-            <td>{{ $data->nim }}</td>
-            <td>{{ $data->nama}}</td>
+        <td>{{ $data->nim }}</td>
+        <td>{{ $data->nama}}</td>
             <td>{{ $data->kelas}}</td>
         </tr>
         @empty
