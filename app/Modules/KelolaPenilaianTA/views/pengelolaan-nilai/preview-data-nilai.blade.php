@@ -70,13 +70,19 @@
                             <input type="text" name="data[{{ $index }}][penguji3]" value="{{ $row['penguji3'] }}" class="form-control text-center" readonly>
                         </td>
                         <td>
-                            <input type="number" name="data[{{ $index }}][nilaiPenguji1]" value="{{ $row['nilaiPenguji1'] }}" class="form-control text-center" required>
+                            <input type="number" name="data[{{ $index }}][nilaiPenguji1]" value="{{ $row['nilaiPenguji1'] }}" 
+                                class="form-control text-center" 
+                                {{ $row['nilaiPenguji1'] ? 'required' : 'readonly' }}>
                         </td>
                         <td>
-                            <input type="number" name="data[{{ $index }}][nilaiPenguji2]" value="{{ $row['nilaiPenguji2'] }}" class="form-control text-center" required>
+                            <input type="number" name="data[{{ $index }}][nilaiPenguji2]" value="{{ $row['nilaiPenguji2'] }}" 
+                                class="form-control text-center" 
+                                {{ $row['nilaiPenguji2'] ? 'required' : 'readonly' }}>
                         </td>
                         <td>
-                            <input type="number" name="data[{{ $index }}][nilaiPenguji3]" value="{{ $row['nilaiPenguji3'] }}" class="form-control text-center" required>
+                            <input type="number" name="data[{{ $index }}][nilaiPenguji3]" value="{{ $row['nilaiPenguji3'] }}" 
+                                class="form-control text-center" 
+                                {{ $row['nilaiPenguji3'] ? 'required' : 'readonly' }}>
                         </td>
                     </tr>
                     @endforeach
