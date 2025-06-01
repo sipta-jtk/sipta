@@ -39,7 +39,7 @@ Route::group(['prefix' => 'user/log-user', 'middleware' => (['auth', 'can:mahasi
     });
 });
 
-// Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
+Route::get('/api/notification/{id}', [LogModalNotifController::class, 'show']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/logUser', [LogUserController::class, 'getLogUserNotifications']);

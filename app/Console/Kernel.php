@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->job(\App\Modules\NotificationAndReminder\Jobs\TimelineReminderJob::class)->dailyAt('07:00');
         $schedule->job(\App\Modules\NotificationAndReminder\Jobs\FormPenilaianReminderJob::class)->dailyAt('07:00');
+        $schedule->job(\App\Modules\NotificationAndReminder\Jobs\PenjadwalanReminderJob::class)->dailyAt('07:00');
     }
 
     /**

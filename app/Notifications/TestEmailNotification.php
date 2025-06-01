@@ -12,6 +12,7 @@ use App\Modules\NotificationAndReminder\helper\PlaceholderHelper;
 use App\Models\Notifikasi;
 use App\Models\NotifikasiKirim;
 
+
 class TestEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -44,7 +45,7 @@ class TestEmailNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $template = TemplateNotifikasi::where('judul_notifikasi', trim($this->templateJudul))->first();
-        
+
         if (!$template) {
             throw new \Exception("Template notifikasi tidak ditemukan");
         }
@@ -83,10 +84,15 @@ class TestEmailNotification extends Notification implements ShouldQueue
             'waktu_kirim' => now(),
             'respon_log' => json_encode(['to' => $notifiable->email])
         ]);
+    $preferensi = PreferensiNotifikasi::where('username', '196610181995121001')
+        ->first();
 
+    // Periksa apakah $preferensi ada (tidak null) DAN nilai emailnya adalah '1'
+    if ($preferensi && $preferensi->email == '1') {
         return (new MailMessage)
             ->subject($isiJudul)
             ->view('vendor.notifications.email', ['content' => $isiEmail]);
+    }
     }
 
     private function replacePlaceholders($text, $data)

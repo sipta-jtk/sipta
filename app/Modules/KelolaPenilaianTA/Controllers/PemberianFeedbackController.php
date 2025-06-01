@@ -23,10 +23,14 @@ use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
 use App\Models\Dokumen;
 use App\Models\SubkategoriDokumen;
+use App\Models\KotaUser;
+use App\Models\User;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+
+use App\Notifications\TestEmailNotification;
 
 class PemberianFeedbackController extends Controller
 {
@@ -339,6 +343,33 @@ class PemberianFeedbackController extends Controller
                 }
             }
 
+            // Ke MHS
+            try {
+                if ($idKota) {
+                    $mahasiswa = KotaUser::where('id_kota', $idKota)->pluck('username');
+                    $namaMhs = User::where('username', $mahasiswa)->value('nama');
+                    $judulTA = Kota::where('id_kota', $idKota)->value('judul_ta');
+                    foreach ($mahasiswa as $username) {
+                        if ($username) {
+                            $username->notify(new TestEmailNotification(
+                                'Penilaian Telah Dilakukan, Periksa Feedback Dosen!',
+                                [
+                                    'nama' => $namaMhs,
+                                    'topik' => $judulTA,
+                                    'feedback_dokumen' => $feedback['masukan'],
+                                    'feedback_presentasi' => $feedback['masukan'],
+                                    'feed_penguasaan_materi' => $feedback['masukan']
+                                ]
+                            ));
+                        }
+                    }
+                }
+            } catch (\Exception $notifEx) {
+                \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                    'id_kota' => $idKota,
+                    'username' => $username
+                ]);
+            }
             // Commit transaksi jika berhasil
             DB::commit();
 

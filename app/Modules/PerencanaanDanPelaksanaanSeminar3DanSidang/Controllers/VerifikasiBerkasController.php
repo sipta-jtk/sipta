@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\VerifikasiBerkasPengajuan;
 use App\Models\Kota;
 use App\Models\Dokumen;
+use App\Models\KotaUser;
 use Carbon\Carbon;
+use App\Notifications\TestEmailNotification;
 Carbon::setLocale('id');
 
 class VerifikasiBerkasController extends Controller
@@ -167,7 +169,33 @@ class VerifikasiBerkasController extends Controller
         if ($keputusan === 'tidak_disetujui') {
             $keputusan = 'ditolak';
         }
-    
+
+        // Ke MHS
+        try {
+            if ($id) {
+                $id_kota = VerifikasiBerkasPengajuan::where('id_pengajuan', $id)->value('id_kota');
+                $mahasiswa = KotaUser::where('id_kota', $id_kota)->pluck('username');
+                foreach($mahasiswa as $username){
+                    if ($username) {
+                        $username->notify(new TestEmailNotification(
+                            'Perubahan Status Dokumen Tugas Akhir!',
+                            [
+                                'nip' => $nip,
+                                'status_konfirmasi' => $keputusan,
+                                'catatan' => $catatan,
+                                'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s')
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_pengajuan' => $id,
+                'username' => $username
+            ]);
+        }
+
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }
