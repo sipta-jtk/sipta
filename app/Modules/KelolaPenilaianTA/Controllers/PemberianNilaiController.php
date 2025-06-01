@@ -46,6 +46,26 @@ class PemberianNilaiController extends Controller
         }
     }
 
+    // filepath: [PemberianNilaiController.php](http://_vscodecontentref_/0)
+    private function cekAksesPembimbing($idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Cek apakah dosen ini adalah pembimbing di kota tersebut dan status_pengujian 'diterima'
+        $isPembimbing = AlokasiDosen::where('nip', $nip)
+            ->whereHas('pengajuanPembimbing', function ($query) use ($idKota) {
+                $query->where('status_pengajuan', 'diterima')
+                      ->whereHas('kota', function ($q) use ($idKota) {
+                          $q->where('id_kota', $idKota);
+                      });
+            })
+            ->exists();
+    
+        if (!$isPembimbing) {
+            abort(403, 'Anda bukan pembimbing kelompok ini, sehingga tidak dapat memberi nilai.');
+        }
+    }
+
     /**
      * Menampilkan halaman pengisian nilai seminar
      * 
@@ -53,18 +73,19 @@ class PemberianNilaiController extends Controller
      * @param int $idKota
      * @param int $idProdi
      */
-    public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
+    public function pengisianNilaiSeminar($namaFta, $idKota): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
-        if ($namaFtaSlug == 'seminar ii') {
-            return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
+        if ($namaFtaSlug == 'dosen pembimbing') {
+            $this->cekAksesPembimbing($idKota);
+            return $this->pengisianNilaiDosenPembimbing($namaFtaSlug, $idKota);
         } else {
-            return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi);
+            $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
+            return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota);
         }
     }
 
-    public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi): View
+    public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota): View
     {
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
@@ -96,13 +117,14 @@ class PemberianNilaiController extends Controller
         ]);
     }
 
-    public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
+    public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota): View
     {
         $username = auth()->user()->username;
 
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
+        $idProdi = $keteranganUmumPenilaian->mahasiswa->first()->id_prodi;
 
         $jenisTa = $keteranganUmumPenilaian->jenis_ta;
 
@@ -522,28 +544,30 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiDosenPembimbing($namaFta, $idKota): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-
+        $username = auth()->user()->username;
+    
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
             ->get();
-
+    
         $idProdi = $keteranganUmumPenilaian->first()->mahasiswa->first()->id_prodi;
-
+    
         $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
             ->where('id_prodi', $idProdi)
             ->with([
                 'kriteriaPenilaian.rubrik',
-                'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota) {
+                'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })
+                    ->where('nip', $username); // Tambahkan filter username/nip di sini
                 }
             ])
             ->get();
         
         // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
         $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
-
+    
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),

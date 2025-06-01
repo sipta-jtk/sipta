@@ -46,23 +46,23 @@
                     <div class="mb-2">
                         @if ($item['sudah_penilaian'] === 'Sudah dinilai')
                             @if($item['status_penilaian'] === 'draf')
-                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
                                     class="btn btn-warning w-100">
                                     Edit Nilai
                                 </button>
                             @elseif($item['status_penilaian'] === 'dipublikasikan')
-                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
                                     class="btn btn-primary w-100">
                                     Lihat Nilai
                                 </button>
                             @else
-                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                                <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
                                     class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
                                     Isi Nilai
                                 </button>
                             @endif
                         @else
-                            <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'idProdi' => $item['id_prodi']]) }}'"
+                            <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
                                 class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
                                 Isi Nilai
                             </button>

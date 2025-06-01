@@ -19,7 +19,11 @@
             'links' => [
                 ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('nilai.index', ['kegiatan' => $namaFtaBreadcrumb]), 'label' => 'Tabel Penilaian & Masukan'],
-                ['url' => '', 'label' => 'Penilaian Seminar III']
+                ['url' => '', 'label' => match ($namaFta) {
+                    'sidang akhir' => 'Sidang Akhir',
+                    'seminar iii' => 'Seminar III',
+                    default => ucfirst($namaFta)
+                } . ' - Formulir Penilaian Berdasarkan Rubrik']
             ]
         ])
         @endcomponent
