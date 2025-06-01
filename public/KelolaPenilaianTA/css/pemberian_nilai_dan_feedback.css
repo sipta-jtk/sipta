@@ -1,3 +1,7 @@
+:root {
+    --input-width: 100px; /* ganti sesuai kebutuhan */
+}
+
 trix-editor {
     min-height: 150px;
     background: white;
@@ -104,4 +108,54 @@ input[type=number]::-webkit-inner-spin-button {
 
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+.input-nilai:nth-last-child(1) {
+    position: sticky;
+    right: 0;
+    background: #fff;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+.input-nilai:nth-last-child(2) {
+    position: sticky;
+    right: calc(var(--input-width) * 1);
+    background: #fff;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+.input-nilai:nth-last-child(3) {
+    position: sticky;
+    right: calc(var(--input-width) * 2);
+    background: #fff;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+
+.input-nilai-header:nth-last-child(1) {
+    position: sticky;
+    right: 0;
+    z-index: 2000;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+.input-nilai-header:nth-last-child(2) {
+    position: sticky;
+    right: calc(var(--input-width) * 1);
+    z-index: 2000;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+.input-nilai-header:nth-last-child(3) {
+    position: sticky;
+    right: calc(var(--input-width) * 2);
+    z-index: 2000;
+    min-width: var(--input-width);
+    max-width: var(--input-width);
+}
+/* Tambahkan lagi jika jumlah mahasiswa bisa lebih banyak */
+
+th.input-nilai, td.input-nilai {
+    min-width: var(--input-width);
+    max-width: var(--input-width);
 }

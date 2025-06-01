@@ -23,7 +23,6 @@ $(document).ready(function () {
             selectedFormPenilaian ? selectedFormPenilaian.nama_fta : ""
         );
 
-        // Reset all kriteria dropdowns
         $(".id_kriteria, .kriteria").html(
             '<option value="" disabled selected>Pilih Kriteria</option>'
         );
@@ -105,12 +104,20 @@ $(document).ready(function () {
 
     function updateRowStriping() {
         $("#rubrikPenilaianTable tr").each(function (index) {
+            $(this).removeClass('even-row odd-row');
             if (index % 2 === 0) {
-                $(this).css("background-color", "#ffffff"); 
+                $(this).addClass('odd-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#ffffff");
             } else {
-                $(this).css("background-color", "#f8f9fa"); 
+                $(this).addClass('even-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#f8f9fa");
             }
         });
+    }
+
+    function calculateFrozenColumnWidth() {
+        const firstColumnWidth = $('.table th:nth-child(1)').outerWidth() || 200;
+        $('.table th:nth-child(2), .table td:nth-child(2)').css('left', firstColumnWidth + 'px');
     }
 
     // Add new row to table
@@ -128,6 +135,8 @@ $(document).ready(function () {
             return;
         }
 
+        const trCount = $("#rubrikPenilaianTable tr").length;
+
         let nilaiColumns = '';
         if (typeof rentangNilai !== 'undefined') {
             rentangNilai.forEach(function (nilai) {
@@ -142,6 +151,19 @@ $(document).ready(function () {
                         const id_nilai = match[1];
                         nilaiColumns += `<td><textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea></td>`;
                     }
+                }
+            });
+        }
+
+        let kriteriaOptions = '';
+        if (typeof kriteriaList !== 'undefined') {
+            kriteriaOptions = kriteriaList.map(kriteria => 
+                `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`
+            ).join('');
+        } else {
+            $('#rubrikPenilaianTable tr:first .id_kriteria option').each(function() {
+                if ($(this).val()) {
+                    kriteriaOptions += `<option value="${$(this).val()}" data-bobot="${$(this).data('bobot')}">${$(this).text()}</option>`;
                 }
             });
         }
@@ -164,6 +186,7 @@ $(document).ready(function () {
 
         $("#rubrikPenilaianTable").append(newRow);
         updateRowStriping();
+        calculateFrozenColumnWidth();
     });
 
     // Handle kriteria selection change (works for both .kriteria and .id_kriteria)
@@ -181,6 +204,7 @@ $(document).ready(function () {
         if ($("#rubrikPenilaianTable tr").length > 1) {
             $(this).closest("tr").remove();
             updateRowStriping();
+            calculateFrozenColumnWidth();
         } else {
             Swal.fire({
                 icon: "error",
@@ -199,4 +223,13 @@ $(document).ready(function () {
     if (initialKodeFTA) {
         loadKriteria(initialKodeFTA);
     }
+
+    setTimeout(function() {
+        calculateFrozenColumnWidth();
+        updateRowStriping();
+    }, 100);
+
+    $(window).on('resize', function() {
+        calculateFrozenColumnWidth();
+    });
 });
