@@ -33,7 +33,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'nip' => '196810141993032002',
-                'id_kbk' => 2,
+                'id_kbk' => 2,  
                 'id_dosen' => 'AN',
                 'kode_dosen' => 'KO002N',
                 'role_dosen' => 'dosen',

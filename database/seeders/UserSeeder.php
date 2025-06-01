@@ -461,6 +461,7 @@ class UserSeeder extends Seeder
                 'photo' => 'sofy_fitriani,_s.s.t.,_m.kom.png',
                 'status_user' => 'aktif'
             ],
+            // Mahasiswa
             [
                 'username' => '221511001',
                 'nama' => 'Agam Andika',
@@ -471,7 +472,6 @@ class UserSeeder extends Seeder
                 'photo' => 'agam_andika.png',
                 'status_user' => 'aktif'
             ],
-            // Mahasiswa
             [
                 'username' => '221511021',
                 'nama' => 'Muhammad Jalaludin Qurthubi',
@@ -622,36 +622,36 @@ class UserSeeder extends Seeder
                 'photo' => 'vico_triansyah_nasril.png',
                 'status_user' => 'aktif'
             ],
-            [
-                'username' => '221511007',
-                'nama' => 'Canandra Eka Mukti',
-                'email' => 'canandra.eka.tif22@polban.ac.id',
-                'password' => Hash::make('cana123!#'),
-                'role_user' => 'mahasiswa',
-                'no_whatsapp' => '087820236109',
-                'photo' => 'canandra_eka_mukti.png',
-                'status_user' => 'aktif'
-            ],
-            [
-                'username' => '221511023',
-                'nama' => 'Najwan Zaky Ahmad',
-                'email' => 'najwan.zaky.tif22@polban.ac.id',
-                'password' => Hash::make('najw123!#'),
-                'role_user' => 'mahasiswa',
-                'no_whatsapp' => '087846667722',
-                'photo' => 'najwan_zaky_ahmad.png',
-                'status_user' => 'aktif'
-            ],
-            [
-                'username' => '221511030',
-                'nama' => 'Stefanus Rico Pandapotan Situngkir',
-                'email' => 'stefanus.rico.tif22@polban.ac.id',
-                'password' => Hash::make('stef123!#'),
-                'role_user' => 'mahasiswa',
-                'no_whatsapp' => '081211356560',
-                'photo' => 'stefanus_rico_pandapotan_situngkir.png',
-                'status_user' => 'aktif'
-            ],
+            // [
+            //     'username' => '221511007',
+            //     'nama' => 'Canandra Eka Mukti',
+            //     'email' => 'canandra.eka.tif22@polban.ac.id',
+            //     'password' => Hash::make('cana123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '087820236109',
+            //     'photo' => 'canandra_eka_mukti.png',
+            //     'status_user' => 'aktif'
+            // ],
+            // [
+            //     'username' => '221511023',
+            //     'nama' => 'Najwan Zaky Ahmad',
+            //     'email' => 'najwan.zaky.tif22@polban.ac.id',
+            //     'password' => Hash::make('najw123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '087846667722',
+            //     'photo' => 'najwan_zaky_ahmad.png',
+            //     'status_user' => 'aktif'
+            // ],
+            // [
+            //     'username' => '221511030',
+            //     'nama' => 'Stefanus Rico Pandapotan Situngkir',
+            //     'email' => 'stefanus.rico.tif22@polban.ac.id',
+            //     'password' => Hash::make('stef123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '081211356560',
+            //     'photo' => 'stefanus_rico_pandapotan_situngkir.png',
+            //     'status_user' => 'aktif'
+            // ],
             [
                 'username' => '221511008',
                 'nama' => 'Claudia Berlian Harli',
@@ -747,7 +747,7 @@ class UserSeeder extends Seeder
                 'nama' => 'Yosua Balingga',
                 'email' => 'yosua.balingga.tif22@polban.ac.id',
                 'password' => Hash::make('yosu123!#'),
-                'role_user' => 'mahasiswa',
+                'role_user' => 'mahasiswa', 
                 'no_whatsapp' => '0882001927007',
                 'photo' => 'yosua_balingga.png',
                 'status_user' => 'aktif'
@@ -1062,86 +1062,637 @@ class UserSeeder extends Seeder
                 'photo' => 'muhammad_adi_saputera.png',
                 'status_user' => 'aktif'
             ],
+            // [
+            //     'username' => '201511051',
+            //     'nama' => 'Muhammad Fadhlan Athhar Fadhilah',
+            //     'email' => 'muhammad.fadhlan.tif20@polban.ac.id',
+            //     'password' => Hash::make('muha123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '00000000000',
+            //     'photo' => 'muhammad_fadhlan_athhar_fadhilah.png',
+            //     'status_user' => 'aktif'
+            // ],
+            //D4
             [
-                'username' => '201511051',
-                'nama' => 'Muhammad Fadhlan Athhar Fadhilah',
-                'email' => 'muhammad.fadhlan.tif20@polban.ac.id',
-                'password' => Hash::make('muha123!#'),
+                'username' => '201524017',
+                'nama' => 'Muhammad Fikri Hidayatulloh',
+                'email' => 'muhammad.fikri.tif420@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'muhammad_fadhlan_athhar_fadhilah.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_fikri_hidayatulloh.png',
                 'status_user' => 'aktif'
             ],
-            //D4
+            // [
+            //     'username' => '211524001',
+            //     'nama' => 'Adinda Faayza Malika',
+            //     'email' => 'adinda.faayza.tif421@polban.ac.id',
+            //     'password' => Hash::make('adinda123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '000000',
+            //     'photo' => 'adinda_faayza_malika.png',
+            //     'status_user' => 'aktif'
+            // ],
+            // [
+            //     'username' => '211524003',
+            //     'nama' => 'Annisa Dinda Gantini',
+            //     'email' => 'annisa.dinda.tif421@polban.ac.id',
+            //     'password' => Hash::make('annisa123!#'),
+            //     'role_user' => 'mahasiswa',
+            //     'no_whatsapp' => '000000',
+            //     'photo' => 'annisa_dinda_gantini.png',
+            //     'status_user' => 'aktif'
+            // ],
+            [
+                'username' => '211524002',
+                'nama' => 'Amelia Dewi Agustiani',
+                'email' => 'amelia.dewi.tif421@polban.ac.id',
+                'password' => Hash::make('amelia123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'amelia_dewi_agustiani.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524026',
+                'nama' => 'Salsabila Maharani Putri',
+                'email' => 'salsabila.maharani.tif421@polban.ac.id',
+                'password' => Hash::make('salsabila123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'salsabila_maharani_putri.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524004',
+                'nama' => 'Berliana Elfada',
+                'email' => 'berliana.elfada.tif421@polban.ac.id',
+                'password' => Hash::make('berliana123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'berliana_elfada.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524027',
+                'nama' => 'Suci Awalia Gardara',
+                'email' => 'suci.awalia.tif421@polban.ac.id',
+                'password' => Hash::make('suci123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'suci_awalia_gardara.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524005',
+                'nama' => 'Cintia Ningsih',
+                'email' => 'cintia.ningsih.tif421@polban.ac.id',
+                'password' => Hash::make('cintia123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'cintia_ningsih.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524029',
+                'nama' => 'Yane Pradita',
+                'email' => 'yane.pradita.tif421@polban.ac.id',
+                'password' => Hash::make('yane123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'yane_pradita.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524006',
+                'nama' => 'Dafa Nurul Fauziansyah',
+                'email' => 'dafa.nurul.tif421@polban.ac.id',
+                'password' => Hash::make('dafa123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'dafa_nurul_fauziansyah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524017',
+                'nama' => 'Muhammad Deo Audha Rizki',
+                'email' => 'muhammad.deo.tif421@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_deo_audha_rizki.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524009',
+                'nama' => 'Fardan Al Jihad',
+                'email' => 'fardan.al.tif421@polban.ac.id',
+                'password' => Hash::make('fardan123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'fardan_al_jihad.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524030',
+                'nama' => 'Yayang Setia Budi',
+                'email' => 'yayang.setia.tif421@polban.ac.id',
+                'password' => Hash::make('yayang123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'yayang_setia_budi.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524010',
+                'nama' => 'Fariz Muhamad Ibnu Hisyam',
+                'email' => 'fariz.muhamad.tif421@polban.ac.id',
+                'password' => Hash::make('fariz123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'fariz_muhamad_ibnu_hisyam.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524016',
+                'nama' => 'Muhamad Naufal Al Ghani',
+                'email' => 'muhamad.naufal.tif421@polban.ac.id',
+                'password' => Hash::make('muhamad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhamad_naufal_al_ghani.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524012',
+                'nama' => 'Hanri Fajar Ramadhan',
+                'email' => 'hanri.fajar.tif421@polban.ac.id',
+                'password' => Hash::make('hanri123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'hanri_fajar_ramadhan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524032',
+                'nama' => 'Zahri Al Adzani Hidayat',
+                'email' => 'zahri.al.tif421@polban.ac.id',
+                'password' => Hash::make('zahri123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'zahri_al_adzani_hidayat.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524015',
+                'nama' => 'Mohammad Fathul`ibad',
+                'email' => 'mohammad.fathul.tif421@polban.ac.id',
+                'password' => Hash::make('mohammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'mohammad_fathul’ibad.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524013',
+                'nama' => 'Maolana Firmansyah',
+                'email' => 'maolana.firmansyah.tif421@polban.ac.id',
+                'password' => Hash::make('maolana123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'maolana_firmansyah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524018',
+                'nama' => 'Muhammad Dyfan Ramadhan',
+                'email' => 'muhammad.dyfan.tif421@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_dyfan_ramadhan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524024',
+                'nama' => 'Reka Briyan Cahya Heryana',
+                'email' => 'reka.briyan.tif421@polban.ac.id',
+                'password' => Hash::make('reka123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'reka_briyan_cahya_heryana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524007',
+                'nama' => 'Dhafin Rizqi Fadhilah',
+                'email' => 'dhafin.rizqi.tif421@polban.ac.id',
+                'password' => Hash::make('dhafin123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'dhafin_rizqi_fadhilah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524019',
+                'nama' => 'Muhammad Fadhil',
+                'email' => 'muhammad.fadhil.tif421@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_fadhil.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524021',
+                'nama' => 'Raditya Pasya Heryandi',
+                'email' => 'raditya.pasya.tif421@polban.ac.id',
+                'password' => Hash::make('raditya123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'raditya_pasya_heryandi.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524022',
+                'nama' => 'Raihan Fuad Syakir',
+                'email' => 'raihan.fuad.tif421@polban.ac.id',
+                'password' => Hash::make('raihan123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'raihan_fuad_syakir.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524025',
+                'nama' => 'Salma Edyna Putri',
+                'email' => 'salma.edyna.tif421@polban.ac.id',
+                'password' => Hash::make('salma123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'salma_edyna_putri.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524028',
+                'nama' => 'Tabitha Salsabila Permana',
+                'email' => 'tabitha.salsabila.tif421@polban.ac.id',
+                'password' => Hash::make('tabitha123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'tabitha_salsabila_permana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524008',
+                'nama' => 'Fadhil Radja Assyidiq',
+                'email' => 'fadhil.radja.tif421@polban.ac.id',
+                'password' => Hash::make('fadhil123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'fadhil_radja_assyidiq.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524031',
+                'nama' => 'Zacky Faishal Abror',
+                'email' => 'zacky.faishal.tif421@polban.ac.id',
+                'password' => Hash::make('zacky123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'zacky_faishal_abror.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524033',
+                'nama' => 'Aini Diah Rahmawati',
+                'email' => 'aini.diah.tif421@polban.ac.id',
+                'password' => Hash::make('aini123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'aini_diah_rahmawati.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524060',
+                'nama' => 'Rivaldo Fauzan Robani',
+                'email' => 'rivaldo.fauzan.tif421@polban.ac.id',
+                'password' => Hash::make('rivaldo123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'rivaldo_fauzan_robani.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524034',
+                'nama' => 'Aini Nurul Azizah',
+                'email' => 'aini.nurul.tif421@polban.ac.id',
+                'password' => Hash::make('aini123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'aini_nurul_azizah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524044',
+                'nama' => 'Helsa Alika Femiani',
+                'email' => 'helsa.alika.tif421@polban.ac.id',
+                'password' => Hash::make('helsa123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'helsa_alika_femiani.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524036',
+                'nama' => 'Amelia Nathasa',
+                'email' => 'amelia.nathasa.tif421@polban.ac.id',
+                'password' => Hash::make('amelia123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'amelia_nathasa.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524041',
+                'nama' => 'Falia Davina Gustaman',
+                'email' => 'falia.davina.tif421@polban.ac.id',
+                'password' => Hash::make('falia123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'falia_davina_gustaman.png',
+                'status_user' => 'aktif'
+            ],
             [
                 'username' => '211524037',
                 'nama' => 'Danu Mahesa',
                 'email' => 'danu.mahesa.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('danu123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Danu_Mahesa.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'danu_mahesa.png',
                 'status_user' => 'aktif'
             ],
-            // Regi Purnama
             [
                 'username' => '211524057',
                 'nama' => 'Regi Purnama',
                 'email' => 'regi.purnama.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('regi123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Regi_Purnama.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'regi_purnama.png',
                 'status_user' => 'aktif'
             ],
-
-            // Dea Salma Isnaini
             [
                 'username' => '211524038',
                 'nama' => 'Dea Salma Isnaini',
                 'email' => 'dea.salma.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('dea123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Dea_Salma_Isnaini.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'dea_salma_isnaini.png',
                 'status_user' => 'aktif'
             ],
-
-            // Mey Meizia Galtiady
             [
                 'username' => '211524048',
                 'nama' => 'Mey Meizia Galtiady',
                 'email' => 'mey.meizia.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('mey123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Mey_Meizia_Galtiady.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'mey_meizia_galtiady.png',
                 'status_user' => 'aktif'
             ],
-
-            // Delvito Rahim Derivansyah
             [
                 'username' => '211524039',
                 'nama' => 'Delvito Rahim Derivansyah',
                 'email' => 'delvito.rahim.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('delvito123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Delvito_Rahim_Derivansyah.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'delvito_rahim_derivansyah.png',
                 'status_user' => 'aktif'
             ],
-
-            // Mentari Ayu Alysia Sudrajat
             [
                 'username' => '211524047',
                 'nama' => 'Mentari Ayu Alysia Sudrajat',
                 'email' => 'mentari.ayu.tif421@polban.ac.id',
-                'password' => Hash::make('mahe123!#'),
+                'password' => Hash::make('mentari123!#'),
                 'role_user' => 'mahasiswa',
-                'no_whatsapp' => '00000000000',
-                'photo' => 'Mentari_Ayu_Alysia_Sudrajat.png',
+                'no_whatsapp' => '000000',
+                'photo' => 'mentari_ayu_alysia_sudrajat.png',
                 'status_user' => 'aktif'
             ],
+            [
+                'username' => '211524042',
+                'nama' => 'Ghessa Theniana',
+                'email' => 'ghessa.theniana.tif421@polban.ac.id',
+                'password' => Hash::make('ghessa123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'ghessa_theniana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524062',
+                'nama' => 'Sendi Setiawan',
+                'email' => 'sendi.setiawan.tif421@polban.ac.id',
+                'password' => Hash::make('sendi123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'sendi_setiawan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524056',
+                'nama' => 'Raka Mahardika Maulana',
+                'email' => 'raka.mahardika.tif421@polban.ac.id',
+                'password' => Hash::make('raka123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'raka_mahardika_maulana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524043',
+                'nama' => 'Gian Sandrova',
+                'email' => 'gian.sandrova.tif421@polban.ac.id',
+                'password' => Hash::make('gian123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'gian_sandrova.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524045',
+                'nama' => 'Husna Maulana',
+                'email' => 'husna.maulana.tif421@polban.ac.id',
+                'password' => Hash::make('husna123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'husna_maulana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524051',
+                'nama' => 'Muhammad Rafi Farhan',
+                'email' => 'muhammad.rafi.tif421@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_rafi_farhan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524046',
+                'nama' => 'Jovan Shelomo',
+                'email' => 'jovan.shelomo.tif421@polban.ac.id',
+                'password' => Hash::make('jovan123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'jovan_shelomo.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524054',
+                'nama' => 'Rachmat Purwa Saputra',
+                'email' => 'rachmat.purwa.tif421@polban.ac.id',
+                'password' => Hash::make('rachmat123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'rachmat_purwa_saputra.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524049',
+                'nama' => 'Mochamad Ferdy Fauzan',
+                'email' => 'mochamad.ferdy.tif421@polban.ac.id',
+                'password' => Hash::make('mochamad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'mochamad_ferdy_fauzan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524050',
+                'nama' => 'Muhammad Daffa Raihandika',
+                'email' => 'muhammad.daffa.tif421@polban.ac.id',
+                'password' => Hash::make('muhammad123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'muhammad_daffa_raihandika.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524052',
+                'nama' => 'Nayara Saffa',
+                'email' => 'nayara.saffa.tif421@polban.ac.id',
+                'password' => Hash::make('nayara123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'nayara_saffa.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524063',
+                'nama' => 'Syifa Khairina',
+                'email' => 'syifa.khairina.tif421@polban.ac.id',
+                'password' => Hash::make('syifa123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'syifa_khairina.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524053',
+                'nama' => 'Novia Nur Azizah',
+                'email' => 'novia.nur.tif421@polban.ac.id',
+                'password' => Hash::make('novia123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'novia_nur_azizah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524061',
+                'nama' => 'Rofa`ul Akrom Hendrawan',
+                'email' => 'rofaul.akrom.tif421@polban.ac.id',
+                'password' => Hash::make('rofaul123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'rofaul_akrom_hendrawan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524059',
+                'nama' => 'Reza Ananta Permadi Supriyo',
+                'email' => 'reza.ananta.tif421@polban.ac.id',
+                'password' => Hash::make('reza123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'reza_ananta_permadi_supriyo.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524055',
+                'nama' => 'Rahma Alia Latifa',
+                'email' => 'rahma.alia.tif421@polban.ac.id',
+                'password' => Hash::make('rahma123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'rahma_alia_latifa.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524064',
+                'nama' => 'Yasmin Azizah Tuhfah',
+                'email' => 'yasmin.azizah.tif421@polban.ac.id',
+                'password' => Hash::make('yasmin123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'yasmin_azizah_tuhfah.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524058',
+                'nama' => 'Reihan Hadi Fauzan',
+                'email' => 'reihan.hadi.tif421@polban.ac.id',
+                'password' => Hash::make('reihan123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'reihan_hadi_fauzan.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524011',
+                'nama' => 'Fariz Rahman Maulana',
+                'email' => 'fariz.rahman.tif421@polban.ac.id',
+                'password' => Hash::make('fariz123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'fariz_rahman_maulana.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524023',
+                'nama' => 'Raihan Shidqi Pangestu',
+                'email' => 'raihan.shidqi.tif421@polban.ac.id',
+                'password' => Hash::make('raihan123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'raihan_shidqi_pangestu.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '211524040',
+                'nama' => 'Egi Satria Dharma Yudha Wicaksana',
+                'email' => 'egi.satria.tif421@polban.ac.id',
+                'password' => Hash::make('egi123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'egi_satria_dharma_yudha_wicaksana.png',
+                'status_user' => 'aktif'
+            ]
         ];
 
         foreach ($data as $item) {
