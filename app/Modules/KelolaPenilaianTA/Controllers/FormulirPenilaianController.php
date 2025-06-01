@@ -17,6 +17,7 @@ use App\Models\KriteriaPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\Rubrik;
 use App\Models\DetailRubrik;
+use App\Models\KategoriPenilaian;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -101,6 +102,11 @@ class FormulirPenilaianController extends Controller {
             $id_fta = $formPenilaian->id_fta;
 
             if ($request->jenisForm === 'Penilaian') {
+                KategoriPenilaian::create([
+                    'id_fta' => $id_fta,
+                    'kunci_penilaian' => 0
+                ]);
+
                 if ($request->has('nama_kriteria')) {
                     // Kalkulasi total bobot
                     $totalBobot = array_sum($request->bobot_kriteria);
