@@ -167,6 +167,27 @@ class PembatalanJadwalSeminarSidangController extends Controller
             $pembatalan->delete();
         }
         // Notif Dosen
+        try {
+            if ($pembatalan_id) {
+                $nip = Pembatalan::where('id_pembatalan', $pembatalan_id)->value('nip');
+                $namaDsn = User::where('username', $nip)->value('nama');
+                $alasan = Pembatalan::where('id_pembatalan', $pembatalan_id)->value('alasan_pembatalan');
+                if ($nip) {
+                    $nip->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+                        [
+                            'nama' => $namaDsn,
+                            'alasan' => $alasan
+                        ]
+                    ));
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_pembatalan' => $pembatalan_id,
+                'username' => $nip
+            ]);
+        }
 
         return redirect()->route('view.persetujuan.pembatalan.sidang')->with('success', $message);
     }
