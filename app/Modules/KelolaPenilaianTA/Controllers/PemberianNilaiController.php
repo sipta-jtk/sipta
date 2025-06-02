@@ -18,19 +18,26 @@ use App\Models\SubkategoriDokumen;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PemberianNilaiController extends Controller
 {
-    private function cekAksebilitasPenilaian($namaFtaSlug, $idKota)
+
+    /**
+     * Cek aksesibilitas penilaian berdasarkan nama FTA dan idKota
+     * 
+     * @param string $namaFtaSlug
+     * @param int $idKota
+     */
+    private function cekAksebilitasPenilaian($idKota)
     {
         $nip = Auth::user()->dosen->nip;
     
         // Ambil semua id_kota yang boleh diakses dosen ini
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
+            ->where('status_alokasi', 'fix')
             ->with([
-                'pengajuanPembimbing.kota.penjadwalan',
-                'pengajuanPembimbing.kota.mahasiswa',
+                'pengajuanPembimbing.kota'
             ])
             ->get()
             ->pluck('pengajuanPembimbing.kota')
@@ -45,6 +52,90 @@ class PemberianNilaiController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk menilai kelompok ini');
         }
     }
+    
+    /**
+     * Cek apakah dosen ini adalah pembimbing di kota tersebut
+     * 
+     * @param int $idKota
+     */
+    private function cekAksesPenilaianPembimbing($idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Cek apakah dosen ini adalah pembimbing di kota tersebut dan status_pengujian 'diterima'
+        $isPembimbing = AlokasiDosen::where('nip', $nip)
+            ->whereHas('pengajuanPembimbing', function ($query) use ($idKota) {
+                $query->where('status_pengajuan', 'diterima')
+                      ->whereHas('kota', function ($q) use ($idKota) {
+                          $q->where('id_kota', $idKota);
+                      });
+            })
+            ->exists();
+    
+        if (!$isPembimbing) {
+            abort(403, 'Anda bukan pembimbing kelompok ini, sehingga tidak dapat memberi nilai.');
+        }
+    }
+
+    private function cekAksesPenilaianRubrikTerkunci($kategoriPenilaian, $mahasiswa, $nip)
+    {
+        // Cek apakah kategori penilaian dikunci
+        if ($kategoriPenilaian->kunci_penilaian) {
+            // Cek apakah dosen sudah pernah memberi nilai rubrik untuk kategori ini pada salah satu mahasiswa
+            $sudahNilai = $mahasiswa->contains(function ($mhs) use ($kategoriPenilaian, $nip) {
+                return $mhs->nilaiRubrik()
+                    ->where('nip', $nip)
+                    ->whereHas('rubrik.kriteriaPenilaian.formPenilaian.kategoriPenilaian', function ($q) use ($kategoriPenilaian) {
+                        $q->where('id_kategori', $kategoriPenilaian->id_kategori);
+                    })
+                    ->exists();
+            });
+    
+            // Jika belum pernah memberi nilai, abort
+            if (!$sudahNilai) {
+                abort(403, 'Penilaian rubrik untuk kategori ini sudah dikunci. Anda tidak dapat mengisi nilai baru.');
+            }
+        }
+    }
+    
+    private function cekAksesJadwalDimulai($idKota, $namaFta)
+    {
+        // Mapping namaFta ke format agenda di database
+        $agenda = match (strtolower($namaFta)) {
+            'seminar iii' => 'seminar_3',
+            'sidang akhir' => 'sidang',
+            default => $namaFta,
+        };
+    
+        $jadwalQuery = Kota::where('id_kota', $idKota)
+            ->with(['penjadwalan' => function ($q) use ($agenda) {
+                if ($agenda) {
+                    $q->where(function ($query) use ($agenda) {
+                        $query->where('agenda', $agenda);
+                    });
+                }
+            }])
+            ->first();
+    
+        $penjadwalan = $jadwalQuery->penjadwalan->first();
+        $start = optional($penjadwalan)->start;
+        $agenda = optional($penjadwalan)->agenda ?? $agenda;
+    
+        // Mapping agenda ke label user-friendly
+        $jenisSeminar = match (strtolower($agenda)) {
+            'seminar_3', 'seminar 3', 'seminar-3' => 'Seminar III',
+            'sidang' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $agenda ?? 'Seminar')),
+        };
+
+        if (!$start) {
+            abort(403, "Jadwal penilaian $jenisSeminar belum ditentukan.");
+        }
+    
+        if (Carbon::now()->lt(Carbon::parse($start))) {
+            abort(403, "Penilaian $jenisSeminar belum dapat dilakukan karena jadwal belum dimulai.");
+        }
+    }
 
     /**
      * Menampilkan halaman pengisian nilai seminar
@@ -53,18 +144,20 @@ class PemberianNilaiController extends Controller
      * @param int $idKota
      * @param int $idProdi
      */
-    public function pengisianNilaiSeminar($namaFta, $idKota, $idProdi): View
+    public function pengisianNilaiSeminar($namaFta, $idKota): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-        // $this->cekAksebilitasPenilaian($namaFtaSlug, $idKota);
-        if ($namaFtaSlug == 'seminar ii') {
-            return $this->pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi);
+        if ($namaFtaSlug == 'dosen pembimbing') {
+            $this->cekAksesPenilaianPembimbing($idKota);
+            return $this->pengisianNilaiDosenPembimbing($namaFtaSlug, $idKota);
         } else {
-            return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi);
+            $this->cekAksebilitasPenilaian($idKota);
+            $this->cekAksesJadwalDimulai($idKota, $namaFtaSlug);
+            return $this->pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota);
         }
     }
 
-    public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota, $idProdi): View
+    public function pengisianNilaiBerdasarkanKriteria($namaFtaSlug, $idKota): View
     {
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
@@ -96,13 +189,14 @@ class PemberianNilaiController extends Controller
         ]);
     }
 
-    public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota, $idProdi): View
+    public function pengisianNilaiBerdasarkanRubrik($namaFtaSlug, $idKota): View
     {
         $username = auth()->user()->username;
 
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user')
             ->first();
+        $idProdi = $keteranganUmumPenilaian->mahasiswa->first()->id_prodi;
 
         $jenisTa = $keteranganUmumPenilaian->jenis_ta;
 
@@ -123,6 +217,12 @@ class PemberianNilaiController extends Controller
                     ->where('nip', $username);
                 }])
             ->get();
+
+        $this->cekAksesPenilaianRubrikTerkunci(
+            $detailInformasiFta->first()->kategoriPenilaian->first(),
+            $keteranganUmumPenilaian->mahasiswa,
+            $username
+        );
 
         $rubrikList = $detailInformasiFta->flatMap(function ($fta) {
             return $fta->kriteriaPenilaian->flatMap(function ($kriteria) {
@@ -522,28 +622,30 @@ class PemberianNilaiController extends Controller
     public function pengisianNilaiDosenPembimbing($namaFta, $idKota): View
     {
         $namaFtaSlug = Str::slug($namaFta, ' ');
-
+        $username = auth()->user()->username;
+    
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
             ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
             ->get();
-
+    
         $idProdi = $keteranganUmumPenilaian->first()->mahasiswa->first()->id_prodi;
-
+    
         $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
             ->where('id_prodi', $idProdi)
             ->with([
                 'kriteriaPenilaian.rubrik',
-                'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota) {
+                'kriteriaPenilaian.nilaiKriteria' => function ($query) use ($idKota, $username) {
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
-                    });
+                    })
+                    ->where('nip', $username); // Tambahkan filter username/nip di sini
                 }
             ])
             ->get();
         
         // Ambil dokumen terbaru berdasarkan kota, dengan kategori 'sidang-akhir'
         $dokumen = $this->getLatestDokumenByKota($idKota, 'sidang-akhir');
-
+    
         return view('KelolaPenilaianTA.views.pemberian-nilai-dan-feedback.formulir_penilaian_dosen_pembimbing', [
             'detailInformasiFta' => $detailInformasiFta,
             'keteranganUmumPenilaian' => $keteranganUmumPenilaian->first(),

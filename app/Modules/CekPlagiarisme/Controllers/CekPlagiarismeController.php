@@ -393,34 +393,36 @@ class CekPlagiarismeController extends Controller
     public function getKota()
     {
         // Mengambil id_kota dan nama_kota dari relasi preferensiKota -> kota
-
         if (auth()->user()->role_user === 'admin') {
             $kotas = Kota::all()->map(function ($kota) {
                 // Mengembalikan id_kota dan nama_kota
                 return [
                     'id_kota' => $kota->id_kota,
-                    'nama_kota' => $kota->nama_kota, // Pastikan relasi dengan model Kota
+                    'nama_kota' => $kota->nama_kota,
                 ];
             });
-        } elseif (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
-            $kotas = Kota::all()->map(function ($kota) {
-                // Mengembalikan id_kota dan nama_kota
-                return [
-                    'id_kota' => $kota->id_kota,
-                    'nama_kota' => $kota->nama_kota, // Pastikan relasi dengan model Kota
-                ];
-            });
-        } else
-            $kotas = auth()->user()
-                ->dosen
-                ->preferensiKota
-                ->map(function ($preferensiKota) {
+        } elseif (auth()->user()->role_user === 'dosen') {
+            if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+                $kotas = Kota::all()->map(function ($kota) {
                     // Mengembalikan id_kota dan nama_kota
                     return [
-                        'id_kota' => $preferensiKota->id_kota,
-                        'nama_kota' => $preferensiKota->kota->nama_kota, // Pastikan relasi dengan model Kota
+                        'id_kota' => $kota->id_kota,
+                        'nama_kota' => $kota->nama_kota,
                     ];
                 });
+            } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
+                $kotas = auth()->user()
+                    ->dosen
+                    ->preferensiKota
+                    ->map(function ($preferensiKota) {
+                        // Mengembalikan id_kota dan nama_kota
+                        return [
+                            'id_kota' => $preferensiKota->id_kota,
+                            'nama_kota' => $preferensiKota->kota->nama_kota,
+                        ];
+                    });
+            }
+        }
 
         Log::info('Mengambil daftar kota untuk user', [
             'user_id' => auth()->id(),

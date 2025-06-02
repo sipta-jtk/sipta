@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
+use App\Models\AlokasiDosen;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
@@ -29,15 +31,45 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 class PemberianFeedbackController extends Controller
 {
     /**
+     * Cek aksesibilitas pemberian feedback berdasarkan idKota
+     * 
+     * @param int $idKota
+     */
+    public function cekAksebilitasFeedback($idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Ambil semua id_kota yang boleh diakses dosen ini
+        $kotaDiuji = AlokasiDosen::where('nip', $nip)
+            ->where('status_alokasi', 'fix')
+            ->with([
+                'pengajuanPembimbing.kota'
+            ])
+            ->get()
+            ->pluck('pengajuanPembimbing.kota')
+            ->flatten()
+            ->unique('id_kota');
+    
+        $bolehAkses = $kotaDiuji->contains(function ($kota) use ($idKota) {
+            return $kota && $kota->id_kota == $idKota;
+        });
+    
+        if (!$bolehAkses) {
+            abort(403, 'Anda tidak memiliki akses untuk memberikan masukan kota ini');
+        }
+    }
+
+    /**
      * Tampilkan halaman pengisian masukan seminar
      * 
      * @param string $namaFta
      * @param int $idKota
-     * @param int $idProdi
      * @return View
      */
-    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
+    public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
+        $this->cekAksebilitasFeedback($idKota);
+
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
 
@@ -47,6 +79,8 @@ class PemberianFeedbackController extends Controller
         // Ambil data umum penilaian berdasarkan kota
         $keteranganUmumPenilaian = Kota::with('penjadwalan', 'mahasiswa.user')
             ->find($idKota);
+
+        $idProdi = $keteranganUmumPenilaian->mahasiswa->first()->id_prodi;
 
         // Ambil jadwal seminar yang sudah fix berdasarkan kota dan agenda
         $jadwal = Penjadwalan::where([
