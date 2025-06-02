@@ -213,8 +213,8 @@ class TemplateNotifikasiSeeder extends Seeder
             [
                 'judul_notifikasi' => '[Pemberitahuan] Akun Berhasil Dibuat',
                 'jenis_notifikasi' => 'pemberitahuan',
-                'isi_in_apps' => "Selamat datang di SIPTA!\nUsername: {username}",
-                'isi_in_email' => "Halo {nama},\n\nAkun SIPTA Anda telah berhasil dibuat.\nUsername: {username}\nEmail: {email}\n\nTerima kasih.",
+                'isi_in_apps' => "Selamat datang di SIPTA!\nUsername: {username}\nPassword telah dikirim ke email Anda.",
+                'isi_in_email' => "Halo {nama},\n\nAkun SIPTA Anda telah berhasil dibuat.\nBerikut adalah informasi login Anda:\n\nUsername: {username}\nEmail: {email}\nPassword: {password}\n\nDemi keamanan, segera ubah password Anda setelah login pertama kali.\n\nTerima kasih.",
             ],
             [
                 'judul_notifikasi' => '[Pemberitahuan] Kegiatan Timeline Baru Ditambahkan',
