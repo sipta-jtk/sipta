@@ -79,7 +79,9 @@ class MahasiswaController extends Controller
                     '[Pemberitahuan] Akun Berhasil Dibuat',
                     [
                         'nama' => $request->nama,
-                        'email' => $request->email
+                        'email' => $request->email,
+                        'username' => $request->nim,
+                        'password' => $password // Send plain text password only in email
                     ]
                 ));
             }
@@ -274,7 +276,9 @@ public function import(Request $request)
                             '[Pemberitahuan] Akun Berhasil Dibuat',
                             [
                                 'nama' => $userData['nama'],
-                                'email' => $userData['email']
+                                'email' => $userData['email'],
+                                'username' => $userData['username'],
+                                'password' => $password // Send plain text password only in email
                             ]
                         ));
                     }

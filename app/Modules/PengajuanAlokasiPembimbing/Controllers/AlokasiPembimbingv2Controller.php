@@ -290,13 +290,13 @@ class AlokasiPembimbingv2Controller extends Controller
                 $user = User::where('username', $mhs['nim'])->first();
                 if ($user) {
                     $user->notify(new TestEmailNotification(
-                        '[Pemberitahuan] Anda Telah Berhasil Mendapatkan Dosen Pembimbing!',
+                        '[Pemberitahuan] Alokasi Dosen Pembimbing TA Anda Telah Disetujui!',
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
                             'nama_mahasiswa' => $mhs['nama'],
                             'nim' => $mhs['nim'],
-                            'tanggal' => $waktu,
+                            'tanggal' => $waktu
                         ]
                     ));
                 }
@@ -310,25 +310,28 @@ class AlokasiPembimbingv2Controller extends Controller
         }
 
         // Kirim notifikasi ke dosen
-        foreach ($dosenList as $nip) {
+        foreach ($dosenList as $id_dosen) {
             try {
-                // Cari user dosen berdasarkan username (karena NIP disimpan di kolom 'username')
-                $user = User::where('username', $nip)->first();
+                // Cari user berdasarkan username (karena NIP disimpan di kolom 'username')
+                $dosen = Dosen::where('id_dosen', $id_dosen['idDosen'])->value('username');
+                $user = User::where('username', $dosen->nip)->first();
                 if ($user) {
                     $user->notify(new TestEmailNotification(
-                        '[Notifikasi] Anda Telah Dialokasikan Sebagai Pembimbing!',
+                        '[Pemberitahuan] Penugasan Sebagai Dosen Pembimbing TA',
                         [
                             'nama_koordinator' => $koordinatorName,
                             'topik' => 'Alokasi Bimbingan Disetujui',
-                            'nama_dosen' => $user->nama,
-                            'tanggal' => $waktu,
+                            'nama_dosen' => $user['nama'],
+                            'nip' => $dosen['nip'],
+                            'tanggal' => $waktu
                         ]
                     ));
                 }
             } catch (\Exception $notifEx) {
                 $errorCount++;
                 \Log::error('Gagal mengirim notifikasi ke dosen: ' . $notifEx->getMessage(), [
-                    'nip' => $nip
+                    'nip' => $dosen['nip'],
+                    'nama' => $dosen['nama']
                 ]);
             }
         }

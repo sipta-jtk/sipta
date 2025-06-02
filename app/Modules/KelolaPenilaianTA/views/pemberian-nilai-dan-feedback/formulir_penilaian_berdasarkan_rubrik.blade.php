@@ -19,7 +19,11 @@
             'links' => [
                 ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('nilai.index', ['kegiatan' => $namaFtaBreadcrumb]), 'label' => 'Tabel Penilaian & Masukan'],
-                ['url' => '', 'label' => 'Penilaian Seminar III']
+                ['url' => '', 'label' => match ($namaFta) {
+                    'sidang akhir' => 'Sidang Akhir',
+                    'seminar iii' => 'Seminar III',
+                    default => ucfirst($namaFta)
+                } . ' - Formulir Penilaian Berdasarkan Rubrik']
             ]
         ])
         @endcomponent
@@ -204,12 +208,11 @@
                             <tr class="bg-dark text-white">
                                 <th style="min-width: 200px;" rowspan="2">Detail Kriteria</th>
                                 <th style="min-width: 200px;" colspan="6">Rentang Penilaian</th>
-                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->mahasiswa ?? []) }}">Nilai Perorangan</th>
+                                <th style="min-width: 200px;" colspan="{{ count($keteranganUmumPenilaian->mahasiswa ?? []) }}" class="input-nilai-header">Nilai Perorangan</th>
                             </tr>
                             <tr class="bg-dark text-white sticky-row">
                                 @foreach($rubrikList as $index => $rubrik)
                                     <th style="min-width: 200px;">
-                                        {{ Log::info($rubrik['nilai']) }}
                                         @if($index == count($rubrikList) - 1)
                                             {{ $rubrik['nilai']['batas_atas'] }} - {{ $rubrik['nilai']['batas_bawah'] }} ({{ $rubrik['nilai']['id_nilai'] }})
                                         @else
@@ -219,7 +222,7 @@
                                 @endforeach
 
                                 @foreach($keteranganUmumPenilaian->mahasiswa ?? [] as $key => $mhs)
-                                    <th>{{ $key + 1 }}</th>
+                                    <th class="input-nilai-header">{{ $key + 1 }}</th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -239,7 +242,7 @@
                                                 $nilai = isset($rubrik->nilaiRubrik[$key]) ? $rubrik->nilaiRubrik[$key]->nilai_rubrik : '';
                                             @endphp
 
-                                            <td>
+                                            <td class="input-nilai align-middle">
                                                 <input type="number" class="form-control" name="nilai{{ $key }}[]" min="0" max="100" value="{{ $nilai }}" {{ $view ? '' : 'readonly' }} required data-toggle="tooltip" data-placement="top" title="{{ $mhs->user->nama }}">
                                             </td>
                                         @endforeach

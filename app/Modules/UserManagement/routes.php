@@ -145,6 +145,17 @@ Route::prefix($prefix)->group(function () {
         Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
     });
 
+    
+    /**
+     * ========== Kajur dan Kaprodi ==========
+     */
+    Route::middleware(['auth', 'can:pemimpin'])->group(function () {
+        Route::get('/pendataan-mahasiswa', [UserManagementController::class, 'show_mhs']);
+        Route::get('/pendataan-kelompok-ta', [UserManagementController::class, 'show_kelompok_ta']);
+        Route::get('/detail-kota-prodi/{id}', [UserManagementController::class, 'getDetailKotaProdi']);
+
+});
+
 
     /**
      * ========== Profile & Dashboard ==========

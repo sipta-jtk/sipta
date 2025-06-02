@@ -16,6 +16,8 @@ use Illuminate\Support\Collection;
 use Carbon\Carbon;
 Carbon::setLocale('id');
 
+use app\Notifications\TestEmailNotification;
+
 
 class VerifikasiPengajuanJadwalController extends Controller
 {
@@ -245,6 +247,7 @@ class VerifikasiPengajuanJadwalController extends Controller
 
             Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                 ->update(['status' => 'batal']);
+                // Batal ke MHS & Dosen
         }
 
         return redirect()->route('kelola.jadwal.list', ['tipe' => $tipe])
@@ -290,6 +293,7 @@ class VerifikasiPengajuanJadwalController extends Controller
             // Jika status disetujui, update status penjadwalan menjadi fix
             Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                 ->update(['status' => 'batal']);
+                // Batal ke MHS
         }
         
         // Redirect kembali ke halaman dengan pesan
@@ -335,6 +339,21 @@ class VerifikasiPengajuanJadwalController extends Controller
             // Jika status disetujui, update status penjadwalan menjadi fix
             Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                 ->update(['status' => 'batal']);
+                // Ke Pembimbing dan MHS
+                try {
+                    if ($nip) {
+                        $nip->notify(new TestEmailNotification(
+                            'Perubahan Status Dokumen Tugas Akhir!',
+                            [
+                                'penjadwalan' => $idPenjadwalan
+                            ]
+                        ));
+                    }
+                } catch (\Exception $notifEx) {
+                    \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                        'nip' => $nip
+                    ]);
+                }
         }
         
         // Redirect kembali ke halaman dengan pesan
