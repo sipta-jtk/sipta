@@ -123,7 +123,7 @@ class VerifikasiBerkasPengajuanMahasiswaController extends Controller
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
                 'id_kota' => $idKota,
-                'nip' => $nip
+                'nip' => ''
             ]);
         }
         return redirect()->route('verifikasi3.create')->with('success', 'Pengajuan berhasil diajukan.');
