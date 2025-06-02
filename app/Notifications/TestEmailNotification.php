@@ -84,15 +84,18 @@ class TestEmailNotification extends Notification implements ShouldQueue
             'waktu_kirim' => now(),
             'respon_log' => json_encode(['to' => $notifiable->email])
         ]);
-    $preferensi = PreferensiNotifikasi::where('username', '196610181995121001')
-        ->first();
+    // $preferensi = PreferensiNotifikasi::where('username', $notifiable->username)
+    //     ->first();
 
     // Periksa apakah $preferensi ada (tidak null) DAN nilai emailnya adalah '1'
-    if ($preferensi && $preferensi->email == '1') {
-        return (new MailMessage)
+    // if ($preferensi && $preferensi->email == '1') {
+    //     return (new MailMessage)
+    //         ->subject($isiJudul)
+    //         ->view('vendor.notifications.email', ['content' => $isiEmail]);
+    // }
+    return (new MailMessage)
             ->subject($isiJudul)
             ->view('vendor.notifications.email', ['content' => $isiEmail]);
-    }
     }
 
     private function replacePlaceholders($text, $data)
