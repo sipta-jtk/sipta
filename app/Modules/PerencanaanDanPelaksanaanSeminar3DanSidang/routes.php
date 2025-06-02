@@ -11,9 +11,13 @@ use App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers\BeritaAca
 // PENGAJUAN JADWAL
 Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
     //daftar pengajuan 
-    Route::get('pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
+    Route::get('seminar3-pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
         ->middleware(['auth'])
-        ->name('pengajuan');
+        ->name('seminar3-pengajuan');
+
+    Route::get('sidang-pengajuan', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuan'])
+        ->middleware(['auth'])
+        ->name('sidang-pengajuan');
 
     //pengajuan jadwal seminar 3
     Route::get('pengajuan-seminar3', [PengajuanJadwalKotaSeminar3DanSidang::class, 'indexPengajuanSeminar3'])

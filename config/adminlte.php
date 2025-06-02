@@ -414,7 +414,7 @@ return [
                     ],
                     [
                         'text' => 'Pengajuan',
-                        'url' => $prefix . '/pengajuan',
+                        'url' => $prefix . '/seminar3-pengajuan',
                         'can' => 'all_mahasiswa',
                         'icon' => 'fas fa-fw fa-file',
                     ],
@@ -438,7 +438,7 @@ return [
                         ],
                         [
                             'text' => 'Pengajuan',
-                            'url' => $prefix . '/pengajuan',
+                            'url' => $prefix . '/sidang-pengajuan',
                             'can' => 'all_mahasiswa',
                             'icon' => 'fas fa-fw fa-file',
                         ],
