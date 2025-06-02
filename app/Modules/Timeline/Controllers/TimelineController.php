@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 class TimelineController extends Controller
 {
@@ -61,16 +62,15 @@ class TimelineController extends Controller
         try {
             $users = User::all();
             foreach ($users as $user) {
-                Notifikasi::kirim(
+                $user->notify(new TestEmailNotification(
                     '[Pemberitahuan] Kegiatan Timeline Baru Ditambahkan',
-                    $user->id,
                     [
                         'nama_kegiatan' => $timeline->nama_kegiatan,
                         'tanggal_mulai' => $timeline->tanggal_mulai,
                         'tanggal_selesai' => $timeline->tanggal_selesai,
                         'deskripsi' => $timeline->deskripsi
                     ]
-                );
+                ));
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi timeline baru: ' . $notifEx->getMessage(), [
