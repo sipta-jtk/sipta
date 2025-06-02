@@ -176,24 +176,24 @@ class MahasiswaSeeder extends Seeder
                 'tahun_masuk' => 2022,
                 'kelas' => '3A',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 1
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511011',
                 'tahun_masuk' => 2022,
                 'kelas' => '3A',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 1
+                'status_ta' => 'mahasiswa_nonta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511027',
                 'tahun_masuk' => 2022,
                 'kelas' => '3A',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 2
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511010',
@@ -361,24 +361,24 @@ class MahasiswaSeeder extends Seeder
                 'tahun_masuk' => 2022,
                 'kelas' => '3B',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 3
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511051',
                 'tahun_masuk' => 2022,
                 'kelas' => '3B',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 3
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511065',
                 'tahun_masuk' => 2022,
                 'kelas' => '3B',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_ta',
-                'id_kota' => 3
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
             ],
             [
                 'nim' => '221511040',
