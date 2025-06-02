@@ -632,26 +632,26 @@ class UserSeeder extends Seeder
             //     'photo' => 'canandra_eka_mukti.png',
             //     'status_user' => 'aktif'
             // ],
-            // [
-            //     'username' => '221511023',
-            //     'nama' => 'Najwan Zaky Ahmad',
-            //     'email' => 'najwan.zaky.tif22@polban.ac.id',
-            //     'password' => Hash::make('najw123!#'),
-            //     'role_user' => 'mahasiswa',
-            //     'no_whatsapp' => '087846667722',
-            //     'photo' => 'najwan_zaky_ahmad.png',
-            //     'status_user' => 'aktif'
-            // ],
-            // [
-            //     'username' => '221511030',
-            //     'nama' => 'Stefanus Rico Pandapotan Situngkir',
-            //     'email' => 'stefanus.rico.tif22@polban.ac.id',
-            //     'password' => Hash::make('stef123!#'),
-            //     'role_user' => 'mahasiswa',
-            //     'no_whatsapp' => '081211356560',
-            //     'photo' => 'stefanus_rico_pandapotan_situngkir.png',
-            //     'status_user' => 'aktif'
-            // ],
+            [
+                'username' => '221511023',
+                'nama' => 'Najwan Zaky Ahmad',
+                'email' => 'najwan.zaky.tif22@polban.ac.id',
+                'password' => Hash::make('najw123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '087846667722',
+                'photo' => 'najwan_zaky_ahmad.png',
+                'status_user' => 'aktif'
+            ],
+            [
+                'username' => '221511030',
+                'nama' => 'Stefanus Rico Pandapotan Situngkir',
+                'email' => 'stefanus.rico.tif22@polban.ac.id',
+                'password' => Hash::make('stef123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '081211356560',
+                'photo' => 'stefanus_rico_pandapotan_situngkir.png',
+                'status_user' => 'aktif'
+            ],
             [
                 'username' => '221511008',
                 'nama' => 'Claudia Berlian Harli',
@@ -1093,16 +1093,16 @@ class UserSeeder extends Seeder
             //     'photo' => 'adinda_faayza_malika.png',
             //     'status_user' => 'aktif'
             // ],
-            // [
-            //     'username' => '211524003',
-            //     'nama' => 'Annisa Dinda Gantini',
-            //     'email' => 'annisa.dinda.tif421@polban.ac.id',
-            //     'password' => Hash::make('annisa123!#'),
-            //     'role_user' => 'mahasiswa',
-            //     'no_whatsapp' => '000000',
-            //     'photo' => 'annisa_dinda_gantini.png',
-            //     'status_user' => 'aktif'
-            // ],
+            [
+                'username' => '211524003',
+                'nama' => 'Annisa Dinda Gantini',
+                'email' => 'annisa.dinda.tif421@polban.ac.id',
+                'password' => Hash::make('annisa123!#'),
+                'role_user' => 'mahasiswa',
+                'no_whatsapp' => '000000',
+                'photo' => 'annisa_dinda_gantini.png',
+                'status_user' => 'aktif'
+            ],
             [
                 'username' => '211524002',
                 'nama' => 'Amelia Dewi Agustiani',
