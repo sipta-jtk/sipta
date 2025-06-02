@@ -291,8 +291,8 @@ class PemberianFeedbackController extends Controller
             }
 
             $wordCount = str_word_count($plainText);
-            if ($wordCount < 30) {
-                $errorMessage = "Masukan minimal 30 kata.";
+            if ($wordCount < 5) {
+                $errorMessage = "Masukan minimal 5 kata.";
                 break;
             }
         }
