@@ -45,10 +45,32 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-4">
                             <div class="form-group text-secondary">
                                 <label>
                                     <i class="fas fa-user mr-1"> KoTa</i>
+                                </label>
+
+                                <select id="kelompokSelect" class="form-control select2bs4"
+                                    style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-secondary">
+                                <label>
+                                    <i class="fas fa-graduation-cap mr-1"> Program Studi</i>
+                                </label>
+
+                                <select id="prodiSelect" class="form-control select2bs4"
+                                    style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-secondary">
+                                <label>
+                                    <i class="fas fa-calendar-alt mr-1"> Tahun Angkatan</i>
                                 </label>
 
                                 <select id="kelompokSelect" class="form-control select2bs4"
@@ -300,6 +322,9 @@
         // Membuat URL untuk API kota
         var urlKota = '/api/kotas';
 
+        // Membuat URL untuk API program studi
+        var urlProdi = '/api/prodi';
+
         if (roleUser === 'dosen' || roleUser === 'admin') {
             // Mengambil data kota dari API
             $.ajax({
@@ -325,8 +350,34 @@
                 },
                 error: function(xhr, status, error) {}
             });
+            
+            $.ajax({
+                type: "GET",
+                url: createApiUrl(urlProdi),
+                dataType: "json",
+                success: function(response) {
+
+                    var prodiOptions;
+
+                    if (response.length === 0) {
+                        prodiOptions = '<option value="">Tidak ada Program Studi</option>';
+                    } else {
+                        prodiOptions = '<option value="">Semua Program Studi</option>'; // Opsi default
+                        // Menambahkan opsi ke dropdown
+                        prodiOptions += response.map(function(item) {
+                            return `<option value="${item.id_prodi}">${item.nama_prodi}</option>`;
+                        }).join('');
+                    }
+
+                    // Menambahkan opsi ke dropdown kelompokSelect
+                    $("#prodiSelect").append(prodiOptions);
+                },
+                error: function(xhr, status, error) {}
+            });
+
         } else {
             $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
+            $("#prodiSelect").append('<option value="">Akses tidak diizinkan</option>');
         }
     });
 
@@ -452,6 +503,7 @@
                     // Fungsi untuk filter DataTable
                     function applyFilters() {
                         var selectedKota = $("#kelompokSelect").val();
+                        var selectedProdi = $("#prodiSelect").val();
 
                         // Clear table filter first
                         table.search('').columns().search('').draw();
@@ -465,7 +517,11 @@
                                 var kotaMatch = !selectedKota ||
                                     (rowData && rowData.id_kota != null && rowData.id_kota.toString() == selectedKota);
 
-                                return kotaMatch;
+                                // Filter by program studi if selected
+                                var prodiMatch = !selectedProdi ||
+                                    (rowData && rowData.id_prodi != null && rowData.id_prodi.toString() == selectedProdi);
+
+                                return kotaMatch && prodiMatch;
                             }
                         );
 

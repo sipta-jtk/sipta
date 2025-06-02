@@ -9,6 +9,8 @@ use App\Models\Dokumen;
 use App\Models\Keyword;
 use App\Models\AmbangBatas;
 use App\Models\Kota;
+use App\Models\Prodi;
+use App\Models\Mahasiswa;
 use App\Models\ListJurnalPlagiarisme;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -432,6 +434,94 @@ class CekPlagiarismeController extends Controller
         ]);
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);
+    }
+
+    public function getProdi()
+    {
+        // Mengambil id_prodi dan nama_prodi 
+        if (auth()->user()->role_user === 'admin') {
+            $prodis = Prodi::all()->map(function ($prodi) {
+                // Mengembalikan id_prodi dan nama_prodi
+                return [
+                    'id_prodi' => $prodi->id_prodi,
+                    'nama_prodi' => $prodi->nama_prodi,
+                ];
+            });
+        } elseif (auth()->user()->role_user === 'dosen') {
+            if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+                $prodis = Kota::all()->map(function ($prodi) {
+                    // Mengembalikan id_prodi dan nama_prodi
+                    return [
+                        'id_prodi' => $prodi->id_prodi,
+                        'nama_prodi' => $prodi->nama_prodi,
+                    ];
+                });
+            } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
+                $prodis = auth()->user()
+                    ->dosen
+                    ->preferensiKota
+                    ->flatMap(function ($preferensiKota) {
+                        // Mengambil prodi dari relasi kota->mahasiswa
+                        return $preferensiKota->kota->mahasiswa
+                            ->flatMap(function ($mahasiswa) {
+                                return [
+                                    [
+                                        'id_prodi' => $mahasiswa->prodi->id_prodi,
+                                        'nama_prodi' => $mahasiswa->prodi->nama_prodi,
+                                    ]
+                                ];
+                            });
+                    })->unique('id_prodi')->values();
+            }
+        }
+
+        Log::info('Mengambil daftar prodi untuk user', [
+            'user_id' => auth()->id(),
+            'prodi_count' => $prodis->count(),
+            'prodi' => $prodis
+        ]);
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($prodis);
+    }
+
+    public function getTahunAngkatan()
+    {
+        // Mengambil tahun_angkatan dan nama_prodi 
+        if (auth()->user()->role_user === 'admin') {
+            $years = Mahasiswa::all()->map(function ($prodi) {
+                // Mengembalikan tahun_angkatan dan nama_prodi
+                return [
+                    'tahun_angkatan' => $prodi->tahun_angkatan,
+                ];
+            });
+        } elseif (auth()->user()->role_user === 'dosen') {
+            if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+                $years = Kota::all()->map(function ($prodi) {
+                    // Mengembalikan tahun_angkatan dan nama_prodi
+                    return [
+                        'tahun_angkatan' => $prodi->tahun_angkatan,
+                    ];
+                });
+            } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
+                $years = auth()->user()
+                    ->dosen
+                    ->preferensiKota
+                    ->map(function ($preferensiKota) {
+                        // Mengembalikan tahun_angkatan dan nama_prodi
+                        return [
+                            'tahun_angkatan' => $preferensiKota->tahun_angkatan,
+                        ];
+                    });
+            }
+        }
+
+        Log::info('Mengambil daftar kota untuk user', [
+            'user_id' => auth()->id(),
+            'year_count' => $years->count(),
+            'year' => $years
+        ]);
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($years);
     }
 
     public function encryptId(Request $request)
