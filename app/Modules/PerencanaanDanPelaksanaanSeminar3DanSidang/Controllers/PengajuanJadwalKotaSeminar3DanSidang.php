@@ -5,6 +5,7 @@ namespace App\Modules\PerencanaanDanPelaksanaanSeminar3DanSidang\Controllers;
 use Carbon\Carbon;
 use App\Modules\Controller;
 use App\Models\Kota;
+use App\Models\KotaUser;
 use App\Models\Mahasiswa;
 use App\Models\User;
 use App\Models\Penjadwalan;
@@ -468,6 +469,30 @@ class PengajuanJadwalKotaSeminar3DanSidang extends Controller
             'status_koordinator_ta' => null,
         ]);
 
+        // Dosen Pembimbing
+        try {
+            if ($kota) {
+                $username = KotaUser::where('id_kota', $id_kota)->value('username');
+                $namaDsn = User::where('username', $username)->value('nama');
+                $judulTA = Kota::where('id_kota', $id_kota)->value('judul_ta');
+                if ($username) {
+                    $username->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Pembatalan Penjadwalan Seminar',
+                        [
+                            'nama' => $namaDsn,
+                            'topik' => $judulTA,
+                            'tanggal' => $request->input('tanggal_pengajuan'),
+                            'nama_ruangan' => $nama_ruangan
+                        ]
+                    ));
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_kota' => $id_kota,
+                'username' => $username
+            ]);
+        }
 
         try {
             
