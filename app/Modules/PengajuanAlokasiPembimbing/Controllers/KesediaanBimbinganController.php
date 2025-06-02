@@ -308,6 +308,14 @@ class KesediaanBimbinganController extends Controller
             return redirect()->back();
         }
 
+        if (empty($data['jadwals'])) {
+            if ($method) {
+                return;
+            }
+            session()->flash('error', 'Jadwal tidak boleh kosong');
+            return redirect()->back();
+        }
+
         DB::beginTransaction();
         try {
             JadwalDosenPembimbing::where('nip', $data['nip'])->delete();
