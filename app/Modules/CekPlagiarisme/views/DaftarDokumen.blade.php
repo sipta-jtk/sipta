@@ -71,7 +71,7 @@
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th style="width:5%;">Id_dokumen</th>
-                        <th style="width:5%;">Nomor</th>
+                        <th style="width:5%;">KoTa</th>
                         <th style="width:30%;">Judul TA</th>
                         <th style="width:15%;">Waktu Unggah</th>
                         <th style="width:20%;">Penulis</th>
@@ -401,23 +401,33 @@
                     // Sorting berdasarkan waktu secara descending
                     response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
 
-                    response = response.map((item, index) => ({
-                        id_dokumen: item.id_dokumen,
-                        nomor: index + 1,
-                        judul: item.judul,
-                        waktu: item.waktu,
-                        penulis: item.penulis,
-                        presentase: item.persentase_plagiarisme + "%",
-                        status: item.status,
-                        catatan: getCatatan(item.review, item.id_dokumen),
-                        id_kota: item.id_kota
-                    }));
+                    response = response.map((item, index) => {
+                        let kotaNumber = "";
+                        if (item.kota && typeof item.kota === 'string') {
+                            const matches = item.kota.match(/\d+/);
+                            if (matches && matches.length > 0) {
+                                kotaNumber = matches[0]; 
+                            }
+                        }
+
+                        return {
+                            id_dokumen: item.id_dokumen,
+                            kota: kotaNumber || item.kota, 
+                            judul: item.judul,
+                            waktu: item.waktu,
+                            penulis: item.penulis,
+                            presentase: item.persentase_plagiarisme + "%",
+                            status: item.status,
+                            catatan: getCatatan(item.review, item.id_dokumen),
+                            id_kota: item.id_kota
+                        };
+                    });
 
                     // Tambahkan ke tabel
                     response.forEach(function(item) {
                         table.row.add([
                             item.id_dokumen,
-                            item.nomor,
+                            item.kota,
                             item.judul,
                             item.waktu,
                             item.penulis,

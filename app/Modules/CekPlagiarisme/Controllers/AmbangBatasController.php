@@ -25,8 +25,8 @@ class AmbangBatasController extends Controller
                 'id' => $item->id_ambang_batas,
                 'ambang_batas' => $item->ambang_batas,
                 'tanggal' => $item->updated_at
-                    ? Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y')
-                    : Carbon::now()->translatedFormat('H:i d F Y'),
+                    ? Carbon::parse($item->updated_at)->translatedFormat('d F Y H:i')
+                    : Carbon::now()->translatedFormat('d F Y H:i'),
                 'koordinator' => $item->dosen && $item->dosen->user ? $item->dosen->user->nama : 'Tidak Ada', // Ambil nama dosen dari user
                 'status' => ucfirst(str_replace('_', ' ', $item->status_ambang_batas)) // Ubah menjadi format yang lebih rapi
             ];

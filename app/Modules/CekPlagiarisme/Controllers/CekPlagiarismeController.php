@@ -120,10 +120,11 @@ class CekPlagiarismeController extends Controller
         $data = $dokumen->map(function ($item) {
             return [
                 'id_dokumen' => $item->id_dokumen,
+                'kota' => $item->kota ? $item->kota->nama_kota : 'Tidak Diketahui',
                 'judul' => $item->judul,
                 'waktu' => $item->created_at
-                    ? Carbon::parse($item->created_at)->translatedFormat('H:i d F Y')
-                    : Carbon::now()->translatedFormat('H:i d F Y'),
+                    ? Carbon::parse($item->created_at)->translatedFormat('d F Y H:i')
+                    : Carbon::now()->translatedFormat('d F Y H:i'),
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
