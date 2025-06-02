@@ -24,8 +24,7 @@
     <div class="card">
         <div class="d-flex justify-content-between px-3 pt-3">
             @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin')
-            <button class="btn btn-primary btn-md" type="button"
-                data-toggle="collapse" data-target="#filterMenu">
+            <button id="filterToggleBtn" class="btn btn-primary btn-md" type="button">
                 <i class="fas fa-filter"></i>
             </button>
             @else(auth()->user()->role_user === 'mahasiswa' || auth()->user()->mahasiwa->status_ta === 'mahasiswa_ta')
@@ -37,7 +36,7 @@
             </div>
             @endif
         </div>
-        <div class="collapse" id="filterMenu">
+        <div id="filterMenu" style="display: none;">
             <div class="card mx-3 mt-3">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -236,6 +235,12 @@
         overflow-y: auto;
         max-height: calc(100vh - 200px);
     }
+    
+    /* Style for active filter button */
+    #filterToggleBtn.active {
+        background-color: #0056b3; 
+        border-color: #004085;
+    }
 </style>
 
 @stop
@@ -286,6 +291,9 @@
 
 
     $(document).ready(function() {
+        // Pastikan filter menu tertutup pada awal load
+        $('#filterMenu').hide();
+        
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
 
@@ -940,6 +948,20 @@
     // Button Close Modal Upload (ikon X)
     $('#uploadModal .close').click(function() {
         resetUploadForm();
+    });
+
+    // Simple toggle untuk filter menu
+    $('#filterToggleBtn').on('click', function() {
+        $('#filterMenu').toggle(); // Ini akan mengubah display:none <-> display:block
+        
+        // Update tombol untuk visual feedback
+        if ($('#filterMenu').is(':visible')) {
+            $(this).addClass('active');
+            $(this).attr('aria-expanded', 'true');
+        } else {
+            $(this).removeClass('active');
+            $(this).attr('aria-expanded', 'false');
+        }
     });
 </script>
 @stop
