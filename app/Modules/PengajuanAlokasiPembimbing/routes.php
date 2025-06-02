@@ -100,5 +100,10 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::delete('/{id}', [PengelolaanPeriodeController::class, 'delete_PengelolaanPeriode'])->name('delete');
     });
 
+    Route::post('/alokasi/kirim-notifikasi-batch', [AlokasiPembimbingv2Controller::class, 'kirimNotifikasiBatch']);
 
 });
+
+Route::get('/redirect-data-kelompok', function () {
+    return redirect()->route('pengajuanalokasipembimbing.pengajuan-pembimbing.data-kelompok');
+})->middleware(['auth', 'can:mahasiswa_kota'])->name('data-kelompok');

@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 class MahasiswaController extends Controller
 {
@@ -68,6 +70,26 @@ class MahasiswaController extends Controller
         ]);
 
         DB::commit();
+
+        // Send notification with error handling
+        try {
+            $user = User::where('username', $request->nim)->first();
+            if ($user) {
+                $user->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Akun Berhasil Dibuat',
+                    [
+                        'nama' => $request->nama,
+                        'email' => $request->email
+                    ]
+                ));
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                'nim' => $request->nim,
+                'nama' => $request->nama
+            ]);
+        }
+
         return redirect()->route('manage.mhs')->with('success', "Mahasiswa berhasil ditambahkan!");
     } catch (\Exception $e) {
         DB::rollBack();
@@ -240,14 +262,35 @@ public function import(Request $request)
         // 3. Bulk Insert
         User::insert($users);
         Mahasiswa::insert($mahasiswa);
-        DB::commit();   
+        DB::commit();  
+
+        // Send notifications to new users
+        try {
+            if (!empty($users)) {
+                foreach ($users as $userData) {
+                    $user = User::where('username', $userData['username'])->first();
+                    if ($user) {
+                        $user->notify(new TestEmailNotification(
+                            '[Pemberitahuan] Akun Berhasil Dibuat',
+                            [
+                                'nama' => $userData['nama'],
+                                'email' => $userData['email']
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                'username' => $userData['username'] ?? null
+            ]);
+        }
         return redirect()->route('manage.mhs')->with('success', 'Data mahasiswa berhasil diimport!');
     }
     catch (\Exception $e) {
         DB::rollBack();
         return redirect()->route('manage.mhs')->with('error', 'Gagal mengubah mahasiswa: ' . $e->getMessage());
     }
-
 }
 
 public function aktifkanAkun(Request $request)

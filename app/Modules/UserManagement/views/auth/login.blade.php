@@ -112,7 +112,7 @@
                 </div>
                 <p class="password-note">It must be a combination of minimum letters, numbers, and symbols.</p>
                 <div class="forgot-password">
-                    <a href="/forgot-password">Forgot Password?</a>
+                    <a href="{{ route('password.request') }}">Forgot Password?</a>
                 </div>
                 <button type="submit" class="login-button">Log In</button>
             </form>

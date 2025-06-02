@@ -3,11 +3,14 @@
 @section('title', 'Pengaturan Bobot Nilai Akhir')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid">
         <h1 class="mb-2">Pengaturan Bobot Nilai Akhir</h1>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Pengaturan Nilai Akhir']
             ]
         ])

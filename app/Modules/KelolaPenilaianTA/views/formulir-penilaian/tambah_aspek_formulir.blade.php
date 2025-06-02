@@ -3,13 +3,16 @@
 @section('title', 'Penambahan Aspek Penilaian')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-3">
     <!-- Judul Halaman -->
     <h1 class="mb-0">Penambahan Aspek Penilaian</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+           ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => route('formulir-penilaian.index'), 'label' => 'Formulir Penilaian'],
             ['url' => '', 'label' => 'Tambah Aspek Penilaian']
         ]
@@ -60,9 +63,7 @@
                                 <div class="form-group">
                                     <label for="namaFTA">Nama FTA</label>
                                     <x-adminlte-select name="namaFTA" id="namaFTA" required fgroup-class="mb-0">
-                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>Pilih Nama FTA</option>
-                                        <option value="Seminar I" {{ old('namaFTA') == 'Seminar I' ? 'selected' : '' }}>Seminar I</option>
-                                        <option value="Seminar II" {{ old('namaFTA') == 'Seminar II' ? 'selected' : '' }}>Seminar II</option>
+                                        <option value="" disabled {{ old('namaFTA') ? '' : 'selected' }}>-- Pilih Nama FTA --</option>
                                         <option value="Seminar III" {{ old('namaFTA') == 'Seminar III' ? 'selected' : '' }}>Seminar III</option>
                                         <option value="Sidang Akhir" {{ old('namaFTA') == 'Sidang Akhir' ? 'selected' : '' }}>Sidang Akhir</option>
                                         <option value="Dosen Pembimbing" {{ old('namaFTA') == 'Dosen Pembimbing' ? 'selected' : '' }}>Dosen Pembimbing</option>

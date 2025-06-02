@@ -241,11 +241,11 @@
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
                                             <option value="FTA-09">FTA-09 - Kehadiran Seminar II</option>
                                             <option value="FTA-09a">FTA-09a - Lesson Learnt Seminar II</option>
-                                            <option value="FTA-10">FTA-10 - Bukti Bimbingan Seminar III</option>
+                                            <option value="FTA-10">FTA 10 - Bukti Bimbingan untuk Seminar III</option>
                                             <option value="FTA-10a">FTA-10a - Resume Bimbingan</option>
                                             <option value="FTA-11">FTA-11 - Penilaian Seminar III</option>
                                             <option value="FTA-12">FTA-12 - Masukan Seminar III</option>
-                                            <option value="FTA-23">FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir</option>
+                                            <option value="FTA-23">FTA 23 - Persetujuan Pembimbing TA</option>
                                         </select>
                                     </div>
                                 </div>
@@ -833,11 +833,11 @@
                         $ftaOptions = [
                         ['value' => 'FTA-09', 'text' => 'FTA-09 - Kehadiran Seminar II'],
                         ['value' => 'FTA-09a', 'text' => 'FTA-09a - Lesson Learnt Seminar II'],
-                        ['value' => 'FTA-10', 'text' => 'FTA-10 - Bukti Bimbingan Seminar III'],
+                        ['value' => 'FTA-10', 'text' => 'FTA 10 - Bukti Bimbingan untuk Seminar III'],
                         ['value' => 'FTA-10a', 'text' => 'FTA-10a - Resume Bimbingan'],
                         ['value' => 'FTA-11', 'text' => 'FTA-11 - Penilaian Seminar III'],
                         ['value' => 'FTA-12', 'text' => 'FTA-12 - Masukan Seminar III'],
-                        ['value' => 'FTA-23', 'text' => 'FTA-23 - Persetujuan Pelaksanaan Seminar III Tugas Akhir'],
+                        ['value' => 'FTA-23', 'text' => 'FTA 23 - Persetujuan Pembimbing TA'],
                         ];
                         @endphp
 
@@ -1189,7 +1189,7 @@
                 // File gambar dan PDF langsung tampil
                 $('#documentPreview').attr('src', fullUrl).show();
                 $('#previewNotAvailable').hide();
-            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+            } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                 // File Word atau PowerPoint pakai Google Docs Viewer
                 var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                 $('#documentPreview').attr('src', viewerUrl).show();
@@ -1257,11 +1257,18 @@
             var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
+            // Determine the appropriate URL for "Buka di halaman baru" based on file type
+            var openInNewTabUrl = fullUrl;
+            if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
+                // For office documents, use Google Docs viewer (without embedded=true for new tab)
+                openInNewTabUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}`;
+            }
+
             // Buka di tab baru
-            $('#view_file_link').attr('href', fullUrl);
+            $('#view_file_link').attr('href', openInNewTabUrl);
 
             // Link download
-            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${docId}/download`);
 
             // Preview file
             if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {

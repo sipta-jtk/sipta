@@ -97,6 +97,11 @@ Route::get("/{$prefix}/repository/koor-ta/monitoring-penyimpanan", [RepositoryCo
     ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
     ->name('Repository.monitoring-penyimpanan');
 
+// Get Filtered Storage Data (for AJAX)
+Route::get("/{$prefix}/repository/koor-ta/get-filtered-data", [RepositoryController::class, 'getFilteredStorageData'])
+    ->middleware(['auth', 'can:akses-sidebar-repo-dosen'])
+    ->name('Repository.get-filtered-data');
+
 
 Route::get("/{$prefix}/v0", [RepositoryController::class, 'v0']);
 Route::get("/{$prefix}/kategori", [RepositoryController::class, 'v1']);

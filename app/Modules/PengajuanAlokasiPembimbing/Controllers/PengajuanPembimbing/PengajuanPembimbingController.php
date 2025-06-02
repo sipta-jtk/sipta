@@ -52,7 +52,14 @@ class PengajuanPembimbingController extends Controller
             ->orderBy('bidang', 'asc')
             ->get();
         
-        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('namaBidang'));
+        $sessionUser = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->where('user.status_user', 'aktif')
+            ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota', 'mahasiswa.id_prodi')
+            ->where('mahasiswa.nim', auth()->user()->username)
+            ->first(); 
+        
+        return view('PengajuanAlokasiPembimbing.views.PengajuanPembimbing.TopikTugasAkhir', compact('sessionUser', 'namaBidang'));
     }
 
     public function view_prioritasDosenPembimbing(): View
@@ -60,6 +67,7 @@ class PengajuanPembimbingController extends Controller
         $listDosen = DB::table('dosen')
             ->join('user', 'dosen.nip', '=', 'user.username')
             ->where('dosen.bersedia_membimbing', 'bersedia')
+            ->where('user.status_user', 'aktif')
             ->select('user.nama', 'dosen.nip')
             ->orderBy('user.nama', 'asc')
             ->get();
@@ -91,6 +99,7 @@ class PengajuanPembimbingController extends Controller
         // Ambil data mahasiswa yang sedang login
         $sessionUser = DB::table('mahasiswa')
         ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->where('user.status_user', 'aktif')
         ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
         ->where('mahasiswa.nim', auth()->user()->username)
         ->first(); 
@@ -144,6 +153,7 @@ class PengajuanPembimbingController extends Controller
         // Ambil data mahasiswa yang sedang login
         $sessionUser = DB::table('mahasiswa')
         ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        ->where('user.status_user', 'aktif')
         ->select('user.nama', 'mahasiswa.nim', 'mahasiswa.kelas', 'mahasiswa.id_kota')
         ->where('mahasiswa.nim', auth()->user()->username)
         ->first(); 
@@ -174,6 +184,7 @@ class PengajuanPembimbingController extends Controller
 
         DB::table('kota')->where('id_kota', $id_kota_user)->update([
             'jenis_ta' => $jenisTA === 'Penelitian' ? 'penelitian' : ($jenisTA === 'Pengembangan' ? 'pengembangan' : null),
+            'status_kota' => 'aktif',
         ]);
 
         // Insert data ke tabel kota (judul_ta) dan bidang (id_bidang)

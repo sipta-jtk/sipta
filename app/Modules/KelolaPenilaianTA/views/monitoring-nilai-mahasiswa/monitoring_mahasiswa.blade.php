@@ -3,14 +3,17 @@
 @section('title', 'Monitoring Mahasiswa')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <h1 class="mb-3">Informasi Penilaian Mahasiswa</h1>
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Informasi Penilaian Mahasiswa']
             ]
-        ])c
+        ])
         @endcomponent
     </div>
 @stop
@@ -100,6 +103,11 @@
                 <tbody>
                     @foreach ($ftaList as $ftaNama)
                         @php
+                            // Skip FTA "Seminar I"
+                            if ($ftaNama === 'Seminar I') {
+                                continue;
+                            }
+
                             $ftaPenilaian = $ftaPenilaianList[$ftaNama] ?? null;
                             $ftaFeedback = $ftaFeedbackList[$ftaNama] ?? null;
                             $isFeedbackAvailable = $ftaFeedback && in_array($ftaFeedback->id_fta, $ftaWithFeedback);
@@ -115,7 +123,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if ($ftaFeedback)
+                                @if ($ftaNama !== 'Seminar II' && $ftaFeedback)
                                     <div class="tooltip-wrapper position-relative">
                                         <a href="{{ $isFeedbackAvailable ? route('monitoring.feedback', ['id_fta' => $ftaFeedback->id_fta, 'id_kota' => $kotaInfo->id_kota]) : '#' }}"
                                             class="btn btn-primary btn-md my-1 w-100 {{ $isFeedbackAvailable ? '' : 'disabled-link' }}">
@@ -131,7 +139,8 @@
                             </td>                                                                           
                         </tr>
                     @endforeach
-                </tbody>                
+                </tbody>
+                
             </table>
         </div>
     </div>      

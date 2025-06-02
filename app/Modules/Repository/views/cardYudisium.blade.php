@@ -245,9 +245,9 @@
                                             <i class="fas fa-project-diagram mr-1"></i> Kode FTA
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option value="FTA-18">FTA-18 - Bukti telah menyelesaikan hasil revisi laporan</option>
-                                            <option value="FTA-19">FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan</option>
-                                            <option value="FTA-19a">FTA-19a - Bukti telah merevisi abstrak dan tata tulis</option>
+                                            <option value="FTA-18">FTA 18 - Bukti Telah Menyelesaikan Revisi</option>
+                                            <option value="FTA-19">FTA 19 - Bukti Menyerahkan Laporan-FTA</option>
+                                            <option value="FTA-19a">FTA 19a - Bukti Menyerahkan Tata Tulis</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1140,9 +1140,9 @@
 
                         @php
                         $ftaOptions = [
-                        ['value' => 'FTA-18', 'text' => 'FTA-18 - Bukti telah menyelesaikan hasil revisi laporan'],
-                        ['value' => 'FTA-19', 'text' => 'FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan'],
-                        ['value' => 'FTA-19a', 'text' => 'FTA-19a - Bukti telah merevisi abstrak dan tata tulis'],
+                        ['value' => 'FTA-18', 'text' => 'FTA 18 - Bukti Telah Menyelesaikan Revisi'],
+                        ['value' => 'FTA-19', 'text' => 'FTA 19 - Bukti Menyerahkan Laporan-FTA'],
+                        ['value' => 'FTA-19a', 'text' => 'FTA 19a - Bukti Menyerahkan Tata Tulis'],
                         ];
                         @endphp
 
@@ -1494,7 +1494,7 @@
                 // File gambar dan PDF langsung tampil
                 $('#documentPreview').attr('src', fullUrl).show();
                 $('#previewNotAvailable').hide();
-            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+            } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                 // File Word atau PowerPoint pakai Google Docs Viewer
                 var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                 $('#documentPreview').attr('src', viewerUrl).show();
@@ -1562,11 +1562,19 @@
             var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
+            // Determine the appropriate URL for "Buka di halaman baru" based on file type
+            var openInNewTabUrl = fullUrl;
+            if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
+                // For office documents, use Google Docs viewer (without embedded=true for new tab)
+                openInNewTabUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}`;
+            }
+
             // Buka di tab baru
-            $('#view_file_link').attr('href', fullUrl);
+            $('#view_file_link').attr('href', openInNewTabUrl);
 
             // Link download
-            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${docId}/download`);
+
 
             // Preview file
             if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {

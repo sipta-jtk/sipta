@@ -3,6 +3,9 @@
 @section('title', 'Monitoring Feedback')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <h1 class="mb-0">Detail Feedback</h1>
     <div>
         @php
@@ -12,7 +15,7 @@
         @if($routeName === 'monitoring.feedback')
             @component('KelolaPenilaianTA.views.components.breadcrumb', [
                 'links' => [
-                    ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                    ['url' => "/$prefix", 'label' => 'Beranda'],
                     ['url' => route('monitoring.mahasiswa'), 'label' => 'Informasi Penilaian Mahasiswa'],
                     ['url' => '', 'label' => 'Detail Feedback']
                 ]

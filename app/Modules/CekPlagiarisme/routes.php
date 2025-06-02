@@ -5,27 +5,32 @@ use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
-Route::middleware(['auth', 'can:dosen'])->get(
+Route::middleware(['auth', 'can:akses-dosen-admin'])->get(
     '/api/kotas',
     [CekPlagiarismeController::class, 'getKota']
 );
-Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
-Route::get('/cek-plagiarisme/{id}/detail-dokumen', [CekPlagiarismeDetailController::class, 'show'])->name('plagiarism.detail');
-Route::post('/cekplagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
 
-Route::get('/cek-plagiarisme', function () {
-    return view('CekPlagiarisme.views.DaftarDokumen');
-});
+Route::middleware(['auth', 'can:user'])->group(function () {
 
-
-Route::get('/cek-plagiarisme/cek-tugas-akhir', function () {
-    return view('CekPlagiarisme.views.PengecekanTugasAkhir');
+    Route::get('/api/cek-plagiarisme', [cekplagiarismeController::class, 'getData']);
+    Route::get('/cek-plagiarisme/detail/{encrypted_id}', [CekPlagiarismeDetailController::class, 'show'])
+        ->middleware(['auth', 'can:user'])
+        ->name('plagiarism.detail');
+    Route::post('/cek-plagiarisme/process', [CekPlagiarismeController::class, 'process'])->name('cekplagiarisme.process');
+    Route::get('/cek-plagiarisme/process', function () {
+        return redirect('/cek-plagiarisme');
+    });
+    Route::get('/cek-plagiarisme', function () {
+        return view('CekPlagiarisme.views.DaftarDokumen');
+    });
+    Route::post('/cek-plagiarisme/encrypt-id', [CekPlagiarismeController::class, 'encryptId']);
 });
 
 /**********************************
  * Penentuan Ambang Batas
  ***********************************/
-Route::middleware(['auth', 'can:koordinator_ta'])->group(function () {
+Route::middleware(['auth', 'can:akses-koordinator-admin'])->group(function () {
+
     Route::get('/penentuan-ambang-batas', function () {
         return view('CekPlagiarisme.views.PenentuanAmbangBatas');
     });

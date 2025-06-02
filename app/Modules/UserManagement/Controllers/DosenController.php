@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 /**
  * Class DosenController
@@ -65,11 +67,31 @@ class DosenController extends Controller
 
         DB::commit();
 
-        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+        // Add notification inside try block
+        try {
+            $user = User::where('username', $nip)->first();
+            if ($user) {
+                $user->notify(new TestEmailNotification(
+                    '[Pemberitahuan] Role Berhasil Diperbarui',
+                    [
+                        'role_baru' => $request->role,
+                        'old_role' => $old_role
+                    ]
+                ));
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi update role: ' . $notifEx->getMessage(), [
+                'nip' => $nip,
+                'role' => $request->role
+            ]);
         }
+
+        return redirect()->route('manage.dosen')->with('success', 'Perubahan role berhasil!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('manage.dosen')->with('error', 'Gagal memperbarui role: ' . $e->getMessage());
+    }
+
     }
 
     /**
@@ -130,6 +152,24 @@ class DosenController extends Controller
             ]);
 
             DB::commit();
+
+            try {
+                $user = User::where('username', $request->nip)->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Akun Berhasil Dibuat',
+                        [
+                            'nama' => $request->nama,
+                            'email' => $request->email
+                        ]
+                    ));
+                }
+            } catch (\Exception $notifEx) {
+                \Log::error('Gagal mengirim notifikasi akun baru: ' . $notifEx->getMessage(), [
+                    'nip' => $request->nip
+                ]);
+            }
+
             return redirect()->route('manage.dosen')->with('success', 'Dosen berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -345,6 +385,29 @@ class DosenController extends Controller
         User::insert($users);
         Dosen::insert($dosen);
         DB::commit();
+
+        // Send notifications to new users
+        try {
+            if (!empty($users)) {
+                foreach ($users as $userData) {
+                    $user = User::where('username', $userData['username'])->first();
+                    if ($user) {
+                        $user->notify(new TestEmailNotification(
+                            '[Pemberitahuan] Akun Berhasil Dibuat',
+                            [
+                                'nama' => $userData['nama'],
+                                'email' => $userData['email']
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi bulk import: ' . $notifEx->getMessage(), [
+                'username' => $userData['username'] ?? null
+            ]);
+        }
+
         return redirect()->route('manage.dosen')->with('success', 'Data dosen berhasil dimasukkan dan diimport!');
         } catch (\Exception $e) {
             DB::rollBack();

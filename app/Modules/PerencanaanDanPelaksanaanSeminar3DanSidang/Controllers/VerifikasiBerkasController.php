@@ -25,6 +25,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 return $item;
             });
 
@@ -45,6 +46,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 $item->catatan = $item->catatan ?? '-';
                 return $item;
             });
@@ -63,6 +65,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 $item->catatan = $item->catatan ?? '-';
                 return $item;
             });
@@ -85,6 +88,8 @@ class VerifikasiBerkasController extends Controller
         if ($dataKota) {
                 $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
                 $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
+                $dataKota->nama_kota = $dataKota->kota?->nama_kota ?? '-';
+                
 
                 if ($dataKota->jenis_pengajuan === 'seminar_3') {
                     $dataKota->jenis_pengajuan = 'Seminar 3';
@@ -141,7 +146,7 @@ class VerifikasiBerkasController extends Controller
         }
 
         $daftarDokumen = collect([$fileTA, $filePresentasi, $ftaSatu, $ftaDua])->filter(); // hindari null
-
+        
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'daftarDokumen','tipe', 'kategori'));
     }
 
