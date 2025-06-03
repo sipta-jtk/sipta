@@ -27,10 +27,10 @@ class KaprodiSeeder extends Seeder
                 'nip' => '199301062019031017',
                 'id_prodi' => 1
             ],
-            // [
-            //     'nip' => '197109031999032001',
-            //     'id_prodi' => 2
-            // ],
+            [
+                'nip' => '197109031999032001',
+                'id_prodi' => 2
+            ],
         ];
 
         foreach ($data as $item) {
