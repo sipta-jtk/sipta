@@ -73,7 +73,7 @@
                                     <i class="fas fa-calendar-alt mr-1"> Tahun Angkatan</i>
                                 </label>
 
-                                <select id="kelompokSelect" class="form-control select2bs4"
+                                <select id="angkatanSelect" class="form-control select2bs4"
                                     style="width: 100%;">
                                 </select>
                             </div>
@@ -412,6 +412,16 @@
                         targets: [8], // id_kota column (hidden)
                         visible: false,
                         searchable: true
+                    },
+                    {
+                        targets: [9], // id_prodi column (hidden)
+                        visible: false,
+                        searchable: true
+                    },
+                    {
+                        targets: [10], // id_angkatan column (hidden)
+                        visible: false,
+                        searchable: true
                     }
                 ],
                 responsive: true,
@@ -478,7 +488,9 @@
                             presentase: item.persentase_plagiarisme + "%",
                             status: item.status,
                             catatan: getCatatan(item.review, item.id_dokumen),
-                            id_kota: item.id_kota
+                            id_kota: item.id_kota,
+                            id_prodi: item.id_prodi,
+                            id_angkatan: item.id_angkatan 
                         };
                     });
 
@@ -493,7 +505,9 @@
                             item.presentase,
                             item.status,
                             item.catatan,
-                            item.id_kota
+                            item.id_kota,
+                            item.id_prodi,
+                            item.id_angkatan
                         ]);
                     });
 

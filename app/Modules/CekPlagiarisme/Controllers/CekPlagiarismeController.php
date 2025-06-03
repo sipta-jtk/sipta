@@ -132,7 +132,9 @@ class CekPlagiarismeController extends Controller
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
                 'status' => $this->getStatus($item->status_plagiarisme), // Default 20 jika tidak ada
                 'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null,
-                'id_kota' => $item->id_kota
+                'id_kota' => $item->id_kota,
+                'id_prodi' => $item->user ? $item->user->mahasiswa->id_prodi : null,
+                'tahun_angkatan' => $item->user ? $item->user->mahasiswa->tahun_masuk : null
             ];
         });
 
@@ -488,18 +490,18 @@ class CekPlagiarismeController extends Controller
     {
         // Mengambil tahun_angkatan dan nama_prodi 
         if (auth()->user()->role_user === 'admin') {
-            $years = Mahasiswa::all()->map(function ($prodi) {
-                // Mengembalikan tahun_angkatan dan nama_prodi
+            $years = Mahasiswa::all()->map(function ($year) {
+                // Mengembalikan tahun_angkatan dan nama_year
                 return [
-                    'tahun_angkatan' => $prodi->tahun_angkatan,
+                    'tahun_angkatan' => $year->tahun_masuk,
                 ];
             });
         } elseif (auth()->user()->role_user === 'dosen') {
             if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
-                $years = Kota::all()->map(function ($prodi) {
-                    // Mengembalikan tahun_angkatan dan nama_prodi
+                $years = Mahasiswa::all()->map(function ($year) {
+                    // Mengembalikan tahun_angkatan 
                     return [
-                        'tahun_angkatan' => $prodi->tahun_angkatan,
+                        'tahun_angkatan' => $year->tahun_masuk,
                     ];
                 });
             } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
@@ -507,9 +509,9 @@ class CekPlagiarismeController extends Controller
                     ->dosen
                     ->preferensiKota
                     ->map(function ($preferensiKota) {
-                        // Mengembalikan tahun_angkatan dan nama_prodi
+                        // Mengembalikan tahun_angkatan dan nama_year
                         return [
-                            'tahun_angkatan' => $preferensiKota->tahun_angkatan,
+                            'tahun_angkatan' => $preferensiKota->tahun_masuk,
                         ];
                     });
             }
