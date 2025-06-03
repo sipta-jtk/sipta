@@ -73,8 +73,8 @@
                                     <i class="fas fa-calendar-alt mr-1"> Tahun Angkatan</i>
                                 </label>
 
-                                <select id="angkatanSelect" class="form-control select2bs4"
-                                    style="width: 100%;">
+                                <select id="angkatanSelect" class="form-control select2bs4" style="width: 100%;">
+                                    <option value="">Semua Tahun Angkatan</option>
                                 </select>
                             </div>
                         </div>
@@ -346,9 +346,11 @@
                     }
 
                     // Menambahkan opsi ke dropdown kelompokSelect
-                    $("#kelompokSelect").append(kelompokOptions);
+                    $("#kelompokSelect").html(kelompokOptions);
                 },
-                error: function(xhr, status, error) {}
+                error: function(xhr, status, error) {
+                    console.error("Error loading kota:", error);
+                }
             });
             
             $.ajax({
@@ -369,15 +371,44 @@
                         }).join('');
                     }
 
-                    // Menambahkan opsi ke dropdown kelompokSelect
-                    $("#prodiSelect").append(prodiOptions);
+                    // Menambahkan opsi ke dropdown prodiSelect
+                    $("#prodiSelect").html(prodiOptions);
                 },
-                error: function(xhr, status, error) {}
+                error: function(xhr, status, error) {
+                    console.error("Error loading prodi:", error);
+                }
+            });
+            
+            // Mengambil data tahun angkatan
+            $.ajax({
+                type: "GET",
+                url: createApiUrl('/api/tahun-angkatan'),
+                dataType: "json",
+                success: function(response) {
+                    var angkatanOptions;
+                    
+                    if (response.length === 0) {
+                        angkatanOptions = '<option value="">Tidak ada Tahun Angkatan</option>';
+                    } else {
+                        angkatanOptions = '<option value="">Semua Tahun Angkatan</option>';
+                        // Tambahkan opsi ke dropdown
+                        angkatanOptions += response.map(function(item) {
+                            return `<option value="${item.tahun_angkatan}">${item.tahun_angkatan}</option>`;
+                        }).join('');
+                    }
+                    
+                    // Tambahkan opsi ke dropdown angkatanSelect
+                    $("#angkatanSelect").html(angkatanOptions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading angkatan:", error);
+                }
             });
 
         } else {
-            $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
-            $("#prodiSelect").append('<option value="">Akses tidak diizinkan</option>');
+            $("#kelompokSelect").html('<option value="">Akses tidak diizinkan</option>');
+            $("#prodiSelect").html('<option value="">Akses tidak diizinkan</option>');
+            $("#angkatanSelect").html('<option value="">Akses tidak diizinkan</option>');
         }
     });
 
@@ -419,7 +450,7 @@
                         searchable: true
                     },
                     {
-                        targets: [10], // id_angkatan column (hidden)
+                        targets: [10], // tahun_angkatan column (hidden)
                         visible: false,
                         searchable: true
                     }
@@ -490,7 +521,7 @@
                             catatan: getCatatan(item.review, item.id_dokumen),
                             id_kota: item.id_kota,
                             id_prodi: item.id_prodi,
-                            id_angkatan: item.id_angkatan 
+                            tahun_angkatan: item.tahun_angkatan
                         };
                     });
 
@@ -507,7 +538,7 @@
                             item.catatan,
                             item.id_kota,
                             item.id_prodi,
-                            item.id_angkatan
+                            item.tahun_angkatan
                         ]);
                     });
 
@@ -518,6 +549,7 @@
                     function applyFilters() {
                         var selectedKota = $("#kelompokSelect").val();
                         var selectedProdi = $("#prodiSelect").val();
+                        var selectedAngkatan = $("#angkatanSelect").val();
 
                         // Clear table filter first
                         table.search('').columns().search('').draw();
@@ -534,8 +566,12 @@
                                 // Filter by program studi if selected
                                 var prodiMatch = !selectedProdi ||
                                     (rowData && rowData.id_prodi != null && rowData.id_prodi.toString() == selectedProdi);
+                                    
+                                // Filter by tahun angkatan if selected
+                                var angkatanMatch = !selectedAngkatan ||
+                                    (rowData && rowData.tahun_angkatan != null && rowData.tahun_angkatan.toString() == selectedAngkatan);
 
-                                return kotaMatch && prodiMatch;
+                                return kotaMatch && prodiMatch && angkatanMatch;
                             }
                         );
 
@@ -556,7 +592,10 @@
                         applyFilters();
                     });
                 },
-                error: function(xhr, status, error) {}
+                error: function(xhr, status, error) {
+                    console.error("Error loading document data:", error);
+                    alert("Terjadi kesalahan saat memuat data dokumen. Silakan refresh halaman.");
+                }
             });
         } catch (err) {
             alert("Terjadi kesalahan saat memuat tabel data. Silakan refresh halaman.");

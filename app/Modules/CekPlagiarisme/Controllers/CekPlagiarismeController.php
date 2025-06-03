@@ -21,6 +21,7 @@ use App\Models\LogAktivitas;
 use Carbon\Carbon;
 use Spatie\PdfToText\Pdf;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 
 Carbon::setLocale('id');
 
@@ -146,9 +147,9 @@ class CekPlagiarismeController extends Controller
         if ($statusPlagiarisme === null) {
             return '<span class="badge badge-warning">Processing</span>';
         } elseif ($statusPlagiarisme === 'tidak_plagiarisme') {
-            return '<span class="badge badge-success">Tidak Plagiat</span>';
+            return '<span class="badge badge-success">Dibawah ambang batas</span>';
         } else {
-            return '<span class="badge badge-danger">Plagiat</span>';
+            return '<span class="badge badge-danger">Melebihi ambang batas</span>';
         }
     }
 
@@ -190,14 +191,29 @@ class CekPlagiarismeController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan file dokumen
+
+            $user = auth()->user();
+            $nim = $user->username;
+            $idKota = $user->mahasiswa->id_kota ?? null;
+            
+            // Format tanggal untuk nama file
+            $tanggalFormat = date('Ymd_His');
+            
+            // Bersihkan judul untuk nama file (hilangkan karakter khusus)
+            $judulBersih = Str::slug(substr($validated['judul'], 0, 50), '_');
+            
+            // Buat nama file terstruktur untuk dokumen plagiarisme
+            $namaFileDokumen = "{$nim}_{$judulBersih}_{$tanggalFormat}.pdf";
+            $namaFileReceipt = "{$nim}_receipt_{$judulBersih}_{$tanggalFormat}.pdf";
+
+            // Simpan file dokumen dengan nama terstruktur
             $fileDokumen = $request->file('dokumen');
-            $filePathDokumen = $fileDokumen->store('dokumen', 'public');
+            $filePathDokumen = $fileDokumen->storeAs('dokumen', $namaFileDokumen, 'public');
             $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
 
-            // Simpan file digital receipt
+            // Simpan file digital receipt dengan nama terstruktur
             $fileReceipt = $request->file('digital_receipt');
-            $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
+            $filePathReceipt = $fileReceipt->storeAs('digital_receipt', $namaFileReceipt, 'public');
             $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
 
             // Simpan jumlah kata dan halaman
@@ -214,13 +230,7 @@ class CekPlagiarismeController extends Controller
                 'jumlah_halaman' => $jumlahHalaman
             ]);
 
-            // Ambil data tambahan user
-            $user = auth()->user();
-            $nim = $user->username;
-            $idKota = $user->mahasiswa->id_kota ?? null;
             $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-            $nim = auth()->user()->username;
-            $idKota = auth()->user()->mahasiswa->id_kota ?? null;
 
             // Debug: Log ambang batas and user info
             Log::info('User and threshold info', [
@@ -495,7 +505,7 @@ class CekPlagiarismeController extends Controller
                 return [
                     'tahun_angkatan' => $year->tahun_masuk,
                 ];
-            });
+            })->unique('tahun_angkatan')->values();
         } elseif (auth()->user()->role_user === 'dosen') {
             if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
                 $years = Mahasiswa::all()->map(function ($year) {
@@ -503,7 +513,7 @@ class CekPlagiarismeController extends Controller
                     return [
                         'tahun_angkatan' => $year->tahun_masuk,
                     ];
-                });
+                })->unique('tahun_angkatan')->values();
             } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
                 $years = auth()->user()
                     ->dosen
@@ -513,7 +523,7 @@ class CekPlagiarismeController extends Controller
                         return [
                             'tahun_angkatan' => $preferensiKota->tahun_masuk,
                         ];
-                    });
+                    })->unique('tahun_angkatan')->values();
             }
         }
 
