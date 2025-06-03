@@ -510,7 +510,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -559,7 +559,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta','nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -587,7 +587,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta','nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
