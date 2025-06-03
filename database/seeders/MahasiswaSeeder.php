@@ -184,7 +184,7 @@ class MahasiswaSeeder extends Seeder
                 'tahun_masuk' => 2022,
                 'kelas' => '3A',
                 'id_prodi' => 1,
-                'status_ta' => 'mahasiswa_nonta',
+                'status_ta' => 'mahasiswa_non_ta',
                 'id_kota' => null
             ],
             [

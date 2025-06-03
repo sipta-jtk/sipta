@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199106142019032000',
                 'nama' => 'Lia Rahmawati',
-                'email' => 'dummy@polban.ac.id', // Diubah
+                'email' => 'lia.rahmawati.test@polban.ac.id', // Diubah
                 'password' => Hash::make('liar123!#'),
                 'role_user' => 'admin',
                 'no_whatsapp' => '081234567950',
@@ -43,21 +43,11 @@ class UserSeeder extends Seeder
             [
                 'username' => '199301062019031017',
                 'nama' => 'Lukmannul Hakim Firdaus, S.Kom., M.T.',
-                'email' => 'lukmannul.hakim@polban.ac.id', // Tetap
+                'email' => 'lukmannul.hakim.test@polban.ac.id', // Tetap
                 'password' => Hash::make('lukm123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567941',
                 'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png',
-                'status_user' => 'aktif'
-            ],
-            [
-                'username' => '198903252019032023',
-                'nama' => 'Sri Ratna Wulan, S.Pd., M.T.',
-                'email' => 'sri.ratna@polban.ac.id', // Tetap
-                'password' => Hash::make('srir123!#'),
-                'role_user' => 'dosen',
-                'no_whatsapp' => '081234567944',
-                'photo' => 'sri_ratna_wulan,_s.pd.,_m.t..png',
                 'status_user' => 'aktif'
             ],
             // Dosen
@@ -379,16 +369,6 @@ class UserSeeder extends Seeder
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567940',
                 'photo' => 'hashri_hayati,_s.t.,_m.t..png',
-                'status_user' => 'aktif'
-            ],
-            [
-                'username' => '199301062019031017',
-                'nama' => 'Lukmannul Hakim Firdaus, S.Kom., M.T.',
-                'email' => 'lukmannul.hakim.test@polban.ac.id',
-                'password' => Hash::make('lukm123!#'),
-                'role_user' => 'dosen',
-                'no_whatsapp' => '081234567941',
-                'photo' => 'lukmannul_hakim_firdaus,_s.kom.,_m.t..png',
                 'status_user' => 'aktif'
             ],
             [
