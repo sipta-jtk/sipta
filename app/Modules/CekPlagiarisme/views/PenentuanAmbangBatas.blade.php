@@ -23,8 +23,8 @@
 <section class="content">
     <div class="card">
         <div class="d-flex justify-content-end px-3 pt-3">
-            <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#addAmbangBatasModal">
-                + Tambah
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addAmbangBatasModal">
+                <i class="fa fa-plus"></i> Tambah
             </button>
         </div>
         <div class="card-body">
@@ -102,8 +102,6 @@
         return '/' + prefix + '/' + endpoint;
     }
 
-    console.log("Prefix URL:", prefixUrl); // Debugging prefix URL
-
     $(document).ready(function() {
 
         var table = $('#table').DataTable({
@@ -128,7 +126,6 @@
         // Ambil prefix URL dari meta tag yang ada di halaman
         var urlEndpoint = 'api/ambang-batas';
         var url = createApiUrl(urlEndpoint);
-        console.log("URL for ambang-batas:", url); // Debugging URL
 
         /**
          * Fungsi ini digunakan untuk mengambil data ambang batas dari API

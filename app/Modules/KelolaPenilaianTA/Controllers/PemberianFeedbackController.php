@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 use App\Models\AlokasiDosen;
 use App\Models\Mahasiswa;
@@ -23,10 +24,14 @@ use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
 use App\Models\Dokumen;
 use App\Models\SubkategoriDokumen;
+use App\Models\KotaUser;
+use App\Models\User;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+
+use App\Notifications\TestEmailNotification;
 
 class PemberianFeedbackController extends Controller
 {
@@ -59,6 +64,46 @@ class PemberianFeedbackController extends Controller
         }
     }
 
+    private function cekAksesJadwalDimulai($idKota, $namaFta)
+    {
+        Log::info("Cek akses jadwal dimulai untuk kota ID: $idKota, nama FTA: $namaFta");
+        // Mapping namaFta ke format agenda di database
+        $agenda = match (strtolower($namaFta)) {
+            'seminar-iii' => 'seminar_3',
+            'sidang-akhir' => 'sidang',
+            default => $namaFta,
+        };
+    
+        $jadwalQuery = Kota::where('id_kota', $idKota)
+            ->with(['penjadwalan' => function ($q) use ($agenda) {
+                if ($agenda) {
+                    $q->where(function ($query) use ($agenda) {
+                        $query->where('agenda', $agenda);
+                    });
+                }
+            }])
+            ->first();
+    
+        $penjadwalan = $jadwalQuery->penjadwalan->first();
+        $start = optional($penjadwalan)->start;
+        $agenda = optional($penjadwalan)->agenda ?? $agenda;
+    
+        // Mapping agenda ke label user-friendly
+        $jenisSeminar = match (strtolower($agenda)) {
+            'seminar_3', 'seminar 3', 'seminar-3' => 'Seminar III',
+            'sidang' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $agenda ?? 'Seminar')),
+        };
+
+        if (!$start) {
+            abort(403, "Jadwal penilaian $jenisSeminar belum ditentukan.");
+        }
+    
+        if (Carbon::now()->lt(Carbon::parse($start))) {
+            abort(403, "Penilaian $jenisSeminar belum dapat dilakukan karena jadwal belum dimulai.");
+        }
+    }
+
     /**
      * Tampilkan halaman pengisian masukan seminar
      * 
@@ -69,6 +114,7 @@ class PemberianFeedbackController extends Controller
     public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
         $this->cekAksebilitasFeedback($idKota);
+        $this->cekAksesJadwalDimulai($idKota, $namaFta);
 
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
@@ -339,6 +385,33 @@ class PemberianFeedbackController extends Controller
                 }
             }
 
+            // Ke MHS
+            // try {
+            //     if ($idKota) {
+            //         $mahasiswa = KotaUser::where('id_kota', $idKota)->pluck('username');
+            //         $namaMhs = User::where('username', $mahasiswa)->value('nama');
+            //         $judulTA = Kota::where('id_kota', $idKota)->value('judul_ta');
+            //         foreach ($mahasiswa as $username) {
+            //             if ($username) {
+            //                 $username->notify(new TestEmailNotification(
+            //                     'Penilaian Telah Dilakukan, Periksa Feedback Dosen!',
+            //                     [
+            //                         'nama' => $namaMhs,
+            //                         'topik' => $judulTA,
+            //                         'feedback_dokumen' => $feedback['masukan'],
+            //                         'feedback_presentasi' => $feedback['masukan'],
+            //                         'feed_penguasaan_materi' => $feedback['masukan']
+            //                     ]
+            //                 ));
+            //             }
+            //         }
+            //     }
+            // } catch (\Exception $notifEx) {
+            //     \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+            //         'id_kota' => $idKota,
+            //         'username' => $username
+            //     ]);
+            // }
             // Commit transaksi jika berhasil
             DB::commit();
 

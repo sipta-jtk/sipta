@@ -284,7 +284,6 @@ $prefix = env('PREFIX_URL', '');
 
             // Check if loaded correctly
             iframe.addEventListener('load', function() {
-                console.log('Iframe loaded:', iframe.src);
                 try {
                     // If we can access the iframe content, check for errors
                     setTimeout(function() {
@@ -316,7 +315,6 @@ $prefix = env('PREFIX_URL', '');
         const downloadButtons = document.querySelectorAll('#unduh a[download]');
         downloadButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
-                console.log('Download initiated:', this.href);
 
                 // Create a notification about the download
                 const notification = document.createElement('div');
