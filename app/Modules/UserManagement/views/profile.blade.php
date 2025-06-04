@@ -1,13 +1,15 @@
 @extends('adminlte::page')
 
 @section('title', 'Profile')
-
+@php
+$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+@endphp
 @section('content_header')
     <h1 class="mb-3">Profil Saya</h1>
     <div>
         @component('UserManagement.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+                ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
                 ['url' => '', 'label' => 'Profil'],
             ]
         ])
