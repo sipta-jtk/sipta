@@ -1252,7 +1252,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('mohammad123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '000000',
-                'photo' => 'mohammad_fathul’ibad.png',
+                'photo' => 'mohammad_fathul`ibad.png',
                 'status_user' => 'aktif'
             ],
             [
