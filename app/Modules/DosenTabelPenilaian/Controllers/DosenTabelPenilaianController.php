@@ -38,6 +38,7 @@ class DosenTabelPenilaianController extends Controller
             ->where('jenis_form', 'penilaian')
             ->with('kategoriPenilaian')
             ->get();
+        Log::info('ID Kategori: '. json_encode($id_kategori, JSON_PRETTY_PRINT));
 
         $idKategoriSemua = [];
         foreach ($id_kategori as $item) {
@@ -58,6 +59,9 @@ class DosenTabelPenilaianController extends Controller
             }
         }
 
+
+        Log::info('ID Kategori Feedback: '. json_encode($this->mappingKegiatan($kegiatan), JSON_PRETTY_PRINT));
+
         // Ambil hanya penjadwalan yang status-nya 'fix'
         $kotaDibimbing = AlokasiDosen::where('nip', $nip)
             ->with([
@@ -72,7 +76,7 @@ class DosenTabelPenilaianController extends Controller
             ->flatten()
             ->unique('id_penjadwalan')
             ->filter(); // filter() untuk menghilangkan null jika tidak ada penjadwalan yang fix
-
+        // Log::info('Kota Dibimbing: '. json_encode($kotaDibimbing, JSON_PRETTY_PRINT));
 
         $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip, $idKategoriSemua, $idKategoriFeedback, $id_kategori) {
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
@@ -101,7 +105,6 @@ class DosenTabelPenilaianController extends Controller
                     ->pluck('status_penilaian_dosen');
             })->unique()->first();
 
-
             $id_prodi_mhs = $mahasiswa->first()->id_prodi;
             $jenis_ta = $mahasiswa->first()->kota->jenis_ta;
 
@@ -109,7 +112,6 @@ class DosenTabelPenilaianController extends Controller
                 return $kategori->id_prodi == $id_prodi_mhs && $kategori->jenis_ta == $jenis_ta;
             });
             
-            Log::info('Filtered Kategori: ' . json_encode($filteredKategori, JSON_PRETTY_PRINT));
             $isTerkunci = false;
             foreach ($filteredKategori as $filter) {
                 if ($filter->kategoriPenilaian->first()->kunci_penilaian) {

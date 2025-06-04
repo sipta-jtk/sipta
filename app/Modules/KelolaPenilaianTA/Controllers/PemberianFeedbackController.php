@@ -125,7 +125,6 @@ class PemberianFeedbackController extends Controller
      */
     private function cekAksesJadwalDimulai($idKota, $namaFta)
     {
-        Log::info("Cek akses jadwal dimulai untuk kota ID: $idKota, nama FTA: $namaFta");
         // Mapping namaFta ke format agenda di database
         $agenda = match (strtolower($namaFta)) {
             'seminar-iii' => 'seminar_3',
