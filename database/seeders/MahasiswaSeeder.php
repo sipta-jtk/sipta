@@ -155,22 +155,22 @@ class MahasiswaSeeder extends Seeder
             //     'status_ta' => 'mahasiswa_ta',
             //     'id_kota' => null
             // ],
-            // [
-            //     'nim' => '221511023',
-            //     'tahun_masuk' => 2022,
-            //     'kelas' => '3A',
-            //     'id_prodi' => 1,
-            //     'status_ta' => 'mahasiswa_ta',
-            //     'id_kota' => null
-            // ],
-            // [
-            //     'nim' => '221511030',
-            //     'tahun_masuk' => 2022,
-            //     'kelas' => '3A',
-            //     'id_prodi' => 1,
-            //     'status_ta' => 'mahasiswa_ta',
-            //     'id_kota' => null
-            // ],
+            [
+                'nim' => '221511023',
+                'tahun_masuk' => 2022,
+                'kelas' => '3A',
+                'id_prodi' => 1,
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
+            ],
+            [
+                'nim' => '221511030',
+                'tahun_masuk' => 2022,
+                'kelas' => '3A',
+                'id_prodi' => 1,
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
+            ],
             [
                 'nim' => '221511008',
                 'tahun_masuk' => 2022,
@@ -526,14 +526,14 @@ class MahasiswaSeeder extends Seeder
             //     'status_ta' => 'mahasiswa_non_ta',
             //     'id_kota' => null
             // ],
-            // [
-            //     'nim' => '211524003',
-            //     'tahun_masuk' => 2021,
-            //     'kelas' => '4A',
-            //     'id_prodi' => 2,
-            //     'status_ta' => 'mahasiswa_non_ta',
-            //     'id_kota' => null
-            // ],
+            [
+                'nim' => '211524003',
+                'tahun_masuk' => 2021,
+                'kelas' => '4A',
+                'id_prodi' => 2,
+                'status_ta' => 'mahasiswa_non_ta',
+                'id_kota' => null
+            ],
             [
                 'nim' => '211524002',
                 'tahun_masuk' => 2021,
