@@ -26,6 +26,18 @@ class TimelineSeeder extends Seeder
                 'tanggal_selesai' => '2024-03-14',
                 'deskripsi' => 'Seminar 2 dilaksanakan pada minggu pertama pada bulan april dengan evaluator dari koordinator TA',
             ],
+            [
+                'nama_kegiatan' => 'Seminar 3',
+                'tanggal_mulai' => '2025-05-1',
+                'tanggal_selesai' => '2025-06-30',
+                'deskripsi' => 'Seminar 3 dilaksanakan pada minggu pertama pada bulan mei sampai minggu terakhir pada bulan juni',
+            ],
+            [
+                'nama_kegiatan' => 'Sidang Akhir',
+                'tanggal_mulai' => '2025-09-1',
+                'tanggal_selesai' => '2025-09-30',
+                'deskripsi' => 'Sidang Akhir dilaksanakan pada bulan september',
+            ],
         ];
 
         DB::table('timeline')->insert($timelines);
