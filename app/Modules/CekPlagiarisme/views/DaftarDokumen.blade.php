@@ -825,13 +825,61 @@
                 text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
                 confirmButtonColor: '#3085d6'
             });
-            // Reset file input
             $(this).val('');
             $('#namaFileTerpilih').text('Tidak ada file');
             return;
         }
 
-        $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
+        // Validasi file Turnitin
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const typedarray = new Uint8Array(e.target.result);
+                const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                const pageCount = pdfDoc.numPages;
+                let fullText = '';
+
+                for (let pageNum = 1; pageNum <= Math.min(pageCount, 5); pageNum++) {
+                    const page = await pdfDoc.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const text = textContent.items.map(item => item.str).join(' ');
+                    fullText += text + ' ';
+                }
+
+                // Validasi: Submission ID
+                const turnitinIdPattern = /Submission ID.*?trn:oid:(?:::)?\d*:\d+/i;
+                const hasValidTurnitinId = turnitinIdPattern.test(fullText);
+
+                // Validasi: Kata kunci khas Turnitin
+                const containsTurnitinKeywords = /Similarity Index|Originality Report|Turnitin|Overall Similarity/i.test(fullText);
+
+                if (!hasValidTurnitinId || !containsTurnitinKeywords) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'File tidak valid',
+                        text: 'File harus merupakan hasil laporan dari Turnitin dengan ID dan informasi asli!',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    $(this).val('');
+                    $('#namaFileTerpilih').text('Tidak ada file');
+                    return;
+                }
+            } catch (err) {
+                console.error('Error reading PDF:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal membaca file PDF. Pastikan file tidak rusak.',
+                    confirmButtonColor: '#3085d6'
+                });
+                $(this).val('');
+                $('#namaFileTerpilih').text('Tidak ada file');
+                return;
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        $('#namaFileTerpilih').text(file.name ? file.name : 'Tidak ada file');
     });
 
     $('#dokumenFileDigitalReceipt').on('change', function() {
