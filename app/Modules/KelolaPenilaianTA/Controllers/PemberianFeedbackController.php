@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 use App\Models\AlokasiDosen;
 use App\Models\Mahasiswa;
@@ -63,6 +64,46 @@ class PemberianFeedbackController extends Controller
         }
     }
 
+    private function cekAksesJadwalDimulai($idKota, $namaFta)
+    {
+        Log::info("Cek akses jadwal dimulai untuk kota ID: $idKota, nama FTA: $namaFta");
+        // Mapping namaFta ke format agenda di database
+        $agenda = match (strtolower($namaFta)) {
+            'seminar-iii' => 'seminar_3',
+            'sidang-akhir' => 'sidang',
+            default => $namaFta,
+        };
+    
+        $jadwalQuery = Kota::where('id_kota', $idKota)
+            ->with(['penjadwalan' => function ($q) use ($agenda) {
+                if ($agenda) {
+                    $q->where(function ($query) use ($agenda) {
+                        $query->where('agenda', $agenda);
+                    });
+                }
+            }])
+            ->first();
+    
+        $penjadwalan = $jadwalQuery->penjadwalan->first();
+        $start = optional($penjadwalan)->start;
+        $agenda = optional($penjadwalan)->agenda ?? $agenda;
+    
+        // Mapping agenda ke label user-friendly
+        $jenisSeminar = match (strtolower($agenda)) {
+            'seminar_3', 'seminar 3', 'seminar-3' => 'Seminar III',
+            'sidang' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $agenda ?? 'Seminar')),
+        };
+
+        if (!$start) {
+            abort(403, "Jadwal penilaian $jenisSeminar belum ditentukan.");
+        }
+    
+        if (Carbon::now()->lt(Carbon::parse($start))) {
+            abort(403, "Penilaian $jenisSeminar belum dapat dilakukan karena jadwal belum dimulai.");
+        }
+    }
+
     /**
      * Tampilkan halaman pengisian masukan seminar
      * 
@@ -73,6 +114,7 @@ class PemberianFeedbackController extends Controller
     public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
         $this->cekAksebilitasFeedback($idKota);
+        $this->cekAksesJadwalDimulai($idKota, $namaFta);
 
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
