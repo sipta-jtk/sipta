@@ -64,6 +64,58 @@ class PemberianFeedbackController extends Controller
         }
     }
 
+    // Cek apakah feedback sudah terkunci atau sudah ada, dan handle tombol edit
+    private function cekAksesFeedbackTerkunci($namaFta, $idKota, $nip)
+    {
+        $username = auth()->user()->nip;
+
+        $namaFta = match (strtolower($namaFta)) {
+            'seminar_3', 'seminar 3', 'seminar-iii' => 'Seminar III',
+            'sidang', 'sidang-akhir' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $namaFta ?? 'Seminar')),
+        };
+
+        // belum tau kalo ini seminar atau sidang
+        $kota = Kota::where('id_kota', $idKota)
+            ->with('mahasiswa')
+            ->with(['detailFeedback' => function ($query) use ($nip, $idKota) {
+            $query->where('nip', $nip)
+                  ->where('id_kota', $idKota)
+                  ->where('status_penilaian_dosen', 'dipublikasikan');
+            }])
+            ->with(['detailFeedback.aspekFeedback.formPenilaian' => function ($query) use ($namaFta) {
+                $query->where('nama_fta', $namaFta)
+                      ->where('jenis_form', 'feedback');
+            }])
+            ->first();
+        
+        $idProdi = $kota->mahasiswa->first()->id_prodi;
+        
+        $jenis_ta = $kota->jenis_ta;
+        
+
+        // Cari form penilaian feedback berdasarkan nama, prodi, dan jenis_form = feedback
+        $formPenilaian = FormPenilaian::where([
+            ['nama_fta', $namaFta],
+            ['id_prodi', $idProdi],
+            ['jenis_form', 'penilaian'],
+            ['jenis_ta', $jenis_ta]
+        ])->with('kategoriPenilaian')
+        ->first();
+        
+        Log::info("Form penilaian ditemukan:". json_encode($formPenilaian, JSON_PRETTY_PRINT));
+
+        // Cek apakah feedback sudah ada
+        $feedback = $kota->detailFeedback->isEmpty();
+        Log::info("Feedback ditemukan: " . ($feedback ? 'Ya' : 'Tidak'));
+        
+        // ini untuk cek apakah dikunci atau tidak
+        if ($formPenilaian->kategoriPenilaian->first()->kunci_penilaian && $feedback) {
+            abort(403, "Form penilaian untuk $namaFta dikunci.");
+        }
+
+    }
+
     private function cekAksesJadwalDimulai($idKota, $namaFta)
     {
         Log::info("Cek akses jadwal dimulai untuk kota ID: $idKota, nama FTA: $namaFta");
@@ -115,6 +167,11 @@ class PemberianFeedbackController extends Controller
     {
         $this->cekAksebilitasFeedback($idKota);
         $this->cekAksesJadwalDimulai($idKota, $namaFta);
+        $this->cekAksesFeedbackTerkunci(
+            $namaFta,
+            $idKota, 
+            auth()->user()->username
+        );
 
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
