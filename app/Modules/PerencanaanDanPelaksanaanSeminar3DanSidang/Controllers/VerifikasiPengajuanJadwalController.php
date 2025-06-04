@@ -351,7 +351,7 @@ class VerifikasiPengajuanJadwalController extends Controller
                     }
                 } catch (\Exception $notifEx) {
                     \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
-                        'nip' => $nip
+                        'nip' => '$nip'
                     ]);
                 }
         }
