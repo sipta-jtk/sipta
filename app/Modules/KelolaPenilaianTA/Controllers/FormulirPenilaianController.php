@@ -254,9 +254,9 @@ class FormulirPenilaianController extends Controller {
 
             if ($hasNilaiKategori) {
                 return redirect()->back()
-                    ->with('error', 'Formulir Penilaian sudah tidak bisa diubah, karena sudah dipublikasikan');
+                    ->with('error', 'Formulir Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
             }
-            
+
             $totalBobot = array_sum($request->bobot_kriteria);
             
             if ($totalBobot != 100) {
@@ -307,10 +307,10 @@ class FormulirPenilaianController extends Controller {
                 ->join('aspek_feedback', 'detail_feedback.id_feedback', '=', 'aspek_feedback.id_feedback')
                 ->where('aspek_feedback.id_fta', $id_fta)
                 ->exists();
-                
+            
             if ($hasDetailFeedback) {
                 return redirect()->back()
-                    ->with('error', 'Formulir Feedback sudah tidak bisa diubah, karena sudah dipublikasikan');
+                    ->with('error', 'Formulir Feedback sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
             }
             
             $namaAspekFeedback = $request->nama_aspek_feedback;
@@ -697,6 +697,20 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
+            
+            if ($formulirPenilaian->isNotEmpty()) {
+                $id_fta = $formulirPenilaian->first()->id_fta;
+                
+                $hasNilaiKategori = DB::table('nilai_kategori')
+                    ->join('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
+                    ->where('kategori_penilaian.id_fta', $id_fta)
+                    ->exists();
+
+                if ($hasNilaiKategori) {
+                    return redirect()->back()
+                        ->with('error', 'Rubrik Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+                }
+            }
             
             $globalRubrikIndex = 0;
             $globalDetailIndex = 0;
