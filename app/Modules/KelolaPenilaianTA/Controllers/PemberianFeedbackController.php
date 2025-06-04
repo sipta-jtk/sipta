@@ -64,7 +64,13 @@ class PemberianFeedbackController extends Controller
         }
     }
 
-    // Cek apakah feedback sudah terkunci atau sudah ada, dan handle tombol edit
+    /**
+     * Cek apakah feedback sudah terkunci untuk FTA tertentu
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param string $nip
+     */
     private function cekAksesFeedbackTerkunci($namaFta, $idKota, $nip)
     {
         $username = auth()->user()->nip;
@@ -92,7 +98,6 @@ class PemberianFeedbackController extends Controller
         $idProdi = $kota->mahasiswa->first()->id_prodi;
         
         $jenis_ta = $kota->jenis_ta;
-        
 
         // Cari form penilaian feedback berdasarkan nama, prodi, dan jenis_form = feedback
         $formPenilaian = FormPenilaian::where([
@@ -102,20 +107,22 @@ class PemberianFeedbackController extends Controller
             ['jenis_ta', $jenis_ta]
         ])->with('kategoriPenilaian')
         ->first();
-        
-        Log::info("Form penilaian ditemukan:". json_encode($formPenilaian, JSON_PRETTY_PRINT));
 
         // Cek apakah feedback sudah ada
         $feedback = $kota->detailFeedback->isEmpty();
-        Log::info("Feedback ditemukan: " . ($feedback ? 'Ya' : 'Tidak'));
         
         // ini untuk cek apakah dikunci atau tidak
         if ($formPenilaian->kategoriPenilaian->first()->kunci_penilaian && $feedback) {
             abort(403, "Form penilaian untuk $namaFta dikunci.");
         }
-
     }
 
+    /**
+     * Cek apakah jadwal penilaian sudah dimulai
+     * 
+     * @param int $idKota
+     * @param string $namaFta
+     */
     private function cekAksesJadwalDimulai($idKota, $namaFta)
     {
         Log::info("Cek akses jadwal dimulai untuk kota ID: $idKota, nama FTA: $namaFta");
@@ -483,7 +490,10 @@ class PemberianFeedbackController extends Controller
     }
 
     /**
-     * Mengunduh dokumen.
+     * Mengunduh dokumen
+     * @param string $kategori
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
     public function download($kategori, $id)
     {
