@@ -42,12 +42,19 @@
                 <td>{{ $item['judul'] }}</td>
                 <td>{{ $item['kota'] }}</td>
                 <td>
-                    {{-- @if (item['status_penilaian'] ===) --}}
+                    <span data-toggle="tooltip" data-placement="top"
+                        title="@if(!$item['sudah_dibuka'])
+                                Penilaian Belum Dimulai
+                            @elseif($item['kunci_penilaian'])
+                                Penilaian Terkunci
+                            @endif
+                        "
+                    >
                     <div class="mb-2">
                         @if ($item['sudah_penilaian'] === 'Sudah dinilai')
                             @if($item['status_penilaian'] === 'draf')
                                 <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
-                                    class="btn btn-warning w-100">
+                                    class="btn btn-warning w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
                                     Edit Nilai
                                 </button>
                             @elseif($item['status_penilaian'] === 'dipublikasikan')
@@ -57,13 +64,13 @@
                                 </button>
                             @else
                                 <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
-                                    class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                    class="btn btn-primary w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : '' }}>
                                     Isi Nilai
                                 </button>
                             @endif
                         @else
                             <button onclick="location.href='{{ route('pengisian.nilai', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota']]) }}'"
-                                class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                class="btn btn-primary w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
                                 Isi Nilai
                             </button>
                         @endif
@@ -72,7 +79,7 @@
                         @if ($item['sudah_feedback'] === "Sudah diisi")
                             @if($item['status_feedback'] === "draf")
                                 <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'] ]) }}'"
-                                    class="btn btn-warning w-100">
+                                    class="btn btn-warning w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
                                     Edit Masukan
                                 </button>
                             @elseif($item['status_feedback'] === "dipublikasikan")
@@ -82,31 +89,36 @@
                                 </button>
                             @else
                                 <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'] ]) }}'"
-                                    class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                    class="btn btn-primary w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
                                     Isi Masukan
                                 </button>
                             @endif
                         @else
                             <button onclick="location.href='{{ route('pengisian.masukan', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'] ]) }}'"
-                                class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled' }}>
+                                class="btn btn-primary w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
                                 Isi Masukan
                             </button>
                         @endif
                     </div>
 
-                    @if ($item['status_penilaian'] === 'draf' || $item['sudah_penilaian'] === 'Belum dinilai')
-                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"
-                            method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary w-100" {{ $item['sudah_dibuka'] ? '' : 'disabled'}}>Publikasi</button>
-                        </form>
-                    @elseif ($item['status_penilaian'] === 'dipublikasikan')
-                        <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'unpublish']) }}"
-                            method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger w-100">Batal Publikasi</button>
-                        </form>
-                    @endif
+                        @if ($item['status_penilaian'] === 'draf' || $item['sudah_penilaian'] === 'Belum dinilai')
+                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'publish']) }}"
+                                method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
+                                    Publikasikan
+                                </button>
+                            </form>
+                        @elseif ($item['status_penilaian'] === 'dipublikasikan')
+                            <form action="{{ route('kelola.penilaian.toggle-publish', ['namaFta' => $item['namaFta'], 'idKota' => $item['id_kota'], 'action' => 'unpublish']) }}"
+                                method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-danger w-100" {{ !$item['sudah_dibuka'] || $item['kunci_penilaian'] ? 'disabled' : ''  }}>
+                                    Batalkan Publikasi
+                                </button>
+                            </form>
+                        @endif
+                    </span>
                 </td>
             </tr>
         @endforeach
@@ -118,15 +130,17 @@
 
 @section('css')
     <!-- CDN untuk DataTables CSS -->
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 @stop
 
 @section('js')
-    <!-- CDN untuk jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- CDN untuk DataTables JS -->
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
         $('#penjadwalanTable').DataTable({
             language: {
@@ -143,6 +157,10 @@
                     previous: "<"
                 }
             }
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover focus', delay: { "show": 0, "hide": 100 } });
         });
     </script>
 @stop
