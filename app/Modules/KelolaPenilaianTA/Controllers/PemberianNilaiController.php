@@ -338,7 +338,7 @@ class PemberianNilaiController extends Controller
 
         try {
             $nilai_rata_rata = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug);
 
             DB::commit();
 
@@ -379,7 +379,7 @@ class PemberianNilaiController extends Controller
         try {
             $nilai_rata_rata_rubrik = $this->ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
             $nilai_rata_rata_kriteria = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
-            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug);
     
             DB::commit();
     
@@ -475,9 +475,12 @@ class PemberianNilaiController extends Controller
     
     
 
-    private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip): void
+    private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug): void
     {
         $idKategori = $kategoriPenilaian->first()->id_kategori;
+
+        $status = ($namaFtaSlug === 'dosen pembimbing') ? 'dipublikasikan' : 'draf';
+        Log::info("Status penilaian untuk $namaFtaSlug: $status");
     
         foreach ($mahasiswa as $index => $mhs) {
             $mhs->nilaiKategori()
@@ -491,7 +494,7 @@ class PemberianNilaiController extends Controller
                 'nip' => $nip,
                 'id_kategori' => $idKategori,
                 'nilai' => $nilai_rata_rata[$index],
-                'status_penilaian_dosen' => 'draf'
+                'status_penilaian_dosen' => $status,
             ]);
         }
     }
