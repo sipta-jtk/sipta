@@ -73,7 +73,8 @@ class DosenTabelPenilaianController extends Controller
             ->unique('id_penjadwalan')
             ->filter(); // filter() untuk menghilangkan null jika tidak ada penjadwalan yang fix
 
-        $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip, $idKategoriSemua, $idKategoriFeedback, $id_kategori) {
+
+        $penjadwalan = $kotaDibimbing->map(function ($item) use ($nip, $idKategoriSemua, $idKategoriFeedback) {
             $mahasiswa = $item->kota->mahasiswa ?? collect([]);
 
             $sudahDinilai = $mahasiswa->contains(function ($mahasiswa) use ($nip, $idKategoriSemua) {
@@ -100,19 +101,6 @@ class DosenTabelPenilaianController extends Controller
                     ->pluck('status_penilaian_dosen');
             })->unique()->first();
 
-            $id_prodi_mhs = $mahasiswa->first()->id_prodi;
-            $jenis_ta = $mahasiswa->first()->kota->jenis_ta;
-
-            $filteredKategori = $id_kategori->filter(function ($kategori) use ($id_prodi_mhs, $jenis_ta) {
-                return $kategori->id_prodi == $id_prodi_mhs && $kategori->jenis_ta == $jenis_ta;
-            });
-            
-            $isTerkunci = false;
-            foreach ($filteredKategori as $filter) {
-                if ($filter->kategoriPenilaian->first()->kunci_penilaian) {
-                    $isTerkunci = true;
-                }
-            }
             return [
                 'id_penjadwalan' => $item->id_penjadwalan,
                 'sesi' => $item->sesi,
@@ -120,7 +108,6 @@ class DosenTabelPenilaianController extends Controller
                     'seminar_3' => 'Seminar 3',
                     'sidang' => 'Sidang Akhir',
                 },
-                'kunci_penilaian' => $isTerkunci,
                 'sudah_dibuka' => Carbon::now()->greaterThanOrEqualTo(Carbon::parse($item->start)),
                 'tanggal' => Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
                 'judul' => $item->kota->judul_ta,

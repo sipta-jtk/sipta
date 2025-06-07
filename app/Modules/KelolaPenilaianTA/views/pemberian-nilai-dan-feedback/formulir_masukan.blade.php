@@ -256,7 +256,7 @@
                         input="feedback-{{ $index }}"
                         {{ $isPublished ? 'readonly contenteditable=false' : '' }}>
                     </trix-editor>
-                    <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 5 kata.</span>
+                    <span style="{{ $isPublished ? 'display: none;' : '' }}">Masukan minimal 30 kata.</span>
                 </div>
             @endforeach
             @endif
