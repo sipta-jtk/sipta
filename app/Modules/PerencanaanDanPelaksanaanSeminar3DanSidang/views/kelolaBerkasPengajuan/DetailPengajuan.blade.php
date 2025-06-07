@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid ">
         <!-- Informasi Pengajuan -->
         <div class="card">
             <div class="card-header">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Berkas Pengajuan -->
-        <div id="container-dokumen" class="container-scroll mt-3"></div>
+        <div id="container-dokumen" class="container-scroll"></div>
 
         <!-- Form Verifikasi -->
         <form action="{{ route('kelola.berkas.verifikasi', ['tipe' => $tipe, 'id' => $dataKota->id_pengajuan]) }}" method="POST">
@@ -36,21 +36,32 @@
                 <button type="button" class="btn btn-danger mx-2" id="btnTolak">Tolak</button>
                 <button type="button" class="btn btn-success mx-2" id="btnSetuju">Setuju</button>
             </div>
-
-            <!-- Container Catatan (Tersembunyi Awalnya) -->
-            <div class="card mt-3" id="containerCatatan" style="display: none;">
-                <div class="card-body">
-                    <label for="catatan" class="form-label">Catatan</label>
-                    <textarea class="form-control" id="catatan" rows="3"></textarea>
-                    <small id="charCount" class="text-muted">0 / 500 karakter</small>
-                </div>
-            </div>
-
-            <!-- Tombol Kirim -->
-            <div class="d-flex justify-content-end mt-3">
-                <button type="submit" class="btn btn-primary" id="btnKirim" disabled>Kirim</button>
-            </div>
         </form>
+
+        <!-- Modal Tolak -->
+        <x-adminlte-modal id="modalTolak" title="Alasan Penolakan" theme="danger" icon="fas fa-times" size="lg" scrollable>
+            <x-adminlte-textarea name="catatanModal" label="Catatan" igroup-size="sm" rows="3" maxlength="500">
+            </x-adminlte-textarea>
+            <small id="charCountModal" class="text-muted">0 / 500 karakter</small>
+
+            <x-slot name="footerSlot">
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="secondary"/>
+                <x-adminlte-button label="Kirim Penolakan" id="submitTolak" theme="danger"/>
+            </x-slot>
+        </x-adminlte-modal>
+
+
+        <!-- Modal Setuju -->
+        <x-adminlte-modal id="modalSetuju" title="Konfirmasi Persetujuan" theme="success" icon="fas fa-check" size="lg" centered>
+            <p>Apakah Anda yakin ingin menyetujui pengajuan ini?</p>
+
+            <x-slot name="footerSlot">
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="secondary"/>
+                <x-adminlte-button label="Kirim Persetujuan" id="submitSetuju" theme="success"/>
+            </x-slot>
+        </x-adminlte-modal>
+
+
     </div>
 @stop
 
@@ -78,49 +89,38 @@
     <script>
         
         $(document).ready(function() {
-            let keputusan = ""; // Menyimpan keputusan user
+        let keputusan = "";
 
-            $('#catatan').on('input', function() {
-                const val = $(this).val();
-                const max = 500;
-                $('#charCount').text(`${val.length} / ${max} karakter`);
-                if (val.length > max) {
-                    $(this).val(val.substring(0, max));
-                    $('#charCount').text(`${max} / ${max} karakter`);
-                }
-            });
+        LihatDokumen();
 
-
-            LihatDokumen();
-
-            // Event ketika tombol "Tolak" diklik
-            $('#btnTolak').on('click', function() {
-                keputusan = 'tidak_disetujui';
-                keputusan2 = 'ditolak';
-                $('#keputusan').val(keputusan);
-                $('#containerCatatan').slideDown(); // Menampilkan container catatan
-                $('#btnSetuju').removeClass('active-btn').addClass('disabled-btn');
-                $(this).addClass('active-btn').removeClass('disabled-btn');
-                $('#btnKirim').prop('disabled', false);
-            });
-
-            // Event ketika tombol "Setuju" diklik
-            $('#btnSetuju').on('click', function() {
-                keputusan = 'disetujui';
-                $('#keputusan').val(keputusan);
-                $('#containerCatatan').slideUp(); // Menyembunyikan container catatan
-                $('#btnTolak').removeClass('active-btn').addClass('disabled-btn');
-                $(this).addClass('active-btn').removeClass('disabled-btn');
-                $('#btnKirim').prop('disabled', false);
-            });
-
-            // Saat Submit, masukkan catatan ke input hidden
-            $('form').on('submit', function() {
-                if (keputusan === 'tidak_disetujui') {
-                    $('#catatan_input').val($('#catatan').val());
-                }
-            });
+        // Catatan modal character counter
+        $('#catatanModal').on('input', function() {
+            const val = $(this).val();
+            $('#charCountModal').text(`${val.length} / 500 karakter`);
         });
+
+        $('#btnTolak').on('click', function() {
+            keputusan = 'tidak_disetujui';
+            $('#modalTolak').modal('show');
+        });
+
+        $('#btnSetuju').on('click', function() {
+            keputusan = 'disetujui';
+            $('#modalSetuju').modal('show');
+        });
+
+        $('#submitTolak').on('click', function() {
+            $('#keputusan').val(keputusan);
+            $('#catatan_input').val($('#catatanModal').val());
+            $('form').submit();
+        });
+
+        $('#submitSetuju').on('click', function() {
+            $('#keputusan').val(keputusan);
+            $('form').submit();
+        });
+    });
+
 
         const prefix = "/{{ env('PREFIX_URL') }}";
         const kategori = '{{ $kategori }}';
@@ -178,7 +178,7 @@
                 }
 
                 const cardHTML = `
-                    <div class="card my-5"> <!-- Tambah my-5 untuk jarak vertikal yang besar -->
+                    <div class="card my-3"> <!-- Tambah my-3 untuk jarak vertikal yang besar -->
                         <div class="card-header">
                             <h3 class="card-title">Berkas Pengajuan</h3>
                         </div>
