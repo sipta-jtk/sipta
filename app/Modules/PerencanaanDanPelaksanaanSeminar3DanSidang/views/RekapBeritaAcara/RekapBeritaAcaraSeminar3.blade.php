@@ -55,7 +55,7 @@
                                     @elseif($item->status_hadir == 'tidak_hadir')
                                         <span class="text-danger font-weight-bold">Tidak Hadir</span>
                                     @else
-                                        <span class="text-warning font-weight-bold">Belum Absen</span>
+                                        <span class="text-warning font-weight-bold">Belum Isi Presensi</span>
                                     @endif
                                 </td>
                                 <td style="width: 50px;">
