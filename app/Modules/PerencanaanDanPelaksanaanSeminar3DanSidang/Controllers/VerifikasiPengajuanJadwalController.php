@@ -215,11 +215,12 @@ class VerifikasiPengajuanJadwalController extends Controller
                         Penjadwalan::where('id_penjadwalan', $idPenjadwalan)
                             ->update(['status' => 'fix']);
 
-                        $mahasiswa = Mahasiswa::where('id_kota', $roomInformation->id_kota)
+                        $mahasiswas = Mahasiswa::where('id_kota', $roomInformation->id_kota)
                             ->select('nim')
-                            ->first();
+                            ->get(); // Mengambil semua mahasiswa dengan id_kota tersebut
 
-                        if ($mahasiswa){
+                        // Membuat kehadiran untuk setiap mahasiswa
+                        foreach ($mahasiswas as $mahasiswa) {
                             Kehadiran::create([
                                 'id_penjadwalan' => $idPenjadwalan,
                                 'username' => $mahasiswa->nim,
