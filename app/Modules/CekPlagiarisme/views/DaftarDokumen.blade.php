@@ -24,8 +24,7 @@
     <div class="card">
         <div class="d-flex justify-content-between px-3 pt-3">
             @if(auth()->user()->role_user === 'dosen' || auth()->user()->role_user === 'admin')
-            <button class="btn btn-primary btn-md" type="button"
-                data-toggle="collapse" data-target="#filterMenu">
+            <button id="filterToggleBtn" class="btn btn-primary btn-md" type="button">
                 <i class="fas fa-filter"></i>
             </button>
             @else(auth()->user()->role_user === 'mahasiswa' || auth()->user()->mahasiwa->status_ta === 'mahasiswa_ta')
@@ -37,7 +36,7 @@
             </div>
             @endif
         </div>
-        <div class="collapse" id="filterMenu">
+        <div id="filterMenu" style="display: none;">
             <div class="card mx-3 mt-3">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -46,7 +45,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-4">
                             <div class="form-group text-secondary">
                                 <label>
                                     <i class="fas fa-user mr-1"> KoTa</i>
@@ -54,6 +53,28 @@
 
                                 <select id="kelompokSelect" class="form-control select2bs4"
                                     style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-secondary">
+                                <label>
+                                    <i class="fas fa-graduation-cap mr-1"> Program Studi</i>
+                                </label>
+
+                                <select id="prodiSelect" class="form-control select2bs4"
+                                    style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-secondary">
+                                <label>
+                                    <i class="fas fa-calendar-alt mr-1"> Tahun Angkatan</i>
+                                </label>
+
+                                <select id="angkatanSelect" class="form-control select2bs4" style="width: 100%;">
+                                    <option value="">Semua Tahun Angkatan</option>
                                 </select>
                             </div>
                         </div>
@@ -71,7 +92,7 @@
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th style="width:5%;">Id_dokumen</th>
-                        <th style="width:5%;">Nomor</th>
+                        <th style="width:5%;">KoTa</th>
                         <th style="width:30%;">Judul TA</th>
                         <th style="width:15%;">Waktu Unggah</th>
                         <th style="width:20%;">Penulis</th>
@@ -236,6 +257,12 @@
         overflow-y: auto;
         max-height: calc(100vh - 200px);
     }
+    
+    /* Style for active filter button */
+    #filterToggleBtn.active {
+        background-color: #0056b3; 
+        border-color: #004085;
+    }
 </style>
 
 @stop
@@ -286,11 +313,17 @@
 
 
     $(document).ready(function() {
+        // Pastikan filter menu tertutup pada awal load
+        $('#filterMenu').hide();
+        
         // Ambil role_user dari meta tag yang ada di halaman
         var roleUser = $("meta[name='role_user']").attr("content");
 
         // Membuat URL untuk API kota
         var urlKota = '/api/kotas';
+
+        // Membuat URL untuk API program studi
+        var urlProdi = '/api/prodi';
 
         if (roleUser === 'dosen' || roleUser === 'admin') {
             // Mengambil data kota dari API
@@ -313,12 +346,69 @@
                     }
 
                     // Menambahkan opsi ke dropdown kelompokSelect
-                    $("#kelompokSelect").append(kelompokOptions);
+                    $("#kelompokSelect").html(kelompokOptions);
                 },
-                error: function(xhr, status, error) {}
+                error: function(xhr, status, error) {
+                    console.error("Error loading kota:", error);
+                }
             });
+            
+            $.ajax({
+                type: "GET",
+                url: createApiUrl(urlProdi),
+                dataType: "json",
+                success: function(response) {
+
+                    var prodiOptions;
+
+                    if (response.length === 0) {
+                        prodiOptions = '<option value="">Tidak ada Program Studi</option>';
+                    } else {
+                        prodiOptions = '<option value="">Semua Program Studi</option>'; // Opsi default
+                        // Menambahkan opsi ke dropdown
+                        prodiOptions += response.map(function(item) {
+                            return `<option value="${item.id_prodi}">${item.nama_prodi}</option>`;
+                        }).join('');
+                    }
+
+                    // Menambahkan opsi ke dropdown prodiSelect
+                    $("#prodiSelect").html(prodiOptions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading prodi:", error);
+                }
+            });
+            
+            // Mengambil data tahun angkatan
+            $.ajax({
+                type: "GET",
+                url: createApiUrl('/api/tahun-angkatan'),
+                dataType: "json",
+                success: function(response) {
+                    var angkatanOptions;
+                    
+                    if (response.length === 0) {
+                        angkatanOptions = '<option value="">Tidak ada Tahun Angkatan</option>';
+                    } else {
+                        angkatanOptions = '<option value="">Semua Tahun Angkatan</option>';
+                        // Tambahkan opsi ke dropdown
+                        angkatanOptions += response.map(function(item) {
+                            return `<option value="${item.tahun_angkatan}">${item.tahun_angkatan}</option>`;
+                        }).join('');
+                    }
+                    
+                    // Tambahkan opsi ke dropdown angkatanSelect
+                    $("#angkatanSelect").html(angkatanOptions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading angkatan:", error);
+                }
+            });
+
         } else {
-            $("#kelompokSelect").append('<option value="">Akses tidak diizinkan</option>');
+            $("#kelompokSelect").html('<option value="">Akses tidak diizinkan</option>');
+            $("#prodiSelect").html('<option value="">Akses tidak diizinkan</option>');
+            $("#angkatanSelect").html('<option value="">Akses tidak diizinkan</option>');
         }
     });
 
@@ -351,6 +441,16 @@
                     },
                     {
                         targets: [8], // id_kota column (hidden)
+                        visible: false,
+                        searchable: true
+                    },
+                    {
+                        targets: [9], // id_prodi column (hidden)
+                        visible: false,
+                        searchable: true
+                    },
+                    {
+                        targets: [10], // tahun_angkatan column (hidden)
                         visible: false,
                         searchable: true
                     }
@@ -401,30 +501,44 @@
                     // Sorting berdasarkan waktu secara descending
                     response.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
 
-                    response = response.map((item, index) => ({
-                        id_dokumen: item.id_dokumen,
-                        nomor: index + 1,
-                        judul: item.judul,
-                        waktu: item.waktu,
-                        penulis: item.penulis,
-                        presentase: item.persentase_plagiarisme + "%",
-                        status: item.status,
-                        catatan: getCatatan(item.review, item.id_dokumen),
-                        id_kota: item.id_kota
-                    }));
+                    response = response.map((item, index) => {
+                        let kotaNumber = "";
+                        if (item.kota && typeof item.kota === 'string') {
+                            const matches = item.kota.match(/\d+/);
+                            if (matches && matches.length > 0) {
+                                kotaNumber = matches[0]; 
+                            }
+                        }
+
+                        return {
+                            id_dokumen: item.id_dokumen,
+                            kota: kotaNumber || item.kota, 
+                            judul: item.judul,
+                            waktu: item.waktu,
+                            penulis: item.penulis,
+                            presentase: item.persentase_plagiarisme + "%",
+                            status: item.status,
+                            catatan: getCatatan(item.review, item.id_dokumen),
+                            id_kota: item.id_kota,
+                            id_prodi: item.id_prodi,
+                            tahun_angkatan: item.tahun_angkatan
+                        };
+                    });
 
                     // Tambahkan ke tabel
                     response.forEach(function(item) {
                         table.row.add([
                             item.id_dokumen,
-                            item.nomor,
+                            item.kota,
                             item.judul,
                             item.waktu,
                             item.penulis,
                             item.presentase,
                             item.status,
                             item.catatan,
-                            item.id_kota
+                            item.id_kota,
+                            item.id_prodi,
+                            item.tahun_angkatan
                         ]);
                     });
 
@@ -434,6 +548,8 @@
                     // Fungsi untuk filter DataTable
                     function applyFilters() {
                         var selectedKota = $("#kelompokSelect").val();
+                        var selectedProdi = $("#prodiSelect").val();
+                        var selectedAngkatan = $("#angkatanSelect").val();
 
                         // Clear table filter first
                         table.search('').columns().search('').draw();
@@ -447,7 +563,15 @@
                                 var kotaMatch = !selectedKota ||
                                     (rowData && rowData.id_kota != null && rowData.id_kota.toString() == selectedKota);
 
-                                return kotaMatch;
+                                // Filter by program studi if selected
+                                var prodiMatch = !selectedProdi ||
+                                    (rowData && rowData.id_prodi != null && rowData.id_prodi.toString() == selectedProdi);
+                                    
+                                // Filter by tahun angkatan if selected
+                                var angkatanMatch = !selectedAngkatan ||
+                                    (rowData && rowData.tahun_angkatan != null && rowData.tahun_angkatan.toString() == selectedAngkatan);
+
+                                return kotaMatch && prodiMatch && angkatanMatch;
                             }
                         );
 
@@ -468,7 +592,10 @@
                         applyFilters();
                     });
                 },
-                error: function(xhr, status, error) {}
+                error: function(xhr, status, error) {
+                    console.error("Error loading document data:", error);
+                    alert("Terjadi kesalahan saat memuat data dokumen. Silakan refresh halaman.");
+                }
             });
         } catch (err) {
             alert("Terjadi kesalahan saat memuat tabel data. Silakan refresh halaman.");
@@ -698,13 +825,61 @@
                 text: 'Dokumen hasil check plagiarism harus dalam format PDF.',
                 confirmButtonColor: '#3085d6'
             });
-            // Reset file input
             $(this).val('');
             $('#namaFileTerpilih').text('Tidak ada file');
             return;
         }
 
-        $('#namaFileTerpilih').text(fileName ? fileName : 'Tidak ada file');
+        // Validasi file Turnitin
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const typedarray = new Uint8Array(e.target.result);
+                const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                const pageCount = pdfDoc.numPages;
+                let fullText = '';
+
+                for (let pageNum = 1; pageNum <= Math.min(pageCount, 5); pageNum++) {
+                    const page = await pdfDoc.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const text = textContent.items.map(item => item.str).join(' ');
+                    fullText += text + ' ';
+                }
+
+                // Validasi: Submission ID
+                const turnitinIdPattern = /Submission ID.*?trn:oid:(?:::)?\d*:\d+/i;
+                const hasValidTurnitinId = turnitinIdPattern.test(fullText);
+
+                // Validasi: Kata kunci khas Turnitin
+                const containsTurnitinKeywords = /Similarity Index|Originality Report|Turnitin|Overall Similarity/i.test(fullText);
+
+                if (!hasValidTurnitinId || !containsTurnitinKeywords) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'File tidak valid',
+                        text: 'File harus merupakan hasil laporan dari Turnitin dengan ID dan informasi asli!',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    $(this).val('');
+                    $('#namaFileTerpilih').text('Tidak ada file');
+                    return;
+                }
+            } catch (err) {
+                console.error('Error reading PDF:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal membaca file PDF. Pastikan file tidak rusak.',
+                    confirmButtonColor: '#3085d6'
+                });
+                $(this).val('');
+                $('#namaFileTerpilih').text('Tidak ada file');
+                return;
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        $('#namaFileTerpilih').text(file.name ? file.name : 'Tidak ada file');
     });
 
     $('#dokumenFileDigitalReceipt').on('change', function() {
@@ -930,6 +1105,20 @@
     // Button Close Modal Upload (ikon X)
     $('#uploadModal .close').click(function() {
         resetUploadForm();
+    });
+
+    // Simple toggle untuk filter menu
+    $('#filterToggleBtn').on('click', function() {
+        $('#filterMenu').toggle(); // Ini akan mengubah display:none <-> display:block
+        
+        // Update tombol untuk visual feedback
+        if ($('#filterMenu').is(':visible')) {
+            $(this).addClass('active');
+            $(this).attr('aria-expanded', 'true');
+        } else {
+            $(this).removeClass('active');
+            $(this).attr('aria-expanded', 'false');
+        }
     });
 </script>
 @stop
