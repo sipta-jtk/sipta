@@ -81,7 +81,7 @@ class DosenController extends Controller
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi update role: ' . $notifEx->getMessage(), [
-                'nip' => $nip,
+                'nip' => '$nip',
                 'role' => $request->role
             ]);
         }

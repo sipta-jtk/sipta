@@ -104,8 +104,13 @@ class PemberianNilaiController extends Controller
         $agenda = match (strtolower($namaFta)) {
             'seminar iii' => 'seminar_3',
             'sidang akhir' => 'sidang',
+            'dosen pembimbing' => 'dosen_pembimbing',
             default => $namaFta,
         };
+
+        if ($agenda == 'dosen_pembimbing') {
+            return;
+        }
     
         $jadwalQuery = Kota::where('id_kota', $idKota)
             ->with(['penjadwalan' => function ($q) use ($agenda) {
@@ -333,7 +338,7 @@ class PemberianNilaiController extends Controller
 
         try {
             $nilai_rata_rata = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
-            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug);
 
             DB::commit();
 
@@ -374,7 +379,7 @@ class PemberianNilaiController extends Controller
         try {
             $nilai_rata_rata_rubrik = $this->ubahNilaiKeDatabaseNilaiRubrik($nilai, $mahasiswa, $kriteriaPenilaian, $nip);
             $nilai_rata_rata_kriteria = $this->ubahNilaiKeDatabaseNilaiKriteria($nilai_rata_rata_rubrik, $mahasiswa, $kriteriaPenilaian, $nip);
-            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip);
+            $this->ubahNilaiKeDatabaseNilaiKategori($nilai_rata_rata_kriteria, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug);
     
             DB::commit();
     
@@ -470,9 +475,12 @@ class PemberianNilaiController extends Controller
     
     
 
-    private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip): void
+    private function ubahNilaiKeDatabaseNilaiKategori(array $nilai_rata_rata, $mahasiswa, $kategoriPenilaian, $nip, $namaFtaSlug): void
     {
         $idKategori = $kategoriPenilaian->first()->id_kategori;
+
+        $status = ($namaFtaSlug === 'dosen pembimbing') ? 'dipublikasikan' : 'draf';
+        Log::info("Status penilaian untuk $namaFtaSlug: $status");
     
         foreach ($mahasiswa as $index => $mhs) {
             $mhs->nilaiKategori()
@@ -486,7 +494,7 @@ class PemberianNilaiController extends Controller
                 'nip' => $nip,
                 'id_kategori' => $idKategori,
                 'nilai' => $nilai_rata_rata[$index],
-                'status_penilaian_dosen' => 'draf'
+                'status_penilaian_dosen' => $status,
             ]);
         }
     }
@@ -625,10 +633,33 @@ class PemberianNilaiController extends Controller
         $username = auth()->user()->username;
     
         $keteranganUmumPenilaian = Kota::where('id_kota', $idKota)
-            ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKriteria')
+            ->with('penjadwalan', 'mahasiswa.user', 'mahasiswa.nilaiKategori')
             ->get();
     
         $idProdi = $keteranganUmumPenilaian->first()->mahasiswa->first()->id_prodi;
+        $mahasiswa = $keteranganUmumPenilaian->first()->mahasiswa;
+    
+        // Ambil semua id_kategori untuk Sidang Akhir
+        $idKategoriSidangAkhir = FormPenilaian::where('nama_fta', 'Sidang Akhir')
+            ->where('id_prodi', $idProdi)
+            ->where('jenis_form', 'penilaian')
+            ->with('kategoriPenilaian')
+            ->get()
+            ->pluck('kategoriPenilaian')
+            ->flatten()
+            ->pluck('id_kategori')
+            ->toArray();
+    
+        // Cek apakah sudah ada nilai Sidang Akhir
+        $sudahAdaNilaiSidangAkhir = $mahasiswa->contains(function ($mhs) use ($idKategoriSidangAkhir) {
+            return collect($mhs->nilaiKategori)
+                ->whereIn('id_kategori', $idKategoriSidangAkhir)
+                ->isNotEmpty();
+        });
+    
+        if (!$sudahAdaNilaiSidangAkhir) {
+            abort(403, 'Kelompok ini belum diberi nilai Sidang Akhir. Pastikan penguji telah mengisi nilai Sidang Akhir terlebih dahulu.');
+        }
     
         $detailInformasiFta = FormPenilaian::where('nama_fta', 'dosen pembimbing')
             ->where('id_prodi', $idProdi)
@@ -638,7 +669,7 @@ class PemberianNilaiController extends Controller
                     $query->whereHas('mahasiswa', function ($q) use ($idKota) {
                         $q->where('id_kota', $idKota);
                     })
-                    ->where('nip', $username); // Tambahkan filter username/nip di sini
+                    ->where('nip', $username);
                 }
             ])
             ->get();
