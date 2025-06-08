@@ -170,7 +170,7 @@
                                         data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -341,7 +341,7 @@
                                         data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -494,7 +494,7 @@
                                         data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -650,7 +650,7 @@
                                         data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -805,7 +805,7 @@
                                         data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
