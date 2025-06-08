@@ -43,6 +43,7 @@ class DaftarPengajuanDosbingController extends Controller
         $mahasiswaList = User::where('role_user', 'mahasiswa')
             ->join('mahasiswa', 'mahasiswa.nim', '=', 'user.username')
             ->join('kota', 'kota.id_kota', '=', 'mahasiswa.id_kota')
+            ->join('pengajuan_pembimbing', 'kota.id_kota', '=', 'pengajuan_pembimbing.id_kota')
             ->select(
                 'user.username as nim',
                 'user.nama',
@@ -75,6 +76,10 @@ class DaftarPengajuanDosbingController extends Controller
         foreach ($mahasiswaGroupedByIdKota as $idKota => $anggotaGrup) {
             $kotaInfo = $allKotaData->get($idKota);
             if (!$kotaInfo) continue;
+            $adaPengajuan = PengajuanPembimbing::where('id_kota', $idKota)->exists();
+            if (!$adaPengajuan) {
+                continue;
+            }
             $anggotaFormatted = $anggotaGrup->map(function ($mhs) {
                 return [
                     'nama' => $mhs->nama,
@@ -110,7 +115,7 @@ class DaftarPengajuanDosbingController extends Controller
             $kelompokData['table'][] = [
                 'loop_no' => $loopIteration++,
                 'id_kota_real' => $idKota,
-                'anggota' => $anggotaFormatted,
+                'anggota' => $anggotaFormatted, 
                 'status_peminatan_aktual' => $statusPeminatanUntukTampilan,
                 'id_prodi' => $anggotaGrup->first()->id_prodi ?? null,
                 'bidang' => $kotaInfo->bidang->bidang ?? '-', // pastikan relasi `bidang` didefinisikan di model Kota
