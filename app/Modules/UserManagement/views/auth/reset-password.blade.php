@@ -38,7 +38,7 @@
             font-weight: bold;
         }
         input {
-            width: 100%;
+            width: 94%;
             padding: 10px;
             margin-top: 5px;
             border: 1px solid #ccc;
@@ -89,7 +89,7 @@
                     <label for="password">Password</label>
                     <div style="position: relative;">
                         <input type="password" name="password" id="password" placeholder="Enter your new password" required>
-                        <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
+                        <button type="button" id="togglePassword" style="position: absolute; right: 5px; top: 60%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -99,7 +99,7 @@
                     <label for="password_confirmation">Confirm Password</label>
                     <div style="position: relative;">
                         <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm your new password" required>
-                        <button type="button" id="togglePasswordConfirm" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
+                        <button type="button" id="togglePasswordConfirm" style="position: absolute; right: 5px; top: 60%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
