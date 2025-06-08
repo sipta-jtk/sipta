@@ -41,6 +41,8 @@ class FormulirPenilaianController extends Controller {
             )
             ->get();
 
+        Log::info('Data Form Penilaian (JSON Pretty): ' . json_encode($data, JSON_PRETTY_PRINT));
+        Log::info('Data Form Penilaian: ', ['data' => $data]);
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
@@ -72,6 +74,7 @@ class FormulirPenilaianController extends Controller {
 
         $exists = FormPenilaian::where('id_prodi', $request->namaProdi)
             ->where('jenis_form', $request->jenisForm)
+            ->where('nama_fta', $request->namaFTA)
             // ->where('kode_fta', $request->kodeFTA)
             ->when(in_array($request->namaProdi, [1, 2]), function ($query) use ($request) {
                 // Cek jenis_ta jika prodi adalah D3 (id = 1) atau D4 (id = 2)
