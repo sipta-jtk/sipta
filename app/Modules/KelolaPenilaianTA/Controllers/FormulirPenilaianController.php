@@ -41,8 +41,6 @@ class FormulirPenilaianController extends Controller {
             )
             ->get();
 
-        Log::info('Data Form Penilaian (JSON Pretty): ' . json_encode($data, JSON_PRETTY_PRINT));
-        Log::info('Data Form Penilaian: ', ['data' => $data]);
         return view('KelolaPenilaianTA.views.formulir-penilaian.formulir_penilaian_ta', compact('data'));
     }
 
