@@ -1154,7 +1154,7 @@
 
             @if ($status_ta === 'mahasiswa_ta')
             <div class="col-md-12 mb-2">
-                <label for="view_notes" class="mt-1">Catatan</label>
+                <label for="view_notes" class="mt-1">Catatan Pembimbing</label>
                 <x-adminlte-textarea name="notes" id="view_notes" readonly rows="4" />
             </div>
             <div class="col-md-12 mb-2">
@@ -1165,7 +1165,7 @@
 
             @if ($isPembimbing)
             <div class="col-md-12 mb-2">
-                <label for="give_notes" class="mt-1">Catatan</label>
+                <label for="give_notes" class="mt-1">Catatan Sebagai Pembimbing</label>
                 <x-adminlte-textarea name="input_notes" id="give_notes" placeholder="Berikan catatan terkait dokumen kepada Mahasiswa" rows="4" />
             </div>
             @endif

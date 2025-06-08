@@ -231,7 +231,11 @@ class RepositoryController extends Controller
             // Cari versi terakhir
             $latestVersion = Dokumen::where('kategori', $kategori)
                 ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
-                ->when($kategori === 'artefak' || $kategori === 'seminar1' || $kategori === 'seminar2' || $kategori === 'seminar3', fn($q) => $q->where('id_subkategori', $request->id_subkategori))
+                // Tambahkan filter subkategori untuk semua kategori yang punya subkategori
+                ->when(
+                    in_array($kategori, ['seminar1', 'seminar2', 'seminar3', 'sidang', 'yudisium']),
+                    fn($q) => $q->where('id_subkategori', $request->id_subkategori)
+                )
                 ->orderByDesc('versi')
                 ->value('versi');
 
@@ -566,7 +570,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta','nama_kota');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -594,7 +598,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta','nama_kota');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
