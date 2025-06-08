@@ -1154,6 +1154,7 @@
                 // Preview file
                 if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
                     $('#viewDocumentPreview').attr('src', fullUrl).show();
+                    // $('#viewDocumentPreview').attr('src', fullUrl + '#toolbar=0').show();
                     $('#viewPreviewNotAvailable').hide();
                 } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                     var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
