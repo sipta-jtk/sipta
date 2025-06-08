@@ -205,9 +205,13 @@ class AlokasiPembimbingv2Controller extends Controller
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', 'pembimbing')
             ->delete();
 
-        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi pembimbing berhasil dihapus.'
+        ]);
     }
 
     public function fixAlokasi(Request $request)
@@ -257,7 +261,14 @@ class AlokasiPembimbingv2Controller extends Controller
                 'tipe_alokasi' => 'pembimbing',
             ]);
 
-        $newStatusPengajuan = ($newStatusAlokasi === 'fix') ? 'diterima' : 'diproses';
+        $jumlah_fix = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'pembimbing')
+            ->where('status_alokasi', 'fix')
+            ->count();
+
+        $newStatusPengajuan = ($jumlah_fix >= 2) ? 'diterima' : 'diproses';
+
 
         // Update status pengajuan jadi DITERIMA
         DB::table('pengajuan_pembimbing')

@@ -573,15 +573,15 @@ return [
             ]
         ],
         [
+            'text' => 'Monitoring Mahasiswa',
+            'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+            'can' => 'akses-penilaian-mahasiswa',
+            'icon' => 'fas fa-fw fa-user-check',
+        ],
+        [
             'text' => 'Kelola Penilaian Tugas Akhir',
             'icon' => 'fas fa-fw fa-file-alt',
             'submenu' => [
-                [
-                    'text' => 'Monitoring Mahasiswa',
-                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
-                    'can' => 'akses-penilaian-mahasiswa',
-                    'icon' => 'fas fa-fw fa-user-check',
-                ],
                 [
                     'text' => 'Rekapitulasi Nilai',
                     'icon' => 'fas fa-fw fa-table',

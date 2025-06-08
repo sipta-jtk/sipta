@@ -185,7 +185,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
                 'id_pembatalan' => $pembatalan_id,
-                'username' => $nip
+                'username' => '$nip'
             ]);
         }
 
@@ -258,7 +258,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi pembatalan seminar: ' . $notifEx->getMessage(), [
-                'nip' => $nip,
+                'nip' => '$nip',
                 'id_penjadwalan' => $request->id
             ]);
         }
@@ -332,7 +332,7 @@ class PembatalanJadwalSeminarSidangController extends Controller
             }
         } catch (\Exception $notifEx) {
             \Log::error('Gagal mengirim notifikasi pembatalan sidang: ' . $notifEx->getMessage(), [
-                'nip' => $nip,
+                'nip' => '$nip',
                 'id_penjadwalan' => $request->id
             ]);
         }

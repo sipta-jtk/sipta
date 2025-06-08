@@ -210,9 +210,13 @@ class AlokasiPengujiController extends Controller
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', 'penguji')
             ->delete();
 
-        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi penguji berhasil dihapus.'
+        ]);
     }
 
     public function fixAlokasi(Request $request)

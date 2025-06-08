@@ -29,7 +29,7 @@ $(document).ready(function () {
                 // Apply styling based on word count only if not published.
                 // If published, the counter will remain 'text-muted'.
                 if (!isPublished) {
-                    if (wordCount < 30) {
+                    if (wordCount < 5) {
                         counter.classList.add("text-danger");
                         counter.classList.remove("text-muted");
                     } else {

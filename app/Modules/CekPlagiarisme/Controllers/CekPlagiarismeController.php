@@ -9,6 +9,8 @@ use App\Models\Dokumen;
 use App\Models\Keyword;
 use App\Models\AmbangBatas;
 use App\Models\Kota;
+use App\Models\Prodi;
+use App\Models\Mahasiswa;
 use App\Models\ListJurnalPlagiarisme;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -19,6 +21,7 @@ use App\Models\LogAktivitas;
 use Carbon\Carbon;
 use Spatie\PdfToText\Pdf;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 
 Carbon::setLocale('id');
 
@@ -120,16 +123,19 @@ class CekPlagiarismeController extends Controller
         $data = $dokumen->map(function ($item) {
             return [
                 'id_dokumen' => $item->id_dokumen,
+                'kota' => $item->kota ? $item->kota->nama_kota : 'Tidak Diketahui',
                 'judul' => $item->judul,
                 'waktu' => $item->created_at
-                    ? Carbon::parse($item->created_at)->translatedFormat('H:i d F Y')
-                    : Carbon::now()->translatedFormat('H:i d F Y'),
+                    ? Carbon::parse($item->created_at)->translatedFormat('d F Y H:i')
+                    : Carbon::now()->translatedFormat('d F Y H:i'),
                 'penulis' => $item->user ? $item->user->nama : 'Tidak Diketahui',
                 'persentase_plagiarisme' => $item->persentase_plagiarisme,
                 'ambang_batas' => $item->ambangBatas ? $item->ambangBatas->ambang_batas : null, // Ambil nilai ambang batas
                 'status' => $this->getStatus($item->status_plagiarisme), // Default 20 jika tidak ada
                 'review' => $item->reviewDosenPembimbing->first() ? $item->reviewDosenPembimbing->first()->review : null,
-                'id_kota' => $item->id_kota
+                'id_kota' => $item->id_kota,
+                'id_prodi' => $item->user ? $item->user->mahasiswa->id_prodi : null,
+                'tahun_angkatan' => $item->user ? $item->user->mahasiswa->tahun_masuk : null
             ];
         });
 
@@ -141,9 +147,9 @@ class CekPlagiarismeController extends Controller
         if ($statusPlagiarisme === null) {
             return '<span class="badge badge-warning">Processing</span>';
         } elseif ($statusPlagiarisme === 'tidak_plagiarisme') {
-            return '<span class="badge badge-success">Tidak Plagiat</span>';
+            return '<span class="badge badge-success">Dibawah ambang batas</span>';
         } else {
-            return '<span class="badge badge-danger">Plagiat</span>';
+            return '<span class="badge badge-danger">Melebihi ambang batas</span>';
         }
     }
 
@@ -185,14 +191,29 @@ class CekPlagiarismeController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan file dokumen
+
+            $user = auth()->user();
+            $nim = $user->username;
+            $idKota = $user->mahasiswa->id_kota ?? null;
+            
+            // Format tanggal untuk nama file
+            $tanggalFormat = date('Ymd_His');
+            
+            // Bersihkan judul untuk nama file (hilangkan karakter khusus)
+            $judulBersih = Str::slug(substr($validated['judul'], 0, 50), '_');
+            
+            // Buat nama file terstruktur untuk dokumen plagiarisme
+            $namaFileDokumen = "{$nim}_{$judulBersih}_{$tanggalFormat}.pdf";
+            $namaFileReceipt = "{$nim}_receipt_{$judulBersih}_{$tanggalFormat}.pdf";
+
+            // Simpan file dokumen dengan nama terstruktur
             $fileDokumen = $request->file('dokumen');
-            $filePathDokumen = $fileDokumen->store('dokumen', 'public');
+            $filePathDokumen = $fileDokumen->storeAs('dokumen', $namaFileDokumen, 'public');
             $fileSizeDokumen = round($fileDokumen->getSize() / 1024, 2); // KB
 
-            // Simpan file digital receipt
+            // Simpan file digital receipt dengan nama terstruktur
             $fileReceipt = $request->file('digital_receipt');
-            $filePathReceipt = $fileReceipt->store('digital_receipt', 'public');
+            $filePathReceipt = $fileReceipt->storeAs('digital_receipt', $namaFileReceipt, 'public');
             $fileSizeReceipt = round($fileReceipt->getSize() / 1024, 2); // KB
 
             // Simpan jumlah kata dan halaman
@@ -209,13 +230,7 @@ class CekPlagiarismeController extends Controller
                 'jumlah_halaman' => $jumlahHalaman
             ]);
 
-            // Ambil data tambahan user
-            $user = auth()->user();
-            $nim = $user->username;
-            $idKota = $user->mahasiswa->id_kota ?? null;
             $ambangBatasAktif = AmbangBatas::where('status_ambang_batas', 'digunakan')->first();
-            $nim = auth()->user()->username;
-            $idKota = auth()->user()->mahasiswa->id_kota ?? null;
 
             // Debug: Log ambang batas and user info
             Log::info('User and threshold info', [
@@ -431,6 +446,94 @@ class CekPlagiarismeController extends Controller
         ]);
         // Mengembalikan hasil dalam format JSON
         return response()->json($kotas);
+    }
+
+    public function getProdi()
+    {
+        // Mengambil id_prodi dan nama_prodi 
+        if (auth()->user()->role_user === 'admin') {
+            $prodis = Prodi::all()->map(function ($prodi) {
+                // Mengembalikan id_prodi dan nama_prodi
+                return [
+                    'id_prodi' => $prodi->id_prodi,
+                    'nama_prodi' => $prodi->nama_prodi,
+                ];
+            });
+        } elseif (auth()->user()->role_user === 'dosen') {
+            if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+                $prodis = Kota::all()->map(function ($prodi) {
+                    // Mengembalikan id_prodi dan nama_prodi
+                    return [
+                        'id_prodi' => $prodi->id_prodi,
+                        'nama_prodi' => $prodi->nama_prodi,
+                    ];
+                });
+            } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
+                $prodis = auth()->user()
+                    ->dosen
+                    ->preferensiKota
+                    ->flatMap(function ($preferensiKota) {
+                        // Mengambil prodi dari relasi kota->mahasiswa
+                        return $preferensiKota->kota->mahasiswa
+                            ->flatMap(function ($mahasiswa) {
+                                return [
+                                    [
+                                        'id_prodi' => $mahasiswa->prodi->id_prodi,
+                                        'nama_prodi' => $mahasiswa->prodi->nama_prodi,
+                                    ]
+                                ];
+                            });
+                    })->unique('id_prodi')->values();
+            }
+        }
+
+        Log::info('Mengambil daftar prodi untuk user', [
+            'user_id' => auth()->id(),
+            'prodi_count' => $prodis->count(),
+            'prodi' => $prodis
+        ]);
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($prodis);
+    }
+
+    public function getTahunAngkatan()
+    {
+        // Mengambil tahun_angkatan dan nama_prodi 
+        if (auth()->user()->role_user === 'admin') {
+            $years = Mahasiswa::all()->map(function ($year) {
+                // Mengembalikan tahun_angkatan dan nama_year
+                return [
+                    'tahun_angkatan' => $year->tahun_masuk,
+                ];
+            })->unique('tahun_angkatan')->values();
+        } elseif (auth()->user()->role_user === 'dosen') {
+            if (auth()->user()->dosen->role_dosen === 'koordinator_ta') {
+                $years = Mahasiswa::all()->map(function ($year) {
+                    // Mengembalikan tahun_angkatan 
+                    return [
+                        'tahun_angkatan' => $year->tahun_masuk,
+                    ];
+                })->unique('tahun_angkatan')->values();
+            } elseif (auth()->user()->dosen->role_dosen === 'dosen' || auth()->user()->dosen->role_dosen === 'kajur') {
+                $years = auth()->user()
+                    ->dosen
+                    ->preferensiKota
+                    ->map(function ($preferensiKota) {
+                        // Mengembalikan tahun_angkatan dan nama_year
+                        return [
+                            'tahun_angkatan' => $preferensiKota->tahun_masuk,
+                        ];
+                    })->unique('tahun_angkatan')->values();
+            }
+        }
+
+        Log::info('Mengambil daftar kota untuk user', [
+            'user_id' => auth()->id(),
+            'year_count' => $years->count(),
+            'year' => $years
+        ]);
+        // Mengembalikan hasil dalam format JSON
+        return response()->json($years);
     }
 
     public function encryptId(Request $request)
