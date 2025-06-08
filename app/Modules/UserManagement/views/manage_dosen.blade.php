@@ -321,6 +321,8 @@ jQuery(document).ready(function($) {
 
     $('#datatable').DataTable({
             responsive: true,
+            paging : false,
+            dom: 't',
             columnDefs: [
                 { targets: [1, 6], orderable: false } // Kolom No & Aksi tidak bisa disort
             ],
