@@ -12,9 +12,11 @@ class LogLoginSeeder extends Seeder
     {
         DB::table('log_login')->insert([
             [
-                'username' => '221524050',
-                'ip_address' => '192.168.1.10',
-                'waktu_aktivitas' => Carbon::now()->subMinutes(10),
+                'username'         => '221524050',
+                'ip_address'       => '192.168.1.10',
+                'waktu_aktivitas'  => Carbon::now()->subMinutes(10),
+                'status'           => 'online',  // optional since default is 'online'
+                'waktu_logout'     => null,
             ],
         ]);
     }
