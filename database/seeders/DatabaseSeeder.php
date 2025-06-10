@@ -85,5 +85,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LogAktivitasSeeder::class); // depends on Kota, User, Dokumen
         $this->call(PembatalanSeeder::class); // depends on penjadwalan and dosen
         $this->call(KotaArtefakSeeder::class); // depends on Kota, Artefak
+
+        //Log
+        $this->call(LogLoginSeeder::class);
     }
 }

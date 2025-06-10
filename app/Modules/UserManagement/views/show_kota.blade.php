@@ -71,15 +71,30 @@
             </div>
             </div>
 
-                     <x-adminlte-modal id="detailKoTA" title="Detail KoTA" theme="blue" size='lg' >
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                    <div class="modal-body" id="modal-detail-kota">
-                                        <div class="text-center">Memuat...</div>
-                                    </div>
-                                    </div>
-                                </div>
-                     </x-adminlte-modal>
+                     <x-adminlte-modal id="detailKoTA" title="Detail KoTA" theme="blue" size='lg'>
+                            <div class="form-group">
+                                <label for="bidang">Bidang</label>
+                                <input type="text" readonly class="form-control" id="bidang" name="bidang" placeholder="Masukkan bidang">
+                            </div>
+
+                           <div class="form-group">
+                                <label>Daftar Anggota</label>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>NIM</th>
+                                            <th>Kelas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="anggota-container">
+                                        <!-- Baris anggota akan di-generate di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                    </x-adminlte-modal>
+
 
 @stop
 
@@ -121,8 +136,14 @@ jQuery(document).ready(function($) {
             }
         });
     });
+// $('#detailKoTA').on('hidden.bs.modal', function () {
+//     $('#formDetailKoTA')[0].reset();             // Reset form (termasuk input bidang)
+//     $('#anggota-container').empty();             // Hapus isi tabel anggota
+// });
 
 $(document).on('click', '.btn-detail-kota', function() {
+        $('#anggota-container').empty();             // Hapus isi tabel anggota
+        $('#bidang').val('');                        // Reset input bidang
         var id = $(this).data('id');
         console.log('ID Kota:', id);
         $('#modal-detail-kota').html('<div class="text-center">Loading...</div>');
@@ -131,12 +152,25 @@ $(document).on('click', '.btn-detail-kota', function() {
             url: '/detail-kota-prodi/' + id,
             method: 'GET',
             success: function(response){
-                $('#modal-detail-kota').html(response);
+                console.log('Response:', response);
+                $('#bidang').val(response.bidang?.bidang || 'Belum ada bidang');
+                 response.kota.forEach((anggota, index) => {
+                const rowHtml = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${anggota.nama}</td>
+                        <td>${anggota.nim}</td>
+                        <td>${anggota.kelas}</td>
+                    </tr>`;
+                $('#anggota-container').append(rowHtml);
+            });
+                
             },
             error: function(){
                 $('#modal-detail-kota').html('<div class="text-danger text-center">Gagal mengambil data.</div>');
             }
         });
+        
     });
 
 </script>
