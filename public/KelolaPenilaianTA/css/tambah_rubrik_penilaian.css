@@ -25,6 +25,7 @@
 table {
     width: 100px;
     border-collapse: collapse;
+    min-width: 1200px;
 }
 
 thead {
@@ -45,21 +46,128 @@ thead th {
     padding: 12px;
 }
 
+/* Freeze kolom pertama (Kriteria Penilaian Penguji) */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background-color: #fff;
+    border-right: 2px solid #dee2e6;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+}
+
+/* Freeze kolom kedua (Bobot) */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    position: sticky;
+    left: 200px;
+    z-index: 10;
+    background-color: #fff;
+    border-right: 2px solid #dee2e6;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+}
+
+/* Freeze kolom terakhir (Aksi) */
+.table th:last-child,
+.table td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+    background-color: #fff;
+    border-left: 4px solid #a99a9a !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 2px solid #969ea7 !important;
+    box-shadow: 
+        -6px 0 12px rgba(255, 255, 255, 0.2),
+        -2px 0 6px rgba(168, 168, 168, 0.15),
+        2px 0 4px rgba(187, 187, 187, 0.1);
+    outline: 1px solid rgba(206, 209, 212, 0.3);
+    outline-offset: -1px;
+}
+
+/* Header kolom Aksi */
+.table thead th:last-child {
+    border-left: 4px solid #5d676f !important;
+    border-right: 2px solid #4e5760 !important;
+    box-shadow: 
+        -6px 0 12px rgba(27, 98, 161, 0.2),
+        -2px 0 6px rgba(71, 71, 71, 0.15),
+        2px 0 4px rgba(100, 100, 100, 0.1);
+    outline: 1px solid rgba(129, 133, 137, 0.3);
+    outline-offset: -1px;
+}
+
+.table thead th:nth-child(1),
+.table thead th:nth-child(2),
+.table thead th:last-child {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    color: white !important;
+    z-index: 1002;
+}
+
 tbody tr:nth-child(even) {
-    background-color: #f8f9fa; 
+    background-color: #f8f9fa;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #ffffff; 
+    background-color: #ffffff;
 }
 
 tbody tr:hover {
-    background-color: #e2e6ea; 
+    background-color: #e2e6ea;
+}
+
+.table tbody tr:hover td:nth-child(1),
+.table tbody tr:hover td:nth-child(2),
+.table tbody tr:hover td:last-child {
+    background-color: #e2e6ea;
+}
+
+.table tbody tr:nth-child(even) td:nth-child(1),
+.table tbody tr:nth-child(even) td:nth-child(2),
+.table tbody tr:nth-child(even) td:last-child {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(odd) td:nth-child(1),
+.table tbody tr:nth-child(odd) td:nth-child(2),
+.table tbody tr:nth-child(odd) td:last-child {
+    background-color: #ffffff;
 }
 
 th, td {
     border: none !important;
     padding: 10px;
     text-align: center;
+}
+
+.table td:nth-child(1) select,
+.table td:nth-child(2) select,
+.table td:last-child select {
+    position: relative;
+    z-index: 12;
+}
+
+.table td:nth-child(1) textarea,
+.table td:nth-child(2) textarea,
+.table td:last-child textarea {
+    position: relative;
+    z-index: 12;
+}
+
+@media (max-width: 768px) {
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        left: 150px;
+    }
+}
+
+.swal2-styled.swal2-confirm,
+.swal2-styled.swal2-cancel {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 120px;
 }
 

@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
+use App\Models\AlokasiDosen;
 use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\KriteriaPenilaian;
@@ -21,23 +24,161 @@ use App\Models\FormPenilaian;
 use App\Models\Penjadwalan;
 use App\Models\Dokumen;
 use App\Models\SubkategoriDokumen;
+use App\Models\KotaUser;
+use App\Models\User;
 
 use App\Exports\RekapitulasiNilaiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
+use App\Notifications\TestEmailNotification;
+
 class PemberianFeedbackController extends Controller
 {
+    /**
+     * Cek aksesibilitas pemberian feedback berdasarkan idKota
+     * 
+     * @param int $idKota
+     */
+    public function cekAksebilitasFeedback($idKota)
+    {
+        $nip = Auth::user()->dosen->nip;
+    
+        // Ambil semua id_kota yang boleh diakses dosen ini
+        $kotaDiuji = AlokasiDosen::where('nip', $nip)
+            ->where('status_alokasi', 'fix')
+            ->with([
+                'pengajuanPembimbing.kota'
+            ])
+            ->get()
+            ->pluck('pengajuanPembimbing.kota')
+            ->flatten()
+            ->unique('id_kota');
+    
+        $bolehAkses = $kotaDiuji->contains(function ($kota) use ($idKota) {
+            return $kota && $kota->id_kota == $idKota;
+        });
+    
+        if (!$bolehAkses) {
+            abort(403, 'Anda tidak memiliki akses untuk memberikan masukan kota ini');
+        }
+    }
+
+    /**
+     * Cek apakah feedback sudah terkunci untuk FTA tertentu
+     * 
+     * @param string $namaFta
+     * @param int $idKota
+     * @param string $nip
+     */
+    private function cekAksesFeedbackTerkunci($namaFta, $idKota, $nip)
+    {
+        $username = auth()->user()->nip;
+
+        $namaFta = match (strtolower($namaFta)) {
+            'seminar_3', 'seminar 3', 'seminar-iii' => 'Seminar III',
+            'sidang', 'sidang-akhir' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $namaFta ?? 'Seminar')),
+        };
+
+        // belum tau kalo ini seminar atau sidang
+        $kota = Kota::where('id_kota', $idKota)
+            ->with('mahasiswa')
+            ->with(['detailFeedback' => function ($query) use ($nip, $idKota) {
+            $query->where('nip', $nip)
+                  ->where('id_kota', $idKota)
+                  ->where('status_penilaian_dosen', 'dipublikasikan');
+            }])
+            ->with(['detailFeedback.aspekFeedback.formPenilaian' => function ($query) use ($namaFta) {
+                $query->where('nama_fta', $namaFta)
+                      ->where('jenis_form', 'feedback');
+            }])
+            ->first();
+        
+        $idProdi = $kota->mahasiswa->first()->id_prodi;
+        
+        $jenis_ta = $kota->jenis_ta;
+
+        // Cari form penilaian feedback berdasarkan nama, prodi, dan jenis_form = feedback
+        $formPenilaian = FormPenilaian::where([
+            ['nama_fta', $namaFta],
+            ['id_prodi', $idProdi],
+            ['jenis_form', 'penilaian'],
+            ['jenis_ta', $jenis_ta]
+        ])->with('kategoriPenilaian')
+        ->first();
+
+        // Cek apakah feedback sudah ada
+        $feedback = $kota->detailFeedback->isEmpty();
+        
+        // ini untuk cek apakah dikunci atau tidak
+        if ($formPenilaian->kategoriPenilaian->first()->kunci_penilaian && $feedback) {
+            abort(403, "Form penilaian untuk $namaFta dikunci.");
+        }
+    }
+
+    /**
+     * Cek apakah jadwal penilaian sudah dimulai
+     * 
+     * @param int $idKota
+     * @param string $namaFta
+     */
+    private function cekAksesJadwalDimulai($idKota, $namaFta)
+    {
+        // Mapping namaFta ke format agenda di database
+        $agenda = match (strtolower($namaFta)) {
+            'seminar-iii' => 'seminar_3',
+            'sidang-akhir' => 'sidang',
+            default => $namaFta,
+        };
+    
+        $jadwalQuery = Kota::where('id_kota', $idKota)
+            ->with(['penjadwalan' => function ($q) use ($agenda) {
+                if ($agenda) {
+                    $q->where(function ($query) use ($agenda) {
+                        $query->where('agenda', $agenda);
+                    });
+                }
+            }])
+            ->first();
+    
+        $penjadwalan = $jadwalQuery->penjadwalan->first();
+        $start = optional($penjadwalan)->start;
+        $agenda = optional($penjadwalan)->agenda ?? $agenda;
+    
+        // Mapping agenda ke label user-friendly
+        $jenisSeminar = match (strtolower($agenda)) {
+            'seminar_3', 'seminar 3', 'seminar-3' => 'Seminar III',
+            'sidang' => 'Sidang Akhir',
+            default => ucfirst(str_replace('_', ' ', $agenda ?? 'Seminar')),
+        };
+
+        if (!$start) {
+            abort(403, "Jadwal penilaian $jenisSeminar belum ditentukan.");
+        }
+    
+        if (Carbon::now()->lt(Carbon::parse($start))) {
+            abort(403, "Penilaian $jenisSeminar belum dapat dilakukan karena jadwal belum dimulai.");
+        }
+    }
+
     /**
      * Tampilkan halaman pengisian masukan seminar
      * 
      * @param string $namaFta
      * @param int $idKota
-     * @param int $idProdi
      * @return View
      */
-    public function pengisianMasukanSeminar($namaFta, $idKota, $idProdi): View
+    public function pengisianMasukanSeminar($namaFta, $idKota): View
     {
+        $this->cekAksebilitasFeedback($idKota);
+        $this->cekAksesJadwalDimulai($idKota, $namaFta);
+        $this->cekAksesFeedbackTerkunci(
+            $namaFta,
+            $idKota, 
+            auth()->user()->username
+        );
+
         // Mengubah nama FTA menjadi slug
         $namaFtaSlug = Str::slug($namaFta, ' ');
 
@@ -47,6 +188,8 @@ class PemberianFeedbackController extends Controller
         // Ambil data umum penilaian berdasarkan kota
         $keteranganUmumPenilaian = Kota::with('penjadwalan', 'mahasiswa.user')
             ->find($idKota);
+
+        $idProdi = $keteranganUmumPenilaian->mahasiswa->first()->id_prodi;
 
         // Ambil jadwal seminar yang sudah fix berdasarkan kota dan agenda
         $jadwal = Penjadwalan::where([
@@ -172,7 +315,6 @@ class PemberianFeedbackController extends Controller
      */
     private function getLatestDokumenByKota($idKota, $kategori)
     {
-        Log::info('Mengambil dokumen terbaru untuk kota: ' . $idKota . ' dengan kategori: ' . $kategori);
         // Ubah kategori menjadi huruf kecil untuk konsistensi
         $kategori = strtolower($kategori);
 
@@ -258,8 +400,8 @@ class PemberianFeedbackController extends Controller
             }
 
             $wordCount = str_word_count($plainText);
-            if ($wordCount < 30) {
-                $errorMessage = "Masukan minimal 30 kata.";
+            if ($wordCount < 5) {
+                $errorMessage = "Masukan minimal 5 kata.";
                 break;
             }
         }
@@ -306,6 +448,33 @@ class PemberianFeedbackController extends Controller
                 }
             }
 
+            // Ke MHS
+            // try {
+            //     if ($idKota) {
+            //         $mahasiswa = KotaUser::where('id_kota', $idKota)->pluck('username');
+            //         $namaMhs = User::where('username', $mahasiswa)->value('nama');
+            //         $judulTA = Kota::where('id_kota', $idKota)->value('judul_ta');
+            //         foreach ($mahasiswa as $username) {
+            //             if ($username) {
+            //                 $username->notify(new TestEmailNotification(
+            //                     'Penilaian Telah Dilakukan, Periksa Feedback Dosen!',
+            //                     [
+            //                         'nama' => $namaMhs,
+            //                         'topik' => $judulTA,
+            //                         'feedback_dokumen' => $feedback['masukan'],
+            //                         'feedback_presentasi' => $feedback['masukan'],
+            //                         'feed_penguasaan_materi' => $feedback['masukan']
+            //                     ]
+            //                 ));
+            //             }
+            //         }
+            //     }
+            // } catch (\Exception $notifEx) {
+            //     \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+            //         'id_kota' => $idKota,
+            //         'username' => $username
+            //     ]);
+            // }
             // Commit transaksi jika berhasil
             DB::commit();
 
@@ -315,13 +484,15 @@ class PemberianFeedbackController extends Controller
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
-            Log::error("Gagal menyimpan masukan: " . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan masukan.');
         }
     }
 
     /**
-     * Mengunduh dokumen.
+     * Mengunduh dokumen
+     * @param string $kategori
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
     public function download($kategori, $id)
     {

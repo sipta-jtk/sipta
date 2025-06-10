@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use App\Models\Kota;
 use App\Models\Subkategori;
 use App\Models\AlokasiDosen;
+use App\Models\Dosen;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LogAktivitas;
@@ -50,6 +51,10 @@ class RepositoryController extends Controller
 
             $isPenguji = AlokasiDosen::where('nip', $nipDosen)
                 ->where('tipe_alokasi', 'penguji')
+                ->exists();
+
+            $isKoordinator = Dosen::where('nip', $nipDosen)
+                ->where('role_dosen', 'koordinator_ta')
                 ->exists();
 
             // Base query dokumen
@@ -144,6 +149,7 @@ class RepositoryController extends Controller
                 'status_ta',
                 'isPembimbing',
                 'isPenguji',
+                'isKoordinator',
                 'kota',
                 'subkategoriLaporan',
                 'subkategoriFta',
@@ -225,7 +231,11 @@ class RepositoryController extends Controller
             // Cari versi terakhir
             $latestVersion = Dokumen::where('kategori', $kategori)
                 ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
-                ->when($kategori === 'artefak' || $kategori === 'seminar1' || $kategori === 'seminar2' || $kategori === 'seminar3', fn($q) => $q->where('id_subkategori', $request->id_subkategori))
+                // Tambahkan filter subkategori untuk semua kategori yang punya subkategori
+                ->when(
+                    in_array($kategori, ['seminar1', 'seminar2', 'seminar3', 'sidang', 'yudisium']),
+                    fn($q) => $q->where('id_subkategori', $request->id_subkategori)
+                )
                 ->orderByDesc('versi')
                 ->value('versi');
 
@@ -241,6 +251,7 @@ class RepositoryController extends Controller
                 'id_subkategori' => $request->id_subkategori,
                 'status_berkas' => 'valid',
                 'notes' => $request->notes ?? null,
+                'notes_koordinator' => $request->notes_koordinator ?? null,
                 'username' => $username,
             ];
 
@@ -510,7 +521,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -559,7 +570,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -587,7 +598,7 @@ class RepositoryController extends Controller
                         $q->where('id_prodi', $request->prodi);
                     }
                 })
-                ->select('id_kota', 'judul_ta');
+                ->select('id_kota', 'judul_ta', 'nama_kota');
 
             $kelompok = $query->get()
                 ->sortBy(function ($kota) {
@@ -733,7 +744,12 @@ class RepositoryController extends Controller
             $dokumen = Dokumen::findOrFail($request->id_dokumen);
 
             // Update notes
-            $dokumen->notes = $request->input_notes;
+            if (auth()->user()->role_user === 'koordinator_ta') {
+                $dokumen->notes_koordinator = $request->input_notes;
+            } else {
+                $dokumen->notes = $request->input_notes;
+            }
+
             $dokumen->save();
 
             try {
