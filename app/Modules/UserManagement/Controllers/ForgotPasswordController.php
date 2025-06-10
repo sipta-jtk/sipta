@@ -1,31 +1,69 @@
 <?php
-// filepath: c:\Taqin\kuliah\Semester_6\proyek3\sipta\app\Modules\UserManagement\Controllers\ForgotPasswordController.php
+
 namespace App\Modules\UserManagement\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User; 
+
 class ForgotPasswordController extends Controller
 {
+    /**
+     * Mengirim link reset password ke email pengguna.
+     */
     public function sendResetLinkEmail(Request $request)
     {
+        // 1. Validasi email
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // 2. Cari pengguna berdasarkan email
+        $user = User::where('email', $request->email)->first();
 
-        return $status === Password::RESET_LINK_SENT
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)]);
+        // 3. Jika pengguna tidak ditemukan
+        if (!$user) {
+            return back()->withErrors(['email' => __('We can\'t find a user with that email address.')]);
+        }
+
+        // 4. Buat token reset password secara manual
+        $token = Password::broker()->createToken($user);
+        
+        // 5. Buat URL lengkap untuk link reset password
+        $resetUrl = url(route('password.reset', [
+            'token' => $token,
+            'email' => $user->email,
+        ], false));
+
+        // 6. Siapkan konten email
+        $content = "<h1>Lupa Password Akun Anda?</h1>
+                    <p>Anda menerima email ini karena kami menerima permintaan reset password untuk akun Anda.</p>
+                    <p>Silakan klik tombol di bawah ini untuk mereset password Anda:</p>
+                    <a href='{$resetUrl}' style='display: inline-block; background-color: black; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Reset Password</a>
+                    <br><br>
+                    <p>Link reset password ini akan kedaluwarsa dalam 60 menit.</p>
+                    <p>Jika Anda tidak merasa melakukan permintaan ini, abaikan saja email ini.</p>";
+
+        // 7. Kirim email menggunakan view 'emails.template_general'
+        try {
+            Mail::send('emails.template_general', ['content' => $content], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Notifikasi Reset Password');
+            });
+        } catch (\Exception $e) {
+            // Jika email gagal dikirim, kembalikan pesan error
+            \Log::error($e->getMessage());
+            return back()->withErrors(['email' => 'Gagal mengirim email. Periksa konfigurasi Anda.']);
+        }
+        
+        // 8. Berikan pesan sukses
+        return back()->with(['status' => __('We have e-mailed your password reset link!')]);
     }
 
     public function showResetForm(Request $request, $token)
     {
-
         return view('UserManagement.views.auth.reset-password', [
             'token' => $token,
             'email' => $request->email,
@@ -39,13 +77,6 @@ class ForgotPasswordController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
-
-        if ($request->password !== $request->password_confirmation) {
-            // Jika tidak cocok, kembalikan error dengan pesan custom
-            return back()->withErrors([
-                'password' => 'Password dan konfirmasi password tidak cocok.',
-            ]);
-        }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
