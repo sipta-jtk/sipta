@@ -1,4 +1,6 @@
-@extends('layouts.app') <!-- Sesuaikan jika layout kamu beda -->
+@extends('adminlte::page')
+
+@section('title', 'Log Aktivitas')
 
 @section('content')
 <div class="container-fluid">
@@ -10,23 +12,34 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
-                    <thead class="table-secondary">
+                    <thead class="table-primary">
                         <tr>
-                            <th>NIP</th>
+                            <th>ID (NIP/NIM)</th>
                             <th>Nama</th>
-                            <th>Alamat IP</th>
-                            <th>Aktivitas</th>
-                            <th>Waktu</th>
+                            <th>IP Address</th>
+                            <th>Timestamp</th>
+                            <th>Status Aktif</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($logAktivitas as $log)
                             <tr>
-                                <td>{{ $log->user->nip ?? '-' }}</td>
-                                <td>{{ $log->user->nama ?? '-' }}</td>
+                                <td>{{ $log->id ?? '-' }}</td>
+                                <td>{{ $log->nama ?? '-' }}</td>
                                 <td>{{ $log->ip_address ?? '-' }}</td>
-                                <td>{{ $log->aktivitas ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($log->waktu_aktivitas)->format('Y-m-d \p\a\d\a H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($log->timestamp)->format('Y-m-d H:i') }}</td>
+                                <td>
+                                    @php
+                                        $diffMinutes = \Carbon\Carbon::parse($log->timestamp)->diffInMinutes(now());
+                                        if ($diffMinutes < 60) {
+                                            echo $diffMinutes . ' menit yang lalu';
+                                        } elseif ($diffMinutes < 1440) {
+                                            echo round($diffMinutes / 60) . ' jam yang lalu';
+                                        } else {
+                                            echo round($diffMinutes / 1440) . ' hari yang lalu';
+                                        }
+                                    @endphp
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -35,6 +48,11 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="mt-3">
+                {{ $logAktivitas->withQueryString()->links() }}
             </div>
         </div>
     </div>
