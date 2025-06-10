@@ -114,8 +114,13 @@
                 <x-adminlte-input name="tahun_masuk" label="Tahun Masuk" id="tahun_masuk-update" placeholder="Tahun Masuk"
                     fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback required />
 
-                <x-adminlte-input name="kelas" label="Kelas" id="kelas-update" placeholder="Kelas"
-                    fgroup-class="" disable-feedback required />
+                <x-adminlte-select2 name="kelas" label="Kelas" id="kelas-update"  fgroup-class="" disable-feedback required >
+                    <option selected disabled>-Pilih Kelas-</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                </x-adminlte-select2>
 
                 <x-adminlte-select2 name="id_prodi" label="Prodi" id="id_prodi-update" fgroup-class="">
                     <option selected disabled>Pilih Prodi ....</option>
@@ -158,8 +163,13 @@
                 <x-adminlte-input name="tahun_masuk" label="Tahun Masuk" placeholder="Tahun Masuk .."
                     fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback required />
 
-                <x-adminlte-input name="kelas" label="Kelas" placeholder="Kelas"
-                    fgroup-class="" disable-feedback required />
+               <x-adminlte-select2 name="kelas" label="Kelas" id="kelas-update"  fgroup-class="" disable-feedback required onkeydown="changeLetter(event, this)">
+                <option selected disabled>-Pilih Kelas-</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+               </x-adminlte-select2>
 
                 <x-adminlte-select2 name="id_prodi" label="Prodi" fgroup-class="" required>
                     <option selected disabled>-Pilih Prodi-</option>
@@ -268,7 +278,6 @@
             }
         });
 });
-  
 
     document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.querySelector('input[type="file"]');
