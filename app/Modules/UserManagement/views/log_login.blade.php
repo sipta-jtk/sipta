@@ -1,14 +1,18 @@
 @extends('adminlte::page')
 
+@php
+    $prefix = $prefix ?? env('PREFIX_URL', 'sipta-dev');
+@endphp
+
 @section('title', 'Log Login')
 
 @section('content_header')
-    <h1>Log Login</h1>
+    <h1 class="mb-3">Log Login</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
             'links' => [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => '', 'label' => 'Log Login']
+                ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Log Login'],
             ]
         ])
         @endcomponent
@@ -20,17 +24,17 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="log-table" class="table table-bordered table-striped">
+                <table id="log-table" class="table table-bordered table-striped table-hover w-100">
                     <thead>
                         <tr class="bg-dark text-white">
-                            <th>No</th>
+                            <th class="text-center" style="width: 5%">No</th>
                             <th>ID (NIP/NIM)</th>
                             <th>Nama</th>
                             <th>IP Address</th>
                             <th>Login Time</th>
                             <th>Logout Time</th>
                             <th>Durasi Online</th>
-                            <th>Status</th>
+                            <th class="text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,15 +75,36 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap4.min.css">
+    <style>
+        #log-table thead th {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .dataTables_wrapper .dataTables_processing {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .badge {
+            min-width: 80px;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
 @stop
 
 @section('js')
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="//cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="//cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#log-table').DataTable({
+                processing: true,
                 language: {
                     search: "Cari:",
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -87,18 +112,28 @@
                     info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                     infoEmpty: "Tidak ada data tersedia",
                     infoFiltered: "(difilter dari total _MAX_ data)",
+                    processing: '<i class="fa fa-spinner fa-spin fa-fw"></i> Loading...',
                     paginate: {
-                        first: "<<",
-                        last: ">>",
-                        next: ">",
-                        previous: "<"
+                        first: '<i class="fas fa-angle-double-left"></i>',
+                        previous: '<i class="fas fa-angle-left"></i>',
+                        next: '<i class="fas fa-angle-right"></i>',
+                        last: '<i class="fas fa-angle-double-right"></i>'
                     }
                 },
+                responsive: true,
                 order: [[0, 'asc']],
+                pageLength: 10,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 columnDefs: [
                     {
-                        targets: [0],
-                        width: '5%'
+                        targets: [0, -1], // No dan Status
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 0,
+                        width: '50px'
                     }
                 ]
             });
