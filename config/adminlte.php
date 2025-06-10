@@ -788,9 +788,9 @@ return [
                     'can' => 'admin'
                 ],
                 [
-                    'text' => 'Log Aktivitas',
-                    'url' => $prefix . '/log-aktivitas',
-                    'icon' => 'fas fa-user-graduate',
+                    'text' => 'Log Login',
+                    'url' => $prefix . '/log-login',
+                    'icon' => 'fas fa-sign-in-alt',
                     'can' => 'admin'
                 ],
                 // [
