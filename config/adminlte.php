@@ -573,15 +573,15 @@ return [
             ]
         ],
         [
+            'text' => 'Monitoring Mahasiswa',
+            'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+            'can' => 'akses-penilaian-mahasiswa',
+            'icon' => 'fas fa-fw fa-user-check',
+        ],
+        [
             'text' => 'Kelola Penilaian Tugas Akhir',
             'icon' => 'fas fa-fw fa-file-alt',
             'submenu' => [
-                [
-                    'text' => 'Monitoring Mahasiswa',
-                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
-                    'can' => 'akses-penilaian-mahasiswa',
-                    'icon' => 'fas fa-fw fa-user-check',
-                ],
                 [
                     'text' => 'Rekapitulasi Nilai',
                     'icon' => 'fas fa-fw fa-table',
@@ -787,12 +787,12 @@ return [
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],
-                // [
-                //     'text' => 'Log Aktivitas',
-                //     'url' => $prefix . '/log-aktivitas',
-                //     'icon' => 'fas fa-user-graduate',
-                //     'can' => 'admin'
-                // ],
+                [
+                    'text' => 'Log Login',
+                    'url' => $prefix . '/log-login',
+                    'icon' => 'fas fa-sign-in-alt',
+                    'can' => 'admin'
+                ],
                 // [
                 //     'text' => 'level_one',
                 //     'url' => '#',

@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197312271999031003',
                 'nama' => 'Ade Chandra Nugraha, S.Si., M.T.',
-                'email' => 'ade.chandra@polban.ac.id',
+                'email' => 'ade.chandra.test@polban.ac.id',
                 'password' => Hash::make('adec123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196810141993032002',
                 'nama' => 'Ani Rahmani, S.Si., M.T.',
-                'email' => 'ani.rahmani@polban.ac.id',
+                'email' => 'ani.rahmani.test@polban.ac.id',
                 'password' => Hash::make('anir123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197201061999031002',
                 'nama' => 'Bambang Wisnuadhi, S.Si., M.T.',
-                'email' => 'bambang.wisnuadhi@polban.ac.id',
+                'email' => 'bambang.wisnuadhi.test@polban.ac.id',
                 'password' => Hash::make('bamb123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
@@ -62,7 +62,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196012261992031001',
                 'nama' => 'Didik Suwito Pribadi, BSCS.',
-                'email' => 'didik.suwito@polban.ac.id',
+                'email' => 'didik.suwito.test@polban.ac.id',
                 'password' => Hash::make('didi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567912',
@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196101141992021001',
                 'nama' => 'Eddy B. Soewono, DRS., M.Kom.',
-                'email' => 'eddy.soewono@polban.ac.id',
+                'email' => 'eddy.soewono.test@polban.ac.id',
                 'password' => Hash::make('eddy123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567913',
@@ -82,7 +82,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198009162009122001',
                 'nama' => 'Fitri Diani, S.Si., M.T.',
-                'email' => 'fitri.diani@polban.ac.id',
+                'email' => 'fitri.diani.test@polban.ac.id',
                 'password' => Hash::make('fitr123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567914',
@@ -92,7 +92,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198604122014041001',
                 'nama' => 'Ghifari Munawar, S.T., M.T.',
-                'email' => 'ghifari.munawar@polban.ac.id',
+                'email' => 'ghifari.munawar.test@polban.ac.id',
                 'password' => Hash::make('ghif123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567915',
@@ -102,7 +102,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198502102015042001',
                 'nama' => 'Ade Hodijah, S.T., M.T.',
-                'email' => 'ade.hodijah@polban.ac.id',
+                'email' => 'ade.hodijah.test@polban.ac.id',
                 'password' => Hash::make('adeh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567916',
@@ -112,7 +112,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197604182001121004',
                 'nama' => 'Iwan Awaludin, S.T., M.T.',
-                'email' => 'iwan.awaludin@polban.ac.id',
+                'email' => 'iwan.awaludin.test@polban.ac.id',
                 'password' => Hash::make('iwan123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567917',
@@ -122,7 +122,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198012122008122001',
                 'nama' => 'Ida Suhartini, S.Kom., MMSI.',
-                'email' => 'ida.suhartini@polban.ac.id',
+                'email' => 'ida.suhartini.test@polban.ac.id',
                 'password' => Hash::make('idas123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567918',
@@ -132,7 +132,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198004192005011002',
                 'nama' => 'Irwan Setiawan, S.Si., M.T.',
-                'email' => 'irwan.setiawan@polban.ac.id',
+                'email' => 'irwan.setiawan.test@polban.ac.id',
                 'password' => Hash::make('irwa123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567919',
@@ -142,7 +142,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196208151990031001',
                 'nama' => 'Irawan Thamrin, IR., M.T.',
-                'email' => 'irawan.thamrin@polban.ac.id',
+                'email' => 'irawan.thamrin.test@polban.ac.id',
                 'password' => Hash::make('iraw123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567920',
@@ -152,7 +152,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198104072006041001',
                 'nama' => 'Dr. Priyanto Hidayatullah, ST.,M.Sc.',
-                'email' => 'priyanto.hidayatullah@polban.ac.id',
+                'email' => 'priyanto.hidayatullah.test@polban.ac.id',
                 'password' => Hash::make('dr.p123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567921',
@@ -162,7 +162,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196210211993031002',
                 'nama' => 'Jonner Hutahaean, BSET., M.Info.Sys.',
-                'email' => 'jonner.hutahaean@polban.ac.id',
+                'email' => 'jonner.hutahaean.test@polban.ac.id',
                 'password' => Hash::make('jonn123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567922',
@@ -172,7 +172,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196610181995121001',
                 'nama' => 'Joe Lian Min, M.Eng.',
-                'email' => 'joe.lian@polban.ac.id',
+                'email' => 'joe.lian.test@polban.ac.id',
                 'password' => Hash::make('joel123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567923',
@@ -182,7 +182,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196312131992012001',
                 'nama' => 'Dr. Nurjannah Syakrani, DRA., M.T.',
-                'email' => 'nurjannah.syakrani@polban.ac.id',
+                'email' => 'nurjannah.syakrani.test@polban.ac.id',
                 'password' => Hash::make('dr.n123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567924',
@@ -192,7 +192,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197109031999032001',
                 'nama' => 'Santi Sundari, S.Si., M.T.',
-                'email' => 'santi.sundari@polban.ac.id',
+                'email' => 'santi.sundari.test@polban.ac.id',
                 'password' => Hash::make('sant123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567925',
@@ -202,7 +202,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196303161995121001',
                 'nama' => 'Suprihanto, BSEE., M.Sc.',
-                'email' => 'suprihanto@polban.ac.id',
+                'email' => 'suprihanto.test@polban.ac.id',
                 'password' => Hash::make('supr123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567926',
@@ -212,7 +212,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196904041998031001',
                 'nama' => 'Setiadi Rachmat, M.Eng.',
-                'email' => 'setiadi.rachmat@polban.ac.id',
+                'email' => 'setiadi.rachmat.test@polban.ac.id',
                 'password' => Hash::make('seti123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567927',
@@ -222,7 +222,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196111091993032001',
                 'nama' => 'Dr. Transmissia Semiawan, BSCS., M.IT.',
-                'email' => 'transmissia.semiawan@polban.ac.id',
+                'email' => 'transmissia.semiawan.test@polban.ac.id',
                 'password' => Hash::make('dr.t123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567928',
@@ -232,7 +232,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '196009281994031001',
                 'nama' => 'Urip Teguh Setijohatmo, BSCS., M.Kom.',
-                'email' => 'urip.setijohatmo@polban.ac.id',
+                'email' => 'urip.setijohatmo.test@polban.ac.id',
                 'password' => Hash::make('urip123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567929',
@@ -242,7 +242,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197912242008121001',
                 'nama' => 'Yadhi Adhitia P., S.T.',
-                'email' => 'yadhi.adhitia@polban.ac.id',
+                'email' => 'yadhi.adhitia.test@polban.ac.id',
                 'password' => Hash::make('yadh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567930',
@@ -252,7 +252,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '197407182001121002',
                 'nama' => 'Yudi Widhiyasana, S.Si., M.T.',
-                'email' => 'yudi.widhiyasana@polban.ac.id',
+                'email' => 'yudi.widhiyasana.test@polban.ac.id',
                 'password' => Hash::make('yudi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567931',
@@ -262,7 +262,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198604212018031001',
                 'nama' => 'Maisevli Harika, S.ST., M.T., M.Eng',
-                'email' => 'maisevli.harika@polban.ac.id',
+                'email' => 'maisevli.harika.test@polban.ac.id',
                 'password' => Hash::make('mais123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567932',
@@ -272,7 +272,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198801292015041003',
                 'nama' => 'Zulkifli Arsyad, S.T., M.T.',
-                'email' => 'zulkifli.arsyad@polban.ac.id',
+                'email' => 'zulkifli.arsyad.test@polban.ac.id',
                 'password' => Hash::make('zulk123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567933',
@@ -282,7 +282,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198705172019031004',
                 'nama' => 'Akhmad Bakhrun, S.Kom, M.T.',
-                'email' => 'akhmad.bakhrun@polban.ac.id',
+                'email' => 'akhmad.bakhrun.test@polban.ac.id',
                 'password' => Hash::make('akhm123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567934',
@@ -292,7 +292,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199304262019032028',
                 'nama' => 'Aprianti Nanda Sari, S.T., M.Kom.',
-                'email' => 'aprianti.nanda@polban.ac.id',
+                'email' => 'aprianti.nanda.test@polban.ac.id',
                 'password' => Hash::make('apri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567935',
@@ -302,7 +302,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198405122019031008',
                 'nama' => 'Ardhian Ekawijana, S.T., M.T.',
-                'email' => 'ardhian.ekawijana@polban.ac.id',
+                'email' => 'ardhian.ekawijana.test@polban.ac.id',
                 'password' => Hash::make('ardh123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567936',
@@ -312,7 +312,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198906102019032019',
                 'nama' => 'Asri Maspupah, S.S.T., M.T.',
-                'email' => 'asri.maspupah@polban.ac.id',
+                'email' => 'asri.maspupah.test@polban.ac.id',
                 'password' => Hash::make('asri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567937',
@@ -322,7 +322,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198911032019031019',
                 'nama' => 'Beri Noviansyah, S.Kom., M.T.',
-                'email' => 'beri.noviansyah@polban.ac.id',
+                'email' => 'beri.noviansyah.test@polban.ac.id',
                 'password' => Hash::make('beri123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567938',
@@ -332,7 +332,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198409012019031008',
                 'nama' => 'Cholid Fauzi, S.T., M.T.',
-                'email' => 'cholid.fauzi@polban.ac.id',
+                'email' => 'cholid.fauzi.test@polban.ac.id',
                 'password' => Hash::make('chol123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567939',
@@ -342,7 +342,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199210222019032018',
                 'nama' => 'Hashri Hayati, S.T., M.T.',
-                'email' => 'hashri.hayati@polban.ac.id',
+                'email' => 'hashri.hayati.test@polban.ac.id',
                 'password' => Hash::make('hash123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567940',
@@ -352,7 +352,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199301062019031017',
                 'nama' => 'Lukmannul Hakim Firdaus, S.Kom., M.T.',
-                'email' => 'lukmannul.hakim@polban.ac.id',
+                'email' => 'lukmannul.hakim.test@polban.ac.id',
                 'password' => Hash::make('lukm123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567941',
@@ -362,7 +362,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199105302019031019',
                 'nama' => 'Muhammad Rizqi Sholahuddin, S.Si., M.T.',
-                'email' => 'muhammad.rizqi@polban.ac.id',
+                'email' => 'muhammad.rizqi.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567942',
@@ -372,7 +372,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199112182019032014',
                 'nama' => 'Siti Dwi Setiarini, S.Si., M.T.',
-                'email' => 'siti.setiarini@polban.ac.id',
+                'email' => 'siti.setiarini.test@polban.ac.id',
                 'password' => Hash::make('siti123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567943',
@@ -382,7 +382,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198903252019032023',
                 'nama' => 'Sri Ratna Wulan, S.Pd., M.T.',
-                'email' => 'sri.ratna@polban.ac.id',
+                'email' => 'sri.ratna.test@polban.ac.id',
                 'password' => Hash::make('srir123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567944',
@@ -392,7 +392,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198608202019031014',
                 'nama' => 'Trisna Gelar, S.T., M.Kom.',
-                'email' => 'trisna.gelar@polban.ac.id',
+                'email' => 'trisna.gelar.test@polban.ac.id',
                 'password' => Hash::make('tris123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567945',
@@ -402,7 +402,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '198706302019031011',
                 'nama' => 'Wendi Wirasta, S.T., M.T.',
-                'email' => 'wendi.wirasta@polban.ac.id',
+                'email' => 'wendi.wirasta.test@polban.ac.id',
                 'password' => Hash::make('wend123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567946',
@@ -412,7 +412,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199003022019032019',
                 'nama' => 'Rahil Jumiyani, S.ST., M.Sc.',
-                'email' => 'rahil.jumiyani@polban.ac.id',
+                'email' => 'rahil.jumiyani.test@polban.ac.id',
                 'password' => Hash::make('rahi123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567947',
@@ -422,7 +422,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199312282019031013',
                 'nama' => 'Djoko Cahyo Utomo Lieharyani, S.Kom., M.MT.',
-                'email' => 'djoko.lieharyani@polban.ac.id',
+                'email' => 'djoko.lieharyani.test@polban.ac.id',
                 'password' => Hash::make('djok123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567948',
@@ -432,7 +432,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199209092019031015',
                 'nama' => 'Muhammad Riza Alifi, S.T., M.T.',
-                'email' => 'muhammad.riza@polban.ac.id',
+                'email' => 'muhammad.riza.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567949',
@@ -442,7 +442,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199106142019032022',
                 'nama' => 'Sofy Fitriani, S.S.T., M.Kom',
-                'email' => 'sofy.fitriani@polban.ac.id',
+                'email' => 'sofy.fitriani.test@polban.ac.id',
                 'password' => Hash::make('sofy123!#'),
                 'role_user' => 'dosen',
                 'no_whatsapp' => '081234567950',
@@ -452,7 +452,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '199106142019032000',
                 'nama' => 'Lia Rahmawati',
-                'email' => 'lia.rahmawati@polban.ac.id',
+                'email' => 'lia.rahmawati.test@polban.ac.id',
                 'password' => Hash::make('liar123!#'),
                 'role_user' => 'admin',
                 'no_whatsapp' => '081234567950',
@@ -462,7 +462,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524033',
                 'nama' => 'Alisha Nara Chandrakirana',
-                'email' => 'alisha.nara.tif422@polban.ac.id',
+                'email' => 'alisha.nara.tif422.test@polban.ac.id',
                 'password' => Hash::make('alis123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567951',
@@ -472,7 +472,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524034',
                 'nama' => 'Arnanda Prasatya',
-                'email' => 'arnanda.prasatya.tif422@polban.ac.id',
+                'email' => 'arnanda.prasatya.tif422.test@polban.ac.id',
                 'password' => Hash::make('arna123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567952',
@@ -482,7 +482,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524035',
                 'nama' => 'Asri Husnul Rosadi',
-                'email' => 'asri.husnul.tif422@polban.ac.id',
+                'email' => 'asri.husnul.tif422.test@polban.ac.id',
                 'password' => Hash::make('asri123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567953',
@@ -492,7 +492,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524036',
                 'nama' => 'Banteng Harisantoso',
-                'email' => 'banteng.harisantoso.tif422@polban.ac.id',
+                'email' => 'banteng.harisantoso.tif422.test@polban.ac.id',
                 'password' => Hash::make('bant123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567954',
@@ -502,7 +502,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524037',
                 'nama' => 'Bhisma Chandra Yudha Setiawan',
-                'email' => 'bhisma.chandra.tif422@polban.ac.id',
+                'email' => 'bhisma.chandra.tif422.test@polban.ac.id',
                 'password' => Hash::make('bhis123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567955',
@@ -512,7 +512,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524039',
                 'nama' => 'Farhan Muhammad Luthfi',
-                'email' => 'farhan.muhammad.tif422@polban.ac.id',
+                'email' => 'farhan.muhammad.tif422.test@polban.ac.id',
                 'password' => Hash::make('farh123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567956',
@@ -522,7 +522,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524040',
                 'nama' => 'Faris Abulkhoir',
-                'email' => 'faris.abulkhoir.tif422@polban.ac.id',
+                'email' => 'faris.abulkhoir.tif422.test@polban.ac.id',
                 'password' => Hash::make('fari123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567957',
@@ -532,7 +532,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524041',
                 'nama' => 'Ferdi Ahmad Ariesta',
-                'email' => 'ferdi.ahmad.tif422@polban.ac.id',
+                'email' => 'ferdi.ahmad.tif422.test@polban.ac.id',
                 'password' => Hash::make('ferd123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567958',
@@ -542,7 +542,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524042',
                 'nama' => 'Jeihan Ilham Kusumawardhana',
-                'email' => 'jeihan.ilham.tif422@polban.ac.id',
+                'email' => 'jeihan.ilham.tif422.test@polban.ac.id',
                 'password' => Hash::make('jeih123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567959',
@@ -552,7 +552,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524043',
                 'nama' => 'Keanu Rayhan Harits',
-                'email' => 'keanu.rayhan.tif422@polban.ac.id',
+                'email' => 'keanu.rayhan.tif422.test@polban.ac.id',
                 'password' => Hash::make('kean123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567960',
@@ -562,7 +562,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524044',
                 'nama' => 'Mahardika Pratama',
-                'email' => 'mahardika.pratama.tif422@polban.ac.id',
+                'email' => 'mahardika.pratama.tif422.test@polban.ac.id',
                 'password' => Hash::make('maha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567961',
@@ -572,7 +572,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524045',
                 'nama' => 'Mochamad Fathur Rabbani',
-                'email' => 'mochamad.fathur.tif422@polban.ac.id',
+                'email' => 'mochamad.fathur.tif422.test@polban.ac.id',
                 'password' => Hash::make('moch123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567962',
@@ -582,7 +582,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524046',
                 'nama' => 'Muhamad Agim',
-                'email' => 'muhamad.agim.tif422@polban.ac.id',
+                'email' => 'muhamad.agim.tif422.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567963',
@@ -592,7 +592,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524047',
                 'nama' => 'Muhamad Fahri Yuwan Dwi Putra',
-                'email' => 'muhamad.fahri.tif422@polban.ac.id',
+                'email' => 'muhamad.fahri.tif422.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567964',
@@ -602,7 +602,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524049',
                 'nama' => 'Muhammad Daffa',
-                'email' => 'muhammad.daffa.tif422@polban.ac.id',
+                'email' => 'muhammad.daffa.tif422.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567965',
@@ -612,7 +612,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524050',
                 'nama' => 'Muhammad Hanif',
-                'email' => 'muhammad.hanif.tif422@polban.ac.id',
+                'email' => 'muhammad.hanif.tif422.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567966',
@@ -622,7 +622,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524051',
                 'nama' => 'Muhammad Rizki Nurmuttaqin',
-                'email' => 'muhammad.rizki.tif422@polban.ac.id',
+                'email' => 'muhammad.rizki.tif422.test@polban.ac.id',
                 'password' => Hash::make('muha123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567967',
@@ -632,7 +632,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524052',
                 'nama' => 'Naia Siti Az-Zahra',
-                'email' => 'naia.siti.tif422@polban.ac.id',
+                'email' => 'naia.siti.tif422.test@polban.ac.id',
                 'password' => Hash::make('naia123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567968',
@@ -642,7 +642,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524053',
                 'nama' => 'Najib Alimudin Fajri',
-                'email' => 'najib.alimudin.tif422@polban.ac.id',
+                'email' => 'najib.alimudin.tif422.test@polban.ac.id',
                 'password' => Hash::make('naji123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567969',
@@ -652,7 +652,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524054',
                 'nama' => 'Niqa Nabila Nur Ihsani',
-                'email' => 'niqa.nabila.tif422@polban.ac.id',
+                'email' => 'niqa.nabila.tif422.test@polban.ac.id',
                 'password' => Hash::make('niqa123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567970',
@@ -662,7 +662,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524055',
                 'nama' => 'Rafif Shabi Prasetyo',
-                'email' => 'rafif.shabi.tif422@polban.ac.id',
+                'email' => 'rafif.shabi.tif422.test@polban.ac.id',
                 'password' => Hash::make('rafi123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567971',
@@ -672,7 +672,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524056',
                 'nama' => 'Revandi Faudiamar Putra Sitepu',
-                'email' => 'revandi.faudiamar.tif422@polban.ac.id',
+                'email' => 'revandi.faudiamar.tif422.test@polban.ac.id',
                 'password' => Hash::make('reva123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567972',
@@ -682,7 +682,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524057',
                 'nama' => 'Reza Maulana Aziz',
-                'email' => 'reza.maulana.tif422@polban.ac.id',
+                'email' => 'reza.maulana.tif422.test@polban.ac.id',
                 'password' => Hash::make('reza123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567973',
@@ -692,7 +692,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524058',
                 'nama' => 'Salsabil Khoirunisa',
-                'email' => 'salsabil.khoirunisa.tif422@polban.ac.id',
+                'email' => 'salsabil.khoirunisa.tif422.test@polban.ac.id',
                 'password' => Hash::make('sals123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567974',
@@ -702,7 +702,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524059',
                 'nama' => 'Sarah',
-                'email' => 'sarah.tif422@polban.ac.id',
+                'email' => 'sarah.tif422.test@polban.ac.id',
                 'password' => Hash::make('sara123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567975',
@@ -712,7 +712,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524060',
                 'nama' => 'Septyana Agustina',
-                'email' => 'septyana.agustina.tif422@polban.ac.id',
+                'email' => 'septyana.agustina.tif422.test@polban.ac.id',
                 'password' => Hash::make('sept123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567976',
@@ -722,7 +722,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524061',
                 'nama' => 'Thoriq Muhammad Fadhli',
-                'email' => 'thoriq.muhammad.tif422@polban.ac.id',
+                'email' => 'thoriq.muhammad.tif422.test@polban.ac.id',
                 'password' => Hash::make('thor123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567977',
@@ -732,7 +732,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524062',
                 'nama' => 'Yusuf',
-                'email' => 'yusuf.tif422@polban.ac.id',
+                'email' => 'yusuf.tif422.test@polban.ac.id',
                 'password' => Hash::make('yusu123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567978',
@@ -742,7 +742,7 @@ class UserSeeder extends Seeder
             [
                 'username' => '221524063',
                 'nama' => 'Zahran Anugerah Rizqullah',
-                'email' => 'zahran.anugerah.tif422@polban.ac.id',
+                'email' => 'zahran.anugerah.tif422.test@polban.ac.id',
                 'password' => Hash::make('zahr123!#'),
                 'role_user' => 'mahasiswa',
                 'no_whatsapp' => '081234567979',

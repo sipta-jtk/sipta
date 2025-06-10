@@ -17,6 +17,7 @@ use App\Models\KriteriaPenilaian;
 use App\Models\AspekFeedback;
 use App\Models\Rubrik;
 use App\Models\DetailRubrik;
+use App\Models\KategoriPenilaian;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -71,7 +72,8 @@ class FormulirPenilaianController extends Controller {
 
         $exists = FormPenilaian::where('id_prodi', $request->namaProdi)
             ->where('jenis_form', $request->jenisForm)
-            ->where('kode_fta', $request->kodeFTA)
+            ->where('nama_fta', $request->namaFTA)
+            // ->where('kode_fta', $request->kodeFTA)
             ->when(in_array($request->namaProdi, [1, 2]), function ($query) use ($request) {
                 // Cek jenis_ta jika prodi adalah D3 (id = 1) atau D4 (id = 2)
                 $query->where('jenis_ta', $request->jenisTA);
@@ -101,6 +103,11 @@ class FormulirPenilaianController extends Controller {
             $id_fta = $formPenilaian->id_fta;
 
             if ($request->jenisForm === 'Penilaian') {
+                KategoriPenilaian::create([
+                    'id_fta' => $id_fta,
+                    'kunci_penilaian' => 0
+                ]);
+
                 if ($request->has('nama_kriteria')) {
                     // Kalkulasi total bobot
                     $totalBobot = array_sum($request->bobot_kriteria);
@@ -241,6 +248,16 @@ class FormulirPenilaianController extends Controller {
         $id_fta = $formPenilaian->id_fta;
         
         if ($formPenilaian->jenis_form == 'penilaian') {
+            $hasNilaiKategori = DB::table('nilai_kategori')
+                ->join('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
+                ->where('kategori_penilaian.id_fta', $id_fta)
+                ->exists();
+
+            if ($hasNilaiKategori) {
+                return redirect()->back()
+                    ->with('error', 'Formulir Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+            }
+
             $totalBobot = array_sum($request->bobot_kriteria);
             
             if ($totalBobot != 100) {
@@ -286,6 +303,17 @@ class FormulirPenilaianController extends Controller {
                     ->delete();
             }
         } else {
+            // Cek apakah formulir feedback sudah memiliki data di tabel detail_feedback
+            $hasDetailFeedback = DB::table('detail_feedback')
+                ->join('aspek_feedback', 'detail_feedback.id_feedback', '=', 'aspek_feedback.id_feedback')
+                ->where('aspek_feedback.id_fta', $id_fta)
+                ->exists();
+            
+            if ($hasDetailFeedback) {
+                return redirect()->back()
+                    ->with('error', 'Formulir Feedback sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+            }
+            
             $namaAspekFeedback = $request->nama_aspek_feedback;
             $aspekLama = AspekFeedback::where('id_fta', $id_fta)->pluck('id_feedback')->toArray();
 
@@ -649,7 +677,6 @@ class FormulirPenilaianController extends Controller {
      */
     public function updateRubrik(Request $request)
     {
-        Log::info('Update Rubrik Request: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
         DB::beginTransaction();
 
         try {
@@ -671,7 +698,20 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
-            Log::info('Formulir Penilaian: ' . json_encode($formulirPenilaian, JSON_PRETTY_PRINT));
+            
+            if ($formulirPenilaian->isNotEmpty()) {
+                $id_fta = $formulirPenilaian->first()->id_fta;
+                
+                $hasNilaiKategori = DB::table('nilai_kategori')
+                    ->join('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
+                    ->where('kategori_penilaian.id_fta', $id_fta)
+                    ->exists();
+
+                if ($hasNilaiKategori) {
+                    return redirect()->back()
+                        ->with('error', 'Rubrik Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+                }
+            }
             
             $globalRubrikIndex = 0;
             $globalDetailIndex = 0;
@@ -719,11 +759,6 @@ class FormulirPenilaianController extends Controller {
                 });
             });
 
-            // insert rubrik baru jika lebih dari jumlah rubrik yang ada
-            Log::info('globalRubrikIndex: ' . $globalRubrikIndex);
-            Log::info('Jumlah Kriteria: ' . count($kriterias));
-            Log::info('Jumlah Rubrik: ' . $jumlahRubrik);
-            Log::info('Kriteria: ' . json_encode(count($kriterias) + $jumlahRubrik - 2, JSON_PRETTY_PRINT));
             for ($i = $globalRubrikIndex; $i < count($kriterias) + $jumlahRubrik - 2; $i++) {
                 if (empty($status[$i])) {
                     continue;

@@ -2,6 +2,8 @@
 
 @php
     $isKoordinator = auth()->user()->dosen->role_dosen === 'koordinator_ta';
+    $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+    $kirimNotifikasiBatchUrl = url($prefix . '/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch');
 @endphp
 
 @section('css')
@@ -422,6 +424,11 @@
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
+
+    <script>
+        // Variabel global untuk URL fetch
+        const KIRIM_NOTIFIKASI_BATCH_URL = @json($kirimNotifikasiBatchUrl);
+    </script>
 
     <script>
         const prodiList = @json(collect($list_prodi)->mapWithKeys(function ($item) {
@@ -850,7 +857,7 @@
                         console.table(window.mahasiswaNotified);
                         console.table(window.dosenNotified);
 
-                        fetch('/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch', {
+                        fetch(KIRIM_NOTIFIKASI_BATCH_URL, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

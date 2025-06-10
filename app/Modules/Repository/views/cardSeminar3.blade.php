@@ -144,12 +144,13 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
                                     data-notes="{{ $doc->notes }}"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-toggle="modal"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
@@ -160,15 +161,16 @@
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
                                         data-notes="{{ $doc->notes }}"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -313,31 +315,33 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
                                     data-notes="{{ $doc->notes }}"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-toggle="modal"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
                                         data-notes="{{ $doc->notes }}"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -464,31 +468,33 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
                                     data-notes="{{ $doc->notes }}"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-toggle="modal"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
                                         data-notes="{{ $doc->notes }}"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -618,31 +624,33 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
                                     data-notes="{{ $doc->notes }}"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-toggle="modal"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
                                         data-notes="{{ $doc->notes }}"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -771,31 +779,33 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
                                     data-notes="{{ $doc->notes }}"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-toggle="modal"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
                                         data-notes="{{ $doc->notes }}"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-toggle="modal"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -989,15 +999,26 @@
 
             @if ($status_ta === 'mahasiswa_ta')
             <div class="col-md-12 mb-2">
-                <label for="view_notes" class="mt-1">Catatan</label>
+                <label for="view_notes" class="mt-1">Catatan Pembimbing</label>
                 <x-adminlte-textarea name="notes" id="view_notes" readonly rows="4" />
+            </div>
+            <div class="col-md-12 mb-2">
+                <label for="view_notes_koordinator" class="mt-1">Catatan Koordinator</label>
+                <x-adminlte-textarea name="notes_koordinator" id="view_notes_koordinator" readonly rows="4" />
             </div>
             @endif
 
             @if ($isPembimbing)
             <div class="col-md-12 mb-2">
-                <label for="give_notes" class="mt-1">Catatan</label>
+                <label for="give_notes" class="mt-1">Catatan Sebagai Pembimbing</label>
                 <x-adminlte-textarea name="input_notes" id="give_notes" placeholder="Berikan catatan terkait dokumen kepada Mahasiswa" rows="4" />
+            </div>
+            @endif
+
+            @if ($isKoordinator)
+            <div class="col-md-12 mb-2">
+                <label for="give_notes_koordinator" class="mt-1">Catatan Sebagai Koordinator</label>
+                <x-adminlte-textarea name="input_notes_koordinator" id="give_notes_koordinator" placeholder="Berikan catatan terkait dokumen kepada Mahasiswa" rows="4" />
             </div>
             @endif
 
@@ -1227,7 +1248,7 @@
 
 
     // $('.view-btn').on('click', function() {
-    function LihatDokumen(judul, deskripsi, filePath, kodeFta, catatan, username) {
+    function LihatDokumen(judul, deskripsi, filePath, kodeFta, catatan, username, catatanKoordinator) {
         console.log("Tes");
         // Get document ID from the button data attribute
         var docId = $(event.currentTarget).data('id');
@@ -1243,6 +1264,8 @@
         $('#view_username').val(username);
         $('#view_notes').val(catatan);
         $('#give_notes').val(catatan);
+        $('#view_notes_koordinator').val(catatanKoordinator);
+        $('#give_notes_koordinator').val(catatanKoordinator);
 
         // Handle Kode FTA
         if (kodeFta) {

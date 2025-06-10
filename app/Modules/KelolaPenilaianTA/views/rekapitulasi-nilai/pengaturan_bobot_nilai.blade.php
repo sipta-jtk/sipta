@@ -81,13 +81,13 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <button type="button" class="btn btn-danger me-2" onclick="window.history.back();">
+                        <button type="button" class="btn btn-danger me-2 d-none" id="cancel-button">
                             <i class="fas fa-times"></i> Batal
                         </button>
                         <button type="button" id="edit-button" class="btn btn-warning ml-2">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button type="submit" id="submit-button" class="btn btn-success ml-2">
+                        <button type="submit" id="submit-button" class="btn btn-success ml-2 d-none">
                             <i class="fas fa-save"></i> Simpan
                         </button>
                     </div>
