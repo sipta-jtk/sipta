@@ -72,6 +72,7 @@ class FormulirPenilaianController extends Controller {
 
         $exists = FormPenilaian::where('id_prodi', $request->namaProdi)
             ->where('jenis_form', $request->jenisForm)
+            ->where('nama_fta', $request->namaFTA)
             // ->where('kode_fta', $request->kodeFTA)
             ->when(in_array($request->namaProdi, [1, 2]), function ($query) use ($request) {
                 // Cek jenis_ta jika prodi adalah D3 (id = 1) atau D4 (id = 2)
@@ -247,6 +248,16 @@ class FormulirPenilaianController extends Controller {
         $id_fta = $formPenilaian->id_fta;
         
         if ($formPenilaian->jenis_form == 'penilaian') {
+            $hasNilaiKategori = DB::table('nilai_kategori')
+                ->join('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
+                ->where('kategori_penilaian.id_fta', $id_fta)
+                ->exists();
+
+            if ($hasNilaiKategori) {
+                return redirect()->back()
+                    ->with('error', 'Formulir Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+            }
+
             $totalBobot = array_sum($request->bobot_kriteria);
             
             if ($totalBobot != 100) {
@@ -292,6 +303,17 @@ class FormulirPenilaianController extends Controller {
                     ->delete();
             }
         } else {
+            // Cek apakah formulir feedback sudah memiliki data di tabel detail_feedback
+            $hasDetailFeedback = DB::table('detail_feedback')
+                ->join('aspek_feedback', 'detail_feedback.id_feedback', '=', 'aspek_feedback.id_feedback')
+                ->where('aspek_feedback.id_fta', $id_fta)
+                ->exists();
+            
+            if ($hasDetailFeedback) {
+                return redirect()->back()
+                    ->with('error', 'Formulir Feedback sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+            }
+            
             $namaAspekFeedback = $request->nama_aspek_feedback;
             $aspekLama = AspekFeedback::where('id_fta', $id_fta)->pluck('id_feedback')->toArray();
 
@@ -676,6 +698,20 @@ class FormulirPenilaianController extends Controller {
                 ->where('jenis_form', 'penilaian')
                 ->with('kriteriaPenilaian.rubrik.detailRubrik')
                 ->get();
+            
+            if ($formulirPenilaian->isNotEmpty()) {
+                $id_fta = $formulirPenilaian->first()->id_fta;
+                
+                $hasNilaiKategori = DB::table('nilai_kategori')
+                    ->join('kategori_penilaian', 'nilai_kategori.id_kategori', '=', 'kategori_penilaian.id_kategori')
+                    ->where('kategori_penilaian.id_fta', $id_fta)
+                    ->exists();
+
+                if ($hasNilaiKategori) {
+                    return redirect()->back()
+                        ->with('error', 'Rubrik Penilaian sudah tidak bisa diubah, karena penilaian sudah dipublikasikan');
+                }
+            }
             
             $globalRubrikIndex = 0;
             $globalDetailIndex = 0;

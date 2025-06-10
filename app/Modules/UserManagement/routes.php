@@ -17,7 +17,7 @@ use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use App\Modules\UserManagement\Controllers\LogAktivitasController;
+use App\Modules\UserManagement\Controllers\LogLoginController;
 
 
 use Illuminate\Support\Facades\Response;
@@ -59,6 +59,8 @@ Route::prefix($prefix)->group(function () {
      * ========== User Management ==========
      */
     Route::get('/user_management', [UserManagementController::class, 'render']);
+    
+    
 
     Route::middleware(['auth', 'can:admin'])->group(function () {
         Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])->name('manage.dosen');
@@ -105,8 +107,9 @@ Route::prefix($prefix)->group(function () {
         Route::put('/program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
         Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
 
-        // Log Aktivitas
-        Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
+        // Log Login routes
+         Route::get('/log-login', [LogLoginController::class, 'index'])->name('log.login');
+        
     });
 
 

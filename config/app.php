@@ -197,6 +197,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
 
+        // Add login tracking
+        App\Providers\LoginServiceProvider::class,
+
         App\Providers\ComponentServiceProvider::class,
 
 

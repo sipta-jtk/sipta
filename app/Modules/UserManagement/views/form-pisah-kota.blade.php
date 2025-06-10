@@ -55,7 +55,7 @@
                     </a>
                 </div>
             </div>
-        @else
+        @elseif($kota->status_kota === 'aktif')
             <span class="text-danger">Belum ada file FTA 20.</span>
         @endif
 

@@ -5,10 +5,15 @@ use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeController;
 use App\Modules\CekPlagiarisme\Controllers\AmbangBatasController;
 use App\Modules\CekPlagiarisme\Controllers\CekPlagiarismeDetailController;
 
-Route::middleware(['auth', 'can:akses-dosen-admin'])->get(
-    '/api/kotas',
-    [CekPlagiarismeController::class, 'getKota']
-);
+Route::middleware(['auth', 'can:akses-dosen-admin'])->group(function (){
+    Route::get('/api/kotas',[CekPlagiarismeController::class, 'getKota']);
+    Route::get('/api/prodi',[CekPlagiarismeController::class, 'getProdi']);
+    Route::get('/api/tahun-angkatan',[CekPlagiarismeController::class, 'getTahunAngkatan']);
+});
+
+/**********************************
+ * Cek Plagiarisme
+ ***********************************/
 
 Route::middleware(['auth', 'can:user'])->group(function () {
 
