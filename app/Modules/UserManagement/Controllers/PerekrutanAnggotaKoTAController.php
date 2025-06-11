@@ -85,13 +85,43 @@ class PerekrutanAnggotaKoTAController extends Controller
         $currentYear = Carbon::now()->year;
 
         // Cari nomor KoTA terakhir dengan tahun yang sama
-        $lastKoTA = Kota::where('tahun_kota', $currentYear)
-            ->orderBy('id_kota', 'desc')
-            ->first();
+        // $lastKoTA = Kota::where('tahun_kota', $currentYear)
+        //     ->orderBy('id_kota', 'desc')
+        //     ->first();
 
-        // Generate nama KoTA
-        $newKoTANumber = $lastKoTA ? intval(substr($lastKoTA->nama_kota, 4)) + 1 : 101;
-        $namaKoTA = 'KoTA ' . $newKoTANumber;
+        // // Generate nama KoTA
+        // $newKoTANumber = $lastKoTA ? intval(substr($lastKoTA->nama_kota, 4)) + 1 : 101;
+        // $namaKoTA = 'KoTA ' . $newKoTANumber;
+
+        // Ambil data mahasiswa pertama untuk mendapatkan prodi dan kelas
+        $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
+        $prodi = Prodi::find($anggota1->id_prodi);
+
+        // Generate kode kelas berdasarkan prodi dan kelas
+        $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas);
+
+        // Cari nomor urut KoTA terakhir dengan tahun yang sama
+        $lastKoTA = Kota::where('tahun_kota', $currentYear)
+            ->where('nama_kota', 'LIKE', 'Kota ' . $kodeKelas . '%')
+            ->get();
+        
+        // Extract nomor urut dari nama KoTA yang ada dan cari yang terbesar
+        $maxNomor = 0;
+        foreach ($lastKoTA as $kota) {
+            // Extract 2 digit terakhir dari nama KoTA
+            if (preg_match('/Kota ' . $kodeKelas . '(\d{2})$/', $kota->nama_kota, $matches)) {
+                $nomor = intval($matches[1]);
+                if ($nomor > $maxNomor) {
+                    $maxNomor = $nomor;
+                }
+            }
+        }
+
+        // Generate nomor urut berikutnya
+        $nomorUrut = $maxNomor + 1;
+
+        // Format nama KoTA: KoTA + kode kelas + nomor urut (2 digit)
+        $namaKoTA = 'Kota ' . $kodeKelas . str_pad($nomorUrut, 2, '0', STR_PAD_LEFT);
 
         // Buat Kelompok TA baru
         $koTA = Kota::create([
@@ -144,6 +174,35 @@ class PerekrutanAnggotaKoTAController extends Controller
         ]);
 
         return redirect()->route('konfirmasi-kota');
+    }
+
+    /**
+     * Generate kode kelas berdasarkan prodi dan kelas
+     * 
+     * @param int $idProdi
+     * @param string $kelas
+     * @return int
+     */
+    private function generateKodeKelas($idProdi, $kelas)
+    {
+        // Ambil semua kombinasi prodi dan kelas yang unik, diurutkan berdasarkan id_prodi dan kelas
+        $kombinasiProdiKelas = Mahasiswa::select('id_prodi', 'kelas')
+            ->distinct()
+            ->orderBy('id_prodi', 'asc')
+            ->orderBy('kelas', 'asc')
+            ->get();
+
+        // Cari posisi kombinasi prodi dan kelas yang sedang diproses
+        $kodeKelas = 1;
+        foreach ($kombinasiProdiKelas as $kombinasi) {
+            if ($kombinasi->id_prodi == $idProdi && $kombinasi->kelas == $kelas) {
+                return $kodeKelas;
+            }
+            $kodeKelas++;
+        }
+        
+        // Fallback jika tidak ditemukan
+        return 1;
     }
 
     /**
