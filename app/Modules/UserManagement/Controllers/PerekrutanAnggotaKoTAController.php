@@ -84,15 +84,6 @@ class PerekrutanAnggotaKoTAController extends Controller
 
         $currentYear = Carbon::now()->year;
 
-        // Cari nomor KoTA terakhir dengan tahun yang sama
-        // $lastKoTA = Kota::where('tahun_kota', $currentYear)
-        //     ->orderBy('id_kota', 'desc')
-        //     ->first();
-
-        // // Generate nama KoTA
-        // $newKoTANumber = $lastKoTA ? intval(substr($lastKoTA->nama_kota, 4)) + 1 : 101;
-        // $namaKoTA = 'KoTA ' . $newKoTANumber;
-
         // Ambil data mahasiswa pertama untuk mendapatkan prodi dan kelas
         $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
         $prodi = Prodi::find($anggota1->id_prodi);
