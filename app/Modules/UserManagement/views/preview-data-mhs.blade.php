@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Preview Data Mahasiswa')
@@ -5,11 +8,11 @@
 @section('content_header')
     <h1>Data Import Mahasiswa</h1>
         <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
         'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url('/sipta-dev/manajemen-akun-mahasiswa/'), 'label' => 'Manajemen Akun Mahasiswa'],
-        ['url' => url(), 'label' => 'Preview Data Mahasiswa']
+        ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+        ['url' => url('/' . $prefix . '/manajemen-akun-mahasiswa/'), 'label' => 'Manajemen Akun Mahasiswa'],
+        ['url' => '', 'label' => 'Preview Data Mahasiswa']
         ]])
         @endcomponent
         </div>

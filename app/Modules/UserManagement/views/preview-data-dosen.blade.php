@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Preview Data Dosen')
@@ -7,9 +10,9 @@
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url('/sipta-dev/manajemen-akun-dosen/'), 'label' => 'Manajemen Akun Dosen'],
-        ['url' => url(), 'label' => 'Preview Data Dosen']
+        ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+        ['url' => url('/' . $prefix . '/manajemen-akun-dosen/'), 'label' => 'Manajemen Akun Dosen'],
+        ['url' => '', 'label' => 'Preview Data Dosen']
         ]])
         @endcomponent
         </div>
