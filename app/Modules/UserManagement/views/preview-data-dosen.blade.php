@@ -8,7 +8,7 @@ $prefix = env('PREFIX_URL','');
 @section('content_header')
     <h1>Data Import Dosen</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
         'links' => [
         ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
         ['url' => url('/' . $prefix . '/manajemen-akun-dosen/'), 'label' => 'Manajemen Akun Dosen'],
