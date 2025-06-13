@@ -85,10 +85,13 @@ public function getDetailKotaProdi($id)
     $bidang = DB::table('kota')
         ->leftjoin('bidang', 'kota.id_bidang', '=', 'bidang.id_bidang')
         ->where('kota.id_kota', $id)
-        ->select('bidang.bidang')
+        ->select('bidang.bidang')   
         ->first();
 
-    return view('UserManagement.views.detail-kota-ajax', compact('kota','bidang'));
+    return response()->json([
+        'kota' => $kota,
+        'bidang' => $bidang
+    ]);
 }
 }
 
