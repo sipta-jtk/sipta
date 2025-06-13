@@ -89,8 +89,26 @@ class PerekrutanAnggotaKoTAController extends Controller
         $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
         $prodi = Prodi::find($anggota1->id_prodi);
 
+        // Kondisi pengecekan tahun TA Mahasiswa dengan Tahun Sekarang
+        if ($anggota1->tahun_ta < $currentYear) {
+            $anggota1->tahun_ta = $currentYear;
+            $anggota1->save();
+
+            // Update anggota lain yang akan bergabung
+            $mahasiswaToUpdate = collect([
+                $request->input('anggota2'),
+                $request->input('anggota3')
+            ])->filter()->values();
+        
+            if ($mahasiswaToUpdate->isNotEmpty()) {
+                Mahasiswa::whereIn('nim', $mahasiswaToUpdate)
+                    ->where('tahun_ta', '<', $currentYear)
+                    ->update(['tahun_ta' => $currentYear]);
+            }
+        }
+
         // Gunakan tahun_ta dari mahasiswa untuk menentukan kode kelas
-        $tahunTA = $anggota1->tahun_ta ?? $currentYear;
+        $tahunTA = $anggota1->tahun_ta;
 
         // Generate kode kelas berdasarkan prodi, kelas dan tahun TA
         $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas, $tahunTA);
