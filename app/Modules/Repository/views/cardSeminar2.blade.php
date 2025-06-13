@@ -18,13 +18,10 @@
         <button class="nav-link" id="tab-fta-tab" data-toggle="tab" data-target="#tab-fta" type="button" role="tab" aria-controls="tab-fta" aria-selected="false">FTA</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Power Point</button>
+        <button class="nav-link" id="tab-srs-tab" data-toggle="tab" data-target="#tab-srs" type="button" role="tab" aria-controls="tab-srs" aria-selected="false">Dokumen Teknis</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-srs-tab" data-toggle="tab" data-target="#tab-srs" type="button" role="tab" aria-controls="tab-srs" aria-selected="false">SRS</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-sdd-tab" data-toggle="tab" data-target="#tab-sdd" type="button" role="tab" aria-controls="tab-sdd" aria-selected="false">SDD</button>
+        <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Dokumen Lainnya</button>
     </li>
 </ul>
 
@@ -358,11 +355,11 @@
         </div>
     </div>
 
-    {{-- Tab: Power Point --}}
+    {{-- Tab: Lainnya --}}
     <div class="tab-pane fade" id="tab-pp" role="tabpanel" aria-labelledby="tab-pp-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen Presentasi</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen Lainnya</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -378,7 +375,7 @@
 
                     <!-- Tombol Tambah -->
                     @if ($status_ta === 'mahasiswa_ta')
-                    <button id="btn-tambah-ppt" onclick="TambahDokumen('btn-tambah-ppt', '{{ $subkategoriPpt->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPpt->id_subkategori }}">
+                    <button id="btn-tambah-lainnya" onclick="TambahDokumen('btn-tambah-ppt', '{{ $subkategoriPpt->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriPpt->id_subkategori }}">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
                     @endif
@@ -405,6 +402,18 @@
                                 </div>
 
                                 <div class="col-md-4">
+                                    <label>Jenis Dokumen</label>
+                                    <select class="form-control doctype-filter">
+                                        <option value="">Semua</option>
+                                        <option value="PowerPoint">PowerPoint</option>
+                                        <option value="Poster">Poster</option>
+                                        <option value="Template">Template</option>
+                                        <option value="Resume">Resume</option>
+                                        <option value="Lampiran">Lampiran</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label>Tanggal Dibuat</label>
                                     <input type="date" class="form-control date-filter">
                                 </div>
@@ -425,6 +434,7 @@
                             <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
+                            <th>Jenis Dokumen</th>
                             <th>Tanggal Dibuat</th>
                             <th>Terakhir Diedit</th>
                             <th>Aksi</th>
@@ -433,7 +443,7 @@
                     <tbody>
                         @if ($powerpoint->isEmpty())
                         <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                            <td colspan="{{ $kategori === 'fta' ? 8 : 7 }}" class="text-center">
                                 <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
                             </td>
                         </tr>
@@ -443,7 +453,7 @@
                             <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
-
+                            <td>{{ $doc->subkategori->nama_subkategori }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
@@ -512,11 +522,11 @@
     </div>
 
 
-    {{-- Tab: SRS --}}
+    {{-- Tab: Dokumen Teknis --}}
     <div class="tab-pane fade" id="tab-srs" role="tabpanel" aria-labelledby="tab-srs-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS Seminar 2</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen Teknis Seminar 2</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -532,7 +542,7 @@
 
                     <!-- Tombol Tambah -->
                     @if ($status_ta === 'mahasiswa_ta')
-                    <button id="btn-tambah-srs" onclick="TambahDokumen('btn-tambah-srs', '{{ $subkategoriSrs->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSrs->id_subkategori }}">
+                    <button id="btn-tambah-teknis" onclick="TambahDokumen('btn-tambah-srs', '{{ $subkategoriSrs->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSrs->id_subkategori }}">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
                     @endif
@@ -560,6 +570,18 @@
                                 </div>
 
                                 <div class="col-md-4">
+                                    <label>Jenis Dokumen</label>
+                                    <select class="form-control doctype-filter">
+                                        <option value="">Semua</option>
+                                        <option value="SRS">Software Requirements Specification (SRS)</option>
+                                        <option value="SDD">Software Design Document (SDD)</option>
+                                        <option value="SAD">Software Architecture Document (SAD)</option>
+                                        <option value="STD">Software Test Document (STD)</option>
+                                        <option value="SOP">Standard Operating Procedure (SOP)</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label>Tanggal Dibuat</label>
                                     <input type="date" class="form-control date-filter">
                                 </div>
@@ -581,6 +603,7 @@
                             <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
+                            <th>Jenis Dokumen</th>
                             <th>Tanggal Dibuat</th>
                             <th>Terakhir Diedit</th>
                             <th>Aksi</th>
@@ -589,7 +612,7 @@
                     <tbody>
                         @if ($srs->isEmpty())
                         <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                            <td colspan="{{ $kategori === 'fta' ? 8 : 7 }}" class="text-center">
                                 <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
                             </td>
                         </tr>
@@ -599,7 +622,7 @@
                             <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
-
+                            <td>{{ $doc->subkategori->nama_subkategori }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
@@ -830,9 +853,37 @@
     <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
+        <input type="hidden" name="dokumen_teknis_type" id="dokumen_teknis_type" value="">
+        <input type="hidden" name="dokumen_lainnya_type" id="dokumen_lainnya_type" value="">
         <div class="row px-3">
             <div class="col-md-10 mb-2">
                 <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
+
+                <!-- Dropdown subkategori untuk dokumen teknis -->
+                <div id="field-subkategori-teknis" style="display:none;">
+                    <label for="subkategori_teknis">Jenis Dokumen Teknis</label>
+                    <x-adminlte-select name="subkategori_teknis" id="subkategori_teknis" class="select2bs4">
+                        <option selected disabled>Pilih Jenis Dokumen Teknis</option>
+                        <option value="SRS">Software Requirements Specification (SRS)</option>
+                        <option value="SDD">Software Design Document (SDD)</option>
+                        <option value="SAD">Software Architecture Document (SAD)</option>
+                        <option value="STD">Software Test Document (STD)</option>
+                        <option value="SOP">Standard Operating Procedure (SOP)</option>
+                    </x-adminlte-select>
+                </div>
+
+                <!-- Dropdown subkategori untuk dokumen lainnya -->
+                <div id="field-subkategori-lainnya" style="display:none;">
+                    <label for="subkategori_lainnya">Jenis Dokumen</label>
+                    <x-adminlte-select name="subkategori_lainnya" id="subkategori_lainnya" class="select2bs4">
+                        <option selected disabled>Pilih Jenis Dokumen</option>
+                        <option value="PowerPoint">PowerPoint</option>
+                        <option value="Poster">Poster</option>
+                        <option value="Template">Template</option>
+                        <option value="Resume">Resume</option>
+                        <option value="Lampiran">Lampiran</option>
+                    </x-adminlte-select>
+                </div>
 
                 <label for="judul">Judul Dokumen</label>
                 <x-adminlte-input name="judul" id="judul" required />
@@ -1126,8 +1177,6 @@
                 customLengthId = 'custom-length-ppt';
             } else if (tableId === 'tab-srs') {
                 customLengthId = 'custom-length-srs';
-            } else if (tableId === 'tab-sdd') {
-                customLengthId = 'custom-length-sdd';
             }
 
             dataTables[tableKey] = $(this).DataTable({
@@ -1345,6 +1394,8 @@
         saveActiveTab();
         var title = '';
         var showKodeFTA = false;
+        var showSubkategoriTeknis = false;
+        var showSubkategoriLainnya = false;
 
         if (type === 'btn-tambah-laporan') {
             title = 'Tambah Laporan seminar 2';
@@ -1352,15 +1403,17 @@
             title = 'Tambah FTA seminar 2';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint seminar 2';
+            title = 'Tambah Dokumen Lainnya seminar 2';
+            showSubkategoriLainnya = true;
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS seminar 2';
-        } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD seminar 2';
+            title = 'Tambah Dokumen Teknis seminar 2';
+            showSubkategoriTeknis = true;
         }
 
         $('#TambahDokumen .modal-title').text(title);
         $('#field-kode-fta').toggle(showKodeFTA);
+        $('#field-subkategori-teknis').toggle(showSubkategoriTeknis);
+        $('#field-subkategori-lainnya').toggle(showSubkategoriLainnya);
 
         if (showKodeFTA) {
             $('#kode_fta').prop('required', true); // Tambahkan required kalau FTA
@@ -1369,14 +1422,36 @@
             $('#kode_fta').val(''); // Reset value juga supaya kosong
         }
 
-        $('#field-subkategori').hide();
+        if (showSubkategoriTeknis) {
+            $('#subkategori_teknis').prop('required', true);
+        } else {
+            $('#subkategori_teknis').prop('required', false);
+            $('#subkategori_teknis').val('');
+        }
+
+        if (showSubkategoriLainnya) {
+            $('#subkategori_lainnya').prop('required', true);
+        } else {
+            $('#subkategori_lainnya').prop('required', false);
+            $('#subkategori_lainnya').val('');
+        }
+
         $('#field-repo-url').hide();
 
-        console.log("Tes");
         // Set id_subkategori dari tombol
-        // var idSubkategori = $(this).data('id-subkategori');
         $('#id_subkategori_hidden').val(id);
-        console.log("Tis");
     };
+
+    // Event handler untuk dropdown subkategori teknis
+    $('#subkategori_teknis').change(function() {
+        var selectedValue = $(this).val();
+        $('#dokumen_teknis_type').val(selectedValue);
+    });
+
+    // Event handler untuk dropdown subkategori lainnya
+    $('#subkategori_lainnya').change(function() {
+        var selectedValue = $(this).val();
+        $('#dokumen_lainnya_type').val(selectedValue);
+    });
 </script>
 @stop
