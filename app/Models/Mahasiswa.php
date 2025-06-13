@@ -19,6 +19,7 @@ class Mahasiswa extends Model
         'kelas',
         'id_prodi',
         'status_ta',
+        'tahun_ta',
         'id_kota'
     ];
 

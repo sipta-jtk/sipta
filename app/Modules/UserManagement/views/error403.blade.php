@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Error 403 : Forbidden')
@@ -13,7 +16,7 @@
         <h3><i class="fas fa-exclamation-triangle text-warning"></i> Akses Dilarang</h3>
         <p>
             Anda tidak memiliki izin untuk mengakses halaman ini.<br>
-            Silakan kembali ke <a href="/sipta">halaman utama</a> atau hubungi administrator.
+            Silakan kembali ke <a href="{{ url('/' . $prefix . '/') }}">halaman utama</a> atau hubungi administrator.
         </p>
                 <img src="{{ asset('error-image/error-403.png') }}" alt="Error 403" class="img-fluid mt-3" style="max-width: 400px;">
 

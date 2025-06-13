@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Error 404 : Not Found')
@@ -13,7 +16,7 @@
         <h3><i class="fas fa-exclamation-triangle text-warning"></i> Halaman Tidak Ditemukan </h3>
         <p>
             Halaman yang anda cari tidak dapat ditemukan<br>
-            Silakan kembali ke <a href="/sipta">halaman utama</a>
+            Silakan kembali ke <a href="{{ url('/' . $prefix . '/') }}">halaman utama</a>
         </p>
                 <img src="{{ asset('error-image/error-404.png') }}" alt="Error 403" class="img-fluid mt-3" style="max-width: 400px;">
 

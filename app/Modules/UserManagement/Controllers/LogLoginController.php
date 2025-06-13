@@ -46,8 +46,11 @@ class LogLoginController extends Controller
 
         // Ambil daftar role untuk filter
         $roles = User::distinct()->pluck('role_user');
+        
+        // Get prefix from environment
+        $prefix = env('PREFIX_URL', 'sipta');
 
         // Kirim ke view
-        return view('UserManagement.views.log_login', compact('logLogin', 'roles'));
+        return view('UserManagement.views.log_login', compact('logLogin', 'roles', 'prefix'));
     }
 }
