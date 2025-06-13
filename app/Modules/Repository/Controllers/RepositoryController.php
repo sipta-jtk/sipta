@@ -93,18 +93,30 @@ class RepositoryController extends Controller
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'fta';
             });
 
-            $powerpoint = $allDokumen->filter(function ($doc) {
-                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'powerpoint';
+            // Dokumen lainnya dapat berupa PowerPoint, Poster, Template, Resume, Lampiran, dll
+            $lainnyaDocs = ['powerpoint', 'poster', 'template', 'resume', 'lampiran'];
+            $powerpoint = $allDokumen->filter(function ($doc) use ($lainnyaDocs) {
+                // Check with case-insensitive comparison
+                $docType = strtolower($doc->subkategori->nama_subkategori ?? '');
+                // Also check for the capitalized version (matching the dropdown options)
+                $docTypeCapitalized = $doc->subkategori->nama_subkategori ?? '';
+                return in_array($docType, $lainnyaDocs) ||
+                    in_array($docTypeCapitalized, ['PowerPoint', 'Poster', 'Template', 'Resume', 'Lampiran']);
             });
 
-            $srs = $allDokumen->filter(function ($doc) {
-                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'srs';
+            // Dokumen teknis dapat berupa SRS, SDD, SAD, STD, SOP, dll
+            $teknisDocs = ['srs', 'sdd', 'sad', 'std', 'sop'];
+            $srs = $allDokumen->filter(function ($doc) use ($teknisDocs) {
+                return in_array(strtolower($doc->subkategori->nama_subkategori ?? ''), $teknisDocs);
             });
 
+            // Tetap menyimpan filter SDD untuk backward compatibility
             $sdd = $allDokumen->filter(function ($doc) {
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'sdd';
             });
 
+            // Note: Poster documents are now included in $powerpoint (Lainnya)
+            // Keeping this for backward compatibility
             $poster = $allDokumen->filter(function ($doc) {
                 return strtolower($doc->subkategori->nama_subkategori ?? '') == 'poster';
             });
@@ -195,6 +207,42 @@ class RepositoryController extends Controller
             // Validasi umum
             $isLink = $kategori === 'link_source_code';
 
+            // Check if this is a technical document submission with a specific type
+            if ($request->has('dokumen_teknis_type') && !empty($request->dokumen_teknis_type)) {
+                // Find or create subkategori for this document type
+                $subkategori = Subkategori::firstOrCreate(
+                    ['nama_subkategori' => $request->dokumen_teknis_type],
+                    ['nama_subkategori' => $request->dokumen_teknis_type]
+                );
+
+                // Update the id_subkategori with the correct one for the selected document type
+                $request->merge(['id_subkategori' => $subkategori->id_subkategori]);
+            }
+
+            // Check if this is a "Lainnya" document submission with a specific type
+            if ($request->has('dokumen_lainnya_type') && !empty($request->dokumen_lainnya_type)) {
+                // Log for debugging
+                \Illuminate\Support\Facades\Log::info('Creating Lainnya Document', [
+                    'type' => $request->dokumen_lainnya_type,
+                    'judul' => $request->judul
+                ]);
+
+                // Find or create subkategori for this document type
+                $subkategori = Subkategori::firstOrCreate(
+                    ['nama_subkategori' => $request->dokumen_lainnya_type],
+                    ['nama_subkategori' => $request->dokumen_lainnya_type]
+                );
+
+                // Log the subkategori that was found or created
+                \Illuminate\Support\Facades\Log::info('Subkategori for Lainnya', [
+                    'id' => $subkategori->id_subkategori,
+                    'name' => $subkategori->nama_subkategori
+                ]);
+
+                // Update the id_subkategori with the correct one for the selected document type
+                $request->merge(['id_subkategori' => $subkategori->id_subkategori]);
+            }
+
             // Subkategori
             $subkategoriName = Subkategori::where('id_subkategori', $request->id_subkategori)->value('nama_subkategori');
             // dd($subkategoriName);
@@ -207,6 +255,8 @@ class RepositoryController extends Controller
                 $isLink ? 'repository_url' : 'file' => $isLink
                     ? 'required|url|max:255'
                     : 'required|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
+                'dokumen_teknis_type' => 'nullable|string|max:10', // Field untuk tipe dokumen teknis
+                'dokumen_lainnya_type' => 'nullable|string|max:20', // Field untuk tipe dokumen lainnya
             ];
 
             // Validasi khusus
