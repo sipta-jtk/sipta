@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Preview Data Mahasiswa')
@@ -5,11 +8,11 @@
 @section('content_header')
     <h1>Data Import Mahasiswa</h1>
         <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
         'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url('/sipta-dev/manajemen-akun-mahasiswa/'), 'label' => 'Manajemen Akun Mahasiswa'],
-        ['url' => url(), 'label' => 'Preview Data Mahasiswa']
+        ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+        ['url' => url('/' . $prefix . '/manajemen-akun-mahasiswa/'), 'label' => 'Manajemen Akun Mahasiswa'],
+        ['url' => '', 'label' => 'Preview Data Mahasiswa']
         ]])
         @endcomponent
         </div>
@@ -53,7 +56,12 @@
                                 <input type="number" name="data[{{ $index }}][tahun_masuk]" value="{{ $row['tahun_masuk'] }}" class="form-control" required>
                             </td>
                             <td>
-                                <input type="text" name="data[{{ $index }}][kelas]" value="{{ $row['kelas'] }}" class="form-control" required>
+                               <x-adminlte-select2 name="data[{{ $index }}][kelas]" fgroup-class="col-md-8" required>
+                                    <option disabled {{ empty($row['kelas']) ? 'selected' : '' }}>Pilih Kelas ....</option>
+                                    @foreach(['A', 'B', 'C', 'D'] as $kelas)
+                                        <option value="{{ $kelas }}" {{ $row['kelas'] == $kelas ? 'selected' : '' }}>{{ $kelas }}</option>
+                                    @endforeach
+                                </x-adminlte-select2>
                             </td>
                             <td>
                                 <input type="text" name="data[{{ $index }}][no_wa]" value="{{ $row['no_wa'] }}" class="form-control" required>
