@@ -94,14 +94,14 @@ class RepositoryController extends Controller
             });
 
             // Dokumen lainnya dapat berupa PowerPoint, Poster, Template, Resume, Lampiran, dll
-            $lainnyaDocs = ['powerpoint', 'poster', 'template', 'resume', 'lampiran'];
+            $lainnyaDocs = ['powerpoint', 'poster', 'template', 'resume', 'lampiran', 'suratbebasmasalah', 'hasiltoeic'];
             $powerpoint = $allDokumen->filter(function ($doc) use ($lainnyaDocs) {
                 // Check with case-insensitive comparison
                 $docType = strtolower($doc->subkategori->nama_subkategori ?? '');
                 // Also check for the capitalized version (matching the dropdown options)
                 $docTypeCapitalized = $doc->subkategori->nama_subkategori ?? '';
                 return in_array($docType, $lainnyaDocs) ||
-                    in_array($docTypeCapitalized, ['PowerPoint', 'Poster', 'Template', 'Resume', 'Lampiran']);
+                    in_array($docTypeCapitalized, ['PowerPoint', 'Poster', 'Template', 'Resume', 'Lampiran', 'SuratBebasMasalah', 'HasilTOEIC']);
             });
 
             // Dokumen teknis dapat berupa SRS, SDD, SAD, STD, SOP, dll
@@ -122,11 +122,13 @@ class RepositoryController extends Controller
             });
 
             $sbm = $allDokumen->filter(function ($doc) {
-                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'surat bebas masalah';
+                $docType = strtolower($doc->subkategori->nama_subkategori ?? '');
+                return $docType == 'surat bebas masalah' || $docType == 'suratbebasmasalah';
             });
 
             $toeic = $allDokumen->filter(function ($doc) {
-                return strtolower($doc->subkategori->nama_subkategori ?? '') == 'hasil toeic';
+                $docType = strtolower($doc->subkategori->nama_subkategori ?? '');
+                return $docType == 'hasil toeic' || $docType == 'hasiltoeic';
             });
 
             // Ambil subkategori spesifik (untuk tombol tambah dokumen)
@@ -137,8 +139,10 @@ class RepositoryController extends Controller
             $subkategoriSrs = Subkategori::where('nama_subkategori', 'SRS')->first();
             $subkategoriSdd = Subkategori::where('nama_subkategori', 'SDD')->first();
             $subkategoriPoster = Subkategori::where('nama_subkategori', 'Poster')->first();
-            $subkategoriSbm = Subkategori::where('nama_subkategori', 'Surat Bebas Masalah')->first();
-            $subkategoriToeic = Subkategori::where('nama_subkategori', 'Hasil TOEIC')->first();
+            $subkategoriSbm = Subkategori::where('nama_subkategori', 'Surat Bebas Masalah')
+                                ->orWhere('nama_subkategori', 'SuratBebasMasalah')->first();
+            $subkategoriToeic = Subkategori::where('nama_subkategori', 'Hasil TOEIC')
+                                 ->orWhere('nama_subkategori', 'HasilTOEIC')->first();
 
             // Ambil semua subkategori kalau kategori artefak
             $subkategoris = $kategori === 'artefak' ? Subkategori::all() : collect();
