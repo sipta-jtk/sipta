@@ -11,9 +11,7 @@ use App\Models\User;
 use App\Modules\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
-
-
+use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
@@ -33,16 +31,32 @@ class UserManagementController extends Controller
         $listkbk = Kbk::all();
         return view('UserManagement.views.manage_dosen', compact('dosen', 'listkbk'));
     }
-    public function manage_mhs()
+    public function manage_mhs(Request $request)
     {
-        $mahasiswa = DB::table('mahasiswa')
-        ->join('user', 'mahasiswa.nim', '=', 'user.username')
-        ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
-        ->select('mahasiswa.*', 'user.nama', 'prodi.nama_prodi' ,'user.email', 'user.no_whatsapp','user.status_user')
-        ->get();
+        $query = DB::table('mahasiswa')
+            ->join('user', 'mahasiswa.nim', '=', 'user.username')
+            ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
+            ->select('mahasiswa.*', 'user.nama', 'prodi.nama_prodi', 'user.email', 'user.no_whatsapp', 'user.status_user');
+
+        if ($request->filled('prodi')) {
+            $query->where('mahasiswa.id_prodi', $request->input('prodi'));
+        }
+
+        if ($request->filled('tahun_masuk')) {
+            $query->where('mahasiswa.tahun_masuk', $request->input('tahun_masuk'));
+        }
+        
+        $mahasiswa = $query->get();
+
+        // $mahasiswa = DB::table('mahasiswa')
+        // ->join('user', 'mahasiswa.nim', '=', 'user.username')
+        // ->join('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id_prodi')
+        // ->select('mahasiswa.*', 'user.nama', 'prodi.nama_prodi' ,'user.email', 'user.no_whatsapp','user.status_user')
+        // ->get();
         $listprodi = Prodi::all();
         return view('UserManagement.views.manage_mhs', compact('mahasiswa', 'listprodi'));
     }
+    
     public function show_mhs(){
         $user = Auth::user(); 
         $query = DB::table('mahasiswa')
