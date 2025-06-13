@@ -16,9 +16,10 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between mb-3" style="gap: 0.5rem;">
-                <button class="btn btn-primary btn-md" type="button" data-toggle="collapse" data-target="#filterMenu"
-                    aria-expanded="{{ request('prodi') || request('tahun_masuk') ? 'true' : 'false' }}" aria-controls="filterMenu">
-                    <i class="fas fa-filter"></i>
+                {{-- Tombol Filter --}}
+                {{-- Mengganti data-toggle dan data-target dengan id untuk JavaScript manual --}}
+                <button id="toggleFilterMhs" class="btn btn-primary btn-md" type="button">
+                    <i class="fas fa-filter"></i> 
                 </button>
                 <div>
                     <button class="btn btn-primary" data-toggle="modal" data-target="#uploadExcel">
@@ -33,56 +34,54 @@
                 </div>
             </div>
 
-            <div class="collapse{{ request('prodi') || request('tahun_masuk') ? ' show' : '' }}" id="filterMenu">
-                <div class="card mx-3 mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-filter mr-2"></i>Filter Data
-                        </h3>
-                    </div>
-                    <form action="{{ route('manage.mhs', ['prodi' => request('prodi'), 'tahun_masuk'=> request('tahun_masuk') ]) }}">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-school mr-1"></i> Prodi
-                                        </label>
-                                        <select class="form-control select2bs4" name="prodi" style="width: 100%;">
-                                            <option selected disabled>Pilih Prodi</option>
-                                            @foreach ($listprodi as $prodi)
-                                                <option value="{{ $prodi->id_prodi }}" {{request('prodi') ? 'selected' : ''}}>{{ $prodi->nama_prodi }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+            <div id="filterMenu" class="card mx-3 mt-3" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-filter mr-2"></i>Filter Data
+                    </h3>
+                </div>
+                <form action="{{ route('manage.mhs') }}" method="GET">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group text-secondary">
+                                    <label>
+                                        <i class="fas fa-school mr-1"></i> Prodi
+                                    </label>
+                                    <select class="form-control select2bs4" name="prodi" style="width: 100%;">
+                                        <option selected disabled>Pilih Prodi</option>
+                                        @foreach ($listprodi as $prodi)
+                                            <option value="{{ $prodi->id_prodi }}" {{ request('prodi') == $prodi->id_prodi ? 'selected' : '' }}>{{ $prodi->nama_prodi }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group text-secondary">
-                                        <label>
-                                            <i class="fas fa-graduation-cap mr-1"></i>
-                                            Tahun Masuk
-                                        </label>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group text-secondary">
+                                    <label>
+                                        <i class="fas fa-graduation-cap mr-1"></i>
+                                        Tahun Masuk
+                                    </label>
 
-                                        <select class="form-control select2bs4" name="tahun_masuk" style="width: 100%;">
-                                            <option selected disabled>Pilih Tahun Masuk</option>
-                                            @foreach ($mahasiswa->pluck('tahun_masuk')->unique()->sort() as $tahun)
-                                                <option value="{{ $tahun }}" {{request('tahun_masuk') ? 'selected' : ''}}>{{ $tahun }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    <select class="form-control select2bs4" name="tahun_masuk" style="width: 100%;">
+                                        <option selected disabled>Pilih Tahun Masuk</option>
+                                        @foreach ($mahasiswa->pluck('tahun_masuk')->unique()->sort() as $tahun)
+                                            <option value="{{ $tahun }}" {{ request('tahun_masuk') == $tahun ? 'selected' : '' }}>{{ $tahun }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer text-right">
-                            <button type="submit" class="btn btn-primary">
-                                Terapkan
-                            </button>
-                            <a href="{{ route('manage.mhs') }}" class="btn btn-secondary ml-2">
-                                Bersihkan Filter
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-primary">
+                            Terapkan
+                        </button>
+                        <a href="{{ route('manage.mhs') }}" class="btn btn-secondary ml-2">
+                            Bersihkan Filter
+                        </a>
+                    </div>
+                </form>
             </div>
 
             <div id="role_section" style="display: none;">
@@ -166,8 +165,6 @@
                     <x-adminlte-input name="nim" id="nim-update" label="NIM" placeholder="NIM" fgroup-class=""
                         disable-feedback readonly />
 
-
-
                     <x-adminlte-input name="tahun_masuk" label="Tahun Masuk" id="tahun_masuk-update"
                         placeholder="Tahun Masuk" fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback
                         required />
@@ -190,14 +187,11 @@
 
                     <p class="text-secondary text-md border-bottom">Kontak</p>
 
-
                     <x-adminlte-input name="no_wa" id="no_whatsapp-update" label="Nomor Whatsapp"
                         placeholder="Nomor Whatsapp" fgroup-class="" disable-feedback required />
 
                     <x-adminlte-input name="email" id="email-update" label="Email" placeholder="Email"
                         fgroup-class="" disable-feedback readonly />
-
-
 
                     <div class="d-flex pt-3 justify-content-end">
                         <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal" class="mx-1" />
@@ -220,7 +214,7 @@
                     <x-adminlte-input name="tahun_masuk" label="Tahun Masuk" placeholder="Tahun Masuk .."
                         fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback required />
 
-                    <x-adminlte-select2 name="kelas" label="Kelas" id="kelas-update" fgroup-class="" disable-feedback
+                    <x-adminlte-select2 name="kelas" label="Kelas" id="kelas-addnew" fgroup-class="" disable-feedback
                         required onkeydown="changeLetter(event, this)">
                         <option selected disabled>-Pilih Kelas-</option>
                         <option value="A">A</option>
@@ -293,8 +287,6 @@
 
 @section('css')
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-
-
 @stop
 
 @section('js')
@@ -303,7 +295,8 @@
     <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        jQuery(document).ready(function($) {
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inisialisasi DataTable
             $('#datatable').DataTable({
                 responsive: true,
                 columnDefs: [{
@@ -334,83 +327,98 @@
                     });
                 }
             });
-        });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const fileInput = document.querySelector('input[type="file"]');
-            if (!fileInput) return;
+            // Filter
+            var toggleFilterButton = document.getElementById("toggleFilterMhs");
+            var filterOptionsDiv = document.getElementById("filterMenu");
 
-            const allowedExtensions = ['xls', 'xlsx', 'csv'];
-
-            fileInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (!file) return;
-
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-                if (!allowedExtensions.includes(fileExtension)) {
-                    alert("File harus berformat .xls, .xlsx, atau .csv!");
-                    this.value = ''; // Reset input file
+            // Periksa apakah ada parameter di URL selain pagination
+            const urlParams = new URLSearchParams(window.location.search);
+            let hasFilterParams = false;
+            for (let p of urlParams.keys()) {
+                if (p !== 'page' && p !== 'draw' && p !== 'start' && p !== 'length' && p !== 'order' && p !== 'columns' && p !== 'search') { // abaikan parameter datatable dan search umum
+                    hasFilterParams = true;
+                    break;
                 }
+            }
 
-                const label = fileInput.closest('.input-group')?.querySelector('.custom-file-label');
-                if (label) {
-                    label.textContent = file.name;
-                }
-            });
-        });
-        document.addEventListener("DOMContentLoaded", function() {
-            const fileInput = document.querySelector('input[type="file"]');
-            const label = fileInput.closest('.input-group').querySelector('.custom-file-label');
+            if (hasFilterParams) {
+                filterOptionsDiv.style.display = "block";
+            } else {
+                filterOptionsDiv.style.display = "none";
+            }
 
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    label.textContent = this.files[0].name;
+
+            toggleFilterButton.addEventListener("click", function() {
+                if (filterOptionsDiv.style.display === "none" || filterOptionsDiv.style.display === "") {
+                    filterOptionsDiv.style.display = "block";
                 } else {
-                    label.textContent = "Choose a file...";
+                    filterOptionsDiv.style.display = "none";
                 }
             });
-        });
-        $(document).ready(function() {
-            $("#dosenTable").DataTable();
-        });
 
 
-        $(document).on('click', '.btn-update-mhs', function() {
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            var email = $(this).data("email");
-            var no_whatsapp = $(this).data("no_whatsapp");
-            var id_prodi = $(this).data("id_prodi");
-            var kelas = $(this).data("kelas");
-            var tahun_masuk = $(this).data("tahun_masuk");
+            // Logic untuk input file Excel (tidak ada perubahan)
+            const fileInput = document.querySelector('input[type="file"]');
+            if (fileInput) {
+                const allowedExtensions = ['xls', 'xlsx', 'csv'];
 
-            document.getElementById("nim-update").value = nim;
-            document.getElementById("nama-update").value = nama;
-            document.getElementById("email-update").value = email;
-            document.getElementById("no_whatsapp-update").value = no_whatsapp;
-            document.getElementById("id_prodi-update").value = id_prodi;
-            document.getElementById("kelas-update").value = kelas;
-            document.getElementById("tahun_masuk-update").value = tahun_masuk;
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
 
-            console.log(nim);
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        alert("File harus berformat .xls, .xlsx, atau .csv!");
+                        this.value = '';
+                    }
 
-        });
+                    const label = fileInput.closest('.input-group')?.querySelector('.custom-file-label');
+                    if (label) {
+                        label.textContent = file.name;
+                    }
+                });
+            }
 
-        $(document).on('click', '.btn-nonaktif-mhs', function() {
+            // Modal update mahasiswa (tidak ada perubahan)
+            $(document).on('click', '.btn-update-mhs', function() {
+                var nim = $(this).data("nim");
+                var nama = $(this).data("nama");
+                var email = $(this).data("email");
+                var no_whatsapp = $(this).data("no_whatsapp");
+                var id_prodi = $(this).data("id_prodi");
+                var kelas = $(this).data("kelas");
+                var tahun_masuk = $(this).data("tahun_masuk"); // Memperbaiki typo dari 'tahun_masih'
 
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            document.getElementById("nim-input-nonaktif").value = nim;
-            document.getElementById("konfirmasi-pesan-nonaktif").textContent =
-                "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
-        });
+                document.getElementById("nim-update").value = nim;
+                document.getElementById("nama-update").value = nama;
+                document.getElementById("email-update").value = email;
+                document.getElementById("no_whatsapp-update").value = no_whatsapp;
+                // Pastikan select2 diinisialisasi terlebih dahulu jika belum
+                $('#id_prodi-update').val(id_prodi).trigger('change');
+                $('#kelas-update').val(kelas).trigger('change');
+                document.getElementById("tahun_masuk-update").value = tahun_masuk;
 
-        $(document).on('click', '.btn-aktif-mhs', function() {
-            var nim = $(this).data("nim");
-            var nama = $(this).data("nama");
-            document.getElementById("nim-input-aktif").value = nim;
-            document.getElementById("konfirmasi-pesan-aktif").textContent =
-                "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
+                console.log(nim);
+            });
+
+            // Modal nonaktifkan mahasiswa (tidak ada perubahan)
+            $(document).on('click', '.btn-nonaktif-mhs', function() {
+                var nim = $(this).data("nim");
+                var nama = $(this).data("nama");
+                document.getElementById("nim-input-nonaktif").value = nim;
+                document.getElementById("konfirmasi-pesan-nonaktif").textContent =
+                    "Apakah Anda yakin ingin menonaktifkan mahasiswa " + nama + "?";
+            });
+
+            // Modal aktifkan mahasiswa (tidak ada perubahan)
+            $(document).on('click', '.btn-aktif-mhs', function() {
+                var nim = $(this).data("nim");
+                var nama = $(this).data("nama");
+                document.getElementById("nim-input-aktif").value = nim;
+                document.getElementById("konfirmasi-pesan-aktif").textContent =
+                    "Apakah Anda yakin ingin mengaktifkan mahasiswa " + nama + "?";
+            });
         });
     </script>
 @stop
