@@ -45,6 +45,7 @@ class PerekrutanAnggotaKoTAController extends Controller
             $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
                 ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
                 ->where('mahasiswa.id_prodi', '=', $mahasiswaAnggota1->id_prodi)
+                ->where('mahasiswa.tahun_ta', '=', $mahasiswaAnggota1->tahun_ta)
                 ->whereNull('mahasiswa.id_kota')
                 ->select('mahasiswa.*', 'user.nama')
                 ->get();
@@ -84,14 +85,38 @@ class PerekrutanAnggotaKoTAController extends Controller
 
         $currentYear = Carbon::now()->year;
 
-        // Cari nomor KoTA terakhir dengan tahun yang sama
-        $lastKoTA = Kota::where('tahun_kota', $currentYear)
-            ->orderBy('id_kota', 'desc')
-            ->first();
+        // Ambil data mahasiswa pertama untuk mendapatkan prodi dan kelas
+        $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
+        $prodi = Prodi::find($anggota1->id_prodi);
 
-        // Generate nama KoTA
-        $newKoTANumber = $lastKoTA ? intval(substr($lastKoTA->nama_kota, 4)) + 1 : 101;
-        $namaKoTA = 'KoTA ' . $newKoTANumber;
+        // Gunakan tahun_ta dari mahasiswa untuk menentukan kode kelas
+        $tahunTA = $anggota1->tahun_ta ?? $currentYear;
+
+        // Generate kode kelas berdasarkan prodi, kelas dan tahun TA
+        $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas, $tahunTA);
+
+        // Cari nomor urut KoTA terakhir dengan tahun yang sama dan kode kelas yang sama
+        $lastKoTA = Kota::where('tahun_kota', $currentYear)
+            ->where('nama_kota', 'LIKE', 'Kota ' . $kodeKelas . '%')
+            ->get();
+        
+        // Extract nomor urut dari nama KoTA yang ada dan cari yang terbesar
+        $maxNomor = 0;
+        foreach ($lastKoTA as $kota) {
+            // Extract 2 digit terakhir dari nama KoTA
+            if (preg_match('/Kota ' . $kodeKelas . '(\d{2})$/', $kota->nama_kota, $matches)) {
+                $nomor = intval($matches[1]);
+                if ($nomor > $maxNomor) {
+                    $maxNomor = $nomor;
+                }
+            }
+        }
+
+        // Generate nomor urut berikutnya
+        $nomorUrut = $maxNomor + 1;
+
+        // Format nama KoTA: KoTA + kode kelas + nomor urut (2 digit)
+        $namaKoTA = 'Kota ' . $kodeKelas . str_pad($nomorUrut, 2, '0', STR_PAD_LEFT);
 
         // Buat Kelompok TA baru
         $koTA = Kota::create([
@@ -147,6 +172,36 @@ class PerekrutanAnggotaKoTAController extends Controller
     }
 
     /**
+     * Generate kode kelas berdasarkan prodi dan kelas
+     * 
+     * @param int $idProdi
+     * @param string $kelas
+     * @return int
+     */
+    private function generateKodeKelas($idProdi, $kelas, $tahunTA)
+    {
+        // Ambil semua kombinasi prodi dan kelas yang unik, untuk tahun TA tertentu diurutkan berdasarkan id_prodi dan kelas
+        $kombinasiProdiKelas = Mahasiswa::select('id_prodi', 'kelas')
+            ->where('tahun_ta', $tahunTA)
+            ->distinct()
+            ->orderBy('id_prodi', 'asc')
+            ->orderBy('kelas', 'asc')
+            ->get();
+
+        // Cari posisi kombinasi prodi dan kelas yang sedang diproses
+        $kodeKelas = 1;
+        foreach ($kombinasiProdiKelas as $kombinasi) {
+            if ($kombinasi->id_prodi == $idProdi && $kombinasi->kelas == $kelas) {
+                return $kodeKelas;
+            }
+            $kodeKelas++;
+        }
+        
+        // Fallback jika tidak ditemukan
+        return 1;
+    }
+
+    /**
      * Menampilkan form untuk menambah anggota ke KoTA yang sudah ada
      *
      * @param int $id ID KoTA
@@ -177,6 +232,7 @@ class PerekrutanAnggotaKoTAController extends Controller
         // Dapatkan mahasiswa dari prodi yang sama yang belum masuk KoTA
         $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
             ->where('mahasiswa.id_prodi', $mahasiswaAnggota1->id_prodi)
+            ->where('mahasiswa.tahun_ta', $mahasiswaAnggota1->tahun_ta)
             ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
             ->whereNull('mahasiswa.id_kota')
             ->select('mahasiswa.*', 'user.nama')

@@ -1,20 +1,22 @@
 @extends('adminlte::page')
 
 @section('title', 'Kelola KBK')
-
+@php
+$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+@endphp
 @section('content_header')
-    <h1 class="mb-3">Daftar Kelompok Bidang Keahlian</h1>
-
+    <h1 class="mb-3">Daftar Bidang Keahlian</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
-                ['url' => '', 'label' => 'Kelola KBK']
+                ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Kelola KBK'],
             ]
         ])
         @endcomponent
     </div>
 @stop
+
 
 @section('content')
     @if(session('success'))

@@ -53,6 +53,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin-bottom: 10px;
         }
         .submit-button:hover {
             background-color: #333;
@@ -65,6 +66,24 @@
             color: red;
             font-size: 12px;
             margin-top: 5px;
+        }
+        .back-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            text-decoration: none;
+            color: white;
         }
     </style>
 </head>
@@ -89,6 +108,7 @@
                 </div>
                 <button type="submit" class="submit-button">Send Password Reset Link</button>
             </form>
+            <a href="/{{ env('PREFIX_URL', 'sipta') }}/login" class="back-button">Back to Login</a>
         </div>
     </div>
 </body>
