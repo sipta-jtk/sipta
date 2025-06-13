@@ -1,4 +1,7 @@
 {{-- bismillahirahmanirahim, semoga dijauhkan dari bug bug yang terkutuk --}}
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Data KoTA')
@@ -6,10 +9,10 @@
 @section('content_header')
     <h1>Data Kota</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
         'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url(), 'label' => 'Data Kelompok KoTA']
+        ['url' => url('/' . $prefix .'/'), 'label' => 'Beranda'],
+        ['url' => '', 'label' => 'Data Kelompok KoTA']
         ]])
         @endcomponent
         </div>
@@ -116,18 +119,18 @@ jQuery(document).ready(function($) {
             ],
             language: {
                 search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ entri",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "→",
-                    previous: "←"
-                },
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
                 zeroRecords: "Data tidak ditemukan",
-                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                infoFiltered: "(disaring dari _MAX_ total entri)"
-            },
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                first: "<<",
+                last: ">>",
+                next: ">",
+                previous: "<"
+                }
+                },
             drawCallback: function (settings) {
                 let api = this.api();
                 api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
