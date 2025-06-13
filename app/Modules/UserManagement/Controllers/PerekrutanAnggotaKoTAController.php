@@ -45,6 +45,7 @@ class PerekrutanAnggotaKoTAController extends Controller
             $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
                 ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
                 ->where('mahasiswa.id_prodi', '=', $mahasiswaAnggota1->id_prodi)
+                ->where('mahasiswa.tahun_ta', '=', $mahasiswaAnggota1->tahun_ta)
                 ->whereNull('mahasiswa.id_kota')
                 ->select('mahasiswa.*', 'user.nama')
                 ->get();
@@ -88,10 +89,13 @@ class PerekrutanAnggotaKoTAController extends Controller
         $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
         $prodi = Prodi::find($anggota1->id_prodi);
 
-        // Generate kode kelas berdasarkan prodi dan kelas
-        $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas);
+        // Gunakan tahun_ta dari mahasiswa untuk menentukan kode kelas
+        $tahunTA = $anggota1->tahun_ta ?? $currentYear;
 
-        // Cari nomor urut KoTA terakhir dengan tahun yang sama
+        // Generate kode kelas berdasarkan prodi, kelas dan tahun TA
+        $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas, $tahunTA);
+
+        // Cari nomor urut KoTA terakhir dengan tahun yang sama dan kode kelas yang sama
         $lastKoTA = Kota::where('tahun_kota', $currentYear)
             ->where('nama_kota', 'LIKE', 'Kota ' . $kodeKelas . '%')
             ->get();
@@ -174,10 +178,11 @@ class PerekrutanAnggotaKoTAController extends Controller
      * @param string $kelas
      * @return int
      */
-    private function generateKodeKelas($idProdi, $kelas)
+    private function generateKodeKelas($idProdi, $kelas, $tahunTA)
     {
-        // Ambil semua kombinasi prodi dan kelas yang unik, diurutkan berdasarkan id_prodi dan kelas
+        // Ambil semua kombinasi prodi dan kelas yang unik, untuk tahun TA tertentu diurutkan berdasarkan id_prodi dan kelas
         $kombinasiProdiKelas = Mahasiswa::select('id_prodi', 'kelas')
+            ->where('tahun_ta', $tahunTA)
             ->distinct()
             ->orderBy('id_prodi', 'asc')
             ->orderBy('kelas', 'asc')
@@ -227,6 +232,7 @@ class PerekrutanAnggotaKoTAController extends Controller
         // Dapatkan mahasiswa dari prodi yang sama yang belum masuk KoTA
         $mahasiswa = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
             ->where('mahasiswa.id_prodi', $mahasiswaAnggota1->id_prodi)
+            ->where('mahasiswa.tahun_ta', $mahasiswaAnggota1->tahun_ta)
             ->where('mahasiswa.nim', '!=', $mahasiswaAnggota1->nim)
             ->whereNull('mahasiswa.id_kota')
             ->select('mahasiswa.*', 'user.nama')
