@@ -15,7 +15,7 @@
         @endphp
         <div class="col-md-3 col-12 ml-2 mr-2">
             <x-pengajuan-alokasi-pembimbing.components.kesediaan-membimbing.card-banner type="success"
-                innerHtml="<h3 class='mb-2'>{{ $totalMahasiswa }}<br><sup style='font-size: 20px'> total mahasiswa</sup></h3>"
+                innerHtml="<h3 class='mb-2'>{{ $totalMahasiswa }}<br><sup style='font-size: 20px'> Total Mahasiswa</sup></h3>"
                 icon="fas fa-users"
                 href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}"
                 hrefText="Informasi lanjut" />
