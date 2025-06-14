@@ -47,6 +47,14 @@
             max-height: calc(80vh - 120px);
             /* Adjusted to fit within the card wrapper */
         }
+        
+        /* Ensure collapse is hidden by default but can be shown */
+        #filterProdiMenu, #filterMenu {
+            display: none;
+        }
+        #filterProdiMenu.show, #filterMenu.show {
+            display: block;
+        }
     </style>
 @stop
 
@@ -405,6 +413,7 @@
 @section('js')
     {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
 
     <script>
@@ -452,9 +461,36 @@
         $(document).ready(function() {
             adjustSidebar();
 
+            // Ensure filter menus are hidden on page load
+            $('#filterProdiMenu, #filterMenu').hide().removeClass('show');
+            
             $.get("{{ route('pengajuanalokasipembimbing.alokasi-penguji.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
                 updateKuotaDosen();
+            });
+
+            // Direct implementation of filter toggle without relying on Bootstrap collapse
+            $('button[data-toggle="collapse"]').off('click').on('click', function() {
+                const targetId = $(this).data('target');
+                const filterMenu = $(targetId);
+                
+                filterMenu.slideToggle(200);
+                
+                // Toggle aria-expanded attribute
+                const expanded = $(this).attr('aria-expanded') === 'true';
+                $(this).attr('aria-expanded', (!expanded).toString());
+                
+                // Toggle show class for Bootstrap compatibility
+                filterMenu.toggleClass('show');
+            });
+
+            // Add toggle functionality for filter menus using jQuery instead of Bootstrap collapse
+            $('[data-target="#filterProdiMenu"]').click(function() {
+                $('#filterProdiMenu').toggleClass('show');
+            });
+            
+            $('[data-target="#filterMenu"]').click(function() {
+                $('#filterMenu').toggleClass('show');
             });
 
             // Init dosenTable
