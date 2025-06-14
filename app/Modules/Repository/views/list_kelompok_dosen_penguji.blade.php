@@ -69,7 +69,7 @@
                             <tbody>
                                 @foreach ($kelompok as $k)
                                 <tr>
-                                    <td class="text-center">{{ $k->id_kota }}</td>
+                                    <td class="text-center">{{ $k->nama_kota }}</td>
                                     <td class="text-center">
                                         {{-- Ambil semua tahun masuk dan tampilkan sebagai daftar unik --}}
                                         {{ $k->mahasiswa->pluck('tahun_masuk')->unique()->join(', ') }}

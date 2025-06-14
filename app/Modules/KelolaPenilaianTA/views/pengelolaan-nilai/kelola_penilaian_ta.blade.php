@@ -3,13 +3,16 @@
 @section('title', 'KelolaPenilaianTA')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <h1 class="mb-0">{{ $data['header'] ?? 'Kelola Penilaian' }}</h1>
         {{-- TBD perbaiki breadcumb --}}
         
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Home'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => '', 'label' =>  $data['header'] ?? 'Kelola Penilaian' ]
             ]
         ])
@@ -69,13 +72,13 @@
         </table>
 
         <!-- Tombol Tampilkan Semua -->
-        @if (count($kategoriPenilaian) > 4)
+        {{-- @if (count($kategoriPenilaian) > 4)
             <div class="d-flex justify-content-center mt-3">
                 <button id="show-more-btn" class="btn btn-secondary" onclick="showAllRows()">
                     Tampilkan Semua
                 </button>
             </div>
-        @endif
+        @endif --}}
     </div>
 @stop
 

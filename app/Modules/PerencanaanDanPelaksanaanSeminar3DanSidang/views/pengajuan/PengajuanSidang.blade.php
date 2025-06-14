@@ -69,6 +69,7 @@
                     
                     <div class="mb-3">
                         <label for="tanggal_pengajuan" class="form-label">Tanggal:</label>
+                        <p class="text-secondary">{{ $tanggal_mulai == null ? '*Timeline belum ditetapkan. Silahkan hubungi Koordinator TA.' : '*Tanggal tersedia mulai dari ' . $tanggal_mulai . ' sampai ' . $tanggal_selesai .'.'}} </p>
                         <input type="date" id="tanggal_pengajuan" name="tanggal_pengajuan" class="form-control" required>
                     </div>
 
@@ -137,7 +138,7 @@
             alert.style.opacity = "0";
             setTimeout(() => alert.remove(), 500);
         }
-    }, 7000);
+    }, 5000);
 </script>
 @stop
 

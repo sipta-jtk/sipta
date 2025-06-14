@@ -84,10 +84,16 @@
             <p><strong>Agenda:</strong> <span id="modalAgenda"></span></p>
         </div>
         <div class="col-md-6 mb-2">
-            <p><strong>Tanggal:</strong> <span id="modalTanggal"></span></p>
+            <p><strong>Tanggal Kegiatan:</strong> <span id="modalTanggal"></span></p>
         </div>
         <div class="col-md-6 mb-2">
             <p><strong>Sesi:</strong> <span id="modalSesi"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Waktu Mulai:</strong> <span id="modalStart"></span></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <p><strong>Waktu Selesai:</strong> <span id="modalEnd"></span></p>
         </div>
         <div class="col-md-6 mb-2">
             <p><strong>Ruangan:</strong> <span id="modalRuangan"></span></p>
@@ -144,11 +150,7 @@
                         orderable: false
                     },
                     { 
-                        data: "id_kota",
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                            return `koTA ${data}`; // Menambahkan prefix "KoTA" sebelum angka
-                        }
+                        data: "nama_kota", className: 'text-center',
                     },
                     { 
                         data: "agenda",
@@ -171,12 +173,14 @@
                         render: function(data, type, row) {
                             return `<button class="btn btn-primary btn-proses" '
                                         data-idpenjadwalan="${row.id_penjadwalan}"
-                                        data-kelompok="${row.id_kota}" 
+                                        data-namakota="${row.nama_kota}"
                                         data-judul="${row.judul_ta}" 
                                         data-agenda="${row.agenda}"
                                         data-tanggal="${row.tanggal}" 
                                         data-ruangan="${row.nama_ruangan}" 
                                         data-sesi="${row.sesi}"
+                                        data-start="${row.start}"
+                                        data-end="${row.end}"
                                         data-status="Menunggu Verifikasi">
                                         Proses
                                     </button>`;
@@ -209,34 +213,38 @@
         });
 
         $(document).on('click', '.btn-proses', function() {
+            // Ambil data dari tombol yang diklik
             let tipe = @json($tipe);
-            console.log(tipe);
             let id_penjadwalan = $(this).data('idpenjadwalan');
-            let id = $(this).data('kelompok');
+            let namakota = $(this).data('namakota');
             let judul = $(this).data('judul');
             let tanggal = $(this).data('tanggal');
             let ruangan = $(this).data('ruangan');
             let sesi = $(this).data('sesi');
+            let start = $(this).data('start');
+            let end = $(this).data('end');
             let status = $(this).data('status');
             let agenda = $(this).data('agenda');
 
             if (agenda === "seminar_3") {
                 agenda = "Seminar 3";
-            } else if (data === "sidang") {
+            } else if (agenda === "sidang") {
                 agenda = "Sidang Akhir";
             }
 
             // Isi data ke dalam modal
-            $('#modalKelompok').text(id);
+            $('#modalKelompok').text(namakota);
             $('#modalJudul').text(judul);
             $('#modalTanggal').text(tanggal);
             $('#modalAgenda').text(agenda);
             $('#modalRuangan').text(ruangan);
             $('#modalSesi').text(sesi);
+            $('#modalStart').text(start);
+            $('#modalEnd').text(end);
             $('#modalStatus').text(status);
 
             // Set ID untuk form
-            $('#inputId').val(id);
+            $('#inputId').val(id_penjadwalan);
 
             // Set action form
             $('#formVerifikasi').attr('action', `/${prefix}/kelola-pengajuan-jadwal-penguji/${tipe}/verifikasi/${id_penjadwalan}`);

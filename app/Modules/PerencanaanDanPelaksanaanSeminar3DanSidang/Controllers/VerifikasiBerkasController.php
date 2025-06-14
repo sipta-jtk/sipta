@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\VerifikasiBerkasPengajuan;
 use App\Models\Kota;
 use App\Models\Dokumen;
+use App\Models\KotaUser;
 use Carbon\Carbon;
+use App\Notifications\TestEmailNotification;
 Carbon::setLocale('id');
 
 class VerifikasiBerkasController extends Controller
@@ -25,6 +27,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 return $item;
             });
 
@@ -45,6 +48,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 $item->catatan = $item->catatan ?? '-';
                 return $item;
             });
@@ -63,6 +67,7 @@ class VerifikasiBerkasController extends Controller
             ->map(function ($item) {
                 $item->tanggal_pengajuan = Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y');
                 $item->judul_ta = $item->kota->judul_ta;
+                $item->nama_kota = $item->kota->nama_kota ?? '-';
                 $item->catatan = $item->catatan ?? '-';
                 return $item;
             });
@@ -85,6 +90,8 @@ class VerifikasiBerkasController extends Controller
         if ($dataKota) {
                 $dataKota->tanggal_pengajuan = Carbon::parse($dataKota->tanggal_pengajuan)->translatedFormat('d F Y');
                 $dataKota->judul_ta = $dataKota->kota?->judul_ta ?? '-';
+                $dataKota->nama_kota = $dataKota->kota?->nama_kota ?? '-';
+                
 
                 if ($dataKota->jenis_pengajuan === 'seminar_3') {
                     $dataKota->jenis_pengajuan = 'Seminar 3';
@@ -141,7 +148,7 @@ class VerifikasiBerkasController extends Controller
         }
 
         $daftarDokumen = collect([$fileTA, $filePresentasi, $ftaSatu, $ftaDua])->filter(); // hindari null
-
+        
         return view('PerencanaanDanPelaksanaanSeminar3DanSidang.views.kelolaBerkasPengajuan.DetailPengajuan', compact('dataKota', 'daftarDokumen','tipe', 'kategori'));
     }
 
@@ -151,18 +158,6 @@ class VerifikasiBerkasController extends Controller
         $catatan = $request->input('catatan', '');
         $nip = auth()->user()->username;
 
-        if ($keputusan === 'tidak_disetujui') {
-            // Ambil data berkas berdasarkan ID
-            $dataKota = Kota::where('id_kota', $id)->first(); 
-
-            // Hapus berkas (jika ada)
-            if ($dataKota && isset($dataKota->berkas)) {
-                foreach (json_decode($dataKota->berkas) as $berkas) {
-                    Storage::delete("public/berkas/{$berkas->file}");
-                }
-            }
-        }
-
         VerifikasiBerkasPengajuan::where('id_pengajuan', $id)
             ->update([
                 'nip' => $nip,
@@ -170,7 +165,37 @@ class VerifikasiBerkasController extends Controller
                 'catatan' => $catatan,
                 'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-    
+
+        if ($keputusan === 'tidak_disetujui') {
+            $keputusan = 'ditolak';
+        }
+
+        // Ke MHS
+        try {
+            if ($id) {
+                $id_kota = VerifikasiBerkasPengajuan::where('id_pengajuan', $id)->value('id_kota');
+                $mahasiswa = KotaUser::where('id_kota', $id_kota)->pluck('username');
+                foreach($mahasiswa as $username){
+                    if ($username) {
+                        $username->notify(new TestEmailNotification(
+                            'Perubahan Status Dokumen Tugas Akhir!',
+                            [
+                                'nip' => $nip,
+                                'status_konfirmasi' => $keputusan,
+                                'catatan' => $catatan,
+                                'tanggal_verifikasi' => Carbon::now()->format('Y-m-d H:i:s')
+                            ]
+                        ));
+                    }
+                }
+            }
+        } catch (\Exception $notifEx) {
+            \Log::error('Gagal mengirim notifikasi pemberian feedback: ' . $notifEx->getMessage(), [
+                'id_pengajuan' => $id,
+                'username' => $username
+            ]);
+        }
+
         return redirect()->route('kelola.berkas.list', ['tipe' => $tipe])
             ->with('success', "Pengajuan telah $keputusan.");
     }

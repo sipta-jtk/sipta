@@ -7,6 +7,8 @@ use Illuminate\Routing\Controller;
 use App\Models\AmbangBatas;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use \App\Models\User;
+use App\Notifications\TestEmailNotification;
 
 Carbon::setLocale('id');
 
@@ -23,8 +25,8 @@ class AmbangBatasController extends Controller
                 'id' => $item->id_ambang_batas,
                 'ambang_batas' => $item->ambang_batas,
                 'tanggal' => $item->updated_at
-                    ? Carbon::parse($item->updated_at)->translatedFormat('H:i d F Y')
-                    : Carbon::now()->translatedFormat('H:i d F Y'),
+                    ? Carbon::parse($item->updated_at)->translatedFormat('d F Y H:i')
+                    : Carbon::now()->translatedFormat('d F Y H:i'),
                 'koordinator' => $item->dosen && $item->dosen->user ? $item->dosen->user->nama : 'Tidak Ada', // Ambil nama dosen dari user
                 'status' => ucfirst(str_replace('_', ' ', $item->status_ambang_batas)) // Ubah menjadi format yang lebih rapi
             ];
@@ -88,6 +90,19 @@ class AmbangBatasController extends Controller
                     ];
                 }
             });
+
+            try {
+                // Kirim notifikasi ke semua user
+                $allUsers = User::all();
+                foreach ($allUsers as $user) {
+                    $user->notify(new \App\Notifications\TestEmailNotification(
+                        '[Pemberitahuan] Ambang Batas Baru',
+                        ['AmbangBatas' => $request->ambang_batas]
+                    ));
+                }
+            } catch (\Exception $notifEx) {
+                \Log::error('Gagal mengirim notifikasi Ambang Batas: ' . $notifEx->getMessage());
+            }
 
             return response()->json($response);
         } catch (\Exception $e) {

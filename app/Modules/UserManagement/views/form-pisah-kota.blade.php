@@ -2,15 +2,30 @@
 
 @section('title', 'Form Pisah KoTA')
 
+@php
+$prefix = env('PREFIX_URL', '');
+@endphp
 @section('content_header')
-    <h1>Form Pisah KoTA</h1>
+    <h1 class="mb-3">Form Pisah KoTA</h1>
+    <div>
+        @component('UserManagement.components.breadcrumb', [
+            'links' => [
+                ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+                ['url' => url('/' . $prefix . '/kota-saya'), 'label' => 'Detail Kelompok TA'],
+                ['url' => '', 'label' => 'Form Pisah KoTA'],
+            ]
+        ])
+        @endcomponent
+    </div>
 @stop
+
+
 
 @section('content')
 <div class="card">
     <div class="card-body">
         @csrf
-        <a href="{{ url()->previous() }}" class="btn btn-primary mb-3">
+        <a href="{{ route('kota.saya') }}" class="btn btn-primary mb-3">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
 
@@ -55,7 +70,7 @@
                     </a>
                 </div>
             </div>
-        @else
+        @elseif($kota->status_kota === 'aktif')
             <span class="text-danger">Belum ada file FTA 20.</span>
         @endif
 

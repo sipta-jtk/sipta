@@ -24,6 +24,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 1
             ],
             [
@@ -32,6 +33,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -40,6 +42,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 1
             ],
             [
@@ -48,6 +51,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 2
             ],
             [
@@ -56,6 +60,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -64,6 +69,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 2
             ],
             [
@@ -72,6 +78,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 3
             ],
             [
@@ -80,6 +87,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -88,6 +96,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 5
             ],
             [
@@ -96,6 +105,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 5
             ],
             [
@@ -104,6 +114,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -112,6 +123,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 5
             ],
             [
@@ -120,6 +132,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 6
             ],
             [
@@ -128,6 +141,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -136,6 +150,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 6
             ],
             [
@@ -144,6 +159,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 6
             ],
             [
@@ -152,6 +168,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -160,6 +177,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 3
             ],
             [
@@ -168,6 +186,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 4
             ],
             [
@@ -176,6 +195,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 2,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -184,6 +204,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 7
             ],
             [
@@ -192,6 +213,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 7
             ],
             [
@@ -200,6 +222,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_non_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => null
             ],
             [
@@ -208,6 +231,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3A',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 7
             ],
             [
@@ -216,6 +240,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 8
             ],
             [
@@ -224,6 +249,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 9
             ],
             [
@@ -232,6 +258,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 8
             ],
             [
@@ -240,6 +267,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 8
             ],
             [
@@ -248,6 +276,7 @@ class MahasiswaSeeder extends Seeder
                 'kelas' => '3B',
                 'id_prodi' => 1,
                 'status_ta' => 'mahasiswa_ta',
+                'tahun_ta' => 2025,
                 'id_kota' => 9
             ]
         ];

@@ -2,6 +2,8 @@
 
 @php
     $isKoordinator = auth()->user()->dosen->role_dosen === 'koordinator_ta';
+    $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+    $kirimNotifikasiBatchUrl = url($prefix . '/PengajuanAlokasiPembimbing/alokasi/kirim-notifikasi-batch');
 @endphp
 
 @section('css')
@@ -47,6 +49,14 @@
             max-height: calc(80vh - 120px);
             /* Adjusted to fit within the card wrapper */
         }
+        
+        /* Ensure collapse is hidden by default but can be shown */
+        #filterProdiMenu, #filterMenu {
+            display: none;
+        }
+        #filterProdiMenu.show, #filterMenu.show {
+            display: block;
+        }
     </style>
 @stop
 
@@ -81,6 +91,7 @@
                         </button>
 
                         <!-- NOTIF KEL REN REN -->
+                        <meta name="csrf-token" content="{{ csrf_token() }}">
                         @if ($isKoordinator)
                             <button class="btn btn-sm btn-info ml-1" onclick="confirmSendNotification()"
                                 title="Kirim notifikasi ke Mahasiswa dan Dosen">
@@ -423,6 +434,11 @@
     @include('PengajuanAlokasiPembimbing.Helper.JS.SweetAlert')
 
     <script>
+        // Variabel global untuk URL fetch
+        const KIRIM_NOTIFIKASI_BATCH_URL = @json($kirimNotifikasiBatchUrl);
+    </script>
+
+    <script>
         const prodiList = @json(collect($list_prodi)->mapWithKeys(function ($item) {
                 return [$item->id_prodi => substr($item->nama_prodi, 0, 2)];
             }));
@@ -467,9 +483,39 @@
         $(document).ready(function() {
             adjustSidebar();
 
+            // Ensure filter menus are hidden on page load
+            $('#filterProdiMenu, #filterMenu').hide().removeClass('show');
+            
             $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
                 updateKuotaDosen();
+            });
+
+            // Fix filter collapse toggling
+            $('[data-toggle="collapse"]').click(function() {
+                const target = $($(this).data('target'));
+                if (target.hasClass('show')) {
+                    target.collapse('hide');
+                    $(this).attr('aria-expanded', 'false');
+                } else {
+                    target.collapse('show');
+                    $(this).attr('aria-expanded', 'true');
+                }
+            });
+
+            // Direct implementation of filter toggle without relying on Bootstrap collapse
+            $('button[data-toggle="collapse"]').off('click').on('click', function() {
+                const targetId = $(this).data('target');
+                const filterMenu = $(targetId);
+                
+                filterMenu.slideToggle(200);
+                
+                // Toggle aria-expanded attribute
+                const expanded = $(this).attr('aria-expanded') === 'true';
+                $(this).attr('aria-expanded', (!expanded).toString());
+                
+                // Toggle show class for Bootstrap compatibility
+                filterMenu.toggleClass('show');
             });
 
             // Init dosenTable
@@ -849,6 +895,27 @@
                         console.table(window.mahasiswaNotified);
                         console.table(window.dosenNotified);
 
+                        fetch(KIRIM_NOTIFIKASI_BATCH_URL, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                mahasiswa: window.mahasiswaNotified,
+                                dosen: window.dosenNotified,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            toast('success', 'Sukses', data.message);
+                        })
+                        .catch(error => {
+                            console.error('Gagal kirim notifikasi:', error);
+                            toast('error', 'Gagal', 'Terjadi kesalahan saat mengirim notifikasi.');
+                        });
+
+                        // toast('success', 'Terkirim', `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`);
                         toast('success', 'Terkirim',
                             `Notifikasi akan dikirim ke ${window.mahasiswaNotified.length} mahasiswa dan ${window.dosenNotified.length} dosen`
                         );

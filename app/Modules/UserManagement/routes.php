@@ -17,13 +17,14 @@ use App\Modules\UserManagement\Controllers\DetailKoTAController;
 use App\Modules\UserManagement\Controllers\ProfileController;
 use App\Modules\UserManagement\Controllers\ManagementKoTAController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Modules\UserManagement\Controllers\LogLoginController;
+
 
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-use App\Modules\UserManagement\Controllers\TestServiceCallController;
 use App\Modules\UserManagement\Controllers\TokenVerify;
 use App\Modules\UserManagement\Controllers\ImpersonateController;
 
@@ -58,6 +59,8 @@ Route::prefix($prefix)->group(function () {
      * ========== User Management ==========
      */
     Route::get('/user_management', [UserManagementController::class, 'render']);
+    
+    
 
     Route::middleware(['auth', 'can:admin'])->group(function () {
         Route::get('/manajemen-akun-dosen', [UserManagementController::class, 'manage_dosen'])->name('manage.dosen');
@@ -93,6 +96,8 @@ Route::prefix($prefix)->group(function () {
         Route::post('/kelola-kbk', [KBKController::class, 'store'])->name('kelola-kbk.store');
         Route::post('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
         Route::delete('/kelola-kbk/{id}', [KBKController::class, 'destroy'])->name('kelola-kbk.destroy');
+        Route::put('/kelola-kbk/update/{id}', [KBKController::class, 'update'])->name('kelola-kbk.update');
+
 
         // Program Studi
         Route::get('/program-studi', [ProgramStudiController::class, 'index'])->name('program-studi.index');
@@ -101,6 +106,10 @@ Route::prefix($prefix)->group(function () {
         Route::get('/program-studi/{id}/edit', [ProgramStudiController::class, 'edit'])->name('program-studi.edit');
         Route::put('/program-studi/{id}', [ProgramStudiController::class, 'update'])->name('program-studi.update');
         Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])->name('program-studi.destroy');
+
+        // Log Login routes
+         Route::get('/log-login', [LogLoginController::class, 'index'])->name('log.login');
+        
     });
 
 
@@ -139,6 +148,17 @@ Route::prefix($prefix)->group(function () {
         Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
     });
 
+    
+    /**
+     * ========== Kajur dan Kaprodi ==========
+     */
+    Route::middleware(['auth', 'can:pemimpin'])->group(function () {
+        Route::get('/pendataan-mahasiswa', [UserManagementController::class, 'show_mhs']);
+        Route::get('/pendataan-kelompok-ta', [UserManagementController::class, 'show_kelompok_ta']);
+        Route::get('/detail-kota-prodi/{id}', [UserManagementController::class, 'getDetailKotaProdi']);
+
+});
+
 
     /**
      * ========== Profile & Dashboard ==========
@@ -158,6 +178,6 @@ Route::prefix($prefix)->group(function () {
     /**
      * ========== Misc ==========
      */
-    Route::get('/external-service/ruangan', [TestServiceCallController::class, 'redirectToExternalService'])->name('test.service.call')->middleware('auth');
     Route::get('/usermanagement/v1/role', [TokenVerify::class, 'verifyToken']);
 });
+

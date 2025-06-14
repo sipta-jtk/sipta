@@ -1,3 +1,6 @@
+@php
+$prefix = env('PREFIX_URL','');
+@endphp
 @extends('adminlte::page')
 
 @section('title', 'Data Dosen')
@@ -5,10 +8,10 @@
 @section('content_header')
     <h1>Data Dosen</h1>
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
         'links' => [
-        ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-        ['url' => url(), 'label' => 'Manajemen Akun Dosen']
+            ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+            ['url' => '', 'label' => 'Manajemen Akun Dosen']
         ]])
         @endcomponent
         </div>
@@ -77,9 +80,7 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $no = 1;
-                @endphp
+
                 @foreach ($dosen as $d)
                 <tr>
                     <td class="first_column">
@@ -88,7 +89,7 @@
                     @endif
                     
                     </td>
-                    <td>{{$no++}}</td>
+                    <td></td>
                     <td>{{ $d->nip }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->email }}</td>
@@ -319,21 +320,36 @@
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
+jQuery(document).ready(function($) {
+
     $('#datatable').DataTable({
-        order : [[1, 'asc']],
-        paging: false,
-        searching: true,
-        language: {
-            search: "Cari:",
-            lengthMenu: "Tampilkan MENU data per halaman",
-            zeroRecords: "Data tidak ditemukan",
-            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data tersedia",
-            infoFiltered: "(difilter dari total _MAX_ data)",
-        },
-        columnDefs: [
-        { orderable: false, targets: [0, -1] } // checkbox dan aksi tidak bisa sort
-    ]
+            responsive: true,
+            paging : false,
+            dom: 't',
+            columnDefs: [
+                { targets: [1, 6], orderable: false } // Kolom No & Aksi tidak bisa disort
+            ],
+            language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data tersedia",
+                    infoFiltered: "(difilter dari total _MAX_ data)",
+                    paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                    }
+                    },
+            drawCallback: function (settings) {
+                let api = this.api();
+                api.column(1, { page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
 });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -454,60 +470,40 @@ document.addEventListener("DOMContentLoaded", function () {
  
     
 
-    $(document).ready(function () {
-        $(".btn-change-role").click(function () {
-            var nip = $(this).data("nip");
-            var nama = $(this).data("nama");
-            var role = $(this).data("role");
+// Event delegation untuk semua tombol
+$(document).on('click', '.btn-change-role', function() {
+    var data = $(this).data();
+    $("#nip-input").val(data.nip);
+    $("#nama-input").val(data.nama);
+    $("#role-input").val(data.role);
+});
 
-            document.getElementById("nip-input").value = nip;
-            document.getElementById("nama-input").value = nama;
-            document.getElementById("role-input").value = role;
-        });
-    });
-    
-     $(document).ready(function () {
-         $(".btn-update-dosen").click(function () {
- 
-             var nip = $(this).data("nip");
-             var nama = $(this).data("nama");
-             var email = $(this).data("email");
-             var no_whatsapp = $(this).data("no_whatsapp");
-             var id_dosen = $(this).data("id_dosen");
-             var kode_dosen = $(this).data("kode_dosen");
-             var id_kbk = $(this).data("id_kbk");
+$(document).on('click', '.btn-update-dosen', function() {
+    var data = $(this).data();
+    $("#nip-update").val(data.nip);
+    $("#nama-update").val(data.nama);
+    $("#email-update").val(data.email);
+    $("#no_whatsapp-update").val(data.no_whatsapp);
+    $("#id_dosen-update").val(data.id_dosen);
+    $("#kode_dosen-update").val(data.kode_dosen);
+    $("#kbk-update").val(data.id_kbk).trigger('change');
+});
 
-             document.getElementById("nip-update").value = nip;
-             document.getElementById("nama-update").value = nama;
-             document.getElementById("email-update").value = email;
-             document.getElementById("no_whatsapp-update").value = no_whatsapp;
-             document.getElementById("id_dosen-update").value = id_dosen;
-             document.getElementById("kode_dosen-update").value = kode_dosen;
-             document.getElementById("kbk-update").value = id_kbk;
-             console.log(id_kbk);
- 
-         });
-     });
-       $(document).ready(function () {
-        $(".btn-nonaktif-dosen").click(function () {
-            var nip = $(this).data("nip");
-            var nama = $(this).data("nama");
-            document.getElementById("nip-input-nonaktif").value = nip;
-            document.getElementById("konfirmasi-pesan-nonaktif").textContent = 
-            "Apakah Anda yakin ingin menonaktifkan dosen " + nama + "?";
-    });
-        });
+$(document).on('click', '.btn-nonaktif-dosen', function() {
+    var data = $(this).data();
+    $("#nip-input-nonaktif").val(data.nip);
+    $("#konfirmasi-pesan-nonaktif").text(
+        `Apakah Anda yakin ingin menonaktifkan dosen ${data.nama}?`
+    );
+});
 
-     $(document).ready(function () {
-        $(".btn-aktif-dosen").click(function () {
-            var nip = $(this).data("nip");
-            var nama = $(this).data("nama");
-            document.getElementById("nip-input-aktif").value = nip;
-            document.getElementById("konfirmasi-pesan-aktif").textContent = 
-            "Apakah Anda yakin ingin mengaktifkan dosen " + nama + "?";
-        });
-    });
-    
+$(document).on('click', '.btn-aktif-dosen', function() {
+    var data = $(this).data();
+    $("#nip-input-aktif").val(data.nip);
+    $("#konfirmasi-pesan-aktif").text(
+        `Apakah Anda yakin ingin mengaktifkan dosen ${data.nama}?`
+    );
+});
     
 
  

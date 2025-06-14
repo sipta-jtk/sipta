@@ -2,7 +2,7 @@ $(document).ready(function () {
     var table = $("#nilaiAkhirTable").DataTable({
         columnDefs: [
             {
-                targets: 0, // Kolom pertama (No)
+                targets: 0, 
                 searchable: false,
                 orderable: false,
             },
@@ -44,7 +44,26 @@ $(document).ready(function () {
     $('#edit-button').click(function () {
         $('.bobot-input, .sumber-nilai').prop('disabled', false); // Aktifkan input
         $('#submit-button').prop('disabled', false); // Aktifkan tombol Simpan
-        $(this).prop('disabled', true); // Nonaktifkan tombol Edit
+        $(this).addClass('d-none'); // Sembunyikan tombol Edit
+        $('#submit-button, #cancel-button').removeClass('d-none'); // Tampilkan tombol Simpan dan Batal
+    });
+
+    // Tombol Batal
+    $('#cancel-button').click(function () {
+        location.reload(); // Redirect ke halaman yang sama untuk reset form
+    });
+
+    // Tombol Simpan
+    $('#submit-button').click(function () {
+        // Validasi form sebelum submit
+        if (!validateForm()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal menyimpan!',
+                html: $('#error-list').html(),
+            });
+            return false;
+        }
     });
 
     table

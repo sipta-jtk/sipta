@@ -100,6 +100,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
         Route::delete('/{id}', [PengelolaanPeriodeController::class, 'delete_PengelolaanPeriode'])->name('delete');
     });
 
+    Route::post('/alokasi/kirim-notifikasi-batch', [AlokasiPembimbingv2Controller::class, 'kirimNotifikasiBatch']);
 
 });
 

@@ -3,12 +3,15 @@
 @section('title', 'Monitoring Dosen Pembimbing')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
 <div class="container-fluid p-2">
     <h1 class="mb-0">Monitoring Dosen Pembimbing</h1>
 
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
         'links' => [
-            ['url' => route('beranda.get'), 'label' => 'Beranda'],
+            ['url' => "/$prefix", 'label' => 'Beranda'],
             ['url' => '', 'label' => 'Monitoring Dosen Pembimbing']
         ]
     ])
@@ -77,8 +80,7 @@
                         <th style="width: 10%;">Nama KoTA</th>
                         <th style="width: 20%;">Judul Topik</th>
                         <th style="width: 15%;">Jenis TA</th>
-                        <th style="width: 10%;">Seminar I</th>
-                        <th style="width: 10%;">Seminar II</th>
+                        {{-- Kolom Seminar I dan II dihapus --}}
                         <th style="width: 10%;">Seminar III</th>
                         <th style="width: 10%;">Sidang Akhir</th>
                         <th style="width: 10%;">Penilaian Pembimbing</th>
@@ -92,11 +94,11 @@
                         <td>{{ $row['judul_ta'] }}</td>
                         <td>{{ $row['jenis_ta'] }}</td>
 
-                        @foreach (['Seminar I', 'Seminar II', 'Seminar III', 'Sidang Akhir'] as $namaFta)
+                        {{-- Hanya tampilkan Seminar III dan Sidang Akhir --}}
+                        @foreach (['Seminar III', 'Sidang Akhir'] as $namaFta)
                             <td>
                                 @php
                                     $fta = $row['fta'][$namaFta];
-                                    // dump($fta);
                                 @endphp
                                 @if ($fta)
                                     <div class="tooltip-wrapper position-relative">
@@ -120,6 +122,8 @@
                                 @endif
                             </td>
                         @endforeach
+
+                        {{-- Penilaian Pembimbing --}}
                         <td>
                             @php
                                 $sidangAkhir = $row['fta']['Sidang Akhir'] ?? null;
@@ -129,7 +133,7 @@
                                 <div class="position-relative d-inline-block">
                                     <a title="Ubah" 
                                     class="btn btn-warning btn-md m-1 {{ $isSidangAkhirAvailable ? '' : 'disabled-link' }}"
-                                    href="{{ $isSidangAkhirAvailable ? route('pengisian.nilai.dosbing', ['namaFta' => 'dosen-pembimbing', $sidangAkhir['id_kota']]) : '#' }}">
+                                    href="{{ $isSidangAkhirAvailable ? route('pengisian.nilai', ['namaFta' => 'dosen-pembimbing', $sidangAkhir['id_kota']]) : '#' }}">
                                         <i class="fas fa-edit text-dark m-1"></i>
                                     </a>
                                     @if (!$isSidangAkhirAvailable)
@@ -139,9 +143,6 @@
                                     @endif
                                 </div>
                             </div>
-                            
-
-                            
                         </td>
 
                     </tr>

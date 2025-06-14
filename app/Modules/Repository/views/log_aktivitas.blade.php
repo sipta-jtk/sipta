@@ -3,16 +3,16 @@
 @section('title', 'Log Aktivitas')
 
 @section('content_header')
-    <h1 class="mb-3">Log Aktivitas</h1>
-    <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
-            'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
-                ['url' => '', 'label' => 'Log Aktivitas']
-            ]
-        ])
-        @endcomponent
-    </div>
+<h1 class="mb-3">Log Aktivitas</h1>
+<div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+    'links' => [
+    ['url' => url('/'), 'label' => 'Beranda'],
+    ['url' => '', 'label' => 'Log Aktivitas']
+    ]
+    ])
+    @endcomponent
+</div>
 @stop
 
 @section('content')
@@ -22,10 +22,6 @@
         <button id="toggleFilter" class="btn btn-outline-secondary">
             <i class="fas fa-filter"></i> Filter
         </button>
-        <div>
-            <a href="{{ url('/monitoring-penyimpanan') }}" class="btn btn-secondary">Monitoring Penyimpanan</a>
-            <a href="{{ url('/repository') }}" class="btn btn-secondary">Akses Dokumen</a>
-        </div>
     </div>
 
     <!-- Form Filter -->
@@ -42,12 +38,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Pengguna:</label>
-                        <select name="user_id" class="form-control">
+                        <select name="username" class="form-control">
                             <option value="">-- Semua Pengguna --</option>
                             @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->nama }}
-                                </option>
+                            <option value="{{ $user->username }}" {{ request('username') == $user->username ? 'selected' : '' }}>
+                                {{ $user->nama }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -56,12 +52,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>ID KoTA:</label>
-                        <select name="kota_id" class="form-control">
+                        <select name="id_kota" class="form-control">
                             <option value="">-- Semua KoTA --</option>
                             @foreach($kotas as $kota)
-                                <option value="{{ $kota->id }}" {{ request('kota_id') == $kota->id ? 'selected' : '' }}>
-                                    {{ $kota->nama_kota }}
-                                </option>
+                            <option value="{{ $kota->id_kota }}" {{ request('id_kota') == $kota->id_kota ? 'selected' : '' }}>
+                                {{ $kota->nama_kota }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -73,9 +69,9 @@
                         <select name="action" class="form-control">
                             <option value="">-- Semua Aktivitas --</option>
                             @foreach($actions as $action)
-                                <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>
-                                    {{ $action }}
-                                </option>
+                            <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>
+                                {{ $action }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -121,24 +117,20 @@
                 </thead>
                 <tbody>
                     @forelse($logAktivitas as $index => $log)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ \Carbon\Carbon::parse($log->waktu_aktivitas)->translatedFormat('H:i d F Y') }}</td>
-                            <td>{{ $log->user ? $log->user->nama : 'No user' }}</td>
-                            <td>{{ $log->kota ? $log->kota->nama_kota : 'No KoTA' }}</td>
-                            <td>{{ $log->action }}</td>
-                        </tr>
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ \Carbon\Carbon::parse($log->waktu_aktivitas)->translatedFormat('H:i d F Y') }}</td>
+                        <td>{{ $log->user ? $log->user->nama : 'No user' }}</td>
+                        <td>{{ $log->kota ? $log->kota->nama_kota : 'No KoTA' }}</td>
+                        <td>{{ $log->action }}</td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak ada data log aktivitas yang ditemukan</td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">Tidak ada data log aktivitas yang ditemukan</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
-
-            <div class="d-flex justify-content-center mt-3">
-                {{ $logAktivitas->appends(request()->query())->links() }}
-            </div>
         </div>
     </div>
 </div>
@@ -152,39 +144,42 @@
 <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var toggleFilter = document.getElementById("toggleFilter");
-    var filterOptions = document.getElementById("filterOptions");
+    document.addEventListener("DOMContentLoaded", function() {
+        var toggleFilter = document.getElementById("toggleFilter");
+        var filterOptions = document.getElementById("filterOptions");
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.toString()) {
-        filterOptions.style.display = "block";
-    }
-
-    toggleFilter.addEventListener("click", function() {
-        if (filterOptions.style.display === "none" || filterOptions.style.display === "") {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.toString()) {
             filterOptions.style.display = "block";
-        } else {
-            filterOptions.style.display = "none";
         }
-    });
 
-    $('#logAktivitasTable').DataTable({
-        language: {
-            search: "Cari:",
-            lengthMenu: "Tampilkan _MENU_ data per halaman",
-            zeroRecords: "Data tidak ditemukan",
-            info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
-            infoEmpty: "Tidak ada data tersedia",
-            infoFiltered: "(difilter dari total _MAX_ data)",
-            paginate: {
-                first: "<<",
-                last: ">>",
-                next: ">",
-                previous: "<"
+        toggleFilter.addEventListener("click", function() {
+            if (filterOptions.style.display === "none" || filterOptions.style.display === "") {
+                filterOptions.style.display = "block";
+            } else {
+                filterOptions.style.display = "none";
             }
-        }
+        });
+
+        $('#logAktivitasTable').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari total _MAX_ data)",
+                paginate: {
+                    first: "<<",
+                    last: ">>",
+                    next: ">",
+                    previous: "<"
+                }
+            },
+            paging: true,
+            ordering: true,
+            searching: true
+        });
     });
-});
 </script>
 @stop

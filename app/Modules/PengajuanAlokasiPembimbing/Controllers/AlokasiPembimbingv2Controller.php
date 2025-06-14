@@ -18,6 +18,8 @@ use App\Models\KetertarikanBidang;
 use App\Models\KuotaMembimbing;
 use Illuminate\Support\Facades\DB;
 use App\Models\PreferensiKota;
+use App\Services\Notifikasi;
+use App\Notifications\TestEmailNotification;
 
 class AlokasiPembimbingv2Controller extends Controller
 {
@@ -203,9 +205,13 @@ class AlokasiPembimbingv2Controller extends Controller
         DB::table('alokasi_dosen')
             ->where('id_pengajuan_pembimbing', $id_pengajuan)
             ->where('urutan_prioritas_terpilih', $urutan_prioritas)
+            ->where('tipe_alokasi', 'pembimbing')
             ->delete();
 
-        return redirect()->back()->with('success', 'Alokasi berhasil dihapus!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alokasi pembimbing berhasil dihapus.'
+        ]);
     }
 
     public function fixAlokasi(Request $request)
@@ -255,7 +261,14 @@ class AlokasiPembimbingv2Controller extends Controller
                 'tipe_alokasi' => 'pembimbing',
             ]);
 
-        $newStatusPengajuan = ($newStatusAlokasi === 'fix') ? 'diterima' : 'diproses';
+        $jumlah_fix = DB::table('alokasi_dosen')
+            ->where('id_pengajuan_pembimbing', $id_pengajuan)
+            ->where('tipe_alokasi', 'pembimbing')
+            ->where('status_alokasi', 'fix')
+            ->count();
+
+        $newStatusPengajuan = ($jumlah_fix >= 2) ? 'diterima' : 'diproses';
+
 
         // Update status pengajuan jadi DITERIMA
         DB::table('pengajuan_pembimbing')
@@ -270,5 +283,77 @@ class AlokasiPembimbingv2Controller extends Controller
             'message' => 'Alokasi berhasil diperbarui!'
         ]);
 
+    }
+    public function kirimNotifikasiBatch(Request $request)
+    {
+        $mahasiswaList = $request->mahasiswa ?? [];
+        $dosenList = $request->dosen ?? [];
+
+        $koordinatorName = auth()->user()->nama;
+        $waktu = now()->format('d-m-Y H:i');
+
+        $errorCount = 0;
+
+        // Kirim notifikasi ke mahasiswa
+        foreach ($mahasiswaList as $mhs) {
+            try {
+                // Cari user berdasarkan username (karena NIM disimpan di kolom 'username')
+                $user = User::where('username', $mhs['nim'])->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Alokasi Dosen Pembimbing TA Anda Telah Disetujui!',
+                        [
+                            'nama_koordinator' => $koordinatorName,
+                            'topik' => 'Alokasi Bimbingan Disetujui',
+                            'nama_mahasiswa' => $mhs['nama'],
+                            'nim' => $mhs['nim'],
+                            'tanggal' => $waktu
+                        ]
+                    ));
+                }
+            } catch (\Exception $notifEx) {
+                $errorCount++;
+                \Log::error('Gagal mengirim notifikasi ke mahasiswa: ' . $notifEx->getMessage(), [
+                    'nim' => $mhs['nim'],
+                    'nama' => $mhs['nama']
+                ]);
+            }
+        }
+
+        // Kirim notifikasi ke dosen
+        foreach ($dosenList as $id_dosen) {
+            try {
+                // Cari user berdasarkan username (karena NIP disimpan di kolom 'username')
+                $dosen = Dosen::where('id_dosen', $id_dosen['idDosen'])->value('username');
+                $user = User::where('username', $dosen->nip)->first();
+                if ($user) {
+                    $user->notify(new TestEmailNotification(
+                        '[Pemberitahuan] Penugasan Sebagai Dosen Pembimbing TA',
+                        [
+                            'nama_koordinator' => $koordinatorName,
+                            'topik' => 'Alokasi Bimbingan Disetujui',
+                            'nama_dosen' => $user['nama'],
+                            'nip' => $dosen['nip'],
+                            'tanggal' => $waktu
+                        ]
+                    ));
+                }
+            } catch (\Exception $notifEx) {
+                $errorCount++;
+                \Log::error('Gagal mengirim notifikasi ke dosen: ' . $notifEx->getMessage(), [
+                    'nip' => $dosen['nip'],
+                    'nama' => $dosen['nama']
+                ]);
+            }
+        }
+
+        $successMessage = 'Notifikasi berhasil dikirim ke ' . count($mahasiswaList) . ' mahasiswa dan ' . count($dosenList) . ' dosen.';
+        if ($errorCount > 0) {
+            $successMessage .= " Terdapat {$errorCount} notifikasi yang gagal dikirim.";
+        }
+
+        return response()->json([
+            'message' => $successMessage
+        ]);
     }
 }

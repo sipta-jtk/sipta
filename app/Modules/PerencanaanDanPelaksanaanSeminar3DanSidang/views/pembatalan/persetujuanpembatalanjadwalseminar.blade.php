@@ -38,7 +38,7 @@
                 <td>{{ $s->judul_ta }}</td>
                 <td>{{ $s->tanggal }}</td>
                 <td>{{ $s->sesi }}</td>
-                <td>{{ $s->id_ruangan }}</td>
+                <td>{{ $s->nama_ruangan }}</td>
                 <td>{{ $s->nama }}</td>
                 <td>{{ $s->alasan_pembatalan }}</td>
                 <td>

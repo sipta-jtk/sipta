@@ -3,6 +3,9 @@
 @section('title', 'Rekapitulasi Nilai')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <div class="container-fluid p-3">
         <!-- Judul Halaman -->
         <h1 class="mb-0">Detail Nilai {{ $detailInformasiFta->nama_fta }} <br /> {{ $detailInformasiFta->prodi->nama_prodi }}</h1>
@@ -10,13 +13,12 @@
         {{-- TBD perbaiki breadcrumb --}}   
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => route('beranda.get'), 'label' => 'Beranda'],
+                ['url' => "/$prefix", 'label' => 'Beranda'],
                 ['url' => route('kelola.penilaian'), 'label' => 'Kelola Nilai'],
                 ['url' => '', 'label' =>  'Data' ]
                 ]
                 ])
         @endcomponent
-        
     </div>
 @stop
 
@@ -25,7 +27,7 @@
         <!-- Button Import From Excel -->
         @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))
             <div class="mb-3">
-                <form action="{{ route('import.nilai') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('import.nilai', ['namaFta' => $detailInformasiFta->nama_fta, 'idProdi' => $detailInformasiFta->prodi->nama_prodi]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="file" class="form-control d-inline-block w-auto" required>
                     <button type="submit" class="btn btn-success">Impor dari Excel</button>
@@ -34,10 +36,11 @@
         @endif
         {{-- Tabel Scrollable --}}
         <div>
-            <table id="alokasiTable" class="table text-center table-stripped table-hover">
+            <table id="alokasiTable" class="table text-center table-striped table-hover">
                 <thead class="sticky-header">
                     <tr class="bg-dark text-white">
                         <th rowspan="2" class="align-middle" style="width: 3%;">No</th>
+                        <th rowspan="2" class="align-middle" style="width: 3%;">NIM</th>
                         <th rowspan="2" class="align-middle" style="width: 20%;">Nama</th>
                         <th rowspan="2" class="align-middle" style="width: 4%;">Kelompok</th>
                         <th rowspan="2" class="align-middle">Penguji 1</th>
@@ -46,9 +49,6 @@
                         <th colspan="3" style="width: 10%;">Nilai</th>
                         @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar iii', 'sidang akhir']))    
                             <th colspan="3" style="width: 10%;">Feedback</th>
-                        @endif
-                        @if (in_array(strtolower($detailInformasiFta->nama_fta), ['seminar ii']))    
-                            <th rowspan="2" class="align-middle">Aksi</th>
                         @endif
                     </tr>
                     <tr class="bg-secondary text-white">
@@ -72,6 +72,9 @@
                         @foreach ($mahasiswaKelompok as $mahasiswa)
                             <tr>
                                 <td class="align-middle text-center">{{ $no++ }}</td>
+                                <td class="align-middle text-center">{{ $mahasiswa->nim }}</td>
+                                
+                                {{-- Nama Mahasiswa --}}
                                 <td class="align-middle text-start">{{ $mahasiswa->user->nama }}</td>
                                 <td class="align-middle text-center">{{ $mahasiswa->kota->nama_kota }}</td>
                                 
@@ -104,8 +107,9 @@
                                     // Ambil daftar feedback dari mahasiswa dan kelompokkan berdasarkan nip
                                     $feedbackGroupedByNip = collect($mahasiswa->kota->detailFeedback ?? [])->groupBy('nip');
                                 @endphp
-                                
+
                                 {{-- Iterasi untuk setiap nip --}}
+                                {{-- Belum ada filter kalau yang masuk kesana itu yang sudah di publish --}}
                                 @foreach ($feedbackGroupedByNip as $nip => $feedbacks)
                                     <td class="align-middle text-center">
                                         <i class="fas fa-check-square text-success"></i> {{-- Centang hijau jika ada feedback untuk nip ini --}}
@@ -118,49 +122,6 @@
                                         <i class="far fa-square text-muted"></i> {{-- Centang kosong jika tidak ada feedback --}}
                                     </td>
                                 @endfor
-
-                                {{-- @php
-                                    // Ambil data nilaiKategori untuk user yang sedang login
-                                    $nilaiKategoriUser = $mahasiswa->nilaiKategori
-                                        ->where('nip', auth()->user()->username)
-                                        ->first();
-                                @endphp
-                                
-                                @if (
-                                    !$nilaiKategoriUser || $nilaiKategoriUser->status_penilaian_dosen === 'draf'
-                                )
-                                    <td class="align-middle text-center d-flex flex-column gap-1">
-                                        <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                            Nilai
-                                        </a>
-                                        <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                            Masukan
-                                        </a>
-                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'publish']) }}" method="POST" class="w-100 mt-1">
-                                            @csrf
-                                            <input type="hidden" name="id_kota" value="{{ $mahasiswa->id_kota }}">
-                                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                Publikasikan
-                                            </button>
-                                        </form>
-                                    </td>
-                                @else
-                                    <td class="align-middle text-center d-flex flex-column gap-1">
-                                        <a href="{{  route('pengisian.nilai', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                            Lihat Nilai
-                                        </a>
-                                        <a href="{{  route('pengisian.masukan', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'idProdi' => $mahasiswa->id_prodi]) }}" class="btn btn-primary btn-sm">
-                                            Lihat Masukan
-                                        </a>
-                                        <form action="{{  route('kelola.penilaian.toggle-publish', ['namaFta' => $namaFta, 'idKota' => $mahasiswa->id_kota, 'action' => 'unpublish']) }}" method="POST" class="w-100 mt-1">
-                                            @csrf
-                                            <input type="hidden" name="id_kota" value="{{ $mahasiswa->id_kota }}">
-                                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                Batalkan Publikasi
-                                            </button>
-                                        </form>
-                                    </td>
-                                @endif --}}
                             </tr>
                         @endforeach
                     @endforeach

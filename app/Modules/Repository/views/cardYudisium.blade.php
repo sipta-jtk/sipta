@@ -18,19 +18,10 @@
         <button class="nav-link" id="tab-fta-tab" data-toggle="tab" data-target="#tab-fta" type="button" role="tab" aria-controls="tab-fta" aria-selected="false">FTA</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Power Point</button>
+        <button class="nav-link" id="tab-srs-tab" data-toggle="tab" data-target="#tab-srs" type="button" role="tab" aria-controls="tab-srs" aria-selected="false">Dokumen Teknis</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-srs-tab" data-toggle="tab" data-target="#tab-srs" type="button" role="tab" aria-controls="tab-srs" aria-selected="false">SRS</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-sdd-tab" data-toggle="tab" data-target="#tab-sdd" type="button" role="tab" aria-controls="tab-sdd" aria-selected="false">SDD</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-sbm-tab" data-toggle="tab" data-target="#tab-sbm" type="button" role="tab" aria-controls="tab-sbm" aria-selected="false">Surat Bebas Masalah</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab-toeic-tab" data-toggle="tab" data-target="#tab-toeic" type="button" role="tab" aria-controls="tab-toeic" aria-selected="false">Hasil TOEIC</button>
+        <button class="nav-link" id="tab-pp-tab" data-toggle="tab" data-target="#tab-pp" type="button" role="tab" aria-controls="tab-pp" aria-selected="false">Dokumen Lainnya</button>
     </li>
 </ul>
 
@@ -150,31 +141,31 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
+                                    data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
+                                        data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -245,9 +236,9 @@
                                             <i class="fas fa-project-diagram mr-1"></i> Kode FTA
                                         </label>
                                         <select class="form-control select2bs4" name="kode_fta" style="width: 100%;">
-                                            <option value="FTA-18">FTA-18 - Bukti telah menyelesaikan hasil revisi laporan</option>
-                                            <option value="FTA-19">FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan</option>
-                                            <option value="FTA-19a">FTA-19a - Bukti telah merevisi abstrak dan tata tulis</option>
+                                            <option value="FTA-18">FTA 18 - Bukti Telah Menyelesaikan Revisi</option>
+                                            <option value="FTA-19">FTA 19 - Bukti Menyerahkan Laporan-FTA</option>
+                                            <option value="FTA-19a">FTA 19a - Bukti Menyerahkan Tata Tulis</option>
                                         </select>
                                     </div>
                                 </div>
@@ -316,31 +307,31 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
+                                    data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
+                                        data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -354,11 +345,11 @@
         </div>
     </div>
 
-    {{-- Tab: Power Point --}}
+    {{-- Tab: Lainnya --}}
     <div class="tab-pane fade" id="tab-pp" role="tabpanel" aria-labelledby="tab-pp-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen Presentasi</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen Lainnya</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -401,6 +392,20 @@
                                 </div>
 
                                 <div class="col-md-4">
+                                    <label>Jenis Dokumen</label>
+                                    <select class="form-control doctype-filter">
+                                        <option value="">Semua</option>
+                                        <option value="PowerPoint">PowerPoint</option>
+                                        <option value="Poster">Poster</option>
+                                        <option value="Template">Template</option>
+                                        <option value="Resume">Resume</option>
+                                        <option value="Lampiran">Lampiran</option>
+                                        <option value="SuratBebasMasalah">Surat Bebas Masalah</option>
+                                        <option value="HasilTOEIC">Hasil TOEIC</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label>Tanggal Dibuat</label>
                                     <input type="date" class="form-control date-filter">
                                 </div>
@@ -421,6 +426,7 @@
                             <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
+                            <th>Jenis Dokumen</th>
                             <th>Tanggal Dibuat</th>
                             <th>Terakhir Diedit</th>
                             <th>Aksi</th>
@@ -429,7 +435,7 @@
                     <tbody>
                         @if ($powerpoint->isEmpty())
                         <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                            <td colspan="{{ $kategori === 'fta' ? 8 : 7 }}" class="text-center">
                                 <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
                             </td>
                         </tr>
@@ -439,7 +445,7 @@
                             <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
-
+                            <td>{{ $doc->subkategori->nama_subkategori }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
@@ -467,31 +473,31 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
+                                    data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
+                                        data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -506,11 +512,11 @@
     </div>
 
 
-    {{-- Tab: SRS --}}
+    {{-- Tab: Dokumen Teknis --}}
     <div class="tab-pane fade" id="tab-srs" role="tabpanel" aria-labelledby="tab-srs-tab">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SRS Yudisium</h3>
+                <h3 class="card-title m-0 text-center text-bold">Dokumen Teknis Yudisium</h3>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
@@ -554,6 +560,18 @@
                                 </div>
 
                                 <div class="col-md-4">
+                                    <label>Jenis Dokumen</label>
+                                    <select class="form-control doctype-filter">
+                                        <option value="">Semua</option>
+                                        <option value="SRS">Software Requirements Specification (SRS)</option>
+                                        <option value="SDD">Software Design Document (SDD)</option>
+                                        <option value="SAD">Software Architecture Document (SAD)</option>
+                                        <option value="STD">Software Test Document (STD)</option>
+                                        <option value="SOP">Standard Operating Procedure (SOP)</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label>Tanggal Dibuat</label>
                                     <input type="date" class="form-control date-filter">
                                 </div>
@@ -575,6 +593,7 @@
                             <th class="no-sort">No</th>
                             <th>Versi</th>
                             <th>Judul</th>
+                            <th>Jenis Dokumen</th>
                             <th>Tanggal Dibuat</th>
                             <th>Terakhir Diedit</th>
                             <th>Aksi</th>
@@ -583,7 +602,7 @@
                     <tbody>
                         @if ($srs->isEmpty())
                         <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
+                            <td colspan="{{ $kategori === 'fta' ? 8 : 7 }}" class="text-center">
                                 <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
                             </td>
                         </tr>
@@ -593,7 +612,7 @@
                             <td></td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
-
+                            <td>{{ $doc->subkategori->nama_subkategori }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
                             <td>
@@ -621,31 +640,31 @@
 
                                 <!-- View button -->
                                 <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                     data-id="{{ $doc->id_dokumen }}"
                                     data-judul="{{ $doc->judul }}"
                                     data-file="{{ $doc->file_path }}"
                                     data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
+                                    data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                    data-notes_koor="{{ $doc->notes_koordinator }}"
                                     data-target="#LihatDokumen">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 @endif
 
-                                @if ($isPembimbing)
+                                @if ($isPembimbing || $isKoordinator)
                                 <!-- View button -->
                                 <div class="d-flex flex-row justify-content-center">
                                     <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
+                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{ $doc->kode_fta }}', '{{ $doc->notes }}', '{{ $doc->username }}', '{{ $doc->notes_koordinator }}')"
                                         data-id="{{ $doc->id_dokumen }}"
                                         data-judul="{{ $doc->judul }}"
                                         data-file="{{ $doc->file_path }}"
                                         data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
+                                        data-notes="{{ $doc->notes }}" data-toggle="modal"
+                                        data-notes_koor="{{ $doc->notes_koordinator }}"
                                         data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
+                                        <i class="fas fa-edit mr-1"></i> Detail
                                     </button>
                                 </div>
                                 @endif
@@ -659,464 +678,7 @@
         </div>
     </div>
 
-    {{-- Tab: SDD --}}
-    <div class="tab-pane fade" id="tab-sdd" role="tabpanel" aria-labelledby="tab-sdd-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen SDD Yudisium</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuSdd">
-                            <i class="fas fa-filter"></i>
-                        </button>
 
-                        <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
-                        <div id="custom-length-sdd"></div>
-                    </div>
-
-                    <!-- Tombol Tambah -->
-                    @if ($status_ta === 'mahasiswa_ta')
-                    <button id="btn-tambah-sdd" onclick="TambahDokumen('btn-tambah-sdd', '{{ $subkategoriSdd->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSdd->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
-                    @endif
-                </div>
-
-
-                <div class="collapse filter-menu" id="filterMenuSdd" data-target="sdd">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 15; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <table class="table table-bordered text-center datatable" data-table="sdd">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($sdd->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($sdd as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
-
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-
-                                @if ($isPembimbing)
-                                <!-- View button -->
-                                <div class="d-flex flex-row justify-content-center">
-                                    <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                        data-id="{{ $doc->id_dokumen }}"
-                                        data-judul="{{ $doc->judul }}"
-                                        data-file="{{ $doc->file_path }}"
-                                        data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
-                                        data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
-                                    </button>
-                                </div>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    {{-- Tab: Surat Bebas Masalah --}}
-    <div class="tab-pane fade" id="tab-sbm" role="tabpanel" aria-labelledby="tab-sbm-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen Surat Bebas Masalah</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuSbm">
-                            <i class="fas fa-filter"></i>
-                        </button>
-
-                        <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
-                        <div id="custom-length-sbm"></div>
-                    </div>
-
-                    <!-- Tombol Tambah -->
-                    @if ($status_ta === 'mahasiswa_ta')
-                    <button id="btn-tambah-sbm" onclick="TambahDokumen('btn-tambah-sbm', '{{ $subkategoriSbm->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriSbm->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
-                    @endif
-                </div>
-
-
-                <div class="collapse filter-menu" id="filterMenuSbm" data-target="sbm">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 15; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <table class="table table-bordered text-center datatable" data-table="sbm">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($sbm->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($sbm as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
-
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-
-                                @if ($isPembimbing)
-                                <!-- View button -->
-                                <div class="d-flex flex-row justify-content-center">
-                                    <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                        data-id="{{ $doc->id_dokumen }}"
-                                        data-judul="{{ $doc->judul }}"
-                                        data-file="{{ $doc->file_path }}"
-                                        data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
-                                        data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
-                                    </button>
-                                </div>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    {{-- Tab: Hasil TOEIC --}}
-    <div class="tab-pane fade" id="tab-toeic" role="tabpanel" aria-labelledby="tab-toeic-tab">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">
-                <h3 class="card-title m-0 text-center text-bold">Dokumen Hasil TOEIC</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap px-2 mb-3">
-                    <div class="d-flex align-items-center">
-                        <!-- Tombol Filter -->
-                        <button class="btn btn-primary btn-md mr-2" type="button" data-toggle="collapse" data-target="#filterMenuToeic">
-                            <i class="fas fa-filter"></i>
-                        </button>
-
-                        <!-- Length Change (Akan diisi otomatis oleh DataTables) -->
-                        <div id="custom-length-toeic"></div>
-                    </div>
-
-                    <!-- Tombol Tambah -->
-                    @if ($status_ta === 'mahasiswa_ta')
-                    <button id="btn-tambah-toeic" onclick="TambahDokumen('btn-tambah-toeic', '{{ $subkategoriToeic->id_subkategori }}')" class="btn btn-primary btn-md" data-toggle="modal" data-target="#TambahDokumen" data-id-subkategori="{{ $subkategoriToeic->id_subkategori }}">
-                        <i class="fas fa-plus"></i> Tambah
-                    </button>
-                    @endif
-                </div>
-
-
-                <div class="collapse filter-menu" id="filterMenuToeic" data-target="toeic">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-filter mr-2"></i>Filter Data
-                            </h3>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Versi</label>
-                                    <select class="form-control version-filter">
-                                        <option value="">Semua</option>
-                                        @for ($i = 1; $i <= 15; $i++)
-                                            <option value="{{ $i }}">V{{ $i }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Tanggal Dibuat</label>
-                                    <input type="date" class="form-control date-filter">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-footer text-right">
-                            <button type="button" class="btn btn-primary apply-filter-btn">
-                                Terapkan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <table class="table table-bordered text-center datatable" data-table="toeic">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="no-sort">No</th>
-                            <th>Versi</th>
-                            <th>Judul</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Terakhir Diedit</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($toeic->isEmpty())
-                        <tr>
-                            <td colspan="{{ $kategori === 'fta' ? 7 : 6 }}" class="text-center">
-                                <p class="text-muted">List Dokumen Kosong, Belum Ada Dokumen Yang Ditambahkan</p>
-                            </td>
-                        </tr>
-                        @else
-                        @foreach ($toeic as $index => $doc)
-                        <tr>
-                            <td></td>
-                            <td>{{ $doc->versi }}</td>
-                            <td>{{ $doc->judul }}</td>
-
-                            <td>{{ \Carbon\Carbon::parse($doc->created_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($doc->updated_at)->translatedFormat('d F Y H:i') }}</td>
-                            <td>
-                                @if ($status_ta === 'mahasiswa_ta')
-                                <!-- Delete button -->
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                    onclick="HapusDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-toggle="modal" data-target="#HapusDokumen">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                    onclick="EditDokumen('{{ $doc->id_dokumen }}','{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}','')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-versi="{{ $doc->versi }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-toggle="modal" data-target="#UbahDokumen">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- View button -->
-                                <button class="btn btn-sm btn-outline-success"
-                                    onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                    data-id="{{ $doc->id_dokumen }}"
-                                    data-judul="{{ $doc->judul }}"
-                                    data-file="{{ $doc->file_path }}"
-                                    data-deskripsi="{{ $doc->deskripsi }}"
-                                    data-notes="{{ $doc->notes }}"
-                                    data-toggle="modal"
-                                    data-target="#LihatDokumen">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @endif
-
-                                @if ($isPembimbing)
-                                <!-- View button -->
-                                <div class="d-flex flex-row justify-content-center">
-                                    <button class="btn btn-sm btn-outline-success"
-                                        onclick="LihatDokumen('{{ $doc->judul }}','{{ $doc->deskripsi }}','{{ $doc->file_path }}', '{{$doc->kode_fta}}', '{{$doc->notes}}', '{{$doc->username}}')"
-                                        data-id="{{ $doc->id_dokumen }}"
-                                        data-judul="{{ $doc->judul }}"
-                                        data-file="{{ $doc->file_path }}"
-                                        data-deskripsi="{{ $doc->deskripsi }}"
-                                        data-notes="{{ $doc->notes }}"
-                                        data-toggle="modal"
-                                        data-target="#LihatDokumen">
-                                        <i class="fas fa-edit mr-1"></i> Catatan
-                                    </button>
-                                </div>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- BAGIAN MODAL -->
@@ -1126,9 +688,39 @@
     <form id="addDocumentForm" action="{{ route('Repository.store', $kategori) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id_subkategori" id="id_subkategori_hidden" value="">
+        <input type="hidden" name="dokumen_teknis_type" id="dokumen_teknis_type" value="">
+        <input type="hidden" name="dokumen_lainnya_type" id="dokumen_lainnya_type" value="">
         <div class="row px-3">
             <div class="col-md-10 mb-2">
                 <p class="text-secondary text-md border-bottom">Informasi Dokumen</p>
+
+                <!-- Dropdown subkategori untuk dokumen teknis -->
+                <div id="field-subkategori-teknis" style="display:none;">
+                    <label for="subkategori_teknis">Jenis Dokumen Teknis</label>
+                    <x-adminlte-select name="subkategori_teknis" id="subkategori_teknis" class="select2bs4">
+                        <option selected disabled>Pilih Jenis Dokumen Teknis</option>
+                        <option value="SRS">Software Requirements Specification (SRS)</option>
+                        <option value="SDD">Software Design Document (SDD)</option>
+                        <option value="SAD">Software Architecture Document (SAD)</option>
+                        <option value="STD">Software Test Document (STD)</option>
+                        <option value="SOP">Standard Operating Procedure (SOP)</option>
+                    </x-adminlte-select>
+                </div>
+
+                <!-- Dropdown subkategori untuk dokumen lainnya -->
+                <div id="field-subkategori-lainnya" style="display:none;">
+                    <label for="subkategori_lainnya">Jenis Dokumen</label>
+                    <x-adminlte-select name="subkategori_lainnya" id="subkategori_lainnya" class="select2bs4">
+                        <option selected disabled>Pilih Jenis Dokumen</option>
+                        <option value="PowerPoint">PowerPoint</option>
+                        <option value="Poster">Poster</option>
+                        <option value="Template">Template</option>
+                        <option value="Resume">Resume</option>
+                        <option value="Lampiran">Lampiran</option>
+                        <option value="SuratBebasMasalah">Surat Bebas Masalah</option>
+                        <option value="HasilTOEIC">Hasil TOEIC</option>
+                    </x-adminlte-select>
+                </div>
 
                 <label for="judul">Judul Dokumen</label>
                 <x-adminlte-input name="judul" id="judul" required />
@@ -1140,9 +732,9 @@
 
                         @php
                         $ftaOptions = [
-                        ['value' => 'FTA-18', 'text' => 'FTA-18 - Bukti telah menyelesaikan hasil revisi laporan'],
-                        ['value' => 'FTA-19', 'text' => 'FTA-19 - Bukti telah menyerahkan laporan dan kelengkapan'],
-                        ['value' => 'FTA-19a', 'text' => 'FTA-19a - Bukti telah merevisi abstrak dan tata tulis'],
+                        ['value' => 'FTA-18', 'text' => 'FTA 18 - Bukti Telah Menyelesaikan Revisi'],
+                        ['value' => 'FTA-19', 'text' => 'FTA 19 - Bukti Menyerahkan Laporan-FTA'],
+                        ['value' => 'FTA-19a', 'text' => 'FTA 19a - Bukti Menyerahkan Tata Tulis'],
                         ];
                         @endphp
 
@@ -1294,15 +886,26 @@
 
             @if ($status_ta === 'mahasiswa_ta')
             <div class="col-md-12 mb-2">
-                <label for="view_notes" class="mt-1">Catatan</label>
+                <label for="view_notes" class="mt-1">Catatan Pembimbing</label>
                 <x-adminlte-textarea name="notes" id="view_notes" readonly rows="4" />
+            </div>
+            <div class="col-md-12 mb-2">
+                <label for="view_notes_koordinator" class="mt-1">Catatan Koordinator</label>
+                <x-adminlte-textarea name="notes_koordinator" id="view_notes_koordinator" readonly rows="4" />
             </div>
             @endif
 
             @if ($isPembimbing)
             <div class="col-md-12 mb-2">
-                <label for="give_notes" class="mt-1">Catatan</label>
+                <label for="give_notes" class="mt-1">Catatan Sebagai Pembimbing</label>
                 <x-adminlte-textarea name="input_notes" id="give_notes" placeholder="Berikan catatan terkait dokumen kepada Mahasiswa" rows="4" />
+            </div>
+            @endif
+
+            @if ($isKoordinator)
+            <div class="col-md-12 mb-2">
+                <label for="give_notes_koordinator" class="mt-1">Catatan Sebagai Koordinator</label>
+                <x-adminlte-textarea name="input_notes_koordinator" id="give_notes_koordinator" placeholder="Berikan catatan terkait dokumen kepada Mahasiswa" rows="4" />
             </div>
             @endif
 
@@ -1494,7 +1097,7 @@
                 // File gambar dan PDF langsung tampil
                 $('#documentPreview').attr('src', fullUrl).show();
                 $('#previewNotAvailable').hide();
-            } else if (['doc', 'docx', 'ppt', 'pptx'].includes(fileExtension)) {
+            } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
                 // File Word atau PowerPoint pakai Google Docs Viewer
                 var viewerUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}&embedded=true`;
                 $('#documentPreview').attr('src', viewerUrl).show();
@@ -1532,7 +1135,7 @@
 
 
     // $('.view-btn').on('click', function() {
-    function LihatDokumen(judul, deskripsi, filePath, kodeFta, catatan, username) {
+    function LihatDokumen(judul, deskripsi, filePath, kodeFta, catatan, username, catatanKoordinator) {
         console.log("Tes");
         // Get document ID from the button data attribute
         var docId = $(event.currentTarget).data('id');
@@ -1548,6 +1151,8 @@
         $('#view_username').val(username);
         $('#view_notes').val(catatan);
         $('#give_notes').val(catatan);
+        $('#view_notes_koordinator').val(catatanKoordinator);
+        $('#give_notes_koordinator').val(catatanKoordinator);
 
         // Handle Kode FTA
         if (kodeFta) {
@@ -1562,11 +1167,19 @@
             var fullUrl = `${prefix}/storage/${filePath}`;
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
+            // Determine the appropriate URL for "Buka di halaman baru" based on file type
+            var openInNewTabUrl = fullUrl;
+            if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(fileExtension)) {
+                // For office documents, use Google Docs viewer (without embedded=true for new tab)
+                openInNewTabUrl = `https://docs.google.com/gview?url=${location.origin}${fullUrl}`;
+            }
+
             // Buka di tab baru
-            $('#view_file_link').attr('href', fullUrl);
+            $('#view_file_link').attr('href', openInNewTabUrl);
 
             // Link download
-            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${$(this).data('id')}/download`);
+            $('#view_file_download').attr('href', `${prefix}/repository/mahasiswa/${kategori}/${docId}/download`);
+
 
             // Preview file
             if (['pdf', 'png', 'jpg', 'jpeg'].includes(fileExtension)) {
@@ -1617,6 +1230,8 @@
         saveActiveTab();
         var title = '';
         var showKodeFTA = false;
+        var showSubkategoriTeknis = false;
+        var showSubkategoriLainnya = false;
 
         if (type === 'btn-tambah-laporan') {
             title = 'Tambah Laporan Yudisium';
@@ -1624,19 +1239,17 @@
             title = 'Tambah FTA Yudisium';
             showKodeFTA = true;
         } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint Yudisium';
+            title = 'Tambah Dokumen Lainnya Yudisium';
+            showSubkategoriLainnya = true;
         } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah SRS Yudisium';
-        } else if (type === 'btn-tambah-sdd') {
-            title = 'Tambah SDD Yudisium';
-        } else if (type === 'btn-tambah-sbm') {
-            title = 'Tambah Dokumen Surat Bebas Masalah';
-        } else if (type === 'btn-tambah-toeic') {
-            title = 'Tambah Dokumen Hasil TOEIC';
+            title = 'Tambah Dokumen Teknis Yudisium';
+            showSubkategoriTeknis = true;
         }
 
         $('#TambahDokumen .modal-title').text(title);
         $('#field-kode-fta').toggle(showKodeFTA);
+        $('#field-subkategori-teknis').toggle(showSubkategoriTeknis);
+        $('#field-subkategori-lainnya').toggle(showSubkategoriLainnya);
 
         if (showKodeFTA) {
             $('#kode_fta').prop('required', true); // Tambahkan required kalau FTA
@@ -1645,14 +1258,38 @@
             $('#kode_fta').val(''); // Reset value juga supaya kosong
         }
 
-        $('#field-subkategori').hide();
+        if (showSubkategoriTeknis) {
+            $('#subkategori_teknis').prop('required', true);
+        } else {
+            $('#subkategori_teknis').prop('required', false);
+            $('#subkategori_teknis').val('');
+        }
+
+        if (showSubkategoriLainnya) {
+            $('#subkategori_lainnya').prop('required', true);
+        } else {
+            $('#subkategori_lainnya').prop('required', false);
+            $('#subkategori_lainnya').val('');
+        }
+
         $('#field-repo-url').hide();
 
         console.log("Tes");
         // Set id_subkategori dari tombol
         // var idSubkategori = $(this).data('id-subkategori');
         $('#id_subkategori_hidden').val(id);
-        console.log("Tis");
     };
+
+    // Event handler untuk dropdown subkategori teknis
+    $('#subkategori_teknis').change(function() {
+        var selectedValue = $(this).val();
+        $('#dokumen_teknis_type').val(selectedValue);
+    });
+
+    // Event handler untuk dropdown subkategori lainnya
+    $('#subkategori_lainnya').change(function() {
+        var selectedValue = $(this).val();
+        $('#dokumen_lainnya_type').val(selectedValue);
+    });
 </script>
 @stop

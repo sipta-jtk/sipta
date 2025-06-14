@@ -504,7 +504,7 @@ return [
                         ],
                         [
                             'text' => 'Penilaian',
-                            'url' => $prefix . '/DosenTabelPenilaian',
+                            'url' => $prefix . '/dosen-tabel-penilaian/seminar-iii',
                             'can' => 'dosen',
                             'icon' => 'fas fa-fw fa-award',
                         ],  
@@ -564,7 +564,7 @@ return [
                         ],    
                         [
                             'text' => 'Penilaian',
-                            'url' => $prefix . '/DosenTabelPenilaian',
+                            'url' => $prefix . '/dosen-tabel-penilaian/sidang-akhir',
                             'can' => 'dosen',
                             'icon' => 'fas fa-fw fa-award',
                         ],  
@@ -573,15 +573,15 @@ return [
             ]
         ],
         [
+            'text' => 'Monitoring Mahasiswa',
+            'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
+            'can' => 'akses-penilaian-mahasiswa',
+            'icon' => 'fas fa-fw fa-user-check',
+        ],
+        [
             'text' => 'Kelola Penilaian Tugas Akhir',
             'icon' => 'fas fa-fw fa-file-alt',
             'submenu' => [
-                [
-                    'text' => 'Monitoring Mahasiswa',
-                    'url' => $prefix . '/kelola-penilaian-ta/monitoring/mahasiswa',
-                    'can' => 'akses-penilaian-mahasiswa',
-                    'icon' => 'fas fa-fw fa-user-check',
-                ],
                 [
                     'text' => 'Rekapitulasi Nilai',
                     'icon' => 'fas fa-fw fa-table',
@@ -729,7 +729,7 @@ return [
                     'text' => 'Penentuan Ambang Batas Plagiarisme',
                     'url' => $prefix . '/penentuan-ambang-batas',
                     'icon' => 'fas fa-scroll',
-                    'can' => 'koordinator_ta'
+                    'can' => 'akses-koordinator-admin'
                 ],
             ]
         ],
@@ -787,11 +787,35 @@ return [
                     'icon' => 'fas fa-user-graduate',
                     'can' => 'admin'
                 ],
+                [
+                    'text' => 'Log Login',
+                    'url' => $prefix . '/log-login',
+                    'icon' => 'fas fa-sign-in-alt',
+                    'can' => 'admin'
+                ],
                 // [
                 //     'text' => 'level_one',
                 //     'url' => '#',
                 // ],
             ],
+        ],
+         [
+            'text' => 'Pendataan Mahasiswa',
+            'icon' => 'fas fa-user-graduate',
+            'submenu' => [
+                [
+                            'text' => 'Pendataan Mahasiswa',
+                            'url' => $prefix . '/pendataan-mahasiswa',
+                            'icon' => 'fas fa-user-graduate',
+                            'can' => 'pemimpin'
+                        ],
+                        [
+                            'text' => 'Pendataan KoTA',
+                            'url' => $prefix . '/pendataan-kelompok-ta',
+                            'icon' => 'fas fa-users',
+                            'can' => 'pemimpin'
+                        ],
+            ]
         ],
         [
             'text' => 'Notifikasi dan Reminder',
@@ -809,6 +833,13 @@ return [
                     'icon' => 'fas fa-clipboard-list',
                     'can' => 'admin',
                 ],
+                                [
+                    'text' => 'Pengaturan Placeholder',
+                    'url' => $prefix . '/notification-placeholders',
+                    'icon' => 'fas fa-pen',
+                    'can' => 'admin',
+                ],
+                
             ]
             // 'label' => 4,
             // 'label_color' => 'success',

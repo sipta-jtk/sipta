@@ -1,5 +1,17 @@
 $(document).ready(function () {
-    // Handle change of kriteria dropdown
+    function capitalizeFirstLetter(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    let jenisTAField = $("#jenisTA");
+    if (jenisTAField.length) {
+        let jenisTAValue = jenisTAField.val().trim();
+        if (jenisTAValue) {
+            jenisTAField.val(capitalizeFirstLetter(jenisTAValue));
+        }
+    }
+    
     $(document).on("change", ".id_kriteria", function () {
         var selectedOption = $(this).find(":selected");
         var bobot = selectedOption.data("bobot");
@@ -12,21 +24,40 @@ $(document).ready(function () {
 
     function updateRowStriping() {
         $("#rubrikPenilaianTable tr").each(function (index) {
+            $(this).removeClass('even-row odd-row');
             if (index % 2 === 0) {
-                $(this).css("background-color", "#ffffff"); // Warna putih untuk baris ganjil
+                $(this).addClass('odd-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#ffffff");
             } else {
-                $(this).css("background-color", "#f8f9fa"); // Warna abu untuk baris genap
+                $(this).addClass('even-row');
+                $(this).find('td:nth-child(1), td:nth-child(2)').css("background-color", "#f8f9fa");
             }
         });
+    }
+
+    // Function to calculate frozen column width
+    function calculateFrozenColumnWidth() {
+        const firstColumnWidth = $('.table th:nth-child(1)').outerWidth() || 200;
+        $('.table th:nth-child(2), .table td:nth-child(2)').css('left', firstColumnWidth + 'px');
     }
 
     // Add new row to table
     $("#addRow").on("click", function () {
         const selectedKodeFTA = $("#kode_fta").val();
         if (!selectedKodeFTA) {
-            alert("Silakan pilih Kode FTA terlebih dahulu.");
+            Swal.fire({
+                icon: "error",
+                title: "Kode FTA Belum Dipilih",
+                text: "Silakan pilih Kode FTA terlebih dahulu.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
             return;
         }
+
+        // Hitung jumlah tr yang ada saat ini
+        const trCount = $("#rubrikPenilaianTable tr").length;
 
         // Get rentangNilai from the page
         let nilaiColumns = '';
@@ -35,7 +66,7 @@ $(document).ready(function () {
             rentangNilai.forEach(function (nilai) {
                 nilaiColumns += `
                     <td>
-                        <textarea class="form-control textarea-rubrik" name="nilai_${nilai.id_nilai}[]" rows="6" required></textarea>
+                        <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
                     </td>`;
             });
         } else {
@@ -46,10 +77,10 @@ $(document).ready(function () {
                     const headerText = $(this).text();
                     const match = headerText.match(/\(([A-Za-z0-9]+)\)$/);
                     if (match && match[1]) {
-                        const id_nilai = match[1];
+                        // Gunakan trCount sebagai index
                         nilaiColumns += `
                             <td>
-                                <textarea class="form-control textarea-rubrik" name="nilai_${id_nilai}[]" rows="6" required></textarea>
+                                <textarea class="form-control textarea-rubrik" name="nilai_${trCount}[]" rows="6" required></textarea>
                             </td>`;
                     }
                 }
@@ -75,9 +106,13 @@ $(document).ready(function () {
         var newRow = `
         <tr>
             <td>
+                <input type="hidden" name="status[]" value="1">
                 <select class="form-control id_kriteria" name="nama_kriteria[]" required>
                     <option value="" disabled selected>Pilih Kriteria</option>
-                    ${kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('')}
+                    ${typeof kriteriaList !== 'undefined' ? 
+                        kriteriaList.map(kriteria => `<option value="${kriteria.id_kriteria}" data-bobot="${kriteria.bobot_kriteria}">${kriteria.nama_kriteria}</option>`).join('') :
+                        kriteriaOptions
+                    }
                 </select>
             </td>
             <td><p class="form-control-plaintext bobot">-</p></td>
@@ -92,17 +127,35 @@ $(document).ready(function () {
 
         $("#rubrikPenilaianTable").append(newRow);
         updateRowStriping();
+        calculateFrozenColumnWidth(); // Recalculate frozen column positions
     });
 
-    // Remove row when remove button is clicked
     $(document).on("click", ".remove-row", function () {
-        // Make sure we keep at least one row
-        if ($("#rubrikPenilaianTable tr").length > 1) {
-            $(this).closest("tr").remove();
-            updateRowStriping();
-        } else {
-            alert("Tidak dapat menghapus baris terakhir.");
+        var $row = $(this).closest("tr");
+        var $statusInput = $row.find('input[name="status[]"]');
+        var visibleRows = $("#rubrikPenilaianTable tr:visible").length;
+
+        if (visibleRows <= 1) {
+            Swal.fire({
+                icon: "error",
+                title: "Tidak Bisa Hapus",
+                text: "Tidak dapat menghapus baris terakhir.",
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
         }
+
+        if ($statusInput.length) {
+            $statusInput.val("0");
+            $row.hide();
+        } else {
+            // Untuk baris baru yang belum ada status, tetap hapus dari DOM
+            $row.remove();
+        }
+        updateRowStriping();
+        calculateFrozenColumnWidth(); // Recalculate frozen column positions
     });
 
     updateRowStriping();
@@ -145,14 +198,23 @@ $(document).ready(function () {
         });
     });
 
-    // Inisialisasi: periksa bobot pada semua baris yang sudah ada
     $(".id_kriteria").each(function () {
         var selectedOption = $(this).find(":selected");
         var bobot = selectedOption.data("bobot");
         if (!bobot) {
-            // Jika data-bobot tidak ada, coba ambil dari teks yang sudah ada
             bobot = $(this).closest("tr").find(".bobot").text().replace("%", "");
         }
         $(this).closest("tr").find(".bobot").text(bobot ? bobot + "%" : "-");
+    });
+
+    // Initialize frozen columns on page load
+    setTimeout(function() {
+        calculateFrozenColumnWidth();
+        updateRowStriping();
+    }, 100);
+
+    // Recalculate on window resize
+    $(window).on('resize', function() {
+        calculateFrozenColumnWidth();
     });
 });

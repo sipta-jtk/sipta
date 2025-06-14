@@ -1,15 +1,16 @@
 @extends('adminlte::page')
 
 @section('title', 'Daftar Program Studi')
-
+@php
+$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+@endphp
 @section('content_header')
     <h1 class="mb-3">Daftar Program Studi</h1>
-
     <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        @component('UserManagement.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
-                ['url' => '', 'label' => 'Program Studi']
+                ['url' => url('/' . $prefix . '/'), 'label' => 'Beranda'],
+                ['url' => '', 'label' => 'Daftar Program Studi'],
             ]
         ])
         @endcomponent

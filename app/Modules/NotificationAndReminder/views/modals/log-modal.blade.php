@@ -1,3 +1,7 @@
+@php
+$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+@endphp
+
 <x-adminlte-modal id="myModal" title="Notification" theme="info" size="md" icon="fas fa-bell" scrollable>
 
     <div class="d-flex justify-content-end align-items-center mb-2" style="margin-top: -15px;">
@@ -8,7 +12,7 @@
 
     <div id="notification-list"></div>
 
-    <a href="{{ url('sipta/logUser') }}" class="btn btn-secondary w-100 mt-3">
+    <a href="{{ url($prefix . '/logUser') }}" class="btn btn-secondary w-100 mt-3">
         See All Notifications
     </a>
 
@@ -102,13 +106,18 @@
             }
         });
 
+        // Get the prefix from PHP
+        var prefix = '{{ $prefix }}';
+        
         function loadNotifications() {
-            $.get('/sipta/api/notifications', function(data) {
+            $.get(prefix + '/api/notifications', function(data) {
                 $('#notification-list').empty();
                 if (data.length === 0) {
                     $('#notification-list').append('<div class="text-center">Tidak ada notifikasi baru</div>');
                 } else {
-                    data.forEach(function(notification) {
+                    // Only take the first 2 notifications
+                    const recentNotifications = data.slice(0, 2);
+                    recentNotifications.forEach(function(notification) {
                         let html = `
                             <div class="notification-item" data-id="${notification.id_notifikasi}">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -119,6 +128,15 @@
                             </div>`;
                         $('#notification-list').append(html);
                     });
+                    
+                    // Show a message if there are more notifications
+                    if (data.length > 2) {
+                        $('#notification-list').append(`
+                            <div class="text-center text-muted small mt-2">
+                                ${data.length - 2} notifikasi lainnya tersedia di halaman log notifikasi
+                            </div>
+                        `);
+                    }
                 }
             })
         }
@@ -127,7 +145,7 @@
         $(document).on('click', '.notification-item', function(event) {
             if (!$(event.target).hasClass('close-notification')) {
                 let notificationId = $(this).data('id');
-                $.get(`/sipta/api/notifications/${notificationId}`, function(data) {
+                $.get(`${prefix}/api/notifications/${notificationId}`, function(data) {
                     if (data.error) {
                         alert(data.error);
                     } else {

@@ -42,6 +42,7 @@
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box;
         }
         .submit-button {
             width: 100%;
@@ -52,9 +53,37 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin-bottom: 10px;
         }
         .submit-button:hover {
             background-color: #333;
+        }
+        .status-message {
+            color: green;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .back-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            text-decoration: none;
+            color: white;
         }
     </style>
 </head>
@@ -62,20 +91,24 @@
     <div class="container">
         <h1>Forgot Password</h1>
         <div class="forgot-box">
-            <p>Enter your email to reset your password.</p>
+            <p style="margin-bottom: 20px;">Masukkan alamat email Anda, dan kami akan mengirimkan link untuk mereset password Anda.</p>
 
             @if (session('status'))
-                <p style="color: green;">{{ session('status') }}</p>
+                <p class="status-message">{{ session('status') }}</p>
             @endif
 
             <form method="POST" action="{{ route('password.email') }}">
                 @csrf
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email" required>
+                    @error('email')
+                        <p class="error-message">{{ $message }}</p>
+                    @enderror
                 </div>
                 <button type="submit" class="submit-button">Send Password Reset Link</button>
             </form>
+            <a href="/{{ env('PREFIX_URL', 'sipta') }}/login" class="back-button">Back to Login</a>
         </div>
     </div>
 </body>

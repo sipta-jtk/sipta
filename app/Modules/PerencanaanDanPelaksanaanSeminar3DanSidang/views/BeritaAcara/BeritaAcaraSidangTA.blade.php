@@ -30,7 +30,7 @@
                             <th style="width: 1%;">Sesi</th>
                             <th style="width: 13%;">Status Kehadiran</th>
                             <th style="width: 10%;">Dokumentasi</th>
-                            <th style="width: 10%;">Batas Revisi</th>
+                            <th style="width: 11%;">Batas Revisi</th>
                             <th style="width: 13%;">Status Kelulusan</th>
                         </tr>
                     </thead>
@@ -53,12 +53,12 @@
                                             @csrf
                                             <input type="hidden" name="id_kehadiran" value="{{ $item->id_kehadiran }}">
                                             <input type="hidden" name="status_hadir" value="hadir">
-                                            <button type="submit" class="btn btn-info btn-md my-1 w-100">Absensi</button>
+                                            <button type="submit" class="btn btn-info btn-md my-1 w-100">Isi presensi</button>
                                         </form>
                                     @elseif($item->status_hadir == 'belum_absen' && $sekarang->gt(($item->penjadwalan->tanggal)))
                                         <button class="btn btn-danger btn-md my-1 w-100" disabled style="opacity: 1">Absen</button>
                                     @else
-                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum Absen</button>
+                                        <button class="btn btn-warning btn-md my-1 w-100" disabled style="opacity: 1">Belum isi presensi</button>
                                     @endif
                                 </td>
                                 <td style="width: 250px;">
@@ -217,6 +217,7 @@
                                                    placeholder="-- Pilih Tanggal --"
                                                    onfocus="this.showPicker()"
                                                    value="{{ $item->batas_revisi }}"
+                                                   {{-- min="{{ \carbon\Carbon::now('Asia/Jakarta')->format('Y-m-d') }}" --}}
                                                    required>
                                         </div>
                                         <small class="form-text text-muted">
