@@ -3,11 +3,14 @@
 @section('title', 'Tabel Penilaian & Masukan')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Tabel Penilaian & Masukan</h1>
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
+    <h1 class=""><strong>Tabel Penilaian & Masukan</strong></h1>
     <div>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => "/$prefix", 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Tabel Penilaian & Masukan']
     ]
     ])

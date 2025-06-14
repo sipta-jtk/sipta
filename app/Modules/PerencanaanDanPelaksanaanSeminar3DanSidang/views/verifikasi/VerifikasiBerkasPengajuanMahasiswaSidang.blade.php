@@ -3,11 +3,14 @@
 @section('title', 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
     <h1 class=""><strong>Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir</strong></h1>
     <div>
     @component('KelolaPenilaianTA.views.components.breadcrumb', [
     'links' => [
-    ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
+    ['url' => "/$prefix", 'label' => 'Beranda'],
     ['url' => '', 'label' => 'Verifikasi Berkas Pengajuan Mahasiswa Sidang Akhir']
     ]
     ])
