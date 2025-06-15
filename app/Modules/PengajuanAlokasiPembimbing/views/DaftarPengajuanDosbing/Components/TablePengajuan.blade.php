@@ -107,6 +107,12 @@ dd($kelompokData['table']);
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // Define base prefix using Laravel's config helper to ensure we get the correct prefix
+    var appPrefix = "{{ env('PREFIX_URL', 'sipta-dev') }}";
+    // Build the URL manually to ensure correct structure
+    var baseApiUrl = "/" + appPrefix + "/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan";
+    console.log('Base API URL:', baseApiUrl);
+    
     $(document).ready(function() {
         // Inisialisasi DataTable
         var table = $('#kesediaanTable').DataTable({
@@ -143,7 +149,7 @@ dd($kelompokData['table']);
             var val = $(this).val();
             table.column(3).search(val ? '^' + $.fn.dataTable.util.escapeRegex(val) + '$' : '', true, false).draw();
         });
-
+        
         // Tambahkan flag untuk mencegah multiple request
         let isProcessing = false;
         let processingRequests = new Set();
@@ -186,16 +192,19 @@ dd($kelompokData['table']);
                     processingRequests.add(kelompokId);
                     isProcessing = true;
 
+                    // Build the URL with the correct parameter order
+                    const requestUrl = `${baseApiUrl}/${kelompokId}/${actionType}`;
+                    
                     console.log('=== AJAX REQUEST START ===', {
                         requestId: requestId
                         , kelompokId: kelompokId
                         , actionType: actionType
-                        , url: `/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/${kelompokId}/${actionType}`
+                        , url: requestUrl
                         , timestamp: new Date().toISOString()
                     });
 
                     $.ajax({
-                        url: `/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/${kelompokId}/${actionType}`
+                        url: requestUrl
                         , type: 'POST'
                         , headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
