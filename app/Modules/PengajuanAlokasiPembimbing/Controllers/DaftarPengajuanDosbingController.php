@@ -190,86 +190,62 @@ class DaftarPengajuanDosbingController extends Controller
     
         DB::beginTransaction();
         try {
-            // Cek apakah record sudah ada dengan method yang aman
-            $recordExists = PreferensiKota::existsRecord($dosenNip, $id_kota);
+            // CEK APAKAH RECORD SUDAH ADA - PAKAI QUERY BUILDER DENGAN WHERE SPESIFIK
+            $existingRecord = DB::table('preferensi_kota')
+                ->where('nip', $dosenNip)
+                ->where('id_kota', $id_kota)
+                ->first();
             
-            \Log::info('Current preferensi check', [
+            \Log::info('Current preferensi check (Query Builder)', [
                 'request_id' => $requestId,
                 'nip' => $dosenNip,
                 'id_kota' => $id_kota,
-                'record_exists' => $recordExists
+                'record_exists' => $existingRecord ? true : false,
+                'current_status' => $existingRecord ? $existingRecord->status : null
             ]);
         
-            if ($action === 'accept') {
-                if ($recordExists) {
-                    // Update existing record
-                    $affected = PreferensiKota::updateStatus($dosenNip, $id_kota, 1);
-                    
-                    \Log::info('Preferensi updated (accept)', [
-                        'request_id' => $requestId,
-                        'nip' => $dosenNip,
-                        'id_kota' => $id_kota,
-                        'status' => 1,
-                        'affected_rows' => $affected,
-                        'operation' => 'update'
-                    ]);
-                } else {
-                    // Insert new record
-                    $result = DB::insert(
-                        'INSERT INTO preferensi_kota (nip, id_kota, status) VALUES (?, ?, ?)',
-                        [$dosenNip, $id_kota, 1]
-                    );
-                    
-                    \Log::info('Preferensi created (accept)', [
-                        'request_id' => $requestId,
-                        'nip' => $dosenNip,
-                        'id_kota' => $id_kota,
-                        'status' => 1,
-                        'result' => $result,
-                        'operation' => 'insert'
-                    ]);
-                }
+            $newStatus = ($action === 'accept') ? 1 : 0;
+            
+            if ($existingRecord) {
+                // UPDATE RECORD YANG SUDAH ADA - PAKAI WHERE CLAUSE YANG SPESIFIK
+                $affected = DB::table('preferensi_kota')
+                    ->where('nip', $dosenNip)
+                    ->where('id_kota', $id_kota)
+                    ->update(['status' => $newStatus]);
                 
-                $message = 'Peminatan berhasil diterima.';
-                $newStatus = 'accepted';
-            } 
-            elseif ($action === 'reject') {
-                if ($recordExists) {
-                    // Update existing record
-                    $affected = PreferensiKota::updateStatus($dosenNip, $id_kota, 0);
-                    
-                    \Log::info('Preferensi updated (reject)', [
-                        'request_id' => $requestId,
-                        'nip' => $dosenNip,
-                        'id_kota' => $id_kota,
-                        'status' => 0,
-                        'affected_rows' => $affected,
-                        'operation' => 'update'
-                    ]);
-                } else {
-                    // Insert new record
-                    $result = DB::insert(
-                        'INSERT INTO preferensi_kota (nip, id_kota, status) VALUES (?, ?, ?)',
-                        [$dosenNip, $id_kota, 0]
-                    );
-                    
-                    \Log::info('Preferensi created (reject)', [
-                        'request_id' => $requestId,
-                        'nip' => $dosenNip,
-                        'id_kota' => $id_kota,
-                        'status' => 0,
-                        'result' => $result,
-                        'operation' => 'insert'
-                    ]);
-                }
+                \Log::info('Preferensi updated via Query Builder', [
+                    'request_id' => $requestId,
+                    'nip' => $dosenNip,
+                    'id_kota' => $id_kota,
+                    'old_status' => $existingRecord->status,
+                    'new_status' => $newStatus,
+                    'affected_rows' => $affected,
+                    'operation' => 'update'
+                ]);
+            } else {
+                // INSERT RECORD BARU - PAKAI QUERY BUILDER INSERT
+                $inserted = DB::table('preferensi_kota')->insert([
+                    'nip' => $dosenNip,
+                    'id_kota' => $id_kota,
+                    'status' => $newStatus
+                ]);
                 
-                $message = 'Peminatan berhasil ditolak.';
-                $newStatus = 'rejected';
+                \Log::info('Preferensi created via Query Builder', [
+                    'request_id' => $requestId,
+                    'nip' => $dosenNip,
+                    'id_kota' => $id_kota,
+                    'status' => $newStatus,
+                    'result' => $inserted,
+                    'operation' => 'insert'
+                ]);
             }
-        
-        // Log state database setelah operasi tapi sebelum commit
+            
+            $message = ($action === 'accept') ? 'Peminatan berhasil diterima.' : 'Peminatan berhasil ditolak.';
+            $newStatusText = ($action === 'accept') ? 'accepted' : 'rejected';
+            
+        // Log state database setelah operasi
         $afterState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
-        \Log::info('Database state AFTER operation (before commit)', [
+        \Log::info('Database state AFTER operation (Query Builder)', [
             'request_id' => $requestId,
             'id_kota' => $id_kota,
             'target_nip' => $dosenNip,
@@ -279,20 +255,10 @@ class DaftarPengajuanDosbingController extends Controller
         
         DB::commit();
         
-        // Log final state setelah commit
-        $finalState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
-        \Log::info('Database state FINAL (after commit)', [
-            'request_id' => $requestId,
-            'id_kota' => $id_kota,
-            'target_nip' => $dosenNip,
-            'action' => $action,
-            'final_state' => $finalState
-        ]);
-        
         return response()->json([
             'status' => 'success',
             'message' => $message,
-            'new_status_peminatan' => $newStatus,
+            'new_status_peminatan' => $newStatusText,
             'request_id' => $requestId
         ], 200);
         
