@@ -130,97 +130,225 @@ class DaftarPengajuanDosbingController extends Controller
 
         // dd('SEBELUM RETURN VIEW DI CONTROLLER');
         return view('PengajuanAlokasiPembimbing.views.DaftarPengajuanDosbing.topik', compact('kelompokData'));
+    }    public function handlePengajuan(Request $request, $id_kota, $action)
+    {
+        // Generate unique request ID untuk tracking
+        $requestId = $request->header('X-Request-ID', uniqid());
+        
+        // Log setiap request yang masuk
+        \Log::info('=== REQUEST MASUK ===', [
+            'request_id' => $requestId,
+            'timestamp' => now()->toISOString(),
+            'user_id' => Auth::id(),
+            'id_kota' => $id_kota,
+            'action' => $action,
+            'ip' => $request->ip(),
+            'user_agent' => $request->header('User-Agent')
+        ]);
+
+        $dosenNip = null;
+        if (Auth::check() && Auth::user()->dosen) {
+            $dosenNip = Auth::user()->dosen->nip;
+        } else {
+            \Log::warning('Unauthorized access attempt', [
+                'request_id' => $requestId,
+                'user_id' => Auth::id(),
+                'id_kota' => $id_kota
+            ]);
+            return response()->json(['status' => 'error', 'message' => 'User tidak terautentikasi atau bukan dosen.'], 403);
+        }
+        
+        // Validasi input
+        if (!in_array($action, ['accept', 'reject'])) {
+            \Log::error('Invalid action', [
+                'request_id' => $requestId,
+                'action' => $action,
+                'nip' => $dosenNip
+            ]);
+            return response()->json(['status' => 'error', 'message' => 'Aksi tidak valid.'], 400);
+        }
+        
+        $kota = Kota::where('id_kota', $id_kota)->first();        
+        if (!$kota) {
+            \Log::error('Kota not found', [
+                'request_id' => $requestId,
+                'id_kota' => $id_kota,
+                'nip' => $dosenNip
+            ]);
+            return response()->json(['message' => 'Kota/Kelompok tidak ditemukan.'], 404);
+        }
+        
+        // Log state database sebelum operasi
+        $beforeState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
+        \Log::info('Database state BEFORE operation', [
+            'request_id' => $requestId,
+            'id_kota' => $id_kota,
+            'target_nip' => $dosenNip,
+            'action' => $action,
+            'before_state' => $beforeState
+        ]);
+    
+        DB::beginTransaction();
+        try {
+            // Cek apakah record sudah ada dengan method yang aman
+            $recordExists = PreferensiKota::existsRecord($dosenNip, $id_kota);
+            
+            \Log::info('Current preferensi check', [
+                'request_id' => $requestId,
+                'nip' => $dosenNip,
+                'id_kota' => $id_kota,
+                'record_exists' => $recordExists
+            ]);
+        
+            if ($action === 'accept') {
+                if ($recordExists) {
+                    // Update existing record
+                    $affected = PreferensiKota::updateStatus($dosenNip, $id_kota, 1);
+                    
+                    \Log::info('Preferensi updated (accept)', [
+                        'request_id' => $requestId,
+                        'nip' => $dosenNip,
+                        'id_kota' => $id_kota,
+                        'status' => 1,
+                        'affected_rows' => $affected,
+                        'operation' => 'update'
+                    ]);
+                } else {
+                    // Insert new record
+                    $result = DB::insert(
+                        'INSERT INTO preferensi_kota (nip, id_kota, status) VALUES (?, ?, ?)',
+                        [$dosenNip, $id_kota, 1]
+                    );
+                    
+                    \Log::info('Preferensi created (accept)', [
+                        'request_id' => $requestId,
+                        'nip' => $dosenNip,
+                        'id_kota' => $id_kota,
+                        'status' => 1,
+                        'result' => $result,
+                        'operation' => 'insert'
+                    ]);
+                }
+                
+                $message = 'Peminatan berhasil diterima.';
+                $newStatus = 'accepted';
+            } 
+            elseif ($action === 'reject') {
+                if ($recordExists) {
+                    // Update existing record
+                    $affected = PreferensiKota::updateStatus($dosenNip, $id_kota, 0);
+                    
+                    \Log::info('Preferensi updated (reject)', [
+                        'request_id' => $requestId,
+                        'nip' => $dosenNip,
+                        'id_kota' => $id_kota,
+                        'status' => 0,
+                        'affected_rows' => $affected,
+                        'operation' => 'update'
+                    ]);
+                } else {
+                    // Insert new record
+                    $result = DB::insert(
+                        'INSERT INTO preferensi_kota (nip, id_kota, status) VALUES (?, ?, ?)',
+                        [$dosenNip, $id_kota, 0]
+                    );
+                    
+                    \Log::info('Preferensi created (reject)', [
+                        'request_id' => $requestId,
+                        'nip' => $dosenNip,
+                        'id_kota' => $id_kota,
+                        'status' => 0,
+                        'result' => $result,
+                        'operation' => 'insert'
+                    ]);
+                }
+                
+                $message = 'Peminatan berhasil ditolak.';
+                $newStatus = 'rejected';
+            }
+        
+        // Log state database setelah operasi tapi sebelum commit
+        $afterState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
+        \Log::info('Database state AFTER operation (before commit)', [
+            'request_id' => $requestId,
+            'id_kota' => $id_kota,
+            'target_nip' => $dosenNip,
+            'action' => $action,
+            'after_state' => $afterState
+        ]);
+        
+        DB::commit();
+        
+        // Log final state setelah commit
+        $finalState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
+        \Log::info('Database state FINAL (after commit)', [
+            'request_id' => $requestId,
+            'id_kota' => $id_kota,
+            'target_nip' => $dosenNip,
+            'action' => $action,
+            'final_state' => $finalState
+        ]);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => $message,
+            'new_status_peminatan' => $newStatus,
+            'request_id' => $requestId
+        ], 200);
+        
+        } 
+        catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error mengubah preferensi kota: ' . $e->getMessage(), [
+                'request_id' => $requestId,
+                'nip' => $dosenNip,
+                'id_kota' => $id_kota,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan pada server saat memproses permintaan.',
+            ], 500);
+        }
     }
 
-    public function handlePengajuan(Request $request, $id_kota, $action)
-{
-    $dosenNip = null;
-    if (Auth::check() && Auth::user()->dosen) {
-        $dosenNip = Auth::user()->dosen->nip;
-    } else {
-        return response()->json(['status' => 'error', 'message' => 'User tidak terautentikasi atau bukan dosen.'], 403);
-    }
-    
-    $kota = Kota::where('id_kota', $id_kota)->first();
-    
-    if (!$kota) {
-        return response()->json(['message' => 'Kota/Kelompok tidak ditemukan.'], 404);
-    }
-    
-    DB::beginTransaction();
-    try {
-        $preferensi = PreferensiKota::where('nip', $dosenNip)
-                                  ->where('id_kota', $kota->id_kota)
-                                  ->first();
+    public function testRawQuery(Request $request, $id_kota, $action)
+    {
+        // Test raw SQL untuk memastikan apakah masalahnya di level database
+        $dosenNip = '198604212018031001';
         
-        if ($action === 'accept') {
-            // Jika belum ada preferensi, buat baru dengan status 1
-            if (!$preferensi) {
-                PreferensiKota::create([
-                    'nip' => $dosenNip,
-                    'id_kota' => $kota->id_kota,
-                    'status' => 1,
-                ]);
-                DB::commit();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Peminatan berhasil diterima.',
-                    'new_status_peminatan' => 'accepted'
-                ], 200);
-            }
-            
-            // Jika sudah ada, update status ke 1
-            $preferensi->status = 1;
-            $preferensi->save();
-            DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Peminatan berhasil diterima.',
-                'new_status_peminatan' => 'accepted'
-            ], 200);
-        } 
-        elseif ($action === 'reject') {
-            // Jika belum ada preferensi, buat baru dengan status 0
-            if (!$preferensi) {
-                PreferensiKota::create([
-                    'nip' => $dosenNip,
-                    'id_kota' => $kota->id_kota,
-                    'status' => 0,
-                ]);
-                DB::commit();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Peminatan berhasil ditolak.',
-                    'new_status_peminatan' => 'rejected'
-                ], 200);
-            }
-            
-            // Jika sudah ada, update status ke 0
-            $preferensi->status = 0;
-            $preferensi->save();
-            DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Peminatan berhasil ditolak.',
-                'new_status_peminatan' => 'rejected'
-            ], 200);
-        } 
-        else {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'message' => 'Aksi tidak dikenali.'], 400);
-        }
-    } 
-    catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Error mengubah preferensi kota: ' . $e->getMessage(), [
+        \Log::info('=== RAW QUERY TEST START ===', [
             'nip' => $dosenNip,
             'id_kota' => $id_kota,
-            'trace' => $e->getTraceAsString()
+            'action' => $action
         ]);
+        
+        // Ambil state sebelum
+        $beforeState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
+        \Log::info('Before RAW update', ['before_state' => $beforeState]);
+        
+        // Raw update dengan WHERE yang sangat spesifik
+        $affected = DB::update('UPDATE preferensi_kota SET status = ? WHERE nip = ? AND id_kota = ?', [
+            $action === 'accept' ? 1 : 0,
+            $dosenNip,
+            $id_kota
+        ]);
+        
+        \Log::info('Raw update executed', [
+            'affected_rows' => $affected,
+            'expected_rows' => 1
+        ]);
+        
+        // Ambil state setelah
+        $afterState = DB::select('SELECT nip, id_kota, status FROM preferensi_kota WHERE id_kota = ?', [$id_kota]);
+        \Log::info('After RAW update', ['after_state' => $afterState]);
+        
         return response()->json([
-            'status' => 'error',
-            'message' => 'Terjadi kesalahan pada server saat memproses permintaan.',
-        ], 500);
+            'status' => 'success',
+            'message' => 'Raw query test completed',
+            'affected_rows' => $affected,
+            'before_state' => $beforeState,
+            'after_state' => $afterState
+        ]);
     }
-}
 }
