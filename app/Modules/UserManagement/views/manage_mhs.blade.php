@@ -110,6 +110,7 @@ $prefix = env('PREFIX_URL','');
                         <th>Prodi</th>
                         <th>Kelas</th>
                         <th>Tahun Masuk</th>
+                        <th>Tahun TA</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -125,6 +126,7 @@ $prefix = env('PREFIX_URL','');
                             <td>{{ $mhs->nama_prodi }}</td>
                             <td>{{ $mhs->kelas }}</td>
                             <td>{{ $mhs->tahun_masuk }}</td>
+                            <td>{{ $mhs->tahun_ta }}</td>
                             <td>
                                 @php
                                     $no++;
@@ -133,7 +135,7 @@ $prefix = env('PREFIX_URL','');
                                     <button class="btn btn-danger btn-xs shadow btn-nonaktif-mhs"
                                         title="Nonaktifkan Mahasiswa" data-toggle="modal" data-target="#nonAktifMhs"
                                         data-nim="{{ $mhs->nim }}" data-nama="{{ $mhs->nama }}">
-                                        <i class="fas fa-power-off m-1"></i>
+                                    <i class="fas fa-power-off m-1"></i>
                                     </button>
                                 @else
                                     <button class="btn btn-success btn-xs shadow btn-aktif-mhs" title="Aktifkan Mahasiswa"
@@ -146,7 +148,8 @@ $prefix = env('PREFIX_URL','');
                                     data-toggle="modal" data-target="#updateMhs" data-nim="{{ $mhs->nim }}"
                                     data-nama="{{ $mhs->nama }}" data-email="{{ $mhs->email }}"
                                     data-no_whatsapp="{{ $mhs->no_whatsapp }}" data-kelas="{{ $mhs->kelas }}"
-                                    data-id_prodi="{{ $mhs->id_prodi }}" data-tahun_masuk="{{ $mhs->tahun_masuk }}">
+                                    data-id_prodi="{{ $mhs->id_prodi }}" data-tahun_masuk="{{ $mhs->tahun_masuk }}"
+                                    data-tahun_ta="{{ $mhs->tahun_ta }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
 
@@ -170,6 +173,9 @@ $prefix = env('PREFIX_URL','');
 
                     <x-adminlte-input name="tahun_masuk" label="Tahun Masuk" id="tahun_masuk-update"
                         placeholder="Tahun Masuk" fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback
+                        required />
+                    <x-adminlte-input name="tahun_ta" label="Tahun TA" id="tahun_ta-update"
+                        placeholder="Tahun TA" fgroup-class="" maxlength="4" pattern="\d{4}" disable-feedback
                         required />
 
                     <x-adminlte-select2 name="kelas" label="Kelas" id="kelas-update" fgroup-class="" disable-feedback
@@ -389,11 +395,13 @@ $prefix = env('PREFIX_URL','');
                 var id_prodi = $(this).data("id_prodi");
                 var kelas = $(this).data("kelas");
                 var tahun_masuk = $(this).data("tahun_masuk"); // Memperbaiki typo dari 'tahun_masih'
-
+                var tahun_ta = $(this).data("tahun_ta");
                 document.getElementById("nim-update").value = nim;
                 document.getElementById("nama-update").value = nama;
                 document.getElementById("email-update").value = email;
                 document.getElementById("no_whatsapp-update").value = no_whatsapp;
+                document.getElementById("tahun_ta-update").value = tahun_ta;
+
                 // Pastikan select2 diinisialisasi terlebih dahulu jika belum
                 $('#id_prodi-update').val(id_prodi).trigger('change');
                 $('#kelas-update').val(kelas).trigger('change');
