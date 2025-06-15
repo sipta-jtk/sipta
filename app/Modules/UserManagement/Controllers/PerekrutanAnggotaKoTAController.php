@@ -25,10 +25,17 @@ class PerekrutanAnggotaKoTAController extends Controller
      */
     public function index()
     {
+        $currentYear = Carbon::now()->year;
+
         $mahasiswaAnggota1 = Mahasiswa::join('user', 'mahasiswa.nim', '=', 'user.username')
             ->where('mahasiswa.nim', '=', auth()->user()->username)
             ->select('mahasiswa.*', 'user.nama')
             ->first();
+
+        // Pengecekan akses berdasarkan tahun_ta
+        if (!$mahasiswaAnggota1 || $mahasiswaAnggota1->tahun_ta != $currentYear) {
+            return redirect()->back()->with('error', 'Anda tidak dapat mengakses halaman perekrutan anggota KoTA. Tahun TA Anda tidak sesuai dengan tahun akademik saat ini.');
+        }
 
         // Mendapatkan maksimal anggota dari prodi mahasiswa
         $maksimalAnggota = 3; // Default jika tidak ada data prodi
@@ -67,6 +74,8 @@ class PerekrutanAnggotaKoTAController extends Controller
      */
     public function submit(Request $request)
     {
+        $currentYear = Carbon::now()->year;
+
         $request->validate([
             'anggota2' => 'nullable|different:anggota1|required_with:anggota3',
             'anggota3' => 'nullable|different:anggota1,anggota2',
@@ -83,28 +92,49 @@ class PerekrutanAnggotaKoTAController extends Controller
             return back()->with('error', 'Salah satu anggota sudah memiliki kelompok TA.');
         }
 
-        $currentYear = Carbon::now()->year;
-
         // Ambil data mahasiswa pertama untuk mendapatkan prodi dan kelas
         $anggota1 = Mahasiswa::where('nim', $request->input('anggota1'))->first();
         $prodi = Prodi::find($anggota1->id_prodi);
 
+        // Pengecekan tahun_ta sebelum melanjutkan proses
+        if ($anggota1->tahun_ta != $currentYear) {
+            return back()->with('error', 'Tahun TA Anda tidak sesuai dengan tahun akademik saat ini. Tidak dapat membuat KoTA.');
+        }
+
+        // Kondisi pengecekan tahun TA Mahasiswa dengan Tahun Sekarang
+        if ($anggota1->tahun_ta < $currentYear) {
+            $anggota1->tahun_ta = $currentYear;
+            $anggota1->save();
+
+            // Update anggota lain yang akan bergabung
+            $mahasiswaToUpdate = collect([
+                $request->input('anggota2'),
+                $request->input('anggota3')
+            ])->filter()->values();
+        
+            if ($mahasiswaToUpdate->isNotEmpty()) {
+                Mahasiswa::whereIn('nim', $mahasiswaToUpdate)
+                    ->where('tahun_ta', '<', $currentYear)
+                    ->update(['tahun_ta' => $currentYear]);
+            }
+        }
+
         // Gunakan tahun_ta dari mahasiswa untuk menentukan kode kelas
-        $tahunTA = $anggota1->tahun_ta ?? $currentYear;
+        $tahunTA = $anggota1->tahun_ta;
 
-        // Generate kode kelas berdasarkan prodi, kelas dan tahun TA
-        $kodeKelas = $this->generateKodeKelas($anggota1->id_prodi, $anggota1->kelas, $tahunTA);
+        // Generate kode kelas berdasarkan prodi
+        $kodeProdi = $anggota1->id_prodi;
 
-        // Cari nomor urut KoTA terakhir dengan tahun yang sama dan kode kelas yang sama
+        // Cari nomor urut KoTA terakhir dengan tahun yang sama dan kode prodi yang sama
         $lastKoTA = Kota::where('tahun_kota', $currentYear)
-            ->where('nama_kota', 'LIKE', 'Kota ' . $kodeKelas . '%')
+            ->where('nama_kota', 'LIKE', 'Kota ' . $kodeProdi . '%')
             ->get();
         
         // Extract nomor urut dari nama KoTA yang ada dan cari yang terbesar
         $maxNomor = 0;
         foreach ($lastKoTA as $kota) {
             // Extract 2 digit terakhir dari nama KoTA
-            if (preg_match('/Kota ' . $kodeKelas . '(\d{2})$/', $kota->nama_kota, $matches)) {
+            if (preg_match('/Kota ' . $kodeProdi . '(\d+)$/', $kota->nama_kota, $matches)) {
                 $nomor = intval($matches[1]);
                 if ($nomor > $maxNomor) {
                     $maxNomor = $nomor;
@@ -115,8 +145,15 @@ class PerekrutanAnggotaKoTAController extends Controller
         // Generate nomor urut berikutnya
         $nomorUrut = $maxNomor + 1;
 
-        // Format nama KoTA: KoTA + kode kelas + nomor urut (2 digit)
-        $namaKoTA = 'Kota ' . $kodeKelas . str_pad($nomorUrut, 2, '0', STR_PAD_LEFT);
+        // Format dengan padding minimal 2 digit, biarkan lebih jika sudah > 99
+        if ($nomorUrut <= 99) {
+            $nomorUrutFormatted = str_pad($nomorUrut, 2, '0', STR_PAD_LEFT);
+        } else {
+            $nomorUrutFormatted = (string) $nomorUrut; // Tidak perlu padding jika > 99
+        }
+
+        // Format nama KoTA: KoTA + kode prodi + nomor urut
+        $namaKoTA = 'Kota ' . $kodeProdi . $nomorUrutFormatted;
 
         // Buat Kelompok TA baru
         $koTA = Kota::create([
