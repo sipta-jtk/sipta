@@ -761,7 +761,7 @@ return [
                     'text' => 'Rekrut Anggota KoTA',
                     'url' => $prefix . '/perekrutan-anggota-kota',
                     'icon' => 'fas fa-users',
-                    'can' => 'mahasiswa_non_ta',
+                    'can' => 'akses-form-perekrutan-anggota-kota',
                 ],
                 [
                     'text' => 'Detail KoTA',

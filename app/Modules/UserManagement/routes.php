@@ -141,13 +141,14 @@ Route::prefix($prefix)->group(function () {
      * ========== Mahasiswa (All) ==========
      */
     Route::middleware(['auth', 'can:all_mahasiswa'])->group(function () {
-        Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
-        Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
-
         Route::get('/konfirmasi-kota', [KonfirmasiKoTAController::class, 'index'])->name('konfirmasi-kota');
         Route::get('/kota-saya', [DetailKoTAController::class, 'index'])->name('kota.saya');
     });
 
+    Route::middleware(['auth', 'can:akses-form-perekrutan-anggota-kota'])->group(function () {
+        Route::get('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'index'])->name('perekrutan-anggota-kota');
+        Route::post('/perekrutan-anggota-kota', [PerekrutanAnggotaKoTAController::class, 'submit'])->name('perekrutan-anggota-kota.submit');
+    });
     
     /**
      * ========== Kajur dan Kaprodi ==========
