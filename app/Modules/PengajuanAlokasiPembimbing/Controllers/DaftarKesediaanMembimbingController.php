@@ -62,9 +62,21 @@ class DaftarKesediaanMembimbingController extends Controller
 
         $formattedResult = json_decode(json_encode($result), true);
     
+        
+        $kbkOptions = collect($formattedResult)->pluck('kbk')->unique()->filter()->values()->toArray();
+        
+        
+        $statusOptions = collect($formattedResult)->pluck('Status_Pengumpulan')->unique()->filter()->values()->toArray();
+        
+        
+        $kesediaanOptions = ['Bersedia', 'Tidak Bersedia'];
+        
         return view('PengajuanAlokasiPembimbing.views.DaftarKesediaanMembimbing.DaftarKesediaanMembimbing', [
             'data' => $formattedResult,
-            'prodiList' => $prodiList
+            'prodiList' => $prodiList,
+            'kbkOptions' => $kbkOptions,
+            'statusOptions' => $statusOptions,
+            'kesediaanOptions' => $kesediaanOptions
         ]);
     }
     
