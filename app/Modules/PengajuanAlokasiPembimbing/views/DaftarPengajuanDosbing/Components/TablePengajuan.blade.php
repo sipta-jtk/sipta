@@ -144,15 +144,31 @@ dd($kelompokData['table']);
             table.column(3).search(val ? '^' + $.fn.dataTable.util.escapeRegex(val) + '$' : '', true, false).draw();
         });
 
-        // Fungsi Handle Aksi (Terima/Batalkan Peminatan)
+        // Tambahkan flag untuk mencegah multiple request
+        let isProcessing = false;
+        let processingRequests = new Set();
+
         function handleAction(kelompokId, actionType) {
-            let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
-            routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
+            // Buat unique request ID
+            const requestId = `${kelompokId}_${actionType}_${Date.now()}`;
+
+            // Cek apakah sudah ada request yang sedang diproses untuk kelompok ini
+            if (processingRequests.has(kelompokId)) {
+                console.log('Request dibatalkan - sedang diproses:', kelompokId);
+                return;
+            }
 
             let confirmationText = actionType === "accept" ?
-                "Apakah Anda benar-benar berminat untuk membimbing kelompok ini?" :
-                "Apakah Anda yakin ingin membatalkan peminatan untuk kelompok ini?";
-            let confirmButtonText = actionType === "accept" ? "Ya, Minat" : "Ya, Batalkan";
+                "Apakah Anda yakin ingin menerima peminatan untuk kelompok ini?" :
+                "Apakah Anda yakin ingin menolak peminatan untuk kelompok ini?";
+            let confirmButtonText = actionType === "accept" ? "Ya, Terima" : "Ya, Tolak";
+
+            console.log('=== HANDLE ACTION START ===', {
+                requestId: requestId
+                , kelompokId: kelompokId
+                , actionType: actionType
+                , timestamp: new Date().toISOString()
+            });
 
             Swal.fire({
                 title: "Konfirmasi"
@@ -166,84 +182,109 @@ dd($kelompokData['table']);
                 , reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: routeUrl
-                        , method: "POST"
-                        , headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-                        }
-                        , dataType: "json"
-                        , success: function(response) {
-                            console.log("Response dari server:", response);
+                    // Tandai request sedang diproses
+                    processingRequests.add(kelompokId);
+                    isProcessing = true;
 
-                            if (response.status === "exists") {
-                                Swal.fire({
-                                    title: "Sudah Diminati!"
-                                    , text: response.message
-                                    , icon: "warning"
-                                });
-                                return;
-                            }
+                    console.log('=== AJAX REQUEST START ===', {
+                        requestId: requestId
+                        , kelompokId: kelompokId
+                        , actionType: actionType
+                        , url: `/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/${kelompokId}/${actionType}`
+                        , timestamp: new Date().toISOString()
+                    });
+
+                    $.ajax({
+                        url: `/PengajuanAlokasiPembimbing/daftar-pengajuan-dosbing/pengajuan/${kelompokId}/${actionType}`
+                        , type: 'POST'
+                        , headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            , 'X-Request-ID': requestId
+                        }
+                        , data: {
+                            '_token': $('meta[name="csrf-token"]').attr('content')
+                        }
+                        , timeout: 10000, // 10 detik timeout
+                        success: function(response) {
+                            console.log('=== AJAX SUCCESS ===', {
+                                requestId: requestId
+                                , kelompokId: kelompokId
+                                , response: response
+                                , timestamp: new Date().toISOString()
+                            });
 
                             if (response.status === 'success') {
                                 Swal.fire({
                                     title: "Berhasil!"
                                     , text: response.message
                                     , icon: "success"
-                                    , timer: 1500, // Tutup otomatis setelah 1.5 detik
-                                    showConfirmButton: false
+                                    , timer: 1500
+                                    , showConfirmButton: false
                                 });
 
-                                // Update Tombol setelah sukses
-                                const $btn = $(`.btn-toggle-status[data-id="${kelompokId}"]`);
-                                if (actionType === "accept") {
-                                    $btn.removeClass("btn-secondary btn-danger").addClass("btn-success")
-                                        .html('<i class="fas fa-check"></i>')
-                                        .data("status", "accepted")
-                                        .prop("disabled", false);
-                                } else if (actionType === "reject") {
-                                    $btn.removeClass("btn-success btn-danger").addClass("btn-danger")
-                                        .html('<i class="fas fa-times"></i>')
-                                        .data("status", "rejected") // Kembali ke status 'none'
-                                        .prop("disabled", false); // Aktifkan kembali
+                                // Update HANYA tombol yang spesifik dengan ID yang tepat
+                                const $specificBtn = $(`.btn-toggle-status[data-id="${kelompokId}"]`);
+
+                                console.log('=== UPDATE BUTTON ===', {
+                                    requestId: requestId
+                                    , kelompokId: kelompokId
+                                    , actionType: actionType
+                                    , buttonsFound: $specificBtn.length
+                                    , timestamp: new Date().toISOString()
+                                });
+
+                                if ($specificBtn.length === 1) {
+                                    if (actionType === "accept") {
+                                        $specificBtn.removeClass("btn-secondary btn-danger").addClass("btn-success")
+                                            .html('<i class="fas fa-check"></i>')
+                                            .data("status", "accepted")
+                                            .prop("disabled", false);
+                                    } else if (actionType === "reject") {
+                                        $specificBtn.removeClass("btn-success btn-secondary").addClass("btn-danger")
+                                            .html('<i class="fas fa-times"></i>')
+                                            .data("status", "rejected")
+                                            .prop("disabled", false);
+                                    }
+                                } else {
+                                    console.error('MASALAH: Jumlah tombol tidak tepat!', {
+                                        expected: 1
+                                        , found: $specificBtn.length
+                                        , kelompokId: kelompokId
+                                    });
                                 }
                             } else {
-                                // Handle jika ada status lain dari backend
                                 Swal.fire({
                                     title: "Informasi"
                                     , text: response.message || "Terjadi sesuatu."
                                     , icon: "info"
                                 });
                             }
-
                         }
                         , error: function(xhr, status, error) {
-                            console.error("AJAX Error:", {
-                                xhr: xhr
+                            console.error("=== AJAX ERROR ===", {
+                                requestId: requestId
+                                , kelompokId: kelompokId
+                                , xhr: xhr
                                 , status: status
                                 , error: error
+                                , timestamp: new Date().toISOString()
                             });
 
-                            let errorTitle = "Error!";
-                            let errorMessage = "Gagal memproses permintaan. Silakan coba lagi.";
-
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                                if (xhr.status === 422) {
-                                    errorTitle = "Gagal!";
-                                } else if (xhr.status === 404) {
-                                    errorTitle = "Tidak Ditemukan!";
-                                } else if (xhr.status === 403) {
-                                    errorTitle = "Akses Ditolak!";
-                                }
-                            } else if (xhr.status === 500) {
-                                errorMessage = "Terjadi kesalahan pada server.";
-                            }
-
                             Swal.fire({
-                                title: errorTitle
-                                , text: errorMessage
+                                title: "Error!"
+                                , text: "Terjadi kesalahan saat memproses permintaan."
                                 , icon: "error"
+                            });
+                        }
+                        , complete: function() {
+                            // Hapus flag processing setelah selesai
+                            processingRequests.delete(kelompokId);
+                            isProcessing = false;
+
+                            console.log('=== REQUEST COMPLETE ===', {
+                                requestId: requestId
+                                , kelompokId: kelompokId
+                                , timestamp: new Date().toISOString()
                             });
                         }
                     });
@@ -251,10 +292,38 @@ dd($kelompokData['table']);
             });
         }
 
-        $(document).on("click", ".btn-toggle-status", function() {
+        $(document).on("click", ".btn-toggle-status", function(e) {
+            // Prevent default dan stop propagation
+            e.preventDefault();
+            e.stopPropagation();
+
             let $btn = $(this);
             let kelompokId = $btn.data("id");
             let currentStatus = $btn.data("status");
+
+            // Cek apakah sedang ada request yang diproses
+            if (isProcessing || processingRequests.has(kelompokId)) {
+                console.log('Click dibatalkan - sedang diproses:', kelompokId);
+                return false;
+            }
+
+            console.log("=== BUTTON CLICK ===", {
+                kelompokId: kelompokId
+                , currentStatus: currentStatus
+                , buttonElement: $btn[0]
+                , timestamp: new Date().toISOString()
+            });
+
+            let buttonsWithSameId = $(`.btn-toggle-status[data-id="${kelompokId}"]`);
+            console.log("Buttons with same ID:", buttonsWithSameId.length);
+
+            if (buttonsWithSameId.length > 1) {
+                console.error('MASALAH: Multiple tombol dengan ID sama!', {
+                    kelompokId: kelompokId
+                    , count: buttonsWithSameId.length
+                });
+                return false;
+            }
 
             // Sederhana: jika rejected -> accept, jika accepted -> reject
             let nextAction;
@@ -266,8 +335,9 @@ dd($kelompokData['table']);
 
             // Panggil fungsi handleAction
             handleAction(kelompokId, nextAction);
-        });
 
+            return false;
+        });
     });
 
 </script>
