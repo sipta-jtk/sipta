@@ -7,7 +7,7 @@ dd($kelompokData['table']);
 
 @section('content')
 <div class="card p-3 container">
-    <div class="mb-3">
+    <div class=" mb-3">
         <label for="filterProdi">Filter Prodi:</label>
         <select id="filterProdi" class="form-control w-25">
             <option value="">Semua Prodi</option>
@@ -149,6 +149,9 @@ dd($kelompokData['table']);
         let processingRequests = new Set();
 
         function handleAction(kelompokId, actionType) {
+            let routeUrl = "{{ route('pengajuanalokasipembimbing.daftar-pengajuan-dosbing.handlePengajuan', ['id' => ':kelompokId', 'action' => ':actionType']) }}";
+            routeUrl = routeUrl.replace(':kelompokId', kelompokId).replace(':actionType', actionType);
+
             // Buat unique request ID
             const requestId = `${kelompokId}_${actionType}_${Date.now()}`;
 
