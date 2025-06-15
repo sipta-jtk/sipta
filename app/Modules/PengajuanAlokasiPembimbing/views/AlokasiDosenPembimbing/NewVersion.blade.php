@@ -49,6 +49,14 @@
             max-height: calc(80vh - 120px);
             /* Adjusted to fit within the card wrapper */
         }
+        
+        /* Ensure collapse is hidden by default but can be shown */
+        #filterProdiMenu, #filterMenu {
+            display: none;
+        }
+        #filterProdiMenu.show, #filterMenu.show {
+            display: block;
+        }
     </style>
 @stop
 
@@ -475,9 +483,39 @@
         $(document).ready(function() {
             adjustSidebar();
 
+            // Ensure filter menus are hidden on page load
+            $('#filterProdiMenu, #filterMenu').hide().removeClass('show');
+            
             $.get("{{ route('pengajuanalokasipembimbing.alokasi-pembimbing.getDetailDosen') }}", function(data) {
                 window.kuotaDosen = data;
                 updateKuotaDosen();
+            });
+
+            // Fix filter collapse toggling
+            $('[data-toggle="collapse"]').click(function() {
+                const target = $($(this).data('target'));
+                if (target.hasClass('show')) {
+                    target.collapse('hide');
+                    $(this).attr('aria-expanded', 'false');
+                } else {
+                    target.collapse('show');
+                    $(this).attr('aria-expanded', 'true');
+                }
+            });
+
+            // Direct implementation of filter toggle without relying on Bootstrap collapse
+            $('button[data-toggle="collapse"]').off('click').on('click', function() {
+                const targetId = $(this).data('target');
+                const filterMenu = $(targetId);
+                
+                filterMenu.slideToggle(200);
+                
+                // Toggle aria-expanded attribute
+                const expanded = $(this).attr('aria-expanded') === 'true';
+                $(this).attr('aria-expanded', (!expanded).toString());
+                
+                // Toggle show class for Bootstrap compatibility
+                filterMenu.toggleClass('show');
             });
 
             // Init dosenTable

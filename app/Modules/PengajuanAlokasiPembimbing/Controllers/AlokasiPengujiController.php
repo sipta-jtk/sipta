@@ -35,6 +35,7 @@ class AlokasiPengujiController extends Controller
 
             $data_pengajuan[$key]['usulan_dosen'] = PreferensiKota::join('dosen', 'preferensi_kota.nip', '=', 'dosen.nip')
                 ->where('preferensi_kota.id_kota', $value->id_kota)
+                ->where('preferensi_kota.status', '1')
                 ->select('dosen.id_dosen')
                 ->get();
 
