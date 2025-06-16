@@ -127,7 +127,11 @@ class AuthServiceProvider extends ServiceProvider
 
         // Akses Form Perekrutan Anggota KoTA
         Gate::define('akses-form-perekrutan-anggota-kota', function ($user) {
-            return Gate::allows('mahasiswa_ta') && $user->mahasiswa->id_kota === null;
+            $currentYear = \Carbon\Carbon::now()->year;
+
+            return Gate::allows('mahasiswa_non_ta') && 
+                $user->mahasiswa->id_kota === null &&
+                $user->mahasiswa->tahun_ta == $currentYear;
         });
 
         // Akses Halaman Detail KoTA pada sidebar Akun Pengguna

@@ -17,28 +17,41 @@ class KBKController extends Controller
         return view('UserManagement.views.kbk', compact('kbkList'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        // Validasi input dan cek duplikasi
         $request->validate([
-            'kbk' => 'required|string|max:100|unique:kbk,kbk'
+            'kbk' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-zA-Z0-9\s]+$/',
+                'unique:kbk,kbk'
+            ]
         ], [
+            'kbk.regex' => 'KBK hanya boleh mengandung huruf, angka, dan spasi.',
             'kbk.unique' => 'KBK sudah ada.'
         ]);
 
         Kbk::create([
             'kbk' => $request->kbk
         ]);
-
+            
         return redirect()->route('kelola-kbk')->with('success', 'KBK berhasil ditambahkan!');
     }
 
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
-        // Validasi input dan cek duplikasi, kecuali yang sedang diedit
+        
         $request->validate([
-            'kbk' => 'required|string|max:100|unique:kbk,kbk,' . $id . ',id_kbk'
+            'kbk' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-zA-Z0-9\s]+$/',
+                'unique:kbk,kbk,' . $id . ',id_kbk'
+            ]
         ], [
+            'kbk.regex' => 'Nama KBK hanya boleh mengandung huruf, angka, dan spasi.',
             'kbk.unique' => 'Nama KBK sudah ada.'
         ]);
 
@@ -48,6 +61,7 @@ class KBKController extends Controller
 
         return redirect()->route('kelola-kbk')->with('success', 'KBK berhasil diperbarui!');
     }
+
 
     public function destroy($id)
     {
