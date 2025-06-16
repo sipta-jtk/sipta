@@ -125,6 +125,7 @@ public function updateMhs(Request $request)
             Rule::unique('user', 'email')->ignore($user_updated->username,'username'),
             ],
         'nama' => 'required|string|',
+        'tahun_ta' => 'required',
         'kelas' => 'required',
         'no_wa' => ['required', 'between:1,15',  'regex:/^[0-9\-]+$/'],
         'tahun_masuk' => 'required',
@@ -136,7 +137,7 @@ public function updateMhs(Request $request)
         'email.regex' => 'Harap menggunakan email Polban dengan domain @polban.ac.id',
         'nim.unique' => 'NIM sudah terdaftar, silahkan masukkan NIM yang lain',
         'email.unique' => 'Email sudah terdaftar, silahkan masukkan email yang lain',
-        'no_wa.required' => 'Nomor WhatsApp wajib diisi. Jika kosong isi dengan -',
+        'tahun_ta.required' => 'Tahun TA wajib diisi.',
         'no_wa.digits_between' => 'Nomor WhatsApp maksimal sampai 15 digit.',
         'no_wa.regex' => 'Nomor WhatsApp hanya boleh berisi angka / -.'
     ]); 
@@ -145,6 +146,12 @@ public function updateMhs(Request $request)
     $nim = $request->nim;
     DB::beginTransaction();
     try {
+    $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+    // Cek jika tahun_ta berubah dan id_kota tidak null
+    if ($mahasiswa->tahun_ta != $request->tahun_ta && $mahasiswa->id_kota !== null) {
+        return redirect()->route('manage.mhs')->with('error', 'Tahun TA tidak dapat diubah karena sudah terdaftar kota.');
+    }
+
     $user = User::where('username', $nim)->first();
     $user->update([
         'nama' => $request->nama,
@@ -155,6 +162,7 @@ public function updateMhs(Request $request)
         'kelas' => $request->kelas,
         'tahun_masuk' => $request->tahun_masuk,
         'id_prodi' => $request->id_prodi,
+        'tahun_ta' => $request->tahun_ta,
     ]);
 
     DB::commit();
