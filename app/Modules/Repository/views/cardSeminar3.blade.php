@@ -615,7 +615,7 @@
                         @else
                         @foreach ($powerpoint as $index => $doc)
                         <tr>
-                            <td></td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
                             <td>{{ $doc->subkategori->nama_subkategori }}</td>
@@ -1093,31 +1093,27 @@
                     }
                 },
                 initComplete: function() {
-                    var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
-                    var customLengthHtml = `
+                var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
+                var customLengthHtml = `
                     <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
                         <label class="mb-0" for="customLengthSelect">Tampilkan</label>
                         ${lengthMenu.find('select').prop('outerHTML')}
                         <span>data per halaman</span>
                     </div>`;
-                    $(`#${customLengthId}`).empty().append(customLengthHtml);
+                $(`#${customLengthId}`).empty().append(customLengthHtml);
 
-                    // ⬇⬇⬇ Tambahkan isi No saat init pertama
-                    var api = this.api();
-                    api.on('order.dt search.dt', function() {
-                        api.column(0, {
-                                search: 'applied',
-                                order: 'applied'
-                            })
-                            .nodes()
-                            .each(function(cell, i) {
-                                cell.innerHTML = i + 1;
-                            });
+                // ✅ Tambahkan logika penomoran di sini
+                var api = this.api();
+                api.on('order.dt search.dt draw.dt', function () {
+                    api.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
                     });
+                });
 
-                    // ⬇⬇⬇ Jalankan manual untuk pertama kali
-                    api.draw();
+                // Jalankan satu kali agar No langsung muncul saat load pertama
+                api.draw();
                 }
+
             });
         });
     });
