@@ -61,10 +61,18 @@ class RepositoryController extends Controller
             $baseQuery = Dokumen::with('subkategori')->where('kategori', $kategori);
 
             if ($user->can('mahasiswa_ta')) {
+            // Ambil semua NIM mahasiswa dalam 1 kota
+            $mahasiswa = Mahasiswa::where('nim', $user->username)->first();
+
+            if ($mahasiswa) {
+                $nimsInSameKota = Mahasiswa::where('id_kota', $mahasiswa->id_kota)->pluck('nim');
+                $baseQuery->whereIn('username', $nimsInSameKota);
+            } else {
+                // Fallback: hanya dokumennya sendiri
                 $baseQuery->where('username', $user->username);
-            } elseif ($user->can('akses-sidebar-repo-dosen')) {
-                $baseQuery->where('id_kota', $id_kota);
             }
+            }
+
 
             if ($request->filled('search')) {
                 $baseQuery->where(function ($q) use ($request) {
@@ -256,12 +264,21 @@ class RepositoryController extends Controller
             $rules = [
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
-                $isLink ? 'repository_url' : 'file' => $isLink
-                    ? 'required|url|max:255'
-                    : 'required|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
-                'dokumen_teknis_type' => 'nullable|string|max:10', // Field untuk tipe dokumen teknis
-                'dokumen_lainnya_type' => 'nullable|string|max:20', // Field untuk tipe dokumen lainnya
+                'dokumen_teknis_type' => 'nullable|string|max:10',
+                'dokumen_lainnya_type' => 'nullable|string|max:20',
             ];
+
+            // Atur validasi file berdasarkan subkategori
+            if ($isLink) {
+                $rules['repository_url'] = 'required|url|max:255';
+            } else {
+                if (in_array(strtolower($subkategoriName), ['fta', 'laporan', 'srs', 'sdd', 'sad', 'std', 'sop'])) {
+                    $rules['file'] = 'required|file|mimes:pdf|max:15360';
+                } else {
+                    $rules['file'] = 'required|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360';
+                }
+            }
+
 
             // Validasi khusus
             if ($subkategoriName === 'fta') {
@@ -282,16 +299,18 @@ class RepositoryController extends Controller
             $id_kota = $user->mahasiswa->id_kota ?? $user->dosen->id_kota ?? null;
             $username = $user->username;
 
-            // Cari versi terakhir
+            // Cari versi terakhir berdasarkan jenis dokumen
             $latestVersion = Dokumen::where('kategori', $kategori)
-                ->when($kategori === 'fta', fn($q) => $q->where('kode_fta', $request->kode_fta))
-                // Tambahkan filter subkategori untuk semua kategori yang punya subkategori
-                ->when(
-                    in_array($kategori, ['seminar1', 'seminar2', 'seminar3', 'sidang', 'yudisium']),
-                    fn($q) => $q->where('id_subkategori', $request->id_subkategori)
-                )
-                ->orderByDesc('versi')
-                ->value('versi');
+            ->when($kategori === 'fta', function ($query) use ($request) {
+                return $query->where('kode_fta', $request->kode_fta);
+            })
+            ->when(
+                in_array($kategori, ['seminar1', 'seminar2', 'seminar3', 'sidang', 'yudisium']),
+                fn($q) => $q->where('id_subkategori', $request->id_subkategori)
+            )
+            ->orderByDesc('versi')
+            ->value('versi');
+
 
             $newVersion = $latestVersion ? $latestVersion + 1 : 1;
 
@@ -394,11 +413,23 @@ class RepositoryController extends Controller
                 ->where('kategori', $kategori)
                 ->firstOrFail();
 
-            $request->validate([
+            // Ambil nama subkategori terkait dokumen (untuk validasi file)
+            $subkategoriName = Subkategori::where('id_subkategori', $dokumen->id_subkategori)->value('nama_subkategori');
+
+            // Definisikan aturan validasi dasar
+            $rules = [
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
-                'file' => 'nullable|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360',
-            ]);
+            ];
+
+            // Validasi file hanya jika ada file baru di-upload
+            if ($request->hasFile('file')) {
+                if (in_array(strtolower($subkategoriName), ['fta', 'laporan', 'srs', 'sdd', 'sad', 'std', 'sop'])) {
+                    $rules['file'] = 'nullable|file|mimes:pdf|max:15360';
+                } else {
+                    $rules['file'] = 'nullable|file|mimes:pptx,pdf,doc,docx,jpg,png,jpeg,xlsx|max:15360';
+                }
+            }
 
             $dokumen->judul = $request->judul;
             $dokumen->deskripsi = $request->deskripsi;

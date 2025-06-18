@@ -757,7 +757,7 @@
 
                 <div class="form-group w-100">
                     <label for="file">File</label>
-                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required />
+                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required accept=".pdf" />
                 </div>
 
                 <label for="username">Pengunggah</label>
@@ -1300,19 +1300,24 @@
         var showSubkategoriTeknis = false;
         var showSubkategoriLainnya = false;
 
+        // accept file type default
+        $('#file').attr('accept', '.pdf');
+    
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan seminar 3';
+        title = 'Tambah Laporan seminar 3';
+        $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-fta') {
             title = 'Tambah FTA seminar 3';
             showKodeFTA = true;
-        } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint seminar 3';
-        } else if (type === 'btn-tambah-srs' || type === 'btn-tambah-teknis') {
+            $('#file').attr('accept', '.pdf'); // hanya PDF
+        } else if (type === 'btn-tambah-teknis' || type === 'btn-tambah-srs') {
             title = 'Tambah Dokumen Teknis seminar 3';
             showSubkategoriTeknis = true;
+            $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-lainnya') {
             title = 'Tambah Dokumen Lainnya seminar 3';
             showSubkategoriLainnya = true;
+            $('#file').attr('accept', '.pptx,.pdf,.doc,.docx,.jpg,.png,.jpeg,.xlsx'); // bebas
         }
 
         $('#TambahDokumen .modal-title').text(title);
@@ -1358,4 +1363,5 @@
         console.log("Tis");
     };
 </script>
+
 @stop
