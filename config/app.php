@@ -143,6 +143,18 @@ return [
         // 'store'  => 'redis',
     ],
 
+        /*
+    |--------------------------------------------------------------------------
+    | Impersonate Feature
+    |--------------------------------------------------------------------------
+    |
+    | Impersonate user for help user in debugging or testing app, please turn it
+    | into 'false' for production environment.
+    |
+    */
+    'impersonate' => env('IMPERSONATE'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
