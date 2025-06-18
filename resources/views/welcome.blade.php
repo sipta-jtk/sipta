@@ -497,11 +497,11 @@
                 <i class="mr-2 fas fa-database ms-2 text-info fa-lg"></i> Monitoring Penyimpanan
             </div>
         </a>
-        <a href="{{ route('notification_reminder.admin.notifikasi') }}" class="text-dark text-decoration-none">
+        <!-- <a href="{{ route('notification_reminder.admin.notifikasi') }}" class="text-dark text-decoration-none">
             <div class="py-4 px-4 border w-100 rounded-lg mb-2 card-hover">
                 <i class="mr-2 fas fa-bell ms-2 text-warning fa-lg"></i> Pengaturan Notifikasi
             </div>
-        </a>
+        </a> -->
 
     @endif 
 @endauth
