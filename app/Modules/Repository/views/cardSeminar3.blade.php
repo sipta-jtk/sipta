@@ -615,7 +615,7 @@
                         @else
                         @foreach ($powerpoint as $index => $doc)
                         <tr>
-                            <td></td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
                             <td>{{ $doc->subkategori->nama_subkategori }}</td>
@@ -757,7 +757,7 @@
 
                 <div class="form-group w-100">
                     <label for="file">File</label>
-                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required />
+                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required accept=".pdf" />
                 </div>
 
                 <label for="username">Pengunggah</label>
@@ -1093,31 +1093,27 @@
                     }
                 },
                 initComplete: function() {
-                    var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
-                    var customLengthHtml = `
+                var lengthMenu = $(this.api().table().container()).find('.dataTables_length').first();
+                var customLengthHtml = `
                     <div class="d-flex align-items-center gap-2" style="white-space: nowrap;">
                         <label class="mb-0" for="customLengthSelect">Tampilkan</label>
                         ${lengthMenu.find('select').prop('outerHTML')}
                         <span>data per halaman</span>
                     </div>`;
-                    $(`#${customLengthId}`).empty().append(customLengthHtml);
+                $(`#${customLengthId}`).empty().append(customLengthHtml);
 
-                    // ⬇⬇⬇ Tambahkan isi No saat init pertama
-                    var api = this.api();
-                    api.on('order.dt search.dt', function() {
-                        api.column(0, {
-                                search: 'applied',
-                                order: 'applied'
-                            })
-                            .nodes()
-                            .each(function(cell, i) {
-                                cell.innerHTML = i + 1;
-                            });
+                // ✅ Tambahkan logika penomoran di sini
+                var api = this.api();
+                api.on('order.dt search.dt draw.dt', function () {
+                    api.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
                     });
+                });
 
-                    // ⬇⬇⬇ Jalankan manual untuk pertama kali
-                    api.draw();
+                // Jalankan satu kali agar No langsung muncul saat load pertama
+                api.draw();
                 }
+
             });
         });
     });
@@ -1300,19 +1296,24 @@
         var showSubkategoriTeknis = false;
         var showSubkategoriLainnya = false;
 
+        // accept file type default
+        $('#file').attr('accept', '.pdf');
+    
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan seminar 3';
+        title = 'Tambah Laporan seminar 3';
+        $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-fta') {
             title = 'Tambah FTA seminar 3';
             showKodeFTA = true;
-        } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint seminar 3';
-        } else if (type === 'btn-tambah-srs' || type === 'btn-tambah-teknis') {
+            $('#file').attr('accept', '.pdf'); // hanya PDF
+        } else if (type === 'btn-tambah-teknis' || type === 'btn-tambah-srs') {
             title = 'Tambah Dokumen Teknis seminar 3';
             showSubkategoriTeknis = true;
+            $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-lainnya') {
             title = 'Tambah Dokumen Lainnya seminar 3';
             showSubkategoriLainnya = true;
+            $('#file').attr('accept', '.pptx,.pdf,.doc,.docx,.jpg,.png,.jpeg,.xlsx'); // bebas
         }
 
         $('#TambahDokumen .modal-title').text(title);
@@ -1358,4 +1359,5 @@
         console.log("Tis");
     };
 </script>
+
 @stop
