@@ -302,7 +302,7 @@
                                                                                             @if ($isKoordinator)
                                                                                                 <button
                                                                                                     class="btn btn-sm {{ $alok2?->status_alokasi === 'fix' ? 'btn-warning' : 'btn-success' }}"
-                                                                                                    onclick="if ($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2, '{{ $alok2?->id_dosen ?? '' }}')">
+                                                                                                    onclick="if ($('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val() !== '') fixAlokasi('{{ $pengajuan->id_pengajuan_pembimbing }}', 2, $('#penguji2-{{ $pengajuan->id_pengajuan_pembimbing }}').val())">
                                                                                                     {{-- class="btn btn-sm btn-success" --}}
                                                                                                     <i
                                                                                                         class="fa fs-fw {{ $alok2?->status_alokasi === 'fix' ? 'fa-undo' : 'fa-check' }}"></i>
