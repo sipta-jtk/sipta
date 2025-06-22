@@ -6,6 +6,7 @@
 4. The application can be accessed at ```127.0.0.1:8000```.
 5. You don't need to recreate container if you had a changes. It'll update automatically.
 
+- If you don't want to run the migration, simply set ```MIGRATE_ON_START=true``` in the ```.env``` file.
 - If you don't want to run the seeder because it will replace your existing data in MySQL, simply set ```RUN_SEEDER=false``` in the ```.env``` file.
 - If database can't connect to app service, run the command ```docker compose down -v``` first.
 - If you encounter an error with message 'ERROR [app internal] load build context, delete vendor folder and run the command ```Get-ChildItem -Recurse | ForEach-Object { icacls $_.FullName /reset }```.
