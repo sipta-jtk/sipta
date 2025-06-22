@@ -1,0 +1,60 @@
+services:
+  app:
+    image: najibalimudin/sipta-app:prod
+    container_name: sipta-app
+    restart: unless-stopped
+    tty: true
+    env_file: .env
+    depends_on:
+      - cache
+      - database
+    networks:
+      - sipta
+    volumes:
+      - laravel-public-storage:/var/www/storage/app/public
+
+  web_server:
+    image: najibalimudin/sipta-web_server:prod
+    container_name: sipta-web_server
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8002:80"
+    depends_on:
+      - app
+    networks:
+      - sipta
+    volumes:
+      - laravel-public-storage:/var/www/storage/app/public
+
+  cache:
+    image: redis:alpine
+    container_name: cache
+    restart: unless-stopped
+    networks:
+      - sipta
+
+  database:
+    image: mysql:8.0
+    container_name: sipta-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data-prod:/var/lib/mysql
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - sipta
+
+networks:
+  sipta:
+    driver: bridge
+
+volumes:
+  db-data-prod:
+  laravel-public-storage:

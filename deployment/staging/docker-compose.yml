@@ -1,0 +1,77 @@
+services:
+  app:
+    image: najibalimudin/sipta-app:dev
+    container_name: sipta-app-dev
+    restart: unless-stopped
+    tty: true
+    env_file: .env
+    depends_on:
+      - cache
+      - database-dev
+    networks:
+      - sipta-dev
+    volumes:
+      - laravel-public-storage:/var/www/storage/app/public
+      - laravel-session-storage:/var/www/storage/framework/sessions
+
+  plagiarism:
+    image: najibalimudin/plagiarism-checking:latest
+    container_name: sipta-plagiarism-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - cache
+      - database-dev
+    ports:
+      - "8006:9001"
+    networks:
+      - sipta-dev
+
+  web_server:
+    image: najibalimudin/sipta-web_server:dev
+    container_name: sipta-web_server-dev
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8003:80"
+    depends_on:
+      - app
+    networks:
+      - sipta-dev
+    volumes:
+      - laravel-public-storage:/var/www/storage/app/public
+      - laravel-session-storage:/var/www/storage/framework/sessions
+
+  cache:
+    image: redis:alpine
+    container_name: cache-dev
+    restart: unless-stopped
+    networks:
+      - sipta-dev
+
+  database-dev:
+    image: mysql:8.0
+    container_name: sipta-db-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3308:3306"
+    volumes:
+      - db-dev-data:/var/lib/mysql
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - sipta-dev
+
+networks:
+  sipta-dev:
+    driver: bridge
+
+volumes:
+  db-dev-data:
+  laravel-public-storage:
+  laravel-session-storage:
