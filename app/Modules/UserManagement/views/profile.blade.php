@@ -2,7 +2,8 @@
 
 @section('title', 'Profile')
 @php
-$prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
+$prefix = env('PREFIX_URL', '');
+$impersonate = config('app.impersonate');
 @endphp
 @section('content_header')
     <h1 class="mb-3">Profil Saya</h1>
@@ -105,8 +106,8 @@ $prefix = env('PREFIX_URL', ''); // Tarik prefix dari env
         </div>
     </div>
 
-    <!-- Card untuk Search Impersonate - Khusus Admin -->
-    @if(auth()->user()->role_user === 'admin')
+    <!-- Card untuk Search Impersonate - Khusus Admin dan Mode Debug -->
+    @if(auth()->user()->role_user === 'admin' && $impersonate === true)
         <div class="card mt-4">
             <div class="card-header bg-info">
                 <h5 class="mb-0"><i class="fas fa-user-secret"></i> Mode Testing Impersonate</h5>

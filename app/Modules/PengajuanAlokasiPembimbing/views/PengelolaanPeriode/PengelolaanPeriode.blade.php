@@ -7,7 +7,7 @@
     <div>
         @component('KelolaPenilaianTA.views.components.breadcrumb', [
             'links' => [
-                ['url' => url('/'), 'label' => 'Beranda'],
+                ['url' => url('/'. env('PREFIX_URL', '')), 'label' => 'Beranda'],
                 [
                     'url' => '',
                     'label' => 'Pengelolaan Periode',

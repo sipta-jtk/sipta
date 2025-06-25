@@ -445,7 +445,7 @@
                         @else
                         @foreach ($powerpoint as $index => $doc)
                         <tr>
-                            <td></td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
                             <td>{{ $doc->subkategori->nama_subkategori }}</td>
@@ -1064,7 +1064,7 @@
 
                 <div class="form-group w-100">
                     <label for="file">File</label>
-                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required />
+                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required accept=".pdf"/>
                 </div>
 
                 <label for="username">Pengunggah</label>
@@ -1615,19 +1615,24 @@
         var showSubkategoriTeknis = false;
         var showSubkategoriLainnya = false;
 
+        // accept file type default
+        $('#file').attr('accept', '.pdf');
+    
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan Sidang';
+        title = 'Tambah Laporan Sidang';
+        $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-fta') {
             title = 'Tambah FTA Sidang';
             showKodeFTA = true;
-        } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah PowerPoint Sidang';
-        } else if (type === 'btn-tambah-srs' || type === 'btn-tambah-teknis') {
+            $('#file').attr('accept', '.pdf'); // hanya PDF
+        } else if (type === 'btn-tambah-teknis' || type === 'btn-tambah-srs') {
             title = 'Tambah Dokumen Teknis Sidang';
             showSubkategoriTeknis = true;
+            $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-lainnya') {
             title = 'Tambah Dokumen Lainnya Sidang';
             showSubkategoriLainnya = true;
+            $('#file').attr('accept', '.pptx,.pdf,.doc,.docx,.jpg,.png,.jpeg,.xlsx'); // bebas
         }
 
         $('#TambahDokumen .modal-title').text(title);

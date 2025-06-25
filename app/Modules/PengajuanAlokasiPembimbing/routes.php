@@ -89,7 +89,7 @@ Route::group(['prefix' => 'PengajuanAlokasiPembimbing', 'as' => 'pengajuanalokas
 
     Route::group(['prefix' => 'daftar-pengajuan-dosbing', 'as' => 'daftar-pengajuan-dosbing.', 'middleware' => ['auth', 'can:dosen']], function () {
         Route::get('/', [DaftarPengajuanDosbingController::class, 'view_daftarPengajuanDosbing'])->name('index');
-        Route::post('/pengajuan/{id}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan'])->name('handlePengajuan');
+        Route::post('/pengajuan/{id_kota}/{action}', [DaftarPengajuanDosbingController::class, 'handlePengajuan'])->name('handlePengajuan');
     });
     
 

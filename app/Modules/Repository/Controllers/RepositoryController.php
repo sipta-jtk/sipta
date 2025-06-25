@@ -140,9 +140,9 @@ class RepositoryController extends Controller
             $subkategoriSdd = Subkategori::where('nama_subkategori', 'SDD')->first();
             $subkategoriPoster = Subkategori::where('nama_subkategori', 'Poster')->first();
             $subkategoriSbm = Subkategori::where('nama_subkategori', 'Surat Bebas Masalah')
-                                ->orWhere('nama_subkategori', 'SuratBebasMasalah')->first();
+                ->orWhere('nama_subkategori', 'SuratBebasMasalah')->first();
             $subkategoriToeic = Subkategori::where('nama_subkategori', 'Hasil TOEIC')
-                                 ->orWhere('nama_subkategori', 'HasilTOEIC')->first();
+                ->orWhere('nama_subkategori', 'HasilTOEIC')->first();
 
             // Ambil semua subkategori kalau kategori artefak
             $subkategoris = $kategori === 'artefak' ? Subkategori::all() : collect();

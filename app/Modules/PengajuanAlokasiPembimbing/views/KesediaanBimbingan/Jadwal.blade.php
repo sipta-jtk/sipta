@@ -8,10 +8,10 @@
 
 @section('content')
     @if ($savedInformation['StatusBersediaMembimbing'] == 'belum_konfirmasi')
-        <p> <a href="/">Beranda</a> / Formulir Kesediaan Membimbing</p>
+        <p> <a href="/{{env('PREFIX_URL', '')}}">Beranda</a> / Formulir Kesediaan Membimbing</p>
         @include('PengajuanAlokasiPembimbing.views.KesediaanBimbingan.V_KonfirmasiBersedia')
     @else
-        <p><a href="/">Beranda</a> / <a
+        <p><a href="/{{env('PREFIX_URL', '')}}">Beranda</a> / <a
                 href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.minat-bidang.index') }}">Peminatan Bidang</a>
             /
             <a href="{{ route('pengajuanalokasipembimbing.kesediaan-membimbing.jumlah-mahasiswa.index') }}">Kuota

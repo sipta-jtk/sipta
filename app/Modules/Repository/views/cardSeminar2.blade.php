@@ -450,7 +450,7 @@
                         @else
                         @foreach ($powerpoint as $index => $doc)
                         <tr>
-                            <td></td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $doc->versi }}</td>
                             <td>{{ $doc->judul }}</td>
                             <td>{{ $doc->subkategori->nama_subkategori }}</td>
@@ -916,7 +916,7 @@
 
                 <div class="form-group w-100">
                     <label for="file">File</label>
-                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required />
+                    <x-adminlte-input-file onchange="JudulDokumen()" name="file" id="file" igroup-size="md" required accept=".pdf" />
                 </div>
 
                 <label for="username">Pengunggah</label>
@@ -1396,18 +1396,25 @@
         var showKodeFTA = false;
         var showSubkategoriTeknis = false;
         var showSubkategoriLainnya = false;
-
+       
+        // accept file type default
+        $('#file').attr('accept', '.pdf');
+    
         if (type === 'btn-tambah-laporan') {
-            title = 'Tambah Laporan seminar 2';
+        title = 'Tambah Laporan Seminar 2';
+        $('#file').attr('accept', '.pdf'); // hanya PDF
         } else if (type === 'btn-tambah-fta') {
-            title = 'Tambah FTA seminar 2';
+            title = 'Tambah FTA Seminar 2';
             showKodeFTA = true;
-        } else if (type === 'btn-tambah-ppt') {
-            title = 'Tambah Dokumen Lainnya seminar 2';
-            showSubkategoriLainnya = true;
-        } else if (type === 'btn-tambah-srs') {
-            title = 'Tambah Dokumen Teknis seminar 2';
+            $('#file').attr('accept', '.pdf'); // hanya PDF
+        } else if (type === 'btn-tambah-teknis' || type === 'btn-tambah-srs') {
+            title = 'Tambah Dokumen Teknis Seminar 2';
             showSubkategoriTeknis = true;
+            $('#file').attr('accept', '.pdf'); // hanya PDF
+        } else if (type === 'btn-tambah-ppt') {
+            title = 'Tambah Dokumen Lainnya Seminar 2';
+            showSubkategoriLainnya = true;
+            $('#file').attr('accept', '.pptx,.pdf,.doc,.docx,.jpg,.png,.jpeg,.xlsx'); // bebas
         }
 
         $('#TambahDokumen .modal-title').text(title);
