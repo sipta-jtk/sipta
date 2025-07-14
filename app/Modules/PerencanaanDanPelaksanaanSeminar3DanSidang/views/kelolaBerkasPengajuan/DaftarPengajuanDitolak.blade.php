@@ -3,15 +3,19 @@
 @section('title', 'Daftar Pengajuan Verifikasi Berkas')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
+    <!-- Judul Halaman -->
     <h1 class="mb-3">Daftar Pengajuan Verifikasi Berkas {{ $tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir' }}</h1>
-    <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', ['links'=> [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => url('/sipta-dev/kelola-pengajuan-berkas/'.$tipe), 'label' => 'Daftar Pengajuan Verifikasi Berkas ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
-                ['url' => url('/sipta-dev/kelola-pengajuan-berkas/'.$tipe.'/ditolak'), 'label' => 'Daftar Pengajuan Verifikasi Berkas Ditolak'],
-            ]])
-        @endcomponent
-    </div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+            'links'=> [
+                ['url' => "/$prefix", 'label' => 'Beranda'],
+                ['url' => route('kelola.berkas.list', ['tipe' => $tipe]), 'label' => 'Daftar Pengajuan Verifikasi Berkas ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
+                ['url' => '', 'label' => 'Daftar Pengajuan Mahasiswa Ditolak']
+            ]
+        ])
+    @endcomponent
 @stop
 
 @section('content')

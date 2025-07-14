@@ -3,14 +3,18 @@
 @section('title', 'Daftar Pengajuan Jadwal')
 
 @section('content_header')
+@php
+    $prefix = env('PREFIX_URL', 'sipta');
+@endphp
+    <!-- Judul Halaman -->
     <h1 class="mb-3">Daftar Pengajuan Jadwal {{ $tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir' }}</h1>
-    <div>
-        @component('KelolaPenilaianTA.views.components.breadcrumb', ['links'=> [
-                ['url' => url('/sipta-dev/'), 'label' => 'Beranda'],
-                ['url' => url('/sipta-dev/kelola-pengajuan-jadwal-pembimbing/'.$tipe), 'label' => 'Daftar Pengajuan Jadwal Pembimbing ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
-            ]])
-        @endcomponent
-    </div>
+    @component('KelolaPenilaianTA.views.components.breadcrumb', [
+        'links' => [
+            ['url' => "/$prefix", 'label' => 'Beranda'],
+            ['url' => route('kelola-pembimbing.jadwal.list', ['tipe' => $tipe]), 'label' => 'Daftar Pengajuan Jadwal Pembimbing ' . ($tipe === 'seminar-3' ? 'Seminar 3' : 'Sidang Akhir')],
+        ]
+    ])
+    @endcomponent
 @stop
 
 @section('content')
